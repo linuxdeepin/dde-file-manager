@@ -570,7 +570,7 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 
     int count = this->count();
     int spacing = this->spacing();
-    int itemWidth = itemSize.width() + spacing * 2;
+    // int itemWidth = itemSize.width() + spacing * 2;
     int itemHeight = itemSize.height() + spacing * 2;
 
     if (isListViewMode() || isTreeViewMode()) {
@@ -582,8 +582,9 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 
         list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (isIconViewMode()) {
-        QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
-        int columnCount = d->calcColumnCount(validRect.width(), itemWidth);
+        // QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
+        qWarning() << "!!!!!!!!!!!!!!visibleIndexes" << rect.width() << width();
+        int columnCount = d->calcColumnCount(rect.width(), itemSize.width());
 
         list << calcRectContiansIndexes(columnCount, rect);
     }
@@ -934,14 +935,15 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
 
 QRect FileView::calcVisualRect(int widgetWidth, int index) const
 {
-    int iconViewSpacing = kIconViewSpacing;
+    int iconViewSpacing = spacing();
+    int iconHorizontalMargin = kIconHorizontalMargin;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
+    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, kIconHorizontalMargin);
 #endif
     QSize itemSize = itemSizeHint();
-    int itemWidth = itemSize.width() + iconViewSpacing * 2;
-
-    int columnCount = d->calcColumnCount(widgetWidth, itemWidth);
+    
+    // 计算列数
+    int columnCount =  d->calcColumnCount(widgetWidth, itemSize.width()); // (availableWidth + iconViewSpacing) / (itemSize.width() + iconViewSpacing);
     if (columnCount == 0)
         return QRect();
 
@@ -952,16 +954,26 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
 #ifdef DTKWIDGET_CLASS_DSizeMode
     iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
 #endif
+
     QRect rect;
-    rect.setTop(rowIndex * (itemSize.height() + 2 * iconViewSpacing) + iconVerticalTopMargin + (rowIndex == 0 ? iconViewSpacing : 0));
-    rect.setLeft(columnIndex * itemWidth + (columnIndex == 0 ? iconViewSpacing : 0));
+    // 计算顶部位置：上边距(VerticalTopMargin) + 行索引 * (项目高度 + 间距)
+    rect.setTop(iconVerticalTopMargin + rowIndex * (itemSize.height() + iconViewSpacing));
+    
+    // 计算左侧位置：左边距(kIconHorizontalMargin) + 列索引 * (项目宽度 + 间距)
+    rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + iconViewSpacing));
+    
     rect.setSize(itemSize);
 
-    int customHorizontalOffset = -kIconHorizontalMargin;
-    if (columnCount < model()->rowCount())
-        customHorizontalOffset = -(widgetWidth - itemWidth * columnCount) / 2;
+    // 计算水平居中偏移，仅当行数大于1时才应用
+    int totalItems = model()->rowCount();
+    int rowCount = (totalItems + columnCount - 1) / columnCount;  // 向上取整
+    if (rowCount > 1) {    // 计算可用宽度（减去左右边距）
+        int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
+        int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * iconViewSpacing;
+        int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
+        rect.moveLeft(rect.left() + horizontalOffset);
+    }
 
-    rect.moveLeft(rect.left() - customHorizontalOffset);
     rect.moveTop(rect.top() - verticalOffset());
 
     return rect;
@@ -1065,15 +1077,16 @@ void FileView::updateHorizontalOffset()
 {
     if (isIconViewMode()) {
         int contentWidth = maximumViewportSize().width();
-        int itemWidth = itemSizeHint().width() + spacing() * 2;
+        int itemWidth = itemSizeHint().width();
         int itemColumn = d->iconModeColumnCount(itemWidth);
 
         if (itemColumn >= model()->rowCount()) {
             d->horizontalOffset = -kIconHorizontalMargin;
         } else {
-            d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+            int totalItemsWidth = itemColumn * itemWidth + (itemColumn - 1) * spacing();
+            int horizontalOffset = (contentWidth - totalItemsWidth) / 2;
+            d->horizontalOffset = -horizontalOffset;
         }
-
     } else {
         d->horizontalOffset = 0;
     }
@@ -1190,6 +1203,7 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     }
 
     QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset() - iconVerticalTopMargin);
+    qWarning() << "!!!!!!!!!!!!!!actualPos" << actualPos;
     auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
 
     if (index == -1 || index >= model()->rowCount(rootIndex()))
@@ -1662,7 +1676,7 @@ void FileView::keyboardSearch(const QString &search)
 void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
     // if the left btn is pressed and the rect large enough, means the view state is draggingSelectState.
-    // and don‘t show menu in the draggingSelectState.
+    // and don't show menu in the draggingSelectState.
     if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght))
         return;
 
@@ -1776,7 +1790,7 @@ QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Q
                 && (cursorAction == MoveDown
                     || cursorAction == MovePageDown
                     || cursorAction == MoveNext)) {
-                // 当下一个位置没有元素时，QListView不会自动换一列选择，应该直接选中最后一个
+                // When there is no element at the next position, QListView will not automatically switch columns to select, you should directly select the last one
                 index = model()->index(count() - 1, 0, rootIndex());
                 lastRow = true;
             }

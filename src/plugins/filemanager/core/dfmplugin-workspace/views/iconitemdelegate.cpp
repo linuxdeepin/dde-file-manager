@@ -114,6 +114,12 @@ void IconItemDelegate::paint(QPainter *painter,
 
     oldFont = opt.font;
 
+    // for debug
+    // painter->drawRect(opt.rect);
+    // if (index.row() == 0) {
+    //     painter->drawRect(parent()->parent()->viewport()->rect());
+    // }
+
     const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, 0);
 
     const QRectF &iconRect = paintItemIcon(painter, opt, index);
@@ -233,18 +239,17 @@ void IconItemDelegate::updateItemSizeHint()
 
     int width = parent()->parent()->iconSize().width();
     if (iconSizeList().indexOf(width) >= 0)
-        width += iconWidth().at(iconSizeList().indexOf(width));
-#ifdef DTKWIDGET_CLASS_DSizeMode
+        width += kIconModeIconSpacing * 2; // iconWidth().at(iconSizeList().indexOf(width));
+
+    int customWidth = iconGridWidth().at(d->currentIconGridWidthIndex);
+    if (customWidth > width)
+        width = customWidth;
+
     int height = parent()->parent()->iconSize().height()
             + 2 * d->textLineHeight   // 2行文字的高度
             + kIconModeTextPadding   // 文字与icon之间的空隙
             + 2 * kIconModeIconSpacing;   // icon与背景的上下两个间距
-#else
-    int height = parent()->parent()->iconSize().height()
-            + 2 * d->textLineHeight   // 2行文字的高度
-            + kIconModeTextPadding   // 文字与icon之间的空隙
-            + 2 * kIconModeIconSpacing;   // icon与背景的间距
-#endif
+
     d->itemSizeHint = QSize(width, height);
 }
 
@@ -605,15 +610,16 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
-    labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
+    // labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
+    // labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
+    qWarning() << "!!!!!!!!!!!!!!abelRect" << labelRect.width();
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     if (!singleSelected && isSelectedOpt) {
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
     }
 
-    layout->layout(labelRect, opt.textElideMode, painter, background);
+    layout->layout(labelRect, opt.textElideMode, painter, background, nullptr, true);
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const
