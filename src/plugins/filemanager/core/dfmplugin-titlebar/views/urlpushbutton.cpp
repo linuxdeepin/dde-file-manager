@@ -331,7 +331,7 @@ void UrlPushButton::setCrumbDatas(const QList<CrumbData> &datas, bool stacked)
 void UrlPushButton::setActive(bool active)
 {
     if (d->active != active) {
-        active = active;
+        d->active = active;
         update();
     }
 }
