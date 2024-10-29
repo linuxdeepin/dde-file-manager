@@ -58,8 +58,31 @@ void FolderViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     if (text.contains('\n'))
         text = text.replace('\n', ' ');
     QRect textRect = option.rect.adjusted(kTextLeftPadding, 0, 0, 0);
-    QString elidedText = option.fontMetrics.elidedText(text, Qt::ElideRight, textRect.width());
-    painter->drawText(textRect, Qt::AlignVCenter, elidedText);
+
+    bool leftToRight = option.direction == Qt::LeftToRight;
+    if (option.fontMetrics.horizontalAdvance(text) > textRect.width()) {
+        QColor fgColor = painter->pen().color();
+        QColor bgColor = fgColor;
+        bgColor.setAlpha(0);
+
+        QLinearGradient gradient(textRect.topLeft(), textRect.topRight());
+        if (leftToRight) {
+            gradient.setColorAt(0.8, fgColor);
+            gradient.setColorAt(1.0, bgColor);
+        } else {
+            gradient.setColorAt(0.0, bgColor);
+            gradient.setColorAt(0.2, fgColor);
+        }
+
+        painter->save();
+        QPen pen;
+        pen.setBrush(QBrush(gradient));
+        painter->setPen(pen);
+        painter->drawText(textRect, Qt::AlignVCenter, text);
+        painter->restore();
+    } else {
+        painter->drawText(textRect, Qt::AlignVCenter, text);
+    }
 }
 
 QSize FolderViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
