@@ -87,6 +87,7 @@ void FileViewPrivate::initIconModeView()
         statusBar->setScalingVisible(true);
         q->setIconSize(QSize(iconSizeList()[currentIconSizeLevel],
                              iconSizeList()[currentIconSizeLevel]));
+        QSignalBlocker blocker(statusBar->scalingSlider());
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }
 
@@ -96,6 +97,9 @@ void FileViewPrivate::initIconModeView()
 
 void FileViewPrivate::initListModeView()
 {
+    if (q->itemDelegate())
+        q->itemDelegate()->setItemMinimumHeightByHeightLevel(currentListHeightLevel);
+
     if (!emptyInteractionArea) {
         emptyInteractionArea = new QWidget(q);
         QVBoxLayout *headerLayout = new QVBoxLayout;

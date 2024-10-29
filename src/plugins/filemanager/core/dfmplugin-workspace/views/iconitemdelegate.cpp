@@ -275,7 +275,6 @@ int IconItemDelegate::increaseIcon()
     Q_D(const IconItemDelegate);
 
     int newLevel = setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
-    Application::instance()->setAppAttribute(Application::kIconSizeLevel, newLevel);
     return newLevel;
 }
 
@@ -284,7 +283,6 @@ int IconItemDelegate::decreaseIcon()
     Q_D(const IconItemDelegate);
 
     int newLevel = setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
-    Application::instance()->setAppAttribute(Application::kIconSizeLevel, newLevel);
     return newLevel;
 }
 
@@ -631,9 +629,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    // labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
-    // labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
-    qWarning() << "!!!!!!!!!!!!!!abelRect" << labelRect.width();
+    
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     if (!singleSelected && isSelectedOpt) {

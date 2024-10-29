@@ -61,6 +61,12 @@ inline QList<int> iconGridWidth()
     return widths;
 }
 
+inline QList<int> listHeight()
+{
+    static const QList<int> heights { 24, 32, 48 };
+    return heights;
+}
+
 inline QList<int> iconWidth()
 {
     return { 44, 36, 28, 28, 28, 28, 28, 32 };

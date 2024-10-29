@@ -540,10 +540,8 @@ void FileView::keyPressEvent(QKeyEvent *event)
 
 void FileView::onScalingValueChanged(const int value)
 {
-    // d->currentIconSizeLevel = value;
-    // qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
-    // setFileViewStateValue(rootUrl(), "iconSizeLevel", value);
-    Application::setAppAttribute(Application::kIconSizeLevel, value);
+    const QUrl &url = rootUrl();
+    setFileViewStateValue(url, "iconSizeLevel", value);
 }
 
 void FileView::delayUpdateStatusBar()
@@ -583,8 +581,6 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 
         list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (isIconViewMode()) {
-        // QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
-        qWarning() << "!!!!!!!!!!!!!!visibleIndexes" << rect.width() << width();
         int columnCount = d->calcColumnCount(rect.width(), itemSize.width());
 
         list << calcRectContiansIndexes(columnCount, rect);
@@ -1048,14 +1044,20 @@ void FileView::increaseIcon()
 {
     if (!itemDelegate())
         return;
-    itemDelegate()->increaseIcon();
+
+    int newLevel = itemDelegate()->increaseIcon();
+    const QUrl &url = rootUrl();
+    setFileViewStateValue(url, "iconSizeLevel", newLevel);
 }
 
 void FileView::decreaseIcon()
 {
     if (!itemDelegate())
         return;
-    itemDelegate()->decreaseIcon();
+
+    int newLevel = itemDelegate()->decreaseIcon();
+    const QUrl &url = rootUrl();
+    setFileViewStateValue(url, "iconSizeLevel", newLevel);
 }
 
 void FileView::setIconSizeBySizeIndex(const int sizeIndex)
@@ -1065,7 +1067,6 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
 
     d->currentIconSizeLevel = sizeIndex;
     d->statusBar->scalingSlider()->setValue(sizeIndex);
-    // setFileViewStateValue(rootUrl(), "iconSizeLevel", sizeIndex);
 }
 
 void FileView::onShowFileSuffixChanged(bool isShow)
@@ -1157,6 +1158,19 @@ void FileView::onItemWidthLevelChanged(int level)
     viewport()->update();
 }
 
+void FileView::onItemHeightLevelChanged(int level)
+{
+    if (!itemDelegate())
+        return;
+
+    if (itemDelegate()->minimumHeightLevel() == level && d->currentListHeightLevel == level)
+        return;
+
+    d->currentListHeightLevel = level;
+    itemDelegate()->setItemMinimumHeightByHeightLevel(level);
+    viewport()->update();
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -1229,7 +1243,6 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     }
 
     QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset() - iconVerticalTopMargin);
-    qWarning() << "!!!!!!!!!!!!!!actualPos" << actualPos;
     auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
 
     if (index == -1 || index >= model()->rowCount(rootIndex()))
@@ -1340,6 +1353,24 @@ void FileView::onHeaderViewSectionChanged(const QUrl &url)
         // refresh
         updateListHeaderView();
         update();
+    }
+}
+
+void FileView::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    if (group == "FileViewState") {
+        if (isListViewMode() || isTreeViewMode()) {
+            int configListHeightLevel = d->fileViewStateValue(rootUrl(), "listHeightLevel", d->currentListHeightLevel).toInt();
+            onItemHeightLevelChanged(configListHeightLevel);
+        }
+
+        if (isIconViewMode()) {
+            int configGridDensityLevel = d->fileViewStateValue(rootUrl(), "gridDensityLevel", d->currentGridDensityLevel).toInt();
+            onItemWidthLevelChanged(configGridDensityLevel);
+
+            int configIconSizeLevel = d->fileViewStateValue(rootUrl(), "iconSizeLevel", d->currentIconSizeLevel).toInt();
+            onIconSizeChanged(configIconSizeLevel);
+        }
     }
 }
 
@@ -2046,9 +2077,12 @@ void FileView::initializeConnect()
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::onIconSizeChanged);
     connect(Application::instance(), &Application::gridDensityLevelChanged, this, &FileView::onItemWidthLevelChanged);
+    connect(Application::instance(), &Application::listHeightLevelChanged, this, &FileView::onItemHeightLevelChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
+    // connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
+    connect(Application::appObtuselySetting(), &Settings::valueChanged, this, &FileView::onAppAttributeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -2310,8 +2344,10 @@ void FileView::loadViewState(const QUrl &url)
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     QVariant defaultGridDensity = Application::instance()->appAttribute(Application::kGridDensityLevel).toInt();
+    QVariant defaultListHeight = Application::instance()->appAttribute(Application::kListHeightLevel).toInt();
     d->currentIconSizeLevel = d->fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
     d->currentGridDensityLevel = d->fileViewStateValue(url, "gridDensityLevel", defaultGridDensity).toInt();
+    d->currentListHeightLevel = d->fileViewStateValue(url, "listHeightLevel", defaultListHeight).toInt();
 }
 
 void FileView::onModelStateChanged()

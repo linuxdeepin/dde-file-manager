@@ -90,6 +90,18 @@ public:
     virtual void setItemMinimumWidthByWidthLevel(int level);
 
     /**
+     * @brief minimumHeightLevel return minimum height level
+     * @return Return minimum height level if level is vaild, otherwise return -1
+     */
+    virtual int minimumHeightLevel() const;
+
+    /**
+     * @brief setItemMinimumHeightByHeightLevel set item minimum height level
+     * @param level
+     */
+    virtual void setItemMinimumHeightByHeightLevel(int level);
+
+    /**
      * @brief hasWidgetIndexs
      * @return
      */
