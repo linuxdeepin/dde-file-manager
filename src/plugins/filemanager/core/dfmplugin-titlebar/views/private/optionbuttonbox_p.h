@@ -30,6 +30,7 @@ class OptionButtonBoxPrivate : public QObject
 
 public:
     explicit OptionButtonBoxPrivate(OptionButtonBox *parent);
+    void updateCompactButton();
 
 public slots:
     void setViewMode(ViewMode mode);
@@ -49,6 +50,8 @@ private:
     SortByButton *sortByButton { nullptr };
     ViewOptionsButton *viewOptionsButton { nullptr };
     QHBoxLayout *hBoxLayout { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *compactButton { nullptr };
+    bool isCompactMode { false };
 
     ViewMode currentMode { ViewMode::kIconMode };
     QUrl currentUrl;

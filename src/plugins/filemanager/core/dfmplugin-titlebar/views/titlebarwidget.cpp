@@ -218,7 +218,7 @@ void TitleBarWidget::initializeUi()
     searchEditWidget->setMaximumWidth(kSearchEditMaxWidth);
 
     // option button
-    optionButtonBox = new OptionButtonBox;
+    optionButtonBox = new OptionButtonBox(this);
     optionButtonBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
@@ -417,7 +417,9 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
     AbstractFrame::resizeEvent(event);
     
     int totalWidth = width();
-    
+
+    optionButtonBox->updateOptionButtonBox(totalWidth);
+
     // Calculate the total width of other fixed-width components
     int fixedWidth = curNavWidget->width() + optionButtonBox->width() + kSpacing * 5;
     
