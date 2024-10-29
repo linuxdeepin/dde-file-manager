@@ -274,14 +274,18 @@ int IconItemDelegate::increaseIcon()
 {
     Q_D(const IconItemDelegate);
 
-    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
+    int newLevel = setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
+    Application::instance()->setAppAttribute(Application::kIconSizeLevel, newLevel);
+    return newLevel;
 }
 
 int IconItemDelegate::decreaseIcon()
 {
     Q_D(const IconItemDelegate);
 
-    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
+    int newLevel = setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
+    Application::instance()->setAppAttribute(Application::kIconSizeLevel, newLevel);
+    return newLevel;
 }
 
 int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
@@ -301,6 +305,23 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
     }
 
     return -1;
+}
+
+int IconItemDelegate::minimumWidthLevel() const
+{
+    Q_D(const IconItemDelegate);
+
+    return d->currentIconGridWidthIndex;
+}
+
+void IconItemDelegate::setItemMinimumWidthByWidthLevel(int level)
+{
+    Q_D(IconItemDelegate);
+
+    if (level >= 0 && level < iconGridWidth().count()) {
+        d->currentIconGridWidthIndex = level;
+        updateItemSizeHint();
+    }
 }
 
 void IconItemDelegate::hideNotEditingIndexWidget()

@@ -180,10 +180,7 @@ void ViewOptionsWidgetPrivate::initConnect()
 
     connect(iconSizeSlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "iconSizeSlider value changed: " << value;
-        QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
-        map["iconSizeLevel"] = value;
-        Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
-        Application::appObtuselySetting()->sync();
+        Application::instance()->setAppAttribute(Application::kIconSizeLevel, value);
     });
     connect(iconSizeSlider, &DSlider::iconClicked, this, [this](DSlider::SliderIcons icon, bool checked) {
         if (icon == DSlider::LeftIcon) {
@@ -198,10 +195,7 @@ void ViewOptionsWidgetPrivate::initConnect()
     });
     connect(gridDensitySlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "gridDensitySlider value changed: " << value;
-        QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
-        map["gridDensityLevel"] = value;
-        Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
-        Application::appObtuselySetting()->sync();
+        Application::instance()->setAppAttribute(Application::kGridDensityLevel, value);
     });
     connect(gridDensitySlider, &DSlider::iconClicked, this, [this](DSlider::SliderIcons icon, bool checked) {
         if (icon == DSlider::LeftIcon) {
