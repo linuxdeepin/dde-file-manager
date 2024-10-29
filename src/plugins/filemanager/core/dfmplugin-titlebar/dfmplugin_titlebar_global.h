@@ -35,7 +35,7 @@ inline constexpr int kToolButtonIconSize { 14 };
 inline constexpr int kMaxTabCount { 8 };
 inline constexpr int kFolderItemHeight { 26 };
 inline constexpr int kFolderIconSize { 16 };
-inline constexpr int kFolderMinWidth { 120 };
+inline constexpr int kFolderMinWidth { 200 };
 
 namespace CustomKey {
 inline constexpr char kUrl[] { "CrumbData_Key_Url" };

@@ -429,35 +429,25 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     textWidth -= (option.rect.width() + 2 * kBorderWidth);
 
     painter.setPen(fgColor);
-    const bool clipped = d->isTextClipped();
     int textX = kBorderWidth;
     if (!leftToRight)
         textX += arrowSize;
     const QRect textRect(textX, 0, textWidth, buttonHeight);
-    if (clipped) {
-        // 文本被裁剪时添加渐变效果
-        QColor bgColor = fgColor;
-        bgColor.setAlpha(0);
-        QLinearGradient gradient(textRect.topLeft(), textRect.topRight());
-        if (leftToRight) {
-            gradient.setColorAt(0.8, fgColor);
-            gradient.setColorAt(1.0, bgColor);
-        } else {
-            gradient.setColorAt(0.0, bgColor);
-            gradient.setColorAt(0.2, fgColor);
-        }
-
-        QPen pen;
-        pen.setBrush(QBrush(gradient));
-        painter.setPen(pen);
-    }
 
     painter.save();
     const int textFlags = Qt::AlignVCenter | Qt::AlignLeft;
     if (!d->stacked && d->subDir.isEmpty())
         painter.setPen(palette().highlight().color());
     painter.setClipRect(textRect);
-    painter.drawText(textRect, textFlags, text());
+
+    QString displayText = text();
+    QFontMetrics fm(painter.font());
+    if (d->isTextClipped()) {
+        // Show ellipsis in the middle when text is clipped
+        displayText = fm.elidedText(displayText, Qt::ElideMiddle, textRect.width());
+    }
+
+    painter.drawText(textRect, textFlags, displayText);
     painter.restore();
 }
 
