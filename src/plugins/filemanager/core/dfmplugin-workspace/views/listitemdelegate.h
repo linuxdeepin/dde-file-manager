@@ -32,6 +32,9 @@ public:
     QRectF itemIconRect(const QRectF &itemRect) const override;
     QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const override;
 
+    void setItemMinimumHeightByHeightLevel(int level) override;
+    int minimumHeightLevel() const override;
+
 protected:
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;

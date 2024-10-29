@@ -136,6 +136,7 @@ public slots:
     void onRowCountChanged();
     void trashStateChanged();
     void onHeaderViewSectionChanged(const QUrl &url);
+    void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
     void onSelectAndEdit(const QUrl &url);
 
@@ -192,7 +193,7 @@ private slots:
     void onDefaultViewModeChanged(int mode);
     void onIconSizeChanged(int sizeIndex);
     void onItemWidthLevelChanged(int level);
-    
+    void onItemHeightLevelChanged(int level);
 private:
     void initializeModel();
     void initializeDelegate();
