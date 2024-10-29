@@ -30,6 +30,7 @@ public:
 
     // default icon size is 64px.
     int currentIconSizeIndex { 1 };
+    int currentIconGridWidthIndex { 3 };
 
     QTextDocument *document { nullptr };
     Q_DECLARE_PUBLIC(IconItemDelegate)

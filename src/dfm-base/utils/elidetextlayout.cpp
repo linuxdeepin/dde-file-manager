@@ -45,7 +45,7 @@ QString ElideTextLayout::text() const
     return document->toPlainText();
 }
 
-QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter, const QBrush &background, QStringList *textLines)
+QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter, const QBrush &background, QStringList *textLines, bool fillBackground)
 {
     QList<QRectF> ret;
     QTextLayout *lay = document->firstBlock().layout();
@@ -60,11 +60,15 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QPointF offset = rect.topLeft();
     qreal curHeight = 0;
 
+    if (fillBackground) {
+        drawFullBackground(painter, rect, background);
+    }
+
     // for draw background.
     QRectF lastLineRect;
     QString elideText;
     QString curText = text();
-    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line) {
+    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines, fillBackground](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
         lRect.setHeight(textLineHeight);
 
@@ -77,7 +81,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
         // draw
         if (painter) {
             // draw background
-            if (background.style() != Qt::NoBrush) {
+            if (background.style() != Qt::NoBrush && !fillBackground) {
                 lastLineRect = drawLineBackground(painter, lRect, lastLineRect, background);
             }
 
@@ -199,6 +203,23 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
 
     painter->restore();
     return lastLineRect;
+}
+
+void ElideTextLayout::drawFullBackground(QPainter *painter, const QRectF &rect, const QBrush &brush) const
+{
+    if (!painter || brush == Qt::NoBrush)
+        return;
+
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setOpacity(1);
+
+    QPainterPath path;
+    qreal radius = attribute<qreal>(kBackgroundRadius);
+    path.addRoundedRect(rect, radius, radius);
+    painter->fillPath(path, brush);
+
+    painter->restore();
 }
 
 void ElideTextLayout::initLayoutOption(QTextLayout *lay)

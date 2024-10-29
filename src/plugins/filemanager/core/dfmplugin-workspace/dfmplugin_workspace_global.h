@@ -37,7 +37,28 @@ enum class DirOpenMode : uint8_t {
 // view defines
 inline QList<int> iconSizeList()
 {
-    return { 48, 64, 96, 128, 160, 192, 224, 256 };
+    static const QList<int> sizes = []() {
+        QList<int> list;
+        list.reserve(62);  // 预分配内存，避免多次重新分配
+        for (int size = 24; size <= 512; size += 8) {
+            list.append(size);
+        }
+        return list;
+    }();
+    return sizes;
+}
+
+inline QList<int> iconGridWidth()
+{
+    static const QList<int> widths = []() {
+        QList<int> list;
+        list.reserve(10);  // 预分配内存，避免多次重新分配
+        for (int size = 60; size <= 150; size += 10) {
+            list.append(size);
+        }
+        return list;
+    }();
+    return widths;
 }
 
 inline QList<int> iconWidth()
@@ -60,7 +81,7 @@ inline constexpr int kCompactIconViewSpacing { 0 };
 inline constexpr int kCompactIconModeColumnPadding { 5 };
 #endif
 
-inline constexpr int kIconViewSpacing { 5 };   // icon模式下的间距的一半
+inline constexpr int kIconViewSpacing { 10 };   // icon模式下的间距的一半
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
