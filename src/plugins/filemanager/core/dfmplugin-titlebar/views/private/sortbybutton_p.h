@@ -34,6 +34,7 @@ private:
 
     bool hoverFlag { false };
     QMenu *menu { nullptr };
+    bool iconClicked { false }; // Add iconClicked state
 };
 }   // namespace dfmplugin_titlebar
 

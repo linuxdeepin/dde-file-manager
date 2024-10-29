@@ -142,20 +142,31 @@ void SortByButton::paintEvent(QPaintEvent *event)
 
     QStyleOptionButton opt;
     opt.initFrom(this);
+
     if (d->hoverFlag || d->menu->isVisible()) {
         style()->drawControl(QStyle::CE_PushButton, &opt, &painter, this);
     }
 
-    // 绘制左侧图标
+    // Draw left icon
     int leftIconY = kSortToolVMargin + (height() - 2 * kSortToolVMargin - kSortToolLeftButtonSize) / 2;
     QRect leftRect(kSortToolHMargin, leftIconY, kSortToolLeftButtonSize, kSortToolLeftButtonSize);
     auto leftIcon = QIcon::fromTheme("dfm_sortby_arrange");
-    leftIcon.paint(&painter, leftRect);
 
-    // 绘制右侧箭头
+    painter.save();
+    if (d->iconClicked) {
+        painter.setPen(palette().highlight().color()); // Use highlight color for icon when clicked
+    }
+    leftIcon.paint(&painter, leftRect);
+    painter.restore();
+
+    // Draw right arrow
     int arrowY = kSortToolVMargin + (height() - 2 * kSortToolVMargin - kSortToolArrowButtonSize) / 2;
     QRect rightRect(width() - kSortToolHMargin - kSortToolArrowButtonSize, arrowY, kSortToolArrowButtonSize, kSortToolArrowButtonSize);
     opt.rect = rightRect;
+
+    if (d->menu->isVisible()) {
+        painter.setPen(palette().highlight().color()); // Use highlight color for arrow when menu visible
+    }
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, &painter, this);
 }
 
@@ -168,15 +179,15 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
     }
     if (event->button() == Qt::LeftButton) {
         int leftWidth = 2 * kSortToolHMargin + kSortToolLeftButtonSize;
-        if (event->x() > leftWidth) {   // 右侧区域
-            if (d->menu) {
-                d->setItemSortRoles();
-                d->menu->exec(mapToGlobal(rect().bottomLeft()));
-            }
-        } else {
+        d->iconClicked = event->x() <= leftWidth; // Check if icon area is clicked
+
+        if (event->x() > leftWidth && d->menu) {
+            d->setItemSortRoles();
+            d->menu->exec(mapToGlobal(rect().bottomLeft()));
+        } else if (d->iconClicked) {
             d->sort();
         }
-        update();   // 触发重绘
+        update();   // Trigger repaint
     }
 }
 
@@ -198,7 +209,8 @@ void SortByButton::leaveEvent(QEvent *event)
     DToolButton::leaveEvent(event);
     if (d->hoverFlag) {
         d->hoverFlag = false;
-        update();
+        d->iconClicked = false; // Reset icon click state
+        update(); // Trigger repaint to restore colors
     }
 }
 
@@ -214,8 +226,6 @@ void SortByButton::mouseMoveEvent(QMouseEvent *event)
 void SortByButton::mouseReleaseEvent(QMouseEvent *event)
 {
     DToolButton::mouseReleaseEvent(event);
-    if (!d->hoverFlag) {
-        d->hoverFlag = true;
-        update();
-    }
+    d->iconClicked = false; // Reset icon click state
+    update(); // Trigger repaint to restore colors
 }
