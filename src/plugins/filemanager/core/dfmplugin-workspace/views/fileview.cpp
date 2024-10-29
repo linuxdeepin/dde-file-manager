@@ -540,9 +540,10 @@ void FileView::keyPressEvent(QKeyEvent *event)
 
 void FileView::onScalingValueChanged(const int value)
 {
-    d->currentIconSizeLevel = value;
-    qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
-    setFileViewStateValue(rootUrl(), "iconSizeLevel", value);
+    // d->currentIconSizeLevel = value;
+    // qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
+    // setFileViewStateValue(rootUrl(), "iconSizeLevel", value);
+    Application::setAppAttribute(Application::kIconSizeLevel, value);
 }
 
 void FileView::delayUpdateStatusBar()
@@ -1045,16 +1046,16 @@ QSize FileView::itemSizeHint() const
 
 void FileView::increaseIcon()
 {
-    int level = itemDelegate()->increaseIcon();
-    if (level >= 0)
-        setIconSizeBySizeIndex(level);
+    if (!itemDelegate())
+        return;
+    itemDelegate()->increaseIcon();
 }
 
 void FileView::decreaseIcon()
 {
-    int level = itemDelegate()->decreaseIcon();
-    if (level >= 0)
-        setIconSizeBySizeIndex(level);
+    if (!itemDelegate())
+        return;
+    itemDelegate()->decreaseIcon();
 }
 
 void FileView::setIconSizeBySizeIndex(const int sizeIndex)
@@ -1064,7 +1065,7 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
 
     d->currentIconSizeLevel = sizeIndex;
     d->statusBar->scalingSlider()->setValue(sizeIndex);
-    setFileViewStateValue(rootUrl(), "iconSizeLevel", sizeIndex);
+    // setFileViewStateValue(rootUrl(), "iconSizeLevel", sizeIndex);
 }
 
 void FileView::onShowFileSuffixChanged(bool isShow)
@@ -1129,6 +1130,31 @@ void FileView::onDefaultViewModeChanged(int mode)
         return;
 
     setViewMode(d->currentViewMode);
+}
+
+void FileView::onIconSizeChanged(int sizeIndex)
+{
+    if (!itemDelegate())
+        return;
+
+    if (itemDelegate()->iconSizeLevel() == sizeIndex && d->currentIconSizeLevel == sizeIndex)
+        return;
+
+    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
+    setIconSizeBySizeIndex(sizeIndex);
+}
+
+void FileView::onItemWidthLevelChanged(int level)
+{
+    if (!itemDelegate())
+        return;
+
+    if (itemDelegate()->minimumWidthLevel() == level && d->currentGridDensityLevel == level)
+        return;
+
+    d->currentGridDensityLevel = level;
+    itemDelegate()->setItemMinimumWidthByWidthLevel(level);
+    viewport()->update();
 }
 
 bool FileView::isIconViewMode() const
@@ -2018,7 +2044,8 @@ void FileView::initializeConnect()
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
 
-    connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
+    connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::onIconSizeChanged);
+    connect(Application::instance(), &Application::gridDensityLevelChanged, this, &FileView::onItemWidthLevelChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
@@ -2282,7 +2309,9 @@ void FileView::loadViewState(const QUrl &url)
     d->loadViewMode(url);
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
+    QVariant defaultGridDensity = Application::instance()->appAttribute(Application::kGridDensityLevel).toInt();
     d->currentIconSizeLevel = d->fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
+    d->currentGridDensityLevel = d->fileViewStateValue(url, "gridDensityLevel", defaultGridDensity).toInt();
 }
 
 void FileView::onModelStateChanged()
