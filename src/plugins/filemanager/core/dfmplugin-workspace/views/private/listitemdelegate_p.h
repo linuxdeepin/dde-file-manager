@@ -20,6 +20,8 @@ public:
     explicit ListItemDelegatePrivate(ListItemDelegate *qq);
     virtual ~ListItemDelegatePrivate();
 
+    int currentHeightLevel { 1 };
+
     Q_DECLARE_PUBLIC(ListItemDelegate)
 };
 

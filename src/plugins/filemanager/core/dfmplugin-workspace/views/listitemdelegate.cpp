@@ -46,8 +46,7 @@ using namespace dfmplugin_workspace;
 ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)
 {
-    parent->parent()->setIconSize(QSize(kListViewIconSize,
-                                        kListViewIconSize));
+    setItemMinimumHeightByHeightLevel(1);
 }
 
 ListItemDelegate::~ListItemDelegate()
@@ -314,7 +313,7 @@ void ListItemDelegate::updateItemSizeHint()
     Q_D(ListItemDelegate);
 
     d->textLineHeight = parent()->parent()->fontMetrics().height();
-    d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.33), d->textLineHeight));
+    d->itemSizeHint = QSize(-1, qMax(int(listHeight().at(d->currentHeightLevel)), d->textLineHeight));
 }
 
 QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
@@ -335,6 +334,28 @@ QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &in
     if (d->paintProxy)
         return d->paintProxy->rectByType(type, index).toRect();
     return QRect();
+}
+
+void ListItemDelegate::setItemMinimumHeightByHeightLevel(int level)
+{
+    Q_D(ListItemDelegate);
+
+    if (d->currentHeightLevel == level)
+        return;
+
+    if (level < 0 || level >= listHeight().length())
+        return;
+
+    d->currentHeightLevel = level;
+    updateItemSizeHint();
+    int iconHeight = d->itemSizeHint.height() * 0.75;
+    parent()->parent()->setIconSize(QSize(iconHeight, iconHeight)); // 设置 iconSize 为行高的 0.75
+}
+
+int ListItemDelegate::minimumHeightLevel() const
+{
+    Q_D(const ListItemDelegate);
+    return d->currentHeightLevel;
 }
 
 /*!
