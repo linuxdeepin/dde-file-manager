@@ -12,6 +12,7 @@
 #include <QWidget>
 
 namespace dfmplugin_titlebar {
+
 class ActionButton : public QToolButton
 {
     Q_OBJECT
@@ -40,6 +41,7 @@ public:
     void setViewOptionsButton(ViewOptionsButton *button);
 
     void setViewMode(int mode);
+    void updateOptionButtonBox(int parentWidth);
 
 public slots:
     void onUrlChanged(const QUrl &url);
@@ -48,6 +50,12 @@ private:
     void initializeUi();
     void initConnect();
     void initUiForSizeMode();
+    void updateFixedWidth();
+
+    void switchToCompactMode();
+    void switchToNormalMode();
+
+    static constexpr int kCompactModeThreshold = 600;
 };
 }
 
