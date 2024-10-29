@@ -5,6 +5,7 @@
 #include "fileview_p.h"
 #include "views/headerview.h"
 #include "views/fileviewstatusbar.h"
+#include "views/baseitemdelegate.h"
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
@@ -47,11 +48,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
     int contentWidth = q->maximumViewportSize().width();
-    qWarning() << "!!!!!!!!!!!!!iconModeColumnCount" << contentWidth << q->width() << itemWidth;
-    // if (itemWidth <= 0)
-    //     itemWidth = q->itemSizeHint().width() + q->spacing();
-
-    return calcColumnCount(contentWidth, itemWidth); // qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
+    return calcColumnCount(contentWidth, itemWidth);
 }
 
 int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
@@ -64,7 +61,7 @@ int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
     // 计算列数
     int columnCount = (availableWidth + q->spacing()) / (itemWidth + q->spacing());
 
-    return columnCount; //qMax((widgetWidth - 1) / itemWidth, 1);
+    return columnCount;
 }
 
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
@@ -92,6 +89,9 @@ void FileViewPrivate::initIconModeView()
                              iconSizeList()[currentIconSizeLevel]));
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }
+
+    if (q->itemDelegate())
+        q->itemDelegate()->setItemMinimumWidthByWidthLevel(currentGridDensityLevel);
 }
 
 void FileViewPrivate::initListModeView()

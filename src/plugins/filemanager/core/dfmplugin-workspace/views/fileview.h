@@ -190,7 +190,9 @@ private slots:
     void updateOneView(const QModelIndex &index);
     void onSelectionChanged(const QItemSelection &indexInRect, const QItemSelection &deselected);
     void onDefaultViewModeChanged(int mode);
-
+    void onIconSizeChanged(int sizeIndex);
+    void onItemWidthLevelChanged(int level);
+    
 private:
     void initializeModel();
     void initializeDelegate();

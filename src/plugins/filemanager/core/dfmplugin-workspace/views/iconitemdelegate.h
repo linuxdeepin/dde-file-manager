@@ -45,6 +45,8 @@ public:
     int increaseIcon() override;
     int decreaseIcon() override;
     int setIconSizeByIconSizeLevel(int level) override;
+    int minimumWidthLevel() const override;
+    void setItemMinimumWidthByWidthLevel(int level) override;
 
     void hideNotEditingIndexWidget() override;
 
