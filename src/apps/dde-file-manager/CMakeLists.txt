@@ -22,6 +22,8 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/private/commandparser_p.h
     ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/dragmoniter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/dragmoniter.h
     )
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
