@@ -78,6 +78,18 @@ public:
     virtual int setIconSizeByIconSizeLevel(int level);
 
     /**
+     * @brief minimumWidthLevel return minimum width level
+     * @return Return minimum width level if level is vaild, otherwise return -1
+     */
+    virtual int minimumWidthLevel() const;
+
+    /**
+     * @brief setItemMinimumWidthByWidthLevel set item minimum width level
+     * @param level
+     */
+    virtual void setItemMinimumWidthByWidthLevel(int level);
+
+    /**
      * @brief hasWidgetIndexs
      * @return
      */

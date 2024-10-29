@@ -124,6 +124,16 @@ int BaseItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
+void BaseItemDelegate::setItemMinimumWidthByWidthLevel(int level)
+{
+    Q_UNUSED(level)
+}
+
+int BaseItemDelegate::minimumWidthLevel() const
+{
+    return -1;
+}
+
 QModelIndexList BaseItemDelegate::hasWidgetIndexs() const
 {
     Q_D(const BaseItemDelegate);
