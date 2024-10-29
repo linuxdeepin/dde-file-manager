@@ -57,9 +57,9 @@ void ExpandedItem::paintEvent(QPaintEvent *)
 
     const QMargins &margins = contentsMargins();
 
-    QRect labelRect(kIconModeRectRadius + margins.left(),
+    QRect labelRect(margins.left(),
                     iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
-                    width() - kIconModeRectRadius * 2,
+                    width(),
                     INT_MAX);
 
     QString str = delegate->displayFileName(index);
@@ -73,7 +73,7 @@ void ExpandedItem::paintEvent(QPaintEvent *)
         return;
 
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
-    const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight));
+    const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight), nullptr, true);
 
     textBounding = GlobalPrivate::boundingRect(lines).toRect();
 }
