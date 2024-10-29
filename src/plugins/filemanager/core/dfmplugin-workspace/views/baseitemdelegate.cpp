@@ -134,6 +134,16 @@ int BaseItemDelegate::minimumWidthLevel() const
     return -1;
 }
 
+void BaseItemDelegate::setItemMinimumHeightByHeightLevel(int level)
+{
+    Q_UNUSED(level)
+}
+
+int BaseItemDelegate::minimumHeightLevel() const
+{
+    return -1;
+}
+
 QModelIndexList BaseItemDelegate::hasWidgetIndexs() const
 {
     Q_D(const BaseItemDelegate);
