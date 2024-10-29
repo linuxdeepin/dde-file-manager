@@ -913,7 +913,7 @@ void FileDialog::handleEnterPressed()
         }
     }
 
-    if (!exit)
+    if (!exit && d->acceptMode == QFileDialog::AcceptOpen)
         statusBar()->acceptButton()->animateClick();
 }
 
