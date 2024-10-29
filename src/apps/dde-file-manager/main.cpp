@@ -5,6 +5,7 @@
 #include "config.h"   //cmake
 #include "singleapplication.h"
 #include "commandparser.h"
+#include "dragmonitor.h"
 
 #include "tools/upgrade/builtininterface.h"
 
@@ -376,8 +377,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    // NOTE: temp code!!!!!!!!!!!
+    QScopedPointer<dfm_drag::DragMoniter> mo(new dfm_drag::DragMoniter);
+    mo->registerDBus();
+
     qCWarning(logAppFileManager) << " --- app start --- pid = " << a.applicationPid();
     int ret { a.exec() };
+
+    mo->unRegisterDBus();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
