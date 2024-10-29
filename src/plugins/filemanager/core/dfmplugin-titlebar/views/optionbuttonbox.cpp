@@ -244,6 +244,7 @@ void OptionButtonBox::initUiForSizeMode()
     }
     int fixedWidth = 10;
     d->hBoxLayout = new QHBoxLayout;
+    d->hBoxLayout->setSpacing(0);
     d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
