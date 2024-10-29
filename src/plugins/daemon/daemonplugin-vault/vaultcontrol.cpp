@@ -297,8 +297,7 @@ QString VaultControl::passwordFromKeyring()
     }
 
     secret_value_unref(value_read);
-    g_hash_table_unref(attributes);
-    g_object_unref(service);
+    g_hash_table_destroy(attributes);
 
     fmWarning() << "Vault Daemon: Read password end!";
 
