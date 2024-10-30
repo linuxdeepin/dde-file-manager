@@ -407,7 +407,8 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     QStyleOption option;
     option.initFrom(this);
     option.rect = QRect(arrowX, arrowY, arrowSize, arrowSize);
-    if (d->subDirVisible && !d->subDir.isEmpty() && !d->stacked && (d->hoverFlag || d->popupVisible())) {
+    bool drawHover = (d->subDirVisible && !d->subDir.isEmpty() && !d->stacked && (d->hoverFlag || d->popupVisible()));
+    if (drawHover) {
         painter.save();
         // QColor hoverColor = palette().color(QPalette::HighlightedText);
         QColor hoverColor = palette().color(QPalette::Text);
@@ -445,6 +446,25 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     if (d->isTextClipped()) {
         // Show ellipsis in the middle when text is clipped
         displayText = fm.elidedText(displayText, Qt::ElideMiddle, textRect.width());
+    }
+    // Draw hover or menu state
+    if (drawHover) {
+        QColor fgColor = painter.pen().color();
+        QColor bgColor = fgColor;
+        bgColor.setAlpha(0);
+
+        QLinearGradient gradient(textRect.topLeft(), textRect.topRight());
+        if (leftToRight) {
+            gradient.setColorAt(0.8, fgColor);
+            gradient.setColorAt(1.0, bgColor);
+        } else {
+            gradient.setColorAt(0.0, bgColor);
+            gradient.setColorAt(0.2, fgColor);
+        }
+
+        QPen pen;
+        pen.setBrush(QBrush(gradient));
+        painter.setPen(pen);
     }
 
     painter.drawText(textRect, textFlags, displayText);
