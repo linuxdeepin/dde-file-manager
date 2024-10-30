@@ -33,6 +33,11 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
 
+inline constexpr int kSearchEditMaxWidth { 240 };      // Maximum width of search box
+inline constexpr int kSearchEditMediumWidth { 200 };   // Medium width of search box
+inline constexpr int kWidthThresholdCollapse { 900 };  // Threshold width to collapse search box
+inline constexpr int kWidthThresholdExpand { 1100 };   // Threshold width to expand search box
+
 SearchEditWidget::SearchEditWidget(QWidget *parent)
     : QWidget(parent)
 {
@@ -82,9 +87,27 @@ bool SearchEditWidget::completerViewVisible()
     return completerView->isVisible();
 }
 
-int SearchEditWidget::getMinimumWidth() const
+void SearchEditWidget::updateSearchEditWidget(int parentWidth)
 {
-    return isSearchExpanded ? 80 : 40;
+    if (parentWidth >= kWidthThresholdExpand) {
+        setSearchMode(SearchMode::ExtraLarge);
+    } else if (parentWidth > kWidthThresholdCollapse) {
+        setSearchMode(SearchMode::Expanded);
+    } else {
+        setSearchMode(SearchMode::Collapsed);
+    }
+}
+
+void SearchEditWidget::setSearchMode(SearchMode mode)
+{
+    if (advancedButton->isChecked() || searchEdit->hasFocus())
+        return;
+
+    if (currentMode == mode)
+        return;
+
+    currentMode = mode;
+    updateSearchWidgetLayout();
 }
 
 void SearchEditWidget::onPauseButtonClicked()
@@ -231,38 +254,13 @@ void SearchEditWidget::appendToCompleterModel(const QStringList &stringList)
 
 void SearchEditWidget::expandSearchEdit()
 {
-    isSearchExpanded = true;
-
-    searchEdit->setVisible(true);
-    advancedButton->setVisible(true);
-    searchButton->setVisible(false);
-
-    // 调整窗口大小以适应展开的搜索编辑框
-    QWidget *parentWidget = qobject_cast<QWidget*>(parent());
-    if (parentWidget) {
-        int newWidth = parentWidget->width() + searchEdit->width() - searchButton->width();
-        parentWidget->resize(newWidth, parentWidget->height());
-    }
-
-    // 设置焦点到搜索编辑框
+    setSearchMode(SearchMode::Expanded);
     searchEdit->lineEdit()->setFocus();
 }
 
 void SearchEditWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-
-    // Add width check
-    if (event->size().width() <= 60) {
-        // Directly hide search box and show search button
-        searchEdit->setVisible(false);
-        searchButton->setVisible(true);
-    } else {
-        searchEdit->setVisible(true);
-        searchButton->setVisible(false);
-    }
-
-    spinner->setFixedSize(height() - 8, height() - 8);
     
     int rightMargin = 60;
 
@@ -358,6 +356,7 @@ void SearchEditWidget::initUI()
     spinner = new DSpinner(searchEdit);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->setFixedSize(32, 32);
     spinner->hide();
 
     // Completer List
@@ -687,9 +686,12 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
     completionPrefix.clear();
     completerView->hide();
 
-    isSearchExpanded = false;
     if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
         advancedButton->setVisible(false);
+    }
+
+    if (parentWidget()) {
+        updateSearchEditWidget(parentWidget()->width());
     }
 }
 
@@ -721,5 +723,21 @@ void SearchEditWidget::handleLeaveEvent(QEvent *e)
     if (spinner->isPlaying()) {
         pauseButton->setVisible(false);
         spinner->show();
+    }
+}
+
+void SearchEditWidget::updateSearchWidgetLayout()
+{
+    if (currentMode == SearchMode::Collapsed) {
+        setFixedWidth(searchButton->width());
+        searchEdit->setVisible(false);
+        searchButton->setVisible(true);
+        advancedButton->setVisible(false);
+    } else {
+        setFixedWidth(currentMode == SearchMode::ExtraLarge ? 
+                     kSearchEditMaxWidth : kSearchEditMediumWidth);
+        searchEdit->setVisible(true);
+        searchButton->setVisible(false);
+        advancedButton->setVisible(searchEdit->hasFocus() || !searchEdit->text().isEmpty());
     }
 }
