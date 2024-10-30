@@ -31,7 +31,7 @@ public:
     virtual ~ElideTextLayout();
     void setText(const QString &text);
     QString text() const;
-    QList<QRectF> layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter = nullptr, const QBrush &background = Qt::NoBrush, QStringList *textLines = nullptr, bool fillBackground = false);
+    QList<QRectF> layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter = nullptr, const QBrush &background = Qt::NoBrush, QStringList *textLines = nullptr);
 public:
     inline QTextDocument *documentHandle() {
         return document;
@@ -48,7 +48,6 @@ public:
 
 protected:
     QRectF drawLineBackground(QPainter *painter, const QRectF &curLineRect, QRectF lastLineRect, const QBrush &brush) const;
-    void drawFullBackground(QPainter *painter, const QRectF &rect, const QBrush &brush) const;
     virtual void initLayoutOption(QTextLayout *lay);
 protected:
     QTextDocument *document = nullptr;

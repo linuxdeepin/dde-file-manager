@@ -629,14 +629,15 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    
+    labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
+    labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
     const FileInfoPointer &info = parent()->fileInfo(index);
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     if (!singleSelected && isSelectedOpt) {
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
     }
 
-    layout->layout(labelRect, opt.textElideMode, painter, background, nullptr, true);
+    layout->layout(labelRect, opt.textElideMode, painter, background);
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const
