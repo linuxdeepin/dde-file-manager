@@ -9,6 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DFontSizeManager>
 
@@ -161,7 +162,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     displayPreviewWidget = new DFrame(q);
     displayPreviewWidget->setFixedHeight(kViewOptionsFrameHeight);
     displayPreviewCheckBox = new QCheckBox(tr("Display preview"), displayPreviewWidget);
-    displayPreviewCheckBox->setChecked(Application::instance()->appAttribute(Application::kShowedDisplayPreview).toBool());
+    displayPreviewCheckBox->setChecked(DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool());
     QHBoxLayout *displayPreviewLayout = new QHBoxLayout(displayPreviewWidget);
     displayPreviewLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);
@@ -175,7 +176,7 @@ void ViewOptionsWidgetPrivate::initConnect()
     connect(displayPreviewCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
         bool isChecked = (state == Qt::Checked);
         Q_EMIT q->displayPreviewVisibleChanged(isChecked);
-        Application::instance()->setAppAttribute(Application::kShowedDisplayPreview, isChecked);
+        DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, isChecked);
     });
 
     connect(iconSizeSlider, &DSlider::valueChanged, this, [this](int value) {

@@ -34,8 +34,7 @@ public:
         kFileAndDirMixedSort,   // Mixed sorting of ordinary files and directories
         kListItemExpandable,   // Item expandable as tree in FileView with list view mode
         kGridDensityLevel,   // grid density level
-        kListHeightLevel,   // list view height level
-        kShowedDisplayPreview,   // show preview in file manager
+        kListHeightLevel   // list view height level
     };
 
     Q_ENUM(ApplicationAttribute)
@@ -113,7 +112,6 @@ Q_SIGNALS:
     void showedHiddenFilesChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
     void indexFullTextSearchChanged(bool enabled);
-    void showedDisplayPreviewChanged(bool enable);
 
     void genericSettingCreated(Settings *settings);
     void appSettingCreated(Settings *settings);
