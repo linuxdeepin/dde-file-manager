@@ -65,8 +65,6 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
             Q_EMIT self->gridDensityLevelChanged(value.toInt());
         } else if (aa == Application::kListHeightLevel) {
             Q_EMIT self->listHeightLevelChanged(value.toInt());
-        } else if (aa == Application::kShowedDisplayPreview) {
-            Q_EMIT self->showedDisplayPreviewChanged(value.toBool());
         }
     } else if (group == QT_STRINGIFY(GenericAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::GenericAttribute>();

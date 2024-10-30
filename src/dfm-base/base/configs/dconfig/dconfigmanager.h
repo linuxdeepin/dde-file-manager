@@ -19,6 +19,7 @@ inline constexpr char kAnimationDConfName[] { "org.deepin.dde.file-manager.anima
 
 inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
 inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
+inline constexpr char kDisplayPreviewVisibleKey[] { "dfm.displaypreview.visible" };
 inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.single.process" };
 inline constexpr char kAnimationEnable[] { "dfm.animation.enable" };
 inline constexpr char kAnimationEnterDuration[] { "dfm.animation.enter.duration" };

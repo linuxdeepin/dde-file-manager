@@ -23,6 +23,17 @@
             "description":"Used to determine whether to enable Open folder windows in a separate process",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.displaypreview.visible": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Display preview visible",
+            "name[zh_CN]":"显示预览",
+            "description[zh_CN]":"控制显示预览",
+            "description":"Control display preview",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

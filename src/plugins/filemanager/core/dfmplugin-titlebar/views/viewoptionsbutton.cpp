@@ -7,6 +7,7 @@
 #include "views/viewoptionswidget.h"
 
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
@@ -61,7 +62,7 @@ void ViewOptionsButton::switchMode(ViewMode mode, const QUrl &url)
 void ViewOptionsButton::setVisible(bool visible)
 {
     DToolButton::setVisible(visible);
-    if (!Application::instance()->appAttribute(Application::kShowedDisplayPreview).toBool())
+    if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
         return;
     QTimer::singleShot(200, [this, visible]() {
         Q_EMIT displayPreviewVisibleChanged(visible);
