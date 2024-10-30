@@ -26,6 +26,12 @@ inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
 inline constexpr char kDisplaySearchHistory[] = "displaySearchHistory";
 }
 
+enum class SearchMode {
+    Collapsed,  // Collapsed mode, only show search button
+    Expanded,    // Expanded mode, show search box
+    ExtraLarge,  // Extra large mode, show search box
+};
+
 class CompleterViewModel;
 class CompleterView;
 class CompleterViewDelegate;
@@ -44,7 +50,8 @@ public:
     void setAdvancedButtonVisible(bool visible);
     bool completerViewVisible();
 
-    int getMinimumWidth() const;
+    void updateSearchEditWidget(int parentWidth);
+    void setSearchMode(SearchMode mode);
 
 public Q_SLOTS:
     void onPauseButtonClicked();
@@ -100,6 +107,8 @@ private:
 #endif
     void handleLeaveEvent(QEvent *e);
 
+    void updateSearchWidgetLayout();
+
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
     DTK_WIDGET_NAMESPACE::DSearchEdit *searchEdit { nullptr };
@@ -113,7 +122,6 @@ private:
     int selectPosStart { 0 };
     int selectLength { 0 };
     bool isKeyPressed { false };
-    bool isSearchExpanded { false };
     QString completerBaseString {};
     QString completionPrefix {};
     QString lastEditedString {};
@@ -125,6 +133,8 @@ private:
     CompleterView *completerView { nullptr };
     QCompleter *urlCompleter { nullptr };
     CompleterViewDelegate *cpItemDelegate { nullptr };
+
+    SearchMode currentMode { SearchMode::Expanded };
 };
 
 } // namespace dfmplugin_titlebar
