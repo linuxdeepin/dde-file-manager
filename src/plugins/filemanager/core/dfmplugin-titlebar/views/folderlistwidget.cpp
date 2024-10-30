@@ -141,14 +141,28 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
     bool isShowedHiddenFiles = true;
     if (!stacked)
         isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+
+    // Calculate max text width
+    int maxTextWidth = 0;
+    QFontMetrics fm(font());
     for (auto data : datas) {
         auto info = InfoFactory::create<FileInfo>(data.url);
         if (!info.isNull() && (isShowedHiddenFiles || !info->isAttributes(FileInfo::FileIsType::kIsHidden))) {
             QStandardItem *item = new QStandardItem(info->fileIcon(), data.displayText);
             d->folderModel->insertRow(dataNum, item);
             dataNum++;
+
+            // Calculate text width
+            int textWidth = fm.horizontalAdvance(data.displayText);
+            maxTextWidth = qMax(maxTextWidth, textWidth);
         }
     }
+
+    // Set fixed width considering icon and margins
+    int width = maxTextWidth + kTextLeftPadding + kItemMargin * 2;
+    width = qBound(172, width, 800);
+    setFixedWidth(width);
+
     int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
     if (dataNum > 1) {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
