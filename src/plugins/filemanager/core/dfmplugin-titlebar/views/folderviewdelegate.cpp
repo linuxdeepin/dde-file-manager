@@ -81,13 +81,9 @@ bool FolderViewDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, c
     auto text = index.data(Qt::DisplayRole).toString();
     if (text.contains('\n'))
         text = text.replace('\n', ' ');
-    int minWidth = qMin(view->contentsRect().width(), option.rect.width());
-    minWidth = minWidth - 2 * kItemMargin;
     QRect textRect = option.rect;
-    textRect.setWidth(minWidth);
     textRect = textRect.adjusted(kTextLeftPadding, 0, 0, 0);
-    QString elidedText = option.fontMetrics.elidedText(text, Qt::ElideRight, textRect.width());
-    if (elidedText != text) {
+    if (option.fontMetrics.horizontalAdvance(text) > textRect.width()) {
         QToolTip::showText(event->globalPos(), text, view);
     }
     return true;
