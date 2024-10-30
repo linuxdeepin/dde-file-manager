@@ -42,8 +42,6 @@ DFMGLOBAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 inline constexpr int kSpacing { 10 };
-inline constexpr int kCriticalWidth { 650 };
-inline constexpr int kSearchEditMaxWidth { 240 };
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -215,7 +213,6 @@ void TitleBarWidget::initializeUi()
     // search widget
     searchEditWidget = new SearchEditWidget(this);
     searchEditWidget->setFixedHeight(30);
-    searchEditWidget->setMaximumWidth(kSearchEditMaxWidth);
 
     // option button
     optionButtonBox = new OptionButtonBox(this);
@@ -417,42 +414,6 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
     AbstractFrame::resizeEvent(event);
     
     int totalWidth = width();
-
     optionButtonBox->updateOptionButtonBox(totalWidth);
-
-    // Calculate the total width of other fixed-width components
-    int fixedWidth = curNavWidget->width() + optionButtonBox->width() + kSpacing * 5;
-    
-    // Get the width of the currently visible bar (crumbBar or addressBar)
-    int currentBarWidth = crumbBar->isVisible() ? crumbBar->width() : addressBar->width();
-    
-    if (totalWidth >= kCriticalWidth) {
-        // When total width is greater than or equal to the critical point, prioritize setting searchEditWidget to maximum width
-        searchEditWidget->setFixedWidth(kSearchEditMaxWidth);
-        
-        // Calculate remaining width and allocate to crumbBar or addressBar
-        int remainingWidth = totalWidth - fixedWidth - kSearchEditMaxWidth;
-        if (crumbBar->isVisible()) {
-            crumbBar->setFixedWidth(remainingWidth);
-        } else if (addressBar->isVisible()) {
-            addressBar->setFixedWidth(remainingWidth);
-        }
-    } else {
-        // When total width is less than the critical point, execute the previous algorithm
-        int idealSearchWidth = totalWidth - fixedWidth - currentBarWidth;
-        
-        // Adjust the width of searchEditWidget
-        int searchEditWidth = qBound(searchEditWidget->getMinimumWidth(), idealSearchWidth, kSearchEditMaxWidth);
-        searchEditWidget->setFixedWidth(searchEditWidth);
-        
-        // Only adjust the width of crumbBar or addressBar when searchEditWidget reaches its boundary values
-        int remainingWidth = totalWidth - fixedWidth - searchEditWidth;
-        if (searchEditWidth == searchEditWidget->getMinimumWidth() || searchEditWidth == kSearchEditMaxWidth) {
-            if (crumbBar->isVisible()) {
-                crumbBar->setFixedWidth(remainingWidth);
-            } else if (addressBar->isVisible()) {
-                addressBar->setFixedWidth(remainingWidth);
-            }
-        }
-    }
+    searchEditWidget->updateSearchEditWidget(totalWidth);
 }
