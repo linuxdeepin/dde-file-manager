@@ -6,6 +6,7 @@
 #include "canvasmanager.h"
 #include "utils/fileutil.h"
 #include "canvasdbusinterface.h"
+#include "dragmonitor.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
@@ -51,6 +52,10 @@ void CanvasPlugin::registerDBus()
     if (!conn.registerObject("/org/deepin/dde/desktop/canvas", "org.deepin.dde.desktop.canvas", ifs, registerOptions)) {
         fmCritical() << "org.deepin.dde.desktop.canvas register object failed" << conn.lastError();
         delete ifs;
+    } else {
+        auto mo = new dfm_drag::DragMoniter;
+        mo->connect(mo, &dfm_drag::DragMoniter::dragEnter, ifs, &CanvasDBusInterface::DragEnter);
+        mo->start();
     }
 }
 }   // namespace ddplugin_canvas

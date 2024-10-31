@@ -379,7 +379,8 @@ int main(int argc, char *argv[])
 
     // NOTE: temp code!!!!!!!!!!!
     QScopedPointer<dfm_drag::DragMoniter> mo(new dfm_drag::DragMoniter);
-    mo->registerDBus();
+    if (!SysInfoUtils::isOpenAsAdmin())
+        mo->registerDBus();
 
     qCWarning(logAppFileManager) << " --- app start --- pid = " << a.applicationPid();
     int ret { a.exec() };
