@@ -5,11 +5,10 @@
 #include "views/private/crumbbar_p.h"
 #include "views/crumbbar.h"
 #include "views/urlpushbutton.h"
-#include "models/crumbmodel.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
-#include "utils/tabbarmanager.h"
 #include "events/titlebareventcaller.h"
+#include "events/titlebareventreceiver.h"
 
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/application/application.h>
@@ -265,7 +264,8 @@ QUrl CrumbBar::lastUrl() const
 void CrumbBar::customMenu(const QUrl &url, QMenu *menu)
 {
     quint64 id { window()->internalWinId() };
-    bool tabAddable { TabBarManager::instance()->canAddNewTab(id) };
+
+    bool tabAddable { TitleBarEventReceiver::instance()->handleTabAddable(id) };
     bool displayIcon { false };   // TODO: use dde-dconfig
     bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
 
