@@ -48,7 +48,6 @@ private:
     bool isAboveArrow(int x) const;
     bool isTextClipped() const;
     bool isSubDir(int x) const;
-    void updateWidth();
     QColor foregroundColor() const;
     bool popupVisible() const;
 

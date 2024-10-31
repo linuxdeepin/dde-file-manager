@@ -37,6 +37,8 @@ public:
     void setActiveSubDirectory(const QString &subDir);
     QString activeSubDirectory() const;
 
+    void updateWidth();
+
 Q_SIGNALS:
     void urlButtonActivated(const QUrl &url);
     void selectSubDirs();

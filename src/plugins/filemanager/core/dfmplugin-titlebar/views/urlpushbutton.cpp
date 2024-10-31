@@ -105,43 +105,6 @@ bool UrlPushButtonPrivate::isSubDir(int x) const
     return subDirFlag;
 }
 
-void UrlPushButtonPrivate::updateWidth()
-{
-    const int oldMinWidth = q->minimumWidth();
-    const int oldMaxWidth = q->maximumWidth();
-
-    int minWidth = 0, maxWidth = 0;
-    if (!q->icon().isNull()) {
-        // 图标模式下的宽度
-        minWidth = 2 * kBorderWidth + q->iconSize().width();
-        maxWidth = minWidth;
-    } else {
-        // 文本模式下的宽度
-        QFont adjustedFont(q->font());
-        adjustedFont.setBold(subDir.isEmpty());
-        int fontWidth = QFontMetrics(adjustedFont).horizontalAdvance(q->text());
-        int defaultWinWidth = QFontMetrics(adjustedFont).horizontalAdvance("......");
-        if (defaultWinWidth < kFolderMinWidth)
-            defaultWinWidth = kFolderMinWidth;
-        int buttonSize = 2 * kBorderWidth + fontWidth;
-        if (arrowWidth() != 0) {
-            buttonSize = buttonSize + arrowWidth() + kBorderWidth;
-        }
-        if (buttonSize >= defaultWinWidth && !subDir.isEmpty()) {
-            minWidth = defaultWinWidth;
-        } else {
-            minWidth = buttonSize;
-        }
-        maxWidth = buttonSize;
-    }
-    if (oldMinWidth != minWidth) {
-        q->setMinimumWidth(minWidth);
-    }
-    if (maxWidth != 0 && oldMaxWidth != maxWidth) {
-        q->setMaximumWidth(maxWidth);
-    }
-}
-
 QColor UrlPushButtonPrivate::foregroundColor() const
 {
     QColor color = q->palette().color(q->foregroundRole());
@@ -294,8 +257,6 @@ UrlPushButton::UrlPushButton(QWidget *parent)
     : DPushButton(parent), d(new UrlPushButtonPrivate(this))
 {
     setFocusPolicy(Qt::TabFocus);
-    setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    setMinimumHeight(24);
     setAttribute(Qt::WA_LayoutUsesWidgetRect);
     setAcceptDrops(true);
     setMouseTracking(true);
@@ -325,7 +286,7 @@ void UrlPushButton::setCrumbDatas(const QList<CrumbData> &datas, bool stacked)
             setIcon(QIcon::fromTheme(getIconName(data)));
         }
     }
-    d->updateWidth();
+    updateWidth();
 }
 
 void UrlPushButton::setActive(bool active)
@@ -361,7 +322,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     if (d->font != font()) {
         d->font = font();
-        d->updateWidth();
+        updateWidth();
     }
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -538,7 +499,7 @@ void UrlPushButton::leaveEvent(QEvent *event)
 void UrlPushButton::setActiveSubDirectory(const QString &subDir)
 {
     d->subDir = subDir;
-    d->updateWidth();
+    updateWidth();
     updateGeometry();
     update();
 }
@@ -546,4 +507,41 @@ void UrlPushButton::setActiveSubDirectory(const QString &subDir)
 QString UrlPushButton::activeSubDirectory() const
 {
     return d->subDir;
+}
+
+void UrlPushButton::updateWidth()
+{
+    const int oldMinWidth = minimumWidth();
+    const int oldMaxWidth = maximumWidth();
+
+    int minWidth = 0, maxWidth = 0;
+    if (!icon().isNull()) {
+        // 图标模式下的宽度
+        minWidth = 2 * kBorderWidth + iconSize().width();
+        maxWidth = minWidth;
+    } else {
+        // 文本模式下的宽度
+        QFont adjustedFont(font());
+        adjustedFont.setBold(d->subDir.isEmpty());
+        int fontWidth = QFontMetrics(adjustedFont).horizontalAdvance(text());
+        int defaultWinWidth = QFontMetrics(adjustedFont).horizontalAdvance("......");
+        if (defaultWinWidth < kFolderMinWidth)
+            defaultWinWidth = kFolderMinWidth;
+        int buttonSize = 2 * kBorderWidth + fontWidth;
+        if (d->arrowWidth() != 0) {
+            buttonSize = buttonSize + d->arrowWidth() + kBorderWidth;
+        }
+        if (buttonSize >= defaultWinWidth && !d->subDir.isEmpty()) {
+            minWidth = defaultWinWidth;
+        } else {
+            minWidth = buttonSize;
+        }
+        maxWidth = buttonSize;
+    }
+    if (oldMinWidth != minWidth) {
+        setMinimumWidth(minWidth);
+    }
+    if (maxWidth != 0 && oldMaxWidth != maxWidth) {
+        setMaximumWidth(maxWidth);
+    }
 }
