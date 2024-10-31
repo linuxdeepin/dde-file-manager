@@ -263,7 +263,6 @@ void FileViewPrivate::updateHorizontalOffset()
 
         // 如果itemColumn为0，则说明当前只有一行，则水平偏移量为默认偏移
         if (itemColumn <= 0) {
-            horizontalOffset = q->spacing();
             return;
         }
 
