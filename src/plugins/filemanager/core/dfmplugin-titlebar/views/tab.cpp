@@ -36,7 +36,7 @@ TabPrivate::TabPrivate()
 
 Tab::Tab(QGraphicsObject *parent)
     : QGraphicsObject(parent),
-    d(new TabPrivate())
+      d(new TabPrivate())
 {
     setAcceptHoverEvents(true);
     setFlags(ItemIsSelectable);
@@ -53,6 +53,13 @@ void Tab::setCurrentUrl(const QUrl &url)
     d->url = url;
 
     QString fileName = getDisplayNameByUrl(url);
+    // Check for possible display text.
+    auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
+    if (infoPointer) {
+        const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
+        if (!displayName.isEmpty())
+            fileName = displayName;
+    }
 
     d->tabAlias.clear();
     dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &d->tabAlias);
@@ -191,7 +198,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         else
             color = QColor(30, 30, 30, 204);
         painter->fillRect(boundingRect(), color);
-        
+
     } else {
         color = pal.color(QPalette::Active, QPalette::Base);
         painter->fillRect(boundingRect(), color);
@@ -214,8 +221,8 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         tPen.setColor(color);
         painter->setPen(tPen);
     }
-    painter->drawText((d->width - fm.horizontalAdvance(str) - textMargin) / 2  + textMargin, (d->height - fm.height()) / 2,
-                          fm.horizontalAdvance(str), fm.height(), 0, buttonHoveredStr);
+    painter->drawText((d->width - fm.horizontalAdvance(str) - textMargin) / 2 + textMargin, (d->height - fm.height()) / 2,
+                      fm.horizontalAdvance(str), fm.height(), 0, buttonHoveredStr);
 
     // draw line
     pen.setColor(pal.color(QPalette::Inactive, QPalette::Shadow));
@@ -244,7 +251,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
         painter->drawLine(d->closeButtonRect.topLeft() + QPoint(4, 4), d->closeButtonRect.bottomRight() + QPoint(-4, -4));
         painter->drawLine(d->closeButtonRect.topRight() + QPoint(-4, 4), d->closeButtonRect.bottomLeft() + QPoint(4, -4));
-        
+
         painter->restore();
     }
 }
@@ -443,4 +450,3 @@ QString Tab::getDisplayNameByUrl(const QUrl &url) const
 
     return url.fileName();
 }
-
