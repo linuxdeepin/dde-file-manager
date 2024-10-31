@@ -14,11 +14,12 @@ class CanvasManager;
 class CanvasDBusInterface : public QObject, public QDBusContext
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.dde.desktop.canvas")
 public:
     explicit CanvasDBusInterface(CanvasManager *parent = nullptr);
 
 signals:
-
+    void DragEnter(const QStringList &urls);
 public slots:
     void EnableUIDebug(bool enable);
     void Refresh(bool silent = true);

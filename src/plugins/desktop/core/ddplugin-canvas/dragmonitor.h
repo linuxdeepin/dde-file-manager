@@ -8,18 +8,15 @@ namespace dfm_drag {
 class DragMoniter : public QObject, public QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.drag")
-
 public:
     explicit DragMoniter(QObject *parent = nullptr);
-    void registerDBus();
-    void unRegisterDBus();
+    void start();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
 signals:
-    Q_SCRIPTABLE void DragEnter(const QStringList &urls);
+    Q_SCRIPTABLE void dragEnter(const QStringList &urls);
 };
 }
 
