@@ -5,12 +5,18 @@
 #include "titlebareventreceiver.h"
 #include "views/titlebarwidget.h"
 #include "views/navwidget.h"
+#include "views/tabbar.h"
+#include "views/tab.h"
 #include "utils/crumbmanager.h"
 #include "utils/crumbinterface.h"
 #include "utils/titlebarhelper.h"
 #include "utils/optionbuttonmanager.h"
-#include "utils/tabbarmanager.h"
+
+#include <dfm-base/utils/universalutils.h>
+
 using namespace dfmplugin_titlebar;
+DFMBASE_USE_NAMESPACE
+
 TitleBarEventReceiver *TitleBarEventReceiver::instance()
 {
     static TitleBarEventReceiver receiver;
@@ -122,20 +128,40 @@ TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
 
 bool TitleBarEventReceiver::handleTabAddable(quint64 windowId)
 {
-    return TabBarManager::instance()->canAddNewTab(windowId);
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return false;
+
+    return w->tabBar()->tabAddable();
 }
 
 void TitleBarEventReceiver::handleCloseTabs(const QUrl &url)
 {
-    TabBarManager::instance()->closeTab(url);
+    auto titlebarWidges = TitleBarHelper::titlebars();
+
+    for (auto w : titlebarWidges)
+        w->tabBar()->closeTab(url);
 }
 
 void TitleBarEventReceiver::handleSetTabAlias(const QUrl &url, const QString &name)
 {
-    TabBarManager::instance()->setTabAlias(url, name);
+    auto titlebarWidges = TitleBarHelper::titlebars();
+
+    for (auto w : titlebarWidges) {
+        auto tabBar = w->tabBar();
+        for (int i = 0; i < tabBar->count(); ++i) {
+            auto tab = tabBar->tabAt(i);
+            if (tab && UniversalUtils::urlEquals(url, tab->getCurrentUrl()))
+                tab->setTabAlias(name);
+        }
+    }
 }
 
 void TitleBarEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)
 {
-    TabBarManager::instance()->openNewTab(windowId, url);
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+
+    w->openNewTab(url);
 }

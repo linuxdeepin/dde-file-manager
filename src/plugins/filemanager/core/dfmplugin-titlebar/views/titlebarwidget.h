@@ -33,15 +33,13 @@ public:
     QUrl currentUrl() const override;
     NavWidget *navWidget() const;
     DTitlebar *titleBar() const;
+    TabBar *tabBar() const;
+    void openNewTab(const QUrl &url);
 
     void startSpinner();
     void stopSpinner();
     void showSearchFilterButton(bool visible);
-
     void setViewModeState(int mode);
-
-    void initTabBar(const quint64 windowId);
-    void currentTabChanged(const int index);
     void handleSplitterAnimation(const QVariant &position);
 
 public slots:
@@ -60,25 +58,27 @@ protected:
 private:
     void initializeUi();
     void initConnect();
-    void initUiForSizeMode();
+    void updateUiForSizeMode();
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
     void showCrumbBar();
     bool eventFilter(QObject *watched, QEvent *event) override;
-    TabBar *createTabBar(const quint64 windowId);
 
 signals:
     void currentUrlChanged(const QUrl &url);
 
 private slots:
     void onAddressBarJump();
-
     void onTabCreated();
     void onTabRemoved(int index);
     void onTabMoved(int from, int to);
+    void onTabCurrentChanged(int tabIndex);
+    void onTabCloseRequested(int index, bool remainState);
+    void onTabAddButtonClicked();
 
 private:
     QUrl titlebarUrl;
     DTitlebar *topBar { nullptr };
+    TabBar *bottomBar { nullptr };
     QHBoxLayout *topBarCustomLayout { nullptr };
     QVBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
     QHBoxLayout *bottomBarLayout { nullptr };
@@ -88,7 +88,7 @@ private:
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
     QWidget *placeholder { nullptr };
-    
+
     bool searchButtonSwitchState { false };
 };
 
