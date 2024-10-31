@@ -33,6 +33,11 @@ QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 
 bool TitleBarHelper::newWindowAndTabEnabled { true };
 
+QList<TitleBarWidget *> TitleBarHelper::titlebars()
+{
+    return kTitleBarMap.values();
+}
+
 TitleBarWidget *TitleBarHelper::findTileBarByWindowId(quint64 windowId)
 {
     if (!kTitleBarMap.contains(windowId))

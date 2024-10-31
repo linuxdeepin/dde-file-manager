@@ -52,7 +52,7 @@ public:
 
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 500 };
+    static constexpr int kMinimumWindowWidth { 550 };
     static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };

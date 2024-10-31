@@ -21,7 +21,7 @@ public:
     static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
     static void sendDetailViewState(QWidget *sender, bool checked);
     static void sendCd(QWidget *sender, const QUrl &url);
-    static void sendChangeCurrentUrl(quint64 windowId, const QUrl &url);
+    static void sendChangeCurrentUrl(QWidget *sender, const QUrl &url);
     static void sendOpenFile(QWidget *sender, const QUrl &url);
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
