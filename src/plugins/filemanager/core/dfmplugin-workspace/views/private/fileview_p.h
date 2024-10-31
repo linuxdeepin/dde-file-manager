@@ -83,6 +83,7 @@ class FileViewPrivate
     bool mouseLeftPressed { false };
     QPoint mouseLastPos { QPoint(0, 0) };
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
+    bool initHorizontalOffset { false };
 
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
@@ -103,6 +104,8 @@ class FileViewPrivate
 
     void loadViewMode(const QUrl &url);
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
+
+    void updateHorizontalOffset();
 };
 
 }
