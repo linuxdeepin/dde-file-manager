@@ -18,6 +18,7 @@ class TitleBarWidget;
 class TitleBarHelper
 {
 public:
+    static QList<TitleBarWidget *> titlebars();
     static TitleBarWidget *findTileBarByWindowId(quint64 windowId);
     static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
     static void removeTitleBar(quint64 windowId);

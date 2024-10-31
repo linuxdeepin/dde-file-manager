@@ -44,9 +44,11 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }
 
-void TitleBarEventCaller::sendChangeCurrentUrl(quint64 windowId, const QUrl &url)
+void TitleBarEventCaller::sendChangeCurrentUrl(QWidget *sender, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, windowId, url);
+    quint64 id = TitleBarHelper::windowId(sender);
+    if (id > 0 && url.isValid())
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }
 
 void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)
