@@ -370,17 +370,14 @@ void TabBar::mousePressEvent(QMouseEvent *event)
         dragStartPosition = event->globalPos();
         isDragging = true;
         setCursor(Qt::SizeAllCursor);
-    } else {
-        // 如果在标签上,让 QGraphicsView 处理事件
-        QGraphicsView::mousePressEvent(event);
-    }
 
-    QWidget *parentWidget = this->parentWidget();
-    if (parentWidget) {
-        QMouseEvent *newEvent = new QMouseEvent(event->type(), parentWidget->mapFromGlobal(event->globalPos()),
-                                                event->button(), event->buttons(), event->modifiers());
-        QCoreApplication::sendEvent(parentWidget, newEvent);
-        delete newEvent;
+        QGraphicsView::mousePressEvent(event);
+    } else {
+        if (event->button() == Qt::RightButton) {
+            // don't show titlebar context menu
+            return;
+        }
+        QGraphicsView::mousePressEvent(event);
     }
 }
 
