@@ -284,12 +284,12 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
 {
     int iconViewSpacing = view->spacing();
 
-    int itemHeight = itemSize.height() + iconViewSpacing;
+    int itemHeight = itemSize.height() + iconViewSpacing * 2;
     if (pos.y() % itemHeight < iconViewSpacing
         || pos.y() % itemHeight > (itemHeight - iconViewSpacing))
         return -1;
 
-    int itemWidth = itemSize.width() + iconViewSpacing;
+    int itemWidth = itemSize.width() + iconViewSpacing * 2;
     if (pos.x() % itemWidth < iconViewSpacing
         || pos.x() % itemWidth > (itemWidth - iconViewSpacing))
         return -1;
