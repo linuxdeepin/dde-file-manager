@@ -137,6 +137,7 @@ void FileView::setViewMode(Global::ViewMode mode)
     setItemDelegate(d->delegates[delegateModeIndex]);
     switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
+        d->initHorizontalOffset = false;
         setUniformItemSizes(false);
         setResizeMode(Adjust);
         setOrientation(QListView::LeftToRight, true);
@@ -933,9 +934,9 @@ void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &t
 QRect FileView::calcVisualRect(int widgetWidth, int index) const
 {
     int iconViewSpacing = spacing();
-    int iconHorizontalMargin = kIconHorizontalMargin;
+    int iconHorizontalMargin = spacing();
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, kIconHorizontalMargin);
+    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, spacing());
 #endif
     QSize itemSize = itemSizeHint();
     
@@ -954,10 +955,10 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
 
     QRect rect;
     // 计算顶部位置：上边距(VerticalTopMargin) + 行索引 * (项目高度 + 间距)
-    rect.setTop(iconVerticalTopMargin + rowIndex * (itemSize.height() + iconViewSpacing));
+    rect.setTop(iconViewSpacing + rowIndex * (itemSize.height() + 2 * iconViewSpacing));
     
     // 计算左侧位置：左边距(kIconHorizontalMargin) + 列索引 * (项目宽度 + 间距)
-    rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + iconViewSpacing));
+    rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + 2 * iconViewSpacing));
     
     rect.setSize(itemSize);
 
@@ -966,7 +967,7 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     int rowCount = (totalItems + columnCount - 1) / columnCount;  // 向上取整
     if (rowCount > 1) {    // 计算可用宽度（减去左右边距）
         int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
-        int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * iconViewSpacing;
+        int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * 2 * iconViewSpacing;
         int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
         rect.moveLeft(rect.left() + horizontalOffset);
     }
@@ -1077,21 +1078,7 @@ void FileView::onShowFileSuffixChanged(bool isShow)
 
 void FileView::updateHorizontalOffset()
 {
-    if (isIconViewMode()) {
-        int contentWidth = maximumViewportSize().width();
-        int itemWidth = itemSizeHint().width();
-        int itemColumn = d->iconModeColumnCount(itemWidth);
-
-        if (itemColumn >= model()->rowCount()) {
-            d->horizontalOffset = -kIconHorizontalMargin;
-        } else {
-            int totalItemsWidth = itemColumn * itemWidth + (itemColumn - 1) * spacing();
-            int horizontalOffset = (contentWidth - totalItemsWidth) / 2;
-            d->horizontalOffset = -horizontalOffset;
-        }
-    } else {
-        d->horizontalOffset = 0;
-    }
+    d->updateHorizontalOffset();
 }
 
 void FileView::updateView()
@@ -1155,7 +1142,7 @@ void FileView::onItemWidthLevelChanged(int level)
 
     d->currentGridDensityLevel = level;
     itemDelegate()->setItemMinimumWidthByWidthLevel(level);
-    viewport()->update();
+    doItemsLayout();
 }
 
 void FileView::onItemHeightLevelChanged(int level)
@@ -1384,6 +1371,8 @@ bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
 
 void FileView::resizeEvent(QResizeEvent *event)
 {
+    d->initHorizontalOffset = false;
+
     d->isResizeEvent = true;
     DListView::resizeEvent(event);
     d->isResizeEvent = false;
@@ -1557,8 +1546,8 @@ void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 void FileView::dropEvent(QDropEvent *event)
 {
     setViewSelectState(false);
-    if (d->dragDropHelper->drop(event))
-        return;
+    d->dragDropHelper->drop(event);
+    setState(QAbstractItemView::NoState);
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
@@ -1597,7 +1586,13 @@ QRect FileView::visualRect(const QModelIndex &index) const
         rect.moveLeft(rect.left() - horizontalOffset());
         rect.moveTop(rect.top() - verticalOffset());
     } else {
-        rect = calcVisualRect(maximumViewportSize().width(), index.row());
+        rect = DListView::visualRect(index);
+        if (!d->initHorizontalOffset) {
+            d->initHorizontalOffset = true;
+            d->updateHorizontalOffset();
+            rect = DListView::visualRect(index);
+        }
+        return rect;
     }
 
     return rect;
