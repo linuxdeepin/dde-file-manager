@@ -4,13 +4,12 @@
 
 #include "titlebarwidget.h"
 #include "tabbar.h"
-#include "tabbar.h"
 #include "searcheditwidget.h"
 #include "events/titlebareventcaller.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
-#include "utils/tabbarmanager.h"
+#include "views/tab.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindow.h>
@@ -52,8 +51,6 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
-    TabBarManager::instance()->setCurrentUrl(this, url);
-
     titlebarUrl = url;
     emit currentUrlChanged(url);
 }
@@ -73,6 +70,24 @@ DTitlebar *TitleBarWidget::titleBar() const
     return topBar;
 }
 
+TabBar *TitleBarWidget::tabBar() const
+{
+    return bottomBar;
+}
+
+void TitleBarWidget::openNewTab(const QUrl &url)
+{
+    if (!tabBar()->tabAddable())
+        return;
+
+    tabBar()->createTab();
+
+    if (url.isEmpty())
+        TitleBarEventCaller::sendCd(this, StandardPaths::location(StandardPaths::kHomePath));
+
+    TitleBarEventCaller::sendCd(this, url);
+}
+
 void TitleBarWidget::startSpinner()
 {
     searchEditWidget->startSpinner();
@@ -81,16 +96,6 @@ void TitleBarWidget::startSpinner()
 void TitleBarWidget::stopSpinner()
 {
     searchEditWidget->stopSpinner();
-}
-
-void TitleBarWidget::initTabBar(const quint64 windowId)
-{
-    topBarCustomLayout->addWidget(createTabBar(windowId), 1);
-}
-
-void TitleBarWidget::currentTabChanged(const int index)
-{
-    curNavWidget->switchHistoryStack(index);
 }
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
@@ -123,32 +128,47 @@ void TitleBarWidget::handleHotketSwitchViewMode(int mode)
 
 void TitleBarWidget::handleHotketCloseCurrentTab()
 {
-    quint64 winId = TitleBarHelper::windowId(this);
-    TabBarManager::instance()->closeCurrentTab(winId);
+    if (tabBar()->count() == 1) {
+        auto winId = TitleBarHelper::windowId(this);
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window)
+            window->close();
+
+        return;
+    }
+
+    tabBar()->removeTab(tabBar()->getCurrentIndex());
 }
 
 void TitleBarWidget::handleHotketNextTab()
 {
-    quint64 winId = TitleBarHelper::windowId(this);
-    TabBarManager::instance()->activateNextTab(winId);
+    tabBar()->activateNextTab();
 }
 
 void TitleBarWidget::handleHotketPreviousTab()
 {
-    quint64 winId = TitleBarHelper::windowId(this);
-    TabBarManager::instance()->activatePreviousTab(winId);
+    tabBar()->activatePreviousTab();
 }
 
 void TitleBarWidget::handleHotketCreateNewTab()
 {
-    quint64 winId = TitleBarHelper::windowId(this);
-    TabBarManager::instance()->createNewTab(winId);
+    // If a directory is selected, open NewTab through the URL of the selected directory
+    auto winId = TitleBarHelper::windowId(this);
+    QList<QUrl> urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
+    if (urls.count() == 1) {
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(urls.at(0));
+        if (fileInfoPtr && fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
+            openNewTab(urls.at(0));
+            return;
+        }
+    }
+
+    openNewTab(currentUrl());
 }
 
 void TitleBarWidget::handleHotketActivateTab(const int index)
 {
-    quint64 winId = TitleBarHelper::windowId(this);
-    TabBarManager::instance()->activateTab(winId, index);
+    tabBar()->setCurrentIndex(index);
 }
 
 void TitleBarWidget::initializeUi()
@@ -157,29 +177,13 @@ void TitleBarWidget::initializeUi()
     setAutoFillBackground(true);
     setFocusPolicy(Qt::NoFocus);
 
+    // titlebar
     topBar = new DTitlebar;
-    topBar->setFixedHeight(40);
+    topBar->setFixedHeight(DSizeModeHelper::element(24, 40));
     auto topBarLayout = topBar->layout();
     if (topBarLayout) {
         topBarLayout->setContentsMargins(0, 0, 0, 0);
         topBarLayout->setSpacing(0);
-    }
-
-    auto optionBtn = topBar->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
-    if (optionBtn) {
-        optionBtn->setFixedSize(40, 40);
-    }
-    auto closeBtn = topBar->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
-    if (closeBtn) {
-        closeBtn->setFixedSize(40, 40);
-    }
-    auto minBtn = topBar->findChild<DWindowMinButton *>("DTitlebarDWindowMinButton");
-    if (minBtn) {
-        minBtn->setFixedSize(40, 40);
-    }
-    auto maxBtn = topBar->findChild<DWindowMaxButton *>("DTitlebarDWindowMaxButton");
-    if (maxBtn) {
-        maxBtn->setFixedSize(40, 40);
     }
 
     QWidget *topCustomWidget = new QWidget(topBar);
@@ -198,6 +202,10 @@ void TitleBarWidget::initializeUi()
 
     topCustomWidget->setLayout(topBarCustomLayout);
     topBar->setCustomWidget(topCustomWidget);
+
+    // tabbar
+    bottomBar = new TabBar;
+    topBarCustomLayout->addWidget(bottomBar, 1);
 
     // nav
     curNavWidget = new NavWidget;
@@ -241,7 +249,6 @@ void TitleBarWidget::initializeUi()
     bottomBarLayout->addSpacing(10);
     bottomBarLayout->addWidget(searchEditWidget, 1);
 
-
     titleBarLayout->addLayout(bottomBarLayout);
 
     DHorizontalLine *line = new DHorizontalLine(this);
@@ -252,13 +259,14 @@ void TitleBarWidget::initializeUi()
 
     setLayout(titleBarLayout);
 
-    initUiForSizeMode();
+    updateUiForSizeMode();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     showCrumbBar();
 }
 
 void TitleBarWidget::initConnect()
 {
+    connect(this, &TitleBarWidget::currentUrlChanged, bottomBar, &TabBar::setCurrentUrl);
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
@@ -301,14 +309,21 @@ void TitleBarWidget::initConnect()
         TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
 
+    connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
+    connect(bottomBar, &TabBar::tabRemoved, this, &TitleBarWidget::onTabRemoved);
+    connect(bottomBar, &TabBar::tabMoved, this, &TitleBarWidget::onTabMoved);
+    connect(bottomBar, &TabBar::currentChanged, this, &TitleBarWidget::onTabCurrentChanged);
+    connect(bottomBar, &TabBar::tabCloseRequested, this, &TitleBarWidget::onTabCloseRequested);
+    connect(bottomBar, &TabBar::tabAddButtonClicked, this, &TitleBarWidget::onTabAddButtonClicked);
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
-        initUiForSizeMode();
+        updateUiForSizeMode();
     });
 #endif
 }
 
-void TitleBarWidget::initUiForSizeMode()
+void TitleBarWidget::updateUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     crumbBar->setFixedHeight(DSizeModeHelper::element(24, 36));
@@ -318,6 +333,22 @@ void TitleBarWidget::initUiForSizeMode()
     addressBar->setFixedHeight(36);
 #endif
     topBar->setFixedHeight(40);
+
+    auto optionBtn = topBar->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
+    if (optionBtn)
+        optionBtn->setFixedSize(40, 40);
+
+    auto closeBtn = topBar->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+    if (closeBtn)
+        closeBtn->setFixedSize(40, 40);
+
+    auto minBtn = topBar->findChild<DWindowMinButton *>("DTitlebarDWindowMinButton");
+    if (minBtn)
+        minBtn->setFixedSize(40, 40);
+
+    auto maxBtn = topBar->findChild<DWindowMaxButton *>("DTitlebarDWindowMaxButton");
+    if (maxBtn)
+        maxBtn->setFixedSize(40, 40);
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)
@@ -374,18 +405,6 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-TabBar *TitleBarWidget::createTabBar(const quint64 windowId)
-{
-    auto tabBar = TabBarManager::instance()->createTabBar(windowId, this);
-    if (!tabBar)
-        return nullptr;
-
-    connect(tabBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
-    connect(tabBar, &TabBar::tabRemoved, this, &TitleBarWidget::onTabRemoved);
-    connect(tabBar, &TabBar::tabMoved, this, &TitleBarWidget::onTabMoved);
-    return tabBar;
-}
-
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
@@ -412,8 +431,33 @@ void TitleBarWidget::onTabMoved(int from, int to)
 void TitleBarWidget::resizeEvent(QResizeEvent *event)
 {
     AbstractFrame::resizeEvent(event);
-    
+
     int totalWidth = width();
     optionButtonBox->updateOptionButtonBox(totalWidth);
     searchEditWidget->updateSearchEditWidget(totalWidth);
+}
+
+void TitleBarWidget::onTabCurrentChanged(int tabIndex)
+{
+    Tab *tab = tabBar()->tabAt(tabIndex);
+    if (tab) {
+        // switch tab must before change url! otherwise NavWidget can not work!
+        curNavWidget->switchHistoryStack(tabIndex);
+        TitleBarEventCaller::sendChangeCurrentUrl(this, tab->getCurrentUrl());
+    }
+}
+
+void TitleBarWidget::onTabCloseRequested(int index, bool remainState)
+{
+    tabBar()->removeTab(index, remainState);
+}
+
+void TitleBarWidget::onTabAddButtonClicked()
+{
+    QUrl url = Application::instance()->appUrlAttribute(Application::kUrlOfNewTab);
+    auto tab = tabBar()->currentTab();
+    if (!url.isValid() && tab)
+        url = tab->getCurrentUrl();
+
+    openNewTab(url);
 }
