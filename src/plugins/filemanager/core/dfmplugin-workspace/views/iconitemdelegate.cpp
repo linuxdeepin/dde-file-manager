@@ -302,7 +302,7 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
         return d->currentIconSizeIndex;
     }
 
-    return -1;
+    return d->currentIconSizeIndex;
 }
 
 int IconItemDelegate::minimumWidthLevel() const
