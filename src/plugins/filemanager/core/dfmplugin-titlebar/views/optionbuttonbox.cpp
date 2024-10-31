@@ -35,11 +35,11 @@ OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
 {
 }
 
-void OptionButtonBoxPrivate::updateCompactButton() 
+void OptionButtonBoxPrivate::updateCompactButton()
 {
     if (!compactButton)
         return;
-        
+
     // Update icon based on current view mode
     switch (currentMode) {
     case ViewMode::kIconMode:
@@ -142,6 +142,11 @@ void OptionButtonBox::setViewMode(int mode)
 
 void OptionButtonBox::updateOptionButtonBox(int parentWidth)
 {
+    // If the current url scheme has no button visibility state set, do not hide buttons
+    if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
+        && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
+        return;
+    }
     if (parentWidth <= kCompactModeThreshold) {
         if (!d->isCompactMode) {
             switchToCompactMode();
@@ -169,10 +174,12 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->sortByButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
         d->viewOptionsButton->setVisible(!(state & OptionButtonManager::kHideDetailSpaceBtn));
 
-        if (state == OptionButtonManager::kHideAllBtn)
+        if (state == OptionButtonManager::kHideAllBtn) {
             setContentsMargins(0, 0, 0, 0);
-        else
+            d->compactButton->hide();
+        } else {
             setContentsMargins(5, 0, 15, 0);
+        }
     } else {
         if (d->treeViewButton)
             d->treeViewButton->setHidden(false);
@@ -181,6 +188,19 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->sortByButton->setHidden(false);
         d->viewOptionsButton->setHidden(false);
         setContentsMargins(5, 0, 15, 0);
+    }
+    // Update button box size according to the parent widget width
+    if (parent() && qobject_cast<QWidget *>(parent())) {
+        if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
+            && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
+            return;
+        }
+        if (qobject_cast<QWidget *>(parent())->width() <= kCompactModeThreshold) {
+            switchToCompactMode();
+        } else {
+            switchToNormalMode();
+        }
+        updateFixedWidth();
     }
 }
 
@@ -285,9 +305,9 @@ void OptionButtonBox::initConnect()
     auto treeAction = menu->addAction(tr("Tree View"));
     treeAction->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
     treeAction->setCheckable(true);
-    
+
     auto updateCheckedState = [=]() {
-        iconAction->setChecked(d->currentMode == ViewMode::kIconMode);  
+        iconAction->setChecked(d->currentMode == ViewMode::kIconMode);
         listAction->setChecked(d->currentMode == ViewMode::kListMode);
         treeAction->setChecked(d->currentMode == ViewMode::kTreeMode);
     };
@@ -337,8 +357,8 @@ void OptionButtonBox::initUiForSizeMode()
 
 void OptionButtonBox::updateFixedWidth()
 {
-    int fixedWidth = 10;  // 起始间距
-    
+    int fixedWidth = 10;   // 起始间距
+
     // 视图模式按钮部分
     if (d->isCompactMode) {
         fixedWidth += d->compactButton->width();
@@ -348,10 +368,10 @@ void OptionButtonBox::updateFixedWidth()
             fixedWidth += d->treeViewButton->width();
         }
     }
-    
+
     // 其他按钮部分（这部分在两种模式下都是一样的）
     fixedWidth += d->viewOptionsButton->width() + 10 + d->sortByButton->width();
-    
+
     setFixedWidth(fixedWidth);
 }
 
@@ -426,13 +446,13 @@ void OptionButtonBox::switchToCompactMode()
     d->listViewButton->hide();
     if (d->treeViewButton)
         d->treeViewButton->hide();
-    
+
     // Show compact button
     if (d->compactButton) {
         d->compactButton->show();
         d->updateCompactButton();
     }
-    
+
     d->isCompactMode = true;
 }
 
@@ -440,12 +460,12 @@ void OptionButtonBox::switchToNormalMode()
 {
     if (d->compactButton)
         d->compactButton->hide();
-        
+
     // Show normal buttons
     d->iconViewButton->show();
     d->listViewButton->show();
     if (d->treeViewButton)
         d->treeViewButton->show();
-        
+
     d->isCompactMode = false;
 }
