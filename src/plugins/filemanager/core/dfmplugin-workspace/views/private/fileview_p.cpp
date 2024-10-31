@@ -59,7 +59,7 @@ int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
     int availableWidth = widgetWidth - 2 * kIconHorizontalMargin;
 
     // 计算列数
-    int columnCount = (availableWidth + q->spacing()) / (itemWidth + q->spacing());
+    int columnCount = (availableWidth + 2 * q->spacing()) / (itemWidth + 2 * q->spacing());
 
     return columnCount;
 }
@@ -239,4 +239,40 @@ QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key
 {
     QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", url).toMap();
     return valueMap.value(key, defalutValue);
+}
+
+void FileViewPrivate::updateHorizontalOffset()
+{
+    horizontalOffset = 0;
+    if (q->isIconViewMode()) {
+        int contentWidth = q->maximumViewportSize().width();
+        int itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
+        int itemColumn = 0;
+        if (itemWidth <= 0) {
+            return;
+        }
+        // 根据qt虚函数去计算当前的itemColumn（每行绘制的个数）
+        int startLeftPx = q->visualRect(q->model()->index(0, 0, q->rootIndex())).left();
+        int rowCount = q->model()->rowCount(q->rootIndex());
+        for (int i = 1; i < rowCount; i++) {
+            if (startLeftPx == q->visualRect(q->model()->index(i, 0, q->rootIndex())).left()) {
+                itemColumn = i;
+                break;
+            }
+        }
+
+        // 如果itemColumn为0，则说明当前只有一行，则水平偏移量为默认偏移
+        if (itemColumn <= 0) {
+            horizontalOffset = q->spacing();
+            return;
+        }
+
+        // itemColumn每行绘制的个数，contentWidth绘制区域宽度，itemWidth每一个item + 2倍间距的绘制宽度
+        if (contentWidth - itemWidth * itemColumn <= 0
+                || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
+            initHorizontalOffset = false;
+            return;
+        }
+        horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+    }
 }
