@@ -5,6 +5,7 @@
 #include "views/private/crumbbar_p.h"
 #include "views/crumbbar.h"
 #include "views/urlpushbutton.h"
+#include "views/titlebarwidget.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
 #include "events/titlebareventcaller.h"
@@ -192,6 +193,7 @@ void CrumbBarPrivate::updateButtonVisibility()
 
     bool isLastButton = true;
     QList<CrumbData> stackedDatas;
+    navButtons.last()->updateWidth();
     for (int i = navButtons.size() - 1; i > 1; --i) {
         UrlPushButton *button = navButtons[i];
         availableWidth -= button->minimumWidth();
@@ -209,6 +211,33 @@ void CrumbBarPrivate::updateButtonVisibility()
             buttonsToShow.append(button);
         }
         isLastButton = false;
+    }
+
+    // Calculate remaining width
+    if (buttonsToShow.size() == 2) {
+        availableWidth = q->width();
+        if (q->parent()) {
+            auto titleBar = qobject_cast<TitleBarWidget *>(q->parent());
+            if (titleBar)
+                availableWidth = titleBar->calculateRemainingWidth();
+        }
+        availableWidth -= kItemMargin * 3;
+        if (!stackedDatas.isEmpty()) {
+            availableWidth -= navButtons[1]->minimumWidth();
+        }
+        int lastButtonMinWidth = navButtons.last()->minimumWidth();
+        if (lastButtonMinWidth > 50)
+            lastButtonMinWidth = 50;
+        if ((availableWidth - lastButtonMinWidth) < 0) {
+            auto lastButton = buttonsToShow.takeLast();
+            lastButton->hide();
+            for (auto data : lastButton->crumbDatas()) {
+                stackedDatas.append(data);
+            }
+        } else if (availableWidth < navButtons.last()->minimumWidth()) {
+            // Compress current directory name
+            navButtons.last()->setMinimumWidth(availableWidth);
+        }
     }
 
     // All buttons have the correct activation state and
