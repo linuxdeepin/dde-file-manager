@@ -91,8 +91,10 @@ void FileViewPrivate::initIconModeView()
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }
 
-    if (q->itemDelegate())
+    if (q->itemDelegate()) {
+        q->itemDelegate()->setIconSizeByIconSizeLevel(currentIconSizeLevel);
         q->itemDelegate()->setItemMinimumWidthByWidthLevel(currentGridDensityLevel);
+    }
 }
 
 void FileViewPrivate::initListModeView()
