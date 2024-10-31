@@ -216,7 +216,7 @@ void TitleBarWidget::initializeUi()
     addressBar->installEventFilter(this);
 
     // crumb
-    crumbBar = new CrumbBar;
+    crumbBar = new CrumbBar(this);
 
     // search widget
     searchEditWidget = new SearchEditWidget(this);
@@ -243,7 +243,7 @@ void TitleBarWidget::initializeUi()
 
     bottomBarLayout->addWidget(curNavWidget);
     bottomBarLayout->addWidget(addressBar);
-    bottomBarLayout->addWidget(crumbBar);
+    bottomBarLayout->addWidget(crumbBar, 1);
     bottomBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
 
     bottomBarLayout->addSpacing(10);
@@ -262,6 +262,26 @@ void TitleBarWidget::initializeUi()
     updateUiForSizeMode();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     showCrumbBar();
+}
+
+int TitleBarWidget::calculateRemainingWidth() const
+{
+    int totalWidth = width();
+    int remainingWidth = totalWidth;
+
+    // Subtract navigation button width
+    remainingWidth -= curNavWidget->width();
+    // Subtract address bar width
+    if (addressBar->isVisible())
+        remainingWidth -= addressBar->width();
+    // Subtract option button width
+    remainingWidth -= optionButtonBox->width();
+    // Subtract search widget width
+    remainingWidth -= searchEditWidget->width();
+    // Subtract spacing
+    remainingWidth -= kSpacing * 4;
+
+    return remainingWidth;
 }
 
 void TitleBarWidget::initConnect()

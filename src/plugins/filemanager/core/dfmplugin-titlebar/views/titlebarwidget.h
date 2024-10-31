@@ -42,6 +42,8 @@ public:
     void setViewModeState(int mode);
     void handleSplitterAnimation(const QVariant &position);
 
+    int calculateRemainingWidth() const;
+
 public slots:
     void handleHotkeyCtrlF();
     void handleHotkeyCtrlL();
