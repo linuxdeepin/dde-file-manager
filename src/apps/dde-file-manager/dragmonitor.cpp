@@ -47,10 +47,8 @@ void DragMoniter::unRegisterDBus()
 bool DragMoniter::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::DragEnter) {
-        qDebug() << "DragEnter event received";
         QDragEnterEvent *e = dynamic_cast<QDragEnterEvent *>(event);
         if (e && e->mimeData() && e->mimeData()->hasUrls()) {
-            qDebug() << "Processing drag urls:" << e->mimeData()->urls().count();
             QStringList str;
             const auto urls = e->mimeData()->urls();
 
@@ -62,14 +60,9 @@ bool DragMoniter::eventFilter(QObject *watched, QEvent *event)
                 }
             }
 
-            if (!str.isEmpty()) {
-                try {
-                    emit dragEnter(str);
-                    qDebug() << "Emitted dragEnter signal with" << str.size() << "urls";
-                } catch (const std::exception &e) {
-                    qWarning() << "Exception when emitting dragEnter signal:" << e.what();
-                }
-            }
+            if (!str.isEmpty())
+                QMetaObject::invokeMethod(this, "DragEnter", Qt::QueuedConnection, Q_ARG(QStringList, str));
+
         }
     }
 
