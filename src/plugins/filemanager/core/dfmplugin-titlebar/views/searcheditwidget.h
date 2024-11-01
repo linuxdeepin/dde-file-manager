@@ -27,9 +27,10 @@ inline constexpr char kDisplaySearchHistory[] = "displaySearchHistory";
 }
 
 enum class SearchMode {
-    Collapsed,  // Collapsed mode, only show search button
-    Expanded,    // Expanded mode, show search box
-    ExtraLarge,  // Extra large mode, show search box
+    kUnknown,
+    kCollapsed,  // Collapsed mode, only show search button
+    kExpanded,    // Expanded mode, show search box
+    kExtraLarge,  // Extra large mode, show search box
 };
 
 class CompleterViewModel;
@@ -134,7 +135,7 @@ private:
     QCompleter *urlCompleter { nullptr };
     CompleterViewDelegate *cpItemDelegate { nullptr };
 
-    SearchMode currentMode { SearchMode::Expanded };
+    SearchMode currentMode { SearchMode::kUnknown };
 };
 
 } // namespace dfmplugin_titlebar
