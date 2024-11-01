@@ -29,6 +29,7 @@ DFMBASE_USE_NAMESPACE
 static constexpr int kBorderWidth = 4;
 static constexpr int kFolderborderRectRadius { 6 };
 static constexpr int kFolderButtonRectRadius { 4 };
+static constexpr int kFolderButtonMinWidth { 40 };
 
 static QString getIconName(const CrumbData &c)
 {
@@ -397,7 +398,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     const QRect textRect(textX, 0, textWidth, buttonHeight);
 
     painter.save();
-    const int textFlags = Qt::AlignVCenter | Qt::AlignLeft;
+    const int textFlags = Qt::AlignCenter;
     if (!d->stacked && d->subDir.isEmpty())
         painter.setPen(palette().highlight().color());
     painter.setClipRect(textRect);
@@ -536,6 +537,8 @@ void UrlPushButton::updateWidth()
         } else {
             minWidth = buttonSize;
         }
+        if (minWidth < kFolderButtonMinWidth)
+            minWidth = kFolderButtonMinWidth;
         maxWidth = buttonSize;
     }
     if (oldMinWidth != minWidth) {
