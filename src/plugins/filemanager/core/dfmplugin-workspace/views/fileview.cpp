@@ -1142,6 +1142,7 @@ void FileView::onItemWidthLevelChanged(int level)
     d->currentGridDensityLevel = level;
     itemDelegate()->setItemMinimumWidthByWidthLevel(level);
     doItemsLayout();
+    updateHorizontalOffset();
 }
 
 void FileView::onItemHeightLevelChanged(int level)
@@ -1309,7 +1310,7 @@ void FileView::onRowCountChanged()
 
     delayUpdateStatusBar();
     updateContentLabel();
-    
+
     if (isIconViewMode()) {
         updateHorizontalOffset();
     }
@@ -2079,7 +2080,6 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
-    // connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
     connect(Application::appObtuselySetting(), &Settings::valueChanged, this, &FileView::onAppAttributeChanged);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
