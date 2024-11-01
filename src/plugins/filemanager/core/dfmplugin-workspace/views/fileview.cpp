@@ -941,7 +941,7 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     QSize itemSize = itemSizeHint();
     
     // 计算列数
-    int columnCount =  d->calcColumnCount(widgetWidth, itemSize.width()); // (availableWidth + iconViewSpacing) / (itemSize.width() + iconViewSpacing);
+    int columnCount =  d->calcColumnCount(widgetWidth, itemSize.width());
     if (columnCount == 0)
         return QRect();
 
@@ -950,12 +950,12 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
 
     int iconVerticalTopMargin = 0;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
 #endif
 
     QRect rect;
     // 计算顶部位置：上边距(VerticalTopMargin) + 行索引 * (项目高度 + 间距)
-    rect.setTop(iconViewSpacing + rowIndex * (itemSize.height() + 2 * iconViewSpacing));
+    rect.setTop(iconVerticalTopMargin + rowIndex * (itemSize.height() + 2 * iconViewSpacing));
     
     // 计算左侧位置：左边距(kIconHorizontalMargin) + 列索引 * (项目宽度 + 间距)
     rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + 2 * iconViewSpacing));
@@ -1018,7 +1018,6 @@ void FileView::onSelectAndEdit(const QUrl &url)
 
 int FileView::itemCountForRow() const
 {
-
     if (!isIconViewMode())
         return 1;
 
@@ -1222,7 +1221,7 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
 
     int iconVerticalTopMargin = 0;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
 #endif
 
     if (itemDelegate() && itemDelegate()->itemExpanded() && itemDelegate()->expandItemRect().contains(pos)) {
@@ -1626,7 +1625,7 @@ void FileView::updateGeometries()
     if (isIconViewMode()) {
         int iconVerticalTopMargin = 0;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, kIconVerticalTopMargin);
+        iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
 #endif
         if (!d->isResizeEvent
                 || (d->isResizeEvent && d->lastContentHeight > 0 && d->lastContentHeight != contentsSize().height()))
