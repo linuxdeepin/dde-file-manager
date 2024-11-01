@@ -47,8 +47,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
-    int contentWidth = q->maximumViewportSize().width();
-    return calcColumnCount(contentWidth, itemWidth);
+    return columnCountByCalc;
 }
 
 int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
@@ -254,21 +253,27 @@ void FileViewPrivate::updateHorizontalOffset()
         // 根据qt虚函数去计算当前的itemColumn（每行绘制的个数）
         int startLeftPx = q->visualRect(q->model()->index(0, 0, q->rootIndex())).left();
         int rowCount = q->model()->rowCount(q->rootIndex());
-        for (int i = 1; i < rowCount; i++) {
-            if (startLeftPx == q->visualRect(q->model()->index(i, 0, q->rootIndex())).left()) {
+        int maxColumnCount = qCeil(contentWidth / (60 + q->spacing() * 2)) + 2;  // 60是item最小宽度
+        for (int i = 1; i < qMax(maxColumnCount, rowCount); i++) {
+            int itemLeft = q->visualRect(q->model()->index(i, 0, q->rootIndex())).left();
+            // NOTE：如果实际item数量不足以绘制到第二行，qt将不会在位置计算中加上边距，
+            // 会导致新计算出的第二行itemleft比第一行少一个边距的值，所以这里需要用大于等于
+            if (startLeftPx >= itemLeft) {
                 itemColumn = i;
                 break;
             }
         }
 
-        // 如果itemColumn为0，则说明当前只有一行，则水平偏移量为默认偏移
-        if (itemColumn <= 0) {
+        columnCountByCalc = itemColumn;
+        // 如果itemColumn为0或itemColumn大于等于实际item数量，则说明当前只有一行，则水平偏移量为默认偏移
+        if (itemColumn <= 0 || itemColumn >= rowCount) {
             return;
         }
 
         // itemColumn每行绘制的个数，contentWidth绘制区域宽度，itemWidth每一个item + 2倍间距的绘制宽度
         if (contentWidth - itemWidth * itemColumn <= 0
                 || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
+            columnCountByCalc = 1;
             initHorizontalOffset = false;
             return;
         }

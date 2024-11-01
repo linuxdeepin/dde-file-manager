@@ -84,6 +84,7 @@ class FileViewPrivate
     QPoint mouseLastPos { QPoint(0, 0) };
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
     bool initHorizontalOffset { false };
+    int columnCountByCalc { 0 };
 
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
