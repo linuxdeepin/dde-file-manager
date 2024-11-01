@@ -54,55 +54,51 @@ void DetailSpaceHelper::removeDetailSpace(quint64 windowId)
 
 void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 {
-    DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-    bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+    // Find the detail space widget for the given window ID
+    DetailSpaceWidget *widget = findDetailSpaceByWindowId(windowId);
+    
+    // Check if animations are enabled in DConfig settings
+    const bool animEnable = DConfigManager::instance()->value(
+                                                              kAnimationDConfName, kAnimationEnable, true)
+                                    .toBool();
+
     if (checked) {
-        if (!w) {
+        // If widget doesn't exist, create a new one
+        if (!widget) {
             addDetailSpace(windowId);
-            w = findDetailSpaceByWindowId(windowId);
-            if (!w) {
+            widget = findDetailSpaceByWindowId(windowId);
+            if (!widget) {
                 fmCritical() << "Can't find the detail space!";
                 return;
             }
         }
 
-        if (animEnable) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_AboutToChangeViewWidth", windowId, -w->detailWidth());
-
-            // Set initial width to 0
-            w->setFixedWidth(0);
-            w->setVisible(true);
-
-            int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewDuration, 366).toInt();
-            auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewCurve).toInt());
-            QPropertyAnimation *ani = new QPropertyAnimation(w, "maximumWidth");
-            ani->setEasingCurve(curve);
-            ani->setDuration(duration);
-            ani->setStartValue(0);
-            ani->setEndValue(w->detailWidth());   // Set to desired width
-            ani->start(QAbstractAnimation::DeleteWhenStopped);
-        } else {
-            w->setVisible(true);
+        // Only animate if widget is not visible or width needs to change
+        bool notRepeatAni = (!widget->isVisible()) || (widget->width() != widget->detailWidth());
+        if (animEnable && notRepeatAni) {
+            // Update workspace width before animation
+            updateWorkspaceWidth(windowId, widget, true);
+            // Set initial width to 0 for animation
+            widget->setFixedWidth(0);
+            // Start show animation
+            animateDetailView(widget, true);
         }
-
+        
+        // Make widget visible
+        widget->setVisible(true);
+        
+        // Update detail view content with current window URL
         auto window = FMWindowsIns.findWindowById(windowId);
-        setDetailViewByUrl(w, window->currentUrl());
-
-    } else {
-        if (w) {
-            if (animEnable) {
-                dpfSlotChannel->push("dfmplugin_workspace", "slot_View_AboutToChangeViewWidth", windowId, w->width());
-                int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewDuration, 366).toInt();
-                auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewCurve).toInt());
-                QPropertyAnimation *aniHide = new QPropertyAnimation(w, "maximumWidth");
-                aniHide->setDuration(duration);
-                aniHide->setStartValue(w->width());
-                aniHide->setEndValue(0);
-                aniHide->setEasingCurve(curve);
-                aniHide->start(QAbstractAnimation::DeleteWhenStopped);
-            } else {
-                w->setVisible(false);
-            }
+        setDetailViewByUrl(widget, window->currentUrl());
+    } else if (widget) {
+        // Handle hiding the detail view
+        if (animEnable) {
+            // Update workspace and animate hiding if animations enabled
+            updateWorkspaceWidth(windowId, widget, false);
+            animateDetailView(widget, false);
+        } else {
+            // Just hide widget if animations disabled
+            widget->setVisible(false);
         }
     }
 }
@@ -135,4 +131,39 @@ QMutex &DetailSpaceHelper::mutex()
 {
     static QMutex m;
     return m;
+}
+
+void DetailSpaceHelper::animateDetailView(DetailSpaceWidget *widget, bool show)
+{
+    const int duration = getAnimationDuration();
+    const auto curve = getAnimationCurve();
+    QPropertyAnimation *ani = new QPropertyAnimation(widget, "maximumWidth");
+    ani->setDuration(duration);
+    ani->setEasingCurve(curve);
+    ani->setStartValue(show ? 0 : widget->width());
+    ani->setEndValue(show ? widget->detailWidth() : 0);
+
+    ani->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void DetailSpaceHelper::updateWorkspaceWidth(quint64 windowId, DetailSpaceWidget *widget, bool show)
+{
+    int width = show ? -widget->detailWidth() : widget->width();
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_AboutToChangeViewWidth",
+                         windowId, width);
+}
+
+int DetailSpaceHelper::getAnimationDuration()
+{
+    return DConfigManager::instance()->value(kAnimationDConfName,
+                                             kAnimationDetailviewDuration, 366)
+            .toInt();
+}
+
+QEasingCurve::Type DetailSpaceHelper::getAnimationCurve()
+{
+    return static_cast<QEasingCurve::Type>(
+            DConfigManager::instance()->value(kAnimationDConfName,
+                                              kAnimationDetailviewCurve)
+                    .toInt());
 }
