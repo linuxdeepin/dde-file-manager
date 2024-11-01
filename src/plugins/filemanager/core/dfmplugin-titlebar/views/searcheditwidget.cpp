@@ -364,6 +364,7 @@ void SearchEditWidget::initUI()
     cpItemDelegate = new CompleterViewDelegate(completerView);
 
     initUiForSizeMode();
+    updateSearchWidgetLayout();
 }
 
 void SearchEditWidget::initConnect()
