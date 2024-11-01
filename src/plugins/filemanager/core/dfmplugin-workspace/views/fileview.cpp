@@ -1309,6 +1309,10 @@ void FileView::onRowCountChanged()
 
     delayUpdateStatusBar();
     updateContentLabel();
+    
+    if (isIconViewMode()) {
+        updateHorizontalOffset();
+    }
 }
 
 void FileView::setFilterData(const QUrl &url, const QVariant &data)
