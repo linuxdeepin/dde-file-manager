@@ -54,11 +54,10 @@ void SearchEditWidget::activateEdit()
     if (!searchEdit || !advancedButton || !searchButton)
         return;
 
-    searchButton->setVisible(false);
-    advancedButton->setVisible(true);
-
-    if (!searchEdit->isVisible())
-        searchEdit->setVisible(true);
+    if (parentWidget() && parentWidget()->width() >= kWidthThresholdExpand)
+        setSearchMode(SearchMode::kExtraLarge);
+    else
+        setSearchMode(SearchMode::kExpanded);
     
     if (searchEdit->hasFocus()) {
         advancedButton->setChecked(!advancedButton->isChecked());
@@ -90,11 +89,11 @@ bool SearchEditWidget::completerViewVisible()
 void SearchEditWidget::updateSearchEditWidget(int parentWidth)
 {
     if (parentWidth >= kWidthThresholdExpand) {
-        setSearchMode(SearchMode::ExtraLarge);
+        setSearchMode(SearchMode::kExtraLarge);
     } else if (parentWidth > kWidthThresholdCollapse) {
-        setSearchMode(SearchMode::Expanded);
+        setSearchMode(SearchMode::kExpanded);
     } else {
-        setSearchMode(SearchMode::Collapsed);
+        setSearchMode(SearchMode::kCollapsed);
     }
 }
 
@@ -254,7 +253,7 @@ void SearchEditWidget::appendToCompleterModel(const QStringList &stringList)
 
 void SearchEditWidget::expandSearchEdit()
 {
-    setSearchMode(SearchMode::Expanded);
+    setSearchMode(SearchMode::kExpanded);
     searchEdit->lineEdit()->setFocus();
 }
 
@@ -728,13 +727,13 @@ void SearchEditWidget::handleLeaveEvent(QEvent *e)
 
 void SearchEditWidget::updateSearchWidgetLayout()
 {
-    if (currentMode == SearchMode::Collapsed) {
+    if (currentMode == SearchMode::kCollapsed) {
         setFixedWidth(searchButton->width());
         searchEdit->setVisible(false);
         searchButton->setVisible(true);
         advancedButton->setVisible(false);
     } else {
-        setFixedWidth(currentMode == SearchMode::ExtraLarge ? 
+        setFixedWidth(currentMode == SearchMode::kExtraLarge ? 
                      kSearchEditMaxWidth : kSearchEditMediumWidth);
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
