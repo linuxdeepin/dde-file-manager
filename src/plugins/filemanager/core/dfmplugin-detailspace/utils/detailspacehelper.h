@@ -12,6 +12,8 @@
 #include <QMap>
 #include <QUrl>
 #include <QMutex>
+#include <QEasingCurve>
+
 namespace dfmplugin_detailspace {
 
 class DetailSpaceWidget;
@@ -29,6 +31,10 @@ public:
 private:
     static QMutex &mutex();
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
+    static void animateDetailView(DetailSpaceWidget *widget, bool show);
+    static void updateWorkspaceWidth(quint64 windowId, DetailSpaceWidget *widget, bool show);
+    static int getAnimationDuration();
+    static QEasingCurve::Type getAnimationCurve();
 };
 
 }   // namespace dfmplugin_detailspace

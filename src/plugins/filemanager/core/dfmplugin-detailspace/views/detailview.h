@@ -24,7 +24,6 @@ public:
 
     bool addCustomControl(QWidget *widget);
     bool insertCustomControl(int index, QWidget *widget);
-
     void removeControl();
 
 public slots:
