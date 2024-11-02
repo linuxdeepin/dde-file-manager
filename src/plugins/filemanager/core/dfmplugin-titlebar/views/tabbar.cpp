@@ -166,7 +166,7 @@ void TabBar::closeTab(const QUrl &url)
         QUrl curUrl = tab->getCurrentUrl();
         // Some URLs cannot be compared universally
         bool closeable { dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_Closeable",
-                                            curUrl, url) };
+                                              curUrl, url) };
 
         static const QUrl &kGotoWhenDevRemoved = QUrl("computer:///");
         if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
@@ -177,7 +177,7 @@ void TabBar::closeTab(const QUrl &url)
                 } else if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer", curUrl, &redirectToWhenDelete)) {
                     if (!redirectToWhenDelete.isValid())
                         redirectToWhenDelete = kGotoWhenDevRemoved;
-                } else if (url.scheme() == Global::Scheme::kFile){   // redirect to upper directory
+                } else if (url.scheme() == Global::Scheme::kFile) {   // redirect to upper directory
                     QString localPath = url.path();
                     do {
                         QStringList pathFragment = localPath.split("/");
@@ -228,7 +228,7 @@ void TabBar::onTabCloseButtonClicked()
         return;
 
     int closingIndex = tabList.indexOf(tab);
-    
+
     // effect handler
     if (closingIndex == count() - 1) {
         historyWidth = count() * tabList.at(0)->width();
@@ -367,11 +367,8 @@ void TabBar::mousePressEvent(QMouseEvent *event)
 
     if (!onTab) {
         // 如果不在标签上,开始窗口拖拽
-        dragStartPosition = event->globalPos();
         isDragging = true;
-        setCursor(Qt::SizeAllCursor);
-
-        QGraphicsView::mousePressEvent(event);
+        event->ignore();   // 让事件继续传播给父窗口
     } else {
         if (event->button() == Qt::RightButton) {
             // don't show titlebar context menu
@@ -384,23 +381,13 @@ void TabBar::mousePressEvent(QMouseEvent *event)
 void TabBar::mouseMoveEvent(QMouseEvent *event)
 {
     if (isDragging) {
-        // 如果正在拖拽,移动窗口
-        QWidget *window = this->window();
-        if (window->isMaximized() || window->isFullScreen()) {
-            // 如果窗口已最大化或全屏,先还原
-            window->showNormal();
-            // 调整拖拽起始位置,使鼠标保持在原来的相对位置
-            dragStartPosition = event->globalPos();
-        } else {
-            QPoint delta = event->globalPos() - dragStartPosition;
-            window->move(window->pos() + delta);
-            dragStartPosition = event->globalPos();
-        }
+        // 如果正在拖拽,让事件继续传播
+        event->ignore();
     } else {
-        // 如果不是拖拽,让 QGraphicsView 处理事件
         QGraphicsView::mouseMoveEvent(event);
     }
 
+    // 更新标签悬停状态
     for (Tab *tab : tabList) {
         bool hovered = tab->sceneBoundingRect().contains(event->pos());
         tab->setHovered(hovered);
@@ -412,10 +399,10 @@ void TabBar::mouseReleaseEvent(QMouseEvent *event)
 {
     if (isDragging) {
         isDragging = false;
-        // 恢复默认鼠标样式
-        unsetCursor();
+        event->ignore();
+    } else {
+        QGraphicsView::mouseReleaseEvent(event);
     }
-    QGraphicsView::mouseReleaseEvent(event);
 }
 
 bool TabBar::eventFilter(QObject *obj, QEvent *event)

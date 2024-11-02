@@ -73,8 +73,9 @@ private:
     void updateTabsState();
     void updateAddTabButtonState();
 
-    inline int getTabAreaWidth() const {
-        return width() - 10- tabAddButton->width();
+    inline int getTabAreaWidth() const
+    {
+        return width() - 10 - tabAddButton->width();
     }
 
     QGraphicsScene *scene { nullptr };
@@ -91,10 +92,9 @@ private:
     int currentIndex { -1 };
     int historyWidth { 0 };
 
-    QPoint dragStartPosition;
     bool isDragging { false };
 };
 
-} // namespace dfmplugin_titlebar
+}   // namespace dfmplugin_titlebar
 
-#endif // TABBAR_H
+#endif   // TABBAR_H
