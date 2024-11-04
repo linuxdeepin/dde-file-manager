@@ -168,7 +168,7 @@ void MountAskPasswordDialog::handleConnect()
     if (passwordCheckBox->isChecked()) {
         loginObj.insert(kPasswdSaveMode, kSavePermanently);
     } else {
-        loginObj.insert(kPasswdSaveMode, kSaveBeforeLogout);   // kSaveBeforeLogout is used as default, for auth one time
+        loginObj.insert(kPasswdSaveMode, kNeverSave);
     }
     accept();
 }

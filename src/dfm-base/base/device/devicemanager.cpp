@@ -1067,38 +1067,35 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
 
     DFMMOUNT::MountPassInfo info;
     QApplication::restoreOverrideCursor();
-    if (dlg.exec() == QDialog::Accepted) {
-        QJsonObject loginInfo = dlg.getLoginData();
-        bool smbIntegrationEnabled = Application::genericAttribute(Application::GenericAttribute::kMergeTheEntriesOfSambaSharedFolders).toBool();
-        if (!uri.startsWith(Global::Scheme::kSmb) || !smbIntegrationEnabled) {
-            if (loginInfo.value(kSavePasswd).toInt() == 1)   // ftp mount with auth one time mode
-                loginInfo.insert(kSavePasswd, 0);   // set to never save password
-        }
 
-        auto data = loginInfo.toVariantMap();
-        using namespace GlobalServerDefines::NetworkMountParamKey;
-        if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
-            info.anonymous = true;
-        } else {
-            info.userName = data.value(kUser).toString();
-            info.domain = data.value(kDomain).toString();
-            QString pwd = data.value(kPasswd).toString();
-            info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
-            info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(
-                    data.value(kPasswdSaveMode).toInt());
-            if (uri.startsWith(Global::Scheme::kSmb)) {
-                QVariantHash pwTypeData = Application::genericSetting()->value(kStashedSmbDevices, kSavedPasswordType, QVariantHash()).toHash();
-                const QString &key = QUrl(uri).toString(QUrl::RemovePath);
-                int newPwType = int(info.savePasswd);
-                int savedPwType = pwTypeData.value(key, -1).toInt();
-                if (savedPwType != int(NetworkMountPasswdSaveMode::kSavePermanently)) {
-                    pwTypeData.insert(key, newPwType);
-                    Application::genericSetting()->setValue(kStashedSmbDevices, kSavedPasswordType, pwTypeData);
-                }
+    if (dlg.exec() == QDialog::Rejected) {
+        info.cancelled = true;
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        return info;
+    }
+
+    QJsonObject loginInfo = dlg.getLoginData();
+    auto data = loginInfo.toVariantMap();
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    if (data.value(kAnonymous, false).toBool()) {
+        info.anonymous = true;
+    } else {
+        info.userName = data.value(kUser).toString();
+        info.domain = data.value(kDomain).toString();
+        info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
+        QString pwd = data.value(kPasswd).toString();
+        info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
+
+        // save password in session if samba is integrated.
+        if (uri.startsWith(Global::Scheme::kSmb)) {
+            using AppGA = Application::GenericAttribute;
+            bool smbIntegrated = Application::genericAttribute(AppGA::kMergeTheEntriesOfSambaSharedFolders).toBool();
+            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently) {
+                info.savePasswd = NetworkMountPasswdSaveMode::kSaveBeforeLogout;
+                QSettings smbTmpConf("/tmp/dfm_smb_pass_save_mode.ini", QSettings::IniFormat);
+                smbTmpConf.setValue(QUrl(uri).host(), 1);
             }
         }
-    } else {
-        info.cancelled = true;
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
