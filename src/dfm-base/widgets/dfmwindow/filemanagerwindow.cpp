@@ -186,8 +186,10 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
         return;
 
     if (!isAnimationEnabled()) {
-        sideBar->setVisible(expanded);
-        sidebarSep->setVisible(expanded);
+        if (expanded)
+            showSideBar();
+        else
+            hideSideBar();
         return;
     }
 
