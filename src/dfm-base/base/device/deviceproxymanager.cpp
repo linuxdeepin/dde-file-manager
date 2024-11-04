@@ -91,7 +91,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     d->initConnection();
-    return true;
+    return isDBusRuning();
 }
 
 bool DeviceProxyManager::isDBusRuning()
