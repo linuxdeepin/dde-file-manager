@@ -145,10 +145,15 @@ void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
         const auto &allMountedStdSmb = getStandardSmbPaths(getMountedSmb());
         bool hasMountedOfHost = std::any_of(allMountedStdSmb.cbegin(), allMountedStdSmb.cend(),
                                             [=](const QString &smb) { return smb.startsWith(removedHost); });
-        if (hasMountedOfHost)
+        if (hasMountedOfHost) {
             return;
-        else
-            computer_sidebar_event_calls::callForgetPasswd(stdRemovedSmb);
+        } else {
+            QSettings smbTmpConf("/tmp/dfm_smb_pass_save_mode.ini", QSettings::IniFormat);
+            if (smbTmpConf.value(host).toInt() == 1) {
+                computer_sidebar_event_calls::callForgetPasswd(stdRemovedSmb);
+                smbTmpConf.remove(host);
+            }
+        }
 
         if (isShowOfflineItem())
             return;
