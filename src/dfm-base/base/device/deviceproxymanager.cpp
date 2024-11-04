@@ -91,7 +91,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     d->initConnection();
-    return true;
+    return isDBusRuning();
 }
 
 bool DeviceProxyManager::isDBusRuning()
@@ -355,7 +355,7 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
-                && !DeviceUtils::isSystemDisk(info))
+            && !DeviceUtils::isSystemDisk(info))
             externalMounts.insert(id, p);
     } else {
         externalMounts.insert(id, p);
