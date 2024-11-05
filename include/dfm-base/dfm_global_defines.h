@@ -93,7 +93,7 @@ enum ItemRoles {
     kItemCreateFileInfoRole = Qt::UserRole + 33,
     kItemTreeViewDepthRole = Qt::UserRole + 34,
     kItemTreeViewExpandedRole = Qt::UserRole + 35,
-    kItemTreeViewCanExpandRole = Qt::UserRole + 36, // item can expand
+    kItemTreeViewCanExpandRole = Qt::UserRole + 36,   // item can expand
     kItemUpdateAndTransFileInfoRole = Qt::UserRole + 37,
     kItemUnknowRole = Qt::UserRole + 999
 };
@@ -169,6 +169,8 @@ inline constexpr char kDesktop[] { "desktop" };
 inline constexpr char kMtp[] { "mtp" };
 inline constexpr char kAfc[] { "afc" };
 inline constexpr char kDav[] { "dav" };
+inline constexpr char kDavs[] { "davs" };
+inline constexpr char kNfs[] { "nfs" };
 inline constexpr char kEntry[] { "entry" };
 inline constexpr char kBurn[] { "burn" };
 inline constexpr char kComputer[] { "computer" };

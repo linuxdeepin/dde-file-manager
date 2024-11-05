@@ -30,7 +30,12 @@ DFMBASE_USE_NAMESPACE
 void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)
 {
     const auto &&scheme = url.scheme();
-    static const QStringList &kSupportedSchemes { Global::Scheme::kSmb, Global::Scheme::kFtp, Global::Scheme::kSFtp };
+    static const QStringList &kSupportedSchemes { Global::Scheme::kSmb,
+                                                  Global::Scheme::kFtp,
+                                                  Global::Scheme::kSFtp,
+                                                  Global::Scheme::kNfs,
+                                                  Global::Scheme::kDav,
+                                                  Global::Scheme::kDavs };
     if (!kSupportedSchemes.contains(scheme))
         return;
 
