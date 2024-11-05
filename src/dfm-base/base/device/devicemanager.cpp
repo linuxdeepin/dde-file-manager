@@ -705,7 +705,8 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 
     static QMap<QString, QString> defaultPort { { "smb", "445" },
                                                 { "ftp", "21" },
-                                                { "sftp", "22" } };
+                                                { "sftp", "22" },
+                                                { "nfs", "2049" } };
     QString host = u.host();
     QString port = defaultPort.value(u.scheme(), "21");
 
@@ -1056,7 +1057,8 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
-    if (uri.startsWith(Global::Scheme::kFtp) || uri.startsWith(Global::Scheme::kSFtp))
+    QStringList noDomainSchemes { Global::Scheme::kSFtp, Global::Scheme::kFtp, Global::Scheme::kDav, Global::Scheme::kDavs };
+    if (noDomainSchemes.contains(QUrl(uri).scheme()))
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;

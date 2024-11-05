@@ -365,7 +365,10 @@ void ConnectToServerDialog::initializeUi()
         schemeComboBox = new DComboBox(this);
         supportedSchemes << QString("%1://").arg(Scheme::kSmb)
                          << QString("%1://").arg(Scheme::kFtp)
-                         << QString("%1://").arg(Scheme::kSFtp);
+                         << QString("%1://").arg(Scheme::kSFtp)
+                         << QString("%1://").arg(Scheme::kDav)
+                         << QString("%1://").arg(Scheme::kDavs)
+                         << QString("%1://").arg(Scheme::kNfs);
         schemeComboBox->addItems(supportedSchemes);
         schemeComboBox->setFixedWidth(100);
 

@@ -653,6 +653,10 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     QString reportName = "Unknown Disk";
     QString subGroup = Global::Scheme::kComputer;
 
+    QStringList netShareSchemes { Global::Scheme::kSmb, Global::Scheme::kFtp, Global::Scheme::kSFtp,
+                                  Global::Scheme::kDav, Global::Scheme::kDavs, Global::Scheme::kNfs };
+    QUrl netShareUrl = QUrl(info->extraProperty(DeviceProperty::kId).toString());
+
     if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
         visableKey = kItemVisiableControlKeys[1];
         visableName = kItemVisiableControlNames[1];
@@ -660,7 +664,9 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         visableKey = kItemVisiableControlKeys[0];
         visableName = kItemVisiableControlNames[0];
         reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
-    } else if (info->order() == AbstractEntryFileEntity::kOrderSmb || info->order() == AbstractEntryFileEntity::kOrderFtp) {
+    } else if (info->order() == AbstractEntryFileEntity::kOrderSmb
+               || info->order() == AbstractEntryFileEntity::kOrderFtp
+               || netShareSchemes.contains(netShareUrl.scheme())) {
         visableKey = kItemVisiableControlKeys[3];
         visableName = kItemVisiableControlNames[3];
         reportName = "Sharing Folders";
@@ -668,6 +674,8 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
             subGroup = Global::Scheme::kSmb;
         else if (info->order() == AbstractEntryFileEntity::kOrderFtp)
             subGroup = Global::Scheme::kFtp;
+        else
+            subGroup = netShareUrl.scheme();
     } else {
         visableKey = kItemVisiableControlKeys[2];
         visableName = kItemVisiableControlNames[2];
@@ -704,7 +712,7 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) },
+        { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) || netShareSchemes.contains(netShareUrl.scheme()) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
