@@ -107,7 +107,7 @@ void FileOperateBaseWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl
                                   fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
-    //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
+    // 权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
     if (permissions != 0000 && !FileUtils::isMtpFile(toInfo->urlOf(UrlInfoType::kUrl)))
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }
@@ -518,7 +518,7 @@ bool FileOperateBaseWorker::createSystemLink(const DFileInfoPointer &fromInfo, c
 
     do {
         actionForlink = AbstractJobHandler::SupportAction::kNoAction;
-        auto target = QUrl::fromLocalFile(newFromInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
+        auto target = QUrl::fromLocalFile(newFromInfo->attribute(DFileInfo::AttributeID::kStandardFilePath).toString());
         if (localFileHandler->createSystemLink(target, toInfo->uri())) {
             return true;
         }
