@@ -97,16 +97,7 @@ private:
     QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
     bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
     bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
-    bool doCopyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
-
-private:   // do copy local big file
-    bool doCopyLocalBigFileResize(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int toFd, bool *skip);
-    char *doCopyLocalBigFileMap(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, int fd, const int per, bool *skip);
-    void memcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *fromPoint, char *toPoint);
-    void doCopyLocalBigFileClear(const size_t size, const int fromFd,
-                                 const int toFd, char *fromPoint, char *toPoint);
-    int doOpenFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, const bool isTo,
-                   const int openFlag, bool *skip);
+    bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
 
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,

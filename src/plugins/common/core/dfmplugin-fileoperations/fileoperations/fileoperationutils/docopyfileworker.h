@@ -59,10 +59,11 @@ public:
     // normal copy
     NextDo doCopyFilePractically(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
                                  bool *skip);
+    // normal copy
+    NextDo doCopyFileByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                             bool *skip);
     // small file copy
     void doFileCopy(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
-    // big file copy in system device
-    void doMemcpyLocalBigFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, char *dest, char *source, size_t size);
     // copy file by dfmio
     bool doDfmioFileCopy(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
 signals:
@@ -117,6 +118,8 @@ private:   // file copy
     void checkRetry();
     bool isStopped();
     void syncBlockFile(const DFileInfoPointer toInfo);
+    int openFileBySys(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
+                      const int flags, bool *skip, const bool isSource = true);
 public:
     static void progressCallback(int64_t current, int64_t total, void *progressData);
 
