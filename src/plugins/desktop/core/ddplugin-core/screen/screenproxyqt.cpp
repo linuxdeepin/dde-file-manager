@@ -7,6 +7,8 @@
 
 #include "dbus-private/dbushelper.h"
 
+#include <dfm-base/utils/windowutils.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <QDebug>
@@ -131,7 +133,7 @@ qreal ScreenProxyQt::devicePixelRatio() const
 DisplayMode ScreenProxyQt::displayMode() const
 {
 #ifdef COMPILE_ON_V23
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
+    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         return DisplayMode::kShowonly;
     }
 #endif

@@ -11,6 +11,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -90,7 +91,7 @@ static bool pluginsLoad()
 
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
 #ifdef COMPILE_ON_V23
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
+    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         qCInfo(logAppDesktop) << "disable background by TreeLand";
         if (!blackNames.contains("ddplugin-background")) {
             blackNames.append("ddplugin-background");
