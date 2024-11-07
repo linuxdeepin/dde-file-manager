@@ -6,16 +6,17 @@
 #include "settingsdbusinterface.h"
 
 #ifndef COMPILE_ON_V20
-#include "wallpapersettings.h"
-#include "private/autoactivatewindow.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#    include "wallpapersettings.h"
+#    include "private/autoactivatewindow.h"
+#    include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include <dfm-base/utils/universalutils.h>
+#    include <dfm-base/utils/universalutils.h>
+#    include <dfm-base/utils/windowutils.h>
 
-#include <QProcess>
+#    include <QProcess>
 #else
-#include <QDBusMessage>
-#include <QDBusPendingCall>
+#    include <QDBusMessage>
+#    include <QDBusPendingCall>
 #endif
 
 #include <QDBusConnection>
@@ -97,7 +98,7 @@ void EventHandle::startTreeland()
 
 bool EventHandle::wallpaperSetting(const QString &name)
 {
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
+    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         startTreeland();
     } else {
         show(name, (int)WallpaperSettings::Mode::WallpaperMode);
@@ -108,7 +109,7 @@ bool EventHandle::wallpaperSetting(const QString &name)
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
+    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         startTreeland();
     } else {
         show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
@@ -138,7 +139,7 @@ void EventHandle::onChanged()
 void EventHandle::show(QString name, int mode)
 {
     if (name.isNull() || name.isEmpty()
-            || ddplugin_desktop_util::screenProxyScreen(name).isNull()) {
+        || ddplugin_desktop_util::screenProxyScreen(name).isNull()) {
         fmWarning() << "invalid screen" << name;
         auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (!primary.get()) {
@@ -169,14 +170,14 @@ void EventHandle::show(QString name, int mode)
     autoAct->setWatched(wallpaperSettings);
     autoAct->start();
 
-    QMetaObject::invokeMethod(wallpaperSettings,"refreshList",Qt::QueuedConnection);
+    QMetaObject::invokeMethod(wallpaperSettings, "refreshList", Qt::QueuedConnection);
 }
 #else
 bool EventHandle::wallpaperSetting(const QString &name)
 {
     QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                   "com.deepin.dde.ControlCenter", "ShowPage");
-    msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting"))});
+                                                      "com.deepin.dde.ControlCenter", "ShowPage");
+    msg.setArguments({ QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting")) });
     QDBusConnection::sessionBus().asyncCall(msg, 5);
     fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
     return true;
@@ -185,8 +186,8 @@ bool EventHandle::wallpaperSetting(const QString &name)
 bool EventHandle::screenSaverSetting(const QString &name)
 {
     QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                   "com.deepin.dde.ControlCenter", "ShowPage");
-    msg.setArguments({QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting"))});
+                                                      "com.deepin.dde.ControlCenter", "ShowPage");
+    msg.setArguments({ QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting")) });
     QDBusConnection::sessionBus().asyncCall(msg, 5);
     fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
     return true;
