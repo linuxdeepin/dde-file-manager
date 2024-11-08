@@ -72,7 +72,9 @@ Depends:
  ${shlibs:Depends}, 
  ${misc:Depends}, 
  libdde-file-manager (=${binary:Version}),
- dde-desktop-plugins (=${binary:Version})
+ dde-desktop-plugins (=${binary:Version}),
+ libqt6sql6-sqlite,
+ qt6-translations-l10n
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
 Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
@@ -87,6 +89,7 @@ Depends:
  libdde-file-manager (=${binary:Version}),
  libgio-qt,
  libqt5xdg3,
+ libqt5sql5-sqlite,
  socat,
  cryfs,
  dde-device-formatter,
