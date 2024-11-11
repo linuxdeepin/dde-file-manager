@@ -95,27 +95,44 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 {
     // TODO(zhangs): use model direct
     ItemInfo info { url, properties };
-    if (SideBarInfoCacheMananger::instance()->contains(info))
+    if (SideBarInfoCacheMananger::instance()->contains(info)) {
+        fmInfo() << "item already added to sidebar." << url;
         return false;
+    }
+
+    SideBarItem *item = SideBarHelper::createItemByInfo(info);
+    if (!item) {
+        fmWarning() << "invalid sidebar item!" << url;
+        return false;
+    }
+
+    bool direct = item->group() == DefaultGroup::kDevice ? false : true;
+    SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
-        SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
-        SideBarItem *item = SideBarHelper::createItemByInfo(info);
         auto sidebar = allSideBar.first();
-        if (item) {
-            // TODO(zhangs): refactor, register ?
-            bool direct = item->group() == DefaultGroup::kDevice ? false : true;
-            if (sidebar->addItem(item, direct) == -1)
-                return false;
-            // for select to computer
-            QUrl &&itemUrl = item->url();
-            QUrl &&sidebarUrl = sidebar->currentUrl();
-            DFMBASE_USE_NAMESPACE
-            if (UniversalUtils::urlEquals(itemUrl, sidebarUrl)
-                || (info.finalUrl.isValid() && UniversalUtils::urlEquals(sidebarUrl, info.finalUrl)))
-                sidebar->setCurrentUrl(item->url());
+        // TODO(zhangs): refactor, register ?
+        if (sidebar->addItem(item, direct) == -1)
+            return false;
+        // for select to computer
+        QUrl &&itemUrl = item->url();
+        QUrl &&sidebarUrl = sidebar->currentUrl();
+        DFMBASE_USE_NAMESPACE
+        if (UniversalUtils::urlEquals(itemUrl, sidebarUrl)
+            || (info.finalUrl.isValid() && UniversalUtils::urlEquals(sidebarUrl, info.finalUrl)))
+            sidebar->setCurrentUrl(item->url());
+        return true;
+    } else {
+        if (SideBarWidget::kSidebarModelIns) {
+            SideBarWidget::kSidebarModelIns->appendRow(item, direct);
+            fmInfo() << "sidebar item directly append to model." << url;
             return true;
+        } else {
+            fmWarning() << "sidebar is not ready for accept item." << url;
+            delete item;
+            SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
+            return false;
         }
     }
 
