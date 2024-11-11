@@ -94,7 +94,19 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
         // not belong collection
         return;
     }
-
+    // In Qt6, when the size of the list is exceeded, the insert operation of QList will trigger an assertion crash
+    // To avoid the crash, if the size bigger than list's size, use append instead.
+    auto moveUrlInItems = [&urls](QHash<QString, CollectionBaseDataPtr>::Iterator &it, int targetIndex) {
+        if (targetIndex > it.value()->items.size()) {
+            for (auto url : urls) {
+                it.value()->items.append(url);
+            }
+        } else {
+            for (auto url : urls) {
+                it.value()->items.insert(targetIndex++, url);
+            }
+        }
+    };
     if (sourceId == targetKey) {
         // same collection
         auto it = collections.find(sourceId);
@@ -109,9 +121,8 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
                     targetIndex--;
                 it.value()->items.removeOne(url);
             }
-            for (auto url : urls) {
-                it.value()->items.insert(targetIndex++, url);
-            }
+            moveUrlInItems(it, targetIndex);
+
             emit itemsChanged(sourceId);
         }
     } else {
@@ -127,9 +138,7 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
         }
         it = collections.find(targetKey);
         if (it != collections.end()) {
-            for (auto url : urls) {
-                it.value()->items.insert(targetIndex++, url);
-            }
+            moveUrlInItems(it, targetIndex);
             emit itemsChanged(targetKey);
         }
     }
