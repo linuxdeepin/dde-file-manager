@@ -473,7 +473,11 @@ void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
         if (ComputerItemWatcher::typeCompare(in, item))
             break;
     }
-    initedDatas.insert(insertAt, in);
+
+    if (initedDatas.size() < insertAt || insertAt < 0)
+        initedDatas.append(in);
+    else
+        initedDatas.insert(insertAt, in);
 }
 
 QString ComputerItemWatcher::reportName(const QUrl &url)

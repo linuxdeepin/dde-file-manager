@@ -78,7 +78,12 @@ bool SideBarInfoCacheMananger::insertItemInfoCache(SideBarInfoCacheMananger::Ind
         return false;
 
     CacheInfoList &cache = cacheInfoMap[info.group];
-    cache.insert(i, info);
+
+    if (cache.size() < i || i < 0)
+        cache.append(info);
+    else
+        cache.insert(i, info);
+
     bindedInfos[info.url] = info;
 
     return true;
