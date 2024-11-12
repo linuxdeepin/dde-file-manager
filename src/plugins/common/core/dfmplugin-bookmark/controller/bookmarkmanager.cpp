@@ -186,10 +186,10 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             sortedUrls.append(url);
             addBookMarkItem(url, info.fileName());
 
-            //add data to dconfig
+            // add data to dconfig
             newData.remove(kKeydefaultItem);   // bookmark data in dconfig dont have keys : `defaultItem` and `index`
             newData.remove(kKeyIndex);
-            newData.insert(kKeyUrl, url.toEncoded());   //here must be encoded and keep compatibility
+            newData.insert(kKeyUrl, url.toEncoded());   // here must be encoded and keep compatibility
             newData.insert(kKeyLocateUrl, url.path().toUtf8().toBase64());
             addBookmarkToDConfig(newData);
         }
@@ -302,7 +302,11 @@ void BookMarkManager::initData()
     const QList<BookmarkData> &defPreDefInitOrder { DefaultItemManager::instance()->defaultPreDefInitOrder() };
     for (const auto &data : defPreDefInitOrder) {
         quickAccessDataMap[data.url] = data;
-        sortedUrls.insert(data.index, data.url);
+
+        if (sortedUrls.size() < data.index || data.index < 0)
+            sortedUrls.append(data.url);
+        else
+            sortedUrls.insert(data.index, data.url);
     }
 }
 
@@ -525,7 +529,7 @@ void BookMarkManager::renameBookmarkToDConfig(const QString &oldName, const QStr
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
         if (map.value(kKeyName).toString() == oldName) {
-            map[kKeyName] = newName;   //update name
+            map[kKeyName] = newName;   // update name
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
             list.replace(i, map);
             DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
@@ -540,7 +544,7 @@ void BookMarkManager::updateBookmarkUrlToDconfig(const QUrl &oldUrl, const QUrl 
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
         if (map.value(kKeyUrl).toString() == oldUrl.toEncoded()) {
-            map[kKeyUrl] = newUrl.toEncoded();   //update url, here must be encoded
+            map[kKeyUrl] = newUrl.toEncoded();   // update url, here must be encoded
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
             map[kKeyLocateUrl] = newUrl.path().toUtf8().toBase64();
             list.replace(i, map);

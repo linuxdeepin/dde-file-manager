@@ -298,7 +298,10 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
         }
 
         beginInsertRows(QModelIndex(), row, row);
-        items.insert(row, data);
+        if (items.size() < row || row < 0)
+            items.append(data);
+        else
+            items.insert(row, data);
         endInsertRows();
     }
 
@@ -449,7 +452,12 @@ void ComputerModel::addGroup(const ComputerItemData &data)
                 insertAt = i + 1;
         }
         beginInsertRows(QModelIndex(), insertAt, insertAt);
-        items.insert(insertAt, data);
+
+        if (insertAt > items.size() || insertAt < 0)
+            items.append(data);
+        else
+            items.insert(insertAt, data);
+
         endInsertRows();
     } else {   // append it, maybe someday vault will take the 3rd position.
         beginInsertRows(QModelIndex(), items.count(), items.count());
