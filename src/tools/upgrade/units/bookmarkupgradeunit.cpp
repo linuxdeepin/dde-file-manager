@@ -90,7 +90,7 @@ bool BookMarkUpgradeUnit::upgrade()
 {
     qCInfo(logToolUpgrade) << "upgrading";
     const QVariantList &quickAccessItems = initData();
-    doUpgrade(quickAccessItems);   //generate quick access field to configuration
+    doUpgrade(quickAccessItems);   // generate quick access field to configuration
 
     return true;
 }
@@ -116,7 +116,7 @@ QVariantList BookMarkUpgradeUnit::initData() const
     for (const BookmarkData &data : defPreDefInitOrder) {
         BookmarkData temData = data;
         const QVariantMap &item = temData.serialize();
-        if (data.index >= 0)
+        if (data.index >= 0 && data.index <= quickAccessItemList.size())
             quickAccessItemList.insert(data.index, item);
         else
             quickAccessItemList.append(item);
@@ -141,9 +141,9 @@ QVariantList BookMarkUpgradeUnit::initData() const
 
     auto parseUrlFromOrderData = [](const QString &src) {
         QString bookmarkOrderItem = src;
-        bookmarkOrderItem.remove(0, 9);   //remove `bookmark:`
+        bookmarkOrderItem.remove(0, 9);   // remove `bookmark:`
         QUrl url(bookmarkOrderItem);
-        QString urlString = url.toString(QUrl::RemoveFragment | QUrl::RemoveQuery);   //remove ?# or #
+        QString urlString = url.toString(QUrl::RemoveFragment | QUrl::RemoveQuery);   // remove ?# or #
         return urlString;
     };
     // 2. sort the bookmark data to `sortedBookmarkOrderList` according to `bookmarkDataList`

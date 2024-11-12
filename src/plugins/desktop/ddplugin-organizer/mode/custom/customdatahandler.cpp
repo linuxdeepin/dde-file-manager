@@ -9,15 +9,12 @@
 using namespace ddplugin_organizer;
 
 CustomDataHandler::CustomDataHandler(QObject *parent)
-    : CollectionDataProvider(parent)
-    , ModelDataHandler()
+    : CollectionDataProvider(parent), ModelDataHandler()
 {
-
 }
 
 CustomDataHandler::~CustomDataHandler()
 {
-
 }
 
 void CustomDataHandler::check(const QSet<QUrl> &vaild)
@@ -133,7 +130,10 @@ void CustomDataHandler::insert(const QUrl &url, const QString &key, const int in
         base->key = key;
         base->items << url;
     } else {
-        it.value()->items.insert(index, url);
+        if (it.value()->items.size() < index || index < 0)
+            it.value()->items.append(url);
+        else
+            it.value()->items.insert(index, url);
     }
 
     emit itemsChanged(key);
@@ -143,10 +143,9 @@ bool CustomDataHandler::acceptInsert(const QUrl &url)
 {
     // todo(wcl) 新建流程
 
-
     for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
         if (iter.value()->items.contains(url)) {
-           return true;
+            return true;
         }
     }
 
@@ -171,7 +170,7 @@ bool CustomDataHandler::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
         if (iter.value()->items.contains(oldUrl)
-                || iter.value()->items.contains(newUrl))
+            || iter.value()->items.contains(newUrl))
             return true;
     }
 
