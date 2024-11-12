@@ -71,7 +71,12 @@ void TagDirMenuScenePrivate::updateMenu(QMenu *menu)
         // insert 'OpenFileLocation' action
         if (openLocalAct) {
             actions.removeOne(openLocalAct);
-            actions.insert(1, openLocalAct);
+
+            if (actions.size() < 1)
+                actions.append(openLocalAct);
+            else
+                actions.insert(1, openLocalAct);
+
             menu->addActions(actions);
         }
     }

@@ -20,6 +20,17 @@ using namespace dfmplugin_workspace;
 using namespace dfmbase::Global;
 using namespace dfmio;
 
+namespace {
+template<class T>
+void insertToList(QList<T> &list, int index, const T &t)
+{
+    if (index < 0 || index > list.size())
+        list.append(t);
+    else
+        list.insert(index, t);
+}
+}   // namespace
+
 FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
     : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags), filterCallback(callfun), currentKey(key)
 {
@@ -519,7 +530,9 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
                     offset = childrenCount();
             }
         }
-        subVisibleList.insert(subIndex, sortInfo->fileUrl());
+
+        insertToList(subVisibleList, subIndex, sortInfo->fileUrl());
+
         visibleTreeChildren.insert(parentUrl, subVisibleList);
 
         // kItemDisplayRole 是不进行排序的
@@ -538,7 +551,8 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         Q_EMIT insertRows(showIndex, 1);
         {
             QWriteLocker lk(&locker);
-            visibleChildren.insert(showIndex, sortInfo->fileUrl());
+
+            insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
         }
         added = true;
 
@@ -995,7 +1009,8 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
                 offset = childrenCount();
         }
     }
-    subVisibleList.insert(subIndex, sortInfo->fileUrl());
+
+    insertToList(subVisibleList, subIndex, sortInfo->fileUrl());
     visibleTreeChildren.insert(parentUrl, subVisibleList);
 
     // kItemDisplayRole 是不进行排序的
@@ -1014,7 +1029,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     Q_EMIT insertRows(showIndex, 1);
     {
         QWriteLocker lk(&locker);
-        visibleChildren.insert(showIndex, sortInfo->fileUrl());
+        insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
     }
 
     if (sort == AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile)
@@ -1170,7 +1185,7 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
                 sortIndex = sortList.count();
             }
         }
-        sortList.insert(sortIndex, url);
+        insertToList(sortList, sortIndex, url);
     }
 
     if (sortList.isEmpty())

@@ -120,7 +120,10 @@ void ExtensionLibMenuScene::updateState(QMenu *parent)
             if (actions.contains(befor) && actionIndex != -1) {
                 actions.removeAt(actionIndex);
                 int beforIndex { actions.indexOf(befor) };
-                actions.insert(beforIndex, action);
+                if (actions.size() < beforIndex || beforIndex < 0)
+                    actions.append(action);
+                else
+                    actions.insert(beforIndex, action);
             }
         }
         parent->addActions(actions);

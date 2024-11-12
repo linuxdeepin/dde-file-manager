@@ -613,8 +613,13 @@ QList<ItemRoles> FileViewModel::getColumnRoles() const
 
         int customCount = roles.count();
         for (auto role : defualtColumnRoleList) {
-            if (!roles.contains(role))
-                roles.insert(roles.length() - customCount, role);
+            if (!roles.contains(role)) {
+                int index = roles.length() - customCount;
+                if(index > roles.size() || index < 0)
+                    roles.append(role);
+                else 
+                    roles.insert(index, role);
+            }
         }
     }
 
