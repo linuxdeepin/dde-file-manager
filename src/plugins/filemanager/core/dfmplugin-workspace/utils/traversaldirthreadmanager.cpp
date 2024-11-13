@@ -218,6 +218,8 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
 void TraversalDirThreadManager::createFileInfo(const QList<SortInfoPointer> &list)
 {
     for (const SortInfoPointer &sortInfo : list) {
+        if (stopFlag)
+            return;
         const QUrl &url = sortInfo->fileUrl();
         InfoFactory::create<FileInfo>(url);
     }
