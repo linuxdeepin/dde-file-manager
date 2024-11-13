@@ -198,6 +198,7 @@ public:
     std::atomic_int64_t elapsed { 0 };
     std::atomic_int64_t deleteFirstFileSize{ false };
     bool isCutMerge{false};
+    QList<QElapsedTimer *> speedtimerList;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
