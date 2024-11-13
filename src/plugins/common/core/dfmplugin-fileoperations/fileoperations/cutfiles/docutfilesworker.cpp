@@ -286,9 +286,9 @@ bool DoCutFilesWorker::checkSymLink(const DFileInfoPointer &fileInfo)
     bool ok = createSystemLink(fileInfo, newTargetInfo, true, false, &skip);
     if (!ok && !skip)
         return false;
-    ok = deleteFile(sourceUrl, QUrl(), &skip);
-    if (!ok && !skip)
-        return false;
+
+    if (ok && !skip)
+        cutAndDeleteFiles.append(fileInfo);
 
     completeSourceFiles.append(sourceUrl);
     completeTargetFiles.append(newTargetInfo->uri());
