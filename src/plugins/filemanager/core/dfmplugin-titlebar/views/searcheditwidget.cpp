@@ -33,9 +33,9 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
 
-inline constexpr int kSearchEditMaxWidth { 240 };      // Maximum width of search box
+inline constexpr int kSearchEditMaxWidth { 240 };   // Maximum width of search box
 inline constexpr int kSearchEditMediumWidth { 200 };   // Medium width of search box
-inline constexpr int kWidthThresholdCollapse { 900 };  // Threshold width to collapse search box
+inline constexpr int kWidthThresholdCollapse { 900 };   // Threshold width to collapse search box
 inline constexpr int kWidthThresholdExpand { 1100 };   // Threshold width to expand search box
 
 SearchEditWidget::SearchEditWidget(QWidget *parent)
@@ -58,7 +58,7 @@ void SearchEditWidget::activateEdit()
         setSearchMode(SearchMode::kExtraLarge);
     else
         setSearchMode(SearchMode::kExpanded);
-    
+
     if (searchEdit->hasFocus()) {
         advancedButton->setChecked(!advancedButton->isChecked());
         TitleBarEventCaller::sendShowFilterView(this, advancedButton->isChecked());
@@ -157,8 +157,7 @@ void SearchEditWidget::onReturnPressed()
 void SearchEditWidget::onTextChanged(const QString &text)
 {
     lastEditedString = text;
-    if (text.isEmpty()) 
-    {
+    if (text.isEmpty()) {
         urlCompleter->setCompletionPrefix("");
         completerBaseString = "";
         completerView->hide();
@@ -260,7 +259,7 @@ void SearchEditWidget::expandSearchEdit()
 void SearchEditWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    
+
     int rightMargin = 60;
 
     int spinnerX = event->size().width() - spinner->size().width() - rightMargin;
@@ -368,7 +367,7 @@ void SearchEditWidget::initUI()
 void SearchEditWidget::initConnect()
 {
     connect(searchButton, &DIconButton::clicked, this, &SearchEditWidget::expandSearchEdit);
-    connect(searchEdit, &DSearchEdit::textChanged, this, &SearchEditWidget::onTextChanged);
+    connect(searchEdit, &DSearchEdit::textChanged, this, &SearchEditWidget::onTextChanged, Qt::QueuedConnection);
     connect(searchEdit, &DSearchEdit::returnPressed, this, &SearchEditWidget::onReturnPressed);
     connect(searchEdit, &DSearchEdit::searchAborted, this, [this]() {
         stopSpinner();
@@ -405,12 +404,12 @@ void SearchEditWidget::initUiForSizeMode()
 #endif
 }
 
-void SearchEditWidget::initData() 
+void SearchEditWidget::initData()
 {
     // 设置补全组件
     urlCompleter = new QCompleter(searchEdit->lineEdit());
     urlCompleter->setWidget(searchEdit->lineEdit());
-    
+
     completerModel = new CompleterViewModel(completerView);
     setCompleter(urlCompleter);
 
@@ -426,7 +425,7 @@ void SearchEditWidget::updateHistory()
                                            DConfigSearch::kDisplaySearchHistory, true)
                  .toBool())
         return;
-    
+
     historyList.clear();
     historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
     isHistoryInCompleterModel = false;
@@ -486,7 +485,7 @@ QString SearchEditWidget::text() const
 
 void SearchEditWidget::setCompleter(QCompleter *c)
 {
-    if (urlCompleter) 
+    if (urlCompleter)
         urlCompleter->disconnect();
 
     urlCompleter = c;
@@ -535,8 +534,8 @@ void SearchEditWidget::doComplete()
     if (urlCompleter->completionCount() == 1
         && lastPressedKey != Qt::Key_Backspace
         && lastPressedKey != Qt::Key_Delete
-        && isKeyPressed   //判断是否按键按下，时间设定的时100ms
-        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   //键盘剪切事件
+        && isKeyPressed   // 判断是否按键按下，时间设定的时100ms
+        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   // 键盘剪切事件
         && searchEdit->lineEdit()->cursorPosition() == searchEdit->text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
@@ -551,7 +550,7 @@ void SearchEditWidget::doComplete()
     return;
 }
 
-void SearchEditWidget::completeSearchHistory(const QString &text) 
+void SearchEditWidget::completeSearchHistory(const QString &text)
 {
     // set completion prefix.
     urlCompleter->setCompletionPrefix("");
@@ -586,7 +585,7 @@ void SearchEditWidget::filterHistory(const QString &text)
 bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
 {
     isKeyPressed = true;
-    QTimer::singleShot(100, this, [=]() {   //设定100ms，若有问题可视情况改变
+    QTimer::singleShot(100, this, [=]() {   // 设定100ms，若有问题可视情况改变
         isKeyPressed = false;
     });
     lastPreviousKey = lastPressedKey;
@@ -634,7 +633,7 @@ bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
             }
             keyEvent->accept();
             return true;
-        //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+        // 解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
         case Qt::Key_Up:
         case Qt::Key_Down:
             completerView->keyPressEvent(keyEvent);
@@ -733,8 +732,7 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchButton->setVisible(true);
         advancedButton->setVisible(false);
     } else {
-        setFixedWidth(currentMode == SearchMode::kExtraLarge ? 
-                     kSearchEditMaxWidth : kSearchEditMediumWidth);
+        setFixedWidth(currentMode == SearchMode::kExtraLarge ? kSearchEditMaxWidth : kSearchEditMediumWidth);
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
         advancedButton->setVisible(searchEdit->hasFocus() || !searchEdit->text().isEmpty());
