@@ -32,7 +32,7 @@ using namespace dfmbase;
 
 BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivate::keyToAA {
     { LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
-    { LV2_GROUP_OPEN_ACTION ".01_open_file_action", Application::kOpenFileMode },
+    { LV2_GROUP_OPEN_ACTION ".02_open_file_action", Application::kOpenFileMode },
     { LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
@@ -227,7 +227,22 @@ void SettingBackend::initBasicSettingConfig()
     ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
                            tr("Always open folder in new window"),
                            false);
-    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".01_open_file_action",
+    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+                           tr("Open folder windows in a separate process"),
+                           true);
+    addSettingAccessor(
+            LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+            []() {
+                return DConfigManager::instance()->value(kViewDConfName,
+                                                         kOpenFolderWindowsInASeparateProcess,
+                                                         true);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kViewDConfName,
+                                                     kOpenFolderWindowsInASeparateProcess,
+                                                     val);
+            });
+    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".02_open_file_action",
                            tr("Open file:"),
                            QStringList { tr("Click"),
                                          tr("Double click") },
@@ -309,7 +324,7 @@ void SettingBackend::initWorkspaceSettingConfig()
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
-        viewModeValues.append( tr("Tree") );
+        viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
     ins->addComboboxConfig(LV2_GROUP_VIEW ".01_view_mode",
@@ -323,21 +338,6 @@ void SettingBackend::initWorkspaceSettingConfig()
                      { "text", tr("Restore default view mode") },
                      { "type", "pushButton" },
                      { "trigger", QVariant(Application::kRestoreViewMode) } });
-    ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
-                           tr("Open folder windows in a separate process"),
-                           true);
-    addSettingAccessor(
-            LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
-            []() {
-                return DConfigManager::instance()->value(kViewDConfName,
-                                                         kOpenFolderWindowsInASeparateProcess,
-                                                         true);
-            },
-            [](const QVariant &val) {
-                DConfigManager::instance()->setValue(kViewDConfName,
-                                                     kOpenFolderWindowsInASeparateProcess,
-                                                     val);
-            });
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 
