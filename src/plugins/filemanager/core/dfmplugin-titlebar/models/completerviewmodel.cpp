@@ -19,6 +19,7 @@ CompleterViewModel::~CompleterViewModel()
 
 void CompleterViewModel::setStringList(const QStringList &list)
 {
+    beginResetModel();
     removeAll();
     for (const auto &str : list) {
         if (str.isEmpty())
@@ -27,6 +28,7 @@ void CompleterViewModel::setStringList(const QStringList &list)
         QStandardItem *item = new QStandardItem(str);
         appendRow(item);
     }
+    endResetModel();
 }
 
 void CompleterViewModel::removeAll()
