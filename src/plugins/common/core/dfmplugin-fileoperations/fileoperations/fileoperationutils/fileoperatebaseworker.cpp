@@ -349,7 +349,8 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok) {
             workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-            cutAndDeleteFiles.append(fromInfo);
+            if (!skip || !*skip)
+                cutAndDeleteFiles.append(fromInfo);
         }
     } else if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
         ok = checkAndCopyDir(fromInfo, toInfo, skip);
