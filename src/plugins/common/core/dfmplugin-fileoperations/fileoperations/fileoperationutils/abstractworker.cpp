@@ -121,7 +121,7 @@ void AbstractWorker::pause()
         return;
     if (speedtimer) {
         elapsed += speedtimer->elapsed();
-        delete speedtimer;
+        speedtimerList.append(speedtimer);
         speedtimer = nullptr;
         JobInfoPointer info(new QMap<quint8, QVariant>);
         info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
@@ -667,6 +667,8 @@ AbstractWorker::~AbstractWorker()
         delete speedtimer;
         speedtimer = nullptr;
     }
+
+    qDeleteAll(speedtimerList);
 }
 
 /*!
