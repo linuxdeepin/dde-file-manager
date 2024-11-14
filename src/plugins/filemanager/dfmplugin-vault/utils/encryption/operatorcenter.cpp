@@ -6,6 +6,7 @@
 #include "vaultconfig.h"
 #include "utils/operator/pbkdf2.h"
 #include "utils/operator/rsam.h"
+#include "utils/pathmanager.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -116,6 +117,19 @@ bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCoun
     }
 
     return true;
+}
+
+void OperatorCenter::unmountLockPathAndUnLockPath()
+{
+    QStringList pathList;
+    pathList << PathManager::vaultLockPath()
+             << PathManager::vaultUnlockPath();
+
+    QProcess process;
+    for (const QString &str : pathList) {
+        process.start("fusermount", QStringList() << "-zu" << str);
+        process.waitForFinished();
+    }
 }
 
 void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount)
@@ -687,13 +701,14 @@ void OperatorCenter::removeVault(const QString &basePath)
 {
     if (basePath.isEmpty())
         return;
-
     QtConcurrent::run([this, basePath]() {
         int filesCount { 0 };
         int removedFileCount { 0 };
         int removedDirCount { 0 };
         if (statisticsFilesInDir(basePath, &filesCount)) {
             filesCount++;   // the basePath dir
+            // Ensure that the default path is unmounted.
+            unmountLockPathAndUnLockPath();
             removeDir(basePath, filesCount, &removedFileCount, &removedDirCount);
         }
     });

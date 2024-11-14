@@ -113,6 +113,7 @@ private:
     bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion);
     bool statisticsFilesInDir(const QString &dirPath, int *filesCount);
     void removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount);
+    void unmountLockPathAndUnLockPath();
 
 public:
     /*!
