@@ -81,6 +81,11 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
         watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run([host, ports, msecs]() {
+        if (ports.isEmpty()) {
+            qCInfo(logDFMBase) << "port not specified, skip network check. " << host;
+            return true; // skip check if ports are empty.
+        }
+
         for (const auto &port : ports) {
             qApp->processEvents();
             if (NetworkUtils::instance()->checkNetConnection(host, port, msecs))

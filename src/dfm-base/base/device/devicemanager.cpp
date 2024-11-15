@@ -708,7 +708,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
                                                 { "sftp", "22" },
                                                 { "nfs", "2049" } };
     QString host = u.host();
-    QString port = defaultPort.value(u.scheme(), "21");
+    QString port = defaultPort.value(u.scheme());
 
     static QRegularExpression regUrl(R"((\w+)://([^/:]+)(:\d*)?)");
     auto match = regUrl.match(address);
@@ -728,7 +728,9 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     };
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QStringList ports { port };
+    QStringList ports;
+    if (!port.isEmpty())
+        ports.append(port);
     static const QStringList &defaultSmbPorts { "445", "139" };
     if (u.scheme() == "smb" && defaultSmbPorts.contains(port))
         ports = defaultSmbPorts;
