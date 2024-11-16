@@ -1155,7 +1155,7 @@ void FileView::onItemHeightLevelChanged(int level)
 
     d->currentListHeightLevel = level;
     itemDelegate()->setItemMinimumHeightByHeightLevel(level);
-    viewport()->update();
+    doItemsLayout();
 }
 
 bool FileView::isIconViewMode() const
@@ -1575,20 +1575,8 @@ QRect FileView::visualRect(const QModelIndex &index) const
     if (index.column() != 0)
         return rect;
 
-    QSize itemSize = itemSizeHint();
-
     if (isListViewMode() || isTreeViewMode()) {
-        rect.setLeft(kListViewSpacing - horizontalScrollBar()->value());
-        rect.setRight(viewport()->width() - kListViewSpacing - 1);
-        rect.setTop(index.row() * (itemSize.height() + kListViewSpacing * 2) + kListViewSpacing);
-        rect.setHeight(itemSize.height());
-
-        if (d->allowedAdjustColumnSize && d->headerView) {
-            rect.setWidth(d->headerView->length());
-        }
-
-        rect.moveLeft(rect.left() - horizontalOffset());
-        rect.moveTop(rect.top() - verticalOffset());
+        rect = DListView::visualRect(index);
     } else {
         rect = DListView::visualRect(index);
         if (!d->initHorizontalOffset) {
@@ -1596,7 +1584,6 @@ QRect FileView::visualRect(const QModelIndex &index) const
             d->updateHorizontalOffset();
             rect = DListView::visualRect(index);
         }
-        return rect;
     }
 
     return rect;
