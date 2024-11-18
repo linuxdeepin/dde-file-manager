@@ -1,4 +1,5 @@
 [Desktop Entry]
+Actions=clean-trash;
 Categories=System;
 Comment=Open trash.
 Exec=dfm-open.sh trash:///
@@ -166,3 +167,11 @@ Name[zh_CN]=回收站
 Name[zh_HK]=回收站
 Name[zh_TW]=回收站
 
+[Desktop Action clean-trash]
+Exec=dde-file-manager --event "{\"action\":\"cleantrash\"}"
+Name=Clean Trash
+
+# Translations:
+# Do not manually modify!
+Name[zh_CN]=清空
+Name[zh_HK]=清空
