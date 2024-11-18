@@ -104,7 +104,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="673"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
         <translation>O nome do arquivo ou o caminho é muito longo!</translation>
     </message>
@@ -138,27 +138,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1053"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1056"/>
         <source>need authorization to access</source>
         <translation>precisa de autorização para acessar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1128"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1132"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>Não é possível verificar a identidade de %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1129"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1133"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Isto ocorre quando o login é feito pela primeira vez em um computador</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1130"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1134"/>
         <source>The identity sent by the remote computer is</source>
         <translation>A identidade enviada pelo computador remoto é</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1132"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1136"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Para continuar com segurança, contate o administrador do sistema.</translation>
     </message>
@@ -941,7 +941,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="406"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="83"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="407"/>
@@ -957,7 +957,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="410"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="86"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="79"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
@@ -1809,82 +1809,87 @@
 <context>
     <name>ddplugin_canvas::CanvasMenuScene</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
         <source>Sort by</source>
         <translation>Ordenar por</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
         <source>Icon size</source>
         <translation>Tamanho do ícone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="125"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
         <source>Auto arrange</source>
         <translation>Organizar automaticamente</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="120"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="122"/>
         <source>Display Settings</source>
         <translation>Configurações da Tela</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
         <source>Refresh</source>
         <translation>Atualizar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="128"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
+        <source>Wallpaper and Screensaver</source>
+        <translation>Papel de parede e protetor de tela</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
         <source>Personalization</source>
         <translation>Personalização</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="130"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="139"/>
         <source>Set Wallpaper</source>
         <translation>Definir papel de parede</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
         <source>Time modified</source>
         <translation>Última modificação</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
         <source>Size</source>
         <translation>Tamanho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="145"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="140"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="149"/>
         <source>Tiny</source>
         <translation>Muito Pequeno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="150"/>
         <source>Small</source>
         <translation>Pequeno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="151"/>
         <source>Medium</source>
         <translation>Médio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <source>Large</source>
         <translation>Grande</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
         <source>Super large</source>
         <translation>Super Grande</translation>
     </message>
@@ -3037,180 +3042,180 @@
         <translation>Sempre abrir a pasta em uma nova janela</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
         <source>Open folder windows in a separate process</source>
         <translation>Abrir as janelas da pasta em um processo separado</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
         <source>Open file:</source>
         <translation>Abrir arquivo:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="232"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Click</source>
         <translation>Clique</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="233"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="248"/>
         <source>Double click</source>
         <translation>Duplo clique</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="237"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
         <source>New window and tab</source>
         <translation>Nova janela e aba</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="239"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="254"/>
         <source>Open from default window:</source>
         <translation>Abrir a partir da janela padrão:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="241"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="256"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
         <source>Computer</source>
         <translation>Computador</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="242"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="257"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
         <source>Home</source>
         <translation>Início</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="243"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="258"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Desktop</source>
         <translation>Área de Trabalho</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="259"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
         <source>Videos</source>
         <translation>Vídeos</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="245"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="267"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
         <source>Music</source>
         <translation>Músicas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="261"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
         <source>Pictures</source>
         <translation>Imagens</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
         <source>Documents</source>
         <translation>Documentos</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="248"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
         <source>Downloads</source>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <source>Open in new tab:</source>
         <translation>Abrir em nova aba:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <source>Current Directory</source>
         <translation>Diretório atual</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Files and folders</source>
         <translation>Arquivos e pastas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Show hidden files</source>
         <translation>Exibir arquivos ocultos</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
         <source>Show file extensions</source>
         <translation>Exibir extensões de arquivo</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="290"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
         <source>Mix sorting of files and folders</source>
         <translation>Classificar aleatoriamente os arquivos e pastas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="313"/>
         <source>Workspace</source>
         <translation>Espaço de Trabalho</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="314"/>
         <source>View</source>
         <translation>Exibir</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
         <source>Default size:</source>
         <translation>Tamanho padrão:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="318"/>
         <source>Extra small</source>
         <translation>Extrapequeno</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="319"/>
         <source>Small</source>
         <translation>Pequeno</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
         <source>Medium</source>
         <translation>Médio</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="321"/>
         <source>Large</source>
         <translation>Grande</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="307"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Extra large</source>
         <translation>Extragrande</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="312"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Tree</source>
         <translation>Árvore</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="316"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="331"/>
         <source>Default view:</source>
         <translation>Visualização padrão:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="309"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="324"/>
         <source>Icon</source>
         <translation>Ícone</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="309"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="324"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="337"/>
         <source>Restore default view mode for all directories</source>
         <translation>Restaurar o modo de exibição padrão para todos os diretórios</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="323"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Restore default view mode</source>
         <translation>Restaurar o modo de exibição padrão</translation>
     </message>
@@ -5599,7 +5604,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="123"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="379"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="382"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="132"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="169"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="388"/>
@@ -5639,25 +5644,25 @@
         <translation>Conectar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="397"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="406"/>
         <source>Charset Encoding</source>
         <translation>Codificação de conjunto de caracteres</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
         <source>Default</source>
         <translation>Padrão</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="465"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="474"/>
         <source>My Favorites</source>
         <translation>Favoritos:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="452"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="461"/>
         <source>No favorites yet</source>
         <translation>Ainda sem favoritos</translation>
