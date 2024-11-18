@@ -27,6 +27,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <DSysInfo>
+
 #include <QMenu>
 #include <QVariant>
 #include <QDBusInterface>
@@ -82,7 +84,7 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
 
     bool renameEnabled = true;
     if (focusFileInfo && FileUtils::isDesktopFileInfo(focusFileInfo)
-            && !focusFileInfo->canAttributes(CanableInfoType::kCanRename))
+        && !focusFileInfo->canAttributes(CanableInfoType::kCanRename))
         renameEnabled = false;
 
     if (!disableActions->isEmpty()) {
@@ -124,11 +126,18 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kIconSize] = tr("Icon size");
     d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
 
-    if (ddplugin_desktop_util::enableScreensaver())
-        d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
-    else
-        d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
+    if (ddplugin_desktop_util::enableScreensaver()) {
+        // TODO(zhangs): v23 dde-control-center also does not support
+        // personalized plug-in display screen saver and wallpaper,
+        // the future if dde-control-center can support to modify this code
+        if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())
+            d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
+        else
+            d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
 
+    } else {
+        d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
+    }
     // 排序子菜单
     d->predicateName[ActionID::kSrtName] = tr("Name");
     d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
@@ -501,9 +510,11 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kWallpaperSettings));
 }
 
-void CanvasMenuScene::normalMenu(QMenu *parent) {
+void CanvasMenuScene::normalMenu(QMenu *parent)
+{
     Q_UNUSED(parent)
-} QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
+}
+QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
 {
     int mininum = d->view->itemDelegate()->minimumIconLevel();
     int maxinum = d->view->itemDelegate()->maximumIconLevel();
