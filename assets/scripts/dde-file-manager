@@ -5,20 +5,33 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # qurl::toPercentEncoding的加密规则
+# When Chinese special characters are mixed, only the ascall character set is used for encoding. 
+# When Chinese characters and special characters are mixed, encoding errors occur, 
+# resulting in the inability to open some directories with special characters. 
+# Here, utf-8 multi-byte encoding is used.
 urlencode() {
-    local string="${1}"
-    local strlen=${#string}
-    local encoded=""
+    local input="${1}"
+    local output=""
+    local char
 
-    for (( pos=0 ; pos<strlen ; pos++ )); do
-        c=${string:$pos:1}
-        printf -v o '%%%02x' "'$c"
-        case "$c" in
-            [-_.~a-zA-Z0-9] ) o=${c} ;;
-        esac
-        encoded+="${o}"
-    done
-    echo "${encoded}"
+   
+    while IFS= read -r -n1 char; do
+        # Convert the character into bytes
+        if [[ "$char" =~ [a-zA-Z0-9\-\_\.\~] ]]; then
+            # If the character is unreserved, append as is
+            output+="$char"
+        else
+            # Handle multi-byte characters
+            local bytes
+            bytes=$(printf "%s" "$char" | od -An -tx1 | tr -d ' \n')
+            while [[ "$bytes" != "" ]]; do
+                output+="%${bytes:0:2}"  # Take the first byte
+                bytes="${bytes:2}"      # Remove the first byte
+            done
+        fi
+    done < <(printf "%s" "$input")
+
+    echo "$output"
 }
 
 args=""
