@@ -239,28 +239,55 @@ void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
 
 QString UserShareHelper::sharedIP() const
 {
-    QString selfIp;
-    QStringList validIpList;
-    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
-        if (!netInterface.isValid())
-            continue;
-        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
-        if (!(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack)))
-            continue;
-        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-        foreach (QNetworkAddressEntry entry, entryList) {
-            if (!entry.ip().toString().isEmpty() && entry.ip().toString() != "0.0.0.0" && entry.ip().toIPv4Address()) {
-                validIpList << entry.ip().toString();
-            }
+    QString ip = "127.0.0.1";
+    QDBusInterface networkIface("org.freedesktop.NetworkManager",
+                                "/org/freedesktop/NetworkManager",
+                                "org.freedesktop.NetworkManager",
+                                QDBusConnection::systemBus());
+
+    auto primaryConn = networkIface.property("PrimaryConnection").value<QDBusObjectPath>();
+    QDBusInterface actIface("org.freedesktop.NetworkManager",
+                            primaryConn.path(),
+                            "org.freedesktop.NetworkManager.Connection.Active",
+                            QDBusConnection::systemBus());
+
+    auto ipv4CfgPath = actIface.property("Ip4Config").value<QDBusObjectPath>();
+    if (ipv4CfgPath.path().isEmpty()) {
+        fmInfo() << "got invalid ipv4config in" << primaryConn.path();
+        return ip;
+    }
+
+    QDBusInterface ipConfigIface("org.freedesktop.NetworkManager",
+                                 ipv4CfgPath.path(),
+                                 "org.freedesktop.DBus.Properties",
+                                 QDBusConnection::systemBus());
+    QDBusReply<QVariant> reply = ipConfigIface.call("Get",
+                                                    "org.freedesktop.NetworkManager.IP4Config",
+                                                    "AddressData");
+    if (!reply.isValid()) {
+        fmWarning() << "Failed to get AddressData:" << reply.error();
+        return ip;
+    }
+
+    // 解析 aa{sv} 类型
+    const QDBusArgument arg = reply.value().value<QDBusArgument>();
+    if (arg.currentType() != QDBusArgument::ArrayType) {
+        return ip;
+    }
+
+    arg.beginArray();
+    while (!arg.atEnd()) {
+        // 开始处理内层数组元素
+        QVariantMap item;
+        arg >> item;
+        if (!item.value("address", "").toString().isEmpty()) {
+            ip = item.value("address").toString();
+            break;
         }
     }
-    // If multiple IPs are got, just take the first one.
-    // There is not a list control on the UI for the IP.
-    // TODO(zhuangshu):discuss this issue with product manager, or reference the code of dde-network-core plugin.
-    if (validIpList.count() > 0)
-        selfIp = validIpList.first();
+    arg.endArray();
 
-    return selfIp;
+    return ip;
 }
 
 int UserShareHelper::getSharePort() const
