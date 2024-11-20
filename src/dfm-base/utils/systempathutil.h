@@ -35,9 +35,9 @@ private:
     ~SystemPathUtil();
     void initialize();
     void mkPath(const QString &path);
-    void cleanPath(QString *path) const;
     bool checkContainsSystemPathByFileInfo(const QList<QUrl> &urlList);
     bool checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList);
+    QString findSystemPathKey(const QString &path) const;
 
 public:
     void loadSystemPaths();

@@ -45,6 +45,7 @@ public:
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
     static bool isSameFile(const QUrl &url1, const QUrl &url2,
                            const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
+    static bool isSameFile(const QString &path1, const QString &path2);
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
     static bool trashIsEmpty();
