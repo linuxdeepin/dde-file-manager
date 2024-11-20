@@ -18,8 +18,8 @@ inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,"
                                      "pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,"
                                      "md,latex,et,dps,wdb,wks,csv,dpt,ofd,uof,xml";
 inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff,webp";
-inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape";
-inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp";
+inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape,flac,aac";
+inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp,wmv,3g2";
 inline const char kTypeSuffixApp[] = "desktop";
 //inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
 }
