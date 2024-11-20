@@ -3202,7 +3202,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>Activa la finestra existent quan es torni a obrir la carpeta.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="325"/>
@@ -3212,12 +3212,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Restore default view mode for all directories</source>
-        <translation>Restaura el mode de visualització predeterminat per a tots els directoris</translation>
+        <translation>Restaura el mode de visualització predeterminat per a tots els directoris.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="339"/>
         <source>Restore default view mode</source>
-        <translation>Restaura el mode de visualització predeterminat</translation>
+        <translation>Restaura el mode de visualització predeterminat.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
