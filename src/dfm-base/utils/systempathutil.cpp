@@ -52,16 +52,8 @@ QString SystemPathUtil::systemPathDisplayName(const QString &key) const
 
 QString SystemPathUtil::systemPathDisplayNameByPath(QString path)
 {
-    // shorten the path from /persistent/* (if it is) to /*
-    // to make sure the $HOME/* can be translated correctly
-    cleanPath(&path);
-    QStringList &&keys = systemPathsMap.keys();
-    auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, path](const QString &key) {
-        return (systemPathsMap.value(key) == path);
-    });
-    if (ret != keys.cend())
-        return systemPathDisplayName(*ret);
-    return QString();
+    QString key = findSystemPathKey(path);
+    return key.isEmpty() ? QString() : systemPathDisplayName(key);
 }
 
 QString SystemPathUtil::systemPathIconName(const QString &key) const
@@ -73,24 +65,24 @@ QString SystemPathUtil::systemPathIconName(const QString &key) const
 
 QString SystemPathUtil::systemPathIconNameByPath(QString path)
 {
-    cleanPath(&path);
-
-    if (isSystemPath(path)) {
-        QStringList &&keys = systemPathsMap.keys();
-        auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, &path](const QString &key) {
-            return (systemPathsMap.value(key) == path);
-        });
-        if (ret != keys.cend())
-            return systemPathIconName(*ret);
-    }
-    return QString();
+    QString key = findSystemPathKey(path);
+    return key.isEmpty() ? QString() : systemPathIconName(key);
 }
 
 bool SystemPathUtil::isSystemPath(QString path) const
 {
-    cleanPath(&path);
+    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    if (path.contains(userHome)) {
+        for (const QString &sysPath : systemPathsSet) {
+            if (path == sysPath)
+                return true;
 
-    return systemPathsSet.contains(path);
+            if (path.endsWith(sysPath))
+                return FileUtils::isSameFile(path, sysPath);
+        }
+    }
+
+    return false;
 }
 
 bool SystemPathUtil::checkContainsSystemPath(const QList<QUrl> &urlList)
@@ -150,21 +142,6 @@ void SystemPathUtil::mkPath(const QString &path)
     }
 }
 
-void SystemPathUtil::cleanPath(QString *path) const
-{
-    Q_ASSERT(path);
-    // 这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
-    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
-    if (path->startsWith(homeBindPath)) {
-        path->replace(homeBindPath, userHome);
-    }
-
-    if (path->size() > 1 && path->at(0) == '/' && path->endsWith("/")) {
-        path->chop(1);
-    }
-}
-
 bool SystemPathUtil::checkContainsSystemPathByFileInfo(const QList<QUrl> &urlList)
 {
     for (const auto &url : urlList) {
@@ -181,6 +158,29 @@ bool SystemPathUtil::checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList
     return std::any_of(urlList.begin(), urlList.end(),[this](const QUrl &url){
         return isSystemPath(url.path());
     });
+}
+
+QString SystemPathUtil::findSystemPathKey(const QString &path) const
+{
+    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    if (path.contains(userHome)) {
+        QStringList &&keys = systemPathsMap.keys();
+        auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, &path](const QString &key) {
+            auto sysPath = systemPathsMap.value(key);
+            if (sysPath == path)
+                return true;
+
+            if (path.endsWith(sysPath))
+                return FileUtils::isSameFile(path, sysPath);
+            
+            return false;
+        });
+
+        if (ret != keys.cend())
+            return *ret;
+    }
+
+    return QString();
 }
 
 void SystemPathUtil::loadSystemPaths()

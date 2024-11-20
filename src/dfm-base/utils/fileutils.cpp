@@ -356,20 +356,24 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const Global::Cre
     if (!info1 || !info2)
         return false;
 
-    struct stat statFromInfo;
-    struct stat statToInfo;
-
     const QString &path1 = info1->pathOf(PathInfoType::kAbsoluteFilePath);
     const QString &path2 = info2->pathOf(PathInfoType::kAbsoluteFilePath);
-    int fromStat = stat(path1.toLocal8Bit().data(), &statFromInfo);
-    int toStat = stat(path2.toLocal8Bit().data(), &statToInfo);
-    if (0 == fromStat && 0 == toStat) {
+
+    return isSameFile(path1, path2);
+}
+
+bool FileUtils::isSameFile(const QString &path1, const QString &path2) 
+{
+    struct stat stat1;
+    struct stat stat2;
+    int ret1 = stat(path1.toLocal8Bit().data(), &stat1);
+    int ret2 = stat(path2.toLocal8Bit().data(), &stat2);
+    if (0 == ret1 && 0 == ret2) {
         // 通过inode判断是否是同一个文件
-        if (statFromInfo.st_ino == statToInfo.st_ino
-            && statFromInfo.st_dev == statToInfo.st_dev) {   //! 需要判断设备号
-            return true;
-        }
+        return (stat1.st_ino == stat2.st_ino
+            && stat1.st_dev == stat2.st_dev);   //! 需要判断设备号
     }
+
     return false;
 }
 
