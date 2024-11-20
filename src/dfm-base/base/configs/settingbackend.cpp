@@ -228,19 +228,20 @@ void SettingBackend::initBasicSettingConfig()
                            tr("Always open folder in new window"),
                            false);
     ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
-                           tr("Open folder windows in a separate process"),
-                           true);
+                           tr("Activate existing window when reopening folder"),
+                           false);
     addSettingAccessor(
             LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
             []() {
-                return DConfigManager::instance()->value(kViewDConfName,
-                                                         kOpenFolderWindowsInASeparateProcess,
-                                                         true);
+                return !(DConfigManager::instance()->value(kViewDConfName,
+                                                           kOpenFolderWindowsInASeparateProcess,
+                                                           true)
+                                 .toBool());
             },
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(kViewDConfName,
                                                      kOpenFolderWindowsInASeparateProcess,
-                                                     val);
+                                                     !(val.toBool()));
             });
     ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".02_open_file_action",
                            tr("Open file:"),
