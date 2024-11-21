@@ -3202,7 +3202,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="231"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>Активувати наявне вікно при повторному відкритті теки</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="325"/>
