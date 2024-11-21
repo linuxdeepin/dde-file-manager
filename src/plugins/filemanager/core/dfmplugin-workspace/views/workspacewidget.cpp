@@ -33,6 +33,8 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
 
 WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     : AbstractFrame(parent)

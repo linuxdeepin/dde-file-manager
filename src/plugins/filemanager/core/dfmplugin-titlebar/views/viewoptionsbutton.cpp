@@ -17,6 +17,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 using DFMBASE_NAMESPACE::Global::ViewMode;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 ViewOptionsButtonPrivate::ViewOptionsButtonPrivate(ViewOptionsButton *qq)
     : QObject(qq), q(qq)

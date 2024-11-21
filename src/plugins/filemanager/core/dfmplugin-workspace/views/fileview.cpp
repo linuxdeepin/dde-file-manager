@@ -61,6 +61,8 @@
 using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
@@ -939,9 +941,9 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, spacing());
 #endif
     QSize itemSize = itemSizeHint();
-    
+
     // 计算列数
-    int columnCount =  d->calcColumnCount(widgetWidth, itemSize.width());
+    int columnCount = d->calcColumnCount(widgetWidth, itemSize.width());
     if (columnCount == 0)
         return QRect();
 
@@ -956,16 +958,16 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     QRect rect;
     // 计算顶部位置：上边距(VerticalTopMargin) + 行索引 * (项目高度 + 间距)
     rect.setTop(iconVerticalTopMargin + rowIndex * (itemSize.height() + 2 * iconViewSpacing));
-    
+
     // 计算左侧位置：左边距(kIconHorizontalMargin) + 列索引 * (项目宽度 + 间距)
     rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + 2 * iconViewSpacing));
-    
+
     rect.setSize(itemSize);
 
     // 计算水平居中偏移，仅当行数大于1时才应用
     int totalItems = model()->rowCount();
-    int rowCount = (totalItems + columnCount - 1) / columnCount;  // 向上取整
-    if (rowCount > 1) {    // 计算可用宽度（减去左右边距）
+    int rowCount = (totalItems + columnCount - 1) / columnCount;   // 向上取整
+    if (rowCount > 1) {   // 计算可用宽度（减去左右边距）
         int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
         int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * 2 * iconViewSpacing;
         int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
@@ -1620,7 +1622,7 @@ void FileView::updateGeometries()
         iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
 #endif
         if (!d->isResizeEvent
-                || (d->isResizeEvent && d->lastContentHeight > 0 && d->lastContentHeight != contentsSize().height()))
+            || (d->isResizeEvent && d->lastContentHeight > 0 && d->lastContentHeight != contentsSize().height()))
             resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
         d->lastContentHeight = contentsSize().height();
     }

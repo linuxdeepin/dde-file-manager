@@ -15,6 +15,8 @@
 #include <QApplication>
 
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 #define TOP_GROUP_BASE "00_base"
 #define LV2_GROUP_OPEN_ACTION "00_base.00_open_action"

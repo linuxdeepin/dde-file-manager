@@ -20,6 +20,8 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 AbstractMenuScene *SortAndDisplayMenuCreator::create()
 {
@@ -207,7 +209,7 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
 
     if (WorkspaceHelper::instance()->supportTreeView(view->rootUrl().scheme())
-            && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+        && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplayTree));
         tempAction->setCheckable(true);
         predicateAction[ActionID::kDisplayTree] = tempAction;
@@ -222,8 +224,9 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
     auto itemRole = static_cast<Global::ItemRoles>(role);
     Qt::SortOrder order = view->model()->sortOrder();
     auto oldRole = view->model()->sortRole();
-    order = oldRole != role ? Qt::AscendingOrder
-                            : order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+    order = oldRole != role               ? Qt::AscendingOrder
+            : order == Qt::AscendingOrder ? Qt::DescendingOrder
+                                          : Qt::AscendingOrder;
 
     view->setSort(itemRole, order);
 }

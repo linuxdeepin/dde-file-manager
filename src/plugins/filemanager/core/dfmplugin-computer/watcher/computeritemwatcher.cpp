@@ -42,8 +42,10 @@ Q_DECLARE_METATYPE(QList<QUrl> *);
 inline constexpr char kComputerCfgPath[] { "org.deepin.dde.file-manager.computer" };
 inline constexpr char kKeyHideUserDir[] { "hideMyDirectories" };
 inline constexpr char kKeyHide3rdEntries[] { "hide3rdEntries" };
+inline constexpr char kHideDisk[] { "dfm.disk.hidden" };
 
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
@@ -401,7 +403,7 @@ bool ComputerItemWatcher::hide3rdEntries()
 
 QList<QUrl> ComputerItemWatcher::disksHiddenByDConf()
 {
-    const auto &&currHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
+    const auto &&currHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kHideDisk).toStringList().toSet();
     const auto &&allBlockUUIDs = ComputerUtils::allValidBlockUUIDs().toSet();
     const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allBlockUUIDs);   // setA ∩ setB
     const auto &&devUrls = ComputerUtils::blkDevUrlByUUIDs(needToBeHidden.toList());
@@ -884,7 +886,7 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
 
 void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
 {
-    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
+    if (cfgKey == kHideDisk && cfg == kDefaultCfgPath) {
         Q_EMIT updatePartitionsVisiable();
         handleSidebarItemsVisiable();
     }

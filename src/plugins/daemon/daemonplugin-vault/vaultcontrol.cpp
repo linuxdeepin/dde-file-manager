@@ -28,6 +28,7 @@ extern "C" {
 }
 
 inline constexpr int kArgumentsNum { 3 };
+using namespace GlobalDConfDefines::ConfigPath;
 
 DAEMONPVAULT_USE_NAMESPACE
 
@@ -265,10 +266,10 @@ void VaultControl::syncGroupPolicyAlgoName()
     VaultConfigOperator config;
     const QString &algoName = config.get(kConfigNodeName, kConfigKeyAlgoName, QVariant(kConfigKeyNotExist)).toString();
     if (algoName == QString(kConfigKeyNotExist)) {
-        dfmbase::DConfigManager::instance()->setValue(dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant("aes-256-gcm"));
+        dfmbase::DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant("aes-256-gcm"));
     } else {
         if (!algoName.isEmpty())
-            dfmbase::DConfigManager::instance()->setValue(dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+            dfmbase::DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
     }
 }
 

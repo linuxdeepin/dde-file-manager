@@ -12,6 +12,8 @@
 
 using namespace dfmbase;
 using namespace dfmplugin_utils;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 void VirtualReportLogPlugin::initialize()
 {

@@ -18,6 +18,9 @@
 #include <QWidget>
 
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
+
 namespace dfmplugin_computer {
 
 /*!
@@ -55,11 +58,11 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
     }
 
     DFMBASE_USE_NAMESPACE
-    auto flag = !DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, true).toBool();
+    auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                   kOpenFolderWindowsInASeparateProcess, true)
+                         .toBool();
     if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(url))
-            || Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
+        || Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
         sendEnterInNewWindow(url, !flag);
     else
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);

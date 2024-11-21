@@ -15,6 +15,7 @@
 #include <QDebug>
 
 DPMENU_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
 
 DConfigHiddenMenuScenePrivate::DConfigHiddenMenuScenePrivate(DConfigHiddenMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
@@ -52,7 +53,7 @@ void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
 void DConfigHiddenMenuScene::disableScene()
 {
     fmDebug() << "disable extend menu scene..";
-    static const QSet<QString> extendScenes{"OemMenu", "ExtendMenu"};
+    static const QSet<QString> extendScenes { "OemMenu", "ExtendMenu" };
     // this scene must be the sibling of extendScenes.
     if (auto parent = dynamic_cast<AbstractMenuScene *>(this->parent())) {
         auto subs = parent->subscene();

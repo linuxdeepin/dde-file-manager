@@ -28,6 +28,8 @@
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 AbstractMenuScene *FileOperatorMenuCreator::create()
 {
@@ -178,7 +180,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             rename->setDisabled(true);
 
         if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
-                && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
+            && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
             rename->setDisabled(true);
     }
 

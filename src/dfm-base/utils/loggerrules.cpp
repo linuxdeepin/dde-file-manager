@@ -6,6 +6,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
+using namespace GlobalDConfDefines::ConfigPath;
 DFMBASE_BEGIN_NAMESPACE
 
 LoggerRules &LoggerRules::instance()

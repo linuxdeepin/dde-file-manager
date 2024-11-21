@@ -16,6 +16,7 @@
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #    include <QGSettings>
 #endif
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_menu {
 namespace Helper {
