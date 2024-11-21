@@ -5736,7 +5736,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="273"/>
         <source>Password must be no more than %1 characters</source>
-        <translation>Hasło nie może zawierać więcej niż %1 znaków</translation>
+        <translation>Hasło nie może przekraczać %1 znaków</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
