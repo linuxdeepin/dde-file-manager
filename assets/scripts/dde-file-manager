@@ -78,8 +78,6 @@ for arg in "$@"; do
     args+="$arg,"
 done
 args=${args%,}
-echo "dbus args = "$args
-echo "origin args = "$argsOrigin
 
 if [[ $isDbus == "false" ]]; then
     exec file-manager.sh "$argsOrigin"
