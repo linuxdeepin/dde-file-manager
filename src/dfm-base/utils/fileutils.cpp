@@ -63,6 +63,7 @@
 #    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
 #    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
 #endif
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmbase {
 

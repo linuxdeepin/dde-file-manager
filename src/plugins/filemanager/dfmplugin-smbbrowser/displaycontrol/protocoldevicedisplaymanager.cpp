@@ -26,6 +26,7 @@ DFMBASE_USE_NAMESPACE
 using namespace computer_sidebar_event_calls;
 using namespace protocol_display_utilities;
 using namespace ui_ventry_calls;
+using namespace GlobalDConfDefines::ConfigPath;
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 

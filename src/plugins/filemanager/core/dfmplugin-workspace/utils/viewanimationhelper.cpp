@@ -17,6 +17,8 @@
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
 
 ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
     : QObject(parent),

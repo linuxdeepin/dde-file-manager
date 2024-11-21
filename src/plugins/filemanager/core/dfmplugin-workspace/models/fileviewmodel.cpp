@@ -36,6 +36,8 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 inline constexpr char kDdeFileManager[] { "dde-fileManager" };
 

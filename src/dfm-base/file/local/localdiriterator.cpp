@@ -18,6 +18,7 @@
 
 USING_IO_NAMESPACE
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace DConfigKeys {
 static constexpr char kAllAsync[] { "dfm.iterator.allasync" };

@@ -30,6 +30,7 @@ inline constexpr int kArgumentsNum { 3 };
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
+using namespace GlobalDConfDefines::ConfigPath;
 
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))

@@ -11,6 +11,8 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
 
 SortAnimationOper::SortAnimationOper(CanvasView *parent)
     : QObject(parent), view(parent)

@@ -21,6 +21,8 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 using DFMBASE_NAMESPACE::Global::ViewMode;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 static constexpr int kViewOptionsButtonIconSize { 16 };
 static constexpr int kViewOptionsMargin { 10 };

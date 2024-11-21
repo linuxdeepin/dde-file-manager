@@ -47,6 +47,8 @@ DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dde_desktop;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
 static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop.qt6";
@@ -160,7 +162,7 @@ static void waitingForKwin()
 static bool isDesktopEnable()
 {
     bool enable = !(dfmbase::DConfigManager::instance()->value(
-                                                               dfmbase::kDefaultCfgPath,
+                                                               kDefaultCfgPath,
                                                                "dd.disabled",
                                                                false)
                             .toBool());
