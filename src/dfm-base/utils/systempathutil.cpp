@@ -71,18 +71,7 @@ QString SystemPathUtil::systemPathIconNameByPath(QString path)
 
 bool SystemPathUtil::isSystemPath(QString path) const
 {
-    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    if (path.contains(userHome)) {
-        for (const QString &sysPath : systemPathsSet) {
-            if (path == sysPath)
-                return true;
-
-            if (path.endsWith(sysPath))
-                return FileUtils::isSameFile(path, sysPath);
-        }
-    }
-
-    return false;
+    return !findSystemPathKey(path).isEmpty();
 }
 
 bool SystemPathUtil::checkContainsSystemPath(const QList<QUrl> &urlList)
@@ -162,16 +151,24 @@ bool SystemPathUtil::checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList
 
 QString SystemPathUtil::findSystemPathKey(const QString &path) const
 {
-    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    if (path.contains(userHome)) {
+    auto targetPath(path);
+    if (targetPath.size() > 1 && targetPath.at(0) == '/' && targetPath.endsWith("/"))
+        targetPath.chop(1);
+
+    auto rootPath = StandardPaths::location(StandardPaths::kDiskPath);
+    if (systemPathsSet.contains(rootPath) && targetPath == rootPath)
+        return systemPathsMap.value(rootPath);
+
+    auto userHome = StandardPaths::location(StandardPaths::kHomePath);
+    if (targetPath.contains(userHome)) {
         QStringList &&keys = systemPathsMap.keys();
-        auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, &path](const QString &key) {
+        auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, targetPath](const QString &key) {
             auto sysPath = systemPathsMap.value(key);
-            if (sysPath == path)
+            if (sysPath == targetPath)
                 return true;
 
-            if (path.endsWith(sysPath))
-                return FileUtils::isSameFile(path, sysPath);
+            if (targetPath.endsWith(sysPath))
+                return FileUtils::isSameFile(targetPath, sysPath);
             
             return false;
         });
