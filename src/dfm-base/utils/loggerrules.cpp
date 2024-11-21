@@ -21,10 +21,8 @@ void LoggerRules::initLoggerRules()
 
     // set env
     currentRules = QString(logRules);
-    qCWarning(logDFMBase) << "Current system env log rules:" << logRules;
 
     logRules = DConfigManager::instance()->value(kDefaultCfgPath, "log_rules").toByteArray();
-    qCWarning(logDFMBase) << "Current app log rules :" << logRules;
     appendRules(logRules);
     setRules(currentRules);
 
