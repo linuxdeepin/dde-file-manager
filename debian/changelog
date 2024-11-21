@@ -1,3 +1,9 @@
+dde-file-manager (6.5.10) UNRELEASED; urgency=medium
+
+  * desktop adapt to Qt6.8
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Thu, 21 Nov 2024 17:11:48 +0800
+
 dde-file-manager (6.5.9) unstable; urgency=medium
 
   * fix dav mount issue.
