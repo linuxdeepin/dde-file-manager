@@ -22,6 +22,9 @@
 #include <QScreen>
 #include <QWindow>
 
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
+
 namespace dfmbase {
 
 enum NetWmState {
@@ -237,7 +240,7 @@ void FileManagerWindowPrivate::handleWindowResize(bool expanded)
         int requiredWidth = kMinimumRightWidth + lastSidebarExpandedPostion + splitter->handleWidth();
         if (currentWindowWidth < requiredWidth) {
             int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
-            auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
+            auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarCurve, 22).toInt());
 
             auto *windowAnimation = new QPropertyAnimation(q, "geometry");
             windowAnimation->setDuration(duration);
@@ -254,7 +257,7 @@ void FileManagerWindowPrivate::handleWindowResize(bool expanded)
 void FileManagerWindowPrivate::configureAnimation(int start, int end)
 {
     int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
-    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarSidebarCurve, 22).toInt());
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarCurve, 22).toInt());
 
     curSplitterAnimation = new QPropertyAnimation(splitter, "splitPosition");
     curSplitterAnimation->setEasingCurve(curve);

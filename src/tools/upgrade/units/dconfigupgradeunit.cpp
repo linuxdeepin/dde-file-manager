@@ -12,8 +12,9 @@
 
 Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
-using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
+using namespace dfm_upgrade;
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace DConfigKeys {
 static constexpr char kDFMMenuHidden[] { "dfm.menu.hidden" };

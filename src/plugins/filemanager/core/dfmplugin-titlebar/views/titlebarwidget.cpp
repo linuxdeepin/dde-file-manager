@@ -39,6 +39,8 @@ using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 inline constexpr int kSpacing { 10 };
 

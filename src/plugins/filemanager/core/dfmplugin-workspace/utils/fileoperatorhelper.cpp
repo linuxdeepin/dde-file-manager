@@ -24,6 +24,9 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
+
 FileOperatorHelper *FileOperatorHelper::instance()
 {
     static FileOperatorHelper helper;
@@ -105,11 +108,10 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
                     dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-                auto flag = !DConfigManager::instance()->
-                        value(kViewDConfName,
-                              kOpenFolderWindowsInASeparateProcess, true).toBool();
-                if (mode == DirOpenMode::kOpenNewWindow ||
-                        (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
+                auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                               kOpenFolderWindowsInASeparateProcess, true)
+                                     .toBool();
+                if (mode == DirOpenMode::kOpenNewWindow || (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
                     WorkspaceEventCaller::sendOpenWindow({ dirUrl }, !flag);
                 } else {
                     WorkspaceEventCaller::sendChangeCurrentUrl(windowId, dirUrl);
@@ -163,8 +165,8 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         return;
 
     fmInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls.first()
-            << ", selected count: " << selectedUrls.size()
-            << ", current dir: " << view->rootUrl();
+             << ", selected count: " << selectedUrls.size()
+             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
@@ -189,8 +191,8 @@ void FileOperatorHelper::cutFiles(const FileView *view)
         return;
 
     fmInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls.first()
-            << ", selected count: " << selectedUrls.size()
-            << ", current dir: " << view->rootUrl();
+             << ", selected count: " << selectedUrls.size()
+             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
@@ -256,7 +258,7 @@ void FileOperatorHelper::moveToTrash(const FileView *view)
         return;
 
     fmInfo() << "Move files to trash, selected urls: " << selectedUrls
-            << ", current dir: " << view->rootUrl();
+             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
@@ -272,7 +274,7 @@ void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &ur
         return;
 
     fmInfo() << "Move files to trash, files urls: " << urls
-            << ", current dir: " << view->rootUrl();
+             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
@@ -288,7 +290,7 @@ void FileOperatorHelper::deleteFiles(const FileView *view)
         return;
 
     fmInfo() << "Delete files, selected urls: " << selectedUrls
-            << ", current dir: " << view->rootUrl();
+             << ", current dir: " << view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
@@ -345,7 +347,7 @@ void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
         return;
 
     fmInfo() << "Send to bluetooth, selected urls: " << urls
-            << ", current dir: " << view->rootUrl();
+             << ", current dir: " << view->rootUrl();
 
     QStringList paths;
     for (const auto &u : urls)
@@ -381,7 +383,7 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
 void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair)
 {
     fmInfo() << "Rename files with replace string: " << replacePair
-            << ", files urls: " << urlList;
+             << ", files urls: " << urlList;
 
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
@@ -394,7 +396,7 @@ void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList
 void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &addPair)
 {
     fmInfo() << "Rename files with add string: " << addPair
-            << ", files urls: " << urlList;
+             << ", files urls: " << urlList;
 
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
@@ -406,7 +408,7 @@ void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUr
 void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair)
 {
     fmInfo() << "Rename files with custom string: " << customPair
-            << ", files urls: " << urlList;
+             << ", files urls: " << urlList;
 
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
@@ -475,7 +477,7 @@ void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgu
 
 void FileOperatorHelper::undoCallBackFunction(QSharedPointer<AbstractJobHandler> handler)
 {
-    connect(handler.data(), &AbstractJobHandler::finishedNotify, this, [ = ](const JobInfoPointer jobInfo){
+    connect(handler.data(), &AbstractJobHandler::finishedNotify, this, [=](const JobInfoPointer jobInfo) {
         AbstractJobHandler::JobType type = static_cast<AbstractJobHandler::JobType>(jobInfo->value(AbstractJobHandler::kJobtypeKey).toInt());
         if (type == AbstractJobHandler::JobType::kCutType) {
             QList<QUrl> targetUrls(jobInfo->value(AbstractJobHandler::kCompleteTargetFilesKey).value<QList<QUrl>>());
@@ -483,7 +485,7 @@ void FileOperatorHelper::undoCallBackFunction(QSharedPointer<AbstractJobHandler>
         }
     });
 
-    connect(handler.data(), &AbstractJobHandler::workerFinish, this, [ = ](){
+    connect(handler.data(), &AbstractJobHandler::workerFinish, this, [=]() {
         WorkspaceHelper::instance()->setUndoFiles({});
     });
 }

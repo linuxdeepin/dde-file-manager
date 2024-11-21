@@ -29,6 +29,8 @@ using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
     : QObject(parent), q(parent)
