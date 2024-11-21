@@ -373,8 +373,19 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 void DCustomActionParser::initWatcher()
 {
     static const QStringList &kPaths { { "/usr/etc/deepin/context-menus" },
-                                       { "/etc/deepin/context-menus" },
-                                       { "/usr/share/applications/context-menus" } };
+                                       { "/etc/deepin/context-menus" } };
+
+    // Add directories from XDG_DATA_DIRS environment variable
+    const QByteArray xdgDataDirs = qgetenv("XDG_DATA_DIRS");
+    if (!xdgDataDirs.isEmpty()) {
+        const QStringList dataDirs = QString::fromLocal8Bit(xdgDataDirs).split(':');
+        for (const QString &dir : dataDirs) {
+            QString path = dir + "/applications/context-menus";
+            if (!kPaths.contains(path) && QDir(path).exists())
+                menuPaths.append(path);
+        }
+    }
+
     std::for_each(kPaths.begin(), kPaths.end(), [this](const QString &path) {
         if (QDir(path).exists())
             menuPaths.append(path);
