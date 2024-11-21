@@ -805,7 +805,7 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, co
         return backgroundRect;
     }
 
-    painter->drawPixmap(qRound(x), qRound(y), px);
+    icon.paint(painter, opts.rect.toRect());
 
     // return rect before scale
     return QRect(qRound(x), qRound(y), w, h);
