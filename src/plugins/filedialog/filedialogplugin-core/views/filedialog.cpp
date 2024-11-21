@@ -376,10 +376,14 @@ void FileDialog::setNameFilters(const QStringList &filters)
 {
     d->nameFilters = filters;
 
-    if (testOption(QFileDialog::HideNameFilterDetails)) {
+    QVariant isGtk = qApp->property("GTK");
+    if (isGtk.isValid() && isGtk.toBool()) {
         statusBar()->setComBoxItems(CoreHelper::stripFilters(filters));
     } else {
-        statusBar()->setComBoxItems(filters);
+        if (testOption(QFileDialog::HideNameFilterDetails))
+            statusBar()->setComBoxItems(CoreHelper::stripFilters(filters));
+        else
+            statusBar()->setComBoxItems(filters);
     }
 
     if (modelCurrentNameFilter().isEmpty())
