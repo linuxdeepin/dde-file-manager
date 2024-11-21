@@ -35,6 +35,8 @@
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
+using namespace GlobalDConfDefines::ConfigPath;
+
 static constexpr char kSavePasswd[] { "savePasswd" };
 static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
 static constexpr char kSavedPasswordType[] { "SavedPasswordType" };

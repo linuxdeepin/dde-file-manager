@@ -15,6 +15,8 @@
 #include <QApplication>
 
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 #define TOP_GROUP_BASE "00_base"
 #define LV2_GROUP_OPEN_ACTION "00_base.00_open_action"
@@ -309,7 +311,7 @@ void SettingBackend::initWorkspaceSettingConfig()
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
-        viewModeValues.append( tr("Tree") );
+        viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
     ins->addComboboxConfig(LV2_GROUP_VIEW ".01_view_mode",

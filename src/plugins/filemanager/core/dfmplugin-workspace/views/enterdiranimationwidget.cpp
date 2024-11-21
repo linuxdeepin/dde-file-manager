@@ -12,6 +12,8 @@
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
 
 EnterDirAnimationWidget::EnterDirAnimationWidget(QWidget *parent)
     : QWidget(parent)

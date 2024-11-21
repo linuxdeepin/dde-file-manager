@@ -32,6 +32,8 @@
 
 using namespace dfmplugin_sidebar;
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
 

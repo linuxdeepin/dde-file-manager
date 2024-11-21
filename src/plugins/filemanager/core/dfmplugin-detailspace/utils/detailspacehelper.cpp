@@ -14,6 +14,8 @@
 #include <QPropertyAnimation>
 
 using namespace dfmplugin_detailspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::AnimationConfig;
 
 DFMBASE_USE_NAMESPACE
 
@@ -56,7 +58,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 {
     // Find the detail space widget for the given window ID
     DetailSpaceWidget *widget = findDetailSpaceByWindowId(windowId);
-    
+
     // Check if animations are enabled in DConfig settings
     const bool animEnable = DConfigManager::instance()->value(
                                                               kAnimationDConfName, kAnimationEnable, true)
@@ -83,10 +85,10 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
             // Start show animation
             animateDetailView(widget, true);
         }
-        
+
         // Make widget visible
         widget->setVisible(true);
-        
+
         // Update detail view content with current window URL
         auto window = FMWindowsIns.findWindowById(windowId);
         setDetailViewByUrl(widget, window->currentUrl());

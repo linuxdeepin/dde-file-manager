@@ -27,6 +27,8 @@
 Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
 
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 CommandParserPrivate::CommandParserPrivate()
 {
@@ -265,9 +267,9 @@ void CommandParser::openInHomeDirectory()
 {
     QString homePath = StandardPaths::location(StandardPaths::StandardLocation::kHomePath);
     QUrl url = QUrl::fromUserInput(homePath);
-    auto flag = DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, true).toBool();
+    auto flag = DConfigManager::instance()->value(kViewDConfName,
+                                                  kOpenFolderWindowsInASeparateProcess, true)
+                        .toBool();
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
@@ -308,9 +310,9 @@ void CommandParser::openInUrls()
         argumentUrls.append(url);
     }
     if (argumentUrls.isEmpty()) {
-        auto flag = DConfigManager::instance()->
-                value(kViewDConfName,
-                      kOpenFolderWindowsInASeparateProcess, true).toBool();
+        auto flag = DConfigManager::instance()->value(kViewDConfName,
+                                                      kOpenFolderWindowsInASeparateProcess, true)
+                            .toBool();
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), flag);
     }
     for (const QUrl &url : argumentUrls)
@@ -338,7 +340,7 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     });
 
     if (Q_UNLIKELY(schemeMap.keys().contains(url.scheme())
-                   && schemePlugins.value(url.scheme())->pluginState()!= dpf::PluginMetaObject::State::kLoaded)) {
+                   && schemePlugins.value(url.scheme())->pluginState() != dpf::PluginMetaObject::State::kLoaded)) {
         static std::once_flag flag;
         std::call_once(flag, [url, schemeMap]() {
             const QString &name { schemeMap.value(url.scheme()) };

@@ -13,6 +13,8 @@
 static constexpr char kCfgAppId[] { "org.deepin.dde.file-manager" };
 
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
+
 DCORE_USE_NAMESPACE
 
 DConfigManager::DConfigManager(QObject *parent)

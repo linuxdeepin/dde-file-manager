@@ -27,6 +27,8 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
@@ -253,7 +255,7 @@ void FileViewPrivate::updateHorizontalOffset()
         // 根据qt虚函数去计算当前的itemColumn（每行绘制的个数）
         int startLeftPx = q->visualRect(q->model()->index(0, 0, q->rootIndex())).left();
         int rowCount = q->model()->rowCount(q->rootIndex());
-        int maxColumnCount = qCeil(contentWidth / (60 + q->spacing() * 2)) + 2;  // 60是item最小宽度
+        int maxColumnCount = qCeil(contentWidth / (60 + q->spacing() * 2)) + 2;   // 60是item最小宽度
         for (int i = 1; i < qMax(maxColumnCount, rowCount); i++) {
             int itemLeft = q->visualRect(q->model()->index(i, 0, q->rootIndex())).left();
             // NOTE：如果实际item数量不足以绘制到第二行，qt将不会在位置计算中加上边距，
@@ -272,7 +274,7 @@ void FileViewPrivate::updateHorizontalOffset()
 
         // itemColumn每行绘制的个数，contentWidth绘制区域宽度，itemWidth每一个item + 2倍间距的绘制宽度
         if (contentWidth - itemWidth * itemColumn <= 0
-                || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
+            || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
             columnCountByCalc = 1;
             initHorizontalOffset = false;
             return;

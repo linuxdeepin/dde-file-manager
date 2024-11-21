@@ -22,6 +22,7 @@
 #include <QDBusPendingCall>
 
 Q_DECLARE_METATYPE(const char *)
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_smbbrowser {
 namespace smb_browser_utils {
