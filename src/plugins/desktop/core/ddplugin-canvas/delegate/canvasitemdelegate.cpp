@@ -305,7 +305,8 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
     return paintIcon(painter, indexOption.icon,
                      { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
                        QIcon::Off, isThumnailIconIndex(index) })
-            .size().toSize();
+            .size()
+            .toSize();
 }
 
 int CanvasItemDelegate::textLineHeight() const
@@ -779,7 +780,7 @@ QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const
 
         return backgroundRect;
     }
-    painter->drawPixmap(QPointF(x, y), px);
+    icon.paint(painter, opts.rect.toRect());
     // return rect before scale
     return QRectF(x, y, w, h);
 }
