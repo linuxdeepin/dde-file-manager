@@ -44,7 +44,6 @@ inline bool isNeedUpgrade()
         if (!dir.isWritable()) {
             qCritical() << "give up upgrading:the config dir is not writable" << dirPath;
             return false;
-            ;
         }
         return true;
     }

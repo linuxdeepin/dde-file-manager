@@ -4,7 +4,7 @@
 #include "desktopdbusinterface.h"
 
 #include "config.h"   //cmake
-// TODO: #Qt6 upgrade
+#include "tools/upgrade/builtininterface.h"
 
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -183,6 +183,42 @@ static QStringList translationDir()
     return translateDirs;
 }
 
+static void checkUpgrade()
+{
+    // TODO(zhangs): TODO(zhangs): dde-shell depends on Qt6,
+    // while the upgrade tool depends on Qt5.
+    // The upgrade adaptation will be carried out
+    // after the upgrade tool is compatible with Qt6.
+#ifdef DFM_ENABLE_UPGTAD_BY_DDE_SHELL
+    if (!dfm_upgrade::isNeedUpgrade())
+        return;
+
+    qCInfo(logAppDesktop) << "try to upgrade in desktop";
+    QMap<QString, QString> args;
+    args.insert("version", qApp->applicationVersion());
+    args.insert(dfm_upgrade::kArgDesktop, "dde-shell");
+
+    QString lib;
+    GetUpgradeLibraryPath(lib);
+
+    int ret = dfm_upgrade::tryUpgrade(lib, args);
+    if (ret < 0) {
+        qCWarning(logAppDesktop) << "something error, exit current process." << qApp->applicationPid();
+        _Exit(-1);
+    } else if (ret == 0) {
+        auto arguments = qApp->arguments();
+        // remove first
+        if (!arguments.isEmpty())
+            arguments.pop_front();
+
+        QDBusConnection::sessionBus().unregisterService(kDesktopServiceName);
+        qCInfo(logAppDesktop) << "restart self " << qApp->applicationFilePath() << arguments;
+        QProcess::startDetached(qApp->applicationFilePath(), arguments);
+        _Exit(-1);
+    }
+#endif
+}
+
 static bool main()
 {
     QString mainTime = QDateTime::currentDateTime().toString();
@@ -190,6 +226,8 @@ static bool main()
                           << "argments" << qApp->arguments() << mainTime;
 
     if (isDesktopEnable()) {
+        checkUpgrade();
+
         if (!pluginsLoad()) {
             qCCritical(logAppDesktop) << "Load pugin failed!";
             return false;
