@@ -70,7 +70,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             && !dpfHookSequence->run("dfmplugin_workspace", "hook_Allow_Repeat_Url", url, curView->rootUrl()))
             return;
 
-        bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+        bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterEnable, true).toBool();
         if (animEnable) {
             auto contentWidget = curView->contentWidget();
             if (!contentWidget)

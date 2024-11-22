@@ -61,7 +61,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 
     // Check if animations are enabled in DConfig settings
     const bool animEnable = DConfigManager::instance()->value(
-                                                              kAnimationDConfName, kAnimationEnable, true)
+                                                              kAnimationDConfName, kAnimationDetailviewEnable, true)
                                     .toBool();
 
     if (checked) {

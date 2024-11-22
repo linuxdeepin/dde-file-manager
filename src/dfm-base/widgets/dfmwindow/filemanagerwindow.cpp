@@ -214,7 +214,7 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
 
 bool FileManagerWindowPrivate::isAnimationEnabled() const
 {
-    return DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+    return DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarEnable, true).toBool();
 }
 
 bool FileManagerWindowPrivate::setupAnimation(bool expanded)

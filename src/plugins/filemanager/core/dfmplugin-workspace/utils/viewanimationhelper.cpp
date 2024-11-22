@@ -28,7 +28,7 @@ ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
 
 void ViewAnimationHelper::initAnimationHelper()
 {
-    if (!DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool())
+    if (!DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutEnable, true).toBool())
         return;
 
     currentIndexRectMap = calcIndexRects(view->contentsRect());
