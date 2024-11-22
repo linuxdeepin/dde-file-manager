@@ -38,7 +38,8 @@ void ProcessDialog::initialize(bool desktop)
 
 bool ProcessDialog::execDialog()
 {
-    const QString exe = onDesktop ? QString("/usr/bin/dde-file-manager") : QString("/usr/bin/dde-desktop");
+    // TODO(zhangs): /usr/libexec/dde-file-manager
+    const QString exe = onDesktop ? QString("/usr/bin/dde-file-manager") : QString("/usr/bin/dde-shell");
     auto process = queryProcess(exe);
     if (process.isEmpty())
         return true;
@@ -54,13 +55,8 @@ bool ProcessDialog::execDialog()
 void ProcessDialog::restart()
 {
     if (killed && !onDesktop) {
-        const QString &desktop = "/usr/bin/dde-desktop";
-        qCInfo(logToolUpgrade) << "restart desktop...";
-#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
-        QProcess::startDetached(desktop);
-#else
-        QProcess::startDetached(desktop, {});
-#endif
+        qCInfo(logToolUpgrade) << "restart dde-shell service...";
+        QProcess::startDetached("systemctl", { "--user", "restart", "dde-shell@DDE.service" });
     }
 }
 

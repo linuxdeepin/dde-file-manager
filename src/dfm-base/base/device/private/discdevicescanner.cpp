@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 static constexpr int kTimerInterval { 3000 };
-static const char kDesktopAppName[] { "dde-desktop" };
+static const char kDesktopAppName[] { "dde-shell" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 using namespace dfmbase;
@@ -163,7 +163,7 @@ void DiscDeviceScanner::initialize()
 {
     static std::once_flag flag;
     std::call_once(flag, [this]() {
-        // ony runing desktop or filemanger, not allowed to run simultaneously
+        // only runing desktop or filemanger, not allowed to run simultaneously
         if (qApp->applicationName() != kDesktopAppName && DevProxyMng->isDBusRuning()) {
             qCInfo(logDFMBase) << "Current app is filemanger and desktop running, don't init";
             return;
