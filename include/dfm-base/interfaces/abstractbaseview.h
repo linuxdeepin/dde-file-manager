@@ -26,13 +26,13 @@ public:
     void deleteLater();
 
     virtual QWidget *widget() const = 0;
-    virtual QWidget *contentWidget() const;
     virtual QUrl rootUrl() const = 0;
     virtual ViewState viewState() const;
     virtual bool setRootUrl(const QUrl &url) = 0;
     virtual QList<QAction *> toolBarActionList() const;
     virtual QList<QUrl> selectedUrlList() const;
     virtual void refresh();
+    virtual QWidget *contentWidget() const;
 
 protected:
     void notifyStateChanged();
