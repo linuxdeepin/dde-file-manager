@@ -625,7 +625,7 @@ void CanvasManagerPrivate::onAboutToFileSort()
 
 void CanvasManagerPrivate::onFileSorted()
 {
-    bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnable, true).toBool();
+    bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortEnable, true).toBool();
     // TODO(liuyangming): only one screen can play sort animation now.
     if (animEnable && q->views().count() == 1) {
         if (auto view = q->views().first()) {

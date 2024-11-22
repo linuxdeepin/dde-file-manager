@@ -24,14 +24,14 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
-        "dfm.animation.sort.enable": {
+        "dd.animation.resort.enable": {
             "value":true,
             "serial":0,
             "flags":[],
-            "name":"Sort animation enabled",
-            "name[zh_CN]":"启用排序方式动效",
-            "description[zh_CN]":"用于控制文件排序变化时的过渡动画效果",
-            "description":"Used to control the transition animation when changing sort order",
+            "name":"Desktop sort animation enabled",
+            "name[zh_CN]":"启用桌面排序动效",
+            "description[zh_CN]":"用于控制桌面图标排序变化时的过渡动画效果",
+            "description":"Used to control the transition animation when changing desktop icon sort order",
             "permissions":"readwrite",
             "visibility":"private"
         },
