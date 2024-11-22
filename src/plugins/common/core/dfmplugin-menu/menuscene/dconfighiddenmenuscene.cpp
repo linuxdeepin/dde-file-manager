@@ -70,7 +70,7 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
 {
     static const QMap<QString, QString> appKeyMap {
         { "dde-file-manager", "dfm.menu.action.hidden" },
-        { "dde-desktop", "dd.menu.action.hidden" },
+        { "dde-shell", "dd.menu.action.hidden" },
         { "dde-select-dialog-x11", "dfd.menu.action.hidden" },
         { "dde-select-dialog-wayland", "dfd.menu.action.hidden" },
         { "dde-file-dialog", "dfd.menu.action.hidden" },
