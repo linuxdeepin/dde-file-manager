@@ -159,7 +159,7 @@ void ExtensionPluginManagerPrivate::restartDesktop(const QUrl &url)
     }
 
     QMap<QString, QString> args;
-    args.insert(dfm_upgrade::kArgDesktop, "dde-desktop");
+    args.insert(dfm_upgrade::kArgDesktop, "dde-shell");
 
     int ret = func(args);
 
