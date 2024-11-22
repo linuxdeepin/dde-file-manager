@@ -25,6 +25,7 @@
 
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QKeyEvent>
 
 Q_DECLARE_METATYPE(QStringList *)
 
@@ -134,11 +135,26 @@ void Core::handleLoadPlugins(const QStringList &names)
 
 bool Core::eventFilter(QObject *watched, QEvent *event)
 {
+    static bool paintHandled = false;
     // windows paint
-    if (event->type() == QEvent::Paint) {
+    if (!paintHandled && event->type() == QEvent::Paint) {
         fmInfo() << "one window painting" << watched;
-        qApp->removeEventFilter(this);
+        paintHandled = true;
         QMetaObject::invokeMethod(this, "initializeAfterPainted", Qt::QueuedConnection);
+    }
+
+    // monitor keyboard events
+    if (event->type() == QEvent::KeyPress) {
+        const QKeyEvent *keyEvent = static_cast<const QKeyEvent *>(event);
+        if (!keyEvent) {
+            fmWarning() << "Failed to cast KeyPress event, event is null";
+            return false;
+        }
+        fmDebug() << "Keyboard event detected:"
+                  << "key:" << keyEvent->key()
+                  << "text:" << keyEvent->text()
+                  << "modifiers:" << keyEvent->modifiers()
+                  << "target object:" << watched;
     }
     return false;
 }
