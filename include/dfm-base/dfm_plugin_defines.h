@@ -31,7 +31,7 @@ inline constexpr std::initializer_list<const char *> kFileManager {
 
 namespace Edge {
 inline constexpr std::initializer_list<const char *> kCommon {
-    "dfmplugin-emblem", "dfmplugin-filepreview", "dfmplugin-tag",
+    "dfmplugin-emblem", "dfmplugin-tag",
     "dfmplugin-dirshare", "dfmplugin-burn"
 };
 inline constexpr std::initializer_list<const char *> kFileManager {
