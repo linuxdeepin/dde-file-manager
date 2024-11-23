@@ -223,6 +223,7 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.moveToCenter();
     d.exec();
 }
 
@@ -277,6 +278,7 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
+    d.moveToCenter();
     d.exec();
 }
 
