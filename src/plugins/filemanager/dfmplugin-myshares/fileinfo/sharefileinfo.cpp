@@ -26,6 +26,9 @@ ShareFileInfo::~ShareFileInfo()
 QString ShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
     if (DisPlayInfoType::kFileDisplayName == type) {
+        if (UrlRoute::isRootUrl(url))
+            return QObject::tr("My Shares");
+
         auto name = d->fileName();
         if (name.isEmpty())
             name = ProxyFileInfo::displayOf(type);
