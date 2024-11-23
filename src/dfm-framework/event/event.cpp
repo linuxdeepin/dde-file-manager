@@ -10,6 +10,13 @@ class EventPrivate
 public:
     using EventMap = QMap<QString, EventType>;
 
+    const QMap<QString, EventStratege> prefixMap { 
+        { kSignalStrategePrefix, EventStratege::kSignal },
+        { kSlotStrategePrefix, EventStratege::kSlot },
+        { kHookStrategePrefix, EventStratege::kHook } 
+    };
+    const QStringList prefixKeys { prefixMap.keys() };
+
     QReadWriteLock rwLock;
     QMap<EventStratege, EventMap> eventsMap {
         { EventStratege::kSignal, {} },
@@ -60,17 +67,12 @@ void Event::registerEventType(EventStratege stratege, const QString &space, cons
 
 EventType Event::eventType(const QString &space, const QString &topic)
 {
-    static const QMap<QString, EventStratege> prefixMap { { kSignalStrategePrefix, EventStratege::kSignal },
-                                                          { kSlotStrategePrefix, EventStratege::kSlot },
-                                                          { kHookStrategePrefix, EventStratege::kHook } };
-    static const QStringList prefixKeys { prefixMap.keys() };
-
     QStringList splits { topic.split("_") };
     Q_ASSERT(splits.size() > 0);
     QString prefix { splits.first().toLower() };
-    if (!prefixKeys.contains(prefix))
+    if (!d->prefixKeys.contains(prefix))
         return EventTypeScope::kInValid;
-    EventStratege stratege { prefixMap.value(prefix) };
+    EventStratege stratege { d->prefixMap.value(prefix) };
     QString key { space + ":" + topic };
 
     QReadLocker guard(&d->rwLock);
