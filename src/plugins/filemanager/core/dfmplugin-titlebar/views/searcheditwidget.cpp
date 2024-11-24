@@ -22,9 +22,7 @@
 #include <DSpinner>
 #include <DDialog>
 #include <DGuiApplicationHelper>
-#ifdef DTKWIDGET_CLASS_DSizeMode
 #include <DSizeMode>
-#endif
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
@@ -154,7 +152,7 @@ void SearchEditWidget::onReturnPressed()
     startSpinner();
 }
 
-void SearchEditWidget::onTextChanged(const QString &text)
+void SearchEditWidget::onTextEdited(const QString &text)
 {
     lastEditedString = text;
     if (text.isEmpty()) {
@@ -367,7 +365,7 @@ void SearchEditWidget::initUI()
 void SearchEditWidget::initConnect()
 {
     connect(searchButton, &DIconButton::clicked, this, &SearchEditWidget::expandSearchEdit);
-    connect(searchEdit, &DSearchEdit::textChanged, this, &SearchEditWidget::onTextChanged, Qt::QueuedConnection);
+    connect(searchEdit, &DSearchEdit::textEdited, this, &SearchEditWidget::onTextEdited, Qt::QueuedConnection);
     connect(searchEdit, &DSearchEdit::returnPressed, this, &SearchEditWidget::onReturnPressed);
     connect(searchEdit, &DSearchEdit::searchAborted, this, [this]() {
         stopSpinner();
