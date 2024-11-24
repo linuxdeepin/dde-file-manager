@@ -58,7 +58,7 @@ public Q_SLOTS:
     void onPauseButtonClicked();
     void onAdvancedButtonClicked();
     void onReturnPressed();
-    void onTextChanged(const QString &text);
+    void onTextEdited(const QString &text);
     void onClearSearchHistory(quint64 winId);
     void onDConfigValueChanged(const QString &config, const QString &key);
 
