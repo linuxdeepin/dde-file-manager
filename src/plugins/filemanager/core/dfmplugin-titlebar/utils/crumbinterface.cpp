@@ -21,19 +21,9 @@ CrumbInterface::CrumbInterface(QObject *parent)
 {
 }
 
-void CrumbInterface::setKeepAddressBar(bool keep)
-{
-    keepAddr = keep;
-}
-
 void CrumbInterface::setSupportedScheme(const QString &scheme)
 {
     curScheme = scheme;
-}
-
-bool CrumbInterface::isKeepAddressBar()
-{
-    return keepAddr;
 }
 
 bool CrumbInterface::isSupportedScheme(const QString &scheme)
@@ -46,21 +36,11 @@ void CrumbInterface::processAction(CrumbInterface::ActionType type)
     switch (type) {
     case kEscKeyPressed:
     case kClearButtonPressed:
-        emit hideAddressBar(keepAddr);
+        emit hideAddressBar();
         break;
     case kAddressBarLostFocus:
-        if (!keepAddr)
-            emit hideAddressBar(keepAddr);
+        emit hideAddressBar();
         break;
-    }
-}
-
-void CrumbInterface::crumbUrlChangedBehavior(const QUrl &url)
-{
-    if (keepAddr) {
-        emit keepAddressBar(url);
-    } else {
-        emit hideAddrAndUpdateCrumbs(url);
     }
 }
 
