@@ -52,9 +52,11 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
     CrumbManager::instance()->registerCrumbCreator(scheme, [=]() {
         CrumbInterface *interface = new CrumbInterface();
         interface->setSupportedScheme(scheme);
-        interface->setKeepAddressBar(keepAddressBar);
         return interface;
     });
+
+    if (keepAddressBar)
+        TitleBarHelper::registerKeepTitleStatusScheme(scheme);
 
     return true;
 }

@@ -30,6 +30,7 @@ using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
+QList<QString> TitleBarHelper::kKeepTitleStatusSchemeList {};
 
 bool TitleBarHelper::newWindowAndTabEnabled { true };
 
@@ -309,6 +310,18 @@ void TitleBarHelper::showDiskPasswordChangingDialog(quint64 windowId)
     QObject::connect(dialog, &DiskPasswordChangingDialog::closed, [=] {
         window->setProperty("DiskPwdChangingDialogShown", false);
     });
+}
+
+void TitleBarHelper::registerKeepTitleStatusScheme(const QString &scheme)
+{
+    if (!kKeepTitleStatusSchemeList.contains(scheme))
+        kKeepTitleStatusSchemeList.append(scheme);
+}
+
+bool TitleBarHelper::checkKeepTitleStatus(const QUrl &url)
+{
+    auto scheme = url.scheme();
+    return kKeepTitleStatusSchemeList.contains(scheme);
 }
 
 QMutex &TitleBarHelper::mutex()
