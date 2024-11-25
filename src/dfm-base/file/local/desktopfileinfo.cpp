@@ -121,10 +121,7 @@ QStringList DesktopFileInfo::desktopCategories() const
 QIcon DesktopFileInfo::fileIcon()
 {
     if (Q_LIKELY(!d->icon.isNull())) {
-        if (Q_LIKELY(!d->icon.availableSizes().isEmpty()))
-            return d->icon;
-
-        d->icon = QIcon();
+        return d->icon;
     }
 
     const QString &iconName = this->nameOf(NameInfoType::kIconName);
