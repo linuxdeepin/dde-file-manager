@@ -34,14 +34,13 @@ public:
 
 Q_SIGNALS:
     void showAddressBarText(const QString &text);
-    void hideAddressBar(bool cd);
+    void hideAddressBar();
     void selectedUrl(const QUrl &url);
     void editUrl(const QUrl &url);
 
 public Q_SLOTS:
     void onUrlChanged(const QUrl &url);
     void onKeepAddressBar(const QUrl &url);
-    void onHideAddrAndUpdateCrumbs(const QUrl &url);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -56,6 +55,9 @@ protected:
     void enterEvent(QEvent *event) override;
 #endif
     void leaveEvent(QEvent *event) override;
+
+private:
+    void onHideAddrAndUpdateCrumbs(const QUrl &url);
 };
 
 }

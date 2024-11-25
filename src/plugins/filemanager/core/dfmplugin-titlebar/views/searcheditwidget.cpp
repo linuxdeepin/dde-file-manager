@@ -47,7 +47,7 @@ SearchEditWidget::SearchEditWidget(QWidget *parent)
     advancedButton->installEventFilter(this);
 }
 
-void SearchEditWidget::activateEdit()
+void SearchEditWidget::activateEdit(bool setAdvanceBtn)
 {
     if (!searchEdit || !advancedButton || !searchButton)
         return;
@@ -57,7 +57,7 @@ void SearchEditWidget::activateEdit()
     else
         setSearchMode(SearchMode::kExpanded);
 
-    if (searchEdit->hasFocus()) {
+    if (searchEdit->hasFocus() && setAdvanceBtn) {
         advancedButton->setChecked(!advancedButton->isChecked());
         TitleBarEventCaller::sendShowFilterView(this, advancedButton->isChecked());
     } else {
@@ -70,8 +70,12 @@ void SearchEditWidget::deactivateEdit()
     if (!searchEdit || !advancedButton)
         return;
 
-    searchEdit->setVisible(false);
+    advancedButton->setChecked(false);
     advancedButton->setVisible(false);
+
+    searchEdit->clearEdit();
+    if (parentWidget())
+        updateSearchEditWidget(parentWidget()->width());
 }
 
 void SearchEditWidget::setAdvancedButtonVisible(bool visible)
@@ -105,6 +109,21 @@ void SearchEditWidget::setSearchMode(SearchMode mode)
 
     currentMode = mode;
     updateSearchWidgetLayout();
+}
+
+void SearchEditWidget::onUrlChanged(const QUrl &url)
+{
+    if (TitleBarHelper::checkKeepTitleStatus(url)) {
+        QUrlQuery query { url.query() };
+        QString searchKey { query.queryItemValue("keyword", QUrl::FullyDecoded) };
+        if (!searchKey.isEmpty()) {
+            activateEdit(false);
+            searchEdit->setText(searchKey);
+        }
+        return;
+    }
+
+    deactivateEdit();
 }
 
 void SearchEditWidget::onPauseButtonClicked()
