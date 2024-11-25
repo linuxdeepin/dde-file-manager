@@ -35,6 +35,9 @@ public:
     static void showUserSharePasswordSettingDialog(quint64 windowId);
     static void showDiskPasswordChangingDialog(quint64 windowId);
 
+    static void registerKeepTitleStatusScheme(const QString &scheme);
+    static bool checkKeepTitleStatus(const QUrl &url);
+
 public:
     static bool newWindowAndTabEnabled;
 
@@ -43,6 +46,7 @@ private:
     static void handleSettingMenuTriggered(quint64 windowId, int action);
     static QString getDisplayName(const QString &name);
     static QMap<quint64, TitleBarWidget *> kTitleBarMap;
+    static QList<QString> kKeepTitleStatusSchemeList;
 };
 
 }

@@ -298,11 +298,9 @@ void TitleBarWidget::initConnect()
         addressBar->setFocus();
         addressBar->setText(text);
     });
-    connect(crumbBar, &CrumbBar::hideAddressBar, this, [this](bool cd) {
+    connect(crumbBar, &CrumbBar::hideAddressBar, this, [this] {
         addressBar->hide();
         crumbBar->show();
-        if (cd)
-            TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
     connect(crumbBar, &CrumbBar::selectedUrl, this, [this](const QUrl &url) {
         TitleBarEventCaller::sendCd(this, url);
@@ -330,6 +328,7 @@ void TitleBarWidget::initConnect()
     connect(searchEditWidget, &SearchEditWidget::clearButtonClicked, this, [this]() {
         TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
+    connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
     connect(bottomBar, &TabBar::tabRemoved, this, &TitleBarWidget::onTabRemoved);
@@ -414,11 +413,8 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     if (watched == addressBar) {
         switch (event->type()) {
         case QEvent::Hide:
-            if (!crumbBar->controller()->isKeepAddressBar()) {
-                showCrumbBar();
-                return true;
-            }
-            break;
+            showCrumbBar();
+            return true;
         default:
             break;
         }

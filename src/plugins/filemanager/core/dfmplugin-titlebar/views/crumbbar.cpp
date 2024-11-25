@@ -93,7 +93,6 @@ void CrumbBarPrivate::updateController(const QUrl &url)
         crumbController->setParent(q);
         QObject::connect(crumbController, &CrumbInterface::hideAddressBar, q, &CrumbBar::hideAddressBar);
         QObject::connect(crumbController, &CrumbInterface::keepAddressBar, q, &CrumbBar::onKeepAddressBar);
-        QObject::connect(crumbController, &CrumbInterface::hideAddrAndUpdateCrumbs, q, &CrumbBar::onHideAddrAndUpdateCrumbs);
     }
 }
 
@@ -268,7 +267,6 @@ CrumbBar::CrumbBar(QWidget *parent)
     : QFrame(parent), d(new CrumbBarPrivate(this))
 {
     setFrameShape(QFrame::NoFrame);
-    // setFrameShape(QFrame::Box);
 }
 
 CrumbBar::~CrumbBar()
@@ -412,10 +410,16 @@ void CrumbBar::leaveEvent(QEvent *event)
 
 void CrumbBar::onUrlChanged(const QUrl &url)
 {
-    d->updateController(url);
+    auto sourceUrl = url;
+    if (TitleBarHelper::checkKeepTitleStatus(url)) {
+        QUrlQuery query { url.query() };
+        QString sourcePath { query.queryItemValue("url", QUrl::FullyDecoded) };
+        if (!sourcePath.isEmpty())
+            sourceUrl = QUrl(sourcePath);
+    }
 
-    if (d->crumbController)
-        d->crumbController->crumbUrlChangedBehavior(url);
+    d->updateController(sourceUrl);
+    onHideAddrAndUpdateCrumbs(sourceUrl);
 }
 
 void CrumbBar::onKeepAddressBar(const QUrl &url)
@@ -427,7 +431,7 @@ void CrumbBar::onKeepAddressBar(const QUrl &url)
 
 void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
 {
-    emit hideAddressBar(false);
+    emit hideAddressBar();
 
     d->clearCrumbs();
     bool updataFlag = false;

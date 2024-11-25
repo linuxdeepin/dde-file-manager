@@ -42,7 +42,7 @@ class SearchEditWidget : public QWidget
 public:
     explicit SearchEditWidget(QWidget *parent = nullptr);
 
-    void activateEdit();
+    void activateEdit(bool setAdvanceBtn = true);
     void deactivateEdit();
 
     void startSpinner();
@@ -55,6 +55,7 @@ public:
     void setSearchMode(SearchMode mode);
 
 public Q_SLOTS:
+    void onUrlChanged(const QUrl &url);
     void onPauseButtonClicked();
     void onAdvancedButtonClicked();
     void onReturnPressed();

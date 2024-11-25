@@ -28,19 +28,16 @@ public:
 
     explicit CrumbInterface(QObject *parent = nullptr);
 
-    void setKeepAddressBar(bool keep);
     void setSupportedScheme(const QString &scheme);
-    bool isKeepAddressBar();
     bool isSupportedScheme(const QString &scheme);
 
     void processAction(ActionType type);
-    void crumbUrlChangedBehavior(const QUrl &url);
     FAKE_VIRTUAL QList<CrumbData> seprateUrl(const QUrl &url);
     void requestCompletionList(const QUrl &url);
     void cancelCompletionListTransmission();
 
 signals:
-    void hideAddressBar(bool cd);
+    void hideAddressBar();
     void pauseSearch();
     void keepAddressBar(const QUrl &url);
     void hideAddrAndUpdateCrumbs(const QUrl &url);
@@ -52,7 +49,6 @@ private slots:
 
 private:
     QString curScheme;
-    bool keepAddr { false };
     QPointer<DFMBASE_NAMESPACE::TraversalDirThread> folderCompleterJobPointer;
 };
 

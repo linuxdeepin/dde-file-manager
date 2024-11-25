@@ -77,7 +77,7 @@ void Search::onWindowOpened(quint64 windId)
 void Search::regSearchCrumbToTitleBar()
 {
     QVariantMap property;
-    property["Property_Key_KeepAddressBar"] = false;
+    property["Property_Key_KeepAddressBar"] = true;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SearchHelper::scheme(), property);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_RedirectUrl",
                             SearchHelper::instance(), &SearchHelper::crumbRedirectUrl);
