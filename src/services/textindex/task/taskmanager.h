@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef TASKMANAGER_H
 #define TASKMANAGER_H
 
-#include "../service_textindex_global.h"
+#include "service_textindex_global.h"
 #include "indextask.h"
 
 #include <QObject>
@@ -23,13 +27,14 @@ public:
 Q_SIGNALS:
     void createFailed();
     void createSuccessful();
-    void createIndexCountChanged(int);
+    void createIndexCountChanged(qint64);
     void updateFailed();
     void updateSuccessful();
-    void updateIndexCountChanged(int);
+    void updateIndexCountChanged(qint64);
+    void startTaskInThread();
 
 private Q_SLOTS:
-    void onTaskProgress(IndexTask::Type type, int count);
+    void onTaskProgress(IndexTask::Type type, qint64 count);
     void onTaskFinished(IndexTask::Type type, bool success);
 
 private:
@@ -40,4 +45,4 @@ private:
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
-#endif // TASKMANAGER_H
+#endif   // TASKMANAGER_H

@@ -30,13 +30,6 @@ void TextIndexDBusPrivate::initConnect()
                      q, &TextIndexDBus::UpdateIndexCountChanged);
 }
 
-QString TextIndexDBusPrivate::indexStorePath() const
-{
-    static QString path = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
-            + "/deepin/dde-file-manager/index";
-    return path;
-}
-
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext(), d(new TextIndexDBusPrivate(this))
 {
@@ -50,12 +43,12 @@ TextIndexDBus::~TextIndexDBus() { }
 
 bool TextIndexDBus::CreateIndexTask(const QString &path)
 {
-    return d->taskManager->startTask(IndexTask::Create, path);
+    return d->taskManager->startTask(IndexTask::Type::Create, path);
 }
 
 bool TextIndexDBus::UpdateIndexTask(const QString &path)
 {
-    return d->taskManager->startTask(IndexTask::Update, path);
+    return d->taskManager->startTask(IndexTask::Type::Update, path);
 }
 
 bool TextIndexDBus::StopCurrentTask()
@@ -71,7 +64,8 @@ bool TextIndexDBus::HasRunningTask()
 {
     return d->taskManager->hasRunningTask();
 }
+
 bool TextIndexDBus::IndexDatabaseExists()
 {
-    return IndexReader::indexExists(FSDirectory::open(d->indexStorePath().toStdWString()));
+    return IndexReader::indexExists(FSDirectory::open(indexStorePath().toStdWString()));
 }
