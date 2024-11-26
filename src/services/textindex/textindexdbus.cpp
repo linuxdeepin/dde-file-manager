@@ -7,11 +7,35 @@
 
 static constexpr char kTextIndexObjPath[] { "/org/deepin/Filemanager/TextIndex" };
 
-namespace service_textindex {
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 DFM_LOG_REISGER_CATEGORY(SERVICETEXTINDEX_NAMESPACE)
-}
+SERVICETEXTINDEX_END_NAMESPACE
 
 SERVICETEXTINDEX_USE_NAMESPACE
+using namespace Lucene;
+
+void TextIndexDBusPrivate::initConnect()
+{
+    QObject::connect(taskManager, &TaskManager::createFailed,
+                     q, &TextIndexDBus::CreateFailed);
+    QObject::connect(taskManager, &TaskManager::createSuccessful,
+                     q, &TextIndexDBus::CreateSuccessful);
+    QObject::connect(taskManager, &TaskManager::createIndexCountChanged,
+                     q, &TextIndexDBus::CreateIndexCountChanged);
+    QObject::connect(taskManager, &TaskManager::updateFailed,
+                     q, &TextIndexDBus::UpdateFailed);
+    QObject::connect(taskManager, &TaskManager::updateSuccessful,
+                     q, &TextIndexDBus::UpdateSuccessful);
+    QObject::connect(taskManager, &TaskManager::updateIndexCountChanged,
+                     q, &TextIndexDBus::UpdateIndexCountChanged);
+}
+
+QString TextIndexDBusPrivate::indexStorePath() const
+{
+    static QString path = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
+            + "/deepin/dde-file-manager/index";
+    return path;
+}
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext(), d(new TextIndexDBusPrivate(this))
@@ -24,27 +48,30 @@ TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
 
 TextIndexDBus::~TextIndexDBus() { }
 
-void TextIndexDBus::CloseTask()
-{
-}
-
 bool TextIndexDBus::CreateIndexTask(const QString &path)
 {
-    return true;
+    return d->taskManager->startTask(IndexTask::Create, path);
 }
 
 bool TextIndexDBus::UpdateIndexTask(const QString &path)
 {
+    return d->taskManager->startTask(IndexTask::Update, path);
+}
+
+bool TextIndexDBus::StopCurrentTask()
+{
+    if (!d->taskManager->hasRunningTask())
+        return false;
+
+    d->taskManager->stopCurrentTask();
     return true;
 }
 
+bool TextIndexDBus::HasRunningTask()
+{
+    return d->taskManager->hasRunningTask();
+}
 bool TextIndexDBus::IndexDatabaseExists()
 {
-    // TODO: dconfig + lock + db exists
-    return true;
-}
-
-bool TextIndexDBus::IndexTaskInProgress()
-{
-    return false;
+    return IndexReader::indexExists(FSDirectory::open(d->indexStorePath().toStdWString()));
 }
