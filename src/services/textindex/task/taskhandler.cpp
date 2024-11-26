@@ -5,6 +5,7 @@
 #include "taskhandler.h"
 
 #include "progressnotifier.h"
+#include "utils/indextraverseutils.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/device/deviceutils.h>
@@ -39,12 +40,47 @@ using namespace Lucene;
 
 namespace {
 
-static constexpr char kFilterFolders[] { "^/(boot|dev|proc|sys|run|lib|usr).*$" };
+class ProgressReporter
+{
+public:
+    explicit ProgressReporter()
+        : processedCount(0), lastReportTime(QDateTime::currentDateTime())
+    {
+    }
+
+    ~ProgressReporter()
+    {
+        // 确保最后一次进度能够显示
+        emit ProgressNotifier::instance()->progressChanged(processedCount);
+    }
+
+    void increment()
+    {
+        ++processedCount;
+
+        // 检查是否经过了足够的时间间隔(1秒)
+        QDateTime now = QDateTime::currentDateTime();
+        if (lastReportTime.msecsTo(now) >= 1000) {   // 1000ms = 1s
+            emit ProgressNotifier::instance()->progressChanged(processedCount);
+            lastReportTime = now;
+        }
+    }
+
+private:
+    qint64 processedCount;
+    QDateTime lastReportTime;
+};
+
+// 目录遍历相关函数
+using FileHandler = std::function<void(const QString &path)>;
+
+// 常量定义
 static constexpr char kSupportFiles[] { "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
                                         "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)|"
                                         "(sh)|(html)|(htm)|(xml)|(xhtml)|(dhtml)|(shtm)|(shtml)|"
                                         "(json)|(css)|(yaml)|(ini)|(bat)|(js)|(sql)|(uof)|(ofd)" };
 
+// 文档处理相关函数
 DocumentPtr createFileDocument(const QString &file)
 {
     DocumentPtr doc = newLucene<Document>();
@@ -67,77 +103,6 @@ DocumentPtr createFileDocument(const QString &file)
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 
     return doc;
-}
-
-void processFile(const QString &path, const IndexWriterPtr &writer, qint64 *processedCount)
-{
-    try {
-        auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path),
-                                                  Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!info) return;
-
-        QString suffix = info->nameOf(NameInfoType::kSuffix);
-        static const QRegularExpression suffixRegex(kSupportFiles);
-        if (suffixRegex.match(suffix).hasMatch()) {
-            fmDebug() << "Adding [" << path << "]";
-            writer->addDocument(createFileDocument(path));
-            if (processedCount) {
-                ++(*processedCount);
-                emit ProgressNotifier::instance()->progressChanged(*processedCount);
-            }
-        }
-    } catch (const std::exception &e) {
-        fmWarning() << "Process file failed:" << path << e.what();
-    }
-}
-
-void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
-                       qint64 *processedCount, const std::atomic_bool &running)
-{
-    static const QRegularExpression filterRegex(kFilterFolders);
-    QMap<QString, QString> bindPathTable = DeviceUtils::fstabBindInfo();
-
-    QQueue<QString> dirQueue;
-    dirQueue.enqueue(rootPath);
-
-    while (!dirQueue.isEmpty() && running.load()) {
-        QString currentPath = dirQueue.dequeue();
-
-        if (bindPathTable.contains(currentPath) || 
-            (filterRegex.match(currentPath).hasMatch() && !currentPath.startsWith("/run/user")))
-            continue;
-
-        if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20)
-            continue;
-
-        DIR *dir = opendir(currentPath.toStdString().c_str());
-        if (!dir) {
-            fmWarning() << "Cannot open directory:" << currentPath;
-            continue;
-        }
-
-        FinallyUtil dirCloser([dir]() { closedir(dir); });
-
-        struct dirent *entry;
-        while ((entry = readdir(dir)) && running.load()) {
-            if (entry->d_name[0] == '.' && strncmp(entry->d_name, ".local", strlen(".local")))
-                continue;
-
-            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
-                continue;
-
-            QString fullPath = currentPath + "/" + entry->d_name;
-            struct stat st;
-            if (lstat(fullPath.toStdString().c_str(), &st) == -1)
-                continue;
-
-            if (S_ISDIR(st.st_mode)) {
-                dirQueue.enqueue(fullPath);
-            } else {
-                processFile(fullPath, writer, processedCount);
-            }
-        }
-    }
 }
 
 bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *needAdd)
@@ -172,10 +137,40 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
     }
 }
 
-void updateFile(const QString &path, const IndexReaderPtr &reader,
-                const IndexWriterPtr &writer, qint64 *processedCount)
+bool isSupportedFile(const QString &path)
+{
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path),
+                                              Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info) return false;
+
+    QString suffix = info->nameOf(NameInfoType::kSuffix);
+    static const QRegularExpression suffixRegex(kSupportFiles);
+    return suffixRegex.match(suffix).hasMatch();
+}
+
+void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
+        if (!isSupportedFile(path))
+            return;
+
+        fmDebug() << "Adding [" << path << "]";
+        writer->addDocument(createFileDocument(path));
+        if (reporter) {
+            reporter->increment();
+        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Process file failed:" << path << e.what();
+    }
+}
+
+void updateFile(const QString &path, const IndexReaderPtr &reader,
+                const IndexWriterPtr &writer, ProgressReporter *reporter)
+{
+    try {
+        if (!isSupportedFile(path))
+            return;
+
         bool needAdd = false;
         if (checkNeedUpdate(path, reader, &needAdd)) {
             if (needAdd) {
@@ -186,9 +181,8 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 TermPtr term = newLucene<Term>(L"path", path.toStdWString());
                 writer->updateDocument(term, createFileDocument(path));
             }
-            if (processedCount) {
-                ++(*processedCount);
-                emit ProgressNotifier::instance()->progressChanged(*processedCount);
+            if (reporter) {
+                reporter->increment();
             }
         }
     } catch (const std::exception &e) {
@@ -196,25 +190,28 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
-void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
-                       const IndexWriterPtr &writer, qint64 *processedCount,
-                       const std::atomic_bool &running)
+void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &running,
+                             const FileHandler &fileHandler)
 {
-    static const QRegularExpression filterRegex(kFilterFolders);
     QMap<QString, QString> bindPathTable = DeviceUtils::fstabBindInfo();
+    QSet<QString> visitedDirs;
 
-    // 用队列存储待处理的目录
     QQueue<QString> dirQueue;
     dirQueue.enqueue(rootPath);
 
     while (!dirQueue.isEmpty() && running.load()) {
         QString currentPath = dirQueue.dequeue();
 
-        // 检查过滤条件
-        if (bindPathTable.contains(currentPath) || (filterRegex.match(currentPath).hasMatch() && !currentPath.startsWith("/run/user")))
+        // 检查是否是系统目录或绑定目录
+        if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath))
             continue;
 
+        // 检查路径长度和深度限制
         if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20)
+            continue;
+
+        // 检查目录是否已访问
+        if (!IndexTraverseUtils::isValidDirectory(currentPath, visitedDirs))
             continue;
 
         DIR *dir = opendir(currentPath.toStdString().c_str());
@@ -227,36 +224,50 @@ void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
 
         struct dirent *entry;
         while ((entry = readdir(dir)) && running.load()) {
-            if (entry->d_name[0] == '.' && strncmp(entry->d_name, ".local", strlen(".local")))
+            if (IndexTraverseUtils::isHiddenFile(entry->d_name) || IndexTraverseUtils::isSpecialDir(entry->d_name))
                 continue;
 
-            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
-                continue;
+            QString fullPath = QDir::cleanPath(currentPath + QDir::separator() + QString::fromUtf8(entry->d_name));
 
-            QString fullPath = currentPath + "/" + entry->d_name;
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1)
                 continue;
 
-            if (S_ISDIR(st.st_mode)) {
-                dirQueue.enqueue(fullPath);   // 将子目录加入队列
-            } else {
-                auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(fullPath),
-                                                          Global::CreateFileInfoType::kCreateFileInfoSync);
-                if (!info) continue;
-
-                QString suffix = info->nameOf(NameInfoType::kSuffix);
-                static const QRegularExpression suffixRegex(kSupportFiles);
-                if (suffixRegex.match(suffix).hasMatch()) {
-                    updateFile(fullPath, reader, writer, processedCount);
+            // 对于普通文件，只检查路径有效性
+            if (S_ISREG(st.st_mode)) {
+                if (IndexTraverseUtils::isValidFile(fullPath)) {
+                    fileHandler(fullPath);
                 }
+            }
+            // 对于目录，加入队列（后续会检查是否访问过）
+            else if (S_ISDIR(st.st_mode)) {
+                dirQueue.enqueue(fullPath);
             }
         }
     }
 }
 
+void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
+                       const std::atomic_bool &running)
+{
+    ProgressReporter reporter;
+    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
+        processFile(path, writer, &reporter);
+    });
+}
+
+void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
+                       const IndexWriterPtr &writer, const std::atomic_bool &running)
+{
+    ProgressReporter reporter;
+    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
+        updateFile(path, reader, writer, &reporter);
+    });
+}
+
 }   // namespace
 
+// 公开的任务处理函数实现
 TaskHandler TaskHandlers::CreateIndexHandler()
 {
     return [](const QString &path, std::atomic_bool &running) -> bool {
@@ -285,15 +296,14 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             FinallyUtil writerCloser([&writer]() {
                 try {
                     if (writer) writer->close();
-                } catch (...) {}
+                } catch (...) {
+                }
             });
 
             fmInfo() << "Indexing to directory:" << indexStorePath();
 
-            qint64 processedCount = 0;
-
             writer->deleteAll();
-            traverseDirectory(path, writer, &processedCount, running);
+            traverseDirectory(path, writer, running);
 
             if (!running.load()) {
                 fmInfo() << "Create index task was interrupted";
@@ -325,7 +335,8 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             FinallyUtil readerCloser([&reader]() {
                 try {
                     if (reader) reader->close();
-                } catch (...) {}
+                } catch (...) {
+                }
             });
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
@@ -337,16 +348,11 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             FinallyUtil writerCloser([&writer]() {
                 try {
                     if (writer) writer->close();
-                } catch (...) {}
+                } catch (...) {
+                }
             });
 
-            qint64 processedCount = 0;
-
-            traverseForUpdate(path, reader, writer, &processedCount, running);
-
-            if (processedCount == 0) {
-                emit ProgressNotifier::instance()->progressChanged(0);
-            }
+            traverseForUpdate(path, reader, writer, running);
 
             writer->optimize();
             return true;
