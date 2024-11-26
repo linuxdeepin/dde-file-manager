@@ -33,10 +33,10 @@ public Q_SLOTS:
 Q_SIGNALS:
     void CreateFailed();
     void CreateSuccessful();
-    void CreateIndexCountChanged(int);
+    void CreateIndexCountChanged(qint64);
     void UpdateFailed();
     void UpdateSuccessful();
-    void UpdateIndexCountChanged(int);
+    void UpdateIndexCountChanged(qint64);
 
 private:
     QScopedPointer<SERVICETEXTINDEX_NAMESPACE::TextIndexDBusPrivate> d;

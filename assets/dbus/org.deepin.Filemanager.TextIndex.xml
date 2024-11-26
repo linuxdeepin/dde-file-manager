@@ -1,0 +1,36 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.TextIndex">
+    <signal name="CreateFailed">
+    </signal>
+    <signal name="CreateSuccessful">
+    </signal>
+    <signal name="CreateIndexCountChanged">
+      <arg type="x" direction="out"/>
+    </signal>
+    <signal name="UpdateFailed">
+    </signal>
+    <signal name="UpdateSuccessful">
+    </signal>
+    <signal name="UpdateIndexCountChanged">
+      <arg type="x" direction="out"/>
+    </signal>
+    <method name="CreateIndexTask">
+      <arg type="b" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+    </method>
+    <method name="UpdateIndexTask">
+      <arg type="b" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+    </method>
+    <method name="StopCurrentTask">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="HasRunningTask">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="IndexDatabaseExists">
+      <arg type="b" direction="out"/>
+    </method>
+  </interface>
+</node>

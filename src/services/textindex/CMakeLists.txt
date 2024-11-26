@@ -4,12 +4,15 @@ project(dde-filemanager-textindex)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(TextIndex_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.TextIndex.xml)
+set(FULL_TEXT_PATH "${CMAKE_SOURCE_DIR}/3rdparty/fulltext")
 
-FILE(GLOB_RECURSE FILEOPERATIONS_FILES
+FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
+    "${FULL_TEXT_PATH}/*.cpp"
+    "${FULL_TEXT_PATH}/*.h"
     )
 
 find_package(PkgConfig REQUIRED)
@@ -21,7 +24,7 @@ find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 #    OPTIONS -M -S
 # )
 
-qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${TextIndex_XML}
+qt5_add_dbus_adaptor(SRC_FILES ${TextIndex_XML}
     textindexdbus.h TextIndexDBus)
 
 #full-text search dependences
@@ -32,16 +35,17 @@ pkg_check_modules(PCRE REQUIRED libpcre)
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${FILEOPERATIONS_FILES}
+    ${SRC_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        target_include_directories
+        ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
+        ${FULL_TEXT_PATH}/..
 )
 
 target_link_libraries(${PROJECT_NAME}
