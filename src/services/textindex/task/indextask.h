@@ -1,10 +1,16 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef INDEXTASK_H
 #define INDEXTASK_H
 
-#include "../service_textindex_global.h"
+#include "service_textindex_global.h"
+#include "taskhandler.h"
 
 #include <QObject>
 #include <QString>
+#include <atomic>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -12,19 +18,22 @@ class IndexTask : public QObject
 {
     Q_OBJECT
 public:
-    enum Type {
+    enum class Type {
         Create,
         Update
     };
+    Q_ENUM(Type)
 
-    enum Status {
+    enum class Status {
         NotStarted,
         Running,
         Finished,
         Failed
     };
+    Q_ENUM(Status)
 
-    explicit IndexTask(Type type, const QString &path, QObject *parent = nullptr);
+    explicit IndexTask(Type type, const QString &path, TaskHandler handler, QObject *parent = nullptr);
+    ~IndexTask();
 
     void start();
     void stop();
@@ -34,17 +43,22 @@ public:
     Status status() const;
 
 Q_SIGNALS:
-    void progressChanged(Type type, int count);
-    void finished(Type type, bool success);
+    void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count);
+    void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, bool success);
 
 private:
     void doTask();
+    void onProgressChanged(qint64 count);
 
     Type m_type;
     QString m_path;
-    Status m_status { NotStarted };
-    bool m_running { false };
+    Status m_status { Status::NotStarted };
+    std::atomic_bool m_running { false };
+    TaskHandler m_handler;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
-#endif // INDEXTASK_H
+
+Q_DECLARE_METATYPE(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type)
+
+#endif   // INDEXTASK_H

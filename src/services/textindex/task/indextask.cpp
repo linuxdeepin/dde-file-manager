@@ -1,27 +1,62 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "indextask.h"
+
+#include "progressnotifier.h"
 
 #include <QDebug>
 #include <QThread>
+#include <QCoreApplication>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
-IndexTask::IndexTask(Type type, const QString &path, QObject *parent)
-    : QObject(parent), m_type(type), m_path(path)
+IndexTask::IndexTask(Type type, const QString &path, TaskHandler handler, QObject *parent)
+    : QObject(parent), m_type(type), m_path(path), m_handler(handler)
 {
+    fmDebug() << "Created new task for path:" << path;
+
+    // 连接进度通知
+    connect(ProgressNotifier::instance(), &ProgressNotifier::progressChanged,
+            this, &IndexTask::onProgressChanged);
+}
+
+IndexTask::~IndexTask()
+{
+    disconnect(ProgressNotifier::instance(), &ProgressNotifier::progressChanged,
+               this, &IndexTask::onProgressChanged);
+}
+
+void IndexTask::onProgressChanged(qint64 count)
+{
+    if (m_running) {
+        fmDebug() << "Task progress:" << count;
+        emit progressChanged(m_type, count);
+    }
 }
 
 void IndexTask::start()
 {
-    if (m_running)
+    if (m_running) {
+        fmWarning() << "Task already running, ignoring start request";
         return;
+    }
 
+    fmInfo() << "Starting task for path:" << m_path;
     m_running = true;
-    m_status = Running;
+    m_status = Status::Running;
+
+    // 确保在正确的线程中执行
+    Q_ASSERT(QThread::currentThread() != QCoreApplication::instance()->thread());
+    fmDebug() << "Task running in worker thread:" << QThread::currentThread();
+
     doTask();
 }
 
 void IndexTask::stop()
 {
+    fmInfo() << "Stopping task for path:" << m_path;
     m_running = false;
 }
 
@@ -47,15 +82,23 @@ IndexTask::Status IndexTask::status() const
 
 void IndexTask::doTask()
 {
-    // TODO: 实现具体的索引创建/更新逻辑
-    // 这里只是示例代码
-    bool success = true;
-    for (int i = 0; i < 100 && m_running; ++i) {
-        QThread::msleep(100);   // 模拟耗时操作
-        // emit progress(m_type, m_path, i);
+    fmInfo() << "Processing task for path:" << m_path;
+
+    bool success = false;
+    if (m_handler) {
+        success = m_handler(m_path, m_running);
+    } else {
+        fmWarning() << "No task handler provided";
     }
 
     m_running = false;
-    m_status = success ? Finished : Failed;
-    //   emit finished(m_type, m_path, success);
+    m_status = success ? Status::Finished : Status::Failed;
+
+    if (success) {
+        fmInfo() << "Task completed successfully for path:" << m_path;
+    } else {
+        fmWarning() << "Task failed for path:" << m_path;
+    }
+
+    emit finished(m_type, success);
 }
