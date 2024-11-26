@@ -97,8 +97,16 @@ QVariant FileItemData::data(int role) const
         assert(qApp->thread() == QThread::currentThread());
         if (info.isNull()) {
             const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
-            if (info)
+            if (info) {
                 info->customData(kItemFileRefreshIcon);
+                
+                if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() &&
+                    !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool()) {
+                    updateOnce = true;
+                    info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
+                    info->updateAttributes();
+                }
+            }
         } else if (!updateOnce) {
             updateOnce = true;
             info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
