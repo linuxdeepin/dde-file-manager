@@ -24,11 +24,11 @@ public:
     ~TextIndexDBus();
 
 public Q_SLOTS:
-    Q_SCRIPTABLE void CloseTask();
-    Q_SCRIPTABLE bool CreateIndexTask(const QString &path);
-    Q_SCRIPTABLE bool UpdateIndexTask(const QString &path);
-    Q_SCRIPTABLE bool IndexDatabaseExists();
-    Q_SCRIPTABLE bool IndexTaskInProgress();
+    bool CreateIndexTask(const QString &path);
+    bool UpdateIndexTask(const QString &path);
+    bool StopCurrentTask();
+    bool HasRunningTask();
+    bool IndexDatabaseExists();
 
 Q_SIGNALS:
     void CreateFailed();
