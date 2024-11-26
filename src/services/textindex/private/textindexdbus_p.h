@@ -17,8 +17,6 @@
 
 #include <docparser.h>
 
-#include <exception>
-
 #include <dirent.h>
 
 class TextIndexDBus;
@@ -37,7 +35,6 @@ public:
     ~TextIndexDBusPrivate() { }
 
     void initConnect();
-    QString indexStorePath() const;
 
 private:
     TextIndexDBus *q { nullptr };
