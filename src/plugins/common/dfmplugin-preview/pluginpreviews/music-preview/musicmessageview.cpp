@@ -157,9 +157,10 @@ void MusicMessageView::setMediaInfo()
     }
 
     if (img.isNull()) {
-        img = QImage(":/icons/icons/default_music_cover.png");
+        imgLabel->setCoverPixmap(QIcon(":/icons/icons/default_music_cover.svg").pixmap(imgLabel->size()));
+    } else {
+        imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
     }
-    imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
 
     updateElidedText();
 }

@@ -6,6 +6,6 @@
         <file>icons/pause_pressed.png</file>
         <file>icons/pause_normal.png</file>
         <file>icons/pause_hover.png</file>
-        <file>icons/default_music_cover.png</file>
+        <file>icons/default_music_cover.svg</file>
     </qresource>
 </RCC>
