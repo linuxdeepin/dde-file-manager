@@ -200,7 +200,13 @@ VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
             lockBaseDir += "/cryfs.config";
 
         if (QFile::exists(lockBaseDir)) {
-            QUrl mountDirUrl = QUrl::fromLocalFile(PathManager::vaultUnlockPath());
+
+            QString realPath = QFileInfo(PathManager::vaultUnlockPath()).canonicalFilePath();
+            if (realPath.isEmpty())
+                return kEncrypted;
+
+            QUrl mountDirUrl = QUrl::fromLocalFile(realPath);
+
             const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(mountDirUrl);
             if (fsType == "fuse.cryfs")
                 d->curState = kUnlocked;
