@@ -32,8 +32,7 @@ ImageView::ImageView(const QString &fileName, const QByteArray &format, QWidget 
 
 void ImageView::setFile(const QString &fileName, const QByteArray &format)
 {
-    const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->geometry().size();
-    qreal device_pixel_ratio = this->devicePixelRatioF();
+    const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->size();
 
     if (format == QByteArrayLiteral("gif")) {
         if (movie) {
@@ -44,10 +43,11 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         }
         setMovie(movie);
         movie->start();
-        sourceImageSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), movie->frameRect().size().width()),
-                                qMin(static_cast<int>(dsize.height() * 0.7 * device_pixel_ratio), movie->frameRect().size().height()));
-        setFixedSize(sourceImageSize);
-        movie->setScaledSize(sourceImageSize);
+        sourceImageSize = movie->frameRect().size();
+        QSize showSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
+                               qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
+        setFixedSize(showSize);
+        movie->setScaledSize(showSize);
         return;
     } else {
         setMovie(nullptr);
@@ -63,16 +63,13 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 
     QImageReader reader(fileName, format);
     sourceImageSize = reader.size();
-
     if (!sourceImageSize.isValid()) {
         setPixmap(QPixmap());
         return;
     }
-
-    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), sourceImageSize.width()),
-                                                                    qMin(static_cast<int>(dsize.height() * 0.7 * device_pixel_ratio), sourceImageSize.height())),
-                                                              Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    pixmap.setDevicePixelRatio(device_pixel_ratio);
+    QSize showSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
+                           qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
+    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(showSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     setPixmap(pixmap);
 }
 
