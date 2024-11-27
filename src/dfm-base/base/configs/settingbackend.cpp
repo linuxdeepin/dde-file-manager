@@ -300,14 +300,13 @@ void SettingBackend::initWorkspaceSettingConfig()
     ins->addGroup(TOP_GROUP_WORKSPACE, tr("Workspace"));
     ins->addGroup(LV2_GROUP_VIEW, tr("View"));
 
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".00_icon_size",
-                           tr("Default size:"),
-                           QStringList { tr("Extra small"),
-                                         tr("Small"),
-                                         tr("Medium"),
-                                         tr("Large"),
-                                         tr("Extra large") },
-                           1);
+    int iconSizeLevelMax = (Global::kIconSizeMax - Global::kIconSizeMin) / Global::kIconSizeStep;
+    int iconSizeLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
+                        tr("Default size:"),
+                        iconSizeLevelMax,
+                        iconSizeLevelMin,
+                        5);
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
