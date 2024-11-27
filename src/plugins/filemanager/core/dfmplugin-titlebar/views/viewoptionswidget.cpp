@@ -30,9 +30,6 @@ static constexpr int kViewOptionsSpacing { 10 };
 static constexpr int kViewOptionsSingleSpacing { 5 };
 static constexpr int kViewOptionsFrameMargin { 6 };
 static constexpr int kViewOptionsFrameHeight { 40 };
-static constexpr int kViewOptionsMinIconSize { 24 };
-static constexpr int kViewOptionsMaxIconSize { 512 };
-static constexpr int kViewOptionsIconSizeStep { 8 };
 static constexpr int kViewOptionsMinGridDensity { 60 };
 static constexpr int kViewOptionsMaxGridDensity { 150 };
 static constexpr int kViewOptionsGridDensityStep { 10 };
@@ -78,7 +75,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     iconSizeSliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     iconSizeSlider = new DSlider(Qt::Horizontal, iconSizeWidget);
-    int iconSizeRange = (kViewOptionsMaxIconSize - kViewOptionsMinIconSize) / kViewOptionsIconSizeStep;
+    int iconSizeRange = (Global::kIconSizeMax - Global::kIconSizeMin) / Global::kIconSizeStep;
     iconSizeSlider->setMaximum(iconSizeRange);
     iconSizeSlider->setMinimum(0);
     iconSizeSlider->setValue(Application::instance()->appAttribute(Application::kIconSizeLevel).toInt());
