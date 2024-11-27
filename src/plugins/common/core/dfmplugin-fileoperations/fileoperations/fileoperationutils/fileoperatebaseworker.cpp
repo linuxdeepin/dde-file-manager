@@ -909,7 +909,7 @@ bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     DoCopyFileWorker::NextDo nextDo = threadCopyWorker[0]->doCopyFileByRange(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    return nextDo != DoCopyFileWorker::NextDo::kDoCopyNext;
+    return nextDo == DoCopyFileWorker::NextDo::kDoCopyNext;
 }
 
 bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
