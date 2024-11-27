@@ -6,6 +6,7 @@
 #define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
 #include <dfm-base/dfm_log_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/event/eventhelper.h>
 
 #include <dtkwidget_config.h>
@@ -40,7 +41,7 @@ inline QList<int> iconSizeList()
     static const QList<int> sizes = []() {
         QList<int> list;
         list.reserve(62);  // 预分配内存，避免多次重新分配
-        for (int size = 24; size <= 512; size += 8) {
+        for (int size = dfmbase::Global::kIconSizeMin; size <= dfmbase::Global::kIconSizeMax; size += dfmbase::Global::kIconSizeStep) {
             list.append(size);
         }
         return list;

@@ -26,6 +26,10 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
+inline constexpr int kIconSizeMax { 512 };
+inline constexpr int kIconSizeMin { 24 };
+inline constexpr int kIconSizeStep { 8 };
+
 enum class TransparentStatus : uint8_t {
     kDefault,
     kTransparent,

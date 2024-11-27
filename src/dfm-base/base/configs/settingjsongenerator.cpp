@@ -212,6 +212,23 @@ bool SettingJsonGenerator::addComboboxConfig(const QString &key, const QString &
     return addConfig(key, config);
 }
 
+bool SettingJsonGenerator::addSliderConfig(const QString &key,
+                                           const QString &name,
+                                           int maxVal,
+                                           int minVal,
+                                           int defaultVal)
+{
+    QVariantMap config {
+        { "key", key.mid(key.lastIndexOf(".") + 1) },
+        { "name", name },
+        { "type", "slider" },
+        { "max", maxVal},
+        { "min", minVal},
+        { "default", defaultVal }
+    };
+    return addConfig(key, config);
+}
+
 void SettingJsonGenerator::mergeGroups()
 {
     auto merge = [](const QMap<QString, QString> &from, QMap<QString, QString> &into) {
