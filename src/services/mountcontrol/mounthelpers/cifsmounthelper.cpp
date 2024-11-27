@@ -399,20 +399,24 @@ bool CifsMountHelper::rmdir(const QString &path)
 
 bool CifsMountHelper::mkdirMountRootPath()
 {
-    auto mntRoot = mountRoot();
+    auto mntRoot = mountRoot();   // 获取挂载根目录
     if (mntRoot.isEmpty()) {
         fmWarning() << "cifs: mount root is empty";
         return false;
     }
 
-    auto dir = opendir(mntRoot.toStdString().c_str());
-    if (!dir) {
-        int ret = ::mkdir(mntRoot.toStdString().c_str(), 0755);
-        fmInfo() << "mkdir mntRoot: " << mntRoot << "failed: " << strerror(errno) << errno;
-        return ret == 0;
-    } else {
-        closedir(dir);
+    QDir dir;
+    if (dir.exists(mntRoot)) {
+        fmInfo() << "cifs: mount root already exists: " << mntRoot;
         return true;
+    }
+
+    if (dir.mkpath(mntRoot)) {
+        fmInfo() << "cifs: mount root created successfully: " << mntRoot;
+        return true;
+    } else {
+        fmWarning() << "cifs: failed to create mount root: " << mntRoot;
+        return false;
     }
 }
 
