@@ -30,7 +30,7 @@ IndexTask::~IndexTask()
 
 void IndexTask::onProgressChanged(qint64 count)
 {
-    if (m_running) {
+    if (m_state.isRunning()) {
         fmDebug() << "Task progress:" << count;
         emit progressChanged(m_type, count);
     }
@@ -38,16 +38,16 @@ void IndexTask::onProgressChanged(qint64 count)
 
 void IndexTask::start()
 {
-    if (m_running) {
+    if (m_state.isRunning()) {
         fmWarning() << "Task already running, ignoring start request";
         return;
     }
 
     fmInfo() << "Starting task for path:" << m_path;
-    m_running = true;
+
+    m_state.start();
     m_status = Status::Running;
 
-    // 确保在正确的线程中执行
     Q_ASSERT(QThread::currentThread() != QCoreApplication::instance()->thread());
     fmDebug() << "Task running in worker thread:" << QThread::currentThread();
 
@@ -57,12 +57,12 @@ void IndexTask::start()
 void IndexTask::stop()
 {
     fmInfo() << "Stopping task for path:" << m_path;
-    m_running = false;
+    m_state.stop();
 }
 
 bool IndexTask::isRunning() const
 {
-    return m_running;
+    return m_state.isRunning();
 }
 
 QString IndexTask::taskPath() const
@@ -86,12 +86,12 @@ void IndexTask::doTask()
 
     bool success = false;
     if (m_handler) {
-        success = m_handler(m_path, m_running);
+        success = m_handler(m_path, m_state);
     } else {
         fmWarning() << "No task handler provided";
     }
 
-    m_running = false;
+    m_state.stop();
     m_status = success ? Status::Finished : Status::Failed;
 
     if (success) {

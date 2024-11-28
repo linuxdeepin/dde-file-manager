@@ -145,8 +145,9 @@ void processFile(const QString &path, const IndexWriterPtr &writer, ProgressRepo
     try {
         if (!isSupportedFile(path))
             return;
-
+#ifdef QT_DEBUG
         fmDebug() << "Adding [" << path << "]";
+#endif
         writer->addDocument(createFileDocument(path));
         if (reporter) {
             reporter->increment();
@@ -166,7 +167,9 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
         bool needAdd = false;
         if (checkNeedUpdate(path, reader, &needAdd)) {
             if (needAdd) {
-                fmDebug() << "Adding new file:" << path;
+#ifdef QT_DEBUG
+                fmDebug() << "Adding [" << path << "]";
+#endif
                 writer->addDocument(createFileDocument(path));
             } else {
                 fmDebug() << "Updating file:" << path;
@@ -182,16 +185,18 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
-void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &running,
+void traverseDirectoryCommon(const QString &rootPath, TaskState &state,
                              const FileHandler &fileHandler)
 {
     QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
     QSet<QString> visitedDirs;
-
     QQueue<QString> dirQueue;
     dirQueue.enqueue(rootPath);
 
-    while (!dirQueue.isEmpty() && running.load()) {
+    while (!dirQueue.isEmpty()) {
+        if (!state.isRunning())
+            break;
+
         QString currentPath = dirQueue.dequeue();
 
         // 检查是否是系统目录或绑定目录
@@ -215,7 +220,10 @@ void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &ru
         ScopeGuard dirCloser([dir]() { closedir(dir); });
 
         struct dirent *entry;
-        while ((entry = readdir(dir)) && running.load()) {
+        while ((entry = readdir(dir))) {
+            if (!state.isRunning())
+                break;
+
             if (IndexTraverseUtils::isHiddenFile(entry->d_name) || IndexTraverseUtils::isSpecialDir(entry->d_name))
                 continue;
 
@@ -240,7 +248,7 @@ void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &ru
 }
 
 void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
-                       const std::atomic_bool &running)
+                       TaskState &running)
 {
     ProgressReporter reporter;
     traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
@@ -249,7 +257,7 @@ void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
 }
 
 void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
-                       const IndexWriterPtr &writer, const std::atomic_bool &running)
+                       const IndexWriterPtr &writer, TaskState &running)
 {
     ProgressReporter reporter;
     traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
@@ -262,7 +270,7 @@ void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
 // 公开的任务处理函数实现
 TaskHandler TaskHandlers::CreateIndexHandler()
 {
-    return [](const QString &path, std::atomic_bool &running) -> bool {
+    return [](const QString &path, TaskState &running) -> bool {
         fmInfo() << "Creating index for path:" << path;
 
         QDir dir;
@@ -299,7 +307,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             writer->deleteAll();
             traverseDirectory(path, writer, running);
 
-            if (!running.load()) {
+            if (!running.isRunning()) {
                 fmInfo() << "Create index task was interrupted";
                 return false;
             }
@@ -319,7 +327,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
 
 TaskHandler TaskHandlers::UpdateIndexHandler()
 {
-    return [](const QString &path, std::atomic_bool &running) -> bool {
+    return [](const QString &path, TaskState &running) -> bool {
         fmInfo() << "Updating index for path:" << path;
 
         try {

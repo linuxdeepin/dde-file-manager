@@ -7,10 +7,10 @@
 
 #include "service_textindex_global.h"
 #include "taskhandler.h"
+#include "utils/taskstate.h"
 
 #include <QObject>
 #include <QString>
-#include <atomic>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -38,6 +38,7 @@ public:
     void start();
     void stop();
     bool isRunning() const;
+
     QString taskPath() const;
     Type taskType() const;
     Status status() const;
@@ -53,7 +54,7 @@ private:
     Type m_type;
     QString m_path;
     Status m_status { Status::NotStarted };
-    std::atomic_bool m_running { false };
+    TaskState m_state;
     TaskHandler m_handler;
 };
 
