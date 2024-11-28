@@ -288,7 +288,8 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
     editor->setFixedWidth(sidebarView->width() - 50);
     QRect rect = editor->geometry();
     rect.setHeight(rect.height() + 2);
-    rect.moveTo(40, rect.top());
+    int verticalOffset = (option.rect.height() - rect.height()) / 2;
+    rect.moveTo(40, rect.top() + verticalOffset);
     editor->setGeometry(rect);
 }
 
