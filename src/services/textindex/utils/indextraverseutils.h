@@ -29,6 +29,8 @@ bool isValidDirectory(const QString &path, QSet<QString> &visitedDirs);
 // 检查是否应该跳过该目录
 bool shouldSkipDirectory(const QString &path);
 
+QMap<QString, QString> fstabBindInfo();
+
 }   // namespace IndexTraverseUtils
 
 SERVICETEXTINDEX_END_NAMESPACE
