@@ -31,6 +31,7 @@ public:
     explicit TextIndexDBusPrivate(TextIndexDBus *qq)
         : q(qq), adapter(new TextIndexAdaptor(qq)), taskManager(new TaskManager(qq))
     {
+        initConnect();
     }
     ~TextIndexDBusPrivate() { }
 

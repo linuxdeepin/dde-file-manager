@@ -18,11 +18,11 @@ FILE(GLOB_RECURSE SRC_FILES
 find_package(PkgConfig REQUIRED)
 find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 
-# qt5_generate_dbus_interface(
-#    textindexdbus.h
-#    ${TextIndex_XML}
-#    OPTIONS -M -S
-# )
+qt5_generate_dbus_interface(
+   textindexdbus.h
+   ${TextIndex_XML}
+   OPTIONS -M -S
+)
 
 qt5_add_dbus_adaptor(SRC_FILES ${TextIndex_XML}
     textindexdbus.h TextIndexDBus)

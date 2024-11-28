@@ -68,35 +68,35 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     return true;
 }
 
+QString TaskManager::typeToString(IndexTask::Type type)
+{
+    switch (type) {
+        case IndexTask::Type::Create:
+            return "create";
+        case IndexTask::Type::Update:
+            return "update";
+        default:
+            return "unknown";
+    }
+}
+
 void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count)
 {
+    if (!currentTask) return;
+    
     fmDebug() << "Task progress:" << type << count;
-    if (type == IndexTask::Type::Create) {
-        emit createIndexCountChanged(count);
-    } else {
-        emit updateIndexCountChanged(count);
-    }
+    emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count);
 }
 
 void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
 {
-    if (success) {
-        fmInfo() << "Task completed successfully:" << type;
-    } else {
-        fmWarning() << "Task failed:" << type;
-    }
-
-    if (type == IndexTask::Type::Create) {
-        if (success)
-            emit createSuccessful();
-        else
-            emit createFailed();
-    } else {
-        if (success)
-            emit updateSuccessful();
-        else
-            emit updateFailed();
-    }
+    if (!currentTask) return;
+    
+    QString taskPath = currentTask->taskPath();  // 在清理前保存路径
+    fmInfo() << "Task" << typeToString(type) << "for path" << taskPath 
+             << (success ? "completed successfully" : "failed");
+             
+    emit taskFinished(typeToString(type), taskPath, success);
     cleanupTask();
 }
 

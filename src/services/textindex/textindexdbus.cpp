@@ -16,18 +16,15 @@ using namespace Lucene;
 
 void TextIndexDBusPrivate::initConnect()
 {
-    QObject::connect(taskManager, &TaskManager::createFailed,
-                     q, &TextIndexDBus::CreateFailed);
-    QObject::connect(taskManager, &TaskManager::createSuccessful,
-                     q, &TextIndexDBus::CreateSuccessful);
-    QObject::connect(taskManager, &TaskManager::createIndexCountChanged,
-                     q, &TextIndexDBus::CreateIndexCountChanged);
-    QObject::connect(taskManager, &TaskManager::updateFailed,
-                     q, &TextIndexDBus::UpdateFailed);
-    QObject::connect(taskManager, &TaskManager::updateSuccessful,
-                     q, &TextIndexDBus::UpdateSuccessful);
-    QObject::connect(taskManager, &TaskManager::updateIndexCountChanged,
-                     q, &TextIndexDBus::UpdateIndexCountChanged);
+    QObject::connect(taskManager, &TaskManager::taskFinished,
+                     q, [this](const QString &type, const QString &path, bool success) {
+        emit q->TaskFinished(type, path, success);
+    });
+
+    QObject::connect(taskManager, &TaskManager::taskProgressChanged,
+                     q, [this](const QString &type, const QString &path, qint64 count) {
+        emit q->TaskProgressChanged(type, path, count);
+    });
 }
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
