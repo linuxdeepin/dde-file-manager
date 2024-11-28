@@ -6,12 +6,7 @@
 
 #include "progressnotifier.h"
 #include "utils/indextraverseutils.h"
-
-#include <dfm-base/base/urlroute.h>
-#include <dfm-base/base/device/deviceutils.h>
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/finallyutil.h>
+#include "utils/scopeguard.h"
 
 #include <docparser.h>
 
@@ -28,6 +23,7 @@
 #include <QDateTime>
 #include <QRegularExpression>
 #include <QStandardPaths>
+#include <QQueue>
 
 #include <dirent.h>
 #include <sys/types.h>
@@ -35,7 +31,6 @@
 #include <unistd.h>
 
 SERVICETEXTINDEX_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
 using namespace Lucene;
 
 namespace {
@@ -90,10 +85,9 @@ DocumentPtr createFileDocument(const QString &file)
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file last modified time
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
-                                              Global::CreateFileInfoType::kCreateFileInfoSync);
-    const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
-    const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
+    QFileInfo fileInfo(file);
+    const QDateTime modifyTime = fileInfo.lastModified();
+    const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
@@ -111,7 +105,6 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", file.toStdWString()));
 
-        // 文件路径为唯一值，所以搜索一个结果就行了
         TopDocsPtr topDocs = searcher->search(query, 1);
         int32_t numTotalHits = topDocs->totalHits;
         if (numTotalHits == 0) {
@@ -121,14 +114,13 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
         }
 
         DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
-        auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
-                                                  Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (!info)
+        QFileInfo fileInfo(file);
+        if (!fileInfo.exists())
             return false;
 
-        const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
-        const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
-        const String &storeTime { doc->get(L"modified") };
+        const QDateTime modifyTime = fileInfo.lastModified();
+        const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
+        const String &storeTime = doc->get(L"modified");
 
         return modifyEpoch.toStdWString() != storeTime;
     } catch (const std::exception &e) {
@@ -139,11 +131,11 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
 
 bool isSupportedFile(const QString &path)
 {
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(path),
-                                              Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info) return false;
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists() || !fileInfo.isFile())
+        return false;
 
-    QString suffix = info->nameOf(NameInfoType::kSuffix);
+    QString suffix = fileInfo.suffix().toLower();
     static const QRegularExpression suffixRegex(kSupportFiles);
     return suffixRegex.match(suffix).hasMatch();
 }
@@ -193,7 +185,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
 void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &running,
                              const FileHandler &fileHandler)
 {
-    QMap<QString, QString> bindPathTable = DeviceUtils::fstabBindInfo();
+    QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
     QSet<QString> visitedDirs;
 
     QQueue<QString> dirQueue;
@@ -220,7 +212,7 @@ void traverseDirectoryCommon(const QString &rootPath, const std::atomic_bool &ru
             continue;
         }
 
-        FinallyUtil dirCloser([dir]() { closedir(dir); });
+        ScopeGuard dirCloser([dir]() { closedir(dir); });
 
         struct dirent *entry;
         while ((entry = readdir(dir)) && running.load()) {
@@ -293,10 +285,12 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                     true,
                     IndexWriter::MaxFieldLengthLIMITED);
 
-            FinallyUtil writerCloser([&writer]() {
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
                 try {
                     if (writer) writer->close();
                 } catch (...) {
+                    // 忽略关闭时的异常
                 }
             });
 
@@ -332,10 +326,12 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             IndexReaderPtr reader = IndexReader::open(
                     FSDirectory::open(indexStorePath().toStdWString()), true);
 
-            FinallyUtil readerCloser([&reader]() {
+            // 添加 reader 的 ScopeGuard
+            ScopeGuard readerCloser([&reader]() {
                 try {
                     if (reader) reader->close();
                 } catch (...) {
+                    // 忽略关闭时的异常
                 }
             });
 
@@ -345,10 +341,12 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                     false,
                     IndexWriter::MaxFieldLengthLIMITED);
 
-            FinallyUtil writerCloser([&writer]() {
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
                 try {
                     if (writer) writer->close();
                 } catch (...) {
+                    // 忽略关闭时的异常
                 }
             });
 

@@ -51,7 +51,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::DBus
-    DFM::base
     ${GLIB_LIBRARIES}
     ${PCRE_LIBRARIES}
     PkgConfig::Lucene
