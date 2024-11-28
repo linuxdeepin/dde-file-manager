@@ -485,7 +485,7 @@ bool FullTextSearcher::search()
 
     bool indexExists = IndexReader::indexExists(FSDirectory::open(d->indexStorePath().toStdWString()));
     if (indexExists) {
-    // 先更新索引再搜索
+        // 先更新索引再搜索
         d->updateIndex(path);
     } else {
         QString bindPath = FileUtils::bindPathTransform(path, false);

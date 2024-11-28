@@ -4,13 +4,13 @@ project(dfmplugin-search)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB_RECURSE
-    SRC
+FILE(GLOB_RECURSE  SRC
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.c"
+    "${CMAKE_SOURCE_DIR}/3rdparty/fsearch/*.c"
+    "${CMAKE_SOURCE_DIR}/3rdparty/fsearch/*.h"
+    "${CMAKE_SOURCE_DIR}/3rdparty/fulltext/*.cpp"
+    "${CMAKE_SOURCE_DIR}/3rdparty/fulltext/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
@@ -38,7 +38,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
+        ${CMAKE_SOURCE_DIR}/3rdparty
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
 )
