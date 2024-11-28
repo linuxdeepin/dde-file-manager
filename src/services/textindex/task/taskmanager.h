@@ -25,12 +25,8 @@ public:
     void stopCurrentTask();
 
 Q_SIGNALS:
-    void createFailed();
-    void createSuccessful();
-    void createIndexCountChanged(qint64);
-    void updateFailed();
-    void updateSuccessful();
-    void updateIndexCountChanged(qint64);
+    void taskFinished(const QString &type, const QString &path, bool success);
+    void taskProgressChanged(const QString &type, const QString &path, qint64 count);
     void startTaskInThread();
 
 private Q_SLOTS:
@@ -42,6 +38,8 @@ private:
 
     QThread workerThread;
     IndexTask *currentTask { nullptr };
+
+    static QString typeToString(IndexTask::Type type);
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

@@ -6,6 +6,7 @@
 #define CORE_H
 
 #include "daemonplugin_core_global.h"
+#include "textindexcontroller.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -35,6 +36,7 @@ private Q_SLOTS:
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
     QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
+    QScopedPointer<TextIndexController> textIndexController;
 };
 
 DAEMONPCORE_END_NAMESPACE
