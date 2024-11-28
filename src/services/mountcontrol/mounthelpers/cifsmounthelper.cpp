@@ -200,7 +200,7 @@ CifsMountHelper::MountStatus CifsMountHelper::checkMount(const QString &path, QS
     if (fs) {
         mpt = mnt_fs_get_target(fs);
         fmDebug() << "find mounted at: " << mpt << path;
-        if (!mpt.contains(QRegularExpression("^/media/.*/smbmounts/")))
+        if (!mpt.contains(QRegularExpression("^(?:/run/media|/media)/.*")))
             return kNotMountByDaemon;
 
         QString fsType = mnt_fs_get_fstype(fs);
