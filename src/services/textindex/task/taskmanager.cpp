@@ -28,8 +28,6 @@ TaskManager::TaskManager(QObject *parent)
 {
     fmInfo() << "Initializing TaskManager...";
     registerMetaTypes();
-    workerThread.start();
-    fmInfo() << "TaskManager initialized, worker thread started";
 }
 
 TaskManager::~TaskManager()
@@ -63,6 +61,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
     connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
+    workerThread.start();
 
     emit startTaskInThread();
     fmDebug() << "Task started in worker thread";
