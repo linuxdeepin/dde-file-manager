@@ -37,6 +37,12 @@ qt5_generate_dbus_interface(
 qt5_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
     operationsstackmanagerdbus.h OperationsStackManagerDbus)
 
+# use TextIndex interface
+qt5_add_dbus_interface(SRC_FILES
+    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml"
+    textindex_interface
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
