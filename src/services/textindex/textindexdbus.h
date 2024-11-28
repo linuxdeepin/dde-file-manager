@@ -31,12 +31,8 @@ public Q_SLOTS:
     bool IndexDatabaseExists();
 
 Q_SIGNALS:
-    void CreateFailed();
-    void CreateSuccessful();
-    void CreateIndexCountChanged(qint64);
-    void UpdateFailed();
-    void UpdateSuccessful();
-    void UpdateIndexCountChanged(qint64);
+    void TaskFinished(const QString &type, const QString &path, bool success);
+    void TaskProgressChanged(const QString &type, const QString &path, qint64 count);
 
 private:
     QScopedPointer<SERVICETEXTINDEX_NAMESPACE::TextIndexDBusPrivate> d;
