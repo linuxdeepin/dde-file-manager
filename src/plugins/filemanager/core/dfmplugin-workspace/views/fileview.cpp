@@ -1106,9 +1106,6 @@ void FileView::onDefaultViewModeChanged(int mode)
     if (newMode == Global::ViewMode::kTreeMode && !WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()))
         return;
 
-    if (newMode == d->currentViewMode)
-        return;
-
     Global::ViewMode oldMode = d->currentViewMode;
     loadViewState(rootUrl());
 
