@@ -7,6 +7,10 @@
 #include <QFileInfo>
 #include <QStorageInfo>
 #include <QSet>
+#include <QMutex>
+
+#include <fstab.h>
+#include <sys/stat.h>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -57,6 +61,7 @@ bool shouldSkipDirectory(const QString &path)
         "/var/tmp",   // 临时文件
         "/var/cache",   // 缓存目录
         "/var/log",   // 日志目录
+        "/var/lib",
         "/run",   // 运行时文件
 
         // 特殊目录
@@ -95,6 +100,34 @@ bool shouldSkipDirectory(const QString &path)
     return false;
 }
 
-}  // namespace IndexTraverseUtils
+QMap<QString, QString> fstabBindInfo()
+{
+    static QMutex mutex;
+    static QMap<QString, QString> table;
+    struct stat statInfo;
+    int result = stat("/etc/fstab", &statInfo);
 
-SERVICETEXTINDEX_END_NAMESPACE 
+    QMutexLocker locker(&mutex);
+    if (0 == result) {
+        static quint32 lastModify = 0;
+        if (lastModify != statInfo.st_mtime) {
+            lastModify = static_cast<quint32>(statInfo.st_mtime);
+            table.clear();
+            struct fstab *fs;
+
+            setfsent();
+            while ((fs = getfsent()) != nullptr) {
+                QString mntops(fs->fs_mntops);
+                if (mntops.contains("bind"))
+                    table.insert(fs->fs_spec, fs->fs_file);
+            }
+            endfsent();
+        }
+    }
+
+    return table;
+}
+
+}   // namespace IndexTraverseUtils
+
+SERVICETEXTINDEX_END_NAMESPACE
