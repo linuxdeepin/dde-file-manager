@@ -172,7 +172,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
 #endif
                 writer->addDocument(createFileDocument(path));
             } else {
-                fmDebug() << "Updating file:" << path;
+                fmDebug() << "Updating file [" << path << "]";
                 TermPtr term = newLucene<Term>(L"path", path.toStdWString());
                 writer->updateDocument(term, createFileDocument(path));
             }
