@@ -20,4 +20,4 @@ extern "C" int DSMUnRegister(const char *name, void *data)
     textIndexDBus->deleteLater();
     textIndexDBus = nullptr;
     return 0;
-} 
+}
