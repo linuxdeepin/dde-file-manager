@@ -2,6 +2,5 @@ usr/lib/*/deepin-service-manager/*.so
 usr/share/deepin-service-manager/system/*.json
 usr/share/deepin-service-manager/user/*.json
 usr/share/dbus-1/system.d/*.conf
-usr/share/dbus-1/services/org.deepin.Filemanager.TextIndex.service
 usr/share/dbus-1/system-services/*.service
 etc/systemd/system/deepin-service-group@.service.d/*
