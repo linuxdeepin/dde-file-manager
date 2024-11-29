@@ -6,6 +6,11 @@
 
 static TextIndexDBus *textIndexDBus = nullptr;
 
+// DEBUG:
+// 1. budild a debug so file and copy to isntall path
+// 2. systemctl --user restart deepin-service-group@app.service
+// 3. use gdb then attach to to process (/usr/bin/deepin-service-manager -g app)
+
 extern "C" int DSMRegister(const char *name, void *data)
 {
     (void)data;

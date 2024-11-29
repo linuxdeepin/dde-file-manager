@@ -5,6 +5,11 @@
 #include "taskmanager.h"
 
 #include <QMetaType>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
+#include <QDir>
+#include <QDateTime>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
@@ -19,6 +24,44 @@ void registerMetaTypes()
         qRegisterMetaType<SERVICETEXTINDEX_NAMESPACE::IndexTask::Type>("SERVICETEXTINDEX_NAMESPACE::IndexTask::Type");
         registered = true;
         fmDebug() << "Meta types registered successfully";
+    }
+}
+
+QString getConfigPath()
+{
+    return indexStorePath() + "/index_status.json";
+}
+
+void clearIndexStatus()
+{
+    QFile file(getConfigPath());
+    if (file.exists()) {
+        fmInfo() << "Clearing index status file:" << file.fileName()
+                 << "[Clearing index status configuration]";
+        file.remove();
+    }
+}
+
+void saveIndexStatus(const QDateTime &lastUpdateTime)
+{
+    QJsonObject status;
+    status["lastUpdateTime"] = lastUpdateTime.toString(Qt::ISODate);
+    
+    QJsonDocument doc(status);
+    QFile file(getConfigPath());
+    
+    // 确保目录存在
+    QDir().mkpath(QFileInfo(file).absolutePath());
+    
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(doc.toJson());
+        file.close();
+        fmInfo() << "Index status saved successfully:" << file.fileName()
+                 << "lastUpdateTime:" << lastUpdateTime.toString(Qt::ISODate)
+                 << "[Updated index status configuration]";
+    } else {
+        fmWarning() << "Failed to save index status to:" << file.fileName()
+                    << "[Failed to write index status configuration]";
     }
 }
 }   // namespace
@@ -49,6 +92,13 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     fmInfo() << "Starting new task for path:" << path;
+
+    // 如果是根目录的任务，清除状态文件
+    if (path == "/") {
+        fmInfo() << "Root path task detected, clearing existing index status"
+                 << "[Initializing new root indexing task]";
+        clearIndexStatus();
+    }
 
     // 获取对应的任务处理器
     TaskHandler handler = (type == IndexTask::Type::Create)
@@ -92,9 +142,22 @@ void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
 {
     if (!currentTask) return;
 
-    QString taskPath = currentTask->taskPath();   // 在清理前保存路径
+    QString taskPath = currentTask->taskPath();
     fmInfo() << "Task" << typeToString(type) << "for path" << taskPath
              << (success ? "completed successfully" : "failed");
+
+    // 如果是根目录的任务，更新状态文件
+    if (taskPath == "/") {
+        if (success) {
+            fmInfo() << "Root indexing completed successfully, updating status"
+                     << "[Root index task succeeded]";
+            saveIndexStatus(QDateTime::currentDateTime());
+        } else {
+            fmInfo() << "Root indexing failed, clearing status"
+                     << "[Root index task failed]";
+            clearIndexStatus();
+        }
+    }
 
     emit taskFinished(typeToString(type), taskPath, success);
     cleanupTask();

@@ -43,11 +43,10 @@ bool TextIndexClient::ensureInterface()
             return false;
         }
 
-        // 启动服务并等待一小段时间
-        auto reply = sessionBusIface->startService("org.deepin.Filemanager.TextIndex");
-        if (!reply.isValid()) {
-            fmWarning() << "[TextIndex] Failed to start service:" << reply.error().message();
-            return false;
+        if (!sessionBusIface->isServiceRegistered("org.deepin.Filemanager.TextIndex")) {
+            auto reply = sessionBusIface->startService("org.deepin.Filemanager.TextIndex");
+            if (!reply.isValid())
+                fmWarning() << "[TextIndex] Failed to start service:" << reply.error().message();
         }
 
         // 创建接口
