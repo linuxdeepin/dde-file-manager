@@ -4,7 +4,7 @@ project(dfmplugin-search)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB_RECURSE  SRC
+FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_SOURCE_DIR}/3rdparty/fsearch/*.c"
@@ -27,9 +27,15 @@ pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(PCRE REQUIRED libpcre)
 
+# use TextIndex interface
+qt5_add_dbus_interface(SRC_FILES
+    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml"
+    textindex_interface
+)
+
 add_library(${PROJECT_NAME}
     SHARED
-    ${SRC}
+    ${SRC_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

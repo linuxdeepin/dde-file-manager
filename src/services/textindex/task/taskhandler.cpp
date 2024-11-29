@@ -176,9 +176,10 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 TermPtr term = newLucene<Term>(L"path", path.toStdWString());
                 writer->updateDocument(term, createFileDocument(path));
             }
-            if (reporter) {
-                reporter->increment();
-            }
+        }
+
+        if (reporter) {
+            reporter->increment();
         }
     } catch (const std::exception &e) {
         fmWarning() << "Update file failed:" << path << e.what();
@@ -359,6 +360,11 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             });
 
             traverseForUpdate(path, reader, writer, running);
+
+            if (!running.isRunning()) {
+                fmInfo() << "Update index task was interrupted";
+                return false;
+            }
 
             writer->optimize();
             return true;

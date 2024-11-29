@@ -9,6 +9,10 @@
 
 #include <QObject>
 
+#include <memory>
+
+class OrgDeepinFilemanagerTextIndexInterface;
+
 DPSEARCH_BEGIN_NAMESPACE
 
 class FullTextSearcherPrivate;
@@ -21,6 +25,8 @@ class FullTextSearcher : public AbstractSearcher
 
 private:
     explicit FullTextSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
+    ~FullTextSearcher();
+
     bool createIndex(const QString &path);
     bool search() override;
     void stop() override;
@@ -29,6 +35,7 @@ private:
     static bool isSupport(const QUrl &url);
 
 private:
+    std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
     FullTextSearcherPrivate *d = nullptr;
 };
 
