@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "textindexcontroller.h"
+
 #include "textindex_interface.h"
+
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 DFMBASE_USE_NAMESPACE
