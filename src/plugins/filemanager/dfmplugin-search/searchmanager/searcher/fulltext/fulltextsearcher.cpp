@@ -7,6 +7,8 @@
 #include "fulltext/chineseanalyzer.h"
 #include "utils/searchhelper.h"
 
+#include "textindex_interface.h"
+
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
@@ -440,6 +442,11 @@ FullTextSearcher::FullTextSearcher(const QUrl &url, const QString &key, QObject 
     : AbstractSearcher(url, key, parent),
       d(new FullTextSearcherPrivate(this))
 {
+}
+
+FullTextSearcher::~FullTextSearcher()
+{
+
 }
 
 bool FullTextSearcher::createIndex(const QString &path)
