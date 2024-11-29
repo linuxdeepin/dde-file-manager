@@ -7,9 +7,9 @@
 
 #include "searchmanager/searcher/abstractsearcher.h"
 
-#include <QObject>
+#include "utils/textindexclient.h"
 
-#include <memory>
+#include <QObject>
 
 class OrgDeepinFilemanagerTextIndexInterface;
 
@@ -27,16 +27,20 @@ private:
     explicit FullTextSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
     ~FullTextSearcher();
 
-    bool createIndex(const QString &path);
     bool search() override;
     void stop() override;
     bool hasItem() const override;
     QList<QUrl> takeAll() override;
     static bool isSupport(const QUrl &url);
 
+private Q_SLOTS:
+    void onIndexTaskStarted(TextIndexClient::TaskType type, const QString &path);
+    void onIndexTaskFinished(TextIndexClient::TaskType type, const QString &path, bool success);
+    void onIndexTaskFailed(TextIndexClient::TaskType type, const QString &path, const QString &error);
+
 private:
-    std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
     FullTextSearcherPrivate *d = nullptr;
+    bool waitForTask();
 };
 
 DPSEARCH_END_NAMESPACE
