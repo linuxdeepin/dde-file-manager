@@ -21,7 +21,7 @@ void registerMetaTypes()
         fmDebug() << "Meta types registered successfully";
     }
 }
-}
+}   // namespace
 
 TaskManager::TaskManager(QObject *parent)
     : QObject(parent)
