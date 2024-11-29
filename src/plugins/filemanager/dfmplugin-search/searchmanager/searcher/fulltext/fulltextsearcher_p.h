@@ -13,6 +13,8 @@
 #include <QApplication>
 #include <QMutex>
 #include <QTime>
+#include <QAtomicInt>
+#include <QWaitCondition>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -49,8 +51,6 @@ private:
     Lucene::IndexWriterPtr newIndexWriter(bool create = false);
     Lucene::IndexReaderPtr newIndexReader();
 
-    bool createIndex(const QString &path);
-    bool updateIndex(const QString &path);
     bool doSearch(const QString &path, const QString &keyword);
     inline static QString indexStorePath()
     {
@@ -61,13 +61,15 @@ private:
 
     Lucene::DocumentPtr fileDocument(const QString &file);
     QString dealKeyword(const QString &keyword);
-    void doIndexTask(const Lucene::IndexReaderPtr &reader, const Lucene::IndexWriterPtr &writer, const QString &path, TaskType type);
     void indexDocs(const Lucene::IndexWriterPtr &writer, const QString &file, IndexType type);
     bool checkUpdate(const Lucene::IndexReaderPtr &reader, const QString &file, IndexType &type);
     void tryNotify();
 
     bool isUpdated = false;
     QAtomicInt status = AbstractSearcher::kReady;
+    QAtomicInt taskStatus { 0 };
+    QMutex taskMutex;
+    QWaitCondition taskCondition;
     QList<QUrl> allResults;
     mutable QMutex mutex;
     static bool isIndexCreating;
@@ -78,6 +80,8 @@ private:
     int lastEmit = 0;
 
     FullTextSearcher *q = nullptr;
+
+    void doSearchAndEmit(const QString &path, const QString &key);
 };
 
 DPSEARCH_END_NAMESPACE

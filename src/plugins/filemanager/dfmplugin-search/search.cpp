@@ -6,6 +6,7 @@
 #include "events/searcheventreceiver.h"
 #include "utils/searchhelper.h"
 #include "utils/custommanager.h"
+#include "utils/textindexclient.h"
 #include "fileinfo/searchfileinfo.h"
 #include "iterator/searchdiriterator.h"
 #include "watcher/searchfilewatcher.h"
@@ -44,6 +45,9 @@ void Search::initialize()
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme(),
                                                 WatcherFactory::RegOpts::kNoCache);
+
+    // must inited in main thread
+    TextIndexClient::instance()->checkService();
 
     bindEvents();
     bindWindows();
@@ -173,11 +177,11 @@ void Search::regSearchSettingConfig()
                                                      val);
             });
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kClearSearchHistory,
-                   { { "key", "04_clear_search_history" },
-                     { "desc", tr("Clear dde-file-manager Search Records") },
-                     { "text", tr("Clean up") },
-                     { "type", "pushButton" },
-                     { "trigger", QVariant(Application::kClearSearchHistory) } });
+                                                { { "key", "04_clear_search_history" },
+                                                  { "desc", tr("Clear dde-file-manager Search Records") },
+                                                  { "text", tr("Clean up") },
+                                                  { "type", "pushButton" },
+                                                  { "trigger", QVariant(Application::kClearSearchHistory) } });
 }
 
 void Search::bindEvents()
