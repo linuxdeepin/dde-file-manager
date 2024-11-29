@@ -221,7 +221,8 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                                                           Global::CreateFileInfoType::kCreateFileInfoSync);
                 // delete invalid index
                 if (!info || !info->exists()) {
-                    indexDocs(writer, url.path(), kDeleteIndex);
+                    // TODO(zhangs):
+                    // indexDocs(writer, url.path(), kDeleteIndex);
                     continue;
                 }
 
