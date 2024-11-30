@@ -1,7 +1,0 @@
-{
-    "name": "org.deepin.Filemanager.Anything",
-    "libPath": "libdde-filemanager-anything.so",
-    "group": "app",
-    "policyStartType": "Resident",
-    "pluginType": "qt"
-}
