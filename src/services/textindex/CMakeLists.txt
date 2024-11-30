@@ -13,6 +13,7 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
     "${FULL_TEXT_PATH}/*.cpp"
     "${FULL_TEXT_PATH}/*.h"
+    "${CMAKE_SOURCE_DIR}/include/dfm-base/dfm_log_defines.h"
     )
 
 find_package(PkgConfig REQUIRED)
@@ -45,6 +46,7 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
+        ${CMAKE_SOURCE_DIR}/include
         ${FULL_TEXT_PATH}/..
 )
 
