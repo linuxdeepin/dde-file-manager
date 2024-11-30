@@ -1795,29 +1795,29 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="339"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>kërkim</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>kërkim i thelluar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Jeni i sigurt se doni të spastrohen historikë kërkimesh?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="455"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="456"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ripohojeni</translation>
     </message>
 </context>
 <context>
