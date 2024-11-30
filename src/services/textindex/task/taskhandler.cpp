@@ -378,3 +378,61 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
         return false;
     };
 }
+
+TaskHandler TaskHandlers::RemoveIndexHandler()
+{
+    return [](const QString &pathList, TaskState &running) -> bool {
+        fmInfo() << "Removing index for paths:" << pathList;
+
+        try {
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(indexStorePath().toStdWString()),
+                    newLucene<ChineseAnalyzer>(),
+                    false,
+                    IndexWriter::MaxFieldLengthLIMITED);
+
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            // 将路径列表字符串转换为QStringList
+            QStringList paths = pathList.split("|", Qt::SkipEmptyParts);
+            
+            ProgressReporter reporter;
+            for (const QString &path : paths) {
+                if (!running.isRunning())
+                    break;
+
+                try {
+                    fmDebug() << "Removing index for path:" << path;
+                    TermPtr term = newLucene<Term>(L"path", path.toStdWString());
+                    writer->deleteDocuments(term);
+                    reporter.increment();
+                } catch (const std::exception &e) {
+                    fmWarning() << "Failed to remove index for path:" << path << e.what();
+                    // 继续处理其他路径
+                }
+            }
+
+            if (!running.isRunning()) {
+                fmInfo() << "Remove index task was interrupted";
+                return false;
+            }
+
+            writer->optimize();
+            return true;
+        } catch (const LuceneException &e) {
+            fmWarning() << "Remove index failed with Lucene exception:"
+                        << QString::fromStdWString(e.getError());
+        } catch (const std::exception &e) {
+            fmWarning() << "Remove index failed with exception:" << e.what();
+        }
+
+        return false;
+    };
+}

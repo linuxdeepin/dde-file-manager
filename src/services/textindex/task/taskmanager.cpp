@@ -101,9 +101,21 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     // 获取对应的任务处理器
-    TaskHandler handler = (type == IndexTask::Type::Create)
-            ? TaskHandlers::CreateIndexHandler()
-            : TaskHandlers::UpdateIndexHandler();
+    TaskHandler handler;
+    switch (type) {
+    case IndexTask::Type::Create:
+        handler = TaskHandlers::CreateIndexHandler();
+        break;
+    case IndexTask::Type::Update:
+        handler = TaskHandlers::UpdateIndexHandler();
+        break;
+    case IndexTask::Type::Remove:
+        handler = TaskHandlers::RemoveIndexHandler();
+        break;
+    default:
+        fmWarning() << "Unknown task type:" << static_cast<int>(type);
+        return false;
+    }
 
     currentTask = new IndexTask(type, path, handler);
     currentTask->moveToThread(&workerThread);
@@ -125,6 +137,8 @@ QString TaskManager::typeToString(IndexTask::Type type)
         return "create";
     case IndexTask::Type::Update:
         return "update";
+    case IndexTask::Type::Remove:
+        return "remove";
     default:
         return "unknown";
     }

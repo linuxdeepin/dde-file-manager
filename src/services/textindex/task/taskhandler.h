@@ -20,6 +20,7 @@ using TaskHandler = std::function<bool(const QString &path, TaskState &state)>;
 namespace TaskHandlers {
 TaskHandler CreateIndexHandler();
 TaskHandler UpdateIndexHandler();
+TaskHandler RemoveIndexHandler();
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

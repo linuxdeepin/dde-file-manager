@@ -21,7 +21,8 @@ class TextIndexClient : public QObject
 public:
     enum class TaskType {
         Create,
-        Update
+        Update,
+        Remove
     };
     Q_ENUM(TaskType)
 
@@ -36,6 +37,7 @@ public:
 
     // 异步方法，通过信号返回结果
     void startTask(TaskType type, const QString &path);
+    void startTask(TaskType type, const QStringList &paths);
 
     // 返回值：
     // - std::nullopt: 服务不可用或出错
@@ -51,6 +53,13 @@ public:
     // - true: 根目录索引任务正在运行
     // - false: 根目录索引任务未运行
     std::optional<bool> hasRunningRootTask();
+
+    // 检查是否有任务在运行
+    // 返回值：
+    // - std::nullopt: 服务不可用或出错
+    // - true: 有任务在运行
+    // - false: 没有任务在运行
+    std::optional<bool> hasRunningTask();
 
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
