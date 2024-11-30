@@ -63,8 +63,10 @@ public:
     bool allowRepeatUrl(const QUrl &cur, const QUrl &pre);
 
     bool crumbRedirectUrl(QUrl *redirectUrl);
-    
+
     static QDBusInterface &anythingInterface();
+    [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
+
 private:
     explicit SearchHelper(QObject *parent = nullptr);
     ~SearchHelper() override;

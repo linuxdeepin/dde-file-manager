@@ -76,6 +76,8 @@ bool TextIndexClient::ensureInterface()
         // 接口可用，连接信号
         connect(interface.get(), &OrgDeepinFilemanagerTextIndexInterface::TaskFinished,
                 this, &TextIndexClient::onDBusTaskFinished);
+        connect(interface.get(), &OrgDeepinFilemanagerTextIndexInterface::TaskProgressChanged,
+                this, &TextIndexClient::onDBusTaskProgressChanged);
 
         fmInfo() << "[TextIndex] Interface successfully initialized";
     }
@@ -143,6 +145,7 @@ void TextIndexClient::startTask(TaskType type, const QString &path)
     }
 
     emit taskStarted(type, path);
+    runningTaskPath = path;
 }
 
 void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &path, bool success)
@@ -153,4 +156,25 @@ void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &pat
     } else {
         emit taskFailed(taskType, path, "Task failed");
     }
+    runningTaskPath.clear();
+}
+
+void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count)
+{
+    TaskType taskType = type == "create" ? TaskType::Create : TaskType::Update;
+    emit taskProgressChanged(taskType, path, count);
+}
+
+std::optional<bool> TextIndexClient::hasRunningRootTask()
+{
+    if (!ensureInterface())
+        return std::nullopt;
+
+    auto pendingHasTask = interface->HasRunningTask();
+    pendingHasTask.waitForFinished();
+
+    if (pendingHasTask.isError())
+        return std::nullopt;
+
+    return pendingHasTask.value() && runningTaskPath == "/";
 }

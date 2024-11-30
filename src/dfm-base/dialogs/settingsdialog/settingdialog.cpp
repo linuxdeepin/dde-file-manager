@@ -141,6 +141,10 @@ SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
 {
     parentWid = FMWindowsIns.findWindowId(parent);
+}
+
+void SettingDialog::initialze()
+{
     // TODO(xust): move to server plugin.
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);

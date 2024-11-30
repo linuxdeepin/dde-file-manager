@@ -24,6 +24,7 @@
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
@@ -145,9 +146,13 @@ void Search::regSearchSettingConfig()
                 });
     }
 
-    SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kFulltextSearch,
-                                                        tr("Full-Text search"),
-                                                        false);
+    QString textIndexKey { SearchSettings::kFulltextSearch };
+    DialogManager::instance()->registerSettingWidget("checkBoxWidthTextIndex", &SearchHelper::createCheckBoxWidthTextIndex);
+    SettingJsonGenerator::instance()->addConfig(SearchSettings::kFulltextSearch,
+                                                { { "key", textIndexKey.mid(textIndexKey.lastIndexOf(".") + 1) },
+                                                  { "text", tr("Full-Text search") },
+                                                  { "type", "checkBoxWidthTextIndex" },
+                                                  { "default", false } });
     SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kDisplaySearchHistory,
                                                         tr("Display search history"),
                                                         true);

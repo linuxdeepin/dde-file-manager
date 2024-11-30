@@ -81,7 +81,3 @@ void MainController::onFinished(QString taskId)
 
     emit searchCompleted(taskId);
 }
-
-void MainController::onIndexFullTextSearchChanged(bool enable)
-{
-}
