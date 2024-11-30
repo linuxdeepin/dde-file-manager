@@ -48,6 +48,12 @@ bool TextIndexDBus::UpdateIndexTask(const QString &path)
     return d->taskManager->startTask(IndexTask::Type::Update, path);
 }
 
+bool TextIndexDBus::RemoveIndexTask(const QStringList &paths)
+{
+    QString pathString = paths.join("|");
+    return d->taskManager->startTask(IndexTask::Type::Remove, pathString);
+}
+
 bool TextIndexDBus::StopCurrentTask()
 {
     if (!d->taskManager->hasRunningTask())

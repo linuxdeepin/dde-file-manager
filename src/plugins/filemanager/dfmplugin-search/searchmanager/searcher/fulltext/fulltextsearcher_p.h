@@ -59,10 +59,7 @@ private:
         return path;
     }
 
-    Lucene::DocumentPtr fileDocument(const QString &file);
     QString dealKeyword(const QString &keyword);
-    void indexDocs(const Lucene::IndexWriterPtr &writer, const QString &file, IndexType type);
-    bool checkUpdate(const Lucene::IndexReaderPtr &reader, const QString &file, IndexType &type);
     void tryNotify();
 
     bool isUpdated = false;
@@ -82,6 +79,8 @@ private:
     FullTextSearcher *q = nullptr;
 
     void doSearchAndEmit(const QString &path, const QString &key);
+
+    QSet<QString> invalidIndexPaths;   // 存储无效的索引路径
 };
 
 DPSEARCH_END_NAMESPACE

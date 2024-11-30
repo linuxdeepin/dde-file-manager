@@ -116,8 +116,15 @@ std::optional<bool> TextIndexClient::indexExists()
 
 void TextIndexClient::startTask(TaskType type, const QString &path)
 {
+    QStringList paths;
+    paths << path;
+    startTask(type, paths);
+}
+
+void TextIndexClient::startTask(TaskType type, const QStringList &paths)
+{
     if (!ensureInterface()) {
-        emit taskFailed(type, path, "Failed to connect to service");
+        emit taskFailed(type, paths.join("|"), "Failed to connect to service");
         return;
     }
 
@@ -125,32 +132,47 @@ void TextIndexClient::startTask(TaskType type, const QString &path)
     auto pendingHasTask = interface->HasRunningTask();
     pendingHasTask.waitForFinished();
     if (pendingHasTask.isError() || pendingHasTask.value()) {
-        emit taskFailed(type, path, "Another task is running");
+        emit taskFailed(type, paths.join("|"), "Another task is running");
         return;
     }
 
     // 启动任务
     QDBusPendingReply<bool> pendingTask;
-    if (type == TaskType::Create) {
-        pendingTask = interface->CreateIndexTask(path);
-    } else {
-        pendingTask = interface->UpdateIndexTask(path);
+    switch (type) {
+    case TaskType::Create:
+        pendingTask = interface->CreateIndexTask(paths.first());  // Create只支持单路径
+        break;
+    case TaskType::Update:
+        pendingTask = interface->UpdateIndexTask(paths.first());  // Update只支持单路径
+        break;
+    case TaskType::Remove:
+        pendingTask = interface->RemoveIndexTask(paths);
+        break;
     }
 
     pendingTask.waitForFinished();
     if (pendingTask.isError() || !pendingTask.value()) {
-        emit taskFailed(type, path,
-                        pendingTask.isError() ? pendingTask.error().message() : "Failed to start task");
+        emit taskFailed(type, paths.join("|"),
+                       pendingTask.isError() ? pendingTask.error().message() : "Failed to start task");
         return;
     }
 
-    emit taskStarted(type, path);
-    runningTaskPath = path;
+    emit taskStarted(type, paths.join("|"));
+    runningTaskPath = paths.join("|");
 }
 
 void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &path, bool success)
 {
-    TaskType taskType = type == "create" ? TaskType::Create : TaskType::Update;
+    TaskType taskType;
+    if (type == "create")
+        taskType = TaskType::Create;
+    else if (type == "update")
+        taskType = TaskType::Update;
+    else if (type == "remove")
+        taskType = TaskType::Remove;
+    else
+        return;
+
     if (success) {
         emit taskFinished(taskType, path, true);
     } else {
@@ -161,11 +183,20 @@ void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &pat
 
 void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count)
 {
-    TaskType taskType = type == "create" ? TaskType::Create : TaskType::Update;
+    TaskType taskType;
+    if (type == "create")
+        taskType = TaskType::Create;
+    else if (type == "update")
+        taskType = TaskType::Update;
+    else if (type == "remove")
+        taskType = TaskType::Remove;
+    else
+        return;
+
     emit taskProgressChanged(taskType, path, count);
 }
 
-std::optional<bool> TextIndexClient::hasRunningRootTask()
+std::optional<bool> TextIndexClient::hasRunningTask()
 {
     if (!ensureInterface())
         return std::nullopt;
@@ -173,8 +204,19 @@ std::optional<bool> TextIndexClient::hasRunningRootTask()
     auto pendingHasTask = interface->HasRunningTask();
     pendingHasTask.waitForFinished();
 
-    if (pendingHasTask.isError())
+    if (pendingHasTask.isError()) {
+        fmWarning() << "[TextIndex] Failed to check running task:" << pendingHasTask.error().message();
         return std::nullopt;
+    }
 
-    return pendingHasTask.value() && runningTaskPath == "/";
+    return pendingHasTask.value();
+}
+
+std::optional<bool> TextIndexClient::hasRunningRootTask()
+{
+    auto hasTask = hasRunningTask();
+    if (!hasTask)
+        return std::nullopt;
+        
+    return *hasTask && runningTaskPath == "/";
 }

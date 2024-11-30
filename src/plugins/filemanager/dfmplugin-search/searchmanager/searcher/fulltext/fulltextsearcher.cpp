@@ -31,11 +31,6 @@
 #include <exception>
 #include <docparser.h>
 
-static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr).*$";
-static constexpr char kSupportFiles[] = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
-                                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)|"
-                                        "(sh)|(html)|(htm)|(xml)|(xhtml)|(dhtml)|(shtm)|(shtml)|"
-                                        "(json)|(css)|(yaml)|(ini)|(bat)|(js)|(sql)|(uof)|(ofd)";
 static int kMaxResultNum = 100000;   // 最大搜索结果数
 static int kEmitInterval = 50;   // 推送时间间隔
 
@@ -68,86 +63,6 @@ IndexReaderPtr FullTextSearcherPrivate::newIndexReader()
     return IndexReader::open(FSDirectory::open(indexStorePath().toStdWString()), true);
 }
 
-void FullTextSearcherPrivate::indexDocs(const IndexWriterPtr &writer, const QString &file, IndexType type)
-{
-    Q_ASSERT(writer);
-
-    try {
-        switch (type) {
-        case kAddIndex: {
-            fmDebug() << "Adding [" << file << "]";
-            // 添加
-            writer->addDocument(fileDocument(file));
-            break;
-        }
-        case kUpdateIndex: {
-            fmDebug() << "Update file: [" << file << "]";
-            // 定义一个更新条件
-            TermPtr term = newLucene<Term>(L"path", file.toStdWString());
-            // 更新
-            writer->updateDocument(term, fileDocument(file));
-            break;
-        }
-        case kDeleteIndex: {
-            fmDebug() << "Delete file: [" << file << "]";
-            // 定义一个删除条件
-            TermPtr term = newLucene<Term>(L"path", file.toStdWString());
-            // 删除
-            writer->deleteDocuments(term);
-            break;
-        }
-        }
-    } catch (const LuceneException &e) {
-        QMetaEnum enumType = QMetaEnum::fromType<FullTextSearcherPrivate::IndexType>();
-        fmWarning() << QString::fromStdWString(e.getError()) << " type: " << enumType.valueToKey(type);
-    } catch (const std::exception &e) {
-        QMetaEnum enumType = QMetaEnum::fromType<FullTextSearcherPrivate::IndexType>();
-        fmWarning() << QString(e.what()) << " type: " << enumType.valueToKey(type);
-    } catch (...) {
-        fmWarning() << "Index document failed! " << file;
-    }
-}
-
-bool FullTextSearcherPrivate::checkUpdate(const IndexReaderPtr &reader, const QString &file, IndexType &type)
-{
-    Q_ASSERT(reader);
-
-    try {
-        SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", file.toStdWString()));
-
-        // 文件路径为唯一值，所以搜索一个结果就行了
-        TopDocsPtr topDocs = searcher->search(query, 1);
-        int32_t numTotalHits = topDocs->totalHits;
-        if (numTotalHits == 0) {
-            type = kAddIndex;
-            return true;
-        } else {
-            DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
-            auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
-                                                      Global::CreateFileInfoType::kCreateFileInfoSync);
-            if (!info)
-                return false;
-
-            const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
-            const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
-            const String &storeTime { doc->get(L"modified") };
-            if (modifyEpoch.toStdWString() != storeTime) {
-                type = kUpdateIndex;
-                return true;
-            }
-        }
-    } catch (const LuceneException &e) {
-        fmWarning() << QString::fromStdWString(e.getError()) << " file: " << file;
-    } catch (const std::exception &e) {
-        fmWarning() << QString(e.what()) << " file: " << file;
-    } catch (...) {
-        fmWarning() << "The file checked failed!" << file;
-    }
-
-    return false;
-}
-
 void FullTextSearcherPrivate::tryNotify()
 {
     int cur = notifyTimer.elapsed();
@@ -156,26 +71,6 @@ void FullTextSearcherPrivate::tryNotify()
         fmDebug() << "unearthed, current spend:" << cur;
         emit q->unearthed(q);
     }
-}
-
-DocumentPtr FullTextSearcherPrivate::fileDocument(const QString &file)
-{
-    DocumentPtr doc = newLucene<Document>();
-    // file path
-    doc->add(newLucene<Field>(L"path", file.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-    // file last modified time
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(file),
-                                              Global::CreateFileInfoType::kCreateFileInfoSync);
-    const QDateTime &modifyTime { info->timeOf(TimeInfoType::kLastModified).toDateTime() };
-    const QString &modifyEpoch { QString::number(modifyTime.toSecsSinceEpoch()) };
-    doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-    // file contents
-    QString contents = DocParser::convertFile(file.toStdString()).c_str();
-    doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
-
-    return doc;
 }
 
 bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keyword)
@@ -194,7 +89,7 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         AnalyzerPtr analyzer = newLucene<ChineseAnalyzer>();
         QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"contents", analyzer);
-        //设定第一个* 可以匹配
+        // 设定第一个* 可以匹配
         parser->setAllowLeadingWildcard(true);
         QueryPtr query = parser->parse(keyword.toStdWString());
 
@@ -207,8 +102,9 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         Collection<ScoreDocPtr> scoreDocs = topDocs->scoreDocs;
 
         QHash<QString, QSet<QString>> hiddenFileHash;
+        QSet<QString> invalidIndexPaths;   // 存储无效的索引路径
         for (auto scoreDoc : scoreDocs) {
-            //中断
+            // 中断
             if (status.loadAcquire() != AbstractSearcher::kRuning)
                 return false;
 
@@ -219,10 +115,9 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                 const QUrl &url = QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str());
                 auto info = InfoFactory::create<FileInfo>(url,
                                                           Global::CreateFileInfoType::kCreateFileInfoSync);
-                // delete invalid index
+                // 收集无效的索引路径
                 if (!info || !info->exists()) {
-                    // TODO(zhangs):
-                    // indexDocs(writer, url.path(), kDeleteIndex);
+                    invalidIndexPaths.insert(url.path());
                     continue;
                 }
 
@@ -239,7 +134,7 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                         allResults.append(QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str()));
                     }
 
-                    //推送
+                    // 推送
                     tryNotify();
                 }
             }
@@ -247,6 +142,15 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
 
         reader->close();
         writer->close();
+
+        // 如果有无效的索引路径，一次性启动移除任务
+        if (!invalidIndexPaths.isEmpty()) {
+            auto client = TextIndexClient::instance();
+            client->startTask(TextIndexClient::TaskType::Remove,
+                              QStringList(invalidIndexPaths.begin(), invalidIndexPaths.end()));
+            invalidIndexPaths.clear();
+        }
+
     } catch (const LuceneException &e) {
         fmWarning() << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
@@ -353,6 +257,15 @@ bool FullTextSearcher::search()
     auto serviceStatus = client->checkService();
     if (serviceStatus != TextIndexClient::ServiceStatus::Available) {
         // 如果服务不可用，直接执行搜索
+        fmWarning() << "Service is not available, search directly";
+        d->doSearchAndEmit(path, key);
+        return true;
+    }
+
+    // 检查到有服务正在运行，也直接执行搜索
+    auto hasRunningTask = client->hasRunningTask();
+    if (hasRunningTask.has_value() && hasRunningTask.value()) {
+        fmWarning() << "Service is running, search directly";
         d->doSearchAndEmit(path, key);
         return true;
     }
@@ -361,6 +274,7 @@ bool FullTextSearcher::search()
     auto indexExistsResult = client->indexExists();
     if (!indexExistsResult.has_value()) {
         // 如果无法确定索引状态，直接执行搜索
+        fmWarning() << "Failed to check index status, search directly";
         d->doSearchAndEmit(path, key);
         return true;
     }

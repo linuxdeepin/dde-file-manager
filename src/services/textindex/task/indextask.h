@@ -20,7 +20,8 @@ class IndexTask : public QObject
 public:
     enum class Type {
         Create,
-        Update
+        Update,
+        Remove
     };
     Q_ENUM(Type)
 
