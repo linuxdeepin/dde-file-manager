@@ -67,8 +67,7 @@ void SearchManager::onDConfigValueChanged(const QString &config, const QString &
     data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
     dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", QString("Search"), data);
 
-    if (mainController)
-        mainController->onIndexFullTextSearchChanged(enabled);
+    emit enableFullTextSearchChanged(enabled);
 }
 
 SearchManager::SearchManager(QObject *parent)

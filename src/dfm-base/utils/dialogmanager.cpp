@@ -259,6 +259,12 @@ void DialogManager::addTask(const JobHandlePointer task)
     taskdialog->addTask(task);
 }
 
+void DialogManager::registerSettingWidget(const QString &viewType,
+                                          std::function<DSettingsWidgetFactory::WidgetCreateHandler> handler)
+{
+    settingWidgetCreators[viewType] = handler;
+}
+
 void DialogManager::showSetingsDialog(FileManagerWindow *window)
 {
     Q_ASSERT(window);
@@ -267,9 +273,21 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
         qCWarning(logDFMBase) << "isSettingDialogShown true";
         return;
     }
+
     window->setProperty("isSettingDialogShown", true);
-    DSettingsDialog *dsd = new SettingDialog(window);
+    SettingDialog *dsd = new SettingDialog(window);
+
+    // 在初始化前注册所有缓存的自定义控件创建器
+    auto factory = dsd->widgetFactory();
+    for (auto iter = settingWidgetCreators.constBegin();
+         iter != settingWidgetCreators.constEnd();
+         ++iter) {
+        factory->registerWidget(iter.key(), iter.value());
+    }
+
+    dsd->initialze();
     dsd->show();
+
     connect(dsd, &DSettingsDialog::finished, [window] {
         window->setProperty("isSettingDialogShown", false);
     });

@@ -23,6 +23,7 @@ class SettingDialog : public DSettingsDialog
 {
 public:
     explicit SettingDialog(QWidget *parent = nullptr);
+    void initialze();
     static void setItemVisiable(const QString &key, bool visiable);
 
 private:

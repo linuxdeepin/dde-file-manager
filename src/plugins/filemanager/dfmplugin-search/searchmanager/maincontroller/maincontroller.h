@@ -26,7 +26,6 @@ private:
 
 private slots:
     void onFinished(QString taskId);
-    void onIndexFullTextSearchChanged(bool enable);
 
 signals:
     void matched(QString taskId);

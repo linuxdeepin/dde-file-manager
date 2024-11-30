@@ -45,10 +45,18 @@ public:
     // 检查服务状态
     ServiceStatus checkService();
 
+    // 检查根目录("/")的索引任务是否正在运行
+    // 返回值：
+    // - std::nullopt: 服务不可用或出错
+    // - true: 根目录索引任务正在运行
+    // - false: 根目录索引任务未运行
+    std::optional<bool> hasRunningRootTask();
+
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
     void taskFinished(TaskType type, const QString &path, bool success);
     void taskFailed(TaskType type, const QString &path, const QString &error);
+    void taskProgressChanged(TaskType type, const QString &path, qlonglong count);
 
 private:
     explicit TextIndexClient(QObject *parent = nullptr);
@@ -58,8 +66,12 @@ private:
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
 
+    // 添加成员变量来跟踪当前运行的任务路径
+    QString runningTaskPath;
+
 private Q_SLOTS:
     void onDBusTaskFinished(const QString &type, const QString &path, bool success);
+    void onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count);
 };
 
 DPSEARCH_END_NAMESPACE

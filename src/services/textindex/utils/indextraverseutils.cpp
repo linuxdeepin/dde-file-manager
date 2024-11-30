@@ -65,7 +65,6 @@ bool shouldSkipDirectory(const QString &path)
         "/run",   // 运行时文件
 
         // 特殊目录
-        "/root",   // root用户目录
         "/opt",   // 可选软件
         "/srv",   // 服务数据
         "/usr/lib",   // 系统库
