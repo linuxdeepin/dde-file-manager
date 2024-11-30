@@ -1,3 +1,9 @@
+dde-file-manager (6.5.12) unstable; urgency=medium
+
+  * Refactoring Full-Text Search
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 30 Nov 2024 14:36:45 +0800
+
 dde-file-manager (6.5.11) unstable; urgency=medium
 
   *fix bugs
