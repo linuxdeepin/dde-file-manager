@@ -61,6 +61,8 @@ public:
     // - false: 没有任务在运行
     std::optional<bool> hasRunningTask();
 
+    QString getLastUpdateTime();
+
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
     void taskFinished(TaskType type, const QString &path, bool success);

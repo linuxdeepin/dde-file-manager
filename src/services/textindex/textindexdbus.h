@@ -30,6 +30,7 @@ public Q_SLOTS:
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();
+    QString GetLastUpdateTime();
 
 Q_SIGNALS:
     void TaskFinished(const QString &type, const QString &path, bool success);

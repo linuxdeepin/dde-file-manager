@@ -72,3 +72,8 @@ bool TextIndexDBus::IndexDatabaseExists()
 {
     return IndexReader::indexExists(FSDirectory::open(indexStorePath().toStdWString()));
 }
+
+QString TextIndexDBus::GetLastUpdateTime()
+{
+    return d->taskManager->getLastUpdateTime();
+}

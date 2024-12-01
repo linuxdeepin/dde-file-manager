@@ -140,10 +140,10 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
     QDBusPendingReply<bool> pendingTask;
     switch (type) {
     case TaskType::Create:
-        pendingTask = interface->CreateIndexTask(paths.first());  // Create只支持单路径
+        pendingTask = interface->CreateIndexTask(paths.first());   // Create只支持单路径
         break;
     case TaskType::Update:
-        pendingTask = interface->UpdateIndexTask(paths.first());  // Update只支持单路径
+        pendingTask = interface->UpdateIndexTask(paths.first());   // Update只支持单路径
         break;
     case TaskType::Remove:
         pendingTask = interface->RemoveIndexTask(paths);
@@ -153,7 +153,7 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
     pendingTask.waitForFinished();
     if (pendingTask.isError() || !pendingTask.value()) {
         emit taskFailed(type, paths.join("|"),
-                       pendingTask.isError() ? pendingTask.error().message() : "Failed to start task");
+                        pendingTask.isError() ? pendingTask.error().message() : "Failed to start task");
         return;
     }
 
@@ -217,6 +217,22 @@ std::optional<bool> TextIndexClient::hasRunningRootTask()
     auto hasTask = hasRunningTask();
     if (!hasTask)
         return std::nullopt;
-        
+
     return *hasTask && runningTaskPath == "/";
+}
+
+QString TextIndexClient::getLastUpdateTime()
+{
+    if (!ensureInterface())
+        return QString();
+
+    auto pendingReply = interface->GetLastUpdateTime();
+    pendingReply.waitForFinished();
+
+    if (pendingReply.isError()) {
+        fmWarning() << "[TextIndex] Get last update time failed:" << pendingReply.error().message();
+        return QString();
+    }
+
+    return pendingReply.value();
 }
