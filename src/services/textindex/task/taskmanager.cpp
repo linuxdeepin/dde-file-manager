@@ -157,6 +157,21 @@ void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
     if (!currentTask) return;
 
     QString taskPath = currentTask->taskPath();
+    
+    if (!success && type == IndexTask::Type::Update) {
+        fmWarning() << "Update task failed for path:" << taskPath << ", trying to rebuild index";
+        
+        // 清理损坏的索引
+        clearIndexDirectory();
+        
+        // 启动新的创建任务
+        cleanupTask();  // 清理当前失败的任务
+        if (startTask(IndexTask::Type::Create, taskPath)) {
+            return;  // 新任务已启动，等待其完成
+        }
+        // 如果重建也失败了，继续向下执行发出失败信号
+    }
+
     fmInfo() << "Task" << typeToString(type) << "for path" << taskPath
              << (success ? "completed successfully" : "failed");
 
@@ -218,4 +233,27 @@ QString TaskManager::getLastUpdateTime() const
         }
     }
     return QString();
+}
+
+void TaskManager::clearIndexDirectory()
+{
+    QString indexDir = indexStorePath();
+    QDir dir(indexDir);
+    
+    if (dir.exists()) {
+        // 删除所有索引文件
+        QStringList files = dir.entryList(QDir::Files);
+        for (const QString &file : files) {
+            if (dir.remove(file)) {
+                fmWarning() << "Removed corrupted index file:" << file;
+            } else {
+                fmWarning() << "Failed to remove index file:" << file;
+            }
+        }
+    }
+    
+    // 确保目录存在
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
 }

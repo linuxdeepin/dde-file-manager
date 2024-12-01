@@ -562,7 +562,9 @@ void SearchEditWidget::doComplete()
         completerView->setFixedHeight(h < kCompleterMaxHeight ? h : kCompleterMaxHeight);
     }
     completerView->show();
-    completerView->activateWindow();
+
+    // maybe lost focus?
+    // completerView->activateWindow();
 
     return;
 }

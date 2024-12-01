@@ -36,6 +36,7 @@ private Q_SLOTS:
 
 private:
     void cleanupTask();
+    void clearIndexDirectory();
 
     QThread workerThread;
     IndexTask *currentTask { nullptr };

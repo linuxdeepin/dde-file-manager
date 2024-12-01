@@ -84,7 +84,6 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         hasTransform = true;
 
     try {
-        IndexWriterPtr writer = newIndexWriter();
         IndexReaderPtr reader = newIndexReader();
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         AnalyzerPtr analyzer = newLucene<ChineseAnalyzer>();
@@ -141,7 +140,6 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         }
 
         reader->close();
-        writer->close();
 
         // 如果有无效的索引路径，一次性启动移除任务
         if (!invalidIndexPaths.isEmpty()) {
@@ -288,7 +286,7 @@ bool FullTextSearcher::search()
         // 如果索引不存在，需要等待创建完成
         QString bindPath = FileUtils::bindPathTransform(path, false);
         client->startTask(TextIndexClient::TaskType::Create, bindPath);
-        
+
         // 等待任务完成
         if (!waitForTask()) {
             d->status.storeRelease(kCompleted);
@@ -298,7 +296,7 @@ bool FullTextSearcher::search()
         // 索引存在的情况
         // 启动更新任务
         client->startTask(TextIndexClient::TaskType::Update, path);
-        
+
         // 如果不是根目录或家目录，等待更新完成
         // 如果是根目录或家目录，直接继续搜索
         if (!isRootOrHome && !waitForTask()) {
