@@ -159,17 +159,21 @@ void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
     QString taskPath = currentTask->taskPath();
     
     if (!success && type == IndexTask::Type::Update) {
-        fmWarning() << "Update task failed for path:" << taskPath << ", trying to rebuild index";
-        
-        // 清理损坏的索引
-        clearIndexDirectory();
-        
-        // 启动新的创建任务
-        cleanupTask();  // 清理当前失败的任务
-        if (startTask(IndexTask::Type::Create, taskPath)) {
-            return;  // 新任务已启动，等待其完成
+        // 检查是否是由于索引损坏导致的失败
+        if (currentTask->isIndexCorrupted()) {
+            fmWarning() << "Update task failed due to index corruption for path:" << taskPath << ", trying to rebuild index";
+            
+            // 清理损坏的索引
+            clearIndexDirectory();
+            
+            // 启动新的创建任务
+            cleanupTask();  // 清理当前失败的任务
+            if (startTask(IndexTask::Type::Create, taskPath)) {
+                return;  // 新任务已启动，等待其完成
+            }
+        } else {
+            fmInfo() << "Update task failed but index is not corrupted, skipping rebuild for path:" << taskPath;
         }
-        // 如果重建也失败了，继续向下执行发出失败信号
     }
 
     fmInfo() << "Task" << typeToString(type) << "for path" << taskPath

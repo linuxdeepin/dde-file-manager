@@ -6,11 +6,14 @@
 
 #include "progressnotifier.h"
 
+#include <LuceneException.h>
+
 #include <QDebug>
 #include <QThread>
 #include <QCoreApplication>
 
 SERVICETEXTINDEX_USE_NAMESPACE
+using namespace Lucene;
 
 IndexTask::IndexTask(Type type, const QString &path, TaskHandler handler, QObject *parent)
     : QObject(parent), m_type(type), m_path(path), m_handler(handler)
@@ -80,13 +83,30 @@ IndexTask::Status IndexTask::status() const
     return m_status;
 }
 
+bool IndexTask::isIndexCorrupted() const
+{
+    return indexCorrupted;
+}
+
+void IndexTask::setIndexCorrupted(bool corrupted)
+{
+    indexCorrupted = corrupted;
+}
+
 void IndexTask::doTask()
 {
     fmInfo() << "Processing task for path:" << m_path;
 
     bool success = false;
     if (m_handler) {
-        success = m_handler(m_path, m_state);
+        try {
+            setIndexCorrupted(false);
+            success = m_handler(m_path, m_state);
+        } catch (const LuceneException &) {
+            // 捕获到 Lucene 异常，说明索引损坏
+            setIndexCorrupted(true);
+            success = false;
+        }
     } else {
         fmWarning() << "No task handler provided";
     }
