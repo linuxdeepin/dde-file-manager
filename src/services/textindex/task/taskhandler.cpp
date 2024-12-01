@@ -369,12 +369,15 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             writer->optimize();
             return true;
         } catch (const LuceneException &e) {
-            fmWarning() << "Update index failed with Lucene exception:"
+            // Lucene异常表示索引损坏
+            fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
                         << QString::fromStdWString(e.getError());
+            throw;   // 重新抛出异常，让 IndexTask 捕获并处理
         } catch (const std::exception &e) {
+            // 其他异常不需要重建
             fmWarning() << "Update index failed with exception:" << e.what();
         }
-
+        
         return false;
     };
 }
@@ -402,7 +405,7 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
 
             // 将路径列表字符串转换为QStringList
             QStringList paths = pathList.split("|", Qt::SkipEmptyParts);
-            
+
             ProgressReporter reporter;
             for (const QString &path : paths) {
                 if (!running.isRunning())

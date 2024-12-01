@@ -44,6 +44,9 @@ public:
     Type taskType() const;
     Status status() const;
 
+    bool isIndexCorrupted() const;
+    void setIndexCorrupted(bool corrupted);
+
 Q_SIGNALS:
     void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count);
     void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, bool success);
@@ -57,6 +60,7 @@ private:
     Status m_status { Status::NotStarted };
     TaskState m_state;
     TaskHandler m_handler;
+    bool indexCorrupted { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
