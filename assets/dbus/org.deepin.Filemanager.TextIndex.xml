@@ -32,5 +32,8 @@
     <method name="IndexDatabaseExists">
       <arg type="b" direction="out"/>
     </method>
+    <method name="GetLastUpdateTime">
+      <arg type="s" direction="out"/>
+    </method>
   </interface>
 </node>

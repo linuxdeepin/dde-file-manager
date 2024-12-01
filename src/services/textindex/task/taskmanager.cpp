@@ -199,3 +199,23 @@ void TaskManager::cleanupTask()
         currentTask = nullptr;
     }
 }
+
+QString TaskManager::getLastUpdateTime() const
+{
+    QFile file(getConfigPath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return QString();
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
+
+    if (doc.isObject()) {
+        QJsonObject obj = doc.object();
+        if (obj.contains("lastUpdateTime")) {
+            QDateTime time = QDateTime::fromString(obj["lastUpdateTime"].toString(), Qt::ISODate);
+            return time.toString("yyyy-MM-dd hh:mm:ss");
+        }
+    }
+    return QString();
+}

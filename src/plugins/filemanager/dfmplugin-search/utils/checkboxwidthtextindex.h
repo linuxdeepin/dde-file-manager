@@ -3,6 +3,8 @@
 #ifndef CHECKBOXWIDTHTEXTINDEX_H
 #define CHECKBOXWIDTHTEXTINDEX_H
 
+#include "utils/textindexclient.h"
+
 #include <DTipLabel>
 #include <DSpinner>
 
@@ -26,7 +28,6 @@ public:
     void setStatus(Status status, const QVariant &data = QVariant());
     void updateIndexingProgress(qlonglong count);
     void setRunning(bool running);
-    QString getLastUpdateTime();
     Status status() const;
 
 private:
@@ -51,6 +52,7 @@ Q_SIGNALS:
 private:
     QCheckBox *checkBox { nullptr };
     TextIndexStatusBar *statusBar { nullptr };
+    bool shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const;
 };
 }   // namespace dfmplugin_search
 #endif   // CHECKBOXWIDTHTEXTINDEX_H

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "checkboxwidthtextindex.h"
 
-#include "utils/textindexclient.h"
 #include "searchmanager/searchmanager.h"
 
 #include <QVBoxLayout>
@@ -73,7 +72,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         break;
     case Status::Completed: {
         setRunning(false);
-        QString lastTime = getLastUpdateTime();
+        QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
         msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
         iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
         break;
@@ -96,29 +95,6 @@ void TextIndexStatusBar::updateIndexingProgress(qlonglong count)
     if (currentStatus == Status::Indexing) {
         msgLabel->setText(tr("Building index, %1 files indexed").arg(count));
     }
-}
-
-QString TextIndexStatusBar::getLastUpdateTime()
-{
-    static const QString kPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
-            + "/deepin/dde-file-manager/index";
-    // 读取 index_status.json
-    QFile file(kPath + "/index_status.json");
-    if (!file.open(QIODevice::ReadOnly)) {
-        return QString();
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    if (doc.isObject()) {
-        QJsonObject obj = doc.object();
-        if (obj.contains("lastUpdateTime")) {
-            QDateTime time = QDateTime::fromString(obj["lastUpdateTime"].toString(), Qt::ISODate);
-            return time.toString("yyyy-MM-dd hh:mm:ss");
-        }
-    }
-    return QString();
 }
 
 TextIndexStatusBar::Status TextIndexStatusBar::status() const
@@ -153,7 +129,7 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     connect(client, &TextIndexClient::taskProgressChanged,
             this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count) {
                 fmDebug() << "Index task changed:" << type << path << count;
-                if (checkBox->isChecked() && path == "/") {
+                if (shouldHandleIndexEvent(path, type)) {
                     if (statusBar->status() != TextIndexStatusBar::Status::Indexing) {
                         statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
                     }
@@ -163,8 +139,15 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
 
     connect(client, &TextIndexClient::taskFinished,
             this, [this](TextIndexClient::TaskType type, const QString &path, bool success) {
-                if (checkBox->isChecked() && path == "/") {
+                if (shouldHandleIndexEvent(path, type)) {
                     statusBar->setStatus(success ? TextIndexStatusBar::Status::Completed : TextIndexStatusBar::Status::Failed);
+                }
+            });
+
+    connect(client, &TextIndexClient::taskFailed,
+            this, [this](TextIndexClient::TaskType type, const QString &path, const QString &error) {
+                if (shouldHandleIndexEvent(path, type)) {
+                    statusBar->setStatus(TextIndexStatusBar::Status::Failed);
                 }
             });
 
@@ -196,13 +179,19 @@ void CheckBoxWidthTextIndex::initStatusBar()
             if (running.value()) {
                 statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
             } else {
-                QString lastTime = statusBar->getLastUpdateTime();
-                statusBar->setStatus(lastTime.isEmpty() ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed);
+                QString lastTime = client->getLastUpdateTime();
+                statusBar->setStatus(lastTime.isEmpty() ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed,
+                                     lastTime);
             }
         }
     } else {
         statusBar->setStatus(TextIndexStatusBar::Status::Hidden);
     }
+}
+
+bool CheckBoxWidthTextIndex::shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const
+{
+    return checkBox->isChecked() && path == "/" && type != TextIndexClient::TaskType::Remove;
 }
 
 }   // namespace dfmplugin_search
