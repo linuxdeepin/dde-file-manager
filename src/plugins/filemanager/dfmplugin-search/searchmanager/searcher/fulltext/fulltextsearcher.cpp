@@ -279,18 +279,32 @@ bool FullTextSearcher::search()
         return true;
     }
 
+    // 判断是否是根目录或家目录
+    const QString homePath = QDir::homePath();
+    const bool isRootOrHome = (path == "/" || path == homePath);
+
     // 根据索引状态决定是创建还是更新
     if (!indexExistsResult.value()) {
+        // 如果索引不存在，需要等待创建完成
         QString bindPath = FileUtils::bindPathTransform(path, false);
         client->startTask(TextIndexClient::TaskType::Create, bindPath);
+        
+        // 等待任务完成
+        if (!waitForTask()) {
+            d->status.storeRelease(kCompleted);
+            return false;
+        }
     } else {
+        // 索引存在的情况
+        // 启动更新任务
         client->startTask(TextIndexClient::TaskType::Update, path);
-    }
-
-    // 等待任务完成
-    if (!waitForTask()) {
-        d->status.storeRelease(kCompleted);
-        return false;
+        
+        // 如果不是根目录或家目录，等待更新完成
+        // 如果是根目录或家目录，直接继续搜索
+        if (!isRootOrHome && !waitForTask()) {
+            d->status.storeRelease(kCompleted);
+            return false;
+        }
     }
 
     // 执行搜索并发送结果
