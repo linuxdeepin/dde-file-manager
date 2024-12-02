@@ -20,8 +20,16 @@
 #    define SYSTEM_INFO_SERVICE "com.deepin.daemon.SystemInfo"
 #    define SYSTEM_INFO_PATH "/com/deepin/daemon/SystemInfo"
 #else
-#    define SYSTEM_INFO_SERVICE "org.deepin.daemon.SystemInfo1"
-#    define SYSTEM_INFO_PATH "/org/deepin/daemon/SystemInfo1"
+#    define SYSTEM_INFO_SERVICE "org.deepin.dde.SystemInfo1"
+#    define SYSTEM_INFO_PATH "/org/deepin/dde/SystemInfo1"
+#endif
+
+#ifdef COMPILE_ON_V20
+#    define SYSTEM_INFO_SERVICE_SYSTEM_BUS "com.deepin.system.SystemInfo"
+#    define SYSTEM_INFO_PATH_SYSTEM_BUS "/com/deepin/system/SystemInfo"
+#else
+#    define SYSTEM_INFO_SERVICE_SYSTEM_BUS "org.deepin.dde.SystemInfo1"
+#    define SYSTEM_INFO_PATH_SYSTEM_BUS "/org/deepin/dde/SystemInfo1"
 #endif
 
 static constexpr int kMaximumHeightOfTwoRow { 52 };
@@ -31,6 +39,30 @@ DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
+
+static QString formatFileSize(quint64 filesize)
+{
+    static quint64 KB = static_cast<quint64>(1) << 10;
+    static quint64 MB = static_cast<quint64>(1) << 20;
+    static quint64 GB = static_cast<quint64>(1) << 30;
+    static quint64 TB = static_cast<quint64>(1) << 40;
+    static quint64 EB = static_cast<quint64>(1) << 50;
+
+    if (filesize < KB) {
+        return QString::number(double(filesize)/double(1), 'f', 2) + "B";
+    } else if (filesize < MB) {
+        return QString::number(double(filesize)/double(KB), 'f', 2) + "KB";
+    } else if (filesize < GB) {
+        return QString::number(double(filesize)/double(MB), 'f', 2) + "MB";
+    } else if (filesize < TB) {
+        return QString::number(double(filesize)/double(GB), 'f', 2) + "GB";
+    } else if (filesize < EB) {
+        return QString::number(double(filesize)/double(TB), 'f', 2) + "TB";
+    } else {
+        return QString::number(double(filesize)/double(EB), 'f', 2) + "EB";
+    }
+}
+
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent)
     : DDialog(parent)
 {
@@ -190,36 +222,6 @@ void ComputerPropertyDialog::closeEvent(QCloseEvent *event)
 {
     thread->stopThread();
     DDialog::closeEvent(event);
-}
-
-static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision = 1)
-{
-    QStringList type { " B", " KB", " MB", " GB", " TB" };
-
-    qulonglong lc = cap;
-    double dc = cap;
-    double ds = size;
-
-    for (int p = 0; p < type.size(); ++p) {
-        if (cap < pow(size, p + 1) || p == (type.size() - 1)) {
-            if (!precision) {
-                //! 内存总大小只能是整数所以当内存大小有小数时，就需要向上取整
-                int mem = static_cast<int>(ceil(lc / pow(size, p)));
-#ifdef __sw_64__
-                return QString::number(mem) + type[p];
-#else
-                //! 如果向上取整后内存大小不为偶数，就向下取整
-                if (mem % 2 > 0)
-                    mem = static_cast<int>(floor(lc / pow(size, p)));
-                return QString::number(mem) + type[p];
-#endif
-            }
-
-            return QString::number(dc / pow(ds, p), 'f', precision) + type[p];
-        }
-    }
-
-    return "";
 }
 
 ComputerInfoThread::ComputerInfoThread(QObject *parent)
@@ -387,8 +389,42 @@ QString ComputerInfoThread::cpuInfo() const
 
 QString ComputerInfoThread::memoryInfo() const
 {
+    fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE_SYSTEM_BUS);
+    QDBusInterface interface(SYSTEM_INFO_SERVICE_SYSTEM_BUS,
+                             SYSTEM_INFO_PATH_SYSTEM_BUS,
+                             "org.freedesktop.DBus.Properties",
+                             QDBusConnection::systemBus());
+    interface.setTimeout(1000);
+    if (!interface.isValid()) {
+        fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE_SYSTEM_BUS);
+        return "";
+    }
+
+    QDBusMessage msgMemInstallInfo = interface.call("Get", SYSTEM_INFO_SERVICE_SYSTEM_BUS, "MemorySizeHuman");
+    QList<QVariant> argsMemInstallInfo = msgMemInstallInfo.arguments();
+    QString memoryInstallSize { "Unkonw" };
+    if (argsMemInstallInfo.count() > 0)
+        memoryInstallSize = argsMemInstallInfo.at(0).value<QDBusVariant>().variant().toString();
+
+    fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
+    QDBusInterface interfaceW(SYSTEM_INFO_SERVICE,
+                              SYSTEM_INFO_PATH,
+                              "org.freedesktop.DBus.Properties",
+                              QDBusConnection::sessionBus());
+    interface.setTimeout(1000);
+    if (!interface.isValid()) {
+        fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
+        return "";
+    }
+
+    QDBusMessage msgMemAvailableInfo = interfaceW.call("Get", SYSTEM_INFO_SERVICE, "MemoryCap");
+    QList<QVariant> argsMemAvailableInfo = msgMemAvailableInfo.arguments();
+    quint64 memoryAvailableSize { 0 };
+    if (argsMemAvailableInfo.count() > 0)
+        memoryAvailableSize = argsMemAvailableInfo.at(0).value<QDBusVariant>().variant().toULongLong();
+
     return QString("%1 (%2 %3)")
-            .arg(formatCap(DSysInfo::memoryInstalledSize(), 1024, 0))
-            .arg(formatCap(DSysInfo::memoryTotalSize()))
+            .arg(memoryInstallSize)
+            .arg(formatFileSize(memoryAvailableSize))
             .arg(tr("Available"));
 }
