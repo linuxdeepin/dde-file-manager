@@ -37,12 +37,6 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-if(OPT_ENABLE_QML)
-    set(DFM_QML_LIBRARIE DFM::gui)
-else()
-    set(DFM_QML_LIBRARIE "")
-endif()
-
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Widgets
@@ -50,7 +44,6 @@ target_link_libraries(
     DFM::base
     DFM::framework
     Dtk${DTK_VERSION_MAJOR}::Widget
-    ${DFM_QML_LIBRARIE}
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})

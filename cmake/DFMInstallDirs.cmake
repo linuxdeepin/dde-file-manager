@@ -76,12 +76,3 @@ endif()
 if(NOT DEFINED DFM_THUMBNAIL_TOOL)
     set(DFM_THUMBNAIL_TOOL ${LIB_INSTALL_DIR}/dde-file-manager/tools)
 endif()
-
-# qml module
-if(NOT DEFINED DFM_QML_MODULE)
-    set(DFM_QML_MODULE ${DFM_PLUGIN_DIR}/qml)
-endif()
-
-# qml import path for qt creator
-list(APPEND QML_DIRS ${DFM_BUILD_PLUGIN_DIR}/qml)
-set(QML_IMPORT_PATH ${QML_DIRS} CACHE STRING "Import local module" FORCE)
