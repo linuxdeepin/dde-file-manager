@@ -5,7 +5,7 @@ project(ddplugin-organizer)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(EXT_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
+    ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/widgetutil.h
     )
 
 FILE(GLOB_RECURSE CORE_FILES

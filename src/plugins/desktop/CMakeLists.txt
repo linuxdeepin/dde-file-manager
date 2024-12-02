@@ -5,8 +5,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(core/ddplugin-core)
-add_subdirectory(core/ddplugin-canvas)
+add_subdirectory(ddplugin-core)
+add_subdirectory(ddplugin-canvas)
 add_subdirectory(ddplugin-background)
 add_subdirectory(ddplugin-organizer)
 add_subdirectory(ddplugin-wallpapersetting)

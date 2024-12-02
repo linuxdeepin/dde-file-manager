@@ -41,7 +41,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}
+    ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
 
 # install dconfig files.

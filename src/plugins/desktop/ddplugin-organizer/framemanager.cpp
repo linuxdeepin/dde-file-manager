@@ -10,7 +10,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include <dfm-base/dfm_desktop_defines.h>
 
 #include <DDBusSender>

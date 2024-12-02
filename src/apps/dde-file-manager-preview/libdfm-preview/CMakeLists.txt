@@ -27,6 +27,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 #install library file
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_COMMON_EDGE_DIR})
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_COMMON_CORE_DIR})
 INSTALL_DCONFIG("org.deepin.dde.file-manager.preview.json")
 

@@ -70,11 +70,10 @@ Depends:
  ${shlibs:Depends}, 
  ${misc:Depends}, 
  libdde-file-manager (=${binary:Version}),
- dde-desktop-plugins (=${binary:Version}),
  libqt6sql6-sqlite,
  qt6-translations-l10n
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
-Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
+Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
 Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
 Description: deepin desktop-environment - desktop module
  Deepin Desktop Environment (DDE) - desktop module.
@@ -91,13 +90,19 @@ Depends:
  socat,
  cryfs,
  dde-device-formatter,
- dde-file-manager-plugins (=${binary:Version}),
- dde-file-manager-daemon-plugins (=${binary:Version}),
- dde-file-manager-services-plugins (=${binary:Version}),
- dde-file-manager-common-plugins (=${binary:Version}),
- dde-file-manager-preview (=${binary:Version}),
- libblockdev-crypto2 | libblockdev-crypto3
-Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
+ libblockdev-crypto2 | libblockdev-crypto3,
+ dde-file-manager-services-plugins (=${binary:Version})
+Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1),
+ dde-file-manager-preview,
+ dde-file-manager-preview-plugins,
+ dde-file-manager-plugins,
+ dde-file-manager-daemon-plugins,
+ dde-file-manager-common-plugins
+Conflicts: dde-file-manager-preview,
+ dde-file-manager-preview-plugins,
+ dde-file-manager-plugins,
+ dde-file-manager-daemon-plugins,
+ dde-file-manager-common-plugins
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -115,46 +120,6 @@ Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
 
-Package: dde-desktop-plugins
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - desktop edge plugins module
- Deepin Desktop Environment (DDE) - desktop edge plugins module.
-
-Package: dde-file-manager-plugins
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, cryfs
-Description: deepin desktop-environment - filemanager edge plugins module
- Deepin Desktop Environment (DDE) - filemanager edge plugins module.
-
-Package: dde-file-manager-common-plugins
-Architecture: any
-Depends: 
- ${shlibs:Depends}, 
- ${misc:Depends}
-Description: deepin desktop-environment - filemanager common edge plugins module
- Deepin Desktop Environment (DDE) - filemanager common edge plugins module.
-
-Package: dde-file-manager-daemon-plugins
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflics: dde-file-manager-server-plugins
-Description: deepin desktop-environment - daemon edge plugins module
- Deepin Desktop Environment (DDE) - daemon edge plugins module.
-
-Package: dde-file-manager-services-plugins
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin desktop-environment - services edge plugins module
- Deepin Desktop Environment (DDE) - services edge plugins module.
- 
-Package: dde-file-manager-preview
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Replaces: dde-file-manager-preview-plugins
-Description: deepin desktop-environment - filemanager preview module
- Deepin Desktop Environment (DDE) - filemanager preview edge module.
-
 Package: dde-disk-mount-plugin
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -167,6 +132,12 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: extension library of dde-file-manager
  Extension library of dde-file-manager which is provided for third parties
 
+Package: dde-file-manager-services-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - deepin-service-manager plugins module
+ Deepin Desktop Environment (DDE) - deepin-service-manager plugins module.
+ 
 Package: libdfm-extension-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension (=${binary:Version})
@@ -181,4 +152,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager (=${binary:Version
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
- 
+

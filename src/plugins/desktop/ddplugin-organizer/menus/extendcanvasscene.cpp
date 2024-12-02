@@ -9,10 +9,10 @@
 #include "models/collectionmodel.h"
 #include "utils/renamedialog.h"
 #include "utils/fileoperator.h"
-#include "core/ddplugin-canvas/menu/canvasmenu_defines.h"
+#include "ddplugin-canvas/menu/canvasmenu_defines.h"
 
-#include "plugins/common/core/dfmplugin-menu/menuscene/menuutils.h"
-#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 
 #include <dfm-framework/dpf.h>
 
