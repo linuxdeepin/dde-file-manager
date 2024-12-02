@@ -100,6 +100,7 @@ inline constexpr int kLeftPadding { 10 };
 inline constexpr int kRightPadding { 10 };
 inline constexpr int kListModeLeftMargin { 10 };
 inline constexpr int kListModeRightMargin { 10 };
+inline constexpr int kListModeBottomMargin { 16 };
 inline constexpr int kColumnPadding { 10 };
 inline constexpr int kMinMoveLenght { 3 };
 inline constexpr int kIconHorizontalMargin { 15 };   // 水平Margin的宽度
