@@ -62,7 +62,7 @@ bool isHiddenMenu(const QString &app)
         }
     }
 
-    if (app == "dde-desktop" || app == "dde-shell")
+    if (app == "dde-desktop" || app == "org.deepin.dde-shell")
         return isHiddenDesktopMenu();
 
     return false;
