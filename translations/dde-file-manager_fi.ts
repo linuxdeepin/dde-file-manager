@@ -5870,27 +5870,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Järjestä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Näytä asetukset</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
         <source>Icon View</source>
-        <translation type="unfinished"/>
+        <translation>Kuvakenäkymä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
         <source>List View</source>
-        <translation type="unfinished"/>
+        <translation>Listanäkymä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Tree View</source>
-        <translation type="unfinished"/>
+        <translation>Puunäkymä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="191"/>
@@ -5903,22 +5903,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="89"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="94"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Muokattu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="99"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Koko</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="104"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tyyppi</translation>
     </message>
 </context>
 <context>
@@ -5940,27 +5940,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Näytä vaihtoehdot</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Kuvakkeen koko</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Ruudukon tiheys</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Listan korkeus</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Näytä esikatselu</translation>
     </message>
 </context>
 <context>
