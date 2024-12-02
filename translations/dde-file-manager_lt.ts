@@ -106,7 +106,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
-        <translation type="unfinished"/>
+        <translation>Failo pavadinimas arba kelias yra per ilgas!</translation>
     </message>
 </context>
 <context>
@@ -468,7 +468,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <source>Network</source>
-        <translation type="unfinished"/>
+        <translation>Tinklas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
@@ -476,7 +476,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
         <source>Mounted partitions and discs</source>
-        <translation type="unfinished"/>
+        <translation>Prijungti skaidiniai ir diskai</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
@@ -877,7 +877,7 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Stabdyti</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="747"/>
@@ -887,19 +887,19 @@
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1217"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>Šis darbalaukio fonas yra užrakintas. Susisiekite su administratoriumi.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1275"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (kopija)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1276"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (kopija %1)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="90"/>
@@ -1735,7 +1735,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
-        <translation type="unfinished"/>
+        <translation>Pasibaigė operacijai skirtas laikas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
@@ -1811,7 +1811,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="455"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Atsisakyti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="456"/>
@@ -2666,7 +2666,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="143"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
