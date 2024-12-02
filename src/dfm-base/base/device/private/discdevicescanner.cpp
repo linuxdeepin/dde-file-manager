@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 static constexpr int kTimerInterval { 3000 };
-static const char kDesktopAppName[] { "dde-shell" };
+static const char kDesktopAppName[] { "org.deepin.dde-shell" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 using namespace dfmbase;
