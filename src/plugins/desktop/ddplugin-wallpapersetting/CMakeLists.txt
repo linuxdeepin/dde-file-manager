@@ -30,7 +30,7 @@ if (COMPLIE_ON_V20)
         ${PROJECT_NAME}
         LIBRARY
         DESTINATION
-        ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
+        ${DFM_PLUGIN_DESKTOP_CORE_DIR}
     )
 
 else()
@@ -42,7 +42,7 @@ else()
     )
 
     set(EXT_FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
+        ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/widgetutil.h
         )
 
     # 指定资源文件

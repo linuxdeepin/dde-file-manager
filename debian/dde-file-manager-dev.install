@@ -1,6 +1,10 @@
 usr/include/dfm-base/*
 usr/include/dfm-framework/*
 usr/lib/*/pkgconfig/dfm-framework.pc
+usr/lib/*/pkgconfig/dfm6-framework.pc
 usr/lib/*/cmake/dfm-framework/*.cmake
+usr/lib/*/cmake/dfm6-framework/*.cmake
 usr/lib/*/pkgconfig/dfm-base.pc
+usr/lib/*/pkgconfig/dfm6-base.pc
 usr/lib/*/cmake/dfm-base/*.cmake
+usr/lib/*/cmake/dfm6-base/*.cmake
