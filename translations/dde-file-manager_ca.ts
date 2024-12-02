@@ -1795,29 +1795,29 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="339"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>cerca</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>cerca avançada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Segur que voleu netejar els historials de cerca?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="455"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="456"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Confirmeu-ho</translation>
     </message>
 </context>
 <context>
@@ -5436,17 +5436,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="77"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Actualització de l&apos;índex completada, hora de la darrera actualització: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="83"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;actualització de l&apos;índex ha fallat; torneu a activar l&apos;interruptor de Cerca de text complet.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="97"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Índex de construcció: %1 fitxers indexats</translation>
     </message>
 </context>
 <context>
@@ -5870,27 +5870,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Classifica per...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Mostra&apos;n les opcions</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
         <source>Icon View</source>
-        <translation type="unfinished"/>
+        <translation>Vista d&apos;icones</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
         <source>List View</source>
-        <translation type="unfinished"/>
+        <translation>Vista de llista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Tree View</source>
-        <translation type="unfinished"/>
+        <translation>Vista d&apos;arbre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="191"/>
@@ -5903,22 +5903,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="89"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="94"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Hora de modificació</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="99"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Mida</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="104"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tipus</translation>
     </message>
 </context>
 <context>
@@ -5940,27 +5940,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Mostra&apos;n les opcions</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Mida de la icona</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Densitat de la graella</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Alçada de la llista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Visualització prèvia</translation>
     </message>
 </context>
 <context>
