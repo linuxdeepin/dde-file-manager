@@ -28,7 +28,7 @@ target_link_libraries(
 )
 
 
-if (COMPLIE_ON_V23)
+if (COMPILE_ON_V2X)
     if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)
         pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemduserunitdir)
     endif()

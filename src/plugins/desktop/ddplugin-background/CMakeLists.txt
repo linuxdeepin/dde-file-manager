@@ -11,7 +11,7 @@ FILE(GLOB_RECURSE SRC_FILES
 )
 
 #delete files which are not needed on the current system
-if (COMPLIE_ON_V23)
+if (COMPILE_ON_V2X)
     FILE(GLOB_RECURSE RM_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/backgroundwm.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/backgroundwm.cpp"

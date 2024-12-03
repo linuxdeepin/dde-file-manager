@@ -18,7 +18,7 @@ set(SCREEN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbushelper.cpp"
     )
 
-if (COMPLIE_ON_V23)
+if (COMPILE_ON_V2X)
     set(SCREEN_FILES
         ${SCREEN_FILES}
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"

@@ -56,7 +56,7 @@
 #include <sys/stat.h>
 #include <linux/limits.h>
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
 #    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 #else

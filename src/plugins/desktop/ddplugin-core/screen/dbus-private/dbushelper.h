@@ -7,7 +7,7 @@
 
 #include "ddplugin_core_global.h"
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #include "dbusdock1.h"
 #include "dbusdisplay1.h"
 //#include "dbusmonitor1.h"

@@ -14,7 +14,7 @@ WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)
 {
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     fmDebug() << "create org.deepin.dde.Appearance1";
     inter = new BackgroudInter("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);

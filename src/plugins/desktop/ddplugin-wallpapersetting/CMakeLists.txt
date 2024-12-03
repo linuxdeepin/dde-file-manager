@@ -4,7 +4,7 @@ project(ddplugin-wallpapersetting)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if (COMPLIE_ON_V20)
+if (COMPILE_ON_V20)
     set(SRC_FILES
         ddplugin_wallpapersetting_global.h
         wlsetplugin.h
