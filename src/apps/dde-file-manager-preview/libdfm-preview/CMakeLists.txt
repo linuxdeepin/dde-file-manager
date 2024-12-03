@@ -15,7 +15,6 @@ add_library(${PROJECT_NAME}
     ${FILEPREVIEW_FILES}
 )
 
-add_definitions(-DPLUGINDIR=\"${DFM_PLUGIN_PREVIEW_DIR}\")
 set(VERSION 1.8.2)
 add_definitions(-DVERSION=\"${VERSION}\")
 
@@ -27,6 +26,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 #install library file
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_COMMON_CORE_DIR})
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_PREVIEW_DIR})
 INSTALL_DCONFIG("org.deepin.dde.file-manager.preview.json")
 

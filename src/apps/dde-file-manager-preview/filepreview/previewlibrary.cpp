@@ -12,7 +12,8 @@ DFM_LOG_REISGER_CATEGORY(DFMPREVIEW_LOG_CG)
 
 PreviewLibrary::PreviewLibrary(QObject *parent)
     : QObject(parent)
-{}
+{
+}
 
 bool PreviewLibrary::load()
 {
@@ -23,12 +24,12 @@ bool PreviewLibrary::load()
     {
         //默认路径
 #ifdef QT_DEBUG
-        char path[PATH_MAX] = {0};
+        char path[PATH_MAX] = { 0 };
         const char *defaultPath = realpath("../libdfm-preview", path);
 #else
-        auto defaultPath = DFM_PLUGIN_COMMON_EDGE_DIR;
+        auto defaultPath = PLUGINDIR;
 #endif
-        static_assert(std::is_same<decltype(defaultPath), const char *>::value, "DFM_PLUGIN_COMMON_EDGE_DIR is not a string.");
+        static_assert(std::is_same<decltype(defaultPath), const char *>::value, "PLUGINDIR is not a string.");
 
         QDir dir(defaultPath);
         libPath = dir.absoluteFilePath("libdfm-preview.so");
