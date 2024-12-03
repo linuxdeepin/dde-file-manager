@@ -23,6 +23,7 @@
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
@@ -127,14 +128,15 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
 
     if (ddplugin_desktop_util::enableScreensaver()) {
-        // TODO(zhangs): v23 dde-control-center also does not support
-        // personalized plug-in display screen saver and wallpaper,
-        // the future if dde-control-center can support to modify this code
-        if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())
+#ifdef COMPILE_ON_V2X
+        if (SysInfoUtils::isDeepin23()) {
             d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
-        else
-            d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
-
+        } else {
+            d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
+        }
+#else
+        d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
+#endif
     } else {
         d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
     }

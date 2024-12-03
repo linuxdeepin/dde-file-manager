@@ -101,6 +101,11 @@ bool SysInfoUtils::isProfessional()
     return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
 }
 
+bool SysInfoUtils::isDeepin23()
+{
+    return DSysInfo::isCommunityEdition() && DSysInfo::productVersion() == "23";
+}
+
 bool SysInfoUtils::isSameUser(const QMimeData *data)
 {
     const auto &userKey = QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) + "_" + QString::number(SysInfoUtils::getUserId());
