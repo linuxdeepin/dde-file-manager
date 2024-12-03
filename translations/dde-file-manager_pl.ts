@@ -1795,12 +1795,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="339"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>szukaj</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>szukanie zaawansowane</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
