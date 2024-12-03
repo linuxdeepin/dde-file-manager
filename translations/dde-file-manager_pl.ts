@@ -1805,19 +1805,19 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Czy na pewno chcesz wyczyścić historię wyszukiwania?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="455"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="456"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Potwierdź</translation>
     </message>
 </context>
 <context>
@@ -5436,7 +5436,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="77"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Zakończono aktualizację indeksów, ostatnia zmiana: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="83"/>
