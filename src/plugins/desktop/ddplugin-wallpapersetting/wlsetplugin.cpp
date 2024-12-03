@@ -5,13 +5,14 @@
 #include "wlsetplugin.h"
 #include "settingsdbusinterface.h"
 
-#ifndef COMPILE_ON_V20
+#ifdef COMPILE_ON_V2X
 #    include "wallpapersettings.h"
 #    include "private/autoactivatewindow.h"
 #    include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #    include <dfm-base/utils/universalutils.h>
 #    include <dfm-base/utils/windowutils.h>
+#    include <dfm-base/utils/sysinfoutils.h>
 
 #    include <QProcess>
 #else
@@ -89,19 +90,19 @@ bool EventHandle::init()
     return true;
 }
 
-#ifndef COMPILE_ON_V20
-void EventHandle::startTreeland()
-{
-    fmInfo() << "call treeland-wallpaper";
-    QProcess::startDetached("/usr/libexec/treeland-wallpaper");
-}
+#ifdef COMPILE_ON_V2X
 
 bool EventHandle::wallpaperSetting(const QString &name)
 {
-    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
-        startTreeland();
-    } else {
+    if (DFMBASE_NAMESPACE::SysInfoUtils::isDeepin23()) {
         show(name, (int)WallpaperSettings::Mode::WallpaperMode);
+    } else {
+        fmDebug() << "call ControlCenter serivce by dbus.";
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
+                                                          "org.deepin.dde.ControlCenter1", "ShowPage");
+        msg.setArguments({ QVariant::fromValue(QString("personalization/wallpaper")) });
+        QDBusConnection::sessionBus().asyncCall(msg, 5);
+        fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
     }
 
     return true;
@@ -109,11 +110,7 @@ bool EventHandle::wallpaperSetting(const QString &name)
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
-    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
-        startTreeland();
-    } else {
-        show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
-    }
+    show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
     return true;
 }
 

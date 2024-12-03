@@ -29,7 +29,6 @@ public slots:
 protected:
     void onChanged();
     void show(QString name, int mode);
-    void startTreeland();
 
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
