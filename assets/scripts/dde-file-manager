@@ -71,7 +71,7 @@ for arg in "$@"; do
     fi
 
     # array:string:"$args"中','是切分符号，所以传入dbus是要被切分
-    if [[ $arg == "-h" ]] || [[ $arg == "--help" ]] || [[ $arg == "--help-all" ]] || [[ $arg == "-v" ]] || [[ $arg == *","* ]]; then
+    if [[ $arg == "-h" ]] || [[ $arg == "--help" ]] || [[ $arg == "--help-all" ]] || [[ $arg == "-v" ]] || [[ $arg == "--version" ]] || [[ $arg == *","* ]]; then
         isDbus="false"
     fi
 
