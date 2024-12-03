@@ -49,7 +49,6 @@ bool isValidDirectory(const QString &path, QSet<QString> &visitedDirs)
 
 bool shouldSkipDirectory(const QString &path)
 {
-    // 基于 Baloo 和 Tracker 的经验，直接排除的系统目录
     static const QSet<QString> kExcludeDirs = {
         // 系统目录
         "/proc",   // 进程信息
@@ -63,6 +62,10 @@ bool shouldSkipDirectory(const QString &path)
         "/var/log",   // 日志目录
         "/var/lib",
         "/run",   // 运行时文件
+        "/media",
+        "/run/media",
+        "/mnt",
+        "/var/mnt",
 
         // 特殊目录
         "/opt",   // 可选软件
@@ -79,20 +82,13 @@ bool shouldSkipDirectory(const QString &path)
         "/usr/local/sbin",
         "/usr/local/include",
         "/usr/local/share",
-        "/data"
+        "/data",
+        "/ostree",
+        "/persistent/ostree"
     };
 
-    // 检查是否在排除列表中
     for (const QString &excludeDir : kExcludeDirs) {
         if (path.startsWith(excludeDir))
-            return true;
-    }
-
-    // 检查挂载点属性（参考 Tracker）
-    QStorageInfo storage(path);
-    if (storage.isValid()) {
-        // 排除临时文件系统
-        if (storage.fileSystemType() == "tmpfs" || storage.fileSystemType() == "devtmpfs" || storage.fileSystemType() == "devpts")
             return true;
     }
 
