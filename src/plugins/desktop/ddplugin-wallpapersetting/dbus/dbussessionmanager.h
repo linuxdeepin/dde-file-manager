@@ -26,7 +26,7 @@
 class DBusSessionManager: public QDBusAbstractInterface
 {
 public:
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     static inline const char *staticInterfaceName()
     { return "org.deepin.dde.SessionManager1"; }
     static inline const char *staticServiceName()

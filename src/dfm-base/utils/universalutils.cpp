@@ -24,7 +24,7 @@
 #include <QRegularExpression>
 #include <DUtil>
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager1"
 #    define APP_MANAGER_PATH_PREFIX "/org/desktopspec/ApplicationManager1"
 #    define APP_INTERFACE "org.desktopspec.ApplicationManager1.Application"
@@ -271,7 +271,7 @@ bool UniversalUtils::checkLaunchAppInterface()
             initStatus = false;
             return;
         }
-#ifndef COMPILE_ON_V23
+#ifndef COMPILE_ON_V2X
         QDBusInterface introspect(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   "org.freedesktop.DBus.Introspectable",
@@ -302,7 +302,7 @@ bool UniversalUtils::checkLaunchAppInterface()
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     const auto &AppId = DUtil::getAppIdFromAbsolutePath(desktopFile);
     const auto &DBusAppId = DUtil::escapeToObjectPath(AppId);
     const auto &currentAppPath = QString { APP_MANAGER_PATH_PREFIX } + "/" + DBusAppId;
@@ -331,7 +331,7 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
 
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     qCDebug(logDFMBase) << "new AM wouldn't provide any method to run Command, so launch cmd by qt:" << cmd << args;
     return QProcess::startDetached(cmd, args, wd);
 #else

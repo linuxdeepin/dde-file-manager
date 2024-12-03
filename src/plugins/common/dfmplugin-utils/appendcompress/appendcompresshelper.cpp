@@ -65,7 +65,7 @@ bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStri
 {
     QStringList arguments;
     QString cmd = "deepin-compressor";
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     cmd = "ll-cli";
     arguments << "run";
     arguments << "org.deepin.compressor";

@@ -92,7 +92,7 @@ static bool pluginsLoad()
                                                     "dfmplugin-filepreview" };
 
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         qCInfo(logAppDesktop) << "disable background by TreeLand";
         if (!blackNames.contains("ddplugin-background")) {

@@ -132,7 +132,7 @@ qreal ScreenProxyQt::devicePixelRatio() const
 
 DisplayMode ScreenProxyQt::displayMode() const
 {
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         return DisplayMode::kShowonly;
     }

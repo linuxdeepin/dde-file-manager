@@ -15,7 +15,7 @@
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #    include <com_deepin_wm.h>
 #endif
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    include "dbus/appearance_interface.h"
 #    define APPEARANCE_NAME org::deepin::dde::Appearance1
 #else

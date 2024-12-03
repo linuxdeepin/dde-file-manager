@@ -10,7 +10,7 @@
 
 #include <dfm-base/interfaces/screen/abstractscreen.h>
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    include "dbus/appearance_interface.h"
 using BackgroudInter = org::deepin::dde::Appearance1;
 #else

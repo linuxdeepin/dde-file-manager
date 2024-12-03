@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    include "backgrounddde.h"
 #else
 #    include "backgroundwm.h"
@@ -72,7 +72,7 @@ BackgroundManager::BackgroundManager(QObject *parent)
     : QObject(parent), d(new BackgroundManagerPrivate(this))
 {
     d->service =
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
             new BackgroundDDE(this);
 #else
             new BackgroundWM(this);

@@ -19,7 +19,7 @@
 DAEMONPVAULT_BEGIN_NAMESPACE
 DFM_LOG_USE_CATEGORY(DAEMONPVAULT_NAMESPCE)
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
 #else

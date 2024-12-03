@@ -320,7 +320,7 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
             fmDebug() << "call ControlCenter serivce by dbus.";
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
             QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
                                                               "org.deepin.dde.ControlCenter1", "ShowPage");
 #else

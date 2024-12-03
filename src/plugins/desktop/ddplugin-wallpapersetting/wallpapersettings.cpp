@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
 #    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 #else
@@ -325,7 +325,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QString value = reply.value();
         auto wallapers = processListReply(value);
         fmDebug() << "get available wallpapers" << wallapers;
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
         actualEffectivedWallpaper = appearanceIfs->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #else
         actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
