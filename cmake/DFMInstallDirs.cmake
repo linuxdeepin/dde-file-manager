@@ -10,9 +10,14 @@ if(NOT DEFINED LIB_INSTALL_DIR)
     set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
 endif()
 
+# defines dde-file-manager lib dir
+if(NOT DEFINED DFM_LIB_DIR)
+    set(DFM_LIB_DIR ${LIB_INSTALL_DIR}/dde-file-manager)
+endif()
+
 # root plguins dir
 if(NOT DEFINED DFM_PLUGIN_DIR)
-    set(DFM_PLUGIN_DIR ${LIB_INSTALL_DIR}/dde-file-manager/plugins)
+    set(DFM_PLUGIN_DIR ${DFM_LIB_DIR}/plugins)
 endif()
 
 # build plugins dir
@@ -26,6 +31,7 @@ set(DFM_BUILD_PLUGIN_DESKTOP_DIR ${DFM_BUILD_PLUGIN_DIR}/desktop)
 set(DFM_BUILD_PLUGIN_FILEDIALOG_DIR ${DFM_BUILD_PLUGIN_DIR}/filedialog)
 set(DFM_BUILD_PLUGIN_FILEMANAGER_DIR ${DFM_BUILD_PLUGIN_DIR}/filemanager)
 set(DFM_BUILD_PLUGIN_SERVER_DIR ${DFM_BUILD_PLUGIN_DIR}/server)
+set(DFM_BUILD_PLUGIN_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tools)
 
 # common-core plugins dir
 if(NOT DEFINED DFM_PLUGIN_COMMON_CORE_DIR)
