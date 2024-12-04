@@ -27,6 +27,7 @@ static const QString kUserTrashFullOpened = "user-trash-full-opened";
 
 DialogManager *DialogManager::instance()
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     static DialogManager ins;
     return &ins;
 }
