@@ -198,7 +198,7 @@ QList<CrumbData> TitleBarHelper::tansToCrumbDataList(const QList<QVariantMap> &m
     return group;
 }
 
-void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)
+void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
 {
     const auto &currentDir = QDir::currentPath();
     QUrl currentUrl;
@@ -211,9 +211,6 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
 
     QString inputStr = text;
     TitleBarEventCaller::sendCheckAddressInputStr(sender, &inputStr);
-
-    bool search { false };
-    FinallyUtil finally([&]() {if (isSearch) *isSearch = search; });
 
     // here, judge whether the text is a local file path.
     QUrl url(UrlRoute::fromUserInput(inputStr, false));
@@ -231,18 +228,33 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
             TitleBarEventCaller::sendCd(sender, url);
         }
     } else {
-        if (currentUrl.isValid()) {
-            bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
-            if (isDisableSearch) {
-                fmInfo() << "search : current directory disable to search! " << currentUrl;
-                return;
-            }
-        }
-
-        search = true;
-        fmInfo() << "search :" << text;
-        TitleBarEventCaller::sendSearch(sender, text);
+        fmWarning() << "jump to :" << inputStr << "is not a valid url";
     }
+}
+
+void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
+{
+    const auto &currentDir = QDir::currentPath();
+    QUrl currentUrl;
+    auto curTitleBar = findTileBarByWindowId(windowId(sender));
+    if (curTitleBar)
+        currentUrl = curTitleBar->currentUrl();
+
+    if (dfmbase::FileUtils::isLocalFile(currentUrl))
+        QDir::setCurrent(currentUrl.toLocalFile());
+
+    QString inputStr = text;
+
+    if (currentUrl.isValid()) {
+        bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
+        if (isDisableSearch) {
+            fmInfo() << "search : current directory disable to search! " << currentUrl;
+            return;
+        }
+    }
+
+    fmInfo() << "search :" << text;
+    TitleBarEventCaller::sendSearch(sender, text);
 }
 
 void TitleBarHelper::openCurrentUrlInNewTab(quint64 windowId)

@@ -372,7 +372,7 @@ void AddressBarPrivate::onReturnPressed()
         }
     }
 
-    TitleBarHelper::handlePressed(q, text, nullptr);
+    TitleBarHelper::handleJumpToPressed(q, text);
 
     emit q->urlChanged();
 }

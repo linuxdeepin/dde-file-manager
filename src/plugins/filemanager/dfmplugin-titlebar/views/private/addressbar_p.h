@@ -48,7 +48,7 @@ class AddressBarPrivate : public QObject
     QList<IPHistroyData> ipHistroyList;
     QTimer timer;
     QVariantAnimation animation;
-    QString placeholderText { tr("Search or enter address") };
+    QString placeholderText { tr("Enter address") };
     QAction indicatorAction;
     QAction clearAction;
     QString completerBaseString;
