@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="322"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="295"/>
         <source>File Manager</source>
         <translation>Tiedostohallinta</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="326"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="299"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Tiedostohallinta on tehokas ja helppokäyttöinen tiedostojen hallintatyökalu, joka sisältää etsinnän, kopioinnin, roskakorin, pakkaamisen/purkamisen, tiedosto-ominaisuudet ja muut hyödylliset toiminnot.</translation>
     </message>
@@ -104,17 +104,9 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
         <translation>Tiedostonimi tai polku on liian pitkä!</translation>
-    </message>
-</context>
-<context>
-    <name>LineSearch</name>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/LineSearch.qml" line="23"/>
-        <source>Search</source>
-        <translation>Haku</translation>
     </message>
 </context>
 <context>
@@ -128,9 +120,9 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-core/utils/corehelper.cpp" line="43"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
@@ -164,10 +156,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="51"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-core/core.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-core/core.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <source>System Disk</source>
         <translation>Järjestelmä</translation>
     </message>
@@ -301,8 +291,8 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
         <translation>Historia</translation>
     </message>
@@ -373,8 +363,8 @@
         <translation>Lataa...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
         <source>Executable</source>
         <translation>Suoritettava</translation>
     </message>
@@ -417,7 +407,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
         <source>Built-in disks</source>
         <translation>Kiinteät levyt</translation>
     </message>
@@ -441,7 +431,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
         <source>Loop partitions</source>
         <translation>Silmukkaosiot</translation>
     </message>
@@ -449,7 +439,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="70"/>
         <source>Mounted sharing folders</source>
         <translation>Asetetut jakokansiot</translation>
@@ -465,8 +455,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <source>Network</source>
         <translation>Verkko</translation>
     </message>
@@ -474,7 +463,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
         <source>Mounted partitions and discs</source>
         <translation>Kiinnitetyt osiot ja levyt</translation>
     </message>
@@ -482,8 +471,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
         <source>Partitions</source>
         <translation>Osiot</translation>
     </message>
@@ -491,8 +479,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
         <source>Quick access</source>
         <translation>Nopea pääsy</translation>
     </message>
@@ -500,8 +487,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
         <source>Tag</source>
         <translation>Tunniste</translation>
     </message>
@@ -777,7 +763,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="184"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>Liitä</translation>
     </message>
@@ -862,13 +848,13 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="437"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Peruuta</translation>
@@ -902,161 +888,154 @@
         <translation>(kopio %1)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="90"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="113"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="101"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="96"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="147"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="86"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="101"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager-tiedosto-hallinta</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="188"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="184"/>
         <source>Files are being processed</source>
         <translation>Tiedostoja käsitellään</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="221"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="217"/>
         <source>Bit</source>
         <translation>Bitti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="142"/>
         <source>Access denied</source>
         <translation>Pääsy evätty</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="36"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="438"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Vahvista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="407"/>
         <source>Open in new window</source>
         <translation>Avaa uudessa ikkunassa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="86"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>Avaa uudessa välilehdessä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="49"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="49"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="573"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Nimeä uudelleen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
         <source>Remove from quick access</source>
         <translation>Poista nopeasta pääsystä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
         <source>Properties</source>
         <translation>Ominaisuudet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="51"/>
         <source>New Folder</source>
         <translation>Uusi kansio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="54"/>
         <source>New Text</source>
         <translation>Uusi teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
         <source>Document</source>
         <translation>Asiakirja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="62"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="62"/>
         <source>Spreadsheet</source>
         <translation>Taulukko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>Presentation</source>
         <translation>Esitys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
         <source>New File</source>
         <translation>Uusi tiedosto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="192"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="192"/>
         <source>Create symlink</source>
         <translation>Luo symlinkki</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="528"/>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="622"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="528"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="622"/>
         <source>Compress</source>
         <translation>Pakkaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
         <source>Write only</source>
         <translation>Vain kirjoitus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
         <source>Read only</source>
         <translation>Vain luku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read-write</source>
         <translation>Luku-kirjoitus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="155"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="155"/>
         <source>Owner</source>
         <translation>Omistaja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="159"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="159"/>
         <source>Group</source>
         <translation>Ryhmä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
         <translation>Muut</translation>
@@ -1095,7 +1074,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>Poista</translation>
     </message>
@@ -1252,10 +1231,9 @@
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Nimeä uudelleen</translation>
@@ -1283,260 +1261,236 @@
         <translation>Korvaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="24"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="24"/>
         <source>Unmount</source>
         <translation>Irrota</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="36"/>
         <source>Safely Remove</source>
         <translation>Poista turvallisesti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="44"/>
         <source>Format</source>
         <translation>Alusta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
         <source>Clear saved password and unmount</source>
         <translation>Tyhjennä tallennettu salasana ja poista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="227"/>
         <source>Open</source>
         <translation>Avaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="56"/>
         <source>Erase</source>
         <translation>Tyhjennä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="206"/>
         <source>Cannot access</source>
         <translation>Ei oikeuksia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="276"/>
         <source>User directory</source>
         <translation>Käyttäjän hakemisto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
         <source>Local disk</source>
         <translation>Paikallinen levy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="282"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="282"/>
         <source>Removable disk</source>
         <translation>Irroitettava levy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="287"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="287"/>
         <source>Network shared directory</source>
         <translation>Lähiverkon jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
         <source>Android mobile device</source>
         <translation>Android mobiililaite</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="292"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="292"/>
         <source>Apple mobile device</source>
         <translation>Apple mobiililaite</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
         <source>Unknown device</source>
         <translation>Tuntematon laite</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
         <translation>Haluatko poistaa tämän kohteen?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>Haluatko poistaa %1 kohdetta?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>It does not delete the original files</source>
         <translation>Se ei poista alkuperäisiä tiedostoja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
         <source>Clear recent history</source>
         <translation>Tyhjennä historia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="166"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="189"/>
         <source>Source path</source>
         <translation>Lähteen polku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="73"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="73"/>
         <source>New window</source>
         <translation>Uusi ikkuna</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="77"/>
         <source>New tab</source>
         <translation>Uusi välilehti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="83"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="83"/>
         <source>Connect to Server</source>
         <translation>Yhdistä palvelimeen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
         <source>Set share password</source>
         <translation>Aseta jakamisen salasana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
         <source>Change disk password</source>
         <translation>Vaihda levyn salasana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
         <source>Settings</source>
         <translation>Asetukset</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="398"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
         <source>Copy path</source>
         <translation>Kopioi kohde</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/crumbbar.cpp" line="420"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="331"/>
         <source>Edit address</source>
         <translation>Muokkaa osoitetta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashfilehelper.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashfilehelper.cpp" line="116"/>
         <source>Unable to open items in the trash, please restore it first</source>
         <translation>Roskakorin kohteita ei voi avata, palauta se ensin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="74"/>
         <source>Empty Trash</source>
         <translation>Tyhjennä roskakori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="173"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="173"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Replace Text</source>
         <translation>Korvaa teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Add Text</source>
         <translation>Lisää teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Custom Text</source>
         <translation>Mukautettu teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
         <source>Find</source>
         <translation>Etsi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Required</source>
         <translation>Vaaditaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
         <source>Replace</source>
         <translation>Korvaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
         <source>Optional</source>
         <translation>Valinnainen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>Before file name</source>
         <translation>Ennen tiedoston nimeä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>After file name</source>
         <translation>Tiedoston nimen jälkeen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
         <source>File name</source>
         <translation>Tiedoston nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
         <source>Start at</source>
         <translation>Alkaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Vihje: Lajittele valitun tiedoston mukaan</translation>
     </message>
@@ -1763,8 +1717,7 @@
         <translation>Epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Sidebar</source>
         <translation>Sivupalkki</translation>
     </message>
@@ -1775,153 +1728,121 @@
         <translation>tai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="159"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="221"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="236"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="498"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="597"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="349"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="562"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="586"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="613"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="726"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="480"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="581"/>
         <source>Clear search history</source>
         <translation>Tyhjennä hakuhistoria</translation>
     </message>
-</context>
-<context>
-    <name>SearchEditWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="339"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
+        <source>Unknow</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="336"/>
         <source>search</source>
-        <translation>haku</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="351"/>
         <source>advanced search</source>
-        <translation>tarkennettu haku</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="435"/>
         <source>Are you sure clear search histories?</source>
-        <translation>Oletko varma, että tyhjennät hakuhistoriat?</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="455"/>
-        <source>Cancel</source>
-        <comment>button</comment>
-        <translation>Peruuta</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/searcheditwidget.cpp" line="456"/>
-        <source>Confirm</source>
-        <comment>button</comment>
-        <translation>Vahvista</translation>
-    </message>
-</context>
-<context>
-    <name>Titlebar</name>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="121"/>
-        <source>Home</source>
-        <translation>Koti</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="126"/>
-        <source>Discover</source>
-        <translation>Haku</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/qml/Titlebar.qml" line="131"/>
-        <source>Activity</source>
-        <translation>Toiminta</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ddplugin_canvas::CanvasMenuScene</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="122"/>
         <source>Sort by</source>
         <translation>Järjestä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
         <source>Icon size</source>
         <translation>Kuvakkeen koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="128"/>
         <source>Auto arrange</source>
         <translation>Järjestä automaattisesti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="122"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
         <source>Display Settings</source>
         <translation>Näytön asetukset</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
         <source>Refresh</source>
         <translation>Virkistä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Tausta ja näytönsäästäjä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
         <translation>Personointi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="139"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Set Wallpaper</source>
         <translation>Aseta taustakuva</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="145"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="145"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="149"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="151"/>
         <source>Tiny</source>
         <translation>Pienin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="150"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <source>Small</source>
         <translation>Pieni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="151"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
         <source>Medium</source>
         <translation>Keskikoko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="154"/>
         <source>Large</source>
         <translation>Suuri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="155"/>
         <source>Super large</source>
         <translation>Suurin</translation>
     </message>
@@ -1929,7 +1850,7 @@
 <context>
     <name>ddplugin_canvas::ItemEditor</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <source>%1 are not allowed</source>
         <translation>%1 eivät ole sallittuja</translation>
     </message>
@@ -1937,7 +1858,7 @@
 <context>
     <name>ddplugin_canvas::RenameDialog</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="275"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="275"/>
         <source>Rename %1 Files</source>
         <translation>Nimeä uudelleen %1 tiedostoa</translation>
     </message>
@@ -1945,75 +1866,75 @@
 <context>
     <name>ddplugin_canvas::RenameDialogPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="66"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="66"/>
         <source>Mode:</source>
         <translation>Moodi:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Replace Text</source>
         <translation>Korvaa teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
         <translation>Lisää teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Custom Text</source>
         <translation>Mukautettu teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="73"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="73"/>
         <source>Find:</source>
         <translation>Etsi:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="76"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="109"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="76"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>Vaaditaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="80"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="80"/>
         <source>Replace:</source>
         <translation>Korvaa:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="82"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="82"/>
         <source>Optional</source>
         <translation>Valinnainen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="87"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="87"/>
         <source>Add:</source>
         <translation>Lisää:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="94"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="94"/>
         <source>Location:</source>
         <translation>Sijainti:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
         <translation>Ennen tiedoston nimeä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>After file name</source>
         <translation>Tiedoston nimen jälkeen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="101"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="101"/>
         <source>File name:</source>
         <translation>Tiedoston nimi:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="107"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
         <translation>Alkaa:</translation>
     </message>
@@ -2021,14 +1942,14 @@
 <context>
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="131"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="131"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
         <source>Not authorized</source>
         <translation>Ei hyväksytty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="139"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="139"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
         <source>In trial period</source>
         <translation>Koeaika</translation>
     </message>
@@ -2036,14 +1957,14 @@
 <context>
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermasksystem.cpp" line="249"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermasksystem.cpp" line="250"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="249"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="250"/>
         <source>Not authorized</source>
         <translation>Ei hyväksytty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermasksystem.cpp" line="254"/>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermasksystem.cpp" line="255"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="254"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="255"/>
         <source>In trial period</source>
         <translation>Koeaika</translation>
     </message>
@@ -2560,7 +2481,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
         <source>%1 item selected</source>
         <translation>%1 kohde valittuna</translation>
     </message>
@@ -3727,18 +3648,18 @@
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="374"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="374"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
         <translation>Valitettavasti pikahakemistoa ei löydy, poistetaanko se?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="376"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="377"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="377"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Poista</translation>
@@ -3747,12 +3668,12 @@
 <context>
     <name>dfmplugin_bookmark::BookmarkMenuScene</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="58"/>
         <source>Pin to quick access</source>
         <translation>Kiinnitä nopeaan pääsyyn</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
         <source>Remove from quick access</source>
         <translation>Poista nopeasta pääsystä</translation>
     </message>
@@ -3988,7 +3909,7 @@
 <context>
     <name>dfmplugin_computer::AppEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="58"/>
         <source>Double click to open it</source>
         <translation>Avaa napsauttamalla kahdesti</translation>
     </message>
@@ -3996,37 +3917,37 @@
 <context>
     <name>dfmplugin_computer::Computer</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="59"/>
         <source>Computer</source>
         <translation>Tietokone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="178"/>
         <source>Computer display items</source>
         <translation>Tietokoneen näytön kohteet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="180"/>
         <source>Hide built-in disks on the Computer page</source>
         <translation>Tietokone näkymässä piilota kiintolevyt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="183"/>
         <source>Hide loop partitions on the Computer page</source>
         <translation>Tietokone näkymässä piilota osiot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="185"/>
         <source>Show file system on disk icon</source>
         <translation>Näytä kuvake järjestelmän asemasta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide My Directories on the Computer page</source>
         <translation>Tietokone näkymässä piilota kotikansiot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="205"/>
         <source>Hide 3rd party entries on the Computer page</source>
         <translation>Tietokone näkymässä piilota 3:nen osapuolen kohteet</translation>
     </message>
@@ -4034,42 +3955,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
         <source>Unlock device failed</source>
         <translation>Lukituksen avaaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
         <source>Wrong password</source>
         <translation>Väärä salasana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
         <source>Rename failed</source>
         <translation>Nimeäminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>Laite on varattu, eikä sitä voi nyt nimetä uudelleen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
         <source>Format failed</source>
         <translation>Alustaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Laite on varattu, eikä sitä voi nyt alustaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
         <source>Mount error</source>
         <translation>Liitoksen virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
         <source>Cannot access %1</source>
         <translation>Ei oikeuksia %1</translation>
     </message>
@@ -4077,27 +3998,27 @@
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
         <source>Computer</source>
         <translation>Tietokone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1 on vain luettavissa. Haluatko antaa sille luku-/kirjoitusoikeudet?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="232"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>Kun tämä on käytössä, luku-/kirjoitusoikeus myönnetään pysyvästi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="235"/>
         <source>Enable Now</source>
         <translation>Ota käyttöön</translation>
     </message>
@@ -4105,12 +4026,12 @@
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="370"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="370"/>
         <source>My Directories</source>
         <translation>Omat hakemistot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="375"/>
         <source>Disks</source>
         <translation>Levyt</translation>
     </message>
@@ -4118,42 +4039,42 @@
 <context>
     <name>dfmplugin_computer::DeviceBasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
         <source>Basic info</source>
         <translation>Perustiedot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
         <source>Device type</source>
         <translation>Laitetyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="44"/>
         <source>Total space</source>
         <translation>Kokonaistila</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
         <source>File system</source>
         <translation>Tiedostojärjestelmä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
         <source>Contains</source>
         <translation>Sisältää</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="54"/>
         <source>Free space</source>
         <translation>Vapaa tila</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="105"/>
         <source>%1 items</source>
         <translation>%1 kohdetta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="105"/>
         <source>%1 item</source>
         <translation>%1 kohde</translation>
     </message>
@@ -4161,8 +4082,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="201"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
         <source>%1 on %2</source>
         <translation>%1 / %2</translation>
     </message>
@@ -4170,89 +4091,39 @@
 <context>
     <name>dfmplugin_detailspace::FileBaseInfoView</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="35"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="35"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="35"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="39"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="39"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Dimension</source>
         <translation>Mitta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
         <source>Duration</source>
         <translation>Kesto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="52"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
         <source>Accessed</source>
         <translation>Käytetty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
         <source>Modified</source>
         <translation>Muokattu</translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_detailspace::QuickFileBaseInfoModel</name>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="304"/>
-        <source>Name</source>
-        <translation>Nimi</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="306"/>
-        <source>Size</source>
-        <translation>Koko</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="308"/>
-        <source>Dimension</source>
-        <translation>Mitta</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="310"/>
-        <source>Duration</source>
-        <translation>Kesto</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="312"/>
-        <source>Type</source>
-        <translation>Tyyppi</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="314"/>
-        <source>Accessed</source>
-        <translation>Käytetty</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="316"/>
-        <source>Modified</source>
-        <translation>Muokattu</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-detailspace/model/quickfilebaseinfomodel.cpp" line="318"/>
-        <source>Unknown</source>
-        <translation>Tuntematon</translation>
     </message>
 </context>
 <context>
@@ -4443,257 +4314,257 @@
 <context>
     <name>dfmplugin_fileoperations::ErrorMessageAndAction</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="30"/>
         <source>Copying %1</source>
         <translation>Kopioi %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
         <source>to %1</source>
         <translation>/ %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
         <source>Deleting %1</source>
         <translation>Poistaa %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
         <source>Moving %1</source>
         <translation>Siirtää %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
         <source>Trashing %1</source>
         <translation>Roskakoriin %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
         <source>Restoring %1</source>
         <translation>Palautus %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
         <translation>Käyttöoikeusvirhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>The action is denied</source>
         <translation>Toimenpide on evätty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
         <translation>Tiedosto %1 on jo olemassa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
         <translation>Kansio %1 on jo olemassa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
         <source>Failed to open the file %1</source>
         <translation>Tiedoston %1 avaaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
         <source>Failed to read the file %1</source>
         <translation>Tiedoston %1 lukeminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
         <source>Failed to write the file %1</source>
         <translation>Tiedoston %1 kirjoittaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="129"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="129"/>
         <source>Failed to create the directory %1</source>
         <translation>Kansion %1 luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to delete the file %1</source>
         <translation>Tiedoston %1 poistaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
         <source>Failed to move the file %1 to trash</source>
         <translation>Tiedoston %1 siirto roskakoriin epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
         <source>Failed to move the file %1</source>
         <translation>Tiedoston %1 siirtäminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
         <source>Original file %1 does not exist</source>
         <translation>Alkuperäistä tiedostoa %1 ei ole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>Epäonnistui, tiedoston %1 koko on oltava alle 4 Gt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
         <source>Not enough free space on the target disk</source>
         <translation>Kohdelevyllä ei ole tarpeeksi vapaata tilaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
         <source>File %1 integrity was damaged</source>
         <translation>Tiedoston %1 eheys oli vaurioitunut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
         <source>The target device is read only</source>
         <translation>Kohde on vain luku-muodossa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
         <source>Target folder is inside the source folder</source>
         <translation>Kohdekansio on lähdekansion sisällä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="214"/>
         <source>The action is not supported</source>
         <translation>Tätä toimintoa ei tueta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>Sinulla ei ole oikeutta käydä läpi tiedostoja kohteessa %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <source>Restore failed, original path could not be found</source>
         <translation>Palautus epäonnistui, alkuperäistä polkua ei löytynyt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
         <source>Unknown error</source>
         <translation>Tuntematon virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
         <source>Failed to parse the url of trash</source>
         <translation>Roskakorin url:n selvittäminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
         <translation>Palautus epäonnistui: alkuperäistä tiedostoa ei ole olemassa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
         <translation>Kopioi tai leikkaa tiedosto epäonnistui! Yritä kopioida uudelleen!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
         <translation>Ei oikeuksia tiedostoon!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
         <source>Failed to open the file %1, cause: %2</source>
         <translation>Tiedoston %1 avaaminen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>Tiedoston %1 lukeminen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>Tiedoston %1 kirjoittaminen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>Kansion %1 luominen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>Tiedoston %1 poistaminen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>Tiedoston %1 siirto roskakoriin epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>Tiedoston %1 siirtäminen epäonnistui, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>Tiedoston %1 eheys oli vaurioitunut, syy: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>Symbolisen linkin luonti epäonnistui, syy: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>Kopio tai leikkaus epäonnistui, syy %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
         <translation>Kopioi tai leikkaa tiedosto epäonnistui,syy: %1. Yritä kopioida uudelleen!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Copy or Cut File failed, cause: %1.</source>
         <translation>Kopio tai leikkaus epäonnistui, syy: %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 on jo kohdekansiossa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
         <source>Original path %1</source>
         <translation>Alkuperäinen polku %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Target path %1</source>
         <translation>Kohdepolku %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
         <source>Original path %1 Target path %2</source>
         <translation>Alkuperäinen %1, kode %2</translation>
     </message>
@@ -4701,28 +4572,28 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="333"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="333"/>
         <source>Rename file error</source>
         <translation>Tiedoston nimeämisen virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="624"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="624"/>
         <source>Failed to create the directory</source>
         <translation>Kansion luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1149"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1149"/>
         <source>Failed to create the file</source>
         <translation>Tiedoston luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
         <source>link file error</source>
         <translation>linkkitiedoston virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1266"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1275"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1266"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1275"/>
         <source>Failed to modify file permissions</source>
         <translation>Tiedoston käyttöoikeuksien muutos epäonnistui</translation>
     </message>
@@ -4738,17 +4609,17 @@
 <context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
         <source>&amp;Paste</source>
         <translation>&amp;Liitä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
         <source>Cu&amp;t</source>
         <translation>Lei&amp;kkaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopioi</translation>
     </message>
@@ -4756,27 +4627,27 @@
 <context>
     <name>dfmplugin_menu::FileOperatorMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="42"/>
         <source>&amp;Open</source>
         <translation>&amp;Avaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="43"/>
         <source>Rena&amp;me</source>
         <translation>Ni&amp;meä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
         <source>&amp;Delete</source>
         <translation>&amp;Poista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>Empty Trash</source>
         <translation>Tyhjennä roskakori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
         <source>Set as wallpaper</source>
         <translation>Aseta taustakuvaksi</translation>
     </message>
@@ -4784,32 +4655,32 @@
 <context>
     <name>dfmplugin_menu::NewCreateMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="33"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="33"/>
         <source>New folder</source>
         <translation>Uusi kansio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="34"/>
         <source>New document</source>
         <translation>Uusi asiakirja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="35"/>
         <source>Office Text</source>
         <translation>Asiakirja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="36"/>
         <source>Spreadsheets</source>
         <translation>Taulukko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="37"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="37"/>
         <source>Presentation</source>
         <translation>Esitys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="38"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="38"/>
         <source>Plain Text</source>
         <translation>Tekstitiedosto</translation>
     </message>
@@ -4817,32 +4688,32 @@
 <context>
     <name>dfmplugin_menu::OpenDirMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="31"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="31"/>
         <source>Open as administrator</source>
         <translation>Avaa pääkäyttäjänä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
         <source>Select all</source>
         <translation>Valitse kaikki</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
         <source>Open in new window</source>
         <translation>Avaa uudessa ikkunassa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="34"/>
         <source>Open in new tab</source>
         <translation>Avaa uudessa välilehdessä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="35"/>
         <source>Open in terminal</source>
         <translation>Avaa päätteessä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="36"/>
         <source>Reverse select</source>
         <translation>Käänteinen valinta</translation>
     </message>
@@ -4850,12 +4721,12 @@
 <context>
     <name>dfmplugin_menu::OpenWithMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="38"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="38"/>
         <source>Open with</source>
         <translation>Avaa sovelluksella</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="39"/>
         <source>Select default program</source>
         <translation>Valitse oletusohjelma</translation>
     </message>
@@ -4863,22 +4734,22 @@
 <context>
     <name>dfmplugin_menu::SendToMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="256"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="256"/>
         <source>Send to</source>
         <translation>Lähetä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="257"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
         <source>Create link</source>
         <translation>Luo linkki</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
         <source>Send to desktop</source>
         <translation>Lähetä työpöydälle</translation>
     </message>
@@ -4886,7 +4757,7 @@
 <context>
     <name>dfmplugin_menu::ShareMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="117"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="117"/>
         <source>Share</source>
         <translation>Jaa</translation>
     </message>
@@ -4975,58 +4846,58 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
         <source>Basic info</source>
         <translation>Perustiedot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="81"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="82"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="82"/>
         <source>Contains</source>
         <translation>Sisältää</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="84"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="84"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="85"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="85"/>
         <source>Time created</source>
         <translation>Luotu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="86"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="86"/>
         <source>Time accessed</source>
         <translation>Käytetty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="87"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="87"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="91"/>
         <source>Hide this file</source>
         <translation>Piilota tämä tiedosto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="287"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="348"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="348"/>
         <source>%1 item</source>
         <translation>%1 kohde</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="348"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="348"/>
         <source>%1 items</source>
         <translation>%1 kohdetta</translation>
     </message>
@@ -5034,12 +4905,12 @@
 <context>
     <name>dfmplugin_propertydialog::CloseAllDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/closealldialog.cpp" line="47"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="47"/>
         <source>Close all</source>
         <translation>Sulje kaikki</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/closealldialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="76"/>
         <source>Total size: %1, %2 files</source>
         <translation>Yhteensä: %1, %2 tiedostoa</translation>
     </message>
@@ -5047,27 +4918,27 @@
 <context>
     <name>dfmplugin_propertydialog::ComputerInfoThread</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="306"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="306"/>
         <source>For Secrets Security</source>
         <translation>Salauksen turvallisuus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="313"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="313"/>
         <source>For Government</source>
         <translation>Valtioille</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="315"/>
         <source>For Enterprise</source>
         <translation>Yrityksille</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="343"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="343"/>
         <source>Bit</source>
         <translation>Bitti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="393"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="400"/>
         <source>Available</source>
         <translation>Saatavilla</translation>
     </message>
@@ -5075,47 +4946,47 @@
 <context>
     <name>dfmplugin_propertydialog::ComputerPropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="54"/>
         <source>Computer</source>
         <translation>Tietokone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="69"/>
         <source>Basic Info</source>
         <translation>Perustiedot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="75"/>
         <source>Computer name</source>
         <translation>Tietokoneen nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
         <source>Version</source>
         <translation>Versio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="85"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="85"/>
         <source>Edition</source>
         <translation>Versio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="90"/>
         <source>OS build</source>
         <translation>OS versio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="95"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="100"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="100"/>
         <source>Processor</source>
         <translation>Suoritin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="105"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="105"/>
         <source>Memory</source>
         <translation>Muisti</translation>
     </message>
@@ -5123,37 +4994,37 @@
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="51"/>
         <source>Multiple Files</source>
         <translation>Useita tiedostoja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="55"/>
         <source>Basic info</source>
         <translation>Perustiedot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="60"/>
         <source>Total size</source>
         <translation>Yhteensä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
         <source>Number of files</source>
         <translation>Tiedostojen määrä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="74"/>
         <source>Time accessed</source>
         <translation>Käytetty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="146"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 tiedostoa, %2 kansiota</translation>
     </message>
@@ -5161,7 +5032,7 @@
 <context>
     <name>dfmplugin_propertydialog::NameTextEdit</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="132"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="132"/>
         <source>%1 are not allowed</source>
         <translation>%1 eivät ole sallittuja</translation>
     </message>
@@ -5169,14 +5040,14 @@
 <context>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="293"/>
         <source>Allow to execute as program</source>
         <translation>Salli suorittaa ohjelmana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="138"/>
         <source>Permissions</source>
         <translation>Käyttöoikeudet</translation>
     </message>
@@ -5184,7 +5055,7 @@
 <context>
     <name>dfmplugin_propertydialog::PropertyMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
         <translation>Lisäas&amp;etukset</translation>
     </message>
@@ -5192,7 +5063,7 @@
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="44"/>
         <source>Recent</source>
         <translation>Historia</translation>
     </message>
@@ -5200,17 +5071,17 @@
 <context>
     <name>dfmplugin_recent::RecentEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
         <translation>Polku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
         <translation>Viimeisin käyttö</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
         <translation>Historia</translation>
     </message>
@@ -5218,22 +5089,22 @@
 <context>
     <name>dfmplugin_recent::RecentMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="174"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="175"/>
         <source>Open file location</source>
         <translation>Avaa tiedoston sijainti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="176"/>
         <source>Path</source>
         <translation>Polku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="177"/>
         <source>Last access</source>
         <translation>Viimeisin käyttö</translation>
     </message>
@@ -5434,17 +5305,17 @@
 <context>
     <name>dfmplugin_search::TextIndexStatusBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="76"/>
         <source>Index update completed, last update time: %1</source>
         <translation>Hakemistoindeksi valmis, viimeisin päivitysaika: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="82"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
         <translation>Hakemistoindeksi epäonnistui, tee vivulla &quot;Täysi tekstihaku&quot; uudelleen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="96"/>
         <source>Building index, %1 files indexed</source>
         <translation>Rakennetaan, %1 tiedostoa indeksoitu</translation>
     </message>
@@ -5452,38 +5323,32 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
         <source>Quick access</source>
         <translation>Nopea pääsy</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
         <source>Partitions</source>
         <translation>Osiot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
         <source>Network</source>
         <translation>Verkko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
         <source>Tag</source>
         <translation>Tunniste</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
         <source>Other</source>
         <translation>Muut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
         <source>Unknown Group</source>
         <translation>Tuntematon ryhmä</translation>
     </message>
@@ -5592,106 +5457,74 @@
 <context>
     <name>dfmplugin_titlebar::AddressBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/private/addressbar_p.h" line="55"/>
-        <source>Search or enter address</source>
-        <translation>Etsi tai anna osoite</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="355"/>
-        <source>Are you sure clear search histories?</source>
-        <translation>Oletko varma, että tyhjennät hakuhistoriat?</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="357"/>
-        <source>Cancel</source>
-        <comment>button</comment>
-        <translation>Peruuta</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/addressbar.cpp" line="358"/>
-        <source>Confirm</source>
-        <comment>button</comment>
-        <translation>Vahvista</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
+        <source>Enter address</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="71"/>
         <source>Connect to Server</source>
         <translation>Yhdistä palvelimeen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="123"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="382"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="132"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="169"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="388"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="382"/>
         <source>Clear History</source>
         <translation>Tyhjennä historia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Unfavorite</source>
         <translation>Suosikkin poisto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="298"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="298"/>
         <source>Error</source>
         <translation>Virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="299"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>URL-osoitetta ei voi lisätä suosikkeihin!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="356"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="356"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="357"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="357"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Yhdistä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="406"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
         <source>Charset Encoding</source>
         <translation>Merkistökoodaus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
         <source>Default</source>
         <translation>Oletus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="474"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
         <source>My Favorites</source>
         <translation>Suosikkini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="461"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
         <source>No favorites yet</source>
         <translation>Ei vielä suosikkeja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Favorite</source>
         <translation>Suosikki</translation>
     </message>
@@ -5699,80 +5532,66 @@
 <context>
     <name>dfmplugin_titlebar::DPCConfirmWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
         <source>Change disk password</source>
         <translation>Vaihda levyn salasana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
         <source>Current password:</source>
         <translation>Nykyinen salasana:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
         <source>New password:</source>
         <translation>Uusi salasana:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>Repeat password:</source>
         <translation>Toista salasana:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Tallenna</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="106"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="172"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="172"/>
         <source>Passwords do not match</source>
         <translation>Salasanat eivät täsmää</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
         <source>New password should differ from the current one</source>
         <translation>Uuden salasanan pitäisi erota nykyisestä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="231"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="231"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>Vähintään 8 merkkiä pitkä. Sisältää 3 tyyppiä: 0-9, a-z, A-Z ja symbolit. Eroaa käyttäjätunnuksesta.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
         <source>Password must be no more than %1 characters</source>
         <translation>Salasanassa enintään %1 merkkiä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="276"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="280"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="281"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="285"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="280"/>
         <source>Password cannot be empty</source>
         <translation>Salasana ei voi olla tyhjä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
         <source>Wrong password</source>
         <translation>Väärä salasana</translation>
     </message>
@@ -5780,32 +5599,27 @@
 <context>
     <name>dfmplugin_titlebar::DPCProgressWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
         <source>Changing disk password...</source>
         <translation>Vaihdetaan levyn salasanaa...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
         <source>The window cannot be closed during the process</source>
         <translation>Ikkunaa ei voi sulkea prosessin aikana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
         <source>Passwords of disks are different</source>
         <translation>Levyjen salasanat ovat erilaisia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
         <source>Unable to get the encrypted disk list</source>
         <translation>Salattujen levyjen luetteloa ei voi hakea</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
         <source>Initialization failed</source>
         <translation>Alustus epäonnistui</translation>
     </message>
@@ -5813,20 +5627,17 @@
 <context>
     <name>dfmplugin_titlebar::DPCResultWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="29"/>
         <source>Disk password changed</source>
         <translation>Levyn salasana vaihdettu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
         <source>Failed to change the disk password</source>
         <translation>Levyn salasanan vaihtaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="58"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Sulje</translation>
@@ -5835,14 +5646,12 @@
 <context>
     <name>dfmplugin_titlebar::NavWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/navwidget.cpp" line="163"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/navwidget.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="163"/>
         <source>back</source>
         <translation>takaisin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/navwidget.cpp" line="168"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/navwidget.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="168"/>
         <source>forward</source>
         <translation>eteenpäin</translation>
     </message>
@@ -5850,115 +5659,81 @@
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="158"/>
-        <source>icons mode</source>
-        <translation>kuvakkeet</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
+        <source>Icon view</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="164"/>
-        <source>list mode</source>
-        <translation>listaus</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
+        <source>List view</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="174"/>
-        <source>tree mode</source>
-        <translation>puu</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
+        <source>Tree view</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
         <source>Sort by</source>
         <translation>Järjestä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>View options</source>
         <translation>Näytä asetukset</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
-        <source>Icon View</source>
-        <translation>Kuvakenäkymä</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
-        <source>List View</source>
-        <translation>Listanäkymä</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
-        <source>Tree View</source>
-        <translation>Puunäkymä</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="191"/>
-        <source>detail view</source>
-        <translation>tiivis</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_titlebar::SortByButtonPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="89"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="94"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="99"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/sortbybutton.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="104"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
 </context>
 <context>
-    <name>dfmplugin_titlebar::TitleBarWidget</name>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/titlebarwidget.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/titlebarwidget.cpp" line="290"/>
-        <source>search</source>
-        <translation>haku</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-titlebar/views/titlebarwidget.cpp" line="283"/>
-        <source>advanced search</source>
-        <translation>tarkennettu haku</translation>
-    </message>
-</context>
-<context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
         <source>View Options</source>
         <translation>Näytä vaihtoehdot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
         <source>Icon size</source>
         <translation>Kuvakkeen koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
         <translation>Ruudukon tiheys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
         <translation>Listan korkeus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
         <translation>Näytä esikatselu</translation>
     </message>
@@ -5966,17 +5741,17 @@
 <context>
     <name>dfmplugin_trash::EmptyTrashWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="33"/>
         <source>Empty</source>
         <translation>Tyhjennä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <source>Empty Trash</source>
         <translation>Tyhjennä roskakori</translation>
     </message>
@@ -5984,12 +5759,12 @@
 <context>
     <name>dfmplugin_trash::TrashHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="273"/>
         <source>Source Path</source>
         <translation>Lähteen polku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="278"/>
         <source>Time deleted</source>
         <translation>Aika poistettu</translation>
     </message>
@@ -5997,27 +5772,27 @@
 <context>
     <name>dfmplugin_trash::TrashMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="197"/>
         <source>Restore</source>
         <translation>Palauta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="198"/>
         <source>Restore all</source>
         <translation>Palauta kaikki</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="199"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="199"/>
         <source>Empty trash</source>
         <translation>Tyhjennä roskakori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="200"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="200"/>
         <source>Source path</source>
         <translation>Lähteen polku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="201"/>
         <source>Time deleted</source>
         <translation>Aika poistettu</translation>
     </message>
@@ -6025,7 +5800,7 @@
 <context>
     <name>dfmplugin_trashcore::TrashCore</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashcore.cpp" line="22"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/trashcore.cpp" line="22"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
@@ -6033,22 +5808,22 @@
 <context>
     <name>dfmplugin_trashcore::TrashPropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="30"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="75"/>
         <source>item</source>
         <translation>kohde</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="77"/>
         <source>items</source>
         <translation>kohdetta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="79"/>
+        <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="79"/>
         <source>Contains %1 %2</source>
         <translation>Sisältää %1 %2</translation>
     </message>
@@ -6910,9 +6685,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="102"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="97"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="102"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>Tiedostoa %1 ei voitu avata, voidaan siirtää tai nimetä</translation>
     </message>
@@ -6920,12 +6693,12 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="2101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2112"/>
         <source>Mount error</source>
         <translation>Liitoksen virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileview.cpp" line="2102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2113"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Kirjautumistiedot palvelimelle ovat virheelliset. Poista liitos ja yhdistä se uudelleen</translation>
     </message>
@@ -6933,26 +6706,22 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="638"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/models/fileviewmodel.cpp" line="663"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="638"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="640"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/models/fileviewmodel.cpp" line="665"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="640"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="642"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/models/fileviewmodel.cpp" line="667"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="642"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="644"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/models/fileviewmodel.cpp" line="669"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="644"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
@@ -6960,8 +6729,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::FileViewStatusBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="65"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="65"/>
         <source>Loading...</source>
         <translation>Lataa...</translation>
     </message>
@@ -6969,8 +6737,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::IconItemEditor</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/iconitemeditor.cpp" line="256"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
         <source>%1 are not allowed</source>
         <translation>%1 eivät ole sallittuja</translation>
     </message>
@@ -6978,8 +6745,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::ListItemEditor</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/views/listitemeditor.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
         <source>%1 are not allowed</source>
         <translation>%1 eivät ole sallittuja</translation>
     </message>
@@ -6987,56 +6753,47 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::SortAndDisplayMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="34"/>
         <source>Sort by</source>
         <translation>Järjestä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="35"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="35"/>
         <source>Display as</source>
         <translation>Näytä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="38"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="38"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="39"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="37"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="39"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="38"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
         <source>Icon</source>
         <translation>Kuvake</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Tree</source>
         <translation>Puu</translation>
     </message>
@@ -7044,8 +6801,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::WorkspaceMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="57"/>
-        <location filename="../src/plugins/filemanager/qml/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="57"/>
         <source>Refresh</source>
         <translation>Virkistä</translation>
     </message>
