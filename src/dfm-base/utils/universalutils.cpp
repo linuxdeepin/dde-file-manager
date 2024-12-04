@@ -33,10 +33,6 @@
 #    define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
 #    define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
 
-#    define DEAMON_SYSTEMINFO_SERVICE "org.deepin.daemon.SystemInfo1"
-#    define DEAMON_SYSTEMINFO_PATH "/org/deepin/daemon/SystemInfo1"
-#    define DEAMON_SYSTEMINFO_INTERFACE "org.deepin.daemon.SystemInfo1"
-
 #    define DEAMON_DOCK_SERVICE "org.deepin.dde.daemon.Dock1"
 #    define DEAMON_DOCK_PATH "/org/deepin/dde/daemon/Dock1"
 #    define DEAMON_DOCK_INTERFACE "org.deepin.dde.daemon.Dock1"
@@ -209,9 +205,9 @@ qint64 UniversalUtils::computerMemory()
 
 void UniversalUtils::computerInformation(QString &cpuinfo, QString &systemType, QString &edition, QString &version)
 {
-    QDBusInterface systemInfo(DEAMON_SYSTEMINFO_SERVICE,
-                              DEAMON_SYSTEMINFO_PATH,
-                              DEAMON_SYSTEMINFO_INTERFACE,
+    QDBusInterface systemInfo(SYSTEM_SYSTEMINFO_SERVICE,
+                              SYSTEM_SYSTEMINFO_PATH,
+                              SYSTEM_SYSTEMINFO_INTERFACE,
                               QDBusConnection::sessionBus());
 
     if (systemInfo.isValid()) {

@@ -20,8 +20,8 @@
 #    define SYSTEM_INFO_SERVICE "com.deepin.daemon.SystemInfo"
 #    define SYSTEM_INFO_PATH "/com/deepin/daemon/SystemInfo"
 #else
-#    define SYSTEM_INFO_SERVICE "org.deepin.daemon.SystemInfo1"
-#    define SYSTEM_INFO_PATH "/org/deepin/daemon/SystemInfo1"
+#    define SYSTEM_INFO_SERVICE "org.deepin.dde.SystemInfo1"
+#    define SYSTEM_INFO_PATH "/org/deepin/dde/SystemInfo1"
 #endif
 
 static constexpr int kMaximumHeightOfTwoRow { 52 };
@@ -285,7 +285,7 @@ QString ComputerInfoThread::edition() const
         } else {
             QString defaultEdition = QString("%1(%2)").arg(DSysInfo::uosEditionName()).arg(DSysInfo::minorVersion());
             if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()
-                    || DSysInfo::UosEdition::UosMilitary == DSysInfo::uosEditionType()) {
+                || DSysInfo::UosEdition::UosMilitary == DSysInfo::uosEditionType()) {
                 QDBusInterface deepinLicenseInfo("com.deepin.license",
                                                  "/com/deepin/license/Info",
                                                  "com.deepin.license.Info",
@@ -345,44 +345,51 @@ QString ComputerInfoThread::systemType() const
 
 QString ComputerInfoThread::cpuInfo() const
 {
-    if (DSysInfo::cpuModelName().contains("Hz"))
-        return DSysInfo::cpuModelName();
+    // 1. 如果CPU型号名称中已包含频率信息，直接返回
+    QString modelName = DSysInfo::cpuModelName();
+    if (modelName.contains("Hz"))
+        return modelName;
 
+    // 2. 获取处理器基本信息
+    QString processor = modelName.isEmpty() ? QObject::tr("Unknow") : modelName;
     fmInfo("Start call Dbus %s...", SYSTEM_INFO_SERVICE);
     QDBusInterface interface(SYSTEM_INFO_SERVICE,
                              SYSTEM_INFO_PATH,
                              "org.freedesktop.DBus.Properties",
                              QDBusConnection::sessionBus());
     interface.setTimeout(1000);
+
     if (!interface.isValid()) {
         fmWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
-        return "";
+        return processor;
     }
 
+    // 3. 从DBus获取处理器信息
     QDBusMessage msgCpuInfo = interface.call("Get", SYSTEM_INFO_SERVICE, "Processor");
     QList<QVariant> argsCpuInfo = msgCpuInfo.arguments();
-    QString processor { "Unkonw" };
-    if (argsCpuInfo.count() > 0)
+    if (argsCpuInfo.count() > 0) {
         processor = argsCpuInfo.at(0).value<QDBusVariant>().variant().toString();
-    if (processor.contains("Hz"))
-        return processor;
-
-    QString showFrequency { "CurrentSpeed" };
-    if (processor.contains("PANGU"))
-        showFrequency = "CPUMaxMHz";
-
-    double cpuShowMhz { 0.0 };
-    QDBusMessage msgShowFrequency = interface.call("Get", SYSTEM_INFO_SERVICE, showFrequency);
-    QList<QVariant> argsShowFrequency = msgShowFrequency.arguments();
-    if (argsShowFrequency.count() > 0)
-        cpuShowMhz = argsShowFrequency.at(0).value<QDBusVariant>().variant().toDouble();
-    double dGHz = cpuShowMhz / 1000.0;
-    QString strHz = QString::number(dGHz, 'f', 2);
-    if (DSysInfo::cpuModelName().isEmpty()) {
-        return QString("%1 @ %2GHz").arg(processor).arg(strHz);
-    } else {
-        return QString("%1 @ %2GHz").arg(DSysInfo::cpuModelName()).arg(strHz);
+        if (processor.contains("Hz"))
+            return processor;
     }
+
+    // 4. 获取CPU频率
+    QString freqProperty = processor.contains("PANGU") ? "CPUMaxMHz" : "CurrentSpeed";
+    QDBusMessage msgFreq = interface.call("Get", SYSTEM_INFO_SERVICE, freqProperty);
+    QList<QVariant> argsFreq = msgFreq.arguments();
+
+    double cpuGHz = 0.0;
+    if (argsFreq.count() > 0) {
+        double cpuMhz = argsFreq.at(0).value<QDBusVariant>().variant().toDouble();
+        cpuGHz = cpuMhz / 1000.0;   // 转换为GHz
+    }
+
+    // 5. 构建最终的CPU信息字符串
+    QString actualProcessor = DSysInfo::cpuModelName().isEmpty() ? processor : DSysInfo::cpuModelName();
+    if (cpuGHz <= 0.0)
+        return actualProcessor;
+
+    return QString("%1 @ %2GHz").arg(actualProcessor).arg(QString::number(cpuGHz, 'f', 2));
 }
 
 QString ComputerInfoThread::memoryInfo() const
