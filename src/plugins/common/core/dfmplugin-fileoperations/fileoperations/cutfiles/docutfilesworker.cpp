@@ -144,7 +144,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
     QString fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString();
     bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
-        trashInfoUrl= trashInfo(fromInfo);
+        trashInfoUrl = trashInfo(fromInfo);
         fileName = fileOriginName(trashInfoUrl);
     }
     DFileInfoPointer toInfo = doRenameFile(fromInfo, targetPathInfo, fileName, &ok, skip);
@@ -155,7 +155,8 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
             workData->blockRenameWriteSize += fromSize;
             workData->currentWriteSize += (fromSize > 0
-                                           ? fromSize : FileUtils::getMemoryPageSize());
+                                                   ? fromSize
+                                                   : FileUtils::getMemoryPageSize());
             if (fromSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         } else {
@@ -222,7 +223,7 @@ void DoCutFilesWorker::onUpdateProgress()
 void DoCutFilesWorker::endWork()
 {
     // delete all cut source files
-    bool skip{false};
+    bool skip { false };
     for (const auto &info : cutAndDeleteFiles) {
         if (!deleteFile(info->uri(), targetOrgUrl, &skip)) {
             fmWarning() << "delete file error, so do not delete other files!!!!";
@@ -316,7 +317,7 @@ bool DoCutFilesWorker::renameFileByHandler(const DFileInfoPointer &sourceInfo, c
     if (localFileHandler) {
         const QUrl &sourceUrl = sourceInfo->uri();
         const QUrl &targetUrl = targetInfo->uri();
-        return localFileHandler->renameFile(sourceUrl, targetUrl);
+        return localFileHandler->renameFile(sourceUrl, targetUrl, false);
     }
     return false;
 }
@@ -336,7 +337,7 @@ DFileInfoPointer DoCutFilesWorker::doRenameFile(const DFileInfoPointer &sourceIn
         if (isCutMerge) {
             newTargetInfo->initQuerier();
             isCutMerge = false;
-            result = doMergDir( sourceInfo, newTargetInfo, skip);
+            result = doMergDir(sourceInfo, newTargetInfo, skip);
         } else {
             result = renameFileByHandler(sourceInfo, newTargetInfo);
         }
