@@ -38,7 +38,8 @@
     "AnythingMonitorFilterPath": {
         "WhiteList":[
             "/media",
-            "/home"
+            "/home",
+            "/run/media"
         ],
         "BlackList": [
             "~/.local/share/Trash"
