@@ -32,11 +32,7 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QTimer>
-#include <QElapsedTimer>
-#include <QDBusConnectionInterface>
 
-#include <iostream>
-#include <algorithm>
 #include <unistd.h>
 
 Q_LOGGING_CATEGORY(logAppDesktop, "org.deepin.dde.filemanager.desktop")
@@ -142,23 +138,6 @@ static void registerDDESession()
     }
 }
 
-static void waitingForKwin()
-{
-    qCWarning(logAppDesktop) << "start waiting kwin ";
-    QElapsedTimer timer;
-    timer.start();
-    int maxTime = 2000;
-    QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    while (maxTime > 0) {
-        if (sessionBus.interface()->isServiceRegistered("org.kde.KWin"))
-            break;
-        QThread::msleep(50);
-        maxTime -= 50;
-    }
-    qint64 elapsed = timer.nsecsElapsed() / 1000000;
-    qCWarning(logAppDesktop) << "waiting for kwin ready cost" << elapsed << "ms";
-}
-
 static bool isDesktopEnable()
 {
     bool enable = !(dfmbase::DConfigManager::instance()->value(
@@ -244,9 +223,6 @@ static bool main()
 
     // Notify dde-desktop start up
     registerDDESession();
-
-    // bug 236971 need to wait for kwin
-    waitingForKwin();
 
     return true;
 }
