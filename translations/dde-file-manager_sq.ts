@@ -1740,22 +1740,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation type="unfinished"/>
+        <translation>E panjohur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="336"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>kërkim</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="351"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>kërkim i thelluar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="435"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Jeni i sigurt se doni të fshihet historik kërkimes?</translation>
     </message>
 </context>
 <context>
@@ -5459,7 +5459,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Jepni adresë</translation>
     </message>
 </context>
 <context>
@@ -5662,19 +5662,19 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Parje si ikona</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Parje si listë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Parje si pemë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
