@@ -20,9 +20,14 @@ if(NOT DEFINED DFM_PLUGIN_DIR)
     set(DFM_PLUGIN_DIR ${DFM_LIB_DIR}/plugins)
 endif()
 
+# build dir
+if(NOT DEFINED DFM_BUILD_DIR)
+    set(DFM_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
+endif()
+
 # build plugins dir
 if(NOT DEFINED DFM_BUILD_PLUGIN_DIR)
-    set(DFM_BUILD_PLUGIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/plugins)
+    set(DFM_BUILD_PLUGIN_DIR ${DFM_BUILD_DIR}/plugins)
 endif()
 
 set(DFM_BUILD_PLUGIN_COMMON_DIR ${DFM_BUILD_PLUGIN_DIR}/common)
@@ -75,7 +80,7 @@ endif()
 
 # tools
 if(NOT DEFINED DFM_TOOLS_DIR)
-    set(DFM_TOOLS_DIR ${LIB_INSTALL_DIR}/dde-file-manager/tools)
+    set(DFM_TOOLS_DIR ${DFM_LIB_DIR}/tools)
 endif()
 
 # dde-file-thumbnail-tool

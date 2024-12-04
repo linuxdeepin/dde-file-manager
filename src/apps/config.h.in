@@ -8,6 +8,12 @@
 //  #undef DFM_PLUGIN_PATH
 //  #define DFM_PLUGIN_PATH xxx
 
+#ifndef DFM_BUILD_DIR
+#    define DFM_BUILD_DIR "${DFM_BUILD_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_BUILD_DIR"
+#endif
+
 #ifndef DFM_BUILD_PLUGIN_DIR
 #    define DFM_BUILD_PLUGIN_DIR "${DFM_BUILD_PLUGIN_DIR}"
 #elif
