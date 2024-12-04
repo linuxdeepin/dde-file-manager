@@ -609,7 +609,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Madhësi parazgjedhje ikonash:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -3130,7 +3130,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Madhësi parazgjedhje ikonash:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
