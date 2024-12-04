@@ -33,7 +33,7 @@ public:
     QUrl touchFile(const QUrl &url, const QUrl &tempUrl = QUrl());
     bool mkdir(const QUrl &dir);
     bool rmdir(const QUrl &url);
-    bool renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck = true);
+    bool renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck);
     bool openFile(const QUrl &file);
     bool openFiles(const QList<QUrl> &files);
     bool openFileByApp(const QUrl &file, const QString &appDesktop);

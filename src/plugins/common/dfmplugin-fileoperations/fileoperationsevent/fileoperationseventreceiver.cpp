@@ -991,7 +991,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.renameFile(oldUrl, newUrl);
+    ok = fileHandler.renameFile(oldUrl, newUrl, true);
     if (!ok) {
         error = fileHandler.errorString();
         dialogManager->showRenameBusyErrDialog();
