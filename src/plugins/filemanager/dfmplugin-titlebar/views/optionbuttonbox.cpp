@@ -219,14 +219,14 @@ void OptionButtonBox::initializeUi()
     d->iconViewButton->setChecked(true);
     d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
     d->iconViewButton->setFixedSize(buttonSize);
-    d->iconViewButton->setToolTip(tr("icons mode"));
+    d->iconViewButton->setToolTip(tr("Icon view"));
     d->iconViewButton->setIconSize(buttonIconSize);
 
     d->listViewButton = new DToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     d->listViewButton->setFixedSize(buttonSize);
-    d->listViewButton->setToolTip(tr("list mode"));
+    d->listViewButton->setToolTip(tr("List view"));
     d->listViewButton->setIconSize(buttonIconSize);
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
@@ -236,7 +236,7 @@ void OptionButtonBox::initializeUi()
         d->treeViewButton->setCheckable(true);
         d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
         d->treeViewButton->setFixedSize(buttonSize);
-        d->treeViewButton->setToolTip(tr("tree mode"));
+        d->treeViewButton->setToolTip(tr("Tree view"));
         d->treeViewButton->setIconSize(buttonIconSize);
         d->buttonGroup->addButton(d->treeViewButton);
     }
@@ -296,15 +296,15 @@ void OptionButtonBox::initConnect()
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
 
     auto menu = new DMenu(d->compactButton);
-    auto iconAction = menu->addAction(tr("Icon View"));
+    auto iconAction = menu->addAction(tr("Icon view"));
     iconAction->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
     iconAction->setCheckable(true);
 
-    auto listAction = menu->addAction(tr("List View"));
+    auto listAction = menu->addAction(tr("List view"));
     listAction->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     listAction->setCheckable(true);
 
-    auto treeAction = menu->addAction(tr("Tree View"));
+    auto treeAction = menu->addAction(tr("Tree view"));
     treeAction->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
     treeAction->setCheckable(true);
 
