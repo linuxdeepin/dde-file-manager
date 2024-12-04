@@ -225,6 +225,12 @@ void CommandParser::showPropertyDialog()
     QList<QUrl> urlList;
     for (const QString &path : paths) {
         QUrl url = QUrl::fromUserInput(path);
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+        if (!fileInfo || !fileInfo->exists()) {
+            qCWarning(logAppFileManager) << "Input path is invalid or file not exists, can not show property dialog! path: " << path;
+            continue;
+        }
+
         QString uPath = url.path();
         if (uPath.endsWith(QDir::separator()) && uPath.size() > 1)
             uPath.chop(1);
