@@ -110,7 +110,7 @@ void DeviceItem::initUI()
 
     QHBoxLayout *itemLay = new QHBoxLayout();
     itemLay->setContentsMargins(10, 8, 8, 12);
-    itemLay->setMargin(0);
+    itemLay->setContentsMargins(0, 0, 0, 0);
     itemLay->setSpacing(0);
     itemLay->addLayout(devIconLay);
     itemLay->addLayout(devInfoLay);
@@ -155,11 +155,11 @@ void DeviceItem::setTextColor(QWidget *obj, int themeType, double alpha)
     obj->setPalette(pal);
 }
 
-void DeviceItem::setTextFont(QWidget *obj, int size, int weight)
+void DeviceItem::setTextFont(QWidget *widget, int pixelSize, int weight)
 {
-    Q_ASSERT(obj);
-    QFont f = obj->font();
-    f.setPixelSize(size);
-    f.setWeight(weight);
-    obj->setFont(f);
+    Q_ASSERT(widget);
+    QFont f = widget->font();
+    f.setPixelSize(pixelSize);
+    f.setWeight(static_cast<QFont::Weight>(weight));
+    widget->setFont(f);
 }

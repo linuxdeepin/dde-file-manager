@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollBar>
+#include <algorithm>  
 
 #include <DGuiApplicationHelper>
 
@@ -34,9 +35,12 @@ void DeviceList::addDevice(const DockItemData &item)
             this, &DeviceList::ejectDevice);
     deviceItems.insert(item.id, devItem);
     sortKeys.insert(item.id, item.sortKey);
+
     QStringList order = sortKeys.values();
-    qSort(order);
+    std::sort(order.begin(), order.end());
+    
     deviceLay->insertWidget(order.indexOf(item.sortKey), devItem);
+    
     qCInfo(logAppDock) << "added item:" << item.id << devItem;
     updateHeight();
 }
@@ -64,11 +68,11 @@ void DeviceList::ejectDevice(const QString &id)
 void DeviceList::initUI()
 {
     deviceLay = new QVBoxLayout();
-    deviceLay->setMargin(0);
+    deviceLay->setContentsMargins(0, 0, 0, 0);
     deviceLay->setSpacing(0);
 
     QVBoxLayout *mainLay = new QVBoxLayout();
-    mainLay->setMargin(0);
+    mainLay->setContentsMargins(0, 0, 0, 0);
     mainLay->setSpacing(0);
     mainLay->setSizeConstraint(QLayout::SetFixedSize);
 
