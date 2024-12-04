@@ -32,7 +32,7 @@ private:
     void initUI();
     void openDevice();
     static void setTextColor(QWidget *obj, int themeType, double alpha);
-    static void setTextFont(QWidget *obj, int size, int weight);
+    static void setTextFont(QWidget *widget, int pixelSize, int weight);
 
 private:
     DockItemData data;

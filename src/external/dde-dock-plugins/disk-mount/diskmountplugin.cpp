@@ -9,7 +9,6 @@
 #include "device/dockitemdatamanager.h"
 
 #include <DApplication>
-#include <QGSettings>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
@@ -80,15 +79,11 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
     QList<QVariant> items;
     items.reserve(2);
 
-    QGSettings settings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
-
-    if (settings.get("filemanagerIntegration").toBool()) {
-        QMap<QString, QVariant> open;
-        open["itemId"] = kOpen;
-        open["itemText"] = tr("Open");
-        open["isActive"] = true;
-        items.push_back(open);
-    }
+    QMap<QString, QVariant> open;
+    open["itemId"] = kOpen;
+    open["itemText"] = tr("Open");
+    open["isActive"] = true;
+    items.push_back(open);
 
     QMap<QString, QVariant> ejectAll;
     ejectAll["itemId"] = kEjectAll;

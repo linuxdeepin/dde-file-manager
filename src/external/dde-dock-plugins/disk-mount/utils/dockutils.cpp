@@ -1,14 +1,19 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dockutils.h"
 #include "global_server_defines.h"
 
-#include <QStringListIterator>
-#include <QRegularExpression>
-#include <QIcon>
 #include <QLoggingCategory>
+#include <QStringList>
+#include <QProcess>
+#include <QRegularExpression>
+#include <QStandardPaths>
+#include <QFileInfo>
+#include <QDir>
+#include <QUrl>
+#include <QIcon>
 
 #include <libmount/libmount.h>
 
