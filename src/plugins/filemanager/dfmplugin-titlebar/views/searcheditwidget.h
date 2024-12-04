@@ -82,7 +82,6 @@ protected:
 private:
     void initUI();
     void initConnect();
-    void initUiForSizeMode();
     void initData();
     void updateHistory();
 

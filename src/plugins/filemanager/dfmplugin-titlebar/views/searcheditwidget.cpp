@@ -21,8 +21,6 @@
 #include <DSearchEdit>
 #include <DSpinner>
 #include <DDialog>
-#include <DGuiApplicationHelper>
-#include <DSizeMode>
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
@@ -165,8 +163,7 @@ void SearchEditWidget::onReturnPressed()
         return;
     }
 
-    bool isSearch { false };
-    TitleBarHelper::handlePressed(this, text, &isSearch);
+    TitleBarHelper::handleSearchPressed(this, text);
 
     startSpinner();
 }
@@ -361,24 +358,25 @@ void SearchEditWidget::initUI()
 
     // pause button
     pauseButton = new DIconButton(searchEdit);
+    pauseButton->setFixedSize(QSize(16, 16));
+    pauseButton->setIconSize(QSize(16, 16));
     pauseButton->setIcon(QIcon::fromTheme("dfm_search_pause"));
     pauseButton->setFocusPolicy(Qt::NoFocus);
     pauseButton->setCursor({ Qt::ArrowCursor });
     pauseButton->setFlat(true);
     pauseButton->setVisible(false);
+    
 
     // spinner
     spinner = new DSpinner(searchEdit);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
-    spinner->setFixedSize(32, 32);
+    spinner->setFixedSize(16, 16);
     spinner->hide();
 
     // Completer List
     completerView = new CompleterView(searchEdit->lineEdit());
     cpItemDelegate = new CompleterViewDelegate(completerView);
-
-    initUiForSizeMode();
 }
 
 void SearchEditWidget::initConnect()
@@ -393,11 +391,6 @@ void SearchEditWidget::initConnect()
     connect(pauseButton, &DIconButton::clicked, this, &SearchEditWidget::onPauseButtonClicked);
     connect(advancedButton, &DToolButton::clicked, this, &SearchEditWidget::onAdvancedButtonClicked);
 
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
-        initUiForSizeMode();
-    });
-#endif
     connect(Application::instance(), &Application::clearSearchHistory, this,
             &SearchEditWidget::onClearSearchHistory);
     // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
@@ -408,17 +401,6 @@ void SearchEditWidget::initConnect()
         selectPosStart = posStart < posEnd ? posStart : posEnd;
         selectLength = searchEdit->lineEdit()->selectionLength();
     });
-}
-
-void SearchEditWidget::initUiForSizeMode()
-{
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    pauseButton->setFixedSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
-    pauseButton->setIconSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
-#else
-    pauseButton->setFixedSize(QSize(24, 24));
-    pauseButton->setIconSize(QSize(24, 24));
-#endif
 }
 
 void SearchEditWidget::initData()

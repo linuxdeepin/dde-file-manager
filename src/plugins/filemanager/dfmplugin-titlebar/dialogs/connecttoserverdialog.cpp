@@ -103,7 +103,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         QDir::setCurrent(currentDir);
 
         QWidget *fileWindow = qobject_cast<QWidget *>(parent());
-        TitleBarHelper::handlePressed(fileWindow, url);
+        TitleBarHelper::handleJumpToPressed(fileWindow, url);
 
         // add search history list
         SearchHistroyManager::instance()->writeIntoSearchHistory(url);
