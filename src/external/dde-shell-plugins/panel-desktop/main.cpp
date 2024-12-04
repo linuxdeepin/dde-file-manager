@@ -164,11 +164,6 @@ static QStringList translationDir()
 
 static void checkUpgrade()
 {
-    // TODO(zhangs): TODO(zhangs): dde-shell depends on Qt6,
-    // while the upgrade tool depends on Qt5.
-    // The upgrade adaptation will be carried out
-    // after the upgrade tool is compatible with Qt6.
-#ifdef DFM_ENABLE_UPGTAD_BY_DDE_SHELL
     if (!dfm_upgrade::isNeedUpgrade())
         return;
 
@@ -195,7 +190,6 @@ static void checkUpgrade()
         QProcess::startDetached(qApp->applicationFilePath(), arguments);
         _Exit(-1);
     }
-#endif
 }
 
 static bool main()
