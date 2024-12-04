@@ -4,38 +4,12 @@ project(dfm-upgrade)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-configure_file(
-    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
-    )
+include(dfm-upgrade.cmake)
 
-FILE(GLOB_RECURSE SRC_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
-    )
-find_package(Qt5 COMPONENTS Core)
-add_library(${PROJECT_NAME}
-    SHARED
-    ${SRC_FILES}
-)
+# Qt5
+include(dfm-upgrade-qt5.cmake)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../tools)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-)
-
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${LIB_INSTALL_DIR}/dde-file-manager/tools
-)
+# Qt6
+if (DFM_BUILD_WITH_QT6)
+    include(dfm-upgrade-qt6.cmake)
+endif()
