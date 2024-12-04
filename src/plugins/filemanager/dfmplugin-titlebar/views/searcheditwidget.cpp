@@ -333,7 +333,7 @@ void SearchEditWidget::initUI()
     searchButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     searchButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
     searchButton->setFocusPolicy(Qt::NoFocus);
-    searchButton->setToolTip(tr("search"));
+    searchButton->setToolTip(QObject::tr("search"));
     searchButton->setFlat(true);
     searchButton->setVisible(false);
 
@@ -348,7 +348,7 @@ void SearchEditWidget::initUI()
     advancedButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
     advancedButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     advancedButton->setFocusPolicy(Qt::NoFocus);
-    advancedButton->setToolTip(tr("advanced search"));
+    advancedButton->setToolTip(QObject::tr("advanced search"));
     advancedButton->setCheckable(true);
     advancedButton->setVisible(false);
 
@@ -432,10 +432,10 @@ void SearchEditWidget::updateHistory()
 
 int SearchEditWidget::showClearSearchHistory()
 {
-    QString clearSearch = tr("Are you sure clear search histories?");
+    QString clearSearch = QObject::tr("Are you sure clear search histories?");
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel", "button"));
-    buttonTexts.append(tr("Confirm", "button"));
+    buttonTexts.append(QObject::tr("Cancel", "button"));
+    buttonTexts.append(QObject::tr("Confirm", "button"));
 
     DDialog d;
 
