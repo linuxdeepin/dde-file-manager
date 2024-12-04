@@ -96,7 +96,7 @@
                     "options": [
                         {
                             "key": "icon_size",
-                            "name": "Default size:",
+                            "name": "Default icon size:",
                             "type": "combobox",
                             "items": [
                                 "Extra small",

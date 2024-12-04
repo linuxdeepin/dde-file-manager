@@ -319,7 +319,7 @@ void SettingBackend::initWorkspaceSettingConfig()
     int iconSizeLevelMax = (Global::kIconSizeMax - Global::kIconSizeMin) / Global::kIconSizeStep;
     int iconSizeLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
-                        tr("Default size:"),
+                        tr("Default icon size:"),
                         iconSizeLevelMax,
                         iconSizeLevelMin,
                         5);

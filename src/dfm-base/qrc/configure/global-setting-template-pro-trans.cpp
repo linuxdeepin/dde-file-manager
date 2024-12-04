@@ -48,7 +48,7 @@ void global_setting_template_pro_trans()
     auto advance_preview_text_file_previewText = QObject::tr("Text preview");
     auto advance_preview_video_file_previewText = QObject::tr("Video preview");
     auto advance_search_show_hiddenText = QObject::tr("Show hidden files in search results");
-    auto base_default_view_icon_sizeName = QObject::tr("Default size:");
+    auto base_default_view_icon_sizeName = QObject::tr("Default icon size:");
     auto base_default_view_icon_sizeText0 = QObject::tr("Extra small");
     auto base_default_view_icon_sizeText1 = QObject::tr("Small");
     auto base_default_view_icon_sizeText2 = QObject::tr("Medium");
