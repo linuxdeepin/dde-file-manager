@@ -125,10 +125,12 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         return true;
     }
 
-
+    
+    // Allow application shortcuts on the desktop to be moved to the Recycle Bin.
+    bool bTrash = FileUtils::isTrashFile(toUrl.toString());
     for (const QUrl &url : fromUrls) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
+        if (!bTrash && event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
             view->setViewSelectState(false);
             event->ignore();
             return true;
