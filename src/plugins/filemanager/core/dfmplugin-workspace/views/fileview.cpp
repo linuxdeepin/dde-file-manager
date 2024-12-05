@@ -1557,6 +1557,7 @@ QList<ItemRoles> FileView::getColumnRoles() const
 
 void FileView::updateGeometries()
 {
+    int totalHeight = 0;
     if (isIconViewMode()) {
         int iconVerticalTopMargin = 0;
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -1565,13 +1566,21 @@ void FileView::updateGeometries()
         if (!d->isResizeEvent
                 || (d->isResizeEvent && d->lastContentHeight > 0 && d->lastContentHeight != contentsSize().height()))
             resizeContents(contentsSize().width(), contentsSize().height() + iconVerticalTopMargin);
-        d->lastContentHeight = contentsSize().height();
+
+        totalHeight = contentsSize().height();
+        d->lastContentHeight = totalHeight;
+    } else {
+        int rowCount = model()->rowCount(rootIndex());
+        int listHeight = rowCount * itemSizeHint().height() + kListModeBottomMargin;
+        int contentHeight = contentsSize().height();
+        totalHeight = listHeight > contentHeight ? listHeight : contentHeight;
     }
+
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }
 
-    resizeContents(d->headerView->length(), contentsSize().height());
+    resizeContents(d->headerView->length(), totalHeight);
     DListView::updateGeometries();
 }
 
