@@ -62,7 +62,7 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
 #endif
     qCInfo(logAppDaemon) << "Using plugins dir:" << pluginsDirs;
-    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "server.blackList").toStringList() };
+    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "daemon.blackList").toStringList() };
     DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, blackNames);
 
     qCInfo(logAppDaemon) << "Depend library paths:" << QCoreApplication::libraryPaths();

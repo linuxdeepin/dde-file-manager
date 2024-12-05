@@ -8,6 +8,7 @@ usr/bin/dde-property-dialog
 usr/bin/dde-file-dialog
 usr/bin/dde-select-dialog-x11
 usr/bin/dde-select-dialog-wayland
+usr/bin/deepin-diskencrypt-service
 usr/lib/*/dde-file-manager/plugins/filemanager-core/*.so
 usr/lib/*/dde-file-manager/plugins/previews/*.so
 usr/share/applications/dde-file-manager.desktop
