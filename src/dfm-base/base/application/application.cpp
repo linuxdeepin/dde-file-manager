@@ -309,20 +309,27 @@ void Application::appAttributeTrigger(TriggerAttribute ta, quint64 winId)
         auto defaultViewMode = appAttribute(Application::kViewMode).toInt();
         auto settings = appObtuselySetting();
 
-        const QStringList &keys = settings->keyList("FileViewState");
-        const QStringList &defaultKeys = settings->defaultConfigkeyList("FileViewState");
+        const QString &kGroupName = "FileViewState";
+        const QString &kViewModeKey = "viewMode";
+
+        const QStringList &keys = settings->keyList(kGroupName);
+        const QStringList &defaultKeys = settings->defaultConfigkeyList(kGroupName);
         for (const QString &url : keys) {
+            auto map = settings->value(kGroupName, url).toMap();
+
             if (defaultKeys.contains(url)) {
-                auto defaultMap = settings->defaultConfigValue("FileViewState", url).toMap();
-                if (defaultMap.contains("viewMode") && defaultMap["viewMode"] != defaultViewMode)
+                auto defaultMap = settings->defaultConfigValue(kGroupName, url).toMap();
+                if (defaultMap.contains(kViewModeKey) && defaultMap[kViewModeKey] != defaultViewMode) {
+                    map.insert(kViewModeKey, defaultMap.value(kViewModeKey));
+                    settings->setValue(kGroupName, url, map);
                     continue;
+                }
             }
 
-            auto map = settings->value("FileViewState", url).toMap();
-            if (map.contains("viewMode")) {
-                qCDebug(logDFMBase) << "Set " << url << "viewMode to " << defaultViewMode;
-                map["viewMode"] = defaultViewMode;
-                settings->setValue("FileViewState", url, map);
+            if (map.contains(kViewModeKey)) {
+                qCDebug(logDFMBase) << "Remove " << url << "viewMode";
+                map.remove(kViewModeKey);
+                settings->setValue(kGroupName, url, map);
             }
         }
 
