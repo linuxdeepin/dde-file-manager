@@ -51,25 +51,6 @@ QString config_utils::cipherType()
     return cipher;
 }
 
-bool fstab_utils::isFstabItem(const QString &mpt)
-{
-    if (mpt.isEmpty())
-        return false;
-
-    bool fstabed { false };
-    struct fstab *fs;
-    setfsent();
-    while ((fs = getfsent()) != nullptr) {
-        QString path = fs->fs_file;
-        if (mpt == path) {
-            fstabed = true;
-            break;
-        }
-    }
-    endfsent();
-    return fstabed;
-}
-
 int tpm_utils::checkTPM()
 {
     return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_TPMIsAvailablePro").toInt();

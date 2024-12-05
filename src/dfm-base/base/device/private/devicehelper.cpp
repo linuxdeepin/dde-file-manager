@@ -24,6 +24,8 @@
 #include <QStandardPaths>
 #include <QProcess>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>
@@ -120,6 +122,20 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
     datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
     datas[kPreferredDevice] = getNullStrIfNotValid(Property::kBlockPreferredDevice);
+
+    auto config = dev->getProperty(Property::kBlockConfiguration).toMap();
+    if (!config.isEmpty()) {
+        QJsonObject jsonRootObj;
+        QMapIterator<QString, QVariant> iter(config);
+        while (iter.hasNext()) {
+            iter.next();
+            auto key = iter.key();
+            QVariantMap value = iter.value().toMap();
+            jsonRootObj.insert(key, QJsonObject::fromVariantMap(value));
+        }
+        QJsonDocument doc(jsonRootObj);
+        datas[kConfiguration] = QString(doc.toJson(QJsonDocument::Compact));
+    }
 
     datas[kUDisks2Size] = dev->sizeTotal();
     auto mpt = dev->mountPoint();

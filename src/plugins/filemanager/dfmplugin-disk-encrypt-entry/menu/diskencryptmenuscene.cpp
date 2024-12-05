@@ -23,6 +23,9 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
 
 #include <ddialog.h>
 #include <dconfig.h>
@@ -105,9 +108,20 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         return false;
     }
 
+    param.initOnly = false;
+    auto configJson = selectedItemInfo.value("Configuration", "").toString();
+    if (!configJson.isEmpty()) {
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(configJson.toLocal8Bit(), &err);
+        if (err.error != QJsonParseError::NoError) {
+            qWarning() << "device configuration not valid!" << device << configJson;
+            return false;
+        }
+        auto obj = doc.object();
+        param.initOnly = obj.contains("fstab");
+    }
     param.devID = selectedItemInfo.value("Id").toString();
     param.devDesc = device;
-    param.initOnly = fstab_utils::isFstabItem(devMpt);
     param.mountPoint = devMpt;
     param.uuid = selectedItemInfo.value("IdUUID", "").toString();
     param.deviceDisplayName = info->displayOf(dfmbase::FileInfo::kFileDisplayName);
