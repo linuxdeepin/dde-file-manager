@@ -1,0 +1,84 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.DiskEncrypt">
+    <signal name="PrepareEncryptDiskResult">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="jobID" type="s" direction="out"/>
+      <arg name="errCode" type="i" direction="out"/>
+    </signal>
+    <signal name="EncryptDiskResult">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="errCode" type="i" direction="out"/>
+      <arg name="msg" type="s" direction="out"/>
+    </signal>
+    <signal name="DecryptDiskResult">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="jobID" type="s" direction="out"/>
+      <arg name="errCode" type="i" direction="out"/>
+    </signal>
+    <signal name="ChangePassphressResult">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="jobID" type="s" direction="out"/>
+      <arg name="errCode" type="i" direction="out"/>
+    </signal>
+    <signal name="EncryptProgress">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="progress" type="d" direction="out"/>
+    </signal>
+    <signal name="DecryptProgress">
+      <arg name="device" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="progress" type="d" direction="out"/>
+    </signal>
+    <signal name="RequestEncryptParams">
+      <arg name="encConfig" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <method name="PrepareEncryptDisk">
+      <arg type="s" direction="out"/>
+      <arg name="params" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="DecryptDisk">
+      <arg type="s" direction="out"/>
+      <arg name="params" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="ChangeEncryptPassphress">
+      <arg type="s" direction="out"/>
+      <arg name="params" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="IgnoreParamRequest">
+    </method>
+    <method name="ResumeEncryption">
+      <arg name="device" type="s" direction="in"/>
+    </method>
+    <method name="SetEncryptParams">
+      <arg name="params" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="QueryTPMToken">
+      <arg type="s" direction="out"/>
+      <arg name="device" type="s" direction="in"/>
+    </method>
+    <method name="EncryptStatus">
+      <arg type="i" direction="out"/>
+      <arg name="device" type="s" direction="in"/>
+    </method>
+    <method name="HasPendingTask">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="IsWorkerRunning">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="UnfinishedDecryptJob">
+      <arg type="s" direction="out"/>
+    </method>
+  </interface>
+</node>

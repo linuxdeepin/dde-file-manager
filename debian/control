@@ -62,7 +62,8 @@ Build-Depends:
  libdfm6-io-dev,
  libdfm6-mount-dev,
  libdfm6-burn-dev,
- libxcb-xfixes0-dev (>= 1.10~)
+ libxcb-xfixes0-dev (>= 1.10~),
+ libdeepin-service-framework-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -74,7 +75,7 @@ Depends:
  libdde-file-manager (=${binary:Version}),
  libqt6sql6-sqlite,
  qt6-translations-l10n,
- libimageeditor6
+ libimageeditor6 | hello
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
 Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
@@ -97,18 +98,24 @@ Depends:
  dde-file-manager-services-plugins (=${binary:Version}),
  qml6-module-qtquick-controls,
  qml6-module-qtquick-layouts,
- qml6-module-qtquick-window
+ qml6-module-qtquick-window,
+ tpm2-abrmd,
+ libtss2-tcti-pcap0,
+ libtss2-tcti-tabrmd0,
+ libusec-recoverykey | hello
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1),
  dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins
+ dde-file-manager-common-plugins,
+ dfmplugin-disk-encrypt
 Conflicts: dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins
+ dde-file-manager-common-plugins,
+ dfmplugin-disk-encrypt
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -143,6 +150,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - deepin-service-manager plugins module
  Deepin Desktop Environment (DDE) - deepin-service-manager plugins module.
+Replaces: dfmplugin-disk-encrypt
  
 Package: libdfm-extension-dev
 Architecture: any

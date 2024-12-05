@@ -1,0 +1,13 @@
+[Skip auth when unlock system devices]
+Identity=unix-group:*
+Action=org.freedesktop.udisks2.encrypted-unlock-system
+ResultAny=no
+ResultInactive=no
+ResultActive=yes
+
+[Skip auth when unlock devices]
+Identity=unix-group:*
+Action=org.freedesktop.udisks2.encrypted-unlock
+ResultAny=no
+ResultInactive=no
+ResultActive=yes

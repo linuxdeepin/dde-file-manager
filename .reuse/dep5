@@ -29,7 +29,7 @@ Copyright: None
 License: CC0-1.0
 
 # ignore files
-Files: src/*.json src/*.xml src/*.policy src/*/pinyin.dict src/*.js src/*.ini src/*.qss src/*.theme src/*/templates/* src/*.psd src/*/com.deepin.filemanager.daemon.conf src/dfm-base/qrc/configure/*.cpp examples/*  src/services/*.conf 
+Files: src/*.json src/*.xml src/*.policy src/*/pinyin.dict src/*.js src/*.ini src/*.qss src/*.theme src/*/templates/* src/*.psd src/*/com.deepin.filemanager.daemon.conf src/dfm-base/qrc/configure/*.cpp examples/*  src/services/*.conf src/services/*.pkla
 Copyright: None
 License: CC0-1.0
 
