@@ -108,14 +108,12 @@ Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1),
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins,
- dfmplugin-disk-encrypt
+ dde-file-manager-common-plugins
 Conflicts: dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins,
- dfmplugin-disk-encrypt
+ dde-file-manager-common-plugins
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -132,6 +130,8 @@ Depends:
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
+Replaces: dfmplugin-disk-encrypt
+Conflicts: dfmplugin-disk-encrypt
 
 Package: dde-disk-mount-plugin
 Architecture: any
@@ -150,7 +150,6 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - deepin-service-manager plugins module
  Deepin Desktop Environment (DDE) - deepin-service-manager plugins module.
-Replaces: dfmplugin-disk-encrypt
  
 Package: libdfm-extension-dev
 Architecture: any
