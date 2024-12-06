@@ -56,7 +56,7 @@ class FileViewPrivate
 
     QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
-    int currentIconSizeLevel = 1;
+    int currentIconSizeLevel = 5;
     int currentGridDensityLevel = 1;
     int currentListHeightLevel = 1;
     bool isAlwaysOpenInCurrentWindow { false };
