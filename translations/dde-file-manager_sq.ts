@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
         <source>Decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Po shfshehtëzohet…</translation>
     </message>
 </context>
 <context>
@@ -140,7 +140,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="54"/>
         <source>Preparing encrypt...</source>
-        <translation type="unfinished"/>
+        <translation>Po përgatitet fshehtëzim…</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1839,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>Po përditësohet grub-i…</translation>
     </message>
 </context>
 <context>
@@ -1847,7 +1847,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Po bëhet fshehtëzim…</translation>
     </message>
 </context>
 <context>
@@ -4596,7 +4596,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="151"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo shfshehtëzim pjese</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="155"/>
@@ -4644,7 +4644,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Çmontoje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
@@ -5055,12 +5055,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja s’është shfshehtëzuar plotësisht, ju lutemi, përfundoni shfshehtëzimin, para se ta përdorni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Shkyçja e pajisjes dështoi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
