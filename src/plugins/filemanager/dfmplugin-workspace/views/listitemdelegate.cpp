@@ -340,9 +340,6 @@ void ListItemDelegate::setItemMinimumHeightByHeightLevel(int level)
 {
     Q_D(ListItemDelegate);
 
-    if (d->currentHeightLevel == level)
-        return;
-
     if (level < 0 || level >= listHeight().length())
         return;
 
