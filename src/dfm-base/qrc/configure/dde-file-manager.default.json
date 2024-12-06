@@ -11,7 +11,7 @@
         "UrlOfNewTab": "",
         "ThemeName": "light",
         "GridDensityLevel": 3,
-        "ListHeightLevel": 0
+        "ListHeightLevel": 1
     },
     "GenericAttribute": {
         "IndexInternal": true,
