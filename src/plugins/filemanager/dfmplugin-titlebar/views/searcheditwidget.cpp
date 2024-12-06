@@ -72,6 +72,7 @@ void SearchEditWidget::deactivateEdit()
     advancedButton->setVisible(false);
 
     searchEdit->clearEdit();
+    searchEdit->clearFocus();
     if (parentWidget())
         updateSearchEditWidget(parentWidget()->width());
 }
@@ -655,9 +656,12 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
-    if (e->reason() == Qt::PopupFocusReason) {
+    if (e->reason() == Qt::PopupFocusReason
+        || e->reason() == Qt::OtherFocusReason
+        || e->reason() == Qt::ActiveWindowFocusReason) {
         e->accept();
-        searchEdit->lineEdit()->setFocus();
+        if (!searchEdit->text().isEmpty())
+            searchEdit->lineEdit()->setFocus();
         return;
     }
 
