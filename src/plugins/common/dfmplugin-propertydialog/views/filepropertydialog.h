@@ -71,7 +71,7 @@ private:
     QScrollArea *scrollArea { nullptr };
     BasicWidget *basicWidget { nullptr };
     PermissionManagerWidget *permissionManagerWidget { nullptr };
-    QLabel *fileIcon {nullptr};
+    QLabel *fileIcon { nullptr };
     EditStackedWidget *editStackWidget { nullptr };
     QFrame *textShowFrame { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *editButton { nullptr };
@@ -79,8 +79,7 @@ private:
     QUrl currentFileUrl {};
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
-    FileInfoPointer currentInfo{ nullptr };
-    bool showPermission { true };
+    FileInfoPointer currentInfo { nullptr };
 };
 }
 #endif   // FILEPROPERTYVIEW_H

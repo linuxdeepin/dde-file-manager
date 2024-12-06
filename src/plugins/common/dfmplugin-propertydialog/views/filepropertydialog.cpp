@@ -139,9 +139,7 @@ void FilePropertyDialog::filterControlView()
     }
 
     if ((controlFilter & PropertyFilterType::kPermission) < 1) {
-        showPermission = true;
-    } else {
-        showPermission = false;
+        createPermissionManagerWidget(currentFileUrl);
     }
 }
 
@@ -301,10 +299,6 @@ void FilePropertyDialog::resizeEvent(QResizeEvent *event)
 
 void FilePropertyDialog::showEvent(QShowEvent *event)
 {
-    if (showPermission) {
-        createPermissionManagerWidget(currentFileUrl);
-    }
-
     DDialog::showEvent(event);
 }
 
