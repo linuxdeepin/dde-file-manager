@@ -76,6 +76,7 @@ private slots:
     void onTabCurrentChanged(int tabIndex);
     void onTabCloseRequested(int index, bool remainState);
     void onTabAddButtonClicked();
+    void quitSearch();
 
 private:
     QUrl titlebarUrl;

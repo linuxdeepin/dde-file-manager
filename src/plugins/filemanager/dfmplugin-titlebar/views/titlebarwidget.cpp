@@ -325,9 +325,8 @@ void TitleBarWidget::initConnect()
         TitleBarEventCaller::sendStopSearch(this);
     });
 
-    connect(searchEditWidget, &SearchEditWidget::clearButtonClicked, this, [this]() {
-        TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
-    });
+    connect(searchEditWidget, &SearchEditWidget::searchQuit, this, &TitleBarWidget::quitSearch);
+
     connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
@@ -478,4 +477,10 @@ void TitleBarWidget::onTabAddButtonClicked()
         url = tab->getCurrentUrl();
 
     openNewTab(url);
+}
+
+void TitleBarWidget::quitSearch()
+{
+    if (crumbBar && !UniversalUtils::urlEquals(crumbBar->lastUrl(), titlebarUrl))
+        TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
 }
