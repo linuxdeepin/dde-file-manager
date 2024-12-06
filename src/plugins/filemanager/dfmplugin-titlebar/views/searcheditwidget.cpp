@@ -136,27 +136,28 @@ void SearchEditWidget::onAdvancedButtonClicked()
 
 void SearchEditWidget::onReturnPressed()
 {
+    if (urlCompleter && urlCompleter->popup()->isVisible()) {
+        completerView->hide();
+        completionPrefix.clear();
+    }
+
     QString text { this->text() };
     if (text.isEmpty())
         return;
 
     // add search history list
-    if (!FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
-        if (DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
-                                              DConfigSearch::kDisplaySearchHistory, true)
-                    .toBool()) {
-            if (historyList.contains(text))
-                historyList.removeAll(text);
-            historyList.append(text);
-            isHistoryInCompleterModel = false;
-        }
-
-        SearchHistroyManager::instance()->writeIntoSearchHistory(text);
+    if (DConfigManager::instance()->value(DConfigSearch::kSearchCfgPath,
+                                            DConfigSearch::kDisplaySearchHistory, true)
+                .toBool()) {
+        if (historyList.contains(text))
+            historyList.removeAll(text);
+        historyList.append(text);
+        isHistoryInCompleterModel = false;
     }
+    SearchHistroyManager::instance()->writeIntoSearchHistory(text);
 
     if (text == QObject::tr("Clear search history")) {
-        Q_EMIT escKeyPressed();
-
+        quitSearch();
         auto result = showClearSearchHistory();
         if (result == DDialog::Accepted)
             clearSearchHistory();
@@ -164,7 +165,6 @@ void SearchEditWidget::onReturnPressed()
     }
 
     TitleBarHelper::handleSearchPressed(this, text);
-
     startSpinner();
 }
 
@@ -217,7 +217,6 @@ void SearchEditWidget::insertCompletion(const QString &completion)
 
     if (completion == QObject::tr("Clear search history")) {
         isClearSearch = true;
-        Q_EMIT searchEdit->returnPressed();
         return;
     }
 
@@ -383,11 +382,8 @@ void SearchEditWidget::initConnect()
 {
     connect(searchButton, &DIconButton::clicked, this, &SearchEditWidget::expandSearchEdit);
     connect(searchEdit, &DSearchEdit::textEdited, this, &SearchEditWidget::onTextEdited, Qt::QueuedConnection);
+    connect(searchEdit, &DSearchEdit::searchAborted, this, &SearchEditWidget::quitSearch);
     connect(searchEdit, &DSearchEdit::returnPressed, this, &SearchEditWidget::onReturnPressed);
-    connect(searchEdit, &DSearchEdit::searchAborted, this, [this]() {
-        stopSpinner();
-        Q_EMIT clearButtonClicked();
-    });
     connect(pauseButton, &DIconButton::clicked, this, &SearchEditWidget::onPauseButtonClicked);
     connect(advancedButton, &DToolButton::clicked, this, &SearchEditWidget::onAdvancedButtonClicked);
 
@@ -594,15 +590,14 @@ bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
 
     switch (keyEvent->key()) {
     case Qt::Key_Escape:
-        emit escKeyPressed();
+        quitSearch();
         keyEvent->accept();
         return true;
     default:
         break;
     }
 
-    auto urlComplter = urlCompleter;
-    if (urlComplter && urlComplter->popup()->isVisible()) {
+    if (urlCompleter && urlCompleter->popup()->isVisible()) {
         if (isHistoryInCompleterModel && keyEvent->modifiers() == Qt::ShiftModifier && keyEvent->key() == Qt::Key_Delete) {
             QString completeResult = completerView->currentIndex().data().toString();
             bool ret = SearchHistroyManager::instance()->removeSearchHistory(completeResult);
@@ -617,13 +612,6 @@ bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
         switch (keyEvent->key()) {
         case Qt::Key_Backtab:
             keyEvent->ignore();
-            return true;
-        case Qt::Key_Enter:
-        case Qt::Key_Return:
-            keyEvent->accept();
-            completerView->hide();
-            completionPrefix.clear();
-            Q_EMIT searchEdit->returnPressed();
             return true;
         case Qt::Key_Tab:
             if (urlCompleter->completionCount() > 0) {
@@ -648,15 +636,6 @@ bool SearchEditWidget::handleKeyPress(QKeyEvent *keyEvent)
         switch (keyEvent->key()) {
         case Qt::Key_Tab:
             keyEvent->accept();
-            return true;
-        case Qt::Key_Enter:
-        case Qt::Key_Return:
-            if (keyEvent->isAutoRepeat()) {
-                keyEvent->ignore();
-            } else {
-                Q_EMIT searchEdit->returnPressed();
-                keyEvent->accept();
-            }
             return true;
         default:
             break;
@@ -738,4 +717,11 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchButton->setVisible(false);
         advancedButton->setVisible(searchEdit->hasFocus() || !searchEdit->text().isEmpty());
     }
+}
+
+void SearchEditWidget::quitSearch()
+{
+    stopSpinner();
+    deactivateEdit();
+    Q_EMIT searchQuit();
 }

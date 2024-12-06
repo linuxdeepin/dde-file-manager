@@ -71,8 +71,7 @@ public Q_SLOTS:
     void expandSearchEdit();
 
 Q_SIGNALS:
-    void escKeyPressed();
-    void clearButtonClicked();
+    void searchQuit();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -109,6 +108,7 @@ private:
     void handleLeaveEvent(QEvent *e);
 
     void updateSearchWidgetLayout();
+    void quitSearch();
 
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
