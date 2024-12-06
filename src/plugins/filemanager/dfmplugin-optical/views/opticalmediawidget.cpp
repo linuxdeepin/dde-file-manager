@@ -98,17 +98,46 @@ void OpticalMediaWidget::initializeUi()
 {
     layout = new QHBoxLayout(this);
     setLayout(layout);
-    layout->addWidget(lbMediatype = new QLabel("<Media Type>"));
-    layout->addWidget(lbAvailable = new QLabel("<Space Available>"));
-    layout->addWidget(lbUDFSupport = new QLabel(tr("It does not support burning UDF discs")));
-    layout->addWidget(pbDump = new DPushButton());
-    layout->addWidget(pbBurn = new DPushButton());
-    layout->addWidget(iconCaution = new QSvgWidget());
+
+    // 创建控件
+    lbMediatype = new QLabel("<Media Type>");
+    lbAvailable = new QLabel("<Space Available>");
+    lbUDFSupport = new QLabel(tr("It does not support burning UDF discs"));
+    pbDump = new DPushButton();
+    pbBurn = new DPushButton();
+    iconCaution = new QSvgWidget();
+
+    // 设置按钮文本
     pbDump->setText(tr("Save as Image File"));
     pbBurn->setText(tr("Burn"));
+
+    // 设置控件初始可见性
     lbUDFSupport->setVisible(false);
     iconCaution->setVisible(false);
 
+    // 设置按钮固定高度为30px
+    pbDump->setFixedHeight(30);
+    pbBurn->setFixedSize({ 86, 30 });
+
+    // 设置标签字体大小为16px
+    QFont font = lbMediatype->font();
+    font.setPixelSize(16);
+    lbMediatype->setFont(font);
+    lbAvailable->setFont(font);
+    lbUDFSupport->setFont(font);
+
+    // 设置布局边距为6px
+    layout->setContentsMargins(10, 6, 10, 6);
+
+    // 添加控件到布局
+    layout->addWidget(lbMediatype);
+    layout->addWidget(lbAvailable);
+    layout->addWidget(lbUDFSupport);
+    layout->addWidget(pbDump);
+    layout->addWidget(pbBurn);
+    layout->addWidget(iconCaution);
+
+    // 设置控件的大小策略
     pbBurn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lbAvailable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     lbMediatype->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
