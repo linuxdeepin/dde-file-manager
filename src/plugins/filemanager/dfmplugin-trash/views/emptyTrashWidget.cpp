@@ -24,7 +24,7 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
 
     trashLabel->setText(tr("Trash"));
     QFont f = trashLabel->font();
-    f.setPixelSize(20);
+    f.setPixelSize(16);
     trashLabel->setFont(f);
     QPushButton *emptyTrashButton = new QPushButton;
     emptyTrashButton->setContentsMargins(0, 0, 0, 0);
@@ -32,7 +32,7 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
 
     emptyTrashButton->setText(tr("Empty"));
     emptyTrashButton->setToolTip(tr("Empty Trash"));
-    emptyTrashButton->setFixedSize({ 86, 36 });
+    emptyTrashButton->setFixedSize({ 86, 30 });
     DPalette pal = DPaletteHelper::instance()->palette(this);
     QPalette buttonPalette = emptyTrashButton->palette();
     buttonPalette.setColor(QPalette::ButtonText, pal.color(DPalette::Active, DPalette::TextWarning));
@@ -49,7 +49,7 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(emptyTrashLayout);
-    mainLayout->setContentsMargins(10, 12, 10, 8);
+    mainLayout->setContentsMargins(10, 6, 10, 6);
 
     this->setLayout(mainLayout);
 }
