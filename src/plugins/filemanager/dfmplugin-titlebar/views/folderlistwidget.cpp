@@ -67,7 +67,7 @@ void FolderListWidgetPrivate::clicked(const QModelIndex &index)
     q->hide();
 
     if (index.isValid()) {
-        int row = index.row();
+        int row = index.data(Qt::UserRole).toInt();
         if (row >= 0 && row < crumbDatas.size()) {
             Q_EMIT q->urlButtonActivated(crumbDatas[row].url);
         }
@@ -136,8 +136,8 @@ FolderListWidget::~FolderListWidget() = default;
 void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked)
 {
     d->folderModel->clear();
-    d->crumbDatas = datas;
     int dataNum = 0;
+    d->crumbDatas = datas;
     bool isShowedHiddenFiles = true;
     if (!stacked)
         isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
@@ -145,15 +145,16 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
     // Calculate max text width
     int maxTextWidth = 0;
     QFontMetrics fm(font());
-    for (auto data : datas) {
-        auto info = InfoFactory::create<FileInfo>(data.url);
+    for (int i = 0; i < datas.size(); ++i) {
+        auto info = InfoFactory::create<FileInfo>(datas[i].url);
         if (!info.isNull() && (isShowedHiddenFiles || !info->isAttributes(FileInfo::FileIsType::kIsHidden))) {
-            QStandardItem *item = new QStandardItem(info->fileIcon(), data.displayText);
+            QStandardItem *item = new QStandardItem(info->fileIcon(), datas[i].displayText);
+            item->setData(i, Qt::UserRole);
             d->folderModel->insertRow(dataNum, item);
             dataNum++;
 
             // Calculate text width
-            int textWidth = fm.horizontalAdvance(data.displayText);
+            int textWidth = fm.horizontalAdvance(datas[i].displayText);
             maxTextWidth = qMax(maxTextWidth, textWidth);
         }
     }
