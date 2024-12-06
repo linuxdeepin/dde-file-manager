@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
         <source>Decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Visszafejtés...</translation>
     </message>
 </context>
 <context>
@@ -140,7 +140,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="54"/>
         <source>Preparing encrypt...</source>
-        <translation type="unfinished"/>
+        <translation>Titkosítás előkészítése...</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1839,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>Grub frissítése...</translation>
     </message>
 </context>
 <context>
@@ -1847,7 +1847,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Titkosítás...</translation>
     </message>
 </context>
 <context>
@@ -4596,7 +4596,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="151"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>A partíció visszafejtésének folytatása</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="155"/>
@@ -4644,7 +4644,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Leválasztás</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
@@ -5059,17 +5059,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>Az eszköz nincs teljesen visszafejtve, kérjük, fejezze be a visszafejtést a hozzáférés előtt.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Az eszköz feloldása sikertelen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Kattintson a jobb oldali lemezmenü &quot;Partíciótitkosítás folytatása&quot; gombra a partíciótitkosítás befejezéséhez.  </translation>
     </message>
 </context>
 <context>
