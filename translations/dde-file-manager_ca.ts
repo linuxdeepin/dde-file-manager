@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
         <source>Decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Es desencripta...</translation>
     </message>
 </context>
 <context>
@@ -140,7 +140,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="54"/>
         <source>Preparing encrypt...</source>
-        <translation type="unfinished"/>
+        <translation>Es prepara l&apos;encriptació...</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1839,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;actualitza el grub...</translation>
     </message>
 </context>
 <context>
@@ -1847,7 +1847,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;encripta...</translation>
     </message>
 </context>
 <context>
@@ -4596,7 +4596,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="151"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Continua la desencriptació de la partició</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="155"/>
@@ -4644,7 +4644,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Desmunta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
@@ -5055,17 +5055,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu no està completament desencriptat; si us plau, acabeu la desencriptació abans d&apos;accedir-hi.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat desblocar el dispositiu.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Cliqueu al menú dret del disc a l&apos;opció Continua l&apos;encriptació de la partició, per completar-ne l&apos;encriptació.</translation>
     </message>
 </context>
 <context>
