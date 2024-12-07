@@ -68,15 +68,22 @@ void FilePropertyDialog::initInfoUI()
     scrollArea->viewport()->setPalette(palette);
     scrollArea->setFrameShape(QFrame::Shape::NoFrame);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QFrame *mainWidget = new QFrame(this);
+    mainWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    mainWidget->setMaximumWidth(kDialogWidth);
+
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
     scrollWidgetLayout->setContentsMargins(10, 0, 10, 10);
     scrollWidgetLayout->setSpacing(kArrowExpandSpacing);
     mainWidget->setLayout(scrollWidgetLayout);
 
     scrollArea->setWidget(mainWidget);
+
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    scrollArea->setMaximumWidth(kDialogWidth);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout;
     vlayout1->addWidget(scrollArea);
@@ -232,16 +239,23 @@ void FilePropertyDialog::processHeight(int height)
     Q_UNUSED(height)
 
     QRect rect = geometry();
-    if (WindowUtils::isWayLand()) {
-        int logicHeight = contentHeight() + kArrowExpandSpacing;
-        int screenHeight = WindowUtils::cursorScreen()->availableSize().height();
-        int realHeight = logicHeight > screenHeight ? screenHeight : logicHeight;
-        rect.setHeight(realHeight);
-    } else {
-        rect.setHeight(contentHeight() + kArrowExpandSpacing);
-    }
+    int screenHeight = WindowUtils::cursorScreen()->availableSize().height();
+    screenHeight -= 100;
 
+    int contentH = contentHeight() + kArrowExpandSpacing;
+    int maxHeight = qMin(contentH, screenHeight);
+    rect.setHeight(maxHeight);
     setGeometry(rect);
+
+    if (scrollArea) {
+        QWidget *content = scrollArea->widget();
+        if (content) {
+            content->setMinimumHeight(0);
+            content->adjustSize();
+            content->updateGeometry();
+        }
+        scrollArea->updateGeometry();
+    }
 }
 
 void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
