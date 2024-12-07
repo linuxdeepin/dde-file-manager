@@ -170,20 +170,26 @@ bool WorkspaceMenuScene::create(DMenu *parent)
 void WorkspaceMenuScene::updateState(DMenu *parent)
 {
     auto currentWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(d->windowId);
+    if (!currentWidget) {
+        AbstractMenuScene::updateState(parent);
+        return;
+    }
+
     bool renameEnabled = true;
     if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
-            && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
+        && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)) {
         renameEnabled = false;
+    }
 
-    if (currentWidget && WorkspaceEventCaller::sendCheckTabAddable(d->windowId)) {
-        auto actions = parent->actions();
-        for (auto act : actions) {
-            const auto &actId = act->property(ActionPropertyKey::kActionID);
-            if (dfmplugin_menu::ActionID::kOpenInNewTab == actId) {
-                act->setEnabled(false);
-            } else if (!renameEnabled && dfmplugin_menu::ActionID::kRename == actId){
-                act->setEnabled(renameEnabled);
-            }
+    bool addTabEnabled = WorkspaceEventCaller::sendCheckTabAddable(d->windowId);
+
+    auto actions = parent->actions();
+    for (auto *act : actions) {
+        const auto &actId = act->property(ActionPropertyKey::kActionID);
+        if (dfmplugin_menu::ActionID::kOpenInNewTab == actId) {
+            act->setEnabled(addTabEnabled);
+        } else if (dfmplugin_menu::ActionID::kRename == actId) {
+            act->setEnabled(renameEnabled);
         }
     }
 
@@ -214,7 +220,7 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
         // paste
         if (actionId == dfmplugin_menu::ActionID::kPaste) {
             QPointer<dfmplugin_workspace::FileView> view = d->view;
-            QTimer::singleShot(200, [view](){
+            QTimer::singleShot(200, [view]() {
                 if (!view.isNull())
                     FileOperatorHelperIns->pasteFiles(view);
             });
@@ -290,7 +296,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 if (Q_UNLIKELY(!index.isValid()))
                     return false;
                 QPointer<dfmplugin_workspace::FileView> view = d->view;
-                QTimer::singleShot(80, [view, index](){
+                QTimer::singleShot(80, [view, index]() {
                     if (!view.isNull())
                         view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
                 });
