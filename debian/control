@@ -126,7 +126,8 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends (>=1.27.3),
  cryptsetup,
- libdfm-extension (=${binary:Version})
+ libdfm-extension (=${binary:Version}),
+ dlnfs | hello
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
