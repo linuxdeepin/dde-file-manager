@@ -6699,7 +6699,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="51"/>
         <source>Error: the Bluetooth device is disconnected</source>
-        <translation>Błąd: urządzenie Bluetooth jest odłączone</translation>
+        <translation>Błąd: urządzenie Bluetooth jest rozłączone</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="52"/>
