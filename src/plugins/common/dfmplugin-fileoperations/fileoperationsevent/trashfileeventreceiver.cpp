@@ -72,10 +72,12 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
         return nullptr;
     }
 
-    const QUrl &sourceFirst = sources.first();
+    // gio can only handle canonical file paths
+    QList<QUrl> processedSources = SystemPathUtil::canonicalUrlList(sources);
+    const QUrl &sourceFirst = processedSources.first();
     JobHandlePointer handle = nullptr;
     bool nullDirDelete = false;
-    if (sources.count() == 1) {
+    if (processedSources.count() == 1) {
         auto info = InfoFactory::create<FileInfo>(sourceFirst);
         nullDirDelete = info && info->isAttributes(OptInfoType::kIsDir)
                 && !info->isAttributes(OptInfoType::kIsSymLink)
@@ -83,14 +85,14 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     }
 
     if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst)) {
-        if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted)
+        if (DialogManagerInstance->showDeleteFilesDialog(processedSources, true) != QDialog::Accepted)
             return nullptr;
-        handle = copyMoveJob->deletes(sources, flags, isInit);
+        handle = copyMoveJob->deletes(processedSources, flags, isInit);
         if (!isInit)
             return handle;
     } else {
         // check url permission
-        QList<QUrl> urlsCanTrash = sources;
+        QList<QUrl> urlsCanTrash = processedSources;
         if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
             if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
                 return nullptr;
