@@ -501,7 +501,7 @@ void TabBar::updateScreen()
 
     // update tabAddButton position
     if (tabAddButton) {
-        int btnX = lastX + 10;
+        int btnX = count() > 1 ? lastX + 10 : 10;
         int btnY = (height() - tabAddButton->height()) / 2;
         QRect rect(btnX, btnY, tabAddButton->size().width(), tabAddButton->size().height());
         if (playTabAnimation) {
@@ -543,6 +543,7 @@ void TabBar::updateTabsState()
     for (Tab *tab : tabList) {
         tab->setShowCloseButton(tabCount > 1);
         tab->setCanDrag(tabCount > 1);
+        tab->setVisible(tabCount > 1);
     }
 }
 
