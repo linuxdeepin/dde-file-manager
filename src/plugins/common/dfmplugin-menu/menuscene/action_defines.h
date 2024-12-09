@@ -55,6 +55,10 @@ inline constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 
 // Separator
 inline constexpr char kSeparator[] = "separator-line";
+
+// ViewMenu
+inline constexpr char kDisplayAs[] = "display-as";
+inline constexpr char kSortBy[] = "sort-by";
 }
 }
 

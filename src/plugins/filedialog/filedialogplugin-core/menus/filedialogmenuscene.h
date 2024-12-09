@@ -12,6 +12,7 @@
 
 namespace filedialog_core {
 
+class FileDialogMenuScenePrivate;
 class FileDialogMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
@@ -29,12 +30,14 @@ public:
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     void updateState(QMenu *parent) override;
-
+    bool actionFilter(AbstractMenuScene *caller, QAction *action) override;
+    
 private:
     QString findSceneName(QAction *act) const;
     void filterAction(QMenu *parent, bool isSubMenu);
 
 private:
+    QScopedPointer<FileDialogMenuScenePrivate> d;
     AbstractMenuScene *workspaceScene { nullptr };
 };
 

@@ -198,6 +198,9 @@ void WorkspaceMenuScene::updateState(DMenu *parent)
 
 bool WorkspaceMenuScene::triggered(QAction *action)
 {
+    if (filterActionBySubscene(this, action))
+        return true;
+
     if (d->isEmptyArea)
         return emptyMenuTriggered(action);
 
