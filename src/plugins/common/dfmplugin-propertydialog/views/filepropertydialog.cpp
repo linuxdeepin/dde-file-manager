@@ -28,6 +28,7 @@
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QScreen>
+#include <QTimer>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -130,7 +131,6 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     if (vlayout) {
         insertExtendedControl(vlayout->count(), permissionManagerWidget);
-        vlayout->addStretch();
     }
 }
 
@@ -314,6 +314,22 @@ void FilePropertyDialog::resizeEvent(QResizeEvent *event)
 void FilePropertyDialog::showEvent(QShowEvent *event)
 {
     DDialog::showEvent(event);
+
+    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+    if (vlayout) {
+        if (vlayout->count() > 0) {
+            QLayoutItem *item = vlayout->itemAt(vlayout->count() - 1);
+            if (item && item->spacerItem()) {
+                vlayout->removeItem(item);
+                delete item;
+            }
+        }
+        vlayout->addStretch();
+    }
+    
+    QTimer::singleShot(0, this, [this]() {
+        processHeight(contentHeight());
+    });
 }
 
 void FilePropertyDialog::closeEvent(QCloseEvent *event)
