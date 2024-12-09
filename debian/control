@@ -76,7 +76,7 @@ Depends:
  libqt6sql6-sqlite,
  qt6-translations-l10n,
  libimageeditor6 | hello
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
 Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
 Description: deepin desktop-environment - desktop module
@@ -109,11 +109,6 @@ Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1),
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
  dde-file-manager-common-plugins
-Conflicts: dde-file-manager-preview,
- dde-file-manager-preview-plugins,
- dde-file-manager-plugins,
- dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins
 Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -132,7 +127,6 @@ Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
 Replaces: dfmplugin-disk-encrypt
-Conflicts: dfmplugin-disk-encrypt
 
 Package: dde-disk-mount-plugin
 Architecture: any
