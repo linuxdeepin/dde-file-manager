@@ -81,14 +81,8 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
                 && !info->isAttributes(OptInfoType::kIsSymLink)
                 && !info->isAttributes(OptInfoType::kIsWritable);
     }
-    const auto &sourceInfo = InfoFactory::create<FileInfo>(sourceFirst);
-    bool canTrash = false;
-    auto filesource = FileUtils::bindUrlTransform(sourceFirst);
-    if (sourceInfo)
-        canTrash = sourceInfo->isAttributes(OptInfoType::kIsSymLink)
-                && filesource.path().startsWith(StandardPaths::location(StandardPaths::StandardLocation::kHomePath));
-    if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst) ||
-            (!dfmio::DFMUtils::supportTrash(sourceFirst) && !canTrash)) {
+
+    if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst)) {
         if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted)
             return nullptr;
         handle = copyMoveJob->deletes(sources, flags, isInit);

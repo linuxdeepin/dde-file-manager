@@ -363,7 +363,7 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const Global::Cre
     return isSameFile(path1, path2);
 }
 
-bool FileUtils::isSameFile(const QString &path1, const QString &path2) 
+bool FileUtils::isSameFile(const QString &path1, const QString &path2)
 {
     struct stat stat1;
     struct stat stat2;
@@ -372,7 +372,7 @@ bool FileUtils::isSameFile(const QString &path1, const QString &path2)
     if (0 == ret1 && 0 == ret2) {
         // 通过inode判断是否是同一个文件
         return (stat1.st_ino == stat2.st_ino
-            && stat1.st_dev == stat2.st_dev);   //! 需要判断设备号
+                && stat1.st_dev == stat2.st_dev);   //! 需要判断设备号
     }
 
     return false;
@@ -1333,7 +1333,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     // 获取当前配置
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (!alltotrash)
-        return info ? info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : isLocalDevice(url);
+        return info ? info->canAttributes(CanableInfoType::kCanTrash) : false;
     if (!url.isValid())
         return false;
 
