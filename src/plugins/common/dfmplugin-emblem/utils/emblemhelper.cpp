@@ -8,6 +8,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/dfileinfo.h>
@@ -269,13 +270,13 @@ void EmblemHelper::pending(const FileInfoPointer &info)
 bool EmblemHelper::isExtEmblemProhibited(const FileInfoPointer &info, const QUrl &url)
 {
     // SMB mounted by cifs (v6), so mountpoint is native path
-    if (FileUtils::isGvfsFile(url))
+    if (ProtocolUtils::isRemoteFile(url))
         return true;
 
     // In the block device, all file extension emblem icons are displayed by default,
     // When configuring emblem icons display, all file extension corners are displayed in the block device
     // When emblem icons hiding is configured, all file extension corners are hidden in the block device
-    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !FileUtils::isLocalDevice(url))) {
+    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !ProtocolUtils::isLocalFile(url))) {
         bool enable { DConfigManager::instance()->value("org.deepin.dde.file-manager.emblem", "blockExtEnable", true).toBool() };
         if (enable)
             return false;

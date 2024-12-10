@@ -11,6 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -190,7 +191,7 @@ void OpenDirMenuScene::openAsAdminAction(QMenu *parent)
     if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys())
         return;
 
-    if (FileUtils::isGvfsFile(d->currentDir)) {   // gvfs mounts and new smb mounts
+    if (ProtocolUtils::isRemoteFile(d->currentDir)) {   // gvfs mounts and new smb mounts
         fmDebug() << "openAsAdmin is not added cause GVFS file: " << d->currentDir;
         return;
     }

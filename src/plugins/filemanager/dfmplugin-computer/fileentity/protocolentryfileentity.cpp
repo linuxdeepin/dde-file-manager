@@ -14,6 +14,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QRegularExpression>
 
@@ -93,7 +94,7 @@ DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder ProtocolEntryFileEntity::
         return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderFtp;
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)
-        || DFMBASE_NAMESPACE::DeviceUtils::isSamba(QUrl(id)))
+        || DFMBASE_NAMESPACE::ProtocolUtils::isSMBFile(QUrl(id)))
         return DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder::kOrderSmb;
 
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kMtp))
@@ -129,7 +130,7 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
         return target;
     target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
-    if (DFMBASE_NAMESPACE::DeviceUtils::isSamba(target))
+    if (DFMBASE_NAMESPACE::ProtocolUtils::isSMBFile(target))
         return DFMBASE_NAMESPACE::DeviceUtils::getSambaFileUriFromNative(target);
     return target;
 }

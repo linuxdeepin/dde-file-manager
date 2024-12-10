@@ -29,9 +29,7 @@ public:
     QString systemPathIconNameByPath(QString path);
     bool isSystemPath(QString path) const;
     bool checkContainsSystemPath(const QList<QUrl> &urlList);
-
-    // 将URL列表转换为规范路径，保持符号链接的原始路径
-    static QList<QUrl> canonicalUrlList(const QList<QUrl> &urls);
+    QList<QUrl> canonicalUrlList(const QList<QUrl> &urls);
 
 private:
     explicit SystemPathUtil(QObject *parent = nullptr);

@@ -7,6 +7,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QUrl>
 #include <QFileInfo>
@@ -71,7 +72,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
         }
     }
 
-    if (isMatchExtension || DeviceUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), mode);
@@ -147,7 +148,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             isMatchExtension = blackList.contains(filePath);
         }
     }
-    if (isMatchExtension || DeviceUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);

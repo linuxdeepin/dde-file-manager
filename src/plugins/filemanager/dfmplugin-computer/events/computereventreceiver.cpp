@@ -96,7 +96,6 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             //            fmInfo() << "not file scheme, ignore prehandle" << url;
             break;
         }
-
         // only handle mounts by udisks
         if (!path.startsWith("/media/")) {
             //            fmInfo() << "not udisks mount path, ignore prehandle" << url;

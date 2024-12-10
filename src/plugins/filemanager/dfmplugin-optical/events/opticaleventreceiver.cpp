@@ -11,6 +11,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -25,7 +26,7 @@ OpticalEventReceiver &OpticalEventReceiver::instance()
 
 bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl)
 {
-    if (!rootUrl.toLocalFile().startsWith("/media"))
+    if (!DevProxyMng->isFileFromOptical(rootUrl.toLocalFile()))
         return false;
 
     auto iter = std::find_if(urls.cbegin(), urls.cend(), [](const QUrl &url) {
@@ -68,9 +69,7 @@ bool OpticalEventReceiver::handleMoveToTrashShortcut(quint64 winId, const QList<
 {
     Q_UNUSED(winId);
 
-    // 树形结构中，如果在根目录展开进行操作将导致 BUG，但是这是一个corner case，
-    // 考虑到性能问题这里直接简单判断
-    if (!rootUrl.toLocalFile().startsWith("/media"))
+    if (!DevProxyMng->isFileFromOptical(rootUrl.toLocalFile()))
         return false;
 
     if (isContainPWSubDirFile(urls))
@@ -83,7 +82,7 @@ bool OpticalEventReceiver::handleCutFilesShortcut(quint64 winId, const QList<QUr
 {
     Q_UNUSED(winId);
 
-    if (!rootUrl.toLocalFile().startsWith("/media"))
+    if (!DevProxyMng->isFileFromOptical(rootUrl.toLocalFile()))
         return false;
 
     // 仅 PW 光盘根目录支持
@@ -99,7 +98,7 @@ bool OpticalEventReceiver::handlePasteFilesShortcut(quint64 winId, const QList<Q
     Q_UNUSED(fromUrls);
 
     const QString &path { to.toLocalFile() };
-    if (!path.startsWith("/media"))
+    if (!DevProxyMng->isFileFromOptical(path))
         return false;
 
     QString dev { DeviceUtils::getMountInfo(path, false) };

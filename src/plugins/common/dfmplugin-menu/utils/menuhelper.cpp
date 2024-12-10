@@ -8,6 +8,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -41,12 +42,12 @@ bool isHiddenExtMenu(const QUrl &dirUrl)
         hidden = true;
 
     // hidden by `dfm.menu.protocoldev.enable`
-    if (!enableProtocolDev && FileUtils::isGvfsFile(dirUrl))
+    if (!enableProtocolDev && ProtocolUtils::isRemoteFile(dirUrl))
         hidden = true;
 
     // hidden by `dfm.menu.blockdev.enable`
     // NOTE: SMB mounted by cifs that mount point is local but it's a protocol device
-    if (!enableBlockDev && DFMIO::DFMUtils::fileIsRemovable(dirUrl) && !FileUtils::isGvfsFile(dirUrl))
+    if (!enableBlockDev && DFMIO::DFMUtils::fileIsRemovable(dirUrl) && !ProtocolUtils::isRemoteFile(dirUrl))
         hidden = true;
 
     return hidden;

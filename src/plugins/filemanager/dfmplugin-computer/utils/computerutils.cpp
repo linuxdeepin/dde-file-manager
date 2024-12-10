@@ -20,6 +20,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -178,7 +179,7 @@ QMutex ComputerUtils::mtxForCheckGvfs;
 QWaitCondition ComputerUtils::condForCheckGvfs;
 bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
 {
-    if (!FileUtils::isGvfsFile(url))
+    if (!ProtocolUtils::isRemoteFile(url))
         return true;
     setCursorState(true);
 

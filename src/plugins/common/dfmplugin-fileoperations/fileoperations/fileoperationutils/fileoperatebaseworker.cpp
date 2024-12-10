@@ -10,6 +10,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/denumerator.h>
@@ -108,7 +109,7 @@ void FileOperateBaseWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
     // 权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
-    if (permissions != 0000 && !FileUtils::isMtpFile(toInfo->urlOf(UrlInfoType::kUrl)))
+    if (permissions != 0000 && !ProtocolUtils::isMTPFile(toInfo->urlOf(UrlInfoType::kUrl)))
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }
 
@@ -680,7 +681,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
             auto fileUrl = toInfo->uri();
             if (localFileHandler->errorCode() == DFMIOErrorCode::DFM_IO_ERROR_FAILED
                 && fileUrl.path().toLocal8Bit().size() > 255
-                && FileUtils::isMtpFile(fileUrl))
+                && ProtocolUtils::isMTPFile(fileUrl))
                 errstr = tr("The file name or the path is too long!");
 
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
@@ -757,7 +758,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
     } else {
-        if (permissions && !FileUtils::isMtpFile(toInfo->uri()))
+        if (permissions && !ProtocolUtils::isMTPFile(toInfo->uri()))
             localFileHandler->setPermissions(toInfo->uri(), permissions);
     }
 
@@ -788,8 +789,8 @@ void FileOperateBaseWorker::initCopyWay()
             threadCount = FileUtils::getCpuProcessCount() >= 8 ? FileUtils::getCpuProcessCount() : 8;
     }
 
-    if (DeviceUtils::isSamba(targetUrl)
-        || DeviceUtils::isFtp(targetUrl)
+    if (ProtocolUtils::isSMBFile(targetUrl)
+        || ProtocolUtils::isFTPFile(targetUrl)
         || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
         countWriteType = CountWriteSizeType::kCustomizeType;
 

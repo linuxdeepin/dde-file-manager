@@ -10,6 +10,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
@@ -62,7 +63,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
     }
 
     auto targetPath = dfmInfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
-    if (FileUtils::isLocalDevice(url) && (targetPath.isEmpty() || FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))) {
+    if (ProtocolUtils::isLocalFile(url) && (targetPath.isEmpty() || ProtocolUtils::isLocalFile(QUrl::fromLocalFile(targetPath)))) {
         info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url));
     } else {
         info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmInfo));
@@ -72,7 +73,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
 
     if (info) {
         if (!q->property("QueryAttributes").toString().isEmpty()
-                && q->property("QueryAttributes").toString() != "*") {
+            && q->property("QueryAttributes").toString() != "*") {
             info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, true);
             info->setExtendedAttributes(ExtInfoType::kFileNeedTransInfo, true);
         }
@@ -212,7 +213,7 @@ void LocalDirIterator::cacheBlockIOAttribute()
     const QUrl &rootUrl = this->url();
     const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
     d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
-    d->isLocalDevice = FileUtils::isLocalDevice(rootUrl);
+    d->isLocalDevice = ProtocolUtils::isLocalFile(rootUrl);
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
 
@@ -266,7 +267,7 @@ bool LocalDirIterator::oneByOne()
     if (info)
         return !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() || !d->dfmioDirIterator;
 
-    return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
+    return !ProtocolUtils::isLocalFile(url()) || !d->dfmioDirIterator;
 }
 
 bool LocalDirIterator::initIterator()

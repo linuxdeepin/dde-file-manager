@@ -27,9 +27,6 @@ public:
 public:
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static int supportedMaxLength(const QString &fileSystem);
-    static bool isGvfsFile(const QUrl &url);
-    static bool isMtpFile(const QUrl &url);
-    static bool isGphotoFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
     static bool processLength(const QString &srcText, int srcPos, int maxLen, bool useCharCount, QString &dstText, int &dstPos);
     static bool isContainProhibitPath(const QList<QUrl> &urls);
@@ -46,7 +43,6 @@ public:
     static bool isSameFile(const QUrl &url1, const QUrl &url2,
                            const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
     static bool isSameFile(const QString &path1, const QString &path2);
-    static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
     static bool trashIsEmpty();
     static QUrl trashRootUrl();
