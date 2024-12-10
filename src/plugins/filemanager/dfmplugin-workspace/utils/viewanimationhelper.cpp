@@ -7,6 +7,7 @@
 #include "views/fileview.h"
 #include "views/baseitemdelegate.h"
 #include "models/fileviewmodel.h"
+#include "utils/itemdelegatehelper.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
@@ -92,6 +93,7 @@ void ViewAnimationHelper::playViewAnimation()
     currentIndexRectMap = calcIndexRects(validRect);
     createPixmapsForVisiableRect();
 
+    resetExpandItem();
     delayTimer->start();
 }
 
@@ -132,6 +134,7 @@ void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)
     currentVisiableRect.setWidth(currentVisiableRect.width() + deltaWidth);
     newIndexRectMap = calcIndexRects(currentVisiableRect);
 
+    resetExpandItem();
     paintPixmaps(newIndexRectMap);
 
     resetAnimation();
@@ -144,6 +147,14 @@ void ViewAnimationHelper::paintItems() const
     painter.setRenderHint(QPainter::Antialiasing, true);
     auto itemIterator = indexPixmaps.begin();
 
+    auto expandItemRect = QRect();
+    auto calcExpandItemRect = [&](const QModelIndex &index, const QRect &rect) {
+        if (expandItemIndex.isValid() && index == expandItemIndex) {
+            expandItemRect = rect;
+            expandItemRect.setTopLeft(rect.topLeft() + expandItemOffset);
+            expandItemRect.setSize(expandItemPixmap.size());
+        }
+    };
     if (isWaitingToPlaying()) {
         while (itemIterator != indexPixmaps.end()) {
             auto index = itemIterator.key();
@@ -154,6 +165,8 @@ void ViewAnimationHelper::paintItems() const
             }
 
             QRect paintRect = currentIndexRectMap[index];
+            calcExpandItemRect(index, paintRect);
+
             QPixmap paintPix = itemIterator.value();
             painter.drawPixmap(paintRect, paintPix);
 
@@ -182,11 +195,16 @@ void ViewAnimationHelper::paintItems() const
             QRect paintRect = newIndexRectMap[index];
             paintRect.moveTopLeft(newPos);
 
+            calcExpandItemRect(index, paintRect);
+
             painter.drawPixmap(paintRect, itemIterator.value());
 
             itemIterator++;
         }
     }
+
+    if (expandItemRect.isValid())
+        painter.drawPixmap(expandItemRect, expandItemPixmap);
 }
 
 void ViewAnimationHelper::setAnimProcess(double value)
@@ -303,3 +321,27 @@ void ViewAnimationHelper::resetAnimation()
     if (animPtr->state() == QPropertyAnimation::Running)
         animPtr->stop();
 }
+
+void ViewAnimationHelper::resetExpandItem()
+{
+    if (view->selectedIndexes().count() != 1) {
+        expandItemIndex = QModelIndex();
+        expandItemPixmap = QPixmap();
+        return;
+    }
+
+    if (view->itemDelegate()->itemExpanded()) {
+        QWidget *expandedItem = view->itemDelegate()->expandedItem();
+        if (!expandedItem)
+            return;
+
+        expandItemIndex = view->itemDelegate()->expandedIndex();
+        auto itemRect = expandedItem->rect();
+        itemRect.moveTopLeft(QPoint(0, 0));
+        auto itemIconRect = view->itemDelegate()->itemIconRect(itemRect);
+        auto itemLabelRect = itemRect.adjusted(0, itemIconRect.height() + kIconModeTextPadding + kIconModeIconSpacing, 0, 0);
+        expandItemOffset = itemLabelRect.topLeft();
+        expandItemPixmap = expandedItem->grab(itemLabelRect);
+    }
+}
+

@@ -219,6 +219,11 @@ QModelIndex BaseItemDelegate::expandedIndex()
     return QModelIndex();
 }
 
+QWidget *BaseItemDelegate::expandedItem()
+{
+    return nullptr;
+}
+
 FileViewHelper *BaseItemDelegate::parent() const
 {
     return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());
