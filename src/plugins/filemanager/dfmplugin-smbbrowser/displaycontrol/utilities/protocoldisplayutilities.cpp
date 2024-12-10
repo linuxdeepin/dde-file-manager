@@ -207,7 +207,7 @@ QString protocol_display_utilities::getStandardSmbPath(const QUrl &entryUrl)
 QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
 {
     QString id = QUrl::fromPercentEncoding(devId.toLocal8Bit());
-    static const QRegularExpression kCifsSmbPrefix(R"(^file:///media/.*/smbmounts/)");
+    static const QRegularExpression kCifsSmbPrefix(R"(^file:///(?:run/)?media/.*/smbmounts/)");
 
     if (!id.startsWith(Global::Scheme::kFile) || !id.contains(kCifsSmbPrefix))
         return id;
