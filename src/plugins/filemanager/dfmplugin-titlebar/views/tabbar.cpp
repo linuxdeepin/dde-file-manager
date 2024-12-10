@@ -33,6 +33,7 @@
 inline constexpr int kTabHeightScaling { 24 };
 inline constexpr int kCloseButtonBigSize { 36 };
 inline constexpr int kCloseButtonSmallSize { 30 };
+inline constexpr int kTabMaxWidth { 240 };
 
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
@@ -520,10 +521,10 @@ void TabBar::updateScreen()
 
 QSize TabBar::tabSizeHint(const int &index)
 {
-    int averageWidth = qMin(120, historyWidth / count());
+    int averageWidth = qMin(kTabMaxWidth, historyWidth / count());
 
     if (index == count() - 1)
-        return (QSize(qMin(120, historyWidth - averageWidth * (count() - 1)), height()));
+        return (QSize(qMin(kTabMaxWidth, historyWidth - averageWidth * (count() - 1)), height()));
     else
         return (QSize(averageWidth, height()));
 }
