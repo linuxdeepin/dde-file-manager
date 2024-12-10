@@ -21,8 +21,8 @@ bool isRemoteFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    // TODO(xust) /media/$USER/smbmounts might be changed in the future.
-    static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/|^/media/[\\s\\S]*/smbmounts)" };
+    // TODO(xust) smbmounts path might be changed in the future.
+    static const QString gvfsMatch { R"((^/run/user/\d+/gvfs/|^/root/.gvfs/|^/(?:run/)?media/[\s\S]*/smbmounts))" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
 
@@ -49,7 +49,7 @@ bool isFTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
+    static const QString smbMatch { R"((^/run/user/\d+/gvfs/s?ftp|^/root/.gvfs/s?ftp))" };
     return hasMatch(url.path(), smbMatch);
 }
 
@@ -58,7 +58,7 @@ bool isSFTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/sftp|^/root/\\.gvfs/sftp)" };
+    static const QString smbMatch { R"((^/run/user/\d+/gvfs/sftp|^/root/.gvfs/sftp))" };
     return hasMatch(url.path(), smbMatch);
 }
 
@@ -68,8 +68,8 @@ bool isSMBFile(const QUrl &url)
         return false;
     if (url.scheme() == Global::Scheme::kSmb)
         return true;
-    // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };
+    // TODO(xust) smbmounts path might be changed in the future.
+    static const QString smbMatch { R"((^/run/user/\d+/gvfs/smb|^/root/.gvfs/smb|^/(?:run/)?media/[\s\S]*/smbmounts))" };
     return hasMatch(url.path(), smbMatch);
 }
 

@@ -99,7 +99,7 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
 {
     QString s(mpt);
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/\\.gvfs/)" };
-    static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
+    static QRegularExpression cifsMptPref { "^/(?:run/)?media/[\\s\\S]*/smbmounts/" };
 
     if (s.contains(gvfsPref)) {
         s.remove(gvfsPref);
