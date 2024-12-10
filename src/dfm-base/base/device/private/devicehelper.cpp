@@ -15,6 +15,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <DDesktopServices>
 #include <dtkwidget_global.h>
@@ -375,7 +376,7 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
 bool DeviceHelper::checkNetworkConnection(const QString &id)
 {
     QUrl url(id);
-    if (!(DeviceUtils::isSamba(url) || DeviceUtils::isSftp(url) || DeviceUtils::isFtp(url)))
+    if (!(ProtocolUtils::isSMBFile(url) || ProtocolUtils::isSFTPFile(url) || ProtocolUtils::isFTPFile(url)))
         return true;
 
     QString host, port;
@@ -414,7 +415,7 @@ QVariantMap DeviceHelper::makeFakeProtocolInfo(const QString &id)
     fakeInfo[DeviceProperty::kDeviceIcon] = "folder-remote";
     fakeInfo["fake"] = true;
 
-    if (DeviceUtils::isSamba(QUrl(path))) {
+    if (ProtocolUtils::isSMBFile(QUrl(path))) {
         QString host, share;
         if (DeviceUtils::parseSmbInfo(path, host, share))
             fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("%1 on %2").arg(share).arg(host);

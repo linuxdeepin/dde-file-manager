@@ -10,6 +10,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QDir>
 #include <QFileInfo>
@@ -413,7 +414,7 @@ void OemMenu::loadDesktopFile()
             menuTypes.removeAll("");
             if (menuTypes.isEmpty()) {
                 fmDebug() << "[OEM Menu Support] Entry will probably not be shown due to empty or have no valid"
-                         << kMenuTypeKey << " and " << kMenuTypeAliasKey << "key in the desktop file.";
+                          << kMenuTypeKey << " and " << kMenuTypeAliasKey << "key in the desktop file.";
                 fmDebug() << "[OEM Menu Support] Details:" << fileInfo.filePath() << "with entry name" << entry.localizedValue(kNameKey, kLocaleKey, kDesktopEntryGroup);
                 continue;
             }
@@ -525,7 +526,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
             }
 
             // compression is not supported on FTP
-            if (action->text() == QObject::tr("Compress") && DeviceUtils::isFtp(file)) {
+            if (action->text() == QObject::tr("Compress") && ProtocolUtils::isFTPFile(file)) {
                 it = actions.erase(it);
                 continue;
             }
@@ -619,7 +620,7 @@ QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl
         }
 
         // compression is not supported on FTP
-        if (action->text() == QObject::tr("Compress") && DeviceUtils::isFtp(foucs)) {
+        if (action->text() == QObject::tr("Compress") && ProtocolUtils::isFTPFile(foucs)) {
             it = actions.erase(it);
             continue;
         }
@@ -650,7 +651,7 @@ QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl
         //The file attributes of some MTP mounted device directories do not meet the specifications
         //(the ordinary directory mimeType is considered octet stream), so special treatment is required
         if (foucs.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream")
-                && siblingMimeTypes.contains("application/octet-stream")) {
+            && siblingMimeTypes.contains("application/octet-stream")) {
             match = false;
         }
 

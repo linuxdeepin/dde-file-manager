@@ -48,13 +48,8 @@ public:
     static bool isPWOpticalDiscDev(const QString &dev);
     static bool isPWUserspaceOpticalDiscDev(const QString &dev);
 
-    static bool isSamba(const QUrl &url);
-    static bool isFtp(const QUrl &url);
-    static bool isSftp(const QUrl &url);
-    static bool isMtpFile(const QUrl &url);
     static bool supportDfmioCopyDevice(const QUrl &url);
     static bool supportSetPermissionsDevice(const QUrl &url);
-    static bool isExternalBlock(const QUrl &url);
     static QUrl parseNetSourceUrl(const QUrl &target);
 
     static bool parseSmbInfo(const QString &smbPath, QString &host, QString &share, QString *port = nullptr);
@@ -73,7 +68,6 @@ public:
 
     static bool isSubpathOfDlnfs(const QString &path);
     static bool isMountPointOfDlnfs(const QString &path);
-    static bool isLowSpeedDevice(const QUrl &url);
 
     static QString getLongestMountRootPath(const QString &filePath);
 

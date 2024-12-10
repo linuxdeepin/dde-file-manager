@@ -12,6 +12,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <DFileDialog>
 #include <QWindow>
@@ -167,7 +168,7 @@ void DumpISOOptDialog::onPathChanged(const QString &path)
 {
     const QUrl &url { UrlRoute::fromUserInput(path) };
     if (url.isEmpty() || !url.isValid() || !dfmbase::FileUtils::isLocalFile(url)
-        || DeviceUtils::isLowSpeedDevice(url) || DeviceUtils::isSamba(url)) {
+        || ProtocolUtils::isRemoteFile(url) || ProtocolUtils::isSMBFile(url)) {
         fmWarning() << "Path:" << path << "is prohibited";
         createImgBtn->setEnabled(false);
         return;

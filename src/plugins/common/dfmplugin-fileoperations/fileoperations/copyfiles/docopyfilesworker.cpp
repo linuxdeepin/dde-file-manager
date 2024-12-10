@@ -6,6 +6,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -51,7 +52,7 @@ bool DoCopyFilesWorker::doWork()
     determineCountProcessType();
 
     // 检查磁盘空间
-    if (!checkTotalDiskSpaceAvailable(sourceUrls.isEmpty() ? QUrl() : sourceUrls.first(), targetOrgUrl, nullptr)){
+    if (!checkTotalDiskSpaceAvailable(sourceUrls.isEmpty() ? QUrl() : sourceUrls.first(), targetOrgUrl, nullptr)) {
         endWork();
         return false;
     }
@@ -121,7 +122,7 @@ bool DoCopyFilesWorker::initArgs()
     if (targetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool())
         targetOrgUrl = QUrl::fromLocalFile(targetInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
 
-    workData->needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
+    workData->needSyncEveryRW = ProtocolUtils::isRemoteFile(targetUrl);
     if (!workData->needSyncEveryRW) {
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(targetUrl);
         workData->isFsTypeVfat = fsType.contains("vfat");
