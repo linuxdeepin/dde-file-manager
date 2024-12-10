@@ -9,6 +9,7 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -185,8 +186,8 @@ int DoCopyFileWorker::openFileBySys(const DFileInfoPointer &fromInfo, const DFil
         if (fd < 0) {
             auto lastError = strerror(errno);
             fmWarning() << "file open error, url from: " << fromInfo->uri()
-                       << " url to: " << toInfo->uri() << " open flag: " << flags
-                       << " open url : " << openUrl << " error msg: " << lastError;
+                        << " url to: " << toInfo->uri() << " open flag: " << flags
+                        << " open url : " << openUrl << " error msg: " << lastError;
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kOpenError,
                                           !isSource, lastError);
@@ -226,7 +227,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (workData->exBlockSyncEveryWrite || DeviceUtils::isSamba(toInfo->uri()))
+        if (workData->exBlockSyncEveryWrite || ProtocolUtils::isSMBFile(toInfo->uri()))
             syncBlockFile(toInfo);
         return NextDo::kDoCopyNext;
     }
@@ -235,7 +236,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         return NextDo::kDoCopyErrorAddCancel;
     // 循环读取和写入文件，拷贝
     int toFd = -1;
-    auto toIsSmb = DeviceUtils::isSamba(toInfo->uri());
+    auto toIsSmb = ProtocolUtils::isSMBFile(toInfo->uri());
     if (workData->exBlockSyncEveryWrite || toIsSmb)
         toFd = open(toInfo->uri().path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize;
@@ -275,7 +276,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     data = nullptr;
 
     // 执行同步策略
-    if ((workData->exBlockSyncEveryWrite  || toIsSmb) && toFd > 0)
+    if ((workData->exBlockSyncEveryWrite || toIsSmb) && toFd > 0)
         syncfs(toFd);
 
     if (toFd > 0)
@@ -331,12 +332,12 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (workData->exBlockSyncEveryWrite || DeviceUtils::isSamba(toInfo->uri()))
+        if (workData->exBlockSyncEveryWrite || ProtocolUtils::isSMBFile(toInfo->uri()))
             syncfs(targetFd);
         return NextDo::kDoCopyNext;
     }
     // 循环读取和写入文件，拷贝
-    auto toIsSmb = DeviceUtils::isSamba(toInfo->uri());
+    auto toIsSmb = ProtocolUtils::isSMBFile(toInfo->uri());
     size_t blockSize = static_cast<size_t>(fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize);
     off_t offset_in = 0;
     off_t offset_out = 0;
@@ -352,7 +353,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
             if (result < 0) {
                 auto lastError = strerror(errno);
                 fmWarning() << "copy file range error, url from: " << fromInfo->uri()
-                           << " url to: " << toInfo->uri() << " error msg: " << lastError;
+                            << " url to: " << toInfo->uri() << " error msg: " << lastError;
                 action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                               AbstractJobHandler::JobErrorType::kWriteError,
                                               false, lastError);
@@ -364,13 +365,13 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
         checkRetry();
         if (!actionOperating(action, fromSize - offset_out, skip))
-            return  NextDo::kDoCopyErrorAddCancel;
+            return NextDo::kDoCopyErrorAddCancel;
         // 执行同步策略
         if (workData->exBlockSyncEveryWrite || toIsSmb)
             syncfs(targetFd);
     } while (offset_out != fromSize);
     // 执行同步策略
-    if (workData->exBlockSyncEveryWrite  || toIsSmb)
+    if (workData->exBlockSyncEveryWrite || toIsSmb)
         syncfs(targetFd);
     // 对文件加权
     setTargetPermissions(fromInfo->uri(), toInfo->uri());

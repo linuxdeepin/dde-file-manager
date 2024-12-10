@@ -23,6 +23,8 @@
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <DMenu>
@@ -64,7 +66,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     if (target.isValid()) {
         if (isOptical)
             target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(url));
-        if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target))
+        if (ProtocolUtils::isSMBFile(target) || ProtocolUtils::isFTPFile(target))
             handleNetworkCdCall(winId, info);
         else
             ComputerEventCaller::cdTo(winId, target);
@@ -560,7 +562,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     QString uri(id);
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)) {
         uri = id;
-    } else if (DeviceUtils::isSamba(id)) {
+    } else if (ProtocolUtils::isSMBFile(id)) {
         QString host, share;
         bool ok = DeviceUtils::parseSmbInfo(id, host, share);
         if (!ok) {

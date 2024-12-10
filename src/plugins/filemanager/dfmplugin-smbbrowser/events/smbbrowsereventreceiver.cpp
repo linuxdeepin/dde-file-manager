@@ -110,7 +110,7 @@ bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
     QString path = in.path();
 
     // is cifs
-    static const QRegularExpression kCifsPrefix { R"(^/media/[^/]*/smbmounts/smb-share:[^/]*)" };
+    static const QRegularExpression kCifsPrefix { R"(^/(?:run/)?media/[^/]*/smbmounts/smb-share:[^/]*)" };
     if (path.contains(kCifsPrefix)) {
         QString host, share, port;
         if (!DeviceUtils::parseSmbInfo(path, host, share, &port))

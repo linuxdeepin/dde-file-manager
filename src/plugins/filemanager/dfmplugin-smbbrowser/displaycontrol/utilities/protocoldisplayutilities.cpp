@@ -15,6 +15,7 @@
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-framework/event/event.h>
 
 #include <DMenu>
@@ -167,7 +168,7 @@ QStringList protocol_display_utilities::getMountedSmb()
     auto protoDevs = DevProxyMng->getAllProtocolIds();
     for (int i = protoDevs.count() - 1; i >= 0; i--) {
         QUrl dev(protoDevs.at(i));
-        if (!DeviceUtils::isSamba(dev)) {
+        if (!ProtocolUtils::isSMBFile(dev)) {
             protoDevs.removeAt(i);
             continue;
         }
@@ -206,7 +207,7 @@ QString protocol_display_utilities::getStandardSmbPath(const QUrl &entryUrl)
 QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
 {
     QString id = QUrl::fromPercentEncoding(devId.toLocal8Bit());
-    static const QRegularExpression kCifsSmbPrefix(R"(^file:///media/.*/smbmounts/)");
+    static const QRegularExpression kCifsSmbPrefix(R"(^file:///(?:run/)?media/.*/smbmounts/)");
 
     if (!id.startsWith(Global::Scheme::kFile) || !id.contains(kCifsSmbPrefix))
         return id;

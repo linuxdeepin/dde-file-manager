@@ -10,6 +10,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfile.h>
 
@@ -211,8 +212,8 @@ bool HistoryStack::needCheckExist(const QUrl &url)
 
 bool HistoryStack::checkPathIsExist(const QUrl &url)
 {
-    if (FileUtils::isGvfsFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
-        return  false;
+    if (ProtocolUtils::isRemoteFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
+        return false;
     } else {
         auto info = InfoFactory::create<FileInfo>(url);
         return info && info->exists();

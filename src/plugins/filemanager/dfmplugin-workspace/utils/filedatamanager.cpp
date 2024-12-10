@@ -7,7 +7,7 @@
 #include "models/fileitemdata.h"
 #include "events/workspaceeventcaller.h"
 
-#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/watchercache.h>
 #include <dfm-base/base/schemefactory.h>
@@ -188,7 +188,7 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
         return true;
 
     // mounted dir should cache files in FileDataManager
-    if ((!FileUtils::isLocalDevice(url)))
+    if ((!ProtocolUtils::isLocalFile(url)))
         return true;
 
     return false;

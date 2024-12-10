@@ -39,7 +39,8 @@
         "WhiteList":[
             "/media",
             "/home",
-            "/run/media"
+            "/run/media",
+            "/var/home"
         ],
         "BlackList": [
             "~/.local/share/Trash"

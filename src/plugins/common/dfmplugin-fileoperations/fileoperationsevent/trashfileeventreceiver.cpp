@@ -73,7 +73,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     }
 
     // gio can only handle canonical file paths
-    QList<QUrl> processedSources = SystemPathUtil::canonicalUrlList(sources);
+    QList<QUrl> processedSources = SystemPathUtil::instance()->canonicalUrlList(sources);
     const QUrl &sourceFirst = processedSources.first();
     JobHandlePointer handle = nullptr;
     bool nullDirDelete = false;

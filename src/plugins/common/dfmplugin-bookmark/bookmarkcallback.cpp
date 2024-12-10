@@ -14,6 +14,7 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-framework/event/event.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfile.h>
 
@@ -86,7 +87,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
 
     if (!bookmarkMap.contains(url)) {
         fmCritical() << "boormark:"
-                    << "not find the book mark!";
+                     << "not find the book mark!";
         return;
     }
 
@@ -99,7 +100,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     if (dfmio::DFile(url).exists()) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         return;
-    } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
+    } else if (ProtocolUtils::isSMBFile(url) || ProtocolUtils::isFTPFile(url)) {
         auto srcUrl = DeviceUtils::parseNetSourceUrl(url);
         fmInfo() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
         if (srcUrl.isValid()) {

@@ -16,6 +16,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -107,7 +108,7 @@ bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
 
 void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString &)
 {
-    if (!DeviceUtils::isSamba(QUrl(id)))
+    if (!ProtocolUtils::isSMBFile(QUrl(id)))
         return;
 
     if (!isShowOfflineItem())
@@ -124,7 +125,7 @@ void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString
 
 void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
 {
-    if (!DeviceUtils::isSamba(QUrl(id)))
+    if (!ProtocolUtils::isSMBFile(QUrl(id)))
         return;
 
     if (displayMode() == SmbDisplayMode::kSeperate && isShowOfflineItem()) {
@@ -271,7 +272,7 @@ bool ProtocolDeviceDisplayManagerPrivate::isSupportVEntry(const QUrl &entryUrl)
 {
     if (!showOffline && displayMode == kSeperate)
         return false;
-    if (!DeviceUtils::isSamba(entryUrl.path()))
+    if (!ProtocolUtils::isSMBFile(entryUrl.path()))
         return false;
     if (!entryUrl.path().endsWith(kComputerProtocolSuffix))
         return false;
@@ -282,7 +283,7 @@ bool ProtocolDeviceDisplayManagerPrivate::isSupportVEntry(const QString &devId)
 {
     if (!showOffline && displayMode == kSeperate)
         return false;
-    if (!DeviceUtils::isSamba(devId))
+    if (!ProtocolUtils::isSMBFile(devId))
         return false;
     return true;
 }

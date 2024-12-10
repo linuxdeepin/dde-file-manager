@@ -13,6 +13,7 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfile.h>
 #include <dfm-burn/dburn_global.h>
@@ -75,7 +76,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     if (!url.isValid())
         return QUrl();
 
-    if (!DeviceUtils::isSamba(url))
+    if (!ProtocolUtils::isSMBFile(url))
         return url;
 
     QUrl smbUrl;
@@ -93,7 +94,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     //  /root/.gvfs/smb-share...../helloworld.txt
     //  /media/user/smbmounts/smb-share...../helloworld.txt
     //  ======>  helloworld.txt
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/media/.*/smbmounts/[^/]*/)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/(?:run/)?media/.*/smbmounts/[^/]*/)");
     QString fileName = fullPath.remove(prefix);
     fileName.chop(1);   // remove last '/'.
 
@@ -270,44 +271,12 @@ bool DeviceUtils::isPWUserspaceOpticalDiscDev(const QString &dev)
     return isPWOpticalDiscDev(dev);
 }
 
-bool DeviceUtils::isSamba(const QUrl &url)
-{
-    if (url.scheme() == Global::Scheme::kSmb)
-        return true;
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isFtp(const QUrl &url)
-{
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isSftp(const QUrl &url)
-{
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/sftp|^/root/\\.gvfs/sftp)" };
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isMtpFile(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
 bool DeviceUtils::supportDfmioCopyDevice(const QUrl &url)
 {
     if (!url.isValid())
         return false;
 
-    return !isMtpFile(url);
+    return !ProtocolUtils::isMTPFile(url);
 }
 
 bool DeviceUtils::supportSetPermissionsDevice(const QUrl &url)
@@ -315,17 +284,12 @@ bool DeviceUtils::supportSetPermissionsDevice(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    return !isMtpFile(url);
-}
-
-bool DeviceUtils::isExternalBlock(const QUrl &url)
-{
-    return DeviceProxyManager::instance()->isFileOfExternalBlockMounts(url.path());
+    return !ProtocolUtils::isMTPFile(url);
 }
 
 QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
 {
-    if (!isSamba(target) && !isFtp(target))
+    if (!ProtocolUtils::isSMBFile(target) && !ProtocolUtils::isFTPFile(target))
         return {};
 
     QString host, port;
@@ -334,7 +298,7 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
         return {};
 
     QString protocol, share;
-    if (isSamba(target)) {
+    if (ProtocolUtils::isSMBFile(target)) {
         protocol = "smb";
         static const QRegularExpression regxSmb(R"(,share=([^,/]*))");
         auto match = regxSmb.match(target.path());
@@ -343,10 +307,10 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
         else
             return {};
     } else {
-        protocol = isSftp(target) ? "sftp" : "ftp";
+        protocol = ProtocolUtils::isSFTPFile(target) ? "sftp" : "ftp";
     }
 
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*|^/media/.*/smbmounts/[^/]*)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*|^/(?:run/)?media/.*/smbmounts/[^/]*)");
     QString dirPath = target.path();
     dirPath.remove(prefix);
     dirPath.prepend(share);
@@ -411,11 +375,12 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
     QString mountPoint = clearInfo.value(kMountPoint, datas.value(kMountPoint)).toString();
     QString label = clearInfo.value(kIdLabel, datas.value(kIdLabel)).toString();
     qlonglong size = datas.value(kSizeTotal).toLongLong();
+    bool canPowerOff = datas.value(kCanPowerOff).toBool();
 
     // get system disk name if there is no alias
     if (mountPoint == "/")
         return QObject::tr("System Disk");
-    if (!mountPoint.startsWith("/media/") && !mountPoint.isEmpty()) {
+    if (!canPowerOff && !mountPoint.isEmpty()) {
         if (label.startsWith("_dde_data"))
             return QObject::tr("Data Disk");
         if (label.startsWith("_dde_"))
@@ -605,19 +570,6 @@ bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
     });
 }
 
-bool DeviceUtils::isLowSpeedDevice(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString lowSpeedMountpoint { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/|^/media/[\\s\\S]*/smbmounts)" };
-    // TODO(xust) /media/$USER/smbmounts might be changed in the future.
-    QRegularExpression re { lowSpeedMountpoint };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
 /*!
  * \brief DeviceUtils::getLongestMountRootPath: get the mount root of a file `filePath`
  * return `/home/` for `/home/helloworld.txt`, eg.
@@ -677,7 +629,7 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
 
 bool DeviceUtils::isUnmountSamba(const QUrl &url)
 {
-    if (!isSamba(url))
+    if (!ProtocolUtils::isSMBFile(url))
         return false;
 
     return !DevProxyMng->isFileOfProtocolMounts(url.path());

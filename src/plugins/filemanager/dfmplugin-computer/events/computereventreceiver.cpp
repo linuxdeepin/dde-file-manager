@@ -96,7 +96,6 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             //            fmInfo() << "not file scheme, ignore prehandle" << url;
             break;
         }
-
         // only handle mounts by udisks
         if (!path.startsWith("/media/")) {
             //            fmInfo() << "not udisks mount path, ignore prehandle" << url;
@@ -180,7 +179,7 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
 {
     Q_ASSERT(mapGroup);
     const QString &filePath = url.path();
-    static const QRegularExpression kCifsPrefix(R"(^/media/.*/smbmounts)");
+    static const QRegularExpression kCifsPrefix(R"(^/(?:run/)?media/.*/smbmounts)");
     auto match = kCifsPrefix.match(filePath);
     if (!match.hasMatch())
         return false;
@@ -190,7 +189,7 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
                            { "CrumbData_Key_DisplayText", "" } };
     mapGroup->push_back(rootNode);
 
-    static const QRegularExpression kCifsDevId(R"(^/media/.*/smbmounts/[^/]*)");
+    static const QRegularExpression kCifsDevId(R"(^/(?:run/)?media/.*/smbmounts/[^/]*)");
     match = kCifsDevId.match(filePath);
     if (!match.hasMatch())
         return true;

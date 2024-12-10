@@ -17,12 +17,12 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
 
 #include <dfm-framework/dpf.h>
@@ -528,7 +528,7 @@ bool TagManager::localFileCanTagFilter(const FileInfoPointer &info) const
             return desktopInfo->canTag();
     }
 
-    if (DeviceUtils::isSamba(url))
+    if (ProtocolUtils::isSMBFile(url))
         return false;
 
     return !SystemPathUtil::instance()->isSystemPath(filePath);

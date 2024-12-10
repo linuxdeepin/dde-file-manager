@@ -11,6 +11,7 @@
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -159,7 +160,7 @@ void ComputerMenuScene::updateState(QMenu *parent)
             keeped << kUnmount;
 
         auto id = d->info->extraProperty(DeviceProperty::kId).toString();
-        if (id.contains(QRegularExpression("^smb|^ftp|^sftp|^dav")) || DeviceUtils::isSamba(QUrl(id)))
+        if (id.contains(QRegularExpression("^smb|^ftp|^sftp|^dav")) || ProtocolUtils::isSMBFile(QUrl(id)))
             keeped << kLogoutAndForget;
     } break;
 
