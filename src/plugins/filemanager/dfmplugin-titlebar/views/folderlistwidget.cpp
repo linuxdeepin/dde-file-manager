@@ -24,7 +24,7 @@ static constexpr int kFolderListItemMargin { 6 };
 FolderListWidgetPrivate::FolderListWidgetPrivate(FolderListWidget *qq)
     : QObject(qq), q(qq)
 {
-    q->resize(172, kItemMargin * 2 + kFolderItemHeight * 8);
+    q->resize(172, kFolderListItemMargin * 2 + kFolderItemHeight * 8);
     q->setMouseTracking(true);
     layout = new QVBoxLayout(qq);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -126,7 +126,7 @@ void FolderListWidgetPrivate::selectDown()
 FolderListWidget::FolderListWidget(QWidget *parent)
     : DBlurEffectWidget(parent), d(new FolderListWidgetPrivate(this))
 {
-    setWindowFlag(Qt::Popup);
+    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     setBlurEnabled(true);
     setMode(DBlurEffectWidget::GaussianBlur);
 }
@@ -165,13 +165,7 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
     setFixedWidth(width);
 
     int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
-    if (dataNum > 1) {
-        d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
-        setFixedHeight(kItemMargin * 2 + kFolderItemHeight * folderCount);
-    } else {
-        d->folderView->setViewportMargins(kItemMargin, kItemMargin * 3 / 2, kItemMargin, kItemMargin * 3 / 2);
-        setFixedHeight(kItemMargin * 3 + kFolderItemHeight * folderCount);
-    }
+    setFixedHeight(kFolderListItemMargin * 2 + kFolderItemHeight * folderCount);
 }
 
 void FolderListWidget::keyPressEvent(QKeyEvent *event)

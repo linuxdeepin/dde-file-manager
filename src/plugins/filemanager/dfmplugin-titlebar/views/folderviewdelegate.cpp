@@ -4,6 +4,8 @@
 
 #include "folderviewdelegate.h"
 
+#include <DStyle>
+
 #include <QPainter>
 #include <QCompleter>
 #include <QApplication>
@@ -39,7 +41,11 @@ void FolderViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         painter->save();
         painter->setBrush(option.palette.brush(cg, QPalette::Highlight));
         painter->setPen(Qt::NoPen);
-        painter->drawRoundedRect(option.rect, 8, 8);
+        // get window radius
+        int radius = 12;
+        if (auto view = dynamic_cast<QAbstractItemView *>(parent()))
+            radius = DStyle::pixelMetric(view->style(), DStyle::PM_FrameRadius, &opt, view);
+        painter->drawRoundedRect(option.rect, radius, radius);
         painter->restore();
     }
 
