@@ -402,6 +402,12 @@ QModelIndex IconItemDelegate::expandedIndex()
     return d->expandedIndex;
 }
 
+QWidget *IconItemDelegate::expandedItem()
+{
+    Q_D(IconItemDelegate);
+    return d->expandedItem;
+}
+
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 {
     bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };

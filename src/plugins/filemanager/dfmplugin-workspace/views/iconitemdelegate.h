@@ -56,6 +56,7 @@ public:
     bool itemExpanded() override;
     QRect expandItemRect() override;
     QModelIndex expandedIndex() override;
+    QWidget *expandedItem() override;
 
     QString displayFileName(const QModelIndex &index) const;
     QList<QRectF> calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const;

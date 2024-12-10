@@ -8,6 +8,8 @@
 #include <QObject>
 #include <QMap>
 #include <QRect>
+#include <QPixmap>
+#include <QModelIndex>
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -52,6 +54,7 @@ private:
     void paintPixmaps(const QMap<QModelIndex, QRect> &indexRects);
     void createPixmapsForVisiableRect();
     void resetAnimation();
+    void resetExpandItem();
 
 private:
     bool initialized { false };
@@ -63,6 +66,9 @@ private:
     QMap<QModelIndex, QRect> newIndexRectMap {};
     QMap<QModelIndex, QRect> oldIndexRectMap {};
     QMap<QModelIndex, QPixmap> indexPixmaps {};
+    QModelIndex expandItemIndex {};
+    QPixmap expandItemPixmap {};
+    QPoint expandItemOffset {};
 
     QTimer *delayTimer { nullptr };
 

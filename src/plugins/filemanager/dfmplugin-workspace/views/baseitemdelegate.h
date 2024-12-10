@@ -135,6 +135,7 @@ public:
     virtual bool itemExpanded();
     virtual QRect expandItemRect();
     virtual QModelIndex expandedIndex();
+    virtual QWidget *expandedItem();
 
     QModelIndex editingIndex() const;
 
