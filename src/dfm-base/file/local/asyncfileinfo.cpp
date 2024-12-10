@@ -15,6 +15,7 @@
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfileinfo.h>
@@ -130,10 +131,10 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
     return FileInfo::nameOf(type);
 }
 /*!
-  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
-  * 处理或者字符串处理，这都比较快
-  * \param FileNameInfoType
-  */
+ * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileNameInfoType
+ */
 QString AsyncFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
@@ -168,7 +169,7 @@ QUrl AsyncFileInfo::urlOf(const UrlInfoType type) const
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->redirectedFileUrl();
-    case FileUrlInfoType::kOriginalUrl:{
+    case FileUrlInfoType::kOriginalUrl: {
         auto originalUri = d->asyncAttribute(FileInfo::FileInfoAttributeID::kOriginalUri);
         if (originalUri.isValid())
             return QUrl(originalUri.toString());
@@ -218,7 +219,7 @@ bool AsyncFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanRename:
         return d->asyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRename).toBool();
     case FileCanType::kCanHidden:
-        if (FileUtils::isGphotoFile(url))
+        if (ProtocolUtils::isGphotoFile(url))
             return false;
         return true;
     default:
@@ -715,7 +716,7 @@ QIcon AsyncFileInfoPrivate::defaultIcon()
 QString AsyncFileInfoPrivate::fileName() const
 {
     QString fileName = this->attribute(DFileInfo::AttributeID::kStandardName).toString();
-    if (fileName == R"(/)" && FileUtils::isGvfsFile(q->fileUrl()))
+    if (fileName == R"(/)" && ProtocolUtils::isRemoteFile(q->fileUrl()))
         fileName = this->attribute(DFileInfo::AttributeID::kIdFilesystem).toString();
     return fileName;
 }
@@ -761,7 +762,7 @@ QString AsyncFileInfoPrivate::iconName() const
         if (!list.isEmpty())
             iconNameValue = list.first();
     }
-    if (!FileUtils::isGvfsFile(q->fileUrl()) && iconNameValue.isEmpty())
+    if (!ProtocolUtils::isRemoteFile(q->fileUrl()) && iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
     if (iconNameValue.isEmpty() && q->isAttributes(OptInfoType::kIsDir))
         iconNameValue = "folder";
@@ -772,7 +773,7 @@ QString AsyncFileInfoPrivate::mimeTypeName() const
 {
     // At present, there is no dfmio library code. For temporary repair
     // local file use the method on v20 to obtain mimeType
-    if (FileUtils::isGvfsFile(q->fileUrl())) {
+    if (ProtocolUtils::isRemoteFile(q->fileUrl())) {
         return asyncAttribute(FileInfo::FileInfoAttributeID::kStandardContentType).toString();
     }
     return q->fileMimeType().name();
@@ -795,7 +796,7 @@ QString AsyncFileInfoPrivate::fileDisplayName() const
     QString fileDisplayName = this->attribute(DFileInfo::AttributeID::kStandardDisplayName, &ok).toString();
     if (fileDisplayName.isEmpty() || !ok)
         fileDisplayName = q->fileUrl().fileName();
-    if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(q->fileUrl()))
+    if (fileDisplayName == R"(/)" && ProtocolUtils::isRemoteFile(q->fileUrl()))
         fileDisplayName = this->attribute(DFileInfo::AttributeID::kIdFilesystem).toString();
 
     return fileDisplayName;
@@ -890,7 +891,7 @@ bool AsyncFileInfoPrivate::isExecutable() const
     if (!success) {
         qCDebug(logDFMBase) << "cannot obtain the property kAccessCanExecute of" << q->fileUrl();
 
-        if (FileUtils::isGvfsFile(q->fileUrl())) {
+        if (ProtocolUtils::isRemoteFile(q->fileUrl())) {
             qCDebug(logDFMBase) << "trying to get isExecutable by judging whether the dir can be iterated" << q->fileUrl();
             struct dirent *next { nullptr };
             DIR *dirp = opendir(filePath().toUtf8().constData());
@@ -1104,7 +1105,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
         && !symlink.isEmpty()
-        && !FileUtils::isLocalDevice(QUrl::fromLocalFile(symlink))) {
+        && !ProtocolUtils::isLocalFile(QUrl::fromLocalFile(symlink))) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
         if (asyncInfo) {

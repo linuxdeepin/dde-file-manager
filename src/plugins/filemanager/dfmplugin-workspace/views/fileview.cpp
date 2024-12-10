@@ -41,7 +41,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileinfohelper.h>
-#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -2105,7 +2105,7 @@ void FileView::initializeConnect()
                 Qt::DirectConnection);
     }
     connect(&FileInfoHelper::instance(), &FileInfoHelper::smbSeverMayModifyPassword, this, [this](const QUrl &url) {
-        if (DeviceUtils::isSamba(rootUrl()) && url.path().startsWith(rootUrl().path())) {
+        if (ProtocolUtils::isSMBFile(rootUrl()) && url.path().startsWith(rootUrl().path())) {
             fmInfo() << rootUrl() << url << "smb server may modify password";
             if (d->isShowSmbMountError)
                 return;

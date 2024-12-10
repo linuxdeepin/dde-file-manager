@@ -20,6 +20,7 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/doperator.h>
 #include <dfm-io/dfile.h>
@@ -178,7 +179,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     }
 
     // check device, use set displayname if device is mtp
-    if (Q_UNLIKELY(FileUtils::isMtpFile(newUrl))) {
+    if (Q_UNLIKELY(ProtocolUtils::isMTPFile(newUrl))) {
         const QUrl &fromParentUrl = UrlRoute::urlParent(url);
         const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
         if (fromParentUrl == toParentUrl) {
@@ -723,7 +724,7 @@ bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
         return true;
 
     const QString &path { info->pathOf(PathInfoType::kAbsoluteFilePath) };
-    if (!DFMIO::DFile(path).exists() && !DeviceUtils::isSamba(url))
+    if (!DFMIO::DFile(path).exists() && !ProtocolUtils::isSMBFile(url))
         return true;
 
     return false;
@@ -1106,7 +1107,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     if (openResult || openMount || openCmd)
         return true;
 
-    if (DeviceUtils::isSamba(transUrls[0]))
+    if (ProtocolUtils::isSMBFile(transUrls[0]))
         return false;
 
     QStringList paths;

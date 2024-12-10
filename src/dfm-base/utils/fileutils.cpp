@@ -7,6 +7,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/urlroute.h>
@@ -158,43 +159,6 @@ int FileUtils::supportedMaxLength(const QString &fileSystem)
         { "xfs", 12 }   // https://github.com/edward6/reiser4progs/blob/master/include/reiser4/types.h fs_hint_t
     };
     return datas.value(fileSystem.toLower(), 11);
-}
-
-bool FileUtils::isGvfsFile(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/|^/media/[\\s\\S]*/smbmounts)" };
-    // TODO(xust) /media/$USER/smbmounts might be changed in the future.
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
-bool FileUtils::isMtpFile(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
-bool FileUtils::isGphotoFile(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
 }
 
 QString FileUtils::preprocessingFileName(QString name)
@@ -376,21 +340,6 @@ bool FileUtils::isSameFile(const QString &path1, const QString &path2)
     }
 
     return false;
-}
-
-bool FileUtils::isLocalDevice(const QUrl &url)
-{
-    //return !DFMIO::DFMUtils::fileIsRemovable(url) && !isGvfsFile(url);
-    if (isGvfsFile(url))
-        return false;
-
-    if (DeviceUtils::isExternalBlock(url))
-        return false;
-
-    if (DevProxyMng->isFileOfProtocolMounts(url.path()))
-        return false;
-
-    return true;
 }
 
 bool FileUtils::isCdRomDevice(const QUrl &url)
@@ -1013,16 +962,16 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     return copyingUrl.contains(url);
 }
 
-// TODO: remot it!
+// TODO: remove it!
 void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url)
 {
     if (!url.isValid())
         return;
 
     auto isRemoteMount = [=](const QUrl &url) -> bool {
-        if (DeviceUtils::isSamba(url))
+        if (ProtocolUtils::isSMBFile(url))
             return true;
-        if (DeviceUtils::isFtp(url))
+        if (ProtocolUtils::isFTPFile(url))
             return true;
 
         return false;

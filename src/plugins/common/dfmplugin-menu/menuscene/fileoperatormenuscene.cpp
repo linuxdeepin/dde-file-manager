@@ -17,6 +17,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -187,7 +188,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     // set as wallpaper
     if (auto setWallpaper = d->predicateAction.value(ActionID::kSetAsWallpaper)) {
         auto focusUrl = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
-        if (FileUtils::isMtpFile(focusUrl) || FileUtils::isGvfsFile(focusUrl))
+        if (ProtocolUtils::isMTPFile(focusUrl) || ProtocolUtils::isRemoteFile(focusUrl))
             setWallpaper->setDisabled(true);
     }
 

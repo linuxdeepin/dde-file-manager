@@ -12,6 +12,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -138,16 +139,17 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
 
     makePath(thumbnailPath);
 
-    QMetaObject::invokeMethod(QCoreApplication::instance(), [img, thumbnailFilePath, fileUrl, fileModify]() {
-        Q_ASSERT(QThread::currentThread() == qApp->thread());
-        QImage tmpImg = img;
-        tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-        tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
-        if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
-            qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
-        }
-    },
-                              Qt::QueuedConnection);
+    QMetaObject::invokeMethod(
+            QCoreApplication::instance(), [img, thumbnailFilePath, fileUrl, fileModify]() {
+                Q_ASSERT(QThread::currentThread() == qApp->thread());
+                QImage tmpImg = img;
+                tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
+                tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
+                if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
+                    qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
+                }
+            },
+            Qt::QueuedConnection);
 
     return thumbnailFilePath;
 }
@@ -236,7 +238,7 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     }
 
     bool enable { true };
-    if (FileUtils::isMtpFile(fileUrl)) {   // 是否是mtpfile
+    if (ProtocolUtils::isMTPFile(fileUrl)) {   // 是否是mtpfile
         enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
     } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // 是否是协议设备
         enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();

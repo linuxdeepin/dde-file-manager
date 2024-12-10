@@ -23,6 +23,7 @@
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -814,7 +815,7 @@ void FileViewModel::onDConfigChanged(const QString &config, const QString &key)
     if (config != DConfigInfo::kConfName)
         return;
 
-    if (DConfigInfo::kMtpThumbnailKey == key && FileUtils::isMtpFile(rootUrl()))
+    if (DConfigInfo::kMtpThumbnailKey == key && ProtocolUtils::isMTPFile(rootUrl()))
         Q_EMIT requestClearThumbnail();
 }
 
