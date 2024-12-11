@@ -344,7 +344,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
         QRect iconRect(QPoint(0, 0), iconSize);
         iconRect.moveCenter(borderRect.center());
         iconRect.moveLeft(kBorderWidth);
-        icon().paint(&painter, iconRect, Qt::AlignCenter);
+        icon().paint(&painter, iconRect, Qt::AlignCenter, QIcon::Normal, QIcon::On);
         return;
     }
 
