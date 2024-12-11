@@ -218,6 +218,7 @@ void SearchEditWidget::insertCompletion(const QString &completion)
 
     if (completion == QObject::tr("Clear search history")) {
         isClearSearch = true;
+        onReturnPressed();
         return;
     }
 

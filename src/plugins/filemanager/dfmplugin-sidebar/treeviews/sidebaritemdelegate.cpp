@@ -378,7 +378,6 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
 
 void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QRect &itemRect, bool isEjectable, QSize iconSize, QIcon::Mode iconMode, QPalette::ColorGroup cg) const
 {
-
     if (option.state & QStyle::State_Selected) {
         painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
     } else {
@@ -390,8 +389,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QRect iconRect(iconTopLeft.toPoint(), iconSize);
 
-    QIcon::State state = (option.state & QStyle::State_Open) ? QIcon::On : QIcon::Off;
-    option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
+    option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, QIcon::On);
 
     // draw ejectable device icon
     if (isEjectable) {
@@ -408,7 +406,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
         QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-        auto px { ejectIcon.pixmap(iconSize, pixmapMode, state) };
+        auto px { ejectIcon.pixmap(iconSize, pixmapMode, QIcon::On) };
         QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
         style->drawItemPixmap(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignCenter, px);
     }

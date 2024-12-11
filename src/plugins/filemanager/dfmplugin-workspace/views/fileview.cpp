@@ -1391,8 +1391,9 @@ void FileView::resizeEvent(QResizeEvent *event)
 
     if (isIconViewMode()) {
         updateViewportContentsMargins(itemSizeHint());
-        if (model()->currentState() == ModelState::kIdle)
+        if (model()->currentState() == ModelState::kIdle && event->size().width() != event->oldSize().width()) {
             d->animationHelper->playViewAnimation();
+        }
     }
 
     verticalScrollBar()->setFixedHeight(rect().height() - d->statusBar->height() - (d->headerView ? d->headerView->height() : 0));
