@@ -272,8 +272,6 @@ void FileManagerWindowPrivate::connectAnimationSignals()
         bool expanded = curSplitterAnimation->endValue().toInt() > 1;
         if (expanded)
             resetSideBarSize();
-        sideBar->setVisible(expanded);
-        sidebarSep->setVisible(expanded);
         delete curSplitterAnimation;
         curSplitterAnimation = nullptr;
     });
