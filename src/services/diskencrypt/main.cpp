@@ -5,6 +5,8 @@
 #include "diskencryptdbus.h"
 #include "diskencryptadaptor.h"
 
+#include <DConfig>
+
 #include <QCoreApplication>
 #include <QDebug>
 
@@ -14,6 +16,15 @@ static constexpr char kServiceName[] { "org.deepin.Filemanager.DiskEncrypt" };
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    auto cfg = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
+                                          "org.deepin.dde.file-manager.diskencrypt");
+    bool enable = cfg->value("enableEncrypt", true).toBool();
+    cfg->deleteLater();
+    if (!enable) {
+        qWarning() << "org.deepin.dde.file-manager.diskencrypt is dsiable, process exit";
+        return 0;
+    }
 
     DiskEncryptDBus encryptServer;
     new DiskEncryptAdaptor(&encryptServer);
