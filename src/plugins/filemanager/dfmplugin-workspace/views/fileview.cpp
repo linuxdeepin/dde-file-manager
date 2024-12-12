@@ -68,6 +68,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
     Q_UNUSED(url);
+    setMinimumHeight(10);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDropIndicatorShown(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
