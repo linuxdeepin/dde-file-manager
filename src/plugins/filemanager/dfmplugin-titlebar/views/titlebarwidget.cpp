@@ -34,6 +34,7 @@
 
 #include <QHBoxLayout>
 #include <QEvent>
+#include <QResizeEvent>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
@@ -102,7 +103,24 @@ void TitleBarWidget::stopSpinner()
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 {
-    placeholder->setFixedWidth(qMax(0, 95 - position.toInt()));
+    if (position == splitterEndValue) {
+        splitterStartValue = -1;
+        splitterEndValue = -1;
+        isSplitterAnimating = false;
+    }
+ 
+    int newWidth = qMax(0, 95 - position.toInt());
+    if (newWidth == placeholder->width())
+        return;
+
+    placeholder->setFixedWidth(newWidth);
+}
+
+void TitleBarWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
+{
+    isSplitterAnimating = true;
+    splitterStartValue = startValue;
+    splitterEndValue = endValue;
 }
 
 void TitleBarWidget::handleHotkeyCtrlF()
@@ -207,6 +225,7 @@ void TitleBarWidget::initializeUi()
 
     // tabbar
     bottomBar = new TabBar;
+    bottomBar->installEventFilter(this);
     topBarCustomLayout->addWidget(bottomBar, 1);
 
     // nav
@@ -417,6 +436,11 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         default:
             break;
         }
+    }
+
+    if (watched == bottomBar && event->type() == QEvent::Resize) {
+        if (isSplitterAnimating)
+            return true;
     }
 
     return false;
