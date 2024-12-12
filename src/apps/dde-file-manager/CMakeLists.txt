@@ -60,7 +60,8 @@ install(FILES pkexec/com.deepin.pkexec.dde-file-manager.policy DESTINATION share
 install(PROGRAMS pkexec/dde-file-manager-pkexec DESTINATION bin)
 
 # manual
-install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual-assets/application)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets/manual/dde-file-manager
+    DESTINATION share/deepin-manual/manual-assets/application)
 
 # translation
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")
