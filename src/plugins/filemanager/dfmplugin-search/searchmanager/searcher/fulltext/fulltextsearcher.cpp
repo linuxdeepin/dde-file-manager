@@ -19,7 +19,6 @@
 #include <FuzzyQuery.h>
 #include <QueryWrapperFilter.h>
 
-#include <QRegExp>
 #include <QDebug>
 #include <QDateTime>
 #include <QMetaEnum>
@@ -162,18 +161,19 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
 
 QString FullTextSearcherPrivate::dealKeyword(const QString &keyword)
 {
-    static QRegExp cnReg("^[\u4e00-\u9fa5]");
-    static QRegExp enReg("^[A-Za-z]+$");
-    static QRegExp numReg("^[0-9]$");
+    QRegularExpression cnReg("^[\u4e00-\u9fa5]");
+    QRegularExpression enReg("^[A-Za-z]+$");
+    QRegularExpression numReg("^[0-9]$");
 
     WordType oldType = kCn, currType = kCn;
     QString newStr;
     for (auto c : keyword) {
-        if (cnReg.exactMatch(c)) {
+        QString charStr(c);
+        if (cnReg.match(charStr).hasMatch()) {
             currType = kCn;
-        } else if (enReg.exactMatch(c)) {
+        } else if (enReg.match(charStr).hasMatch()) {
             currType = kEn;
-        } else if (numReg.exactMatch(c)) {
+        } else if (numReg.match(charStr).hasMatch()) {
             currType = kDigit;
         } else {
             // 特殊符号均当作空格处理

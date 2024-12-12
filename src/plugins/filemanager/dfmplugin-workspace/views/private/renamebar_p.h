@@ -22,7 +22,6 @@ class QComboBox;
 class QStackedWidget;
 class QLineEdit;
 class QFrame;
-class QRegExpValidator;
 class QPushButton;
 QT_END_NAMESPACE
 

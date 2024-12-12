@@ -810,26 +810,15 @@ void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
     if (!itemData || itemData->data(Global::ItemRoles::kItemFileIsDirRole).toBool() || nameFilters.isEmpty())
         return;
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QRegExp re("", Qt::CaseInsensitive, QRegExp::Wildcard);
+    QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
     for (int i = 0; i < nameFilters.size(); ++i) {
-        re.setPattern(nameFilters.at(i));
-        if (re.exactMatch(itemData->data(kItemNameRole).toString())) {
+        QString pattern = QRegularExpression::wildcardToRegularExpression(nameFilters.at(i));
+        re.setPattern(pattern);
+        if (re.match(itemData->data(kItemNameRole).toString()).hasMatch()) {
             itemData->setAvailableState(true);
             return;
         }
     }
-#else
-    for (const QString &filter : nameFilters) {
-        // 使用 QRegularExpression::wildcardToRegularExpression 转换通配符为正则表达式
-        QRegularExpression re(QRegularExpression::wildcardToRegularExpression(filter), QRegularExpression::CaseInsensitiveOption);
-        QRegularExpressionMatch match = re.match(itemData->data(kItemNameRole).toString());
-        if (match.hasMatch()) {
-            itemData->setAvailableState(true);
-            return;
-        }
-    }
-#endif
 
     itemData->setAvailableState(false);
 }
@@ -1529,7 +1518,8 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
         for (int i = 0; i < nameFilters.size(); ++i) {
-            re.setPattern(nameFilters.at(i));
+            QString pattern = QRegularExpression::wildcardToRegularExpression(nameFilters.at(i));
+            re.setPattern(pattern);
             if (re.match(item->data(kItemNameRole).toString()).hasMatch()) {
                 item->setAvailableState(true);
             }
