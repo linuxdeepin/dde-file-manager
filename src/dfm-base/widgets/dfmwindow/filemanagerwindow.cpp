@@ -272,7 +272,10 @@ void FileManagerWindowPrivate::connectAnimationSignals()
         bool expanded = curSplitterAnimation->endValue().toInt() > 1;
         if (expanded)
             resetSideBarSize();
-        splitter->handle(1)->setEnabled(expanded);
+        // set the handle to be disabled when the side bar is collapsed
+        // because if do not disable the handle, the splitter can be dragged by pressed window left boarder.
+        if (auto handle = splitter->handle(1))
+            handle->setEnabled(expanded);
         delete curSplitterAnimation;
         curSplitterAnimation = nullptr;
     });

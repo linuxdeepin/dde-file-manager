@@ -16,6 +16,8 @@
 #include <QVBoxLayout>
 #include <QStandardItemModel>
 #include <QKeyEvent>
+#include <QApplication>
+#include <QScreen>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -290,7 +292,32 @@ void ViewOptionsWidget::exec(const QPoint &pos, DFMBASE_NAMESPACE::Global::ViewM
 {
     d->setUrl(url);
     d->switchMode(mode);
-    move(pos);
+    
+    // Calculate appropriate display position to ensure widget stays within screen bounds
+    QPoint showPos = pos;
+    QRect screenRect = QApplication::screenAt(pos)->availableGeometry();
+    
+    // Check right boundary
+    if (pos.x() + width() > screenRect.right()) {
+        showPos.setX(screenRect.right() - width());
+    }
+    
+    // Check left boundary 
+    if (showPos.x() < screenRect.left()) {
+        showPos.setX(screenRect.left());
+    }
+    
+    // Check bottom boundary
+    if (pos.y() + height() > screenRect.bottom()) {
+        showPos.setY(screenRect.bottom() - height());
+    }
+    
+    // Check top boundary
+    if (showPos.y() < screenRect.top()) {
+        showPos.setY(screenRect.top());
+    }
+    
+    move(showPos);
     show();
 
     QEventLoop eventLoop;
