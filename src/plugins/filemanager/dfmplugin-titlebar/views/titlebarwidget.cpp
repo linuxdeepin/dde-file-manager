@@ -438,6 +438,8 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         }
     }
 
+    // if the splitter is animating, do not process the resize event of tabbar
+    // otherwise, the tabbar width will be changed twice(once by the resizeEvent and once by placeholder size changed)
     if (watched == bottomBar && event->type() == QEvent::Resize) {
         if (isSplitterAnimating)
             return true;
