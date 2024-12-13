@@ -318,7 +318,7 @@ void WorkspaceWidget::initViewLayout()
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
 
     widgetLayout = new QVBoxLayout;
-    widgetLayout->addLayout(viewStackLayout, 0);
+    widgetLayout->addLayout(viewStackLayout, 1);
     widgetLayout->setSpacing(0);
     widgetLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(widgetLayout);
@@ -366,7 +366,7 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
     } else {
         TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
         if (topWidgetPtr) {
-            widgetLayout->insertWidget(0, topWidgetPtr.get(), 1, Qt::AlignTop);
+            widgetLayout->insertWidget(0, topWidgetPtr.get());
             topWidgets.insert(scheme, topWidgetPtr);
             topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
         }
