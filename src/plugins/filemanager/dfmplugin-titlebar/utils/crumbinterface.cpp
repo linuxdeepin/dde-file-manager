@@ -102,14 +102,14 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
         folderCompleterJobPointer->setParent(nullptr);
     }
     folderCompleterJobPointer = new TraversalDirThread(url, QStringList(),
-                                                       QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+                                                       QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
     folderCompleterJobPointer->setQueryAttributes("standard::standard::name");
     folderCompleterJobPointer->setParent(this);
     if (folderCompleterJobPointer.isNull())
         return;
 
     connect(folderCompleterJobPointer.data(), &TraversalDirThread::updateChildren, this,
-            &CrumbInterface::onUpdateChildren, Qt::DirectConnection);
+            &CrumbInterface::onUpdateChildren);
 
     connect(
             folderCompleterJobPointer.data(), &TraversalDirThread::finished, this,
