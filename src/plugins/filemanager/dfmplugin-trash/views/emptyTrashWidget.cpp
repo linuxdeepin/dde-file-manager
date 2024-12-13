@@ -17,7 +17,7 @@ using namespace dfmplugin_trash;
 EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
     : QFrame(parent)
 {
-
+    setFixedHeight(42);
     this->setFrameShape(QFrame::NoFrame);
     QHBoxLayout *emptyTrashLayout = new QHBoxLayout;
     QLabel *trashLabel = new QLabel(this);
