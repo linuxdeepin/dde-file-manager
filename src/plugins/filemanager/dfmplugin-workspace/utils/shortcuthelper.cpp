@@ -132,7 +132,7 @@ void ShortcutHelper::initRenameProcessTimer()
     renameProcessTimer->setSingleShot(true);
     renameProcessTimer->setInterval(500);
 
-    connect(renameProcessTimer, &QTimer::timeout, this, [ = ]{
+    connect(renameProcessTimer, &QTimer::timeout, this, [=] {
         if (enterTriggerFlag) {
             enterTriggerFlag = false;
 
@@ -177,13 +177,11 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             openAction(view->selectedUrlList());
             return true;
         }
-        case Qt::Key_D:
-        {
+        case Qt::Key_D: {
             moveToTrash();
             return true;
         }
-        case Qt::Key_Y:
-        {
+        case Qt::Key_Y: {
             // redo
             redoFiles();
             return true;
@@ -332,12 +330,8 @@ void ShortcutHelper::touchFolder()
 
 void ShortcutHelper::toggleHiddenFiles()
 {
-    // Todo(yanghao)
-    //  Todo(yanghao): preSelectionUrls
-    //  d->preSelectionUrls = urls;
-    view->itemDelegate()->hideAllIIndexWidget();
-    view->clearSelection();
-    view->model()->toggleHiddenFiles();
+    bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, !isShowedHiddenFiles);
 }
 
 void ShortcutHelper::showFilesProperty()
