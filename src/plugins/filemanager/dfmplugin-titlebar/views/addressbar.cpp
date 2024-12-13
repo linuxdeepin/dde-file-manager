@@ -311,7 +311,7 @@ void AddressBarPrivate::completeLocalPath(const QString &text, const QUrl &url, 
 
     // Check if we should start a new completion transmission.
     if (this->completerBaseString == text.left(slashIndex + 1)
-            || UrlRoute::fromUserInput(completerBaseString) == UrlRoute::fromUserInput(text.left(slashIndex + 1))) {
+        || UrlRoute::fromUserInput(completerBaseString) == UrlRoute::fromUserInput(text.left(slashIndex + 1))) {
         urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));   // set completion prefix first
         onCompletionModelCountChanged();   // will call complete()
         return;
