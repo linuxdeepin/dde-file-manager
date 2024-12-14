@@ -1,3 +1,9 @@
+dde-file-manager (6.5.16) unstable; urgency=medium
+
+  * adapt to dde-shell 1.99.X
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 14 Dec 2024 16:34:52 +0800
+
 dde-file-manager (6.5.15) unstable; urgency=medium
 
   * fix bugs.
