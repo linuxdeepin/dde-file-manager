@@ -1,3 +1,6 @@
+# qt_add_resources works only if you have previously used find_package to find the Qt
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core)
+
 # 指定资源文件
 set(QRC_FILE
     resources/images.qrc
@@ -15,7 +18,6 @@ add_library(${BIN_NAME}
     ${QRC_RESOURCES}
 )
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core)
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
