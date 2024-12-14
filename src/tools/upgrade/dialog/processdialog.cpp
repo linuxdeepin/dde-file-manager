@@ -55,7 +55,7 @@ void ProcessDialog::restart()
 {
     if (killed && !onDesktop) {
         qCInfo(logToolUpgrade) << "restart dde-shell service...";
-        QProcess::startDetached("systemctl", { "--user", "restart", "dde-shell@DDE.service" });
+        QProcess::startDetached("systemctl", { "--user", "restart", "dde-shell-plugin@org.deepin.ds.desktop.service" });
     }
 }
 
