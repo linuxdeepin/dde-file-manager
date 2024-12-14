@@ -421,14 +421,14 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     // paint progress bar
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
     if (progressVisiable) {
-        const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
+        const int textMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
         double usedRate = (sizeTotal == 0) ? 0 : (sizeUsage * 1.0 / sizeTotal);
         if (usedRate > 1)
             usedRate = 1.0;   // avoid overflow.
         if (usedRate < 0)
             usedRate = 0;
 
-        QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
+        QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(textMaxWidth, 6));
         QRect usedRect = totalRect;
         usedRect.setRight(usedRect.left() + usedRect.width() * usedRate);
 
@@ -461,7 +461,7 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
             painter->drawPixmap(shadowRect, renderBlurShadow(usedRect.size(), shadowColor, BlurRadius));
         }
 
-        painter->setBrush(QColor(0, 0, 0, 25));
+        painter->setBrush(getProgressTotalColor());
         painter->drawRoundedRect(totalRect, 3, 3);
 
         if (usedRate != 0) {
@@ -511,6 +511,14 @@ QPixmap ComputerItemDelegate::renderBlurShadow(const QPixmap &pm, int blurRadius
     pp.end();
     delete eff;
     return ret;
+}
+
+QColor ComputerItemDelegate::getProgressTotalColor() const
+{
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        return QColor(255, 255, 255, 25);
+    }
+    return QColor(0, 0, 0, 25);
 }
 
 }
