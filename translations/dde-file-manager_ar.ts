@@ -4,12 +4,12 @@
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="49"/>
         <source>Invalid args</source>
-        <translation type="unfinished"/>
+        <translation>الترجيح غير صالح</translation>
     </message>
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="50"/>
         <source>Invalid invoker</source>
-        <translation type="unfinished"/>
+        <translation>المستدعي غير صالح</translation>
     </message>
 </context>
 <context>
@@ -46,7 +46,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="134"/>
         <source>Disks</source>
-        <translation>الأقراص</translation>
+        <translation>السواقات</translation>
     </message>
 </context>
 <context>
@@ -77,12 +77,12 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="165"/>
         <source>eject</source>
-        <translation type="unfinished"/>
+        <translation>إخراج</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="166"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>تفريغ</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
@@ -98,7 +98,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="170"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
-        <translation type="unfinished"/>
+        <translation>الجهاز (%1) مشغول، لا يمكن %2 الآن.</translation>
     </message>
 </context>
 <context>
@@ -106,7 +106,7 @@
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="561"/>
         <source>All Files </source>
-        <translation>جميع الملفات</translation>
+        <translation>جميع الملفات </translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
-        <translation>اسم الملف طويل جداً</translation>
+        <translation>اسم الملف أو المسار طويل جدًا!</translation>
     </message>
 </context>
 <context>
@@ -132,7 +132,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
 </context>
 <context>
@@ -148,27 +148,27 @@
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1058"/>
         <source>need authorization to access</source>
-        <translation>تحتاج إلى صلاحية للوصول</translation>
+        <translation>تحتاج إلى إذن للوصول</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1134"/>
         <source>Can&apos;t verify the identity of %1.</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن التحقق من هوية %1.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1135"/>
         <source>This happens when you log in to a computer the first time.</source>
-        <translation>يحدث هذا عند تسجيل الدخول إلى جهاز الحاسب للمرة الأولى.</translation>
+        <translation>يحدث هذا عندما تقوم بتسجيل الدخول إلى جهاز الكمبيوتر لأول مرة.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1136"/>
         <source>The identity sent by the remote computer is</source>
-        <translation type="unfinished"/>
+        <translation>الهوية المرسلة من قبل الكمبيوتر البعيد هي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1138"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translation>إذا كنت تريد التأكد تماماً من أنه من الآمن المتابعة، فاتصل بمسؤول عن النظام.</translation>
+        <translation>&gt;- إذا كنت متأكدًا تمامًا من أنه آمن لمتابعة الاتصال بمسؤول النظام.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
@@ -219,18 +219,18 @@
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="274"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل الإزالة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="274"/>
         <source>Cannot stop scanning device</source>
-        <translation>لا يمكن إيقاف فحص الجهاز</translation>
+        <translation>لا يمكن إيقاف المسح الضوئي للجهاز</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="404"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="93"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 على %2</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="203"/>
@@ -300,7 +300,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="219"/>
@@ -310,7 +310,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
-        <translation>مؤخراً</translation>
+        <translation>حديث</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="211"/>
@@ -346,7 +346,7 @@
     <message>
         <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="299"/>
         <source>Unable to find the original file</source>
-        <translation>غير قادر على العثور على الملف الأصلي</translation>
+        <translation>لم يتم العثور على الملف الأصلي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
@@ -365,7 +365,7 @@
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="485"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished"/>
+        <translation>ليس لديك إذن لاستكشاف الملفات الموجودة فيه</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
@@ -376,7 +376,7 @@
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
         <source>Loading...</source>
-        <translation>جاري التحميل ...</translation>
+        <translation>يحمل الآن ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
@@ -396,7 +396,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="8"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="8"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation>اطلب التأكيد عند حذف الملفات</translation>
+        <translation>اطلب تأكيدي عند حذف الملفات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="9"/>
@@ -417,7 +417,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"/>
+        <translation>البحث الكامل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
@@ -425,14 +425,14 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
         <source>Built-in disks</source>
-        <translation type="unfinished"/>
+        <translation>السواقات المدمجة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
         <source>Computer</source>
-        <translation>الحاسب</translation>
+        <translation>الحاسوب</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
@@ -449,7 +449,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="655"/>
         <source>Loop partitions</source>
-        <translation type="unfinished"/>
+        <translation>اقسام حلقة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
@@ -458,14 +458,14 @@
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="70"/>
         <source>Mounted sharing folders</source>
-        <translation type="unfinished"/>
+        <translation>المجلدات المشتركة المقترنة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
-        <translation type="unfinished"/>
+        <translation>مشاركاتي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
@@ -481,7 +481,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
         <source>Mounted partitions and discs</source>
-        <translation type="unfinished"/>
+        <translation>المقسمات والأقراص المقترنة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
@@ -489,7 +489,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
         <source>Partitions</source>
-        <translation>الأقسام</translation>
+        <translation>المقسمات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
@@ -505,7 +505,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
         <source>Tag</source>
-        <translation>علامة استدلالية</translation>
+        <translation>علامة استدلال</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
@@ -513,14 +513,14 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
         <source>Added tags</source>
-        <translation>إضافة علامات استدلالية</translation>
+        <translation>المصنفات المضافة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>الخزنة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
@@ -528,56 +528,56 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="168"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>اظهار المجلدات المشتركة لسamba المقترنة باستمرار</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="37"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="37"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"/>
+        <translation>دمج عناصر المجلدات المشتركة لسamba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="38"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation type="unfinished"/>
+        <translation>اظهار أعداد وحجوم العناصر في المسار للأجهزة MTP المقترنة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
-        <translation type="unfinished"/>
+        <translation>تمديد أحرف اسم الملف</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء الأقراص المدمجة في صفحة الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء المقسمات الحلقية في صفحة الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="42"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="42"/>
         <source>Show crumb bar clickable area</source>
-        <translation type="unfinished"/>
+        <translation>اظهار منطقة النقر المقبول في شريط الخبز</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"/>
+        <translation>اظهار نظام الملفات على رمز القرص</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
@@ -604,7 +604,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>البيئة البعيدة تعرض معاينات الصور المصغرة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
@@ -632,7 +632,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Music preview</source>
-        <translation>معاينة الصوت</translation>
+        <translation>معاينة الموسيقى</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
@@ -681,7 +681,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>ترتيب مختلط للملفات والمجلدات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
@@ -702,7 +702,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
         <source>Show file extensions</source>
-        <translation>إظهار صيغ الملفات</translation>
+        <translation>اظهار امتدادات الملفات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
@@ -772,7 +772,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
         <source>Items on sidebar pane</source>
-        <translation type="unfinished"/>
+        <translation>العناصر في_pane الجانبي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
@@ -845,17 +845,17 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="27"/>
         <source>Current Directory</source>
-        <translation>المجلد الحالي</translation>
+        <translation>الدليل الحالي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation>قد يؤدي تشغيل معاينة الصورة المصغرة إلى تحميل مجلد الشبكة ببطء أو تجميد العملية</translation>
+        <translation>تفعيل معاينة الصورة المصغرة قد يؤدي إلى تحميل الدليل البعيد ببطء أو تجميد العملية</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation>تبديل عرض المدخل قد يؤدي إلى فشل التركيب</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
@@ -889,19 +889,19 @@
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1217"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>خلفية النظام هذه مقفلة. يرجى الاتصال بمسؤول النظام الخاص بك.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1275"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (نسخ)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1276"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (نسخ %1)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="86"/>
@@ -970,7 +970,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
         <source>Remove from quick access</source>
-        <translation>إزالة من الوصول السريع</translation>
+        <translation>إزالة من السرعة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
@@ -1086,7 +1086,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
         <source>Verify data</source>
-        <translation>التحقق من البيانات</translation>
+        <translation>تأكيد البيانات</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
@@ -1097,7 +1097,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="183"/>
         <source>Add to disc</source>
-        <translation type="unfinished"/>
+        <translation>إضافة إلى القرص</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="35"/>
@@ -1160,7 +1160,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <source>Invalid volume name</source>
-        <translation type="unfinished"/>
+        <translation>اسم حجم غير صالح</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
@@ -1257,7 +1257,7 @@
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="73"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation>سيتم إخفاء هذا الملف إذا كان اسم الملف يبدأ بـ &quot;.&quot; هل تريد إخفاءه؟</translation>
+        <translation>سيتم إخفاء هذا الملف إذا بدأ اسم الملف بـ &apos;.&apos;. هل ترغب في إخفائه؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
@@ -1294,7 +1294,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>مسح كلمة المرور المحفوظة وإزالة الاقتران</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
@@ -1335,7 +1335,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="287"/>
         <source>Network shared directory</source>
-        <translation>المجلد المشترك للشبكة</translation>
+        <translation>الدليل المشترك للشبكة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
@@ -1362,17 +1362,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
-        <translation>هل تريد إزالة هذا العنصر؟</translation>
+        <translation>هل ترغب في إزالة هذا العنصر؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation>هل تريد إزالة 1% عنصر (عناصر)؟</translation>
+        <translation>هل ترغب في إزالة %1 عنصر؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>It does not delete the original files</source>
-        <translation>لا يحذف الملفات الأصلية</translation>
+        <translation>لا يقوم بحذف الملفات الأصلية</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
@@ -1414,7 +1414,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
         <source>Settings</source>
-        <translation>الإعدادات</translation>
+        <translation>إعدادات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
@@ -1429,12 +1429,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashfilehelper.cpp" line="116"/>
         <source>Unable to open items in the trash, please restore it first</source>
-        <translation>غير قادر على فتح العناصر وهي في سلة المهملات، الرجاء استعادتها أولاً</translation>
+        <translation>لا يمكن فتح العناصر في السلة، يرجى استعادتها أولاً</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="74"/>
         <source>Empty Trash</source>
-        <translation>إفراغ سلة المحذوفات</translation>
+        <translation>إقراغ سلة المحذوفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="173"/>
@@ -1503,7 +1503,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
         <source>Start at</source>
-        <translation>ابدأ من</translation>
+        <translation>ابدأ في</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
@@ -1535,22 +1535,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="101"/>
         <source>Searching...</source>
-        <translation>جاري البحث ...</translation>
+        <translation>يبحث اﻵن ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="294"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزانتى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="221"/>
         <source>Create Vault</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء خزنة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
         <source>Unlock</source>
-        <translation>إلغاء القفل</translation>
+        <translation>فك القفل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
@@ -1560,7 +1560,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
         <source>Auto lock</source>
-        <translation>قفل تلقائي</translation>
+        <translation>تأمين تلقائى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
@@ -1575,17 +1575,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="254"/>
         <source>10 minutes</source>
-        <translation>عشرة دقائق</translation>
+        <translation>عشر دقائق</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
         <source>20 minutes</source>
-        <translation>عشرون دقيقة</translation>
+        <translation> عشرون دقيقة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>مسح خزنة الملفات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
@@ -1600,37 +1600,37 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="11"/>
         <source>File is a directory</source>
-        <translation>الملف عبارة عن مجلد</translation>
+        <translation>الملف مجلد</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
         <source>File is not a directory</source>
-        <translation>الملف ليس مجلد</translation>
+        <translation>الملف ليس مجلدًا</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="13"/>
         <source>File is a directory that isn&apos;t empty</source>
-        <translation>الملف عبارة عن مجلد ذات محتوى </translation>
+        <translation>المجلد ليس فارغًا</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="14"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished"/>
+        <translation>الملف ليس ملفًا عاديًا</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="15"/>
         <source>File is not a symbolic link</source>
-        <translation type="unfinished"/>
+        <translation>الملف ليس رابطًا سريعًا</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="16"/>
         <source>File cannot be mounted</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن تركيب الملف</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="17"/>
         <source>Filename has too many characters</source>
-        <translation>يحتوي اسم الملف على عدد كبير جداً من الأحرف</translation>
+        <translation>اسم الملف يحتوي على الكثير من الأحرف</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="18"/>
@@ -1640,37 +1640,37 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="19"/>
         <source>File contains too many symbolic links</source>
-        <translation type="unfinished"/>
+        <translation>الملف يحتوي على الكثير من الروابط السريعة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="20"/>
         <source>No space left on drive</source>
-        <translation>لا توجد مساحة متبقية على محرك الأقراص</translation>
+        <translation>لم يتبق مساحة على القرص</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"/>
+        <translation>حجة غير صالحة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Permission denied</source>
-        <translation>تم رفض طلب المصادقة</translation>
+        <translation>تم رفض الإذن</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
         <source>Operation (or one of its parameters) not supported</source>
-        <translation type="unfinished"/>
+        <translation>العمليّة (أو أحد معطياتها) غير مدعومة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
         <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم تركيب الملف</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"/>
+        <translation>تم تركيب الملف بالفعل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
@@ -1680,42 +1680,42 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>Operation was cancelled</source>
-        <translation>تم إلغاء العملية</translation>
+        <translation>تم إلغاء العمليّة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operations are still pending</source>
-        <translation>العمليات لا تزال معلقة</translation>
+        <translation>لا تزال العمليات معلقة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
         <source>File is read-only</source>
-        <translation>الملف للقراءة فقط</translation>
+        <translation>ملف readonly</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="32"/>
         <source>Failed to open the file</source>
-        <translation>فشل في فتح الملف</translation>
+        <translation>لم يتم فتح الملف</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
         <source>Target Trash File Not exist</source>
-        <translation type="unfinished"/>
+        <translation>ملف السلة الهدف غير موجود</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
-        <translation>انتهت مهلة العملية</translation>
+        <translation>فشل العمليّة بسبب_timeout</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
         <source>File is busy</source>
-        <translation>الملف قيد الاستخدام</translation>
+        <translation>الملف مشغول</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
-        <translation>الجهاز غير متصل</translation>
+        <translation>تم فصل الجهاز</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
@@ -2268,7 +2268,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <source>Organize by</source>
-        <translation>تنظيم بـ</translation>
+        <translation>ترتيب حسب</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
@@ -2362,7 +2362,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation>ابدأ من:</translation>
+        <translation>ابدأ بـ:</translation>
     </message>
 </context>
 <context>
@@ -2378,7 +2378,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="68"/>
         <source>Apps</source>
-        <translation>تطبيقات</translation>
+        <translation>التطبيقات</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="69"/>
@@ -2403,7 +2403,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="73"/>
         <source>Folders</source>
-        <translation>مجلدات</translation>
+        <translation>المجلدات</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
@@ -2416,7 +2416,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="20"/>
         <source>Apps</source>
-        <translation>تطبيقات</translation>
+        <translation>التطبيقات</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
@@ -2441,7 +2441,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
         <source>Folders</source>
-        <translation>مجلدات</translation>
+        <translation>المجلدات</translation>
     </message>
 </context>
 <context>
@@ -2449,29 +2449,29 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1030"/>
         <source>Loading wallpapers...</source>
-        <translation>جاري تحميل خلفيات الشاشة ...</translation>
+        <translation>تحميل الخلفيات ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1032"/>
         <source>Loading screensavers...</source>
-        <translation>جاري تحميل شاشات التوقف ...</translation>
+        <translation>تحميل شاشات التوقف ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1092"/>
         <source>Custom Screensaver</source>
-        <translation>شاشة توقف مخصصة</translation>
+        <translation>ضبط الخلفية حسب الطلب</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1093"/>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1095"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation>تطبيق</translation>
+        <translation>طبِّق</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1168"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation>خلفية النظام هذه مقفلة. يرجى الاتصال يالمسؤول.</translation>
+        <translation>هذا الخلفية مقفل. يرجى الاتصال بمسؤول النظام الخاص بك.</translation>
     </message>
 </context>
 <context>
@@ -2496,7 +2496,7 @@
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="370"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation>قفل الشاشة</translation>
+        <translation>شاشة القفل</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="371"/>
@@ -2539,12 +2539,12 @@
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="30"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation>سيتم تحديث مدير الملفات إلى إصدار جديد، سيتم خلاله إنهاء المهام الجارية. هل تريد التحديث الآن؟</translation>
+        <translation>سيتم تحديث مدير الملف إلى إصدار جديد، وخلال ذلك سيتم إنهاء المهام الجارية. هل ترغب في التحديث الآن؟</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="32"/>
         <source>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation>سيتم تحديث خدمات سطح المكتب إلى إصدار جديد، سيتم خلاله إنهاء المهام الجارية. هل تريد التحديث الآن؟</translation>
+        <translation>سيتم تحديث خدمات سطح المكتب إلى إصدار جديد، وخلال ذلك سيتم إنهاء المهام الجارية. هل ترغب في التحديث الآن؟</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="33"/>
@@ -2624,52 +2624,52 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="83"/>
         <source>Operating failed</source>
-        <translation>فشلت العملية</translation>
+        <translation>فشل العملية</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="84"/>
         <source>Mount failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل الإبلاغ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="85"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل الإزالة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>تم إزالة الجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>يجري تركيب الجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"/>
+        <translation>يجري محو الجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"/>
+        <translation>يجري إنشاء نظام الملفات للجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Locking device now...</source>
-        <translation>جاري قفل الجهاز ...</translation>
+        <translation>يجري قفل الجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
         <source>Unlocking device now...</source>
-        <translation>جاري إلغاء قفل الجهاز ...</translation>
+        <translation>يجري فتح الجهاز الآن...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="130"/>
         <source>The device is busy now</source>
-        <translation>الجهاز قيد الاستخدام الآن</translation>
+        <translation>الجهاز مشغول الآن</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
@@ -2728,7 +2728,7 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="677"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
@@ -2945,7 +2945,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="675"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation>تحتوي الملفات المحددة على ملفات أو مجلدات النظام، ولا يمكن حذفه</translation>
+        <translation>تحتوي الملفات المحددة على ملفات نظام / دليل، ولا يمكن حذفه</translation>
     </message>
 </context>
 <context>
@@ -2953,7 +2953,7 @@
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="23"/>
         <source>Directory</source>
-        <translation>مجلد</translation>
+        <translation>دليل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="24"/>
@@ -3063,7 +3063,7 @@
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="33"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>إلغاء القفل</translation>
+        <translation>فك القفل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="37"/>
@@ -3099,35 +3099,35 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="251"/>
         <source>Double click</source>
-        <translation>نقر مزدوح</translation>
+        <translation>النقر المزدوج</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="255"/>
         <source>New window and tab</source>
-        <translation>تبويب ونافذة جديدة</translation>
+        <translation>نافذة جديدة والتذييل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="257"/>
         <source>Open from default window:</source>
-        <translation>فتح من النافذة الافتراضية:</translation>
+        <translation>افتح من النافذة الافتراضية:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="259"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
         <source>Computer</source>
-        <translation>الحاسب</translation>
+        <translation>جهاز الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
         <source>Home</source>
-        <translation>المنزل</translation>
+        <translation>الصفحة الرئيسية</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="261"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
         <source>Desktop</source>
-        <translation>سطح المكتب</translation>
+        <translation>السطح المكتبي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
@@ -3139,7 +3139,7 @@
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
         <source>Music</source>
-        <translation>الصوتيات</translation>
+        <translation>الموسيقى</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
@@ -3151,7 +3151,7 @@
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
         <source>Documents</source>
-        <translation>المستندات</translation>
+        <translation>الوثائق</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
@@ -3162,12 +3162,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
         <source>Open in new tab:</source>
-        <translation>فتح في تبويب جديد</translation>
+        <translation>افتح في علامة تبويب جديدة:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Current Directory</source>
-        <translation>المجلد الحالي</translation>
+        <translation>الدليل الحالي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
@@ -3177,17 +3177,17 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
         <source>Show hidden files</source>
-        <translation>إظهار الملفات المخفية</translation>
+        <translation>اظهار الملفات المخفية</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
         <source>Show file extensions</source>
-        <translation>إظهار صيغ الملفات</translation>
+        <translation>اظهار امتدادات الملفات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>خلط ترتيب الملفات والمجلدات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="316"/>
@@ -3202,17 +3202,17 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="329"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>شجرة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
         <source>Default view:</source>
-        <translation>العرض الافتراضي:</translation>
+        <translation>العرض الافتراضي :</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation>رمز</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="233"/>
@@ -3242,7 +3242,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
         <source>Thumbnail preview</source>
-        <translation>معاينة الصورة المصغرة</translation>
+        <translation>معاينة الشاشة المصغرة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="347"/>
@@ -3272,57 +3272,57 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
         <source>Music preview</source>
-        <translation>معاينة الصوت</translation>
+        <translation>معاينة الموسيقى</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="361"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>البيئة البعيدة تعرض معاينة الشاشة المصغرة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="362"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation>قد يؤدي تشغيل معاينة الصورة المصغرة إلى تحميل مجلد الشبكة ببطء أو تجميد العملية</translation>
+        <translation>تفعيل معاينة الشاشة المصغرة قد يؤدي إلى تحميل المجلد البعيد ببطء أو تجميد العمليات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>متقدم</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="373"/>
         <source>Mount</source>
-        <translation type="unfinished"/>
+        <translation>تركيب</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
         <source>Auto mount</source>
-        <translation type="unfinished"/>
+        <translation>التثبيت التلقائي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>افتح بعد التثبيت التلقائي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"/>
+        <translation>دمج عناصر مجلدات المشاركة عبر Samba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="388"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation>تبديل عرض العناصر قد يؤدي إلى فشل التثبيت</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"/>
+        <translation>استخدم محل eingeordnete Dateiauswahl von Dateimanager</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation>اطلب التأكيد عند حذف الملفات</translation>
+        <translation>اسأل عن تأكيدي عند حذف الملفات</translation>
     </message>
 </context>
 <context>
@@ -3365,7 +3365,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
         <source>Reverse selection</source>
-        <translation type="unfinished"/>
+        <translation>الاختيار العكسي</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -3375,7 +3375,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="26"/>
         <source>To parent directory</source>
-        <translation>إلى المجلد اﻷصل</translation>
+        <translation>إلى الدليل اﻷصل</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
@@ -3415,7 +3415,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Open in terminal</source>
-        <translation type="unfinished"/>
+        <translation>افتح في المحطة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -3500,7 +3500,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
-        <translation type="unfinished"/>
+        <translation>تبديل إلى عرض الشجرة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3593,7 +3593,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="109"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="110"/>
@@ -3603,7 +3603,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="111"/>
         <source>Recent</source>
-        <translation>مؤخراً</translation>
+        <translation>المؤخر</translation>
     </message>
 </context>
 <context>
@@ -3611,12 +3611,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>فشل في عرض معلومات التباين عند إنشاء ملف المصدر %1_info!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>فشل في عرض معلومات التباين عند إنشاء ملف الهدف %1_info!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
@@ -3652,7 +3652,7 @@
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="448"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="786"/>
         <source>In data statistics ...</source>
-        <translation type="unfinished"/>
+        <translation>في إحصاء البيانات...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="797"/>
@@ -3662,12 +3662,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
         <source>Syncing data</source>
-        <translation>جاري مزامنة البيانات</translation>
+        <translation>مزامنة البيانات</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="386"/>
         <source>Please wait</source>
-        <translation>الرجاء الإنتظار</translation>
+        <translation>الرجاء الانتظار</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="602"/>
@@ -3711,12 +3711,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="27"/>
         <source>Enter a password to protect shared folders</source>
-        <translation>الرجاء ادخال كلمة مرور لحماية مجلدات التي تم مشاركتها</translation>
+        <translation>أدخل كلمة مرور لحماية المجلدات المشتركة</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="50"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
-        <translation>تعيين كلمة مرور على المجلد التي تم مشاركته للوصول غير المجهول</translation>
+        <translation>قم بتعيين كلمة مرور على المجلد المشترك للحصول على الوصول غير الشبكي</translation>
     </message>
 </context>
 <context>
@@ -3742,7 +3742,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="374"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
-        <translation>عذراً، غير قادر على تحديد موقع مجلد الوصول السريع الخاص بك، هل تريد إزالته؟</translation>
+        <translation>آسف، غير قادر على تحديد موقع الدليل السريع لديك، هل ترغب في حذفه؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="376"/>
@@ -3762,12 +3762,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="58"/>
         <source>Pin to quick access</source>
-        <translation type="unfinished"/>
+        <translation>تم تعليقه في åt nhanh</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
         <source>Remove from quick access</source>
-        <translation>إزالة من الوصول السريع</translation>
+        <translation>إزالة من åt nhanh</translation>
     </message>
 </context>
 <context>
@@ -3785,13 +3785,13 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="90"/>
         <source>Verifying data...</source>
-        <translation>جاري التحقق من البيانات...</translation>
+        <translation>جاري التأكد من البيانات...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="164"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="170"/>
         <source>Data verification successful.</source>
-        <translation>تم التحقق من البيانات بنجاح.</translation>
+        <translation>تم تأكيد البيانات بنجاح.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="172"/>
@@ -3801,7 +3801,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
         <source>The device was not safely unmounted</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم إيقاف الجهاز بشكل آمن</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
@@ -3814,7 +3814,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="98"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>غير قادر على الحرق، لا يوجد مساحة كافية على القرص المستهدف</translation>
+        <translation>لم يتمكن من التشغيل. ليس هناك مساحة كافية على القرص الهدف.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
@@ -3827,7 +3827,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation>اسم الملف أو المسار طويل جدا. يرجى تقصير اسم الملف أو المسار والمحاولة مرة أخرى.</translation>
+        <translation>اسم الملف أو المسار طويل جدًا. يرجى اختصار اسم الملف أو المسار وحاول مرة أخرى.</translation>
     </message>
 </context>
 <context>
@@ -3836,7 +3836,7 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="223"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="237"/>
@@ -3851,7 +3851,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
         <source>Data verification failed</source>
-        <translation>فشلت عملية التحقق من البيانات.</translation>
+        <translation>فشل التحقق من البيانات</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
@@ -3889,17 +3889,17 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="292"/>
         <source>View Image File</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>عرض ملف الصورة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="311"/>
         <source>Image successfully created</source>
-        <translation type="unfinished"/>
+        <translation>تم إنشاء الصورة بنجاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="345"/>
         <source>Image creation failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل إنشاء الصورة</translation>
     </message>
 </context>
 <context>
@@ -3912,37 +3912,37 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="165"/>
         <source>File system: </source>
-        <translation type="unfinished"/>
+        <translation>نظام الملفات:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
         <source>ISO9660 Only</source>
-        <translation type="unfinished"/>
+        <translation>ISO9660 فقط</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
         <source>ISO9660/Joliet (For Windows)</source>
-        <translation type="unfinished"/>
+        <translation>ISO9660 / Joliet (لمتصفح ويندوز)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
-        <translation type="unfinished"/>
+        <translation>ISO9660 / Rock Ridge (لمتصفح يونكس)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (يقبل وضع قرص الويندوز سي دي/دي في دي)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
         <source>Device error</source>
-        <translation type="unfinished"/>
+        <translation>خطأ في الجهاز</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
         <source>Optical device %1 doesn&apos;t exist</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم العثور على جهاز الليزر %1</translation>
     </message>
 </context>
 <context>
@@ -3950,7 +3950,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف أو المسار طويل جدًا. يرجى اختصار اسم الملف أو المسار وحاول مرة أخرى.</translation>
     </message>
 </context>
 <context>
@@ -3958,12 +3958,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء صورة ISO</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
         <source>to %1</source>
-        <translation>إلى 1%</translation>
+        <translation>إلى %1</translation>
     </message>
 </context>
 <context>
@@ -3972,22 +3972,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>إنشاء صورة ISO</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="69"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"/>
+        <translation>حفظ كملف صورة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="80"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation type="unfinished"/>
+        <translation>سيتم حزم جميع الملفات في القرص وتكوينها كملف صورة ISO.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="91"/>
         <source>Save the ISO image here:</source>
-        <translation type="unfinished"/>
+        <translation>حفظ صورة ISO هنا:</translation>
     </message>
 </context>
 <context>
@@ -4003,7 +4003,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="58"/>
         <source>Double click to open it</source>
-        <translation>نقر مزدوج للفتح</translation>
+        <translation>اضغط الماوس مرة_double_Click لعرضه</translation>
     </message>
 </context>
 <context>
@@ -4011,37 +4011,37 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="59"/>
         <source>Computer</source>
-        <translation>الحاسب</translation>
+        <translation>الحاسوب</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="178"/>
         <source>Computer display items</source>
-        <translation type="unfinished"/>
+        <translation>عناصر عرض الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="180"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء الأقراص المدمجة في صفحة الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="183"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء مناطق التعاقب في صفحة الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="185"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"/>
+        <translation>إظهار نظام الملفات على رمز القرص</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide My Directories on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء مجلداتي في صفحة الكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="205"/>
         <source>Hide 3rd party entries on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء عناصر الطرف الثالث في صفحة الكمبيوتر</translation>
     </message>
 </context>
 <context>
@@ -4049,7 +4049,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
         <source>Unlock device failed</source>
-        <translation>فشلت عملية إلغاء قفل الجهاز</translation>
+        <translation>فشل فتح الجهاز</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
@@ -4059,32 +4059,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
         <source>Rename failed</source>
-        <translation>فشلت عملية إعادة التسمية</translation>
+        <translation>فشل التغيير</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
         <source>The device is busy and cannot be renamed now</source>
-        <translation>الجهاز قيد الاستخدام ، لا يمكن إعادة تسمية اﻵن</translation>
+        <translation>الجهاز مشغول ولا يمكن تغيير اسمه الآن</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
         <source>Format failed</source>
-        <translation>فشلت عملية إعادة التهيئة</translation>
+        <translation>فشل التنسيق</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
         <source>The device is busy and cannot be formatted now</source>
-        <translation>الجهاز قيد الاستخدام ، لا يمكن إعادة التهيئة اﻵن</translation>
+        <translation>الجهاز مشغول ولا يمكن تنسيقه الآن</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>خطأ في التثبيت</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
         <source>Cannot access %1</source>
-        <translation>غير قادر على الوصول إلى 1%</translation>
+        <translation>لا يمكن الوصول إلى %1</translation>
     </message>
 </context>
 <context>
@@ -4092,12 +4092,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
         <source>Computer</source>
-        <translation>الحاسب</translation>
+        <translation>الحاسوب</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation type="unfinished"/>
+        <translation>%1ReadOnly. هل ترغب في تمكين إذن القراءة والكتابة؟</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="232"/>
@@ -4337,7 +4337,7 @@
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
@@ -5145,23 +5145,23 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
         <source>Moving %1</source>
-        <translation>جاري نقل  1% ...</translation>
+        <translation>نقل %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
         <source>Trashing %1</source>
-        <translation>جاري إزالة 1% إلى سلة المحذوفات</translation>
+        <translation>رمي %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
         <source>Restoring %1</source>
-        <translation type="unfinished"/>
+        <translation>استعادة %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
-        <translation>خطأ في الصلاحيات</translation>
+        <translation>خطأ في إذن</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
@@ -5173,83 +5173,83 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
-        <translation type="unfinished"/>
+        <translation>يوجد ملف %1 موجود بالهدف بالفعل</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
-        <translation>المجلد المستهدف 1% موجود بالفعل</translation>
+        <translation>يوجد مجلد %1 موجود بالهدف بالفعل</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
         <source>Failed to open the file %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في فتح الملف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
         <source>Failed to read the file %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في قراءة الملف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
         <source>Failed to write the file %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في كتابة الملف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="129"/>
         <source>Failed to create the directory %1</source>
-        <translation>فشل في إنشاء المجلد 1%</translation>
+        <translation>فشل في إنشاء الدليل %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to delete the file %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في حذف الملف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
         <source>Failed to move the file %1 to trash</source>
-        <translation>فشلت عملية إزالة الملف 1% إلى سلة المحذوفات</translation>
+        <translation>فشل في نقلة إلى السلة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
         <source>Failed to move the file %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في نقل الملف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
         <source>Original file %1 does not exist</source>
-        <translation type="unfinished"/>
+        <translation>ملف %1 الأصلي غير موجود</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
-        <translation type="unfinished"/>
+        <translation>فشل، يجب أن يكون حجم الملف %1 أقل من 4 جيجابايت</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
         <source>Not enough free space on the target disk</source>
-        <translation>لا يوجد مساحة كافية على القرص المستهدف</translation>
+        <translation>غير كافٍ مساحة حرة على القرص الهدف</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
         <source>File %1 integrity was damaged</source>
-        <translation type="unfinished"/>
+        <translation>سلامة الملف %1 التالفة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>جهاز الهدفReadOnly</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>المجلد الهدف موجود داخل المجلد المصدر</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
@@ -5261,12 +5261,12 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
         <source>You do not have permission to traverse files in %1</source>
-        <translation type="unfinished"/>
+        <translation>ليس لديك إذن لتمرير الملفات في %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>فشل الاستعادة، لم يتم العثور على المسار الأصلي</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
@@ -5276,12 +5276,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>فشل في تحليل عنوان URL السلة</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
-        <translation>فشلت عملية الاستعادة بسبب أن الملف الأصلي غير موجود</translation>
+        <translation>فشل الاسترجاع: الملف الأصلي غير موجود</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
@@ -5296,52 +5296,52 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
         <source>Failed to open the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>فشل في فتح الملف %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
         <source>Failed to read the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>فشل في قراءة الملف %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
         <source>Failed to write the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>فشل في كتابة الملف %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
         <source>Failed to create the directory %1, cause: %2</source>
-        <translation>فشل في إنشاء المجلد 1% بسبب 2%</translation>
+        <translation>فشل في إنشاء الدليل %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
         <source>Failed to delete the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>فشل في حذف الملف %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation>فشلت عملية إزالة الملف 1% إلى سلة المحذوفات بسبب: 2%</translation>
+        <translation>فشل في نقل الملف %1 إلى سلة المحذوفات، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
         <source>Failed to move the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>فشل في نقل الملف %1، السبب: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
         <source>File %1 integrity was damaged, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>integrity of file %1 was damaged, cause: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
         <source>Failed to create symlink, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في إنشاء رmlink، السبب: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
         <source>Copy or Cut File failed, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل نسخ أو قص الملف، السبب: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
@@ -5356,7 +5356,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"/>
+        <translation>%1 موجود بالفعل في مجلد الهدف</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
@@ -5364,7 +5364,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
         <source>Original path %1</source>
-        <translation type="unfinished"/>
+        <translation>الطريق الأصلي %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
@@ -5372,12 +5372,12 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Target path %1</source>
-        <translation type="unfinished"/>
+        <translation>الطريق الهدف %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
         <source>Original path %1 Target path %2</source>
-        <translation type="unfinished"/>
+        <translation>الطريق الأصلي %1 الطريق الهدف %2</translation>
     </message>
 </context>
 <context>
@@ -5385,12 +5385,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="333"/>
         <source>Rename file error</source>
-        <translation>فشلت عملية إعادة التسمية</translation>
+        <translation>خطأ تغيير الاسم</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="624"/>
         <source>Failed to create the directory</source>
-        <translation>فشل في إنشاء المجلد</translation>
+        <translation>فشل في إنشاء الدليل</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1149"/>
@@ -5400,13 +5400,13 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
         <source>link file error</source>
-        <translation type="unfinished"/>
+        <translation>خطأ في الملف الارتباط</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1266"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1275"/>
         <source>Failed to modify file permissions</source>
-        <translation type="unfinished"/>
+        <translation>فشل تعديل أذونات الملف</translation>
     </message>
 </context>
 <context>
@@ -5414,7 +5414,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewdialogmanager.cpp" line="74"/>
         <source>Unable to find the original file</source>
-        <translation>غير قادر على العثور على الملف الأصلي</translation>
+        <translation>لم يتم العثور على الملف الأصلي</translation>
     </message>
 </context>
 <context>
@@ -5422,17 +5422,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>&amp;لصق</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>قم&amp;ص</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>&amp;نسخ</translation>
     </message>
 </context>
 <context>
@@ -5455,7 +5455,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>Empty Trash</source>
-        <translation>إفراغ سلة المحذوفات</translation>
+        <translation>إقراغ سلة المحذوفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
@@ -5758,7 +5758,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="54"/>
         <source>Computer</source>
-        <translation>الحاسب</translation>
+        <translation>الحاسوب</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="69"/>
@@ -5859,7 +5859,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="138"/>
         <source>Permissions</source>
-        <translation>الصلاحيات</translation>
+        <translation>الأذونات</translation>
     </message>
 </context>
 <context>
@@ -5867,7 +5867,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>الخصائص</translation>
     </message>
 </context>
 <context>
@@ -5875,7 +5875,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="44"/>
         <source>Recent</source>
-        <translation>مؤخراً</translation>
+        <translation>حديث</translation>
     </message>
 </context>
 <context>
@@ -5944,12 +5944,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>Time Accessed:</source>
-        <translation>وقت الدخول:</translation>
+        <translation>تم الوصول إليه:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
         <source>Time Created:</source>
-        <translation>وقت الإنشاء:</translation>
+        <translation>تم إنشاؤه:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="64"/>
@@ -5964,7 +5964,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
         <source>Current directory</source>
-        <translation>المجلد الحالي</translation>
+        <translation>الموقع الحالي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
@@ -6058,17 +6058,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="125"/>
         <source>Auto index internal disk</source>
-        <translation type="unfinished"/>
+        <translation>الفرز التلقائي للقرص الداخلي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="137"/>
         <source>Index external storage device after connected to computer</source>
-        <translation type="unfinished"/>
+        <translation>فرز الجهاز التخزيني الخارجي بعد الاتصال بالكمبيوتر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="153"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"/>
+        <translation>البحث الكامل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="157"/>
@@ -6140,7 +6140,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
         <source>Partitions</source>
-        <translation>الأقسام</translation>
+        <translation>الاقسام</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
@@ -6150,7 +6150,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
         <source>Tag</source>
-        <translation>علامة استدلالية</translation>
+        <translation>علامة استدلال</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
@@ -6160,7 +6160,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
         <source>Unknown Group</source>
-        <translation>مجموعة غير معروفة</translation>
+        <translation>مجموعة مجهولة</translation>
     </message>
 </context>
 <context>
@@ -6168,7 +6168,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="148"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"/>
+        <translation>&amp;فتح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="149"/>
@@ -6178,17 +6178,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="150"/>
         <source>Open in new tab</source>
-        <translation>فتح في تبويب جديد</translation>
+        <translation>افتح في علامة تبويب جديدة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="151"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>الخصائص</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="152"/>
         <source>Mount</source>
-        <translation>توصيل</translation>
+        <translation>وصل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="153"/>
@@ -6201,17 +6201,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="178"/>
         <source>Unmount</source>
-        <translation>فصل</translation>
+        <translation>إزالة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="179"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>مسح كلمة المرور المحفوظة وإزالة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="180"/>
         <source>Remove</source>
-        <translation>إزالة</translation>
+        <translation>حذف</translation>
     </message>
 </context>
 <context>
@@ -6219,7 +6219,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="48"/>
         <source>Tag</source>
-        <translation>علامة استدلالية</translation>
+        <translation>علامة استدلال</translation>
     </message>
 </context>
 <context>
@@ -6235,7 +6235,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="95"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>الرجاء ادخال معلومات العلامة الاستدلالية مثل عمل، عائلة. الفاصلة (تُستخدم بين العلامتين).</translation>
+        <translation>أدخل معلومات شعارية، مثل عمل، عائلة. الفاصلة تُستخدم بين شعارين.</translation>
     </message>
 </context>
 <context>
@@ -6243,17 +6243,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="61"/>
         <source>Tag information</source>
-        <translation>معلومات العلامة الاستدلالية</translation>
+        <translation>معلومات شعارية</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="188"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation>إزالة &quot;1%&quot; كعلامة الاستدلالية </translation>
+        <translation>حذف العلامة &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="190"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>إضافة &quot;%1&quot; كعلامة الاستدلالية</translation>
+        <translation>إضافة شعار &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -6261,7 +6261,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="41"/>
         <source>Tag</source>
-        <translation>علامة استدلالية</translation>
+        <translation>علامة استدلال</translation>
     </message>
 </context>
 <context>
@@ -6289,7 +6289,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"/>
+        <translation>إزالة من المفضلة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="298"/>
@@ -6299,7 +6299,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="299"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation type="unfinished"/>
+        <translation>غير قادر على وضع عنصر غير صالح في المفضلة!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="356"/>
@@ -6316,7 +6316,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
         <source>Charset Encoding</source>
-        <translation type="unfinished"/>
+        <translation>ترميز الأحرف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
@@ -6326,17 +6326,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>المفضلات لدي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>لم يوجد المفضلات بعد</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Favorite</source>
-        <translation type="unfinished"/>
+        <translation>المفضلة</translation>
     </message>
 </context>
 <context>
@@ -6359,7 +6359,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>Repeat password:</source>
-        <translation>أعد إدخال كلمة المرور:</translation>
+        <translation>كرر كلمة المرور:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
@@ -6381,24 +6381,24 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
         <source>New password should differ from the current one</source>
-        <translation>يجب أن تختلف كلمة المرور الجديدة عن كلمة المرور الحالية</translation>
+        <translation>يجب أن تختلف كلمة المرور الجديدة عن الحالية</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="231"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
-        <translation type="unfinished"/>
+        <translation>أدخل كلمة مرور bestehen mindestens 8 Zeichen. Mindestens 3 verschiedene Zeichentypen: 0-9, a-z, A-Z und Symbole. Nicht gleich Benutzername.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
         <source>Password must be no more than %1 characters</source>
-        <translation type="unfinished"/>
+        <translation>يجب ألا تتجاوز كلمة المرور %1 CHARACTER.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="276"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="280"/>
         <source>Password cannot be empty</source>
-        <translation>لا يمكن أن تكون كلمة المرور فارغة</translation>
+        <translation>يجب ألا تكون كلمة المرور فارغة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
@@ -6411,27 +6411,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
         <source>Changing disk password...</source>
-        <translation>جاري تغيير كلمة مرور القرص ...</translation>
+        <translation>تغيير كلمة مرور القرص...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
         <source>The window cannot be closed during the process</source>
-        <translation>لا يمكن إغلاق النافذة أثناء هذه العملية</translation>
+        <translation>لا يمكن إغلاق النافذة أثناء العملية</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
         <source>Passwords of disks are different</source>
-        <translation>كلمات مرور للأقراص مختلفة</translation>
+        <translation>كلمات مرور القرص مختلفة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
         <source>Unable to get the encrypted disk list</source>
-        <translation type="unfinished"/>
+        <translation>عدم القدرة على الحصول على قائمة القرص المشفر</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل الت inicialización</translation>
     </message>
 </context>
 <context>
@@ -6444,7 +6444,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
         <source>Failed to change the disk password</source>
-        <translation>فشلت عملية تغيير كلمة مرور القرص</translation>
+        <translation>فشل تغيير كلمة مرور القرص</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="58"/>
@@ -6458,12 +6458,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="163"/>
         <source>back</source>
-        <translation type="unfinished"/>
+        <translation>السابق</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="168"/>
         <source>forward</source>
-        <translation type="unfinished"/>
+        <translation>التالي</translation>
     </message>
 </context>
 <context>
@@ -6553,7 +6553,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="33"/>
@@ -6563,7 +6563,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <source>Empty Trash</source>
-        <translation>إفراغ سلة المحذوفات</translation>
+        <translation>إقراغ سلة المحذوفات</translation>
     </message>
 </context>
 <context>
@@ -6612,7 +6612,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/trashcore.cpp" line="22"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
 </context>
 <context>
@@ -6620,7 +6620,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="30"/>
         <source>Trash</source>
-        <translation>سلة المحذوفات</translation>
+        <translation>سلة المهملات</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="75"/>
@@ -6748,7 +6748,7 @@
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="61"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="160"/>
@@ -6875,13 +6875,13 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
         <source>Unlock failed</source>
-        <translation>فشلت عملية إلغاء القفل</translation>
+        <translation>فشل الفتح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>المجلد %1 مشغول، يرجى مسحه وحاول مرة أخرى فتح الخزنة</translation>
     </message>
 </context>
 <context>
@@ -6889,13 +6889,13 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="29"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>احفظه بأمان</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="43"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation>انتقل إلى إلغاء القفل</translation>
+        <translation>اذهب لفتح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="43"/>
@@ -6906,12 +6906,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="48"/>
         <source>Verification Successful</source>
-        <translation>تم التحقق بنجاح</translation>
+        <translation>التحقق بنجاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="53"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>كلمة المرور الخزنة: %1</translation>
     </message>
 </context>
 <context>
@@ -6919,12 +6919,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="60"/>
         <source>Unlock by Key</source>
-        <translation>إلغاء القفل بواسطة مفتاح</translation>
+        <translation>فتح باستخدام المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="33"/>
         <source>Input the 32-digit recovery key</source>
-        <translation>الرجاء ادخال مفتاح الاسترداد المكون من 32 رقما</translation>
+        <translation>أدخل المفتاح الاستردادي 32 بت</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
@@ -6936,22 +6936,22 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>إلغاء القفل</translation>
+        <translation>فك القفل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="113"/>
         <source>Wrong recovery key</source>
-        <translation>مفتاح الاسترداد خاطئ</translation>
+        <translation>المفتاح الاستردادي غير صحيح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="228"/>
         <source>Failed to unlock file vault</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم فتح خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="232"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
 </context>
 <context>
@@ -6959,18 +6959,18 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="41"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>بواسطة المفتاح في المسار الافتراضي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="42"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>بواسطة المفتاح في المسار المحدد</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="198"/>
         <source>Select a path</source>
-        <translation>اختيار المسار</translation>
+        <translation>حدد مسار</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="104"/>
@@ -6980,12 +6980,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="194"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="230"/>
         <source>Unable to get the key file</source>
-        <translation>غير قادر على الحصول على ملف المفتاح</translation>
+        <translation>لم يتم الحصول على ملف المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل التحقق</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="139"/>
@@ -6997,12 +6997,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="139"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation>التحقق من المفتاح</translation>
+        <translation>تحقق من المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
         <source>Retrieve Password</source>
-        <translation>استعادة كلمة المرور</translation>
+        <translation>استرد كلمة المرور</translation>
     </message>
 </context>
 <context>
@@ -7015,7 +7015,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="45"/>
         <source>Time locked</source>
-        <translation type="unfinished"/>
+        <translation>تم تعطيل الوقت</translation>
     </message>
 </context>
 <context>
@@ -7030,12 +7030,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>إلغاء القفل</translation>
+        <translation>فك القفل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="50"/>
         <source>Unlock File Vault</source>
-        <translation type="unfinished"/>
+        <translation>فتح خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
@@ -7045,7 +7045,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
         <source>Key unlock</source>
-        <translation>مفتاح إلغاء القفل</translation>
+        <translation>فتح المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
@@ -7055,32 +7055,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="97"/>
         <source>Password hint: %1</source>
-        <translation>تلميح كلمة المرور: 1%</translation>
+        <translation>نصHint كلمة المرور: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="118"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن فتح الخزنة تحت الشبكة!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="127"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>يرجى المحاولة مرة أخرى بعد %1 دقيقة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="156"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى بعد %1 دقيقة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>كلمة المرور غير صحيحة، تبقى فرصة واحدة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="161"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>كلمة المرور غير صحيحة، تبقى %1 فرصة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="208"/>
@@ -7093,12 +7093,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
         <source>Failed to unlock file vault, error code is %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في فتح خزنة الملف، kód الخطأ هو %1</translation>
     </message>
 </context>
 <context>
@@ -7106,22 +7106,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="52"/>
         <source>Encrypt File Vault</source>
-        <translation type="unfinished"/>
+        <translation> تشفير خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>انقر فوق &quot;تشفير&quot; وأدخل كلمة مرور المستخدم.</translation>
+        <translation> انقر فوق &apos;تشفير&apos; ثم أدخل كلمة مرور المستخدم.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
         <source>Encrypting...</source>
-        <translation>جاري التشفير ...</translation>
+        <translation> يتم تشفير... </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="77"/>
         <source>The setup is complete</source>
-        <translation type="unfinished"/>
+        <translation> الإعداد جاهز</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
@@ -7129,17 +7129,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="192"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="214"/>
         <source>Encrypt</source>
-        <translation>تشفير</translation>
+        <translation> تشفير</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="186"/>
         <source>Failed to create file vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>فشل في إنشاء خزنة الملف: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="260"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
 </context>
 <context>
@@ -7147,32 +7147,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="44"/>
         <source>Save Recovery Key</source>
-        <translation>حفظ مفتاح الاسترداد </translation>
+        <translation> حفظ مفتاح الاسترداد</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="51"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation> احفظ المفتاح بأمان للحصول على كلمة مرور الخزنة لاحقًا</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation> حفظ في المسار الافتراضي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="62"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation> حفظ في مواقع أخرى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>لا يوجد إذن، يرجى إعادة التحديد</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="72"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation> حدد مسار</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="87"/>
@@ -7182,7 +7182,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="97"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation> &gt;- المسار الافتراضي غير مرئي للمستخدمين الآخرين، ولا سيما معلومات المسار لن يتم عرضها.</translation>
     </message>
 </context>
 <context>
@@ -7190,22 +7190,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
         <source>Set Vault Password</source>
-        <translation type="unfinished"/>
+        <translation> تعيين كلمة مرور الخزانة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="45"/>
         <source>Encryption method</source>
-        <translation type="unfinished"/>
+        <translation> طريقة التشفير</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="48"/>
         <source>Key encryption</source>
-        <translation>شفرة المفتاح</translation>
+        <translation> تشفير المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="48"/>
         <source>Transparent encryption</source>
-        <translation type="unfinished"/>
+        <translation> تشفير الشفاف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="54"/>
@@ -7216,7 +7216,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="197"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation> ≥ 8 أحرف، يشمل A-Z، a-z، 0-9، والعلامات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
@@ -7226,12 +7226,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Input the password again</source>
-        <translation>الرجاء إدخال كلمة المرور مرة أخرى</translation>
+        <translation> أدخل كلمة المرور مرة أخرى</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Password hint</source>
-        <translation>تلميح كلمة المرور</translation>
+        <translation> تلميح كلمة المرور</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
@@ -7241,7 +7241,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="73"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation type="unfinished"/>
+        <translation> &gt;- سيتم فتح خزنة الملف تلقائيًا عند الوصول إليها، دون التحقق من كلمة المرور. سيكون الملفات الموجودة فيها غير قابلة للوصول تحت حسابات المستخدم الأخرى. </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="82"/>
@@ -7265,12 +7265,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="39"/>
         <source>Create your secure private space</source>
-        <translation type="unfinished"/>
+        <translation>انشاء مساحتك الخاصة الآمنة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="39"/>
         <source>Advanced encryption technology</source>
-        <translation type="unfinished"/>
+        <translation>التكنولوجيا التشفيرية المتقدمة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="39"/>
@@ -7280,7 +7280,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="46"/>
         <source>Create</source>
-        <translation>إنشاء</translation>
+        <translation>انشاء</translation>
     </message>
 </context>
 <context>
@@ -7288,7 +7288,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="30"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزنتي</translation>
     </message>
 </context>
 <context>
@@ -7296,12 +7296,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="180"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزنة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="180"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>لا تتوفر الخزنة لأن cryfs غير مثبت!</translation>
     </message>
 </context>
 <context>
@@ -7310,17 +7310,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزنة</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>لا تتوفر الخزنة لأن cryfs غير مثبت!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation type="unfinished"/>
+        <translation>هناك مهمة جارية، لذا لا يمكنك إجراء عملية</translation>
     </message>
 </context>
 <context>
@@ -7328,7 +7328,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزنتي</translation>
     </message>
 </context>
 <context>
@@ -7346,12 +7346,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>حذف خزنة الملفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>فشل في حذف خزنة الملفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
@@ -7361,7 +7361,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation>عندما تتم عملية الحذف، سيتم حذف الملفات الموجودة فيه بشكل نهائي</translation>
+        <translation>بمجرد الحذف، سيتم حذف الملفات الموجودة فيها بشكل دائم</translation>
     </message>
 </context>
 <context>
@@ -7369,7 +7369,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation>عندما تتم عملية الحذف، سيتم حذف الملفات الموجودة فيه بشكل نهائي</translation>
+        <translation>بمجرد الحذف، سيتم حذف الملفات الموجودة فيها بشكل دائم</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
@@ -7379,12 +7379,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
         <source>Key delete</source>
-        <translation>حذف المفتاح</translation>
+        <translation>مسح المفتاح</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
         <source>Password hint: %1</source>
-        <translation>تلميح كلمة المرور: 1%</translation>
+        <translation>نصيحة كلمة المرور: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
@@ -7399,7 +7399,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="87"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>حذف خزنة الملفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
@@ -7409,12 +7409,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>فشل في حذف خزنة الملفات</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>تم_OK</translation>
     </message>
 </context>
 <context>
@@ -7422,7 +7422,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="27"/>
         <source>Input the 32-digit recovery key</source>
-        <translation>الرجاء ادخال مفتاح الاسترداد المكون من 32 رقما</translation>
+        <translation>أدخل المفتاح الاستردادي 32 رقميًا</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
@@ -7437,22 +7437,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="97"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>حذف خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="112"/>
         <source>Wrong recovery key</source>
-        <translation>مفتاح الاسترداد خاطئ</translation>
+        <translation>مفتاح استرداد خاطئ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="176"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>فشل في حذف خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="180"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>تم_OK</translation>
     </message>
 </context>
 <context>
@@ -7460,22 +7460,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="39"/>
         <source>Removing...</source>
-        <translation>جاري الإزالة ...</translation>
+        <translation>يتم الحذف...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="71"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>تم_OK</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>حذف خزنة الملف</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"/>
+        <translation>تم الحذف بنجاح</translation>
     </message>
 </context>
 <context>
@@ -7483,7 +7483,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>خزنة خاصة بي</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="114"/>
@@ -7496,7 +7496,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="102"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>فشل في فتح %1، الذي قد تم نقله أو تغيير اسمه</translation>
     </message>
 </context>
 <context>
@@ -7522,7 +7522,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="640"/>
         <source>Time modified</source>
-        <translation>وقت التعديل</translation>
+        <translation>التاريخ والتوقيت للتعديل</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="642"/>
@@ -7540,7 +7540,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="65"/>
         <source>Loading...</source>
-        <translation>جاري التحميل ...</translation>
+        <translation>يحمل الآن ...</translation>
     </message>
 </context>
 <context>
@@ -7548,7 +7548,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
         <source>%1 are not allowed</source>
-        <translation>٪1 غير مسموح به</translation>
+        <translation>%1 غير مسموح به</translation>
     </message>
 </context>
 <context>
@@ -7556,7 +7556,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
         <source>%1 are not allowed</source>
-        <translation>٪1 غير مسموح به</translation>
+        <translation>%1 غير مسموح به</translation>
     </message>
 </context>
 <context>
@@ -7604,7 +7604,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>شجرة</translation>
     </message>
 </context>
 <context>
@@ -7673,22 +7673,22 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="273"/>
         <source>Available sizes: </source>
-        <translation>الأحجام المتوفرة:</translation>
+        <translation> الأحجام المتاحة: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="275"/>
         <source>Custom Size</source>
-        <translation>حجم مخصص</translation>
+        <translation>الحجم المخصص</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="302"/>
         <source>Device Pixel Ratio: </source>
-        <translation type="unfinished"/>
+        <translation>نسبة دقة الجهاز:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="324"/>
         <source>Theme: </source>
-        <translation>السمة:</translation>
+        <translation>الموضوع: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="326"/>
@@ -7698,17 +7698,17 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="326"/>
         <source>Dark</source>
-        <translation>غامق</translation>
+        <translation>داكن</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Mode: </source>
-        <translation>الوضع:</translation>
+        <translation>وضع: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Normal</source>
-        <translation>عادي</translation>
+        <translation>المعتاد</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
@@ -7718,47 +7718,47 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Hovered</source>
-        <translation type="unfinished"/>
+        <translation>مؤثر</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Pressed</source>
-        <translation type="unfinished"/>
+        <translation>مؤثر مضغوط</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Palette</source>
-        <translation type="unfinished"/>
+        <translation>ملونة</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Current mode icon does not support the palette</source>
-        <translation type="unfinished"/>
+        <translation>لا يدعم وضع الألوان</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="357"/>
         <source>Foreground:</source>
-        <translation type="unfinished"/>
+        <translation>الأمام:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="372"/>
         <source>Background:</source>
-        <translation>الخلفية:</translation>
+        <translation>الخلف:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="385"/>
         <source>Highlight:</source>
-        <translation type="unfinished"/>
+        <translation>السطوع:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="397"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"/>
+        <translation>سطوع الأمام:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
         <source>Background Color: </source>
-        <translation>لون الخلفية:</translation>
+        <translation>لون الخلفية: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="415"/>
@@ -7786,7 +7786,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="36"/>
         <source>Encrypted file, please enter the password</source>
-        <translation>الملف مشفر، الرجاء إدخال كلمة المرور</translation>
+        <translation>ملف مشفر، يرجى إدخال كلمة المرور</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="42"/>
@@ -7797,7 +7797,7 @@
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="47"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>حسناً</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="90"/>
@@ -7810,22 +7810,22 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="61"/>
         <source>Artist:</source>
-        <translation type="unfinished"/>
+        <translation>الفنان:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="73"/>
         <source>Album:</source>
-        <translation type="unfinished"/>
+        <translation>الألبوم:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="138"/>
         <source>unknown artist</source>
-        <translation type="unfinished"/>
+        <translation>فنان مجهول</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="142"/>
         <source>unknown album</source>
-        <translation type="unfinished"/>
+        <translation>ألبوم مجهول</translation>
     </message>
 </context>
 </TS>
