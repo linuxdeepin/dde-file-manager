@@ -44,6 +44,7 @@ private:
 
     QPixmap renderBlurShadow(const QSize &sz, const QColor &color, int blurRadius) const;
     QPixmap renderBlurShadow(const QPixmap &pm, int blurRadius) const;
+    QColor getProgressTotalColor() const;
 
 private:
     ComputerView *view { nullptr };
