@@ -1,3 +1,9 @@
+dde-file-manager (6.5.17) unstable; urgency=medium
+
+  *fix  disk-encrypt blocked
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Mon, 16 Dec 2024 15:26:08 +0800
+
 dde-file-manager (6.5.16) unstable; urgency=medium
 
   * adapt to dde-shell 1.99.X
