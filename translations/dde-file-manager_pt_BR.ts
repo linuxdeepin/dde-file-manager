@@ -1839,7 +1839,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>Atualizando o GRUB...</translation>
     </message>
 </context>
 <context>
@@ -1847,7 +1847,7 @@
     <message>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Criptografando...</translation>
     </message>
 </context>
 <context>
@@ -3222,7 +3222,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho padrão de ícone:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
