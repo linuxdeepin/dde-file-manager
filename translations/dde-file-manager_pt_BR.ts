@@ -6270,7 +6270,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Inserir endereço</translation>
     </message>
 </context>
 <context>
@@ -6473,29 +6473,29 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Ícone</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Lista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Visualizar em árvore</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Ordenar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Opções de visualização</translation>
     </message>
 </context>
 <context>
