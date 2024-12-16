@@ -5,6 +5,7 @@
 #include "plugin_diskencryptentry.h"
 #include "menu/diskencryptmenuscene.h"
 #include "events/eventshandler.h"
+#include "utils/encryptutils.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 
@@ -28,6 +29,8 @@ void DiskEncryptEntry::initialize()
 
 bool DiskEncryptEntry::start()
 {
+    if (!config_utils::enableEncrypt())
+        return true;
     dpfSlotChannel->push(kMenuPluginName, "slot_MenuScene_RegisterScene",
                          DiskEncryptMenuCreator::name(), new DiskEncryptMenuCreator);
 
