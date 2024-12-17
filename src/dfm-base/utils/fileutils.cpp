@@ -272,6 +272,14 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
     return false;
 }
 
+void FileUtils::refreshIconCache()
+{
+    // https://bugreports.qt.io/browse/QTBUG-112257
+    QString currentTheme = QIcon::themeName();
+    QIcon::setThemeName(QString());
+    QIcon::setThemeName(currentTheme);
+}
+
 bool FileUtils::isTrashDesktopFile(const QUrl &url)
 {
     if (isDesktopFileSuffix(url)) {
@@ -1507,6 +1515,33 @@ bool Match::match(const QString &path, const QString &name)
     }
 
     return false;
+}
+
+QString FileUtils::findIconFromXdg(const QString &iconName)
+{
+    if (!QStandardPaths::findExecutable("qtxdg-iconfinder").isEmpty()) {
+        QProcess process;
+        process.start("qtxdg-iconfinder", QStringList() << iconName);
+        process.closeWriteChannel();
+        process.waitForFinished();
+
+        QString outputTxt = process.readAllStandardOutput();
+        QStringList list = outputTxt.split("\n");
+
+        if (list.size() > 3) {
+            // Remove unnecessary lines
+            list.removeFirst();
+            list.removeLast();
+            list.removeLast();
+            
+            return list.first().simplified();
+        }
+
+        return QString();
+    } else {
+        qCWarning(logDFMBase) << "qtxdg-iconfinder not found";
+        return QString();
+    }
 }
 
 }

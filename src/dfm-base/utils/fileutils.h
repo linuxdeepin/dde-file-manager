@@ -35,6 +35,8 @@ public:
     static bool isDesktopFile(const QUrl &url);
     static bool isDesktopFileSuffix(const QUrl &url);
     static bool isDesktopFileInfo(const FileInfoPointer &info);
+    static void refreshIconCache();
+    static QString findIconFromXdg(const QString &iconName);
 
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);

@@ -24,6 +24,7 @@ public:
     explicit FileInfoModelPrivate(FileInfoModel *qq);
     void doRefresh();
     QIcon fileIcon(FileInfoPointer info);
+    void checkAndRefreshDesktopIcon(const FileInfoPointer &info, int retryCount = 5);
 
 public slots:
     void resetData(const QList<QUrl> &urls);
