@@ -85,12 +85,12 @@ IndexTask::Status IndexTask::status() const
 
 bool IndexTask::isIndexCorrupted() const
 {
-    return indexCorrupted;
+    return m_indexCorrupted;
 }
 
 void IndexTask::setIndexCorrupted(bool corrupted)
 {
-    indexCorrupted = corrupted;
+    m_indexCorrupted = corrupted;
 }
 
 void IndexTask::doTask()
