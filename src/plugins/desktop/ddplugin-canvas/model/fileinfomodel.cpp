@@ -18,6 +18,7 @@
 #include <QMimeData>
 #include <QDateTime>
 #include <QApplication>
+#include <QTimer>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
@@ -29,6 +30,7 @@ FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
 
 void FileInfoModelPrivate::doRefresh()
 {
+    FileUtils::refreshIconCache();
     modelState = FileInfoModelPrivate::RefreshState;
     fileProvider->refresh(filters);
 }
@@ -81,7 +83,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         if (auto cur = fileMap.value(url)) {
             lk.unlock();
             fmInfo() << "the file to insert is existed" << url;
-            cur->refresh(); // refresh fileinfo.
+            cur->refresh();   // refresh fileinfo.
             const QModelIndex &index = q->index(url);
             emit q->dataChanged(index, index);
             return;
@@ -102,6 +104,15 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         fileMap.insert(url, itemInfo);
     }
     q->endInsertRows();
+
+    // Since QIcon::fromTheme stores the QIcon as NULL for the cache,
+    // this results in the cache not being updated when the icon is drawn for
+    // the first time if the cached icon is empty, even if the icon icon resource is installed next.
+    //
+    // detail see: https://bugreports.qt.io/browse/QTBUG-112257
+    if (FileUtils::isDesktopFileInfo(itemInfo)) {
+        checkAndRefreshDesktopIcon(itemInfo);
+    }
 }
 
 void FileInfoModelPrivate::removeData(const QUrl &url)
@@ -207,7 +218,7 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     if (Q_UNLIKELY(!index.isValid()))
         return;
 
-    emit q->dataChanged(index, index, {Global::kItemCreateFileInfoRole});
+    emit q->dataChanged(index, index, { Global::kItemCreateFileInfoRole });
 }
 
 void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
@@ -251,7 +262,43 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
     if (Q_UNLIKELY(!index.isValid()))
         return;
 
-    emit q->dataChanged(index, index, {kItemIconRole});
+    emit q->dataChanged(index, index, { kItemIconRole });
+}
+
+void FileInfoModelPrivate::checkAndRefreshDesktopIcon(const FileInfoPointer &info, int retryCount)
+{
+    if (retryCount < 0) {
+        // All retries exhausted, try qtxdg-iconfinder as last resort
+        DesktopFile file(info->absoluteFilePath());
+        QString iconName = file.desktopIcon();
+
+        // NOTE: FileUtils::findIconFromXdg is very slow!
+        // Maybe cause UI blocking
+        QString iconPath = FileUtils::findIconFromXdg(iconName);
+        fmWarning() << "Still can't find the icon after retrying! XDG icon path: " << iconPath;
+        if (!iconPath.isEmpty()) {
+            FileUtils::refreshIconCache();
+            updateData(info->urlOf(UrlInfoType::kUrl));
+        }
+        return;
+    }
+
+    DesktopFile file(info->absoluteFilePath());
+    bool isNullIcon = QIcon::fromTheme(file.desktopIcon()).isNull();
+    if (!isNullIcon)
+        return;
+
+    // When installing a deb package, the desktop file may be installed before its icon resources.
+    // We need to retry checking the icon multiple times to ensure it's properly loaded after
+    // the icon resources are installed. Each retry has a 2-second interval, with a maximum of
+    // 5 retries (10 seconds total). If all retries fail, we'll try qtxdg-iconfinder as last resort.
+    QTimer::singleShot(2000, this, [this, info, retryCount]() {
+        FileUtils::refreshIconCache();
+        updateData(info->urlOf(UrlInfoType::kUrl));
+
+        // Recursive retry with decremented counter
+        checkAndRefreshDesktopIcon(info, retryCount - 1);
+    });
 }
 
 FileInfoModel::FileInfoModel(QObject *parent)
