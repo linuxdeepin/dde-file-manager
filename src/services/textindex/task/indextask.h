@@ -60,7 +60,7 @@ private:
     Status m_status { Status::NotStarted };
     TaskState m_state;
     TaskHandler m_handler;
-    bool indexCorrupted { false };
+    bool m_indexCorrupted { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

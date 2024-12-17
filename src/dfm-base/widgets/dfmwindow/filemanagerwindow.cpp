@@ -504,7 +504,6 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null TitleBar");
     std::call_once(d->titleBarFlag, [this, w]() {
         d->titleBar = w;
-        d->titleBar->setCurrentUrl(d->currentUrl);
         initializeUi();
 
         emit this->titleBarInstallFinished();
@@ -516,7 +515,6 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
     std::call_once(d->sideBarFlag, [this, w]() {
         d->sideBar = w;
-        d->sideBar->setCurrentUrl(d->currentUrl);
 
         initializeUi();
         updateUi();   // setSizes is only valid when the splitter is non-empty
@@ -529,8 +527,6 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
     std::call_once(d->workspaceFlag, [this, w]() {
         d->workspace = w;
-
-        d->workspace->setCurrentUrl(d->currentUrl);
         d->workspace->installEventFilter(this);
 
         initializeUi();
@@ -701,6 +697,9 @@ void FileManagerWindow::initializeUi()
             d->centralView->setLayout(mainLayout);
             setCentralWidget(d->centralView);
         }
+
+        // cd
+        cd(d->currentUrl);
     }
 }
 
