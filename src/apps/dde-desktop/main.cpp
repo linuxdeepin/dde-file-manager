@@ -44,6 +44,7 @@ Q_LOGGING_CATEGORY(logAppDesktop, "org.deepin.dde.filemanager.desktop")
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dde_desktop;
+using namespace GlobalDConfDefines::ConfigPath;
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -198,7 +199,7 @@ static void checkUpgrade(DApplication *app)
 static bool isDesktopEnable()
 {
     bool enable = !(dfmbase::DConfigManager::instance()->value(
-                                                               dfmbase::kDefaultCfgPath,
+                                                               kDefaultCfgPath,
                                                                "dd.disabled",
                                                                false)
                             .toBool());
@@ -207,7 +208,7 @@ static bool isDesktopEnable()
 
 static void autoReleaseMemory()
 {
-    bool autoRelease = dfmbase::DConfigManager::instance()->value(dfmbase::kDefaultCfgPath, "dfm.memory.autorelease", true).toBool();
+    bool autoRelease = dfmbase::DConfigManager::instance()->value(kDefaultCfgPath, "dfm.memory.autorelease", true).toBool();
     if (!autoRelease)
         return;
 

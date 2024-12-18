@@ -10,6 +10,8 @@
 #include <QString>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
+#include <QFontMetrics>
+#include <QModelIndex>
 
 namespace dfmbase {
 
@@ -54,6 +56,9 @@ public:
     static QString covertUrlToLocalPath(const QString &url);
     static void boardCastPastData(const QUrl &sourcPath, const QUrl &targetPath,
                                   const QList<QUrl> &files);
+
+    static int getTextLineHeight(const QModelIndex &index, const QFontMetrics &fontMetrics);
+    static int getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics);
 };
 
 }

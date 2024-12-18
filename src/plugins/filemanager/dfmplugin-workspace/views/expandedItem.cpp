@@ -12,6 +12,7 @@
 #include "events/workspaceeventsequence.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -63,9 +64,10 @@ void ExpandedItem::paintEvent(QPaintEvent *)
                     INT_MAX);
 
     QString str = delegate->displayFileName(index);
+    int lineHeight = UniversalUtils::getTextLineHeight(str, delegate->parent()->parent()->fontMetrics());
 
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(str, QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                                pa.fontMetrics().height(), Qt::AlignCenter, &pa));
+                                                                                lineHeight, Qt::AlignCenter, &pa));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
     const FileInfoPointer &info = delegate->parent()->parent()->model()->fileInfo(index);
