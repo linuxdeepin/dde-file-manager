@@ -570,4 +570,22 @@ void UniversalUtils::boardCastPastData(const QUrl &sourcPath, const QUrl &target
     fileMonitor.asyncCallWithArgumentList(QStringLiteral("PrepareSendData"), data);
 }
 
+int UniversalUtils::getTextLineHeight(const QModelIndex &index, const QFontMetrics &fontMetrics)
+{
+    auto text = index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString();
+    return getTextLineHeight(text, fontMetrics);
+}
+
+int UniversalUtils::getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics)
+{
+    if (text.isEmpty())
+        return fontMetrics.height();
+
+    auto textRect = fontMetrics.boundingRect(text);
+    if (textRect.height() <= 0)
+        return fontMetrics.height();
+
+    return textRect.height();
+}
+
 }

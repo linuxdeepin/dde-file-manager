@@ -18,6 +18,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/iconutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -65,8 +66,9 @@ ElideTextLayout *CollectionItemDelegatePrivate::createTextlayout(const QModelInd
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
+    int lineHeight = UniversalUtils::getTextLineHeight(index, q->parent()->fontMetrics());
     layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
-    layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
+    layout->setAttribute(ElideTextLayout::kLineHeight, lineHeight);
     layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignHCenter);
     if (painter) {
         layout->setAttribute(ElideTextLayout::kFont, painter->font());

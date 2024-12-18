@@ -8,6 +8,8 @@
 #include "models/fileviewmodel.h"
 #include "utils/itemdelegatehelper.h"
 
+#include <dfm-base/utils/universalutils.h>
+
 #include <QPainter>
 
 using namespace dfmbase;
@@ -150,7 +152,7 @@ void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index, q
     painter->setPen(Qt::white);
 
     QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
-    int textLineHeight = view->fontMetrics().height();
+    int textLineHeight = UniversalUtils::getTextLineHeight(fileName, view->fontMetrics());
     QRectF boundingRect(kDragIconOutline + (dragIconSize - textWidth) / 2, dragIconSize + kDragIconOutline, textWidth, textLineHeight * 2);
     QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
