@@ -1088,11 +1088,8 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         if (uri.startsWith(Global::Scheme::kSmb)) {
             using AppGA = Application::GenericAttribute;
             bool smbIntegrated = Application::genericAttribute(AppGA::kMergeTheEntriesOfSambaSharedFolders).toBool();
-            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently) {
+            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently)
                 info.savePasswd = NetworkMountPasswdSaveMode::kSaveBeforeLogout;
-                QSettings smbTmpConf("/tmp/dfm_smb_pass_save_mode.ini", QSettings::IniFormat);
-                smbTmpConf.setValue(QUrl(uri).host(), 1);
-            }
         }
     }
 

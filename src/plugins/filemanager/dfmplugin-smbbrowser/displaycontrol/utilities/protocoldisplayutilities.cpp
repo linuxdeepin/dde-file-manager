@@ -22,6 +22,12 @@
 #include <QApplication>
 #include <QSettings>
 
+#undef signals
+extern "C" {
+#include <libsecret/secret.h>
+}
+#define signals public
+
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -343,4 +349,77 @@ bool computer_sidebar_event_calls::sidebarUrlEquals(const QUrl &item, const QUrl
         return pathA == pathB && item.host() == target.host();
     }
     return false;
+}
+
+void secret_utils::forgetPasswordInSession(const QString &host)
+{
+    const SecretSchema schema = {
+        "org.gnome.keyring.NetworkPassword",
+        SECRET_SCHEMA_NONE,
+        { { "user", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "domain", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "server", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "protocol", SECRET_SCHEMA_ATTRIBUTE_STRING } }
+    };
+
+    GError_autoptr error = NULL;
+    SecretService *service = secret_service_get_sync(
+            SECRET_SERVICE_NONE,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error connecting to service:" << error->message;
+        return;
+    }
+
+    SecretCollection *sessionCollection = secret_collection_for_alias_sync(
+            service,
+            "session",   // 使用 "session" 别名获取会话集合
+            SECRET_COLLECTION_LOAD_ITEMS,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error getting session collection:" << error->message;
+        g_error_free(error);
+        g_object_unref(service);
+        return;
+    }
+    if (!sessionCollection) {
+        fmWarning() << "Session collection not found";
+        g_object_unref(service);
+        return;
+    }
+
+    // 在会话集合中搜索密码
+    GHashTable_autoptr query = g_hash_table_new_full(g_str_hash,
+                                                     g_str_equal,
+                                                     g_free,
+                                                     g_free);
+    g_hash_table_insert(query, g_strdup("server"), g_strdup(host.toStdString().c_str()));
+    g_hash_table_insert(query, g_strdup("protocol"), g_strdup("smb"));
+
+    GList_autoptr items = secret_collection_search_sync(
+            sessionCollection,
+            &schema,
+            query,
+            SECRET_SEARCH_ALL,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error searching in session collection:" << error->message;
+        g_object_unref(sessionCollection);
+        g_object_unref(service);
+        return;
+    }
+
+    while (items) {
+        SecretItem *item = reinterpret_cast<SecretItem *>(items->data);
+        items = items->next;
+        char *label = secret_item_get_label(item);
+        fmInfo() << "Remove saved item:" << QString(label);
+        secret_item_delete(item, nullptr, nullptr, nullptr);
+        g_free(label);
+    }
+    g_object_unref(sessionCollection);
+    g_object_unref(service);
 }
