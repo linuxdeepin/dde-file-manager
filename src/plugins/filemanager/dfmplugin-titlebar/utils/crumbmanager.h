@@ -30,7 +30,7 @@ public:
     static CrumbManager *instance();
 
     void registerCrumbCreator(const KeyType &scheme, const CrumbCreator &creator);
-    bool isRegisted(const KeyType &scheme) const;
+    bool isRegistered(const KeyType &scheme) const;
     CrumbInterface *createControllerByUrl(const QUrl &url);
 
 private:
