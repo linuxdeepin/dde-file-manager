@@ -280,7 +280,7 @@ void UrlPushButton::setCrumbDatas(const QList<CrumbData> &datas, bool stacked)
     } else {
         const CrumbData &data = datas.first();
         // 本地文件显示下拉选项
-        d->subDirVisible = (ProtocolUtils::isLocalFile(data.url) && CrumbManager::instance()->isRegisted(data.url.scheme()));
+        d->subDirVisible = (!ProtocolUtils::isRemoteFile(data.url) && CrumbManager::instance()->isRegistered(data.url.scheme()));
         if (data.iconName.isEmpty()) {
             setText(data.displayText);
         } else {

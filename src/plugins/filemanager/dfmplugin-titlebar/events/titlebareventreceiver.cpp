@@ -26,7 +26,7 @@ TitleBarEventReceiver *TitleBarEventReceiver::instance()
 bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QVariantMap &properties)
 {
     Q_ASSERT(!scheme.isEmpty());
-    if (CrumbManager::instance()->isRegisted(scheme)) {
+    if (CrumbManager::instance()->isRegistered(scheme)) {
         fmWarning() << "Crumb sechme " << scheme << "has been resigtered!";
         return false;
     }

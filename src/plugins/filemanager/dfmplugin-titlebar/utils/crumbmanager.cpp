@@ -17,15 +17,15 @@ CrumbManager *CrumbManager::instance()
 
 void CrumbManager::registerCrumbCreator(const CrumbManager::KeyType &scheme, const CrumbManager::CrumbCreator &creator)
 {
-    if (isRegisted(scheme))
+    if (isRegistered(scheme))
         return;
 
     creators.insert(scheme, creator);
 }
 
-bool CrumbManager::isRegisted(const KeyType &KeyType) const
+bool CrumbManager::isRegistered(const KeyType &scheme) const
 {
-    return creators.contains(KeyType) ? true : false;
+    return creators.contains(scheme) ? true : false;
 }
 
 CrumbInterface *CrumbManager::createControllerByUrl(const QUrl &url)
