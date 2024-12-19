@@ -148,11 +148,7 @@ void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
         if (hasMountedOfHost) {
             return;
         } else {
-            QSettings smbTmpConf("/tmp/dfm_smb_pass_save_mode.ini", QSettings::IniFormat);
-            if (smbTmpConf.value(host).toInt() == 1) {
-                computer_sidebar_event_calls::callForgetPasswd(stdRemovedSmb);
-                smbTmpConf.remove(host);
-            }
+            secret_utils::forgetPasswordInSession(host);
         }
 
         if (isShowOfflineItem())
