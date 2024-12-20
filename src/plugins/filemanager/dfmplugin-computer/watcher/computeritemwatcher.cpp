@@ -585,13 +585,6 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
         routeMapper.insertMulti(devUrl, ComputerUtils::makeBurnUrl(devId));
 }
 
-void ComputerItemWatcher::clearAsyncThread()
-{
-    if (fw) {
-        fw->waitForFinished();
-    }
-}
-
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
     QVariantMap map {
@@ -767,15 +760,15 @@ void ComputerItemWatcher::startQueryItems(bool async)
     };
 
     if (async) {
-        fw = new QFutureWatcher<ComputerDataList>();
+        QFutureWatcher<ComputerDataList> *fw { new QFutureWatcher<ComputerDataList>() };
+        fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
         // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
         // on initialize computer view/model, get the cached items in construction.
-        connect(fw, &QFutureWatcher<void>::finished, this, [afterQueryFunc, this]() {
+        connect(fw, &QFutureWatcher<void>::finished, this, [fw, afterQueryFunc, this]() {
             initedDatas = fw->result();
             afterQueryFunc();
             delete fw;
         });
-        fw->setFuture(QtConcurrent::run(this, &ComputerItemWatcher::items));
 
         return;
     }
