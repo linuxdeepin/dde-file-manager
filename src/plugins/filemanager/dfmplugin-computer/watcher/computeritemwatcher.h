@@ -53,6 +53,7 @@ public:
     void handleSidebarItemsVisiable();
 
     void insertUrlMapper(const QString &devId, const QUrl &mntUrl);
+    void clearAsyncThread();
 
     static QString userDirGroup();
     static QString diskGroup();
@@ -127,6 +128,7 @@ private:
     QMap<QString, int> groupIds;
 
     QMap<QUrl, QUrl> routeMapper;
+    QFutureWatcher<ComputerDataList> *fw{ nullptr };
 };
 }
 #endif   // COMPUTERITEMWATCHER_H
