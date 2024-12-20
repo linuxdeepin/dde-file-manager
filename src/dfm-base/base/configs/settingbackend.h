@@ -38,6 +38,8 @@ public:
     void addToSerialDataKey(const QString &key);
     void removeSerialDataKey(const QString &key);
 
+    static QPair<QWidget *, QWidget *> createSliderWithSideIcon(QObject *opt);
+
 Q_SIGNALS:
     void optionSetted(const QString &key, const QVariant &value);
 

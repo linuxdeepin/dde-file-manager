@@ -7,9 +7,13 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/settingdialog/customsettingitemregister.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <DSettings>
+#include <DLabel>
+#include <DSlider>
+#include <DSettingsOption>
 
 #include <QDebug>
 #include <QApplication>
@@ -17,6 +21,8 @@
 using namespace dfmbase;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
+DFMGLOBAL_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 #define TOP_GROUP_BASE "00_base"
 #define LV2_GROUP_OPEN_ACTION "00_base.00_open_action"
@@ -38,7 +44,9 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
     { LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
-    { LV2_GROUP_VIEW ".01_view_mode", Application::kViewMode },
+    { LV2_GROUP_VIEW ".01_icon_grid_density", Application::kGridDensityLevel },
+    { LV2_GROUP_VIEW ".02_list_height", Application::kListHeightLevel },
+    { LV2_GROUP_VIEW ".03_view_mode", Application::kViewMode },
     { LV2_GROUP_FILES_AND_FOLDERS ".02_mixed_sort", Application::kFileAndDirMixedSort },
 };
 
@@ -212,6 +220,9 @@ void SettingBackend::onValueChanged(int attribute, const QVariant &value)
 
 void SettingBackend::initPresetSettingConfig()
 {
+    // register custom setting item type
+    CustomSettingItemRegister::instance()->registCustomSettingItemType(SettingDialog::kSettingSliderItem, &SettingBackend::createSliderWithSideIcon);
+
     initBasicSettingConfig();
     initWorkspaceSettingConfig();
     initAdvanceSettingConfig();
@@ -316,20 +327,40 @@ void SettingBackend::initWorkspaceSettingConfig()
     ins->addGroup(TOP_GROUP_WORKSPACE, tr("Workspace"));
     ins->addGroup(LV2_GROUP_VIEW, tr("View"));
 
-    int iconSizeLevelMax = (Global::kIconSizeMax - Global::kIconSizeMin) / Global::kIconSizeStep;
+    int iconSizeLevelMax = Global::kIconSizeList().size() - 1;
     int iconSizeLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
                         tr("Default icon size:"),
+                        "dfm_viewoptions_minicon",
+                        "dfm_viewoptions_maxicon",
                         iconSizeLevelMax,
                         iconSizeLevelMin,
                         5);
+    int iconGridDensityLevelMax = Global::kIconGridDensity().size() - 1;
+    int iconGridDensityLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".01_icon_grid_density",
+                        tr("Default icon grid density:"),
+                        "dfm_viewoptions_mingrid",
+                        "dfm_viewoptions_maxgrid",
+                        iconGridDensityLevelMax,
+                        iconGridDensityLevelMin,
+                        2);
+    int listHeightLevelMax = Global::kListHeight().size() - 1;
+    int listHeightLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".02_list_height",
+                        tr("Default list height:"),
+                        "dfm_viewoptions_minlist",
+                        "dfm_viewoptions_maxlist",
+                        listHeightLevelMax,
+                        listHeightLevelMin,
+                        1);
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".01_view_mode",
+    ins->addComboboxConfig(LV2_GROUP_VIEW ".03_view_mode",
                            tr("Default view:"),
                            { { "values", viewModeValues },
                              { "keys", viewModeKeys } },
@@ -443,4 +474,37 @@ QVariant SettingBackendPrivate::getByFunc(const QString &key)
             return getter();
     }
     return QVariant();
+}
+
+QPair<QWidget *, QWidget *> SettingBackend::createSliderWithSideIcon(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+
+    const QString text = option->name();
+    DLabel *label = new DLabel(text);
+
+    DSlider *slider = new DSlider;
+    slider->setObjectName("OptionQSlider");
+    slider->setAccessibleName("OptionQSlider");
+    slider->slider()->setOrientation(Qt::Horizontal);
+    slider->setMaximum(option->data("max").toInt());
+    slider->setMinimum(option->data("min").toInt());
+    slider->setLeftIcon(QIcon::fromTheme(option->data("left-icon").toString()));
+    slider->setRightIcon(QIcon::fromTheme(option->data("right-icon").toString()));
+    slider->setValue(option->value().toInt());
+    slider->setIconSize(QSize(20, 20));
+
+    option->connect(slider, &DSlider::valueChanged,
+    option, [ = ](int value) {
+        slider->blockSignals(true);
+        option->setValue(value);
+        slider->blockSignals(false);
+    });
+    option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
+    slider, [ = ](const QVariant & value) {
+        slider->setValue(value.toInt());
+        slider->update();
+    });
+
+    return QPair<QWidget *, QWidget *>(label, slider);
 }

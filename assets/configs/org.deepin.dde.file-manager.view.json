@@ -34,6 +34,39 @@
             "description":"Control display preview",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.icon.size.level": {
+            "value":5,
+            "serial":0,
+            "flags":[],
+            "name":"Icon size level",
+            "name[zh_CN]":"图标大小级别",
+            "description[zh_CN]":"控制图标大小级别",
+            "description":"Control icon size level",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.icon.griddensity.level": {
+            "value":2,
+            "serial":0,
+            "flags":[],
+            "name":"Icon grid density level",
+            "name[zh_CN]":"图标网格密度级别",
+            "description[zh_CN]":"控制图标网格密度级别",
+            "description":"Control icon grid density level",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.list.height.level": {
+            "value":1,
+            "serial":0,
+            "flags":[],
+            "name":"List height level",
+            "name[zh_CN]":"列表高度级别",
+            "description[zh_CN]":"控制列表高度级别",
+            "description":"Control list height level",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }
