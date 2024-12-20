@@ -6,6 +6,7 @@
 #include <dfm-base/utils/desktopfile.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QDir>
@@ -284,4 +285,17 @@ QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)
     map["DeepinVendor"] = desktopFile.desktopDeepinVendor();
 
     return map;
+}
+
+QSharedPointer<FileInfo> DesktopFileInfo::convert(QSharedPointer<FileInfo> fileInfo)
+{
+    const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
+    // invoking suffix/mimeTypeName might cost huge time
+    if (ProtocolUtils::isRemoteFile(url))
+        return fileInfo;
+
+    if (FileUtils::isDesktopFileInfo(fileInfo))
+        return FileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url, fileInfo));
+
+    return fileInfo;
 }
