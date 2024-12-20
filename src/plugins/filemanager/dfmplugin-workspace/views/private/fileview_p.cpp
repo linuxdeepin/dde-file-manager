@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
@@ -86,8 +87,8 @@ void FileViewPrivate::initIconModeView()
 
     if (statusBar) {
         statusBar->setScalingVisible(true);
-        q->setIconSize(QSize(iconSizeList()[currentIconSizeLevel],
-                             iconSizeList()[currentIconSizeLevel]));
+        q->setIconSize(QSize(kIconSizeList()[currentIconSizeLevel],
+                             kIconSizeList()[currentIconSizeLevel]));
         QSignalBlocker blocker(statusBar->scalingSlider());
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }

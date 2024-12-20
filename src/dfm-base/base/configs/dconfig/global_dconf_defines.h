@@ -25,6 +25,16 @@ inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.sing
 }   // namespace BaseConfig
 
 /*!
+ * \brief 视图相关配置项
+ */
+namespace ViewConfig {
+inline constexpr char kIconSizeLevel[] { "dfm.icon.size.level" };
+inline constexpr char kIconGridDensityLevel[] { "dfm.icon.griddensity.level" };
+inline constexpr char kListHeightLevel[] { "dfm.list.height.level" };
+}   // namespace ViewConfig
+
+
+/*!
  * \brief 动画相关配置项
  */
 namespace AnimationConfig {
