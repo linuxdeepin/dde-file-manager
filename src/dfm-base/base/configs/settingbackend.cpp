@@ -9,6 +9,7 @@
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/settingdialog/customsettingitemregister.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #include <DSettings>
 #include <DLabel>
@@ -220,9 +221,6 @@ void SettingBackend::onValueChanged(int attribute, const QVariant &value)
 
 void SettingBackend::initPresetSettingConfig()
 {
-    // register custom setting item type
-    CustomSettingItemRegister::instance()->registCustomSettingItemType(SettingDialog::kSettingSliderItem, &SettingBackend::createSliderWithSideIcon);
-
     initBasicSettingConfig();
     initWorkspaceSettingConfig();
     initAdvanceSettingConfig();
@@ -327,7 +325,9 @@ void SettingBackend::initWorkspaceSettingConfig()
     ins->addGroup(TOP_GROUP_WORKSPACE, tr("Workspace"));
     ins->addGroup(LV2_GROUP_VIEW, tr("View"));
 
-    int iconSizeLevelMax = Global::kIconSizeList().size() - 1;
+    ViewDefines viewDefines;
+
+    int iconSizeLevelMax = viewDefines.iconSizeCount() - 1;
     int iconSizeLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
                         tr("Default icon size:"),
@@ -336,7 +336,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                         iconSizeLevelMax,
                         iconSizeLevelMin,
                         5);
-    int iconGridDensityLevelMax = Global::kIconGridDensity().size() - 1;
+    int iconGridDensityLevelMax = viewDefines.iconGridDensityCount() - 1;
     int iconGridDensityLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".01_icon_grid_density",
                         tr("Default icon grid density:"),
@@ -345,7 +345,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                         iconGridDensityLevelMax,
                         iconGridDensityLevelMin,
                         2);
-    int listHeightLevelMax = Global::kListHeight().size() - 1;
+    int listHeightLevelMax = viewDefines.listHeightCount() - 1;
     int listHeightLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".02_list_height",
                         tr("Default list height:"),
@@ -360,13 +360,13 @@ void SettingBackend::initWorkspaceSettingConfig()
         viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".03_view_mode",
+    ins->addComboboxConfig(LV2_GROUP_VIEW ".02_view_mode",
                            tr("Default view:"),
                            { { "values", viewModeValues },
                              { "keys", viewModeKeys } },
                            1);
-    ins->addConfig(LV2_GROUP_VIEW ".02_restore_view_mode",
-                   { { "key", "02_restore_view_mode" },
+    ins->addConfig(LV2_GROUP_VIEW ".03_restore_view_mode",
+                   { { "key", "03_restore_view_mode" },
                      { "desc", tr("Restore default view mode for all directories") },
                      { "text", tr("Restore default view mode") },
                      { "type", "pushButton" },
@@ -474,37 +474,4 @@ QVariant SettingBackendPrivate::getByFunc(const QString &key)
             return getter();
     }
     return QVariant();
-}
-
-QPair<QWidget *, QWidget *> SettingBackend::createSliderWithSideIcon(QObject *opt)
-{
-    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
-
-    const QString text = option->name();
-    DLabel *label = new DLabel(text);
-
-    DSlider *slider = new DSlider;
-    slider->setObjectName("OptionQSlider");
-    slider->setAccessibleName("OptionQSlider");
-    slider->slider()->setOrientation(Qt::Horizontal);
-    slider->setMaximum(option->data("max").toInt());
-    slider->setMinimum(option->data("min").toInt());
-    slider->setLeftIcon(QIcon::fromTheme(option->data("left-icon").toString()));
-    slider->setRightIcon(QIcon::fromTheme(option->data("right-icon").toString()));
-    slider->setValue(option->value().toInt());
-    slider->setIconSize(QSize(20, 20));
-
-    option->connect(slider, &DSlider::valueChanged,
-    option, [ = ](int value) {
-        slider->blockSignals(true);
-        option->setValue(value);
-        slider->blockSignals(false);
-    });
-    option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
-    slider, [ = ](const QVariant & value) {
-        slider->setValue(value.toInt());
-        slider->update();
-    });
-
-    return QPair<QWidget *, QWidget *>(label, slider);
 }

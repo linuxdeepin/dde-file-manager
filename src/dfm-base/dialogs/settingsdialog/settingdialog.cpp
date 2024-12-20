@@ -18,6 +18,8 @@
 #include <DSettingsWidgetFactory>
 #include <dsettingsbackend.h>
 #include <DPushButton>
+#include <DSlider>
+#include <DLabel>
 
 #include <QWindow>
 #include <QFile>
@@ -151,6 +153,7 @@ void SettingDialog::initialze()
 
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
     widgetFactory()->registerWidget("pushButton", &SettingDialog::createPushButton);
+    widgetFactory()->registerWidget("sliderWithSideIcon", &SettingDialog::createSliderWithSideIcon);
 
     auto creators = CustomSettingItemRegister::instance()->getCreators();
     auto iter = creators.cbegin();
@@ -309,6 +312,46 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
     });
 
     return qMakePair(new QLabel(desc), rightWidget);
+}
+
+
+QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+
+    const QString &text = option->name();
+    DLabel *label = new DLabel(text);
+
+    DSlider *slider = new DSlider;
+    slider->setObjectName("OptionQSlider");
+    slider->setAccessibleName("OptionQSlider");
+    slider->slider()->setOrientation(Qt::Horizontal);
+    slider->setMaximum(option->data("max").toInt());
+    slider->setMinimum(option->data("min").toInt());
+    const QString &leftIcon = option->data("left-icon").toString();
+    const QString &rightIcon = option->data("right-icon").toString();
+    if (!leftIcon.isEmpty()) {
+        slider->setLeftIcon(QIcon::fromTheme(leftIcon));
+    }
+    if (!rightIcon.isEmpty()) {
+        slider->setRightIcon(QIcon::fromTheme(rightIcon));
+    }
+    slider->setValue(option->value().toInt());
+    slider->setIconSize(QSize(20, 20));
+
+    option->connect(slider, &DSlider::valueChanged,
+    option, [ = ](int value) {
+        slider->blockSignals(true);
+        option->setValue(value);
+        slider->blockSignals(false);
+    });
+    option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
+    slider, [ = ](const QVariant & value) {
+        slider->setValue(value.toInt());
+        slider->update();
+    });
+
+    return qMakePair(label, slider);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)

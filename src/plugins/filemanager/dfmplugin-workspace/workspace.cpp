@@ -9,7 +9,6 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 #include "utils/filedatamanager.h"
-#include "utils/workspaceconfighelper.h"
 #include "events/workspaceeventreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
@@ -29,9 +28,19 @@
 #include <dfm-framework/dpf.h>
 
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_workspace {
 DFM_LOG_REISGER_CATEGORY(DPWORKSPACE_NAMESPACE)
+
+/*!
+ * \brief 视图相关配置项
+ */
+namespace ViewConfig {
+inline constexpr char kIconSizeLevel[] { "dfm.icon.size.level" };
+inline constexpr char kIconGridDensityLevel[] { "dfm.icon.griddensity.level" };
+inline constexpr char kListHeightLevel[] { "dfm.list.height.level" };
+}   // namespace ViewConfig
 
 void Workspace::initialize()
 {
@@ -45,7 +54,7 @@ void Workspace::initialize()
 
     WorkspaceEventReceiver::instance()->initConnection();
 
-    WorkspaceConfigHelper::initConfig();
+    initConfig();
 }
 
 bool Workspace::start()
@@ -98,6 +107,104 @@ void Workspace::onWindowOpened(quint64 windId)
 void Workspace::onWindowClosed(quint64 windId)
 {
     WorkspaceHelper::instance()->removeWorkspace(windId);
+}
+
+void Workspace::initConfig() {
+    SyncPair thumbnailPair {
+        { SettingType::kGenAttr, Application::kShowThunmbnailInRemote },
+        { DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey },
+        saveRemoteThumbnailToConf,
+        syncRemoteThumbnailToAppSet,
+        isRemoteThumbnailConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(thumbnailPair);
+
+    SyncPair iconSizePair {
+        { SettingType::kAppAttr, Application::kIconSizeLevel },
+        { kViewDConfName, ViewConfig::kIconSizeLevel },
+        saveIconSizeToConf,
+        syncIconSizeToAppSet,
+        isIconSizeConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(iconSizePair);
+
+    SyncPair gridDensityPair {
+        { SettingType::kAppAttr, Application::kGridDensityLevel },
+        { kViewDConfName, ViewConfig::kIconGridDensityLevel },
+        saveGridDensityToConf,
+        syncGridDensityToAppSet,
+        isGridDensityConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(gridDensityPair);
+
+    SyncPair listHeightPair {
+        { SettingType::kAppAttr, Application::kListHeightLevel },
+        { kViewDConfName, ViewConfig::kListHeightLevel },
+        saveListHeightToConf,
+        syncListHeightToAppSet,
+        isListHeightConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(listHeightPair);
+}
+
+void Workspace::saveRemoteThumbnailToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey, var);
+}
+
+void Workspace::syncRemoteThumbnailToAppSet(const QString &, const QString &, const QVariant &var)
+{
+    Application::instance()->setGenericAttribute(Application::kShowThunmbnailInRemote, var.toBool());
+}
+
+bool Workspace::isRemoteThumbnailConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toBool() && dset.toBool();
+}
+
+void Workspace::saveIconSizeToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kIconSizeLevel, var);
+}
+
+void Workspace::syncIconSizeToAppSet(const QString &, const QString &, const QVariant &var)
+{
+    Application::instance()->setAppAttribute(Application::kIconSizeLevel, var.toInt());
+}
+
+bool Workspace::isIconSizeConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toInt() == dset.toInt();
+}
+
+void Workspace::saveGridDensityToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kIconGridDensityLevel, var);
+}
+
+void Workspace::syncGridDensityToAppSet(const QString &, const QString &, const QVariant &var)
+{
+    Application::instance()->setAppAttribute(Application::kGridDensityLevel, var.toInt());
+}
+
+bool Workspace::isGridDensityConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toInt() == dset.toInt();
+}
+
+void Workspace::saveListHeightToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kListHeightLevel, var);
+}
+
+void Workspace::syncListHeightToAppSet(const QString &, const QString &, const QVariant &var)
+{
+    Application::instance()->setAppAttribute(Application::kListHeightLevel, var.toInt());
+}
+
+bool Workspace::isListHeightConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toInt() == dset.toInt();
 }
 
 }   // namespace dfmplugin_workspace

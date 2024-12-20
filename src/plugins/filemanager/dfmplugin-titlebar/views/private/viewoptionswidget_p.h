@@ -8,6 +8,7 @@
 #include "dfmplugin_titlebar_global.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #include <DFrame>
 #include <DSlider>
@@ -26,6 +27,7 @@ class ViewOptionsWidgetPrivate : public QObject
     ViewOptionsWidget *q { nullptr };
 
     QUrl fileUrl;
+    DFMBASE_NAMESPACE::ViewDefines viewDefines;
 
     // title
     DTK_WIDGET_NAMESPACE::DLabel *title { nullptr };

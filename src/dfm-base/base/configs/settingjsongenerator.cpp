@@ -214,6 +214,11 @@ bool SettingJsonGenerator::addComboboxConfig(const QString &key, const QString &
     return addConfig(key, config);
 }
 
+bool SettingJsonGenerator::addSliderConfig(const QString &key, const QString &name, int maxVal, int minVal, int defaultVal)
+{
+    return addSliderConfig(key, name, "", "", maxVal, minVal, defaultVal);
+}
+
 bool SettingJsonGenerator::addSliderConfig(const QString &key,
                                            const QString &name,
                                            const QString &leftIcon,
@@ -225,7 +230,7 @@ bool SettingJsonGenerator::addSliderConfig(const QString &key,
     QVariantMap config {
         { "key", key.mid(key.lastIndexOf(".") + 1) },
         { "name", name },
-        { "type", SettingDialog::kSettingSliderItem },
+        { "type", "sliderWithSideIcon" },
         { "max", maxVal},
         { "min", minVal},
         { "default", defaultVal },

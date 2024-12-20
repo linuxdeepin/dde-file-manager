@@ -8,6 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #include <QModelIndex>
 #include <QSize>
@@ -38,6 +39,7 @@ public:
 
     AbstractItemPaintProxy *paintProxy { nullptr };
     QWidget *commitDataCurentWidget { nullptr };
+    DFMBASE_NAMESPACE::ViewDefines viewDefines;
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)

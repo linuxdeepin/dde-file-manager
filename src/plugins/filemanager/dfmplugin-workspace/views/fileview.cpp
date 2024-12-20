@@ -42,6 +42,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileinfohelper.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -2048,8 +2049,9 @@ void FileView::initializeDelegate()
 
 void FileView::initializeStatusBar()
 {
+    ViewDefines viewDefines;
     d->statusBar = new FileViewStatusBar(this);
-    d->statusBar->resetScalingSlider(kIconSizeList().length() - 1);
+    d->statusBar->resetScalingSlider(viewDefines.iconSizeCount() - 1);
 
     d->updateStatusBarTimer = new QTimer(this);
     d->updateStatusBarTimer->setInterval(100);

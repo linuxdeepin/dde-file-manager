@@ -313,7 +313,7 @@ void ListItemDelegate::updateItemSizeHint()
     Q_D(ListItemDelegate);
 
     d->textLineHeight = parent()->parent()->fontMetrics().height();
-    d->itemSizeHint = QSize(-1, qMax(int(kListHeight().at(d->currentHeightLevel)), d->textLineHeight));
+    d->itemSizeHint = QSize(-1, qMax(int(d->viewDefines.listHeight(d->currentHeightLevel)), d->textLineHeight));
 }
 
 QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
@@ -340,7 +340,7 @@ void ListItemDelegate::setItemMinimumHeightByHeightLevel(int level)
 {
     Q_D(ListItemDelegate);
 
-    if (level < 0 || level >= kListHeight().length())
+    if (level < 0 || level >= d->viewDefines.listHeightCount())
         return;
 
     d->currentHeightLevel = level;
