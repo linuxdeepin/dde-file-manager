@@ -2049,7 +2049,7 @@ void FileView::initializeDelegate()
 void FileView::initializeStatusBar()
 {
     d->statusBar = new FileViewStatusBar(this);
-    d->statusBar->resetScalingSlider(iconSizeList().length() - 1);
+    d->statusBar->resetScalingSlider(kIconSizeList().length() - 1);
 
     d->updateStatusBarTimer = new QTimer(this);
     d->updateStatusBarTimer->setInterval(100);

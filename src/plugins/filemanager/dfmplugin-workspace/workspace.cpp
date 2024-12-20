@@ -9,6 +9,7 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 #include "utils/filedatamanager.h"
+#include "utils/workspaceconfighelper.h"
 #include "events/workspaceeventreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
@@ -23,6 +24,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/configs/configsynchronizer.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -43,7 +45,7 @@ void Workspace::initialize()
 
     WorkspaceEventReceiver::instance()->initConnection();
 
-    initConfig();
+    WorkspaceConfigHelper::initConfig();
 }
 
 bool Workspace::start()
@@ -98,30 +100,4 @@ void Workspace::onWindowClosed(quint64 windId)
     WorkspaceHelper::instance()->removeWorkspace(windId);
 }
 
-void Workspace::initConfig()
-{
-    SyncPair pair {
-        { SettingType::kGenAttr, Application::kShowThunmbnailInRemote },
-        { DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey },
-        saveRemoteToConf,
-        syncRemoteToAppSet,
-        isRemoteConfEqual
-    };
-    ConfigSynchronizer::instance()->watchChange(pair);
-}
-
-void Workspace::saveRemoteToConf(const QVariant &var)
-{
-    DConfigManager::instance()->setValue(DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey, var);
-}
-
-void Workspace::syncRemoteToAppSet(const QString &, const QString &, const QVariant &var)
-{
-    Application::instance()->setGenericAttribute(Application::kShowThunmbnailInRemote, var.toBool());
-}
-
-bool Workspace::isRemoteConfEqual(const QVariant &dcon, const QVariant &dset)
-{
-    return dcon.toBool() && dset.toBool();
-}
 }   // namespace dfmplugin_workspace

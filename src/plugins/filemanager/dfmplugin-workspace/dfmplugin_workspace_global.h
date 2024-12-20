@@ -35,44 +35,6 @@ enum class DirOpenMode : uint8_t {
     // kForceOpenNewWindow // Todo(yanghao): ???
 };
 
-// view defines
-inline QList<int> iconSizeList()
-{
-    static const QList<int> sizes = []() {
-        QList<int> list;
-        list.reserve(62);  // 预分配内存，避免多次重新分配
-        for (int size = dfmbase::Global::kIconSizeMin; size <= dfmbase::Global::kIconSizeMax; size += dfmbase::Global::kIconSizeStep) {
-            list.append(size);
-        }
-        return list;
-    }();
-    return sizes;
-}
-
-inline QList<int> iconGridWidth()
-{
-    static const QList<int> widths = []() {
-        QList<int> list;
-        list.reserve(10);  // 预分配内存，避免多次重新分配
-        for (int size = 60; size <= 150; size += 10) {
-            list.append(size);
-        }
-        return list;
-    }();
-    return widths;
-}
-
-inline QList<int> listHeight()
-{
-    static const QList<int> heights { 24, 32, 48 };
-    return heights;
-}
-
-inline QList<int> iconWidth()
-{
-    return { 44, 36, 28, 28, 28, 28, 28, 32 };
-}
-
 enum class RectOfItemType : uint8_t {
     kItemIconRect,
     kItemTreeArrowRect
