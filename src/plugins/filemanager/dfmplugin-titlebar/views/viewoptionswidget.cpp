@@ -295,26 +295,30 @@ void ViewOptionsWidget::exec(const QPoint &pos, DFMBASE_NAMESPACE::Global::ViewM
     
     // Calculate appropriate display position to ensure widget stays within screen bounds
     QPoint showPos = pos;
-    QRect screenRect = QApplication::screenAt(pos)->availableGeometry();
-    
-    // Check right boundary
-    if (pos.x() + width() > screenRect.right()) {
-        showPos.setX(screenRect.right() - width());
-    }
-    
-    // Check left boundary 
-    if (showPos.x() < screenRect.left()) {
-        showPos.setX(screenRect.left());
-    }
-    
-    // Check bottom boundary
-    if (pos.y() + height() > screenRect.bottom()) {
-        showPos.setY(screenRect.bottom() - height());
-    }
-    
-    // Check top boundary
-    if (showPos.y() < screenRect.top()) {
-        showPos.setY(screenRect.top());
+
+    if (QApplication::screenAt(pos)) {
+        
+        QRect screenRect = QApplication::screenAt(pos)->availableGeometry();
+
+        // Check right boundary
+        if (pos.x() + width() > screenRect.right()) {
+            showPos.setX(screenRect.right() - width());
+        }
+        
+        // Check left boundary 
+        if (showPos.x() < screenRect.left()) {
+            showPos.setX(screenRect.left());
+        }
+        
+        // Check bottom boundary
+        if (pos.y() + height() > screenRect.bottom()) {
+            showPos.setY(screenRect.bottom() - height());
+        }
+        
+        // Check top boundary
+        if (showPos.y() < screenRect.top()) {
+            showPos.setY(screenRect.top());
+        }
     }
     
     move(showPos);
