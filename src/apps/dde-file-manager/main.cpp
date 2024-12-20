@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
     } else {
         qCInfo(logAppFileManager) << "new client";
         a.handleNewClient(uniqueKey);
-        return 0;
+        ::_exit(0);
     }
 
     // NOTE: temp code!!!!!!!!!!!
@@ -353,16 +353,16 @@ int main(int argc, char *argv[])
 
     qCWarning(logAppFileManager) << " --- app start --- pid = " << a.applicationPid();
     int ret { a.exec() };
-
+    a.closeServer();
     mo->unRegisterDBus();
+
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     bool isSigterm { qApp->property("SIGTERM").toBool() };
     if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
-        a.closeServer();
         QProcess::startDetached(QString(argv[0]), { "-d" });
     }
 
-    return ret;
+    ::_exit(ret);
 }
