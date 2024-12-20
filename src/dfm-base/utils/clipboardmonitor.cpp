@@ -92,23 +92,23 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
     : QThread(parent)
 {
     // 创建 XCB 连接
-        connection = nullptr;
-        connection = xcb_connect(nullptr, nullptr);
-        if (xcb_connection_has_error(connection)) {
-            for (size_t i = 0; i < 100; i++) {
-                std::string displayStr(":");
-                displayStr += std::to_string(i);
-                // setenv("DISPLAY",displayStr.c_str(),1);
-                connection = xcb_connect(displayStr.c_str(), nullptr);
-                if (xcb_connection_has_error(connection) == 0) {
-                    break;
-                }
+    connection = nullptr;
+    connection = xcb_connect(nullptr, nullptr);
+    if (xcb_connection_has_error(connection)) {
+        for (size_t i = 0; i < 100; i++) {
+            std::string displayStr(":");
+            displayStr += std::to_string(i);
+            // setenv("DISPLAY",displayStr.c_str(),1);
+            connection = xcb_connect(displayStr.c_str(), nullptr);
+            if (xcb_connection_has_error(connection) == 0) {
+                break;
             }
         }
+    }
 
-        if (xcb_connection_has_error(connection)) {
-            return;
-        }
+    if (xcb_connection_has_error(connection)) {
+        return;
+    }
 
 
 
@@ -121,17 +121,10 @@ ClipboardMonitor::ClipboardMonitor(QObject *parent)
     m_queryExtension = queryExtension;
     xcb_discard_reply(connection, xcb_xfixes_query_version(connection, 1, 0).sequence);
     screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
-    connect(qApp, &QApplication::aboutToQuit, this, [this](){
-        stop();
-        this->wait(100);
-    });
 }
 
 ClipboardMonitor::~ClipboardMonitor()
 {
-    if (connection) {
-        xcb_disconnect(connection);
-    }
 }
 
 void ClipboardMonitor::stop()
@@ -175,7 +168,8 @@ void ClipboardMonitor::run()
     while (true) {
         xcb_generic_event_t *event = xcb_wait_for_event(connection);
         if (stoped) {
-            free(event);
+            if (event)
+                free(event);
             break;
         }
         if (event) {
