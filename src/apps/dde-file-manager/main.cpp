@@ -355,12 +355,12 @@ int main(int argc, char *argv[])
     int ret { a.exec() };
 
     mo->unRegisterDBus();
+    a.closeServer();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     bool isSigterm { qApp->property("SIGTERM").toBool() };
     if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
-        a.closeServer();
         QProcess::startDetached(QString(argv[0]), { "-d" });
     }
 
