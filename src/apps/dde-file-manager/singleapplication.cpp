@@ -36,7 +36,6 @@ SingleApplication::~SingleApplication()
 void SingleApplication::initConnect()
 {
     connect(localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
-    connect(this, &QApplication::aboutToQuit, this, &SingleApplication::closeServer);
 }
 
 QLocalSocket *SingleApplication::getNewClientConnect(const QString &key, const QByteArray &message)
