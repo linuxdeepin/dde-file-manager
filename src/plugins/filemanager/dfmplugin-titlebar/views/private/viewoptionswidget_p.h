@@ -58,6 +58,8 @@ private:
     void initConnect();
     void setUrl(const QUrl &url);
     void switchMode(ViewMode mode);
+
+    QList<QString> getStringListByIntList(const QList<int> &intList);
 };
 
 }   // namespace dfmplugin_titlebar

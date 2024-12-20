@@ -22,6 +22,7 @@
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 using DFMBASE_NAMESPACE::Global::ViewMode;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
@@ -32,9 +33,6 @@ static constexpr int kViewOptionsSpacing { 10 };
 static constexpr int kViewOptionsSingleSpacing { 5 };
 static constexpr int kViewOptionsFrameMargin { 6 };
 static constexpr int kViewOptionsFrameHeight { 40 };
-static constexpr int kViewOptionsMinGridDensity { 60 };
-static constexpr int kViewOptionsMaxGridDensity { 150 };
-static constexpr int kViewOptionsGridDensityStep { 10 };
 
 ViewOptionsWidgetPrivate::ViewOptionsWidgetPrivate(ViewOptionsWidget *qq)
     : QObject(qq), q(qq)
@@ -77,8 +75,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     iconSizeSliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     iconSizeSlider = new DSlider(Qt::Horizontal, iconSizeWidget);
-    int iconSizeRange = (Global::kIconSizeMax - Global::kIconSizeMin) / Global::kIconSizeStep;
-    iconSizeSlider->setMaximum(iconSizeRange);
+    iconSizeSlider->setMaximum(kIconSizeList().size() - 1);
     iconSizeSlider->setMinimum(0);
     iconSizeSlider->setValue(Application::instance()->appAttribute(Application::kIconSizeLevel).toInt());
     iconSizeSlider->slider()->setPageStep(1);
@@ -111,8 +108,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     gridDensitySliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                                 kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     gridDensitySlider = new DSlider(Qt::Horizontal, gridDensityWidget);
-    int gridDensityRange = (kViewOptionsMaxGridDensity - kViewOptionsMinGridDensity) / kViewOptionsGridDensityStep;
-    gridDensitySlider->setMaximum(gridDensityRange);
+    gridDensitySlider->setMaximum(kIconGridDensity().size() - 1);
     gridDensitySlider->setMinimum(0);
     gridDensitySlider->setValue(Application::instance()->appAttribute(Application::kGridDensityLevel).toInt());
     gridDensitySlider->slider()->setPageStep(1);
@@ -145,7 +141,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     listHeightSliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                                kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     listHeightSlider = new DSlider(Qt::Horizontal, listHeightWidget);
-    listHeightSlider->setMaximum(2);
+    listHeightSlider->setMaximum(kListHeight().size() - 1);
     listHeightSlider->setMinimum(0);
     listHeightSlider->setValue(Application::instance()->appAttribute(Application::kListHeightLevel).toInt());
     listHeightSlider->slider()->setPageStep(1);
@@ -275,6 +271,15 @@ void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)
         widgetHeight += singleHeight;
     }
     q->setFixedHeight(widgetHeight);
+}
+
+QList<QString> ViewOptionsWidgetPrivate::getStringListByIntList(const QList<int> &intList)
+{
+    QList<QString> stringList;
+    for (int value : intList) {
+        stringList << QString::number(value);
+    }
+    return stringList;
 }
 
 ViewOptionsWidget::ViewOptionsWidget(QWidget *parent)

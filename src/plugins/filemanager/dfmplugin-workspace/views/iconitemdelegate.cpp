@@ -238,10 +238,10 @@ void IconItemDelegate::updateItemSizeHint()
     Q_D(IconItemDelegate);
 
     int width = parent()->parent()->iconSize().width();
-    if (iconSizeList().indexOf(width) >= 0)
+    if (kIconSizeList().indexOf(width) >= 0)
         width += kIconModeIconSpacing * 2;
 
-    int customWidth = iconGridWidth().at(d->currentIconGridWidthIndex);
+    int customWidth = kIconGridDensity().at(d->currentIconGridWidthIndex);
     if (customWidth > width)
         width = customWidth;
 
@@ -267,7 +267,7 @@ int IconItemDelegate::minimumIconSizeLevel() const
 
 int IconItemDelegate::maximumIconSizeLevel() const
 {
-    return iconSizeList().count() - 1;
+    return kIconSizeList().count() - 1;
 }
 
 int IconItemDelegate::increaseIcon()
@@ -316,7 +316,7 @@ void IconItemDelegate::setItemMinimumWidthByWidthLevel(int level)
 {
     Q_D(IconItemDelegate);
 
-    if (level >= 0 && level < iconGridWidth().count()) {
+    if (level >= 0 && level < kIconGridDensity().count()) {
         d->currentIconGridWidthIndex = level;
         updateItemSizeHint();
     }
@@ -652,7 +652,7 @@ QSize IconItemDelegate::iconSizeByIconSizeLevel() const
 {
     Q_D(const IconItemDelegate);
 
-    int size = iconSizeList().at(d->currentIconSizeIndex);
+    int size = kIconSizeList().at(d->currentIconSizeIndex);
 
     return QSize(size, size);
 }
