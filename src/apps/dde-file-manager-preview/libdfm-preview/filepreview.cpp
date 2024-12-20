@@ -12,6 +12,7 @@
 #include <dfm-base/file/local/asyncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
 
 #include <QSurfaceFormat>
 
@@ -25,7 +26,8 @@ static FilePreview *filePreviewIns = nullptr;
 extern "C" {
 #endif
 
-int initFilePreview() {
+int initFilePreview()
+{
     filePreviewIns = new FilePreview;
     filePreviewIns->initialize();
     filePreviewIns->start();
@@ -57,6 +59,8 @@ void FilePreview::initialize()
     }
 
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
+    InfoFactory::regInfoTransFunc<FileInfo>(Global::Scheme::kFile, DesktopFileInfo::convert);
+    UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/", QIcon(), false, QObject::tr("System Disk"));
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
@@ -77,7 +81,7 @@ bool FilePreview::start()
 
 void FilePreview::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
 {
-    if(isPreviewEnabled())
+    if (isPreviewEnabled())
         PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl);
 }
 

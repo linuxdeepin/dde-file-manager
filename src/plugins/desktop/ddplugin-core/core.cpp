@@ -52,6 +52,7 @@ DFM_LOG_REISGER_CATEGORY(DDPCORE_NAMESPACE)
 static void registerFileSystem()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
+    InfoFactory::regInfoTransFunc<FileInfo>(Global::Scheme::kFile, DesktopFileInfo::convert);
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);

@@ -52,6 +52,7 @@ void Core::initialize()
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/", QIcon(), false, QObject::tr("System Disk"));
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regInfoTransFunc<FileInfo>(Global::Scheme::kFile, DesktopFileInfo::convert);
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
