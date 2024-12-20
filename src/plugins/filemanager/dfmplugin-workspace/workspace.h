@@ -112,6 +112,25 @@ signals:
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);
+
+private:
+    void initConfig();
+
+    static void saveRemoteThumbnailToConf(const QVariant &var);
+    static void syncRemoteThumbnailToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isRemoteThumbnailConfEqual(const QVariant &dcon, const QVariant &dset);
+
+    static void saveIconSizeToConf(const QVariant &var);
+    static void syncIconSizeToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isIconSizeConfEqual(const QVariant &dcon, const QVariant &dset);
+
+    static void saveGridDensityToConf(const QVariant &var);
+    static void syncGridDensityToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isGridDensityConfEqual(const QVariant &dcon, const QVariant &dset);
+
+    static void saveListHeightToConf(const QVariant &var);
+    static void syncListHeightToAppSet(const QString &, const QString &, const QVariant &var);
+    static bool isListHeightConfEqual(const QVariant &dcon, const QVariant &dset);
 };
 
 }

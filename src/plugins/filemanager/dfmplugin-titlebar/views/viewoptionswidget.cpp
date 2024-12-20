@@ -75,7 +75,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     iconSizeSliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     iconSizeSlider = new DSlider(Qt::Horizontal, iconSizeWidget);
-    iconSizeSlider->setMaximum(kIconSizeList().size() - 1);
+    iconSizeSlider->setMaximum(viewDefines.iconSizeCount() - 1);
     iconSizeSlider->setMinimum(0);
     iconSizeSlider->setValue(Application::instance()->appAttribute(Application::kIconSizeLevel).toInt());
     iconSizeSlider->slider()->setPageStep(1);
@@ -108,7 +108,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     gridDensitySliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                                 kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     gridDensitySlider = new DSlider(Qt::Horizontal, gridDensityWidget);
-    gridDensitySlider->setMaximum(kIconGridDensity().size() - 1);
+    gridDensitySlider->setMaximum(viewDefines.iconGridDensityCount() - 1);
     gridDensitySlider->setMinimum(0);
     gridDensitySlider->setValue(Application::instance()->appAttribute(Application::kGridDensityLevel).toInt());
     gridDensitySlider->slider()->setPageStep(1);
@@ -141,7 +141,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     listHeightSliderLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                                kViewOptionsFrameMargin, kViewOptionsFrameMargin);
     listHeightSlider = new DSlider(Qt::Horizontal, listHeightWidget);
-    listHeightSlider->setMaximum(kListHeight().size() - 1);
+    listHeightSlider->setMaximum(viewDefines.listHeightCount() - 1);
     listHeightSlider->setMinimum(0);
     listHeightSlider->setValue(Application::instance()->appAttribute(Application::kListHeightLevel).toInt());
     listHeightSlider->slider()->setPageStep(1);

@@ -21,6 +21,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -87,8 +88,9 @@ void FileViewPrivate::initIconModeView()
 
     if (statusBar) {
         statusBar->setScalingVisible(true);
-        q->setIconSize(QSize(kIconSizeList()[currentIconSizeLevel],
-                             kIconSizeList()[currentIconSizeLevel]));
+        DFMBASE_NAMESPACE::ViewDefines viewDefines;
+        q->setIconSize(QSize(viewDefines.iconSize(currentIconSizeLevel),
+                             viewDefines.iconSize(currentIconSizeLevel)));
         QSignalBlocker blocker(statusBar->scalingSlider());
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }

@@ -26,59 +26,6 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
-// view defines
-inline constexpr int kIconSizeMax { 512 };
-inline constexpr int kIconSizeMin { 24 };
-inline constexpr int kIconSizeMiddle { 192 };
-inline constexpr int kIconSizeNormalStep { 8 };
-inline constexpr int kIconSizeLargeStep { 16 };
-inline constexpr int kIconGridDensityMin { 60 };
-inline constexpr int kIconGridDensityMax { 198 };
-inline constexpr int kIconGridDensityStep { 6 };
-
-inline QList<int> kIconSizeList()
-{
-    static const QList<int> sizes = []() {
-        QList<int> list;
-        list.reserve(42);  // 22(first range) + 20(second range) = 42
-        // range 24-192, step size 8
-        int size = kIconSizeMin;
-        while (size <= kIconSizeMiddle) {
-            list.append(size);
-            size += kIconSizeNormalStep;
-        }
-        // range 192-512, step size 16
-        size = kIconSizeMiddle + kIconSizeLargeStep;
-        while (size <= kIconSizeMax) {
-            list.append(size);
-            size += kIconSizeLargeStep;
-        }
-        return list;
-    }();
-    return sizes;
-}
-
-inline QList<int> kIconGridDensity()
-{
-    static const QList<int> widths = []() {
-        QList<int> list;
-        list.reserve(24);  // pre-allocate memory to avoid multiple reallocations
-        int size = kIconGridDensityMin;
-        while (size <= kIconGridDensityMax) {
-            list.append(size);
-            size += kIconGridDensityStep;
-        }
-        return list;
-    }();
-    return widths;
-}
-
-inline QList<int> kListHeight()
-{
-    static const QList<int> heights { 24, 32, 48 };
-    return heights;
-}
-
 enum class TransparentStatus : uint8_t {
     kDefault,
     kTransparent,
@@ -251,10 +198,6 @@ inline constexpr char kDesktopDrawWallpaperTime[] { "DrawWallPaperTime" };
 inline constexpr char kDesktopLoadFilesTime[] { "LoadFilesTime" };
 inline constexpr char kDesktopLoadFilesCount[] { "LoadFilesCount" };
 }   // namespace DataPersistence
-
-namespace SettingDialog {
-inline constexpr char kSettingSliderItem[] { "sliderWithSideIcon" };
-}   // namespace SettingDialog
 
 }   // namespace Global
 }   // namespace dfmbase
