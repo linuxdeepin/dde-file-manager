@@ -52,7 +52,14 @@ bool AppLaunchUtilsPrivate::checkLaunchAppInterface() const
 
 QDBusInterface *AppLaunchUtilsPrivate::dbusInterface(const QString &desktopFile)
 {
-    const auto &appId = DUtil::getAppIdFromAbsolutePath(desktopFile);
+    auto appId = DUtil::getAppIdFromAbsolutePath(desktopFile);
+    if (appId.isEmpty()) {
+        QFileInfo file { desktopFile };
+        constexpr auto kDesktopSuffix { u8"desktop" };
+        if (file.suffix() == kDesktopSuffix)
+            appId = file.completeBaseName();
+    }
+
     const auto &dbusAppId = DUtil::escapeToObjectPath(appId);
     const auto &objectPath = QString("%1/%2").arg(DBusServiceNames::kPathPrefix, dbusAppId);
 
