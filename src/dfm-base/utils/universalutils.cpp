@@ -25,10 +25,6 @@
 #include <DUtil>
 
 #ifdef COMPILE_ON_V2X
-#    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager1"
-#    define APP_MANAGER_PATH_PREFIX "/org/desktopspec/ApplicationManager1"
-#    define APP_INTERFACE "org.desktopspec.ApplicationManager1.Application"
-
 #    define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
 #    define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
 #    define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
@@ -255,74 +251,6 @@ QString UniversalUtils::sizeFormat(qint64 size, int percision)
     QString unit;
     double numberPart = sizeFormat(size, unit);
     return QString("%1 %2").arg(QString::number(numberPart, 'f', percision)).arg(unit);
-}
-
-bool UniversalUtils::checkLaunchAppInterface()
-{
-    static bool initStatus = true;
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        QDBusConnectionInterface *interface = QDBusConnection::sessionBus().interface();
-        if (!interface || !interface->isServiceRegistered(APP_MANAGER_SERVICE).value()) {
-            initStatus = false;
-            return;
-        }
-#ifndef COMPILE_ON_V2X
-        QDBusInterface introspect(APP_MANAGER_SERVICE,
-                                  APP_MANAGER_PATH,
-                                  "org.freedesktop.DBus.Introspectable",
-                                  QDBusConnection::sessionBus());
-        introspect.setTimeout(1000);
-        QDBusPendingReply<QString> reply = introspect.asyncCallWithArgumentList(QStringLiteral("Introspect"), {});
-        reply.waitForFinished();
-        if (reply.isFinished() && reply.isValid() && !reply.isError()) {
-            QString xmlCode = reply.argumentAt(0).toString();
-            if (xmlCode.contains(APP_MANAGER_INTERFACE)) {
-                if (xmlCode.contains("LaunchApp")) {
-                    initStatus = true;
-                } else {
-                    qCWarning(logDFMBase) << QString("%1 : doesn't have LaunchApp interface.").arg(APP_MANAGER_SERVICE);
-                    initStatus = false;
-                }
-            } else {
-                qCWarning(logDFMBase) << QString("%1 : Introspect error").arg(APP_MANAGER_SERVICE) << xmlCode;
-                initStatus = false;
-            }
-        } else {
-            initStatus = false;
-        }
-#endif
-    });
-    return initStatus;
-}
-
-bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
-{
-#ifdef COMPILE_ON_V2X
-    const auto &AppId = DUtil::getAppIdFromAbsolutePath(desktopFile);
-    const auto &DBusAppId = DUtil::escapeToObjectPath(AppId);
-    const auto &currentAppPath = QString { APP_MANAGER_PATH_PREFIX } + "/" + DBusAppId;
-    qCDebug(logDFMBase) << "app object path:" << currentAppPath;
-    QDBusInterface appManager(APP_MANAGER_SERVICE,
-                              currentAppPath,
-                              APP_INTERFACE,
-                              QDBusConnection::sessionBus());
-
-    auto reply = appManager.callWithArgumentList(QDBus::Block, QStringLiteral("Launch"), { QVariant::fromValue(QString {}), QVariant::fromValue(filePaths), QVariant::fromValue(QVariantMap {}) });
-
-    return reply.type() == QDBusMessage::ReplyMessage;
-
-#else
-    QDBusInterface appManager(APP_MANAGER_SERVICE,
-                              APP_MANAGER_PATH,
-                              APP_MANAGER_INTERFACE,
-                              QDBusConnection::sessionBus());
-
-    QList<QVariant> argumentList;
-    argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
-    appManager.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
-    return true;
-#endif
 }
 
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)

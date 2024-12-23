@@ -1,31 +1,31 @@
+include(GNUInstallDirs)
+
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)
 endif()
 
-# dbus xml dir
-set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
-
-# defines plugins install dir
+# Base directories
 if(NOT DEFINED LIB_INSTALL_DIR)
     set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
 endif()
 
-# defines dde-file-manager lib dir
 if(NOT DEFINED DFM_LIB_DIR)
     set(DFM_LIB_DIR ${LIB_INSTALL_DIR}/dde-file-manager)
 endif()
 
-# root plguins dir
+# DBUS XML directories
+set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
+
+# Plugin root directory
 if(NOT DEFINED DFM_PLUGIN_DIR)
     set(DFM_PLUGIN_DIR ${DFM_LIB_DIR}/plugins)
 endif()
 
-# build dir
+# Build directories
 if(NOT DEFINED DFM_BUILD_DIR)
     set(DFM_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
 endif()
 
-# build plugins dir
 if(NOT DEFINED DFM_BUILD_PLUGIN_DIR)
     set(DFM_BUILD_PLUGIN_DIR ${DFM_BUILD_DIR}/plugins)
 endif()
@@ -83,7 +83,6 @@ if(NOT DEFINED DFM_TOOLS_DIR)
     set(DFM_TOOLS_DIR ${DFM_LIB_DIR}/tools)
 endif()
 
-# dde-file-thumbnail-tool
 if(NOT DEFINED DFM_THUMBNAIL_TOOL)
-    set(DFM_THUMBNAIL_TOOL ${LIB_INSTALL_DIR}/dde-file-manager/tools)
+    set(DFM_THUMBNAIL_TOOL ${DFM_TOOLS_DIR})
 endif()
