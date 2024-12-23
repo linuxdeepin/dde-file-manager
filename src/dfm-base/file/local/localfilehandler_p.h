@@ -9,6 +9,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-base/utils/applaunchutils.h>
 
 #include <dfm-io/error/error.h>
 #include <dfm-io/dfile.h>
@@ -30,9 +31,6 @@ public:
 
 public:
     bool launchApp(const QString &desktopFile, const QStringList &filePaths = {});
-    bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths = {});
-    bool launchAppByGio(const QString &desktopFile, const QStringList &filePaths = {});
-
     bool isFileManagerSelf(const QString &desktopFile);
     bool isInvalidSymlinkFile(const QUrl &url);
 
@@ -68,6 +66,7 @@ public:
     DFMIOError lastError;
     GlobalEventType lastEvent = GlobalEventType::kUnknowType;
     QList<QUrl> invalidPath;   //BUG:259909,记录无效链接路径
+    AppLaunchUtils appLauncher;
 };
 
 }
