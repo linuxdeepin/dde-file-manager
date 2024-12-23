@@ -30,8 +30,6 @@ public:
     static double sizeFormat(qint64 size, QString &unit);
     static QString sizeFormat(qint64 size, int percision);
 
-    static bool checkLaunchAppInterface();
-    static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);
     static bool runCommand(const QString &cmd, const QStringList &args, const QString &wd = QString());
     static int dockHeight();
     static QMap<QString, QString> getKernelParameters();

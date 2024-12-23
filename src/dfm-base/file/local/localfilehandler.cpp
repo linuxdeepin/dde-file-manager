@@ -656,56 +656,7 @@ bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QS
 
     // url path will be truncated at the index of '#', so replace it if it's real existed in url. (mostly it's for avfs archive paths)
     std::for_each(newFileUrls.begin(), newFileUrls.end(), [](QString &path) { path.replace("#", "%23"); });
-    bool ok = launchAppByDBus(desktopFilePath, newFileUrls);
-    if (!ok) {
-        ok = launchAppByGio(desktopFilePath, newFileUrls);
-    }
-    return ok;
-}
-
-bool LocalFileHandlerPrivate::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
-{
-    qCInfo(logDFMBase, "launch App By DBus, desktopFile : %s, files count : %d !", desktopFile.toStdString().c_str(), filePaths.count());
-    qCDebug(logDFMBase) << "launch App By DBus, files : \n"
-                        << filePaths;
-    if (UniversalUtils::checkLaunchAppInterface())
-        return UniversalUtils::launchAppByDBus(desktopFile, filePaths);
-    return false;
-}
-
-bool LocalFileHandlerPrivate::launchAppByGio(const QString &desktopFilePath, const QStringList &fileUrls)
-{
-    qCDebug(logDFMBase) << "launchApp by gio:" << desktopFilePath << fileUrls;
-
-    const QByteArray &cDesktopFilePath = desktopFilePath.toLocal8Bit();
-
-    g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(cDesktopFilePath.data());
-    if (!appInfo) {
-        qCWarning(logDFMBase) << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
-        return false;
-    }
-
-    GList *gfiles = nullptr;
-    foreach (const QString &url, fileUrls) {
-        const QByteArray &cFilePath = url.toLocal8Bit();
-        GFile *gfile = g_file_new_for_uri(cFilePath.data());
-        gfiles = g_list_append(gfiles, gfile);
-    }
-
-    g_autoptr(GError) gerror = nullptr;
-    gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo *>(appInfo), gfiles, nullptr, &gerror);
-
-    if (gerror) {
-        qCWarning(logDFMBase) << "Error when trying to open desktop file with gio:" << gerror->message;
-    }
-
-    if (!ok) {
-        qCWarning(logDFMBase) << "Failed to open desktop file with gio: g_app_info_launch returns false";
-    }
-    if (gfiles)
-        g_list_free(gfiles);
-
-    return ok;
+    return appLauncher.launchApp(desktopFilePath, newFileUrls);
 }
 
 bool LocalFileHandlerPrivate::isFileManagerSelf(const QString &desktopFile)
