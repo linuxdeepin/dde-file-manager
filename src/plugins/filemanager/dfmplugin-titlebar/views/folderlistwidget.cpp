@@ -8,11 +8,11 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/chinese2pinyin.h>
 
 #include <QVBoxLayout>
 #include <QStandardItemModel>
 #include <QKeyEvent>
-#include <dfm-base/utils/chinese2pinyin.h>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -166,7 +166,13 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
     setFixedWidth(width);
 
     int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
-    setFixedHeight(kFolderListItemMargin * 2 + kFolderItemHeight * folderCount);
+    if (dataNum > 1) {
+        d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
+        setFixedHeight(kItemMargin * 2 + kFolderItemHeight * folderCount);
+    } else {
+        d->folderView->setViewportMargins(kItemMargin, kItemMargin * 3 / 2, kItemMargin, kItemMargin * 3 / 2);
+        setFixedHeight(kItemMargin * 3 + kFolderItemHeight * folderCount);
+    }
 }
 
 void FolderListWidget::keyPressEvent(QKeyEvent *event)
