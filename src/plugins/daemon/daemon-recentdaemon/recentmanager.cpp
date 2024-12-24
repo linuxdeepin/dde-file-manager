@@ -11,6 +11,8 @@
 
 #include <QCoreApplication>
 #include <QTimer>
+#include <QFileInfo>
+#include <QFile>
 
 SERVERRECENTMANAGER_BEGIN_NAMESPACE
 
@@ -78,6 +80,20 @@ void RecentManager::finalize()
 void RecentManager::startWatch()
 {
     auto uri { QUrl::fromLocalFile(xbelPath()) };
+    QString localPath = uri.toLocalFile();
+
+    if (!QFileInfo(localPath).exists()) {
+        // Create empty xbel file if not exists
+        QFile file(localPath);
+        if (file.open(QIODevice::WriteOnly)) {
+            fmInfo() << "Created empty recent file:" << localPath;
+            file.close();
+        } else {
+            fmWarning() << "Failed to create recent file:" << localPath;
+            return;
+        }
+    }
+
     watcher = WatcherFactory::create<AbstractFileWatcher>(uri);
     fmDebug() << "Start watch recent file: " << uri;
     // fileAttributeChanged 可能被高频率发送
