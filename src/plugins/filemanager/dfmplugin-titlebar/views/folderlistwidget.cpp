@@ -166,7 +166,13 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
     setFixedWidth(width);
 
     int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
-    setFixedHeight(kFolderListItemMargin * 2 + kFolderItemHeight * folderCount);
+    if (dataNum > 1) {
+        d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
+        setFixedHeight(kItemMargin * 2 + kFolderItemHeight * folderCount);
+    } else {
+        d->folderView->setViewportMargins(kItemMargin, kItemMargin * 3 / 2, kItemMargin, kItemMargin * 3 / 2);
+        setFixedHeight(kItemMargin * 3 + kFolderItemHeight * folderCount);
+    }
 }
 
 void FolderListWidget::keyPressEvent(QKeyEvent *event)
