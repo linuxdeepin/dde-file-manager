@@ -16,6 +16,8 @@
 
 #include <QString>
 
+#include <optional>
+
 class QUrl;
 class QString;
 
@@ -25,6 +27,8 @@ class DesktopFile;
 class LocalFileHandler;
 class LocalFileHandlerPrivate
 {
+    friend class LocalFileHandler;
+
 public:
     explicit LocalFileHandlerPrivate(LocalFileHandler *handler);
     ~LocalFileHandlerPrivate() = default;
@@ -60,6 +64,20 @@ public:
                               const QMap<QString, QString> &mimeTypes);
     static void addRecentFile(const QString &desktop, const QList<QUrl> urls,
                               const QString &mimeType);
+
+private:
+    // 处理单个文件的打开
+    bool handleSingleFileOpen(QUrl &fileUrl, const QUrl &sourceUrl, bool &result);
+
+    // 解析符号链接,返回最终指向的文件URL
+    // 处理相对路径,避免循环链接,支持网络文件检查
+    std::optional<QUrl> resolveSymlink(const QUrl &url);
+
+    // 处理可执行文件
+    bool handleExecutableFile(const QUrl &fileUrl, bool *result);
+
+    // 收集要打开的文件路径
+    void collectFilePath(const QUrl &fileUrl, QList<QUrl> *pathList);
 
 public:
     LocalFileHandler *q { nullptr };

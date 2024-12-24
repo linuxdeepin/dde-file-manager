@@ -271,76 +271,30 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     if (fileUrls.isEmpty())
         return true;
 
-    QList<QUrl> urls = fileUrls;
-
     QList<QUrl> pathList;
     bool result = false;
     d->invalidPath.clear();
-    for (QUrl &fileUrl : urls) {
-        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
-        QUrl sourceUrl = fileUrl;
-        QStringList targetList;
-        targetList.append(fileUrl.path());
-        FileInfoPointer fileInfoLink = fileInfo;
 
-        while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
-            QString targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
-            targetLink = targetLink.endsWith(QDir::separator()) && targetLink != QDir::separator() ? QString(targetLink).left(targetLink.length() - 1)
-                                                                                                   : targetLink;
-            if (targetList.contains(targetLink))
-                break;
-            targetList.append(targetLink);
-            // 网络文件检查
-            if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(targetLink))) {
-                DialogManager::instance()->showUnableToVistDir(targetLink);
-                return true;
-            }
-            fileInfoLink = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(targetLink));
-            if (!fileInfoLink) {
-                DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
-                return false;
-            }
-            const_cast<QUrl &>(fileUrl) = fileInfoLink->urlOf(UrlInfoType::kRedirectedFileUrl);
-            if (d->isInvalidSymlinkFile(fileUrl)) {
-                d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameOf(
-                                                                                     NameInfoType::kFileName),
-                                                                             fileInfo->urlOf(UrlInfoType::kUrl));
-                d->invalidPath << sourceUrl;
-                return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
-            }
-        }
-
-        if (d->isExecutableScript(fileUrl.path())) {
-            int code = DialogManagerInstance->showRunExcutableScriptDialog(fileUrl);
-            result = d->openExcutableScriptFile(fileUrl.path(), code) || result;
+    // 处理每个文件
+    for (const QUrl &fileUrl : fileUrls) {
+        // 1. 处理符号链接
+        auto resolvedUrl = d->resolveSymlink(fileUrl);
+        if (!resolvedUrl)  // 如果解析失败则继续下一个
             continue;
-        }
 
-        if (d->isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
-            int code = DialogManagerInstance->showRunExcutableFileDialog(fileUrl);
-            result = d->openExcutableFile(fileUrl.path(), code) || result;
+        // 2. 处理可执行文件
+        if (d->handleExecutableFile(*resolvedUrl, &result))
             continue;
-        }
 
-        if (d->shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
-            int code = DialogManagerInstance->showAskIfAddExcutableFlagAndRunDialog();
-            result = d->addExecutableFlagAndExecuse(fileUrl.path(), code) || result;
-            continue;
-        }
-
-        QString urlPath = fileUrl.path();
-        if (d->isFileWindowsUrlShortcut(urlPath)) {
-            urlPath = d->getInternetShortcutUrl(urlPath);
-            pathList << QUrl::fromLocalFile(urlPath);
-        } else {
-            pathList << fileUrl;
-        }
+        // 3. 收集要打开的文件路径
+        d->collectFilePath(*resolvedUrl, &pathList);
     }
 
+    // 4. 打开收集的文件
     if (!pathList.empty()) {
         result = d->doOpenFiles(pathList);
     } else {
-        return true;
+        result = true;
     }
 
     return result;
@@ -1232,4 +1186,92 @@ void LocalFileHandlerPrivate::addRecentFile(const QString &desktop, const QList<
 LocalFileHandlerPrivate::LocalFileHandlerPrivate(LocalFileHandler *handler)
     : q(handler)
 {
+}
+
+// 处理符号链接解析
+std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
+{
+    // 记录已访问的路径,用于检测循环链接
+    QStringList visitedPaths;
+    QString currentPath = url.toLocalFile();
+    visitedPaths << currentPath;
+
+    QFileInfo fileInfo(currentPath);
+    while (fileInfo.isSymLink()) {
+        // 获取链接目标的绝对路径(会自动处理相对路径)
+        QString canonicalPath = fileInfo.canonicalFilePath();
+        
+        // 如果获取规范路径失败,说明链接可能已失效
+        if (canonicalPath.isEmpty()) {
+            DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
+            return std::nullopt;
+        }
+
+        // 检查循环链接
+        if (visitedPaths.contains(canonicalPath))
+            break;  // 发现循环,使用最后一个有效路径
+            
+        visitedPaths << canonicalPath;
+
+        // 网络文件检查
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(canonicalPath))) {
+            DialogManager::instance()->showUnableToVistDir(canonicalPath);
+            return std::nullopt;
+        }
+
+        // 检查链接目标是否存在
+        fileInfo.setFile(canonicalPath);
+        if (!fileInfo.exists()) {
+            // 链接已失效
+            lastEvent = DialogManagerInstance->showBreakSymlinkDialog(
+                    QFileInfo(currentPath).fileName(),
+                    url);
+            invalidPath << url;
+            return std::nullopt;
+        }
+
+        currentPath = canonicalPath;
+    }
+
+    // 返回最终解析后的URL(如果有循环链接,则返回最后一个有效路径)
+    return QUrl::fromLocalFile(currentPath);
+}
+
+// 处理可执行文件
+bool LocalFileHandlerPrivate::handleExecutableFile(const QUrl &fileUrl, bool *result)
+{
+    // 处理可执行脚本
+    if (isExecutableScript(fileUrl.path())) {
+        int code = DialogManagerInstance->showRunExcutableScriptDialog(fileUrl);
+        *result = openExcutableScriptFile(fileUrl.path(), code) || *result;
+        return true;
+    }
+
+    // 处理可运行文件
+    if (isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+        int code = DialogManagerInstance->showRunExcutableFileDialog(fileUrl);
+        *result = openExcutableFile(fileUrl.path(), code) || *result;
+        return true;
+    }
+
+    // 处理需要添加可执行权限的文件
+    if (shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+        int code = DialogManagerInstance->showAskIfAddExcutableFlagAndRunDialog();
+        *result = addExecutableFlagAndExecuse(fileUrl.path(), code) || *result;
+        return true;
+    }
+
+    return false;
+}
+
+// 收集要打开的文件路径
+void LocalFileHandlerPrivate::collectFilePath(const QUrl &fileUrl, QList<QUrl> *pathList)
+{
+    QString urlPath = fileUrl.path();
+    if (isFileWindowsUrlShortcut(urlPath)) {
+        urlPath = getInternetShortcutUrl(urlPath);
+        pathList->append(QUrl::fromLocalFile(urlPath));
+    } else {
+        pathList->append(fileUrl);
+    }
 }
