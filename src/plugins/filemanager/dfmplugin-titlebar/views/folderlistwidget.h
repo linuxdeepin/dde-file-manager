@@ -30,6 +30,10 @@ Q_SIGNALS:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void hideEvent(QHideEvent *event) override;
+
+private:
+    bool matchText(const QString &source, const QString &input) const;
+    bool findAndSelectMatch(const QString &text, int startRow) const;
 };
 
 }   // namespace dfmplugin_titlebar
