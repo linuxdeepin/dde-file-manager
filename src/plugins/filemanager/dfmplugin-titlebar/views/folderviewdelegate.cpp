@@ -11,6 +11,8 @@
 #include <QApplication>
 #include <QHelpEvent>
 #include <QToolTip>
+#include <DPalette>
+#include <DPaletteHelper>
 
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
@@ -24,49 +26,61 @@ void FolderViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 {
     if (!index.isValid())
         return DStyledItemDelegate::paint(painter, option, index);
+
     QStyleOptionViewItem opt = option;
     DStyledItemDelegate::initStyleOption(&opt, index);
     painter->setRenderHint(QPainter::Antialiasing);
+    DPalette pl(DPaletteHelper::instance()->palette(option.widget));
 
-    // prepare
-    QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled)
-            ? QPalette::Normal
-            : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
-        cg = QPalette::Inactive;
+    int radius = 12;
+    if (auto view = dynamic_cast<QAbstractItemView *>(parent())) {
+        radius = DStyle::pixelMetric(view->style(), DStyle::PM_FrameRadius, &opt, view);
     }
 
-    // draw background
-    if (option.showDecorationSelected && (option.state & (QStyle::State_Selected | QStyle::State_MouseOver))) {
+    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    bool isHovered = option.state & QStyle::State_MouseOver;
+
+    if (isSelected || isHovered) {
         painter->save();
-        painter->setBrush(option.palette.brush(cg, QPalette::Highlight));
         painter->setPen(Qt::NoPen);
-        // get window radius
-        int radius = 12;
-        if (auto view = dynamic_cast<QAbstractItemView *>(parent()))
-            radius = DStyle::pixelMetric(view->style(), DStyle::PM_FrameRadius, &opt, view);
+
+        if (isSelected) {
+            QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled)
+                    ? QPalette::Normal
+                    : QPalette::Disabled;
+            if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
+                cg = QPalette::Inactive;
+            }
+            painter->setBrush(option.palette.brush(cg, QPalette::Highlight));
+        } else {
+            QColor baseColor = pl.color(DPalette::Active, DPalette::ItemBackground);
+            QColor hoverColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+            painter->setBrush(hoverColor);
+        }
+
         painter->drawRoundedRect(option.rect, radius, radius);
         painter->restore();
     }
 
-    // draw icon
     paintItemIcon(painter, option, index);
 
-    // draw text
-    if (option.state & (QStyle::State_Selected | QStyle::State_MouseOver)) {
-        painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
+    if (isSelected) {
+        painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {
-        painter->setPen(option.palette.color(cg, QPalette::Text));
+        painter->setPen(opt.palette.color(QPalette::Active, QPalette::Text));
     }
 
     painter->setFont(option.font);
-    auto text = index.data(Qt::DisplayRole).toString();
-    if (text.contains('\n'))
+    QString text = index.data(Qt::DisplayRole).toString();
+    if (text.contains('\n')) {
         text = text.replace('\n', ' ');
+    }
+
     QRect textRect = option.rect.adjusted(kTextLeftPadding, 0, 0, 0);
     if (option.fontMetrics.horizontalAdvance(text) > textRect.width()) {
         text = option.fontMetrics.elidedText(text, Qt::ElideMiddle, textRect.width());
     }
+
     painter->drawText(textRect, Qt::AlignVCenter, text);
 }
 
