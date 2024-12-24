@@ -360,12 +360,12 @@ void SettingBackend::initWorkspaceSettingConfig()
         viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".02_view_mode",
+    ins->addComboboxConfig(LV2_GROUP_VIEW ".03_view_mode",
                            tr("Default view:"),
                            { { "values", viewModeValues },
                              { "keys", viewModeKeys } },
                            1);
-    ins->addConfig(LV2_GROUP_VIEW ".03_restore_view_mode",
+    ins->addConfig(LV2_GROUP_VIEW ".04_restore_view_mode",
                    { { "key", "03_restore_view_mode" },
                      { "desc", tr("Restore default view mode for all directories") },
                      { "text", tr("Restore default view mode") },
