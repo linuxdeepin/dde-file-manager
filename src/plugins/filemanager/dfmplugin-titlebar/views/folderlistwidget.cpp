@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QStandardItemModel>
 #include <QKeyEvent>
+#include <dfm-base/utils/chinese2pinyin.h>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -177,6 +178,14 @@ void FolderListWidget::keyPressEvent(QKeyEvent *event)
     } else if (event->key() == Qt::Key_Return) {
         d->returnPressed();
     }
+    else {
+        QString pressedText = event->text();
+        if (!pressedText.isEmpty() && pressedText[0].isPrint()) {
+            QModelIndex currentIndex = d->folderView->currentIndex();
+            int startRow = currentIndex.isValid() ? currentIndex.row() : -1;
+            findAndSelectMatch(pressedText, startRow);
+        }
+    }
     DBlurEffectWidget::keyPressEvent(event);
 }
 
@@ -184,4 +193,49 @@ void FolderListWidget::hideEvent(QHideEvent *event)
 {
     emit hidden();
     DBlurEffectWidget::hideEvent(event);
+}
+
+bool FolderListWidget::matchText(const QString &source, const QString &input) const
+{
+    if (input.isEmpty() || source.isEmpty())
+        return false;
+
+    QString sourceLower = source.toLower();
+    QString inputLower = input.toLower();
+
+    if (sourceLower.startsWith(inputLower))
+        return true;
+    // 上面的英文未匹配，使用拼音再匹配一次
+    if (input[0].isLetter()) {
+        QString pinyinText = Pinyin::Chinese2Pinyin(source);
+        return pinyinText.toLower().startsWith(inputLower);
+    }
+
+    return false;
+}
+
+bool FolderListWidget::findAndSelectMatch(const QString &text, int startRow) const
+{
+    bool foundCurrent = false;
+
+    // 实现列表的循环查找，比如当前选中的满足输入的字符，则去匹配下一个
+    for (int round = 0; round < 2; ++round) {
+        for (int i = 0; i < d->folderModel->rowCount(); ++i) {
+            int currentRow = (startRow + i + 1) % d->folderModel->rowCount();
+            QString itemText = d->folderModel->item(currentRow)->text();
+
+            if (matchText(itemText, text)) {
+                if (!foundCurrent && currentRow == startRow) {
+                    foundCurrent = true;
+                    continue;
+                }
+
+                QModelIndex index = d->folderModel->index(currentRow, 0);
+                d->folderView->setCurrentIndex(index);
+                d->folderView->scrollTo(index);
+                return true;
+            }
+        }
+    }
+    return false;
 }
