@@ -104,7 +104,7 @@ public:
 
     FileInfo::FileType fileType() const;
     int cacheAllAttributes(const QString &attributes = QString());
-    bool inserAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value);
+    bool insertAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value);
     void fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     QMimeType mimeTypes(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
                         const QString &inod = QString(), const bool isGvfs = false);
