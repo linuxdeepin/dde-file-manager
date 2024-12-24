@@ -1287,18 +1287,14 @@ bool FileUtils::fileCanTrash(const QUrl &url)
             return false;
     }
 
-    // 获取当前配置
-    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
-    if (!alltotrash)
-        return info ? info->canAttributes(CanableInfoType::kCanTrash) : false;
-    if (!url.isValid())
+    if (!info)
         return false;
 
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return !match.hasMatch();
+    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
+    if (alltotrash)
+        return info->canAttributes(CanableInfoType::kCanTrash);
+
+    return info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool();
 }
 
 QUrl FileUtils::bindUrlTransform(const QUrl &url)
@@ -1533,7 +1529,7 @@ QString FileUtils::findIconFromXdg(const QString &iconName)
             list.removeFirst();
             list.removeLast();
             list.removeLast();
-            
+
             return list.first().simplified();
         }
 
