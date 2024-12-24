@@ -67,7 +67,6 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", VaultFileHelper::instance(), &VaultFileHelper::openFileByApp);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", VaultFileHelper::instance(), &VaultFileHelper::setPermision);
     dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PermissionView_Ash", this, &VaultEventReceiver::handlePermissionViewAsh);
     dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", this, &VaultEventReceiver::handleFileCanTaged);

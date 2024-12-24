@@ -87,6 +87,11 @@ bool Computer::start()
     return true;
 }
 
+void Computer::stop()
+{
+    ComputerItemWatcher::instance()->clearAsyncThread();
+}
+
 void Computer::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
