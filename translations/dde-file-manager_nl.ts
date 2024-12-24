@@ -36,7 +36,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="284"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="285"/>
         <source>Desktop</source>
         <translation>Bureaublad</translation>
     </message>
@@ -112,7 +112,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="685"/>
         <source>The file name or the path is too long!</source>
         <translation>De bestandsnaam of -locatie is te lang!</translation>
     </message>
@@ -171,63 +171,64 @@
         <translation>Als je wilt bevestigen dat het veilig is om door te gaan, neem dan contact op met de systeembeheerder.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="417"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="63"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="382"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <source>System Disk</source>
         <translation>Systeemschijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="420"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="385"/>
         <source>Data Disk</source>
         <translation>Gegevensschijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="427"/>
         <source>Blank %1 Disc</source>
         <translation>Lege %1-schijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="406"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="412"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="429"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="472"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
         <source>%1 Drive</source>
         <translation>%1-schijf</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="491"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="456"/>
         <source>%1 Encrypted</source>
         <translation>%1 versleuteld</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="499"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="464"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="84"/>
         <source>%1 Volume</source>
         <translation>Volume %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="267"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>Wil je het doorzoeken van het apparaat afbreken?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="274"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
         <source>Unmount failed</source>
         <translation>Ontkoppelen mislukt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="274"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
         <source>Cannot stop scanning device</source>
         <translation>Het scannen kan niet worden afgebroken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="404"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="421"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="93"/>
         <source>%1 on %2</source>
         <translation>%1 op %2</translation>
@@ -344,26 +345,26 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="299"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="300"/>
         <source>Unable to find the original file</source>
         <translation>Het oorspronkelijke bestand is niet aangetroffen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="480"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="481"/>
         <source>File has been moved or deleted</source>
         <translation>Bestand is verplaatst of verwijderd</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="482"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="483"/>
         <source>You do not have permission to access this folder</source>
         <translation>Je bent niet bevoegd om deze map te openen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="485"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Je bent niet bevoegd om deze map te gebruiken</translation>
     </message>
@@ -456,7 +457,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="656"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="71"/>
         <source>Mounted sharing folders</source>
         <translation>Aangekoppelde gedeelde mappen</translation>
     </message>
@@ -858,10 +859,10 @@
         <translation>Let op: hierdoor kan het aankoppelen mislukken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
@@ -869,7 +870,7 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="437"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="435"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -882,23 +883,23 @@
         <translation>Afbreken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="747"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="704"/>
         <source>Shortcut</source>
         <translation>Snelkoppeling</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1217"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1174"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Deze systeemachtergrond is vergrendeld - neem contact op met je beheerder.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1275"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1232"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (kopiëren)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1276"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1233"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (kopie %1)</translation>
@@ -926,15 +927,15 @@
         <translation>Toegang geweigerd</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="36"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="438"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="436"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="560"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
@@ -948,7 +949,7 @@
         <translation>Openen in nieuw venster</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="564"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
@@ -961,19 +962,19 @@
         <translation>Openen op nieuw tabblad</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="49"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="573"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Naam wijzigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="55"/>
         <source>Remove from quick access</source>
         <translation>Verwijderen uit snelle toegang</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
@@ -1017,8 +1018,8 @@
         <translation>Snelkoppeling</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="528"/>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="622"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="529"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="623"/>
         <source>Compress</source>
         <translation>Comprimeren</translation>
     </message>
@@ -1308,48 +1309,48 @@
         <translation>Wissen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="207"/>
         <source>Cannot access</source>
         <translation>Geen toegang</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="277"/>
         <source>User directory</source>
         <translation>Persoonlijke map</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="281"/>
         <source>Local disk</source>
         <translation>Lokale schijf</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="282"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="283"/>
         <source>Removable disk</source>
         <translation>Verwijderbare schijf</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="285"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="287"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="288"/>
         <source>Network shared directory</source>
         <translation>Gedeelde netwerkmap</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="289"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="290"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="294"/>
         <source>Android mobile device</source>
         <translation>Mobiel Android-apparaat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="292"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
         <source>Apple mobile device</source>
         <translation>Mobiel Apple-apparaat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="298"/>
         <source>Unknown device</source>
         <translation>Onbekend apparaat</translation>
     </message>
@@ -1745,11 +1746,11 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="157"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="218"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="233"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="480"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="581"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="160"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="478"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="579"/>
         <source>Clear search history</source>
         <translation>Zoekgeschiedenis wissen</translation>
     </message>
@@ -1759,80 +1760,80 @@
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="336"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="337"/>
         <source>search</source>
         <translation>Zoeken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="351"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="352"/>
         <source>advanced search</source>
         <translation>Geavanceerd zoeken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="435"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="433"/>
         <source>Are you sure clear search histories?</source>
         <translation>Weet je zeker dat je alle zoekgeschiedenis wilt wissen?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="393"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
         <source>Cannot generate random number by TPM</source>
         <translation>TPM kan geen willekeurig getal genereren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="396"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
         <translation>Er is geen algoritme beschikbaar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
         <translation>TPM kan niet worden versleuteld.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
         <source>TPM is locked.</source>
         <translation>TPM is vergrendeld.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="430"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
         <translation>Versleutelen van ‘%1’ bevestigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>De huidige partitie staat op het punt om versleuteld te worden. Dit proces kan niet worden afgebroken. Bevestig dat je dit wilt gaan doen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="440"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
         <translation>* Let op: na het versleutelen van de partitie kan het systeem niet meer worden teruggezet naar een eerdere versie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="451"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="447"/>
         <source>Cancel</source>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="452"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="467"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
         <translation>Bevestigen en herstarten</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="453"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="467"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm</source>
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="463"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="444"/>
         <source>Decrypt %1?</source>
         <translation>Ontsleutelen van ‘%1’ bevestigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>Het ontsleutelen kan enige tijd duren. Zorg dat de computer gedurende het proces verbonden is met de netstroom.</translation>
     </message>
@@ -2077,27 +2078,27 @@
 <context>
     <name>ddplugin_organizer::CollectionItemDelegate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="105"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="107"/>
         <source>Tiny</source>
         <translation>Extra klein</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="106"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
         <source>Small</source>
         <translation>Klein</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="107"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="109"/>
         <source>Medium</source>
         <translation>Medium</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
         <source>Large</source>
         <translation>Groot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="109"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
         <source>Super large</source>
         <translation>Extra groot</translation>
     </message>
@@ -3082,245 +3083,255 @@
 <context>
     <name>dfmbase::SettingBackend</name>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="230"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="241"/>
         <source>Always open folder in new window</source>
         <translation>Mappen altijd openen in nieuw venster</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
         <source>Open file:</source>
         <translation>Bestand openen:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="250"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="261"/>
         <source>Click</source>
         <translation>Eenmaal klikken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="251"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
         <source>Double click</source>
         <translation>Dubbelklikken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="255"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
         <source>New window and tab</source>
         <translation>Nieuw venster en tabblad</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="257"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
         <source>Open from default window:</source>
         <translation>Openen in standaardvenster:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="259"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="260"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="293"/>
         <source>Home</source>
         <translation>Persoonlijke map</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="261"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Desktop</source>
         <translation>Bureaublad</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="262"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Videos</source>
         <translation>Video&apos;s</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Music</source>
         <translation>Muziek</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="286"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Pictures</source>
         <translation>Afbeeldingen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Documents</source>
         <translation>Documenten</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="266"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>Downloads</source>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="289"/>
         <source>Open in new tab:</source>
         <translation>Openen op nieuw tabblad:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
         <source>Current Directory</source>
         <translation>Huidige map</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="312"/>
         <source>Files and folders</source>
         <translation>Bestanden en mappen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="314"/>
         <source>Show hidden files</source>
         <translation>Verborgen bestanden tonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
         <source>Show file extensions</source>
         <translation>Bestandsextensies tonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="319"/>
         <source>Mix sorting of files and folders</source>
         <translation>Mappen niet vóór bestanden sorteren</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="316"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Workspace</source>
         <translation>Werkruimte</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="328"/>
         <source>View</source>
         <translation>Weergave</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
+        <source>Default icon grid density:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
+        <source>Default list height:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>Tree</source>
         <translation>Boomweergave</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
         <source>Default view:</source>
         <translation>Standaardweergave:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
         <source>Icon</source>
         <translation>Pictogrammen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="233"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Activate existing window when reopening folder</source>
         <translation>Reeds geopend venster gebruiken om mappen te heropenen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
         <source>Default icon size:</source>
         <translation>Standaard pictogramgrootte:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
         <source>List</source>
         <translation>Lijst</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="339"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="370"/>
         <source>Restore default view mode for all directories</source>
         <translation>Standaardweergave van alle mappen herstellen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="340"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
         <source>Restore default view mode</source>
         <translation>Standaardweergave herstellen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="375"/>
         <source>Thumbnail preview</source>
         <translation>Miniatuurvoorbeelden</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="347"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Compressed file preview</source>
         <translation>Ingepakte bestanden voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="350"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
         <source>Text preview</source>
         <translation>Tekstbestanden voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="352"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
         <source>Document preview</source>
         <translation>Documenten voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="385"/>
         <source>Image preview</source>
         <translation>Afbeeldingen voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="356"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="387"/>
         <source>Video preview</source>
         <translation>Video&apos;s voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
         <source>Music preview</source>
         <translation>Muziek voorvertonen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="361"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="392"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>Miniatuurvoorbeelden tonen in externe mappen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="362"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>Let op: miniatuurvoorbeelden kunnen ervoor zorgen dat de externe map langzamer laad of dat de actie bevriest</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="402"/>
         <source>Advanced</source>
         <translation>Geavanceerd</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="373"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="404"/>
         <source>Mount</source>
         <translation>Aankoppelen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Auto mount</source>
         <translation>Automatisch aankoppelen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Open after auto mount</source>
         <translation>Openen na automatisch aankoppelen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="417"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>Items van met Samba gedeelde mappen samenvoegen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="388"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="419"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>Let op: hierdoor kan het aankoppelen mislukken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="424"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>Deepin-bestandskiezer gebruiken</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="426"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Om bevestiging vragen bij verwijderen van bestanden</translation>
     </message>
@@ -3709,12 +3720,12 @@
 <context>
     <name>dfmbase::UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="27"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="29"/>
         <source>Enter a password to protect shared folders</source>
         <translation>Voer een wachtwoord in om gedeelde mappen te beveiligen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="50"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="53"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
         <translation>Stel een wachtwoord in om openbare toegang in te schakelen</translation>
     </message>
@@ -3969,23 +3980,23 @@
 <context>
     <name>dfmplugin_burn::DumpISOOptDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="57"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
         <translation>Iso-schijfkopie aanmaken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="70"/>
         <source>Save as Image File</source>
         <translation>Opslaan als schijfkopiebestand</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="81"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
         <translation>Alle bestanden op de schijf worden ingepakt en aangemaakt als een iso-schijfkopiebestand.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
         <source>Save the ISO image here:</source>
         <translation>Iso-schijfkopie opslaan in:</translation>
     </message>
@@ -4047,42 +4058,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
         <source>Unlock device failed</source>
         <translation>Het ontgrendelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
         <source>Rename failed</source>
         <translation>Naamswijziging mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>Schijf is in gebruik; je kunt nu de naam niet wijzigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
         <source>Format failed</source>
         <translation>Formatteren mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Schijf is in gebruik; je kunt nu niet formatteren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
         <source>Mount error</source>
         <translation>Aankoppelfout</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
         <source>Cannot access %1</source>
         <translation>Geen toegang tot %1</translation>
     </message>
@@ -4095,22 +4106,22 @@
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1 is alleen-lezen. Wil je lees- en schrijfbevoegdheden toekennen?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>Let op: de toekenning is permanent</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="233"/>
         <source>Cancel</source>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
         <source>Enable Now</source>
         <translation>Nu toekennen</translation>
     </message>
@@ -4174,8 +4185,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="201"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="200"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
         <source>%1 on %2</source>
         <translation>%1 op %2</translation>
     </message>
@@ -4446,7 +4457,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="311"/>
         <source>Confirm</source>
         <translation>Oké</translation>
     </message>
@@ -4569,105 +4580,105 @@
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="134"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="148"/>
         <source>Unlock encrypted partition</source>
         <translation>Versleutelde partitie ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="138"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
         <source>Cancel partition encryption</source>
         <translation>Vergrendeling afbreken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
         <source>passphrase</source>
         <translation>toegangszin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Changing the encryption %1</source>
         <translation>Bezig met bewerken van %1-versleuteling</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>Continue partition encryption</source>
         <translation>Partitie versleutelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="151"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
         <translation>Partitie ontsleutelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
         <source>Enable partition encryption</source>
         <translation>Partitie versleutelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="211"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="234"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
         <translation>Foutmelding</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
         <source>Cannot resolve passphrase from TPM</source>
         <translation>De toegangszin kan niet uit TPM worden gehaald</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="234"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
         <translation>De pincode is onjuist</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
         <source>Change passphrase failed</source>
         <translation>De toegangszin kan niet worden gewijzigd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="511"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
         <source>Unlock device failed</source>
         <translation>Het ontgrendelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="512"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="526"/>
         <source>Wrong passphrase</source>
         <translation>De toegangszin is onjuist</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="530"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="544"/>
         <source>Mount device failed</source>
         <translation>Het aankoppelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>unmount</source>
         <translation>Afkoppelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="573"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>lock</source>
         <translation>Vergrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="574"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
         <source>Encrypt failed</source>
         <translation>Het versleutelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="575"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="589"/>
         <source>Cannot %1 device %2</source>
         <translation>Het apparaat %2 kan niet worden %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="659"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>Reboot to continue encrypt</source>
         <translation>Herstarten om door te gaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="660"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="674"/>
         <source>Reboot to finish decrypt</source>
         <translation>Herstarten om te voltooien</translation>
     </message>
@@ -5438,27 +5449,27 @@
 <context>
     <name>dfmplugin_menu::FileOperatorMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="43"/>
         <source>&amp;Open</source>
         <translation>&amp;Openen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
         <source>Rena&amp;me</source>
         <translation>Naa&amp;m wĳzigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>&amp;Delete</source>
         <translation>Verwij&amp;deren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
         <source>Empty Trash</source>
         <translation>Prullenbak legen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="47"/>
         <source>Set as wallpaper</source>
         <translation>Instellen als achtergrond</translation>
     </message>
@@ -5499,32 +5510,32 @@
 <context>
     <name>dfmplugin_menu::OpenDirMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="31"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
         <source>Open as administrator</source>
         <translation>Openen met beheerdersbevoegdheid</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
         <source>Select all</source>
         <translation>Alles selecteren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="34"/>
         <source>Open in new window</source>
         <translation>Openen in nieuw venster</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="35"/>
         <source>Open in new tab</source>
         <translation>Openen op nieuw tabblad</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="36"/>
         <source>Open in terminal</source>
         <translation>Openen in terminalvenster</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
         <translation>Selectie omkeren</translation>
     </message>
@@ -6534,17 +6545,17 @@
         <translation>Pictogramgrootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="101"/>
         <source>Grid density</source>
         <translation>Tussenruimte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="134"/>
         <source>List height</source>
         <translation>Hoogte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="161"/>
         <source>Display preview</source>
         <translation>Voorvertoningen tonen</translation>
     </message>
@@ -7504,12 +7515,12 @@
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2114"/>
         <source>Mount error</source>
         <translation>Het aankoppelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2115"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>De inloggegevens van de server zijn onjuist. Koppel af en weer aan.</translation>
     </message>
@@ -7517,22 +7528,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="638"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="639"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="640"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="641"/>
         <source>Time modified</source>
         <translation>Gewijzigd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="642"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="643"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="644"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
