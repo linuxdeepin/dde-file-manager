@@ -479,7 +479,6 @@ QString DiskEncryptMenuScene::generateTPMToken(const QString &device, bool pin)
     QJsonObject token = doc.object();
 
     // keep same with usec.
-    // https://gerrit.uniontech.com/plugins/gitiles/usec-crypt-kit/+/refs/heads/master/src/boot-crypt/util.cpp
     // j["type"] = "usec-tpm2";
     // j["keyslots"] = {"0"};
     // j["kek-priv"] = encoded_priv_key;
