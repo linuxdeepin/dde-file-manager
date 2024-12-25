@@ -167,14 +167,8 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     pen.setWidth(1);
 
     QFont font;
-    if (isChecked()) {
-        font.setBold(true);
-    } else {
-        font.setBold(false);
-    }
-
     int tabMargin = 10;
-    int blueSquareWidth = isChecked() ? 5 : 0;
+    int blueSquareWidth = isChecked() ? 6 : 0;
     int blueSquareMargin = isChecked() ? 4 : 0;
     int buttonSize = (d->hovered && d->showCloseButton) ? 16 : 0;
     int buttonMargin = (d->hovered && d->showCloseButton) ? 4 : 0;
@@ -205,8 +199,12 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     }
 
     if (isChecked()) {
+        painter->save();
         QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
-        painter->fillRect(QRect((d->width - fm.horizontalAdvance(str) - textMargin) / 2, (d->height - blueSquareWidth) / 2, blueSquareWidth, blueSquareWidth), blueColor);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(blueColor);
+        painter->drawRoundedRect(QRect((d->width - fm.horizontalAdvance(str) - textMargin) / 2, (d->height - blueSquareWidth) / 2, blueSquareWidth, blueSquareWidth), 1, 1);
+        painter->restore();
     }
 
     // draw text
