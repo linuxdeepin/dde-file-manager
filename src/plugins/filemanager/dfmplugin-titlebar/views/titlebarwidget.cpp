@@ -227,6 +227,7 @@ void TitleBarWidget::initializeUi()
     bottomBar = new TabBar;
     bottomBar->installEventFilter(this);
     topBarCustomLayout->addWidget(bottomBar, 1);
+    topBarCustomLayout->addSpacing(10);
 
     // nav
     curNavWidget = new NavWidget;
