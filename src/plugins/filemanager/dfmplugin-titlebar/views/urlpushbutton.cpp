@@ -111,7 +111,7 @@ QColor UrlPushButtonPrivate::foregroundColor() const
     QColor color = q->palette().color(q->foregroundRole());
 
     // 根据活动状态调整透明度
-    int alpha = active ? 255 : 128;
+    int alpha = active ? 178 : 89;
     if (!active) {
         alpha -= alpha / 4;
     }
@@ -349,7 +349,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
     }
 
     QFont adjustedFont(font());
-    adjustedFont.setBold(d->subDir.isEmpty());
+    // adjustedFont.setBold(d->subDir.isEmpty());
     painter.setFont(adjustedFont);
 
     const int buttonWidth = width();
