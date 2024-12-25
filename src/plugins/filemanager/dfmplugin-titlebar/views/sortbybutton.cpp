@@ -17,6 +17,7 @@
 #include <QPainter>
 #include <QStyleOptionButton>
 #include <QMouseEvent>
+#include <QStylePainter>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
@@ -144,7 +145,13 @@ void SortByButton::paintEvent(QPaintEvent *event)
     opt.initFrom(this);
 
     if (d->hoverFlag || d->menu->isVisible()) {
-        style()->drawControl(QStyle::CE_PushButton, &opt, &painter, this);
+        QStylePainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        QStyleOptionToolButton option;
+        QToolButton::initStyleOption(&option);
+        option.state |= QStyle::State_MouseOver;
+        option.rect.adjust(1, 1, -1, -1);
+        painter.drawComplexControl(QStyle::CC_ToolButton, option);
     }
 
     // Draw left icon
