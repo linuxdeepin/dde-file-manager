@@ -3203,12 +3203,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Domyślne zagęszczenie siatki ikon:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Domyślna wysokość listy:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
