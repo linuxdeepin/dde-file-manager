@@ -103,9 +103,6 @@ void SearchEditWidget::setSearchMode(SearchMode mode)
     if (advancedButton->isChecked() || searchEdit->hasFocus())
         return;
 
-    if (currentMode == mode)
-        return;
-
     currentMode = mode;
     updateSearchWidgetLayout();
 }
@@ -717,7 +714,10 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchButton->setVisible(true);
         advancedButton->setVisible(false);
     } else {
-        setFixedWidth(currentMode == SearchMode::kExtraLarge ? kSearchEditMaxWidth : kSearchEditMediumWidth);
+        int width = kSearchEditMediumWidth;
+        if (currentMode == SearchMode::kExtraLarge)
+            width = (parentWidget()->width() - kWidthThresholdExpand) + kSearchEditMediumWidth;
+        setFixedWidth(qMin(width, kSearchEditMaxWidth));
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
         advancedButton->setVisible(searchEdit->hasFocus() || !searchEdit->text().isEmpty());
