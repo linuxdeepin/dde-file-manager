@@ -12,30 +12,31 @@
 
 namespace dfmplugin_titlebar {
 class FolderListWidgetPrivate;
-class FolderListWidget : public Dtk::Widget::DBlurEffectWidget
-{
-    Q_OBJECT
-    QScopedPointer<FolderListWidgetPrivate> d;
+class FolderListWidget : public Dtk::Widget::DBlurEffectWidget {
+  Q_OBJECT
+  QScopedPointer<FolderListWidgetPrivate> d;
 
 public:
-    explicit FolderListWidget(QWidget *parent = nullptr);
-    ~FolderListWidget() override;
+  explicit FolderListWidget(QWidget *parent = nullptr);
+  ~FolderListWidget() override;
 
-    void setFolderList(const QList<CrumbData> &datas, bool stacked);
+  void setFolderList(const QList<CrumbData> &datas, bool stacked);
+  void popUp(const QPoint &popupPos);
 
 Q_SIGNALS:
-    void urlButtonActivated(const QUrl &url);
-    void hidden();
+  void urlButtonActivated(const QUrl &url);
+  void hidden();
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
+  void hideEvent(QHideEvent *event) override;
 
 private:
-    bool matchText(const QString &source, const QString &input) const;
-    bool findAndSelectMatch(const QString &text, int startRow) const;
+  bool matchText(const QString &source, const QString &input) const;
+  bool findAndSelectMatch(const QString &text, int startRow) const;
+  QRect availableGeometry() const;
 };
 
-}   // namespace dfmplugin_titlebar
+} // namespace dfmplugin_titlebar
 
-#endif   // FOLDERLISTWIDGET_H
+#endif // FOLDERLISTWIDGET_H

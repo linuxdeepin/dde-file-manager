@@ -215,8 +215,7 @@ void UrlPushButtonPrivate::onSelectSubDirs()
         requestCompleteByUrl(crumbDatas.last().url);
     } else {
         folderListWidget->setFolderList(crumbDatas, stacked);
-        folderListWidget->move(popupPos);
-        folderListWidget->show();
+        folderListWidget->popUp(popupPos);
     }
 
     QEventLoop eventLoop;
@@ -250,8 +249,7 @@ void UrlPushButtonPrivate::onCompletionCompleted()
     const int popupX = (leftToRight && !stacked) ? (q->width() - arrowWidth() - kBorderWidth) : 0;
     const QPoint popupPos = q->parentWidget()->mapToGlobal(q->geometry().bottomLeft() + QPoint(popupX, 0));
     folderListWidget->setFolderList(datas, stacked);
-    folderListWidget->move(popupPos);
-    folderListWidget->show();
+    folderListWidget->popUp(popupPos);
 }
 
 UrlPushButton::UrlPushButton(QWidget *parent)

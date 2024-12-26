@@ -13,14 +13,16 @@
 #include <QVBoxLayout>
 #include <QStandardItemModel>
 #include <QKeyEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
-static constexpr int kMaxFolderCount = 8;
 static constexpr int kFolderBatchSize = 2000;
 static constexpr int kFolderListItemMargin { 6 };
+constexpr int KFloderListMargin = 10;
 
 FolderListWidgetPrivate::FolderListWidgetPrivate(FolderListWidget *qq)
     : QObject(qq), q(qq)
@@ -160,19 +162,55 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
         }
     }
 
-    // Set fixed width considering icon and margins
-    int width = maxTextWidth + kTextLeftPadding + kItemMargin * 2;
-    width = qBound(172, width, 800);
-    setFixedWidth(width);
+    QRect availableRect = this->availableGeometry();
+    // 整体的高度为屏幕高度减去任务栏高度，和上下各10单位的边距
+    int maxAvailableHeight = availableRect.height() - KFloderListMargin * 2;
 
-    int folderCount = dataNum > kMaxFolderCount ? kMaxFolderCount : dataNum;
+    // 计算实际需要的总高度
+    int totalHeight;
     if (dataNum > 1) {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
-        setFixedHeight(kItemMargin * 2 + kFolderItemHeight * folderCount);
+        totalHeight = kItemMargin * 2 + kFolderItemHeight * dataNum;
     } else {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin * 3 / 2, kItemMargin, kItemMargin * 3 / 2);
-        setFixedHeight(kItemMargin * 3 + kFolderItemHeight * folderCount);
+        totalHeight = kItemMargin * 3 + kFolderItemHeight * dataNum;
     }
+    setFixedHeight(qMin(totalHeight, maxAvailableHeight));
+}
+
+void FolderListWidget::popUp(const QPoint& popupPos)
+{
+    QPoint adjustedPos = popupPos;  // 初始位置
+    QSize popupSize = size();
+    const QRect availableRect = this->availableGeometry();
+
+    const int maxHeight = availableRect.height() - 2 * KFloderListMargin;
+
+    // 限制弹窗最大高度
+    if (popupSize.height() > maxHeight) {
+        resize(popupSize.width(), maxHeight);
+        popupSize = size();
+    }
+
+    if (adjustedPos.y() + popupSize.height() > availableRect.bottom() - KFloderListMargin) {
+        adjustedPos.setY(availableRect.bottom() - KFloderListMargin - popupSize.height());
+    }
+
+    // 确保不低于顶部边距
+    if (adjustedPos.y() < availableRect.top() + KFloderListMargin) {
+        adjustedPos.setY(availableRect.top() + KFloderListMargin);
+    }
+
+    // 超出屏幕边界时,调整水平位置
+    if (adjustedPos.x() + popupSize.width() > availableRect.right()) {
+        adjustedPos.setX(availableRect.right() - popupSize.width());
+    }
+    if (adjustedPos.x() < availableRect.left()) {
+        adjustedPos.setX(availableRect.left());
+    }
+
+    move(adjustedPos);
+    show();
 }
 
 void FolderListWidget::keyPressEvent(QKeyEvent *event)
@@ -244,4 +282,12 @@ bool FolderListWidget::findAndSelectMatch(const QString &text, int startRow) con
         }
     }
     return false;
+}
+
+QRect FolderListWidget::availableGeometry() const
+{
+    QScreen *screen = QGuiApplication::primaryScreen();
+    if (!screen)
+        return QRect();
+    return screen->availableGeometry();
 }
