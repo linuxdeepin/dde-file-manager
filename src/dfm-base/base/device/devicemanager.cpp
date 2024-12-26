@@ -172,6 +172,15 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         return;
     }
 
+    QVariantMap options = opts;
+    const QStringList winFS { "ntfs", "vfat", "exfat" };
+    if (winFS.contains(dev->fileSystem())) {
+        auto optStr = options.value("options").toString();
+        optStr.prepend("dmask=000,fmask=111,");
+        if (optStr.endsWith(",")) optStr.chop(1);
+        options.insert("options", optStr);
+    }
+
     if (dev->optical()) {
         if (d->isMountingOptical) {
             qCWarning(logDFMBase) << "Currently mounting a disc!";
@@ -195,7 +204,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
             qCInfo(logDFMBase) << "query optical item info finished, about to starting mounting it...";
             d->isMountingOptical = false;
-            dev->mountAsync(opts, callback);
+            dev->mountAsync(options, callback);
             delete fw;
         });
         d->isMountingOptical = true;
@@ -238,7 +247,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                     retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
             };
-            dev->mountAsync(opts, callback);
+            dev->mountAsync(options, callback);
         } else {
             qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
             if (cb)
