@@ -20,9 +20,9 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
-static constexpr int kFolderBatchSize = 2000;
+static constexpr int kFolderBatchSize = { 2000 };
 static constexpr int kFolderListItemMargin { 6 };
-constexpr int KFloderListMargin = 10;
+static constexpr int kFloderListMargin = { 10 };
 
 FolderListWidgetPrivate::FolderListWidgetPrivate(FolderListWidget *qq)
     : QObject(qq), q(qq)
@@ -162,9 +162,9 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
         }
     }
 
-    QRect availableRect = this->availableGeometry();
+    QRect availableRect = this->availableGeometry(QCursor::pos());
     // 整体的高度为屏幕高度减去任务栏高度，和上下各10单位的边距
-    int maxAvailableHeight = availableRect.height() - KFloderListMargin * 2;
+    int maxAvailableHeight = availableRect.height() - kFloderListMargin * 2;
 
     // 计算实际需要的总高度
     int totalHeight;
@@ -182,9 +182,9 @@ void FolderListWidget::popUp(const QPoint& popupPos)
 {
     QPoint adjustedPos = popupPos;  // 初始位置
     QSize popupSize = size();
-    const QRect availableRect = this->availableGeometry();
+    const QRect availableRect = this->availableGeometry(popupPos);
 
-    const int maxHeight = availableRect.height() - 2 * KFloderListMargin;
+    const int maxHeight = availableRect.height() - 2 * kFloderListMargin;
 
     // 限制弹窗最大高度
     if (popupSize.height() > maxHeight) {
@@ -192,13 +192,13 @@ void FolderListWidget::popUp(const QPoint& popupPos)
         popupSize = size();
     }
 
-    if (adjustedPos.y() + popupSize.height() > availableRect.bottom() - KFloderListMargin) {
-        adjustedPos.setY(availableRect.bottom() - KFloderListMargin - popupSize.height());
+    if (adjustedPos.y() + popupSize.height() > availableRect.bottom() - kFloderListMargin) {
+        adjustedPos.setY(availableRect.bottom() - kFloderListMargin - popupSize.height());
     }
 
     // 确保不低于顶部边距
-    if (adjustedPos.y() < availableRect.top() + KFloderListMargin) {
-        adjustedPos.setY(availableRect.top() + KFloderListMargin);
+    if (adjustedPos.y() < availableRect.top() + kFloderListMargin) {
+        adjustedPos.setY(availableRect.top() + kFloderListMargin);
     }
 
     // 超出屏幕边界时,调整水平位置
@@ -284,10 +284,25 @@ bool FolderListWidget::findAndSelectMatch(const QString &text, int startRow) con
     return false;
 }
 
-QRect FolderListWidget::availableGeometry() const
+QRect FolderListWidget::availableGeometry(const QPoint& popUpPos) const
 {
-    QScreen *screen = QGuiApplication::primaryScreen();
+    QScreen *screen = nullptr;
+
+    // 先通过弹出位置来计算所在屏幕
+    if (!popUpPos.isNull())
+        screen = QGuiApplication::screenAt(popUpPos);
+
+    // 如果根据传递值没有找到屏幕则使用全局鼠标所在位置
     if (!screen)
-        return QRect();
-    return screen->availableGeometry();
+        screen = QGuiApplication::screenAt(QCursor::pos());
+    // 找到窗口所在屏幕
+    if (!screen && window())
+        screen = window()->screen();
+
+    // 使用主屏幕
+    if (!screen) {
+        screen = QGuiApplication::primaryScreen();
+    }
+
+    return screen ? screen->availableGeometry() : QRect();
 }

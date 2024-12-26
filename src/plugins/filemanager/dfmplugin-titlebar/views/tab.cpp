@@ -222,17 +222,24 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     painter->drawText((d->width - fm.horizontalAdvance(str) - textMargin) / 2 + textMargin, (d->height - fm.height()) / 2,
                       fm.horizontalAdvance(str), fm.height(), 0, buttonHoveredStr);
 
-    // draw line
-    pen.setColor(pal.color(QPalette::Inactive, QPalette::Shadow));
+    // 绘制边框线
+    painter->save();
+    QColor lineColor = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType
+            ? QColor(255, 255, 255, 20)     // 深色模式：白色 8%
+            : QColor(0, 0, 0, 20);          // 浅色模式为8% 的黑色
+
+    pen.setColor(lineColor);
     painter->setPen(pen);
+
     int y = static_cast<int>(boundingRect().height());
     int x = static_cast<int>(boundingRect().width());
 
-    qDrawShadeLine(painter, QPoint(x, 0), QPoint(x, y), pal);
-    if (!isChecked()) {
-        qDrawShadeLine(painter, QPoint(0, y), QPoint(x, y), pal);
-    }
+    painter->drawLine(QPointF(x - 1, 0), QPointF(x - 1, y));
 
+    if (!isChecked()) {
+        painter->drawLine(QPointF(0, y - 1), QPointF(x - 2, y - 1));
+    }
+    painter->restore();
     QPalette::ColorGroup cp = isChecked() || d->hovered ? QPalette::Active : QPalette::Inactive;
     pen.setColor(pal.color(cp, QPalette::WindowText));
     painter->setPen(pen);
