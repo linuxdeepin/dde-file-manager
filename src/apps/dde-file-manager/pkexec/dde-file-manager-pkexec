@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# Reference:
-# https://wikidev.uniontech.com/%E8%BF%9B%E7%A8%8B%E8%BF%90%E8%A1%8C%E6%9D%83%E9%99%90%E4%B8%8E%E6%8F%90%E6%9D%83
 function get_scale_factor() {
     user_name=$(logname)
     scaling=$(sudo -u "$user_name" dbus-launch gsettings get com.deepin.xsettings scale-factor)
