@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 - 2027 UnionTech Software Technology Co., Ltd.
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef APPLAUNCHUTILS_P_H
 #define APPLAUNCHUTILS_P_H
 
@@ -9,7 +12,8 @@
 DFMBASE_BEGIN_NAMESPACE
 
 // DBus service names for V2X
-struct DBusServiceNames {
+struct DBusServiceNames
+{
     static constexpr const char *kService = "org.desktopspec.ApplicationManager1";
     static constexpr const char *kPathPrefix = "/org/desktopspec/ApplicationManager1";
     static constexpr const char *kInterface = "org.desktopspec.ApplicationManager1.Application";
@@ -44,4 +48,4 @@ private:
 
 DFMBASE_END_NAMESPACE
 
-#endif // APPLAUNCHUTILS_P_H 
+#endif   // APPLAUNCHUTILS_P_H

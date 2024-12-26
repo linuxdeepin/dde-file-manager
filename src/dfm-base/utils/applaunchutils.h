@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 - 2027 UnionTech Software Technology Co., Ltd.
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef APPLAUNCHUTILS_H
 #define APPLAUNCHUTILS_H
 
@@ -21,7 +24,7 @@ public:
 
     // 添加启动策略，优先级数字越小优先级越高
     void addStrategy(AppLaunchFunc launcher, int priority);
-    
+
     // 启动应用
     bool launchApp(const QString &desktopFile, const QStringList &filePaths);
 
@@ -34,4 +37,4 @@ private:
 
 DFMBASE_END_NAMESPACE
 
-#endif // APPLAUNCHUTILS_H
+#endif   // APPLAUNCHUTILS_H
