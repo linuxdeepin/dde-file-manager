@@ -179,22 +179,18 @@ bool BlockEntryFileEntity::showUsageSize() const
 AbstractEntryFileEntity::EntryOrder BlockEntryFileEntity::order() const
 {
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
-        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
     auto clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty, QVariantHash()).toHash();
-    if (clearInfo.value(DeviceProperty::kMountPoint, "").toString() == "/")
+    if (DeviceUtils::isSystemDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskRoot;
 
-    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
-    if (!canPowerOff && datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_data"))
-        return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
-    if (!canPowerOff && clearInfo.value(DeviceProperty::kIdLabel, "").toString() == "_dde_data")
+    if (DeviceUtils::isDataDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return AbstractEntryFileEntity::EntryOrder::kOrderSysDiskData;
 
     if (datas.value(DeviceProperty::kOptical).toBool()
         || datas.value(DeviceProperty::kOpticalDrive).toBool())
         return AbstractEntryFileEntity::EntryOrder::kOrderOptical;
 
+    bool canPowerOff = datas.value(DeviceProperty::kCanPowerOff).toBool();
     if (canPowerOff && !isSiblingOfRoot())
         return AbstractEntryFileEntity::EntryOrder::kOrderRemovableDisks;
 
@@ -275,12 +271,16 @@ QUrl BlockEntryFileEntity::mountPoint() const
 {
     auto mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
     QUrl target;
+
     if (mptList.isEmpty())
         return target;
 
+    if (DeviceUtils::isSystemDisk(datas))
+        return QUrl::fromLocalFile(QDir::rootPath());
+
     // when enter DataDisk, enter Home directory.
     for (const auto &mpt : mptList) {
-        if (mpt != QDir::rootPath()) {
+        if (DeviceUtils::isDataDisk(datas)) {
             const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
             const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
             if (userHome != homeBindPath && homeBindPath.startsWith(mpt))

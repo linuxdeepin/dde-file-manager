@@ -56,7 +56,7 @@ public:
 
     static QMap<QString, QString> fstabBindInfo();
 
-    static QString nameOfSystemDisk(const QVariantMap &datas);
+    static QString nameOfBuiltInDisk(const QVariantMap &datas);
     static QString nameOfOptical(const QVariantMap &datas);
     static QString nameOfEncrypted(const QVariantMap &datas);
     static QString nameOfDefault(const QString &label, const quint64 &size);
@@ -78,8 +78,12 @@ public:
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
 
+    static bool isBuiltInDisk(const QVariantHash &devInfo);
+    static bool isBuiltInDisk(const QVariantMap &devInfo);
     static bool isSystemDisk(const QVariantHash &devInfo);
     static bool isSystemDisk(const QVariantMap &devInfo);
+    static bool isDataDisk(const QVariantHash &devInfo);
+    static bool isDataDisk(const QVariantMap &devInfo);
     static bool isSiblingOfRoot(const QVariantHash &devInfo);
     static bool isSiblingOfRoot(const QVariantMap &devInfo);
 
@@ -87,6 +91,7 @@ private:
     static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
     static bool findDlnfsPath(const QString &target, Compare func);
+    static QVariantHash toHash(const QVariantMap &map);
 };
 
 }

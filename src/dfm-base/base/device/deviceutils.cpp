@@ -24,6 +24,7 @@
 #include <QRegularExpressionMatch>
 #include <QMutex>
 #include <QSettings>
+#include <QDir>
 
 #include <libmount.h>
 #include <fstab.h>
@@ -94,7 +95,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     //  /root/.gvfs/smb-share...../helloworld.txt
     //  /media/user/smbmounts/smb-share...../helloworld.txt
     //  ======>  helloworld.txt
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/(?:run/)?media/.*/smbmounts/[^/]*/)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/(?:run/)?media/.*/smbmounts/[^/]*)");
     QString fileName = fullPath.remove(prefix);
     fileName.chop(1);   // remove last '/'.
 
@@ -127,11 +128,9 @@ QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
         return alias;
 
     QVariantMap clearInfo = devInfo.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
-    QString mpt = clearInfo.value(kMountPoint, devInfo.value(kMountPoint).toString()).toString();
-    QString idLabel = clearInfo.value(kIdLabel, devInfo.value(kIdLabel).toString()).toString();
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    if (mpt == "/" || idLabel.startsWith("_dde_")) {
-        return nameOfSystemDisk(devInfo);
+    if (DeviceUtils::isBuiltInDisk(clearInfo.isEmpty() ? devInfo : clearDevInfo)) {
+        return nameOfBuiltInDisk(devInfo);
     } else if (devInfo.value(kIsEncrypted).toBool()) {
         return nameOfEncrypted(devInfo);
     } else if (devInfo.value(kOpticalDrive).toBool()) {
@@ -368,7 +367,7 @@ QMap<QString, QString> DeviceUtils::fstabBindInfo()
     return table;
 }
 
-QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
+QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
 {
     QVariantMap clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
 
@@ -378,7 +377,7 @@ QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
     bool canPowerOff = datas.value(kCanPowerOff).toBool();
 
     // get system disk name if there is no alias
-    if (mountPoint == "/")
+    if (DeviceUtils::isSystemDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return QObject::tr("System Disk");
     if (!canPowerOff && !mountPoint.isEmpty()) {
         if (label.startsWith("_dde_data"))
@@ -664,29 +663,76 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
     return bindPath;
 }
 
-bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
+bool DeviceUtils::isBuiltInDisk(const QVariantHash &devInfo)
 {
-    if (!devInfo.contains(GlobalServerDefines::DeviceProperty::kHintSystem))
+    // 如果是可移除设备，则不是内置磁盘
+    if (devInfo.value(kCanPowerOff).toBool())
         return false;
 
-    bool isSystem = devInfo.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()
-            || devInfo.value(GlobalServerDefines::DeviceProperty::kConnectionBus).toString() != "usb";
-    if (devInfo.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
-        isSystem = false;
-    // treat the siblings of root(/) device as System devices.
-    isSystem |= isSiblingOfRoot(devInfo);
-    return isSystem;
+    // 如果是光驱设备，则不是内置磁盘
+    if (devInfo.value(kOpticalDrive).toBool())
+        return false;
+
+    // 检查是否为系统相关磁盘
+    QString mpt = devInfo.value(kMountPoint).toString();
+    QString idLabel = devInfo.value(kIdLabel).toString();
+    if (mpt == QDir::rootPath() || idLabel.startsWith("_dde_"))
+        return true;
+
+    // 检查硬件特征
+    bool hintSystem = devInfo.value(kHintSystem).toBool();
+    QString bus = devInfo.value(kConnectionBus).toString();
+    if (hintSystem || bus != "usb")
+        return true;
+
+    // 检查是否为根设备的兄弟设备
+    return isSiblingOfRoot(devInfo);
+}
+
+bool DeviceUtils::isBuiltInDisk(const QVariantMap &devInfo)
+{
+    return isBuiltInDisk(toHash(devInfo));
+}
+
+bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
+{
+    // 检查是否为根目录
+    QString mountPoint = devInfo.value(kMountPoint).toString();
+    if (mountPoint == QDir::rootPath())
+        return true;
+
+    // 特殊情况：Root[X]分区, A-B Recover
+    QString label = devInfo.value(kIdLabel).toString();
+    if (label.startsWith("Root") && mountPoint == "/sysroot")
+        return true;
+
+    return false;
 }
 
 bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
 {
-    QVariantHash hash;
-    QMapIterator<QString, QVariant> iter(devInfo);
-    while (iter.hasNext()) {
-        iter.next();
-        hash.insert(iter.key(), iter.value());
-    }
-    return isSystemDisk(hash);
+    return isSystemDisk(toHash(devInfo));
+}
+
+bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
+{
+    // 如果是可移除设备，则不是数据盘
+    if (devInfo.value(kCanPowerOff).toBool())
+        return false;
+
+    // 如果是根目录，则不是数据盘
+    QString mountPoint = devInfo.value(kMountPoint).toString();
+    if (mountPoint == QDir::rootPath())
+        return false;
+
+    // 检查标签是否为数据盘标识
+    QString label = devInfo.value(kIdLabel).toString();
+    return label.startsWith("_dde_data");
+}
+
+bool DeviceUtils::isDataDisk(const QVariantMap &devInfo)
+{
+    return isDataDisk(toHash(devInfo));
 }
 
 bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
@@ -694,7 +740,7 @@ bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
     static QString rootDrive;
     static std::once_flag flg;
     std::call_once(flg, [] {
-        const QString &rootDev = DeviceUtils::getMountInfo("/", false);
+        const QString &rootDev = DeviceUtils::getMountInfo(QDir::rootPath(), false);
         const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
         const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
         rootDrive = data.value(GlobalServerDefines::DeviceProperty::kDrive).toString();
@@ -706,13 +752,7 @@ bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
 
 bool DeviceUtils::isSiblingOfRoot(const QVariantMap &devInfo)
 {
-    QVariantHash hash;
-    QMapIterator<QString, QVariant> iter(devInfo);
-    while (iter.hasNext()) {
-        iter.next();
-        hash.insert(iter.key(), iter.value());
-    }
-    return isSiblingOfRoot(hash);
+    return isSiblingOfRoot(toHash(devInfo));
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
@@ -756,4 +796,13 @@ bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)
     QRegularExpression re(rex);
     QRegularExpressionMatch match = re.match(txt);
     return match.hasMatch();
+}
+
+QVariantHash DeviceUtils::toHash(const QVariantMap &map)
+{
+    QVariantHash hash;
+    hash.reserve(map.size());
+    for (auto it = map.constBegin(); it != map.constEnd(); ++it)
+        hash.insert(it.key(), it.value());
+    return hash;
 }

@@ -93,7 +93,7 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
             && !data.value(DeviceProperty::kOptical).toBool())
             continue;
         if (opts.testFlag(DeviceQueryOption::kSystem)
-            && !DeviceUtils::isSystemDisk(data))
+            && !DeviceUtils::isBuiltInDisk(data))
             continue;
         if (opts.testFlag(DeviceQueryOption::kLoop)
             && !data.value(DeviceProperty::kIsLoopDevice).toBool())

@@ -673,7 +673,7 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
         visableKey = kItemVisiableControlKeys[1];
         visableName = kItemVisiableControlNames[1];
-    } else if (DeviceUtils::isSystemDisk(info->extraProperties())) {
+    } else if (DeviceUtils::isBuiltInDisk(info->extraProperties())) {
         visableKey = kItemVisiableControlKeys[0];
         visableName = kItemVisiableControlNames[0];
         reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";

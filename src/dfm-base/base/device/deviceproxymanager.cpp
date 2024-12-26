@@ -234,7 +234,7 @@ void DeviceProxyManagerPrivate::initMounts()
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
                     // FIXME(xust): fix later, the kRemovable is not always correct.
                     QWriteLocker lk(&lock);
-                    if (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isSystemDisk(info))
+                    if (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isBuiltInDisk(info))
                         externalMounts.insert(dev, mpt);
                     allMounts.insert(dev, mpt);
                 }
@@ -355,7 +355,7 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
-                && !DeviceUtils::isSystemDisk(info))
+                && !DeviceUtils::isBuiltInDisk(info))
             externalMounts.insert(id, p);
     } else {
         externalMounts.insert(id, p);

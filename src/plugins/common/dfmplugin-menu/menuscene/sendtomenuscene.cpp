@@ -125,7 +125,7 @@ bool SendToMenuScene::create(QMenu *parent)
             QString mpt = data.value(DeviceProperty::kMountPoint).toString();
             QString devDesc = data.value(DeviceProperty::kDevice).toString();
 
-            if (data.value(DeviceProperty::kOptical).toBool() || DeviceUtils::isSystemDisk(data)) {
+            if (data.value(DeviceProperty::kOptical).toBool() || DeviceUtils::isBuiltInDisk(data)) {
                 continue;   // this should be added in burn plugin.
             } else {
                 QAction *act = menuSendTo->addAction(label);
