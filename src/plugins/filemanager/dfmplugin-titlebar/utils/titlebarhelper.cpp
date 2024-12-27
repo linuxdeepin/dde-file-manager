@@ -254,6 +254,7 @@ void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
     }
 
     fmInfo() << "search :" << text;
+    curTitleBar->startSpinner();
     TitleBarEventCaller::sendSearch(sender, text);
 }
 
