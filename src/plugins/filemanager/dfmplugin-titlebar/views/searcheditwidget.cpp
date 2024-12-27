@@ -163,7 +163,6 @@ void SearchEditWidget::onReturnPressed()
     }
 
     TitleBarHelper::handleSearchPressed(this, text);
-    startSpinner();
 }
 
 void SearchEditWidget::onTextEdited(const QString &text)
