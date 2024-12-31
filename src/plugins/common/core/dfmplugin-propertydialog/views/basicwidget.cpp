@@ -27,8 +27,8 @@ static constexpr int kLeftContentsMargins { 0 };
 static constexpr int kRightContentsMargins { 5 };
 static constexpr int kFrameWidth { 360 };
 static constexpr int kItemWidth { 340 };
-static constexpr int kLeftWidgetWidth { 70 };
-static constexpr int kRightWidgetWidth { 255 };
+static constexpr int kLeftWidgetWidth { 75 };
+static constexpr int kRightWidgetWidth { 250 };
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
