@@ -47,6 +47,10 @@ public slots:
 
     void slotFileHide(int state);
 
+    void imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
 
@@ -59,6 +63,9 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     QCheckBox *hideFile { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileImgSize { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileMediaResolution { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileMediaDuration { nullptr };
     bool hideCheckBox { false };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     qint64 fSize { 0 };

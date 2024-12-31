@@ -10,7 +10,14 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+
 #include <dfm-framework/event/event.h>
+
+#include <dfm-io/dfileinfo.h>
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
@@ -32,6 +39,7 @@ static constexpr int kRightWidgetWidth { 255 };
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
+USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
@@ -90,6 +98,10 @@ void BasicWidget::initUI()
     DFontSizeManager::instance()->bind(hideFile, DFontSizeManager::SizeType::T7, QFont::Normal);
     hideFile->setText(tr("Hide this file"));
     hideFile->setToolTip(hideFile->text());
+
+    fileImgSize = createValueLabel(frameMain, tr("Image size"));
+    fileMediaResolution = createValueLabel(frameMain, tr("Resolution"));
+    fileMediaDuration = createValueLabel(frameMain, tr("Duration"));
 }
 
 KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
@@ -214,6 +226,18 @@ void BasicWidget::basicFieldFilter(const QUrl &url)
         fieldMap.remove(BasicFieldExpandEnum::kFileModifiedTime);
         fileModified->deleteLater();
         fileModified = nullptr;
+    } else if (fieldFilter & PropertyFilterType::kFileImageSizeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileImageSize);
+        fileImgSize->deleteLater();
+        fileImgSize = nullptr;
+    } else if (fieldFilter & PropertyFilterType::kFileMediaResolutionFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileMediaResolution);
+        fileMediaResolution->deleteLater();
+        fileMediaResolution = nullptr;
+    } else if (fieldFilter & PropertyFilterType::kFileMediaDurationFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileMediaDuration);
+        fileMediaDuration->deleteLater();
+        fileMediaDuration = nullptr;
     }
 }
 
@@ -279,9 +303,15 @@ void BasicWidget::basicFill(const QUrl &url)
         fCount = 1;
         fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
     }
+    if (fileImgSize && fileImgSize->RightValue().isEmpty())
+        fileImgSize->setVisible(false);
+    if (fileMediaResolution && fileMediaResolution->RightValue().isEmpty())
+        fileMediaResolution->setVisible(false);
+    if (fileMediaDuration && fileMediaDuration->RightValue().isEmpty())
+        fileMediaDuration->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        const FileInfo::FileType type = info->fileType();
+        FileInfo::FileType type = info->fileType();
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
@@ -297,7 +327,38 @@ void BasicWidget::basicFill(const QUrl &url)
             delete fileCount;
             fileCount = nullptr;
         }
+
+        QUrl localUrl = url;
+        QList<QUrl> urls {};
+        bool ok = UniversalUtils::urlsTransformToLocal({ localUrl }, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+        FileInfoPointer localinfo = InfoFactory::create<FileInfo>(localUrl);
+        const QString &mimeName { localinfo->nameOf(NameInfoType::kMimeTypeName) };
+        type = MimeTypeDisplayManager::instance()->displayNameToEnum(mimeName);
+        QList<DFileInfo::AttributeExtendID> extenList;
+        if (type == FileInfo::FileType::kVideos) {
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &BasicWidget::videoExtenInfo);
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
+            if (!mediaAttributes.isEmpty())
+                videoExtenInfo(url, mediaAttributes);
+        } else if (type == FileInfo::FileType::kImages) {
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &BasicWidget::imageExtenInfo);
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
+            if (!mediaAttributes.isEmpty())
+                imageExtenInfo(url, mediaAttributes);
+        } else if (type == FileInfo::FileType::kAudios) {
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &BasicWidget::audioExtenInfo);
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
+            if (!mediaAttributes.isEmpty())
+                audioExtenInfo(url, mediaAttributes);
+        }
     }
+
+    
 }
 
 void BasicWidget::initFileMap()
@@ -309,6 +370,9 @@ void BasicWidget::initFileMap()
     fieldMap.insert(BasicFieldExpandEnum::kFileCreateTime, fileCreated);
     fieldMap.insert(BasicFieldExpandEnum::kFileAccessedTime, fileAccessed);
     fieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, fileModified);
+    fieldMap.insert(BasicFieldExpandEnum::kFileImageSize, fileImgSize);
+    fieldMap.insert(BasicFieldExpandEnum::kFileMediaResolution, fileMediaResolution);
+    fieldMap.insert(BasicFieldExpandEnum::kFileMediaDuration, fileMediaDuration);
 }
 
 void BasicWidget::selectFileUrl(const QUrl &url)
@@ -359,4 +423,66 @@ void BasicWidget::slotFileHide(int state)
 void BasicWidget::closeEvent(QCloseEvent *event)
 {
     DArrowLineDrawer::closeEvent(event);
+}
+
+void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (url != currentUrl) {
+        return;
+    }
+    
+    if (properties.isEmpty()) {
+        return;
+    }
+    int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
+    int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
+    const QString &imgSizeStr = QString::number(width) + "x" + QString::number(height);
+
+    fileImgSize->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
+    fileImgSize->setVisible(true);
+}
+
+void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (url != currentUrl) {
+        return;
+    }
+    if (properties.isEmpty()) {
+        return;
+    }
+
+    int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
+    int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
+    const QString &videoResolutionStr = QString::number(width) + "x" + QString::number(height);
+
+    QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
+
+    QTime t(0, 0, 0);
+    t = t.addMSecs(duration.toInt());
+
+    const QString &durationStr = t.toString("hh:mm:ss");
+
+    fileMediaResolution->setRightValue(videoResolutionStr, Qt::ElideNone, Qt::AlignVCenter, true);
+    fileMediaResolution->setVisible(true);
+    fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
+    fileMediaDuration->setVisible(true);
+}
+
+void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (url != currentUrl) {
+        return;
+    }
+    if (properties.isEmpty()) {
+        return;
+    }
+
+    QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
+    QTime t(0, 0, 0);
+    t = t.addMSecs(duration.toInt());
+
+    const QString &durationStr = t.toString("hh:mm:ss");
+
+    fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
+    fileMediaDuration->setVisible(true);
 }
