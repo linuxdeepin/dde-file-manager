@@ -45,6 +45,8 @@ static constexpr int kCollectionItemVerticalMargin = 2;
 static constexpr int kIconOffset = 10;
 static constexpr int kIconSelectMargin = 3;
 
+inline constexpr int kStartDragDistance { 20 };
+
 CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent)
     : QObject(parent), q(qq), id(uuid), provider(dataProvider), menuProxy(new CollectionViewMenu(qq))
 {
@@ -295,8 +297,10 @@ void CollectionViewPrivate::checkTouchDarg(QMouseEvent *event)
         if (themeSettings)
             touchFlickBeginMoveDelay = themeSettings->property("touchFlickBeginMoveDelay");
 
-        touchDragTimer.setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 200);
-        touchDragTimer.start();
+        if (touchFlickBeginMoveDelay.isValid()) {
+            touchDragTimer.setInterval(touchFlickBeginMoveDelay.toInt());
+            touchDragTimer.start();
+        }
     } else {
         touchDragTimer.stop();
     }
@@ -1807,6 +1811,13 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
     if (index.isValid() && isPersistentEditorOpen(index))
         return;
 
+    if (event->source() == Qt::MouseEventSynthesizedByQt
+            && event->button() == Qt::LeftButton
+            && index.isValid()) {
+        d->isTouchDrag = true;
+        d->mousePressPosForTouch = event->pos();
+    }
+
     d->pressedModifiers = event->modifiers();
     d->pressedAlreadySelected = selectionModel()->isSelected(index);
     d->pressedIndex = index;
@@ -1864,6 +1875,14 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
 {
     if (d->ignoreMouseEvent)
         return;
+
+    if (event->source() == Qt::MouseEventSynthesizedByQt
+            && d->isTouchDrag) {
+        const QPoint distance = event->pos() - d->mousePressPosForTouch;
+        if (distance.manhattanLength() > kStartDragDistance)
+            startDrag(Qt::MoveAction);
+    }
+
     QAbstractItemView::mouseMoveEvent(event);
 
     // left button pressed on empty area.
@@ -2239,7 +2258,10 @@ void CollectionView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void CollectionView::dropEvent(QDropEvent *event)
 {
+    d->isTouchDrag = false;
+
     if (d->drop(event)) {
+        activateWindow();
         setState(NoState);
         return;
     }
