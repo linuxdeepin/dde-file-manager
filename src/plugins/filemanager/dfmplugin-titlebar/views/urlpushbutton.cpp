@@ -21,6 +21,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QTimer>
+#include <QEventLoop>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -51,6 +52,10 @@ UrlPushButtonPrivate::UrlPushButtonPrivate(UrlPushButton *qq)
 
 UrlPushButtonPrivate::~UrlPushButtonPrivate()
 {
+    if (folderListWidget) {
+        folderListWidget->hide();
+        folderListWidget->deleteLater();
+    }
 }
 
 void UrlPushButtonPrivate::initConnect()
@@ -194,13 +199,20 @@ void UrlPushButtonPrivate::onSelectSubDirs()
         fmWarning("Parent is not a CrumbBar !!!");
         return;
     }
+
+    // 如果已经显示则隐藏
     if (folderListWidget && folderListWidget->isVisible()) {
         folderListWidget->hide();
         return;
     }
+
     if (crumbDatas.isEmpty())
         return;
+
+    // 保存 crumbBar 的弱引用
+    QPointer<CrumbBar> weakCrumbBar(crumbBar);
     crumbBar->setPopupVisible(true);
+
     const bool leftToRight = (q->layoutDirection() == Qt::LeftToRight);
     const int popupX = (leftToRight && !stacked) ? (q->width() - arrowWidth() - kBorderWidth) : 0;
     const QPoint popupPos = q->parentWidget()->mapToGlobal(q->geometry().bottomLeft() + QPoint(popupX, 0));
@@ -208,10 +220,19 @@ void UrlPushButtonPrivate::onSelectSubDirs()
     if (!folderListWidget) {
         folderListWidget = new FolderListWidget(q);
         connect(folderListWidget, &FolderListWidget::urlButtonActivated, q, &UrlPushButton::urlButtonActivated);
+        connect(folderListWidget, &FolderListWidget::hidden, this, [this, weakCrumbBar]() {
+            if (weakCrumbBar) {
+                weakCrumbBar->setPopupVisible(false);
+            }
+            if (hoverFlag) {
+                hoverFlag = false;
+                q->update();
+            }
+        });
     }
-    QList<CrumbData> childDatas;
+
     if (!stacked) {
-        // 堆叠时显示堆叠目录
+        // 非堆叠时显示子目录
         requestCompleteByUrl(crumbDatas.last().url);
     } else {
         folderListWidget->setFolderList(crumbDatas, stacked);
@@ -221,12 +242,6 @@ void UrlPushButtonPrivate::onSelectSubDirs()
     QEventLoop eventLoop;
     connect(folderListWidget, &FolderListWidget::hidden, &eventLoop, &QEventLoop::quit);
     (void)eventLoop.exec(QEventLoop::DialogExec);
-
-    crumbBar->setPopupVisible(false);
-    if (hoverFlag) {
-        hoverFlag = false;
-        q->update();
-    }
 }
 
 void UrlPushButtonPrivate::onCompletionFound(const QStringList &stringList)
