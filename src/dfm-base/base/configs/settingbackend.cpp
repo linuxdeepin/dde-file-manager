@@ -366,7 +366,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                              { "keys", viewModeKeys } },
                            1);
     ins->addConfig(LV2_GROUP_VIEW ".04_restore_view_mode",
-                   { { "key", "03_restore_view_mode" },
+                   { { "key", "04_restore_view_mode" },
                      { "desc", tr("Restore default view mode for all directories") },
                      { "text", tr("Restore default view mode") },
                      { "type", "pushButton" },
