@@ -647,6 +647,15 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
     }
 
+    // If the filename is very long, sizeHint() will set the height of the last item to maximum 
+    // to make the scrollbar appear on the right side.
+    // However, when the last item is not a single selection target, 
+    // we don't need to draw the filename at maximum height
+    if (!isSelected || !singleSelected) {
+        qreal normalHeight = lineHeight * 2;
+        labelRect.setHeight(labelRect.height() > normalHeight ? normalHeight : labelRect.height());
+    }
+
     layout->layout(labelRect, opt.textElideMode, painter, background);
 }
 
@@ -671,7 +680,8 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
     int lineHeight = UniversalUtils::getTextLineHeight(index, parent()->parent()->fontMetrics());
     size.setHeight(size.height() + 2 * lineHeight);
 
-    // 如果有一个选中，名称显示很长时，最后一个index时设置item的高度为最多，右边才会出现滑动块
+    // If there is one selection and the name is very long, 
+    // set the item height to maximum for the last index to make the scrollbar appear on the right side
     if (index.isValid() && parent()->isLastIndex(index) && d->expandedItem
         && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
