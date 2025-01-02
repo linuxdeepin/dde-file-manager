@@ -1,3 +1,20 @@
+dde-file-manager (6.5.22) unstable; urgency=medium
+
+  * fix: fix crash when closing folder list widget
+  * fix: optimize filename display height in icon view
+  * fix: correct config key for restore view mode
+  * chore: update translation
+  * feat: Add media file information display in property dialog
+  * fix: move burn confirm dialog center.
+  * refactor: move spinner start logic to TitleBarHelper
+  * fix: size not updated in admin mode.
+  * fix: save last visited url in filedialog.
+  * fix: add dmask fmask when mount device
+  * fix: refactoring the deletion logic for temporary passwords
+  * refactor: improve network mount password handling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 02 Jan 2025 19:49:12 +0800
+
 dde-file-manager (6.5.21) unstable; urgency=medium
 
   * fix bugs
