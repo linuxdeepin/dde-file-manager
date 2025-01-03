@@ -6149,12 +6149,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="82"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося оновити покажчик. Будь ласка, знову увімкніть «Повнотекстовий пошук»</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="96"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Побудова покажчика, індексовано %1 файлів</translation>
     </message>
 </context>
 <context>
@@ -6296,7 +6296,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Введіть адресу</translation>
     </message>
 </context>
 <context>
@@ -6499,29 +6499,29 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Перегляд піктограм</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Перегляд списку</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Ієрархічний перегляд</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Критерій упорядкування</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Параметри перегляду</translation>
     </message>
 </context>
 <context>
@@ -6529,22 +6529,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="90"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="95"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Час зміни</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="100"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Розмір</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="105"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Тип</translation>
     </message>
 </context>
 <context>
@@ -6552,27 +6552,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Параметри перегляду</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Розмір піктограми</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="101"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Щільність ґратки</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="134"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Висота списку</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="161"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Попередній перегляд</translation>
     </message>
 </context>
 <context>
