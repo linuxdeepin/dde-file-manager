@@ -9,8 +9,6 @@
 #include "global.h"
 #include "sheetrenderer.h"
 
-#include <DApplicationHelper>
-
 #include <QApplication>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

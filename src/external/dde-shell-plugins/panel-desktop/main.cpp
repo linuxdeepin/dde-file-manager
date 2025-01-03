@@ -68,7 +68,6 @@ static bool pluginsLoad()
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
     qCInfo(logAppDesktop) << QString("Load plugins path : %1").arg(pluginsDir);
-    qApp->setProperty("DFM_BUILD_PLUGIN_DIR", pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/desktop");
     pluginsDirs.push_back(pluginsDir + "/common");
 #else

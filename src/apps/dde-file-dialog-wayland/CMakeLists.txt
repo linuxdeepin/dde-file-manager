@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(dde-select-dialog-wayland)
 
 configure_file(
-    "../config.h.in"
+    "${APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 

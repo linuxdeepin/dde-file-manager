@@ -34,7 +34,7 @@ SideBarImageListView::SideBarImageListView(DocSheet *sheet, QWidget *parent)
     setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     setAutoFillBackground(true);
     QPalette palet = this->palette();
-    palet.setColor(QPalette::Background, Dtk::Gui::DGuiApplicationHelper::instance()->applicationPalette().itemBackground().color());
+    palet.setColor(QPalette::Window, Dtk::Gui::DGuiApplicationHelper::instance()->applicationPalette().itemBackground().color());
     setPalette(palet);
 }
 

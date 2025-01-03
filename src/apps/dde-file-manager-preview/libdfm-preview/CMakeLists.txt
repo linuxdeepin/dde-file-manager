@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(dfm-preview)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core REQUIRED)
 
 FILE(GLOB_RECURSE FILEPREVIEW_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -21,8 +21,8 @@ add_definitions(-DVERSION=\"${VERSION}\")
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
 
 target_link_libraries(${PROJECT_NAME}
-    DFM${DTK_VERSION_MAJOR}::base
-    DFM${DTK_VERSION_MAJOR}::framework
+    DFM6::base
+    DFM6::framework
 )
 
 #install library file

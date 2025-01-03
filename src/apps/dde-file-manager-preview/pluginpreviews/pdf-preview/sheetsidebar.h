@@ -12,6 +12,7 @@
 
 namespace plugin_filepreview {
 enum PreviewWidgesFlag {
+    PREVIEW_NULL = 0x000,
     PREVIEW_THUMBNAIL = 0x0001,
 };
 }

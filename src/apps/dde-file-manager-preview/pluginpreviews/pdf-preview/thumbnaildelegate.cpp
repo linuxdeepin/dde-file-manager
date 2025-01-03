@@ -28,11 +28,10 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
         int rotate = index.data(ImageinfoType_e::IMAGE_ROTATE).toInt();
 
-        QMatrix matrix;
+        QTransform transform; // 使用QTransform替代QMatrix
+        transform.rotate(rotate);
 
-        matrix.rotate(rotate);
-
-        const QPixmap &pixmap = index.data(ImageinfoType_e::IMAGE_PIXMAP).value<QPixmap>().transformed(matrix);
+        const QPixmap &pixmap = index.data(ImageinfoType_e::IMAGE_PIXMAP).value<QPixmap>().transformed(transform); // 使用QTransform进行变换
 
         const int borderRadius = 6;
 

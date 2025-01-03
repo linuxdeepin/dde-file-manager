@@ -13,8 +13,11 @@ if(NOT DEFINED DFM_LIB_DIR)
     set(DFM_LIB_DIR ${LIB_INSTALL_DIR}/dde-file-manager)
 endif()
 
-# DBUS XML directories
+# DBUS XML directory
 set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
+
+# APP source directory
+set(APP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/apps)
 
 # Plugin root directory
 if(NOT DEFINED DFM_PLUGIN_DIR)
@@ -36,7 +39,8 @@ set(DFM_BUILD_PLUGIN_DESKTOP_DIR ${DFM_BUILD_PLUGIN_DIR}/desktop)
 set(DFM_BUILD_PLUGIN_FILEDIALOG_DIR ${DFM_BUILD_PLUGIN_DIR}/filedialog)
 set(DFM_BUILD_PLUGIN_FILEMANAGER_DIR ${DFM_BUILD_PLUGIN_DIR}/filemanager)
 set(DFM_BUILD_PLUGIN_SERVER_DIR ${DFM_BUILD_PLUGIN_DIR}/server)
-set(DFM_BUILD_PLUGIN_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tools)
+set(DFM_BUILD_PLUGIN_TOOLS_DIR ${DFM_BUILD_DIR}/tools)
+set(DFM_BUILD_PLUGIN_PREVIEW_DIR ${DFM_BUILD_DIR}/apps/dde-file-manager-preview)
 
 # common-core plugins dir
 if(NOT DEFINED DFM_PLUGIN_COMMON_CORE_DIR)
@@ -76,6 +80,11 @@ endif()
 # filemanager-edge plugins dir
 if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_EDGE_DIR)
     set(DFM_PLUGIN_FILEMANAGER_EDGE_DIR ${DFM_PLUGIN_DIR}/filemanager-edge)
+endif()
+
+# prevview plugins dir
+if(NOT DEFINED DFM_PLUGIN_PREVIEW_DIR)
+    set(DFM_PLUGIN_PREVIEW_DIR ${DFM_PLUGIN_DIR}/previews)
 endif()
 
 # tools

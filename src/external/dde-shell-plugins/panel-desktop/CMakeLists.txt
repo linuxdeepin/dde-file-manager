@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(ds-panel-desktop )
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
+    "${APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
 )
 

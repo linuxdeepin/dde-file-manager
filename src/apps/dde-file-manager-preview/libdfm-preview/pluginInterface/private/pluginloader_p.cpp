@@ -10,16 +10,16 @@
 
 using namespace dfmplugin_filepreview;
 QStringList PreviewPluginLoaderPrivate::pluginPaths;
-static constexpr char kPluginPath[] { "/common/dfmplugin-preview/previews" };
 PreviewPluginLoaderPrivate::PreviewPluginLoaderPrivate(QObject *parent)
     : QObject(parent)
 {
     if (pluginPaths.isEmpty()) {
 #ifdef QT_DEBUG
-        QString pluginsDir(qApp->property("DFM_BUILD_PLUGIN_DIR").toString() + kPluginPath);
-        pluginPaths.append(pluginsDir);
+        char path[PATH_MAX] = { 0 };
+        const char *defaultPath = realpath("../previews", path);
+        pluginPaths.append(QString::fromLocal8Bit(defaultPath));
 #else
-        pluginPaths.append(QString::fromLocal8Bit(PLUGINDIR));
+        pluginPaths.append(QString::fromLocal8Bit(DFM_PLUGIN_PREVIEW_DIR));
 #endif
     }
 }

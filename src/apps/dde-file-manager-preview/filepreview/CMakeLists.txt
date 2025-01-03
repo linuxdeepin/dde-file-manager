@@ -3,13 +3,14 @@ cmake_minimum_required(VERSION 3.10)
 set(BIN_NAME "dde-file-manager-preview")
 
 configure_file(
-    "../../config.h.in"
+    "${APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+
+find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Dtk6 COMPONENTS Widget REQUIRED)
 
 FILE(GLOB_RECURSE FILEPREVIEW_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -21,9 +22,9 @@ add_executable(${BIN_NAME}
 )
 
 target_link_libraries(${BIN_NAME} PRIVATE
-    Qt5::Core
-    Dtk::Widget
-    DFM::base
+    Qt6::Core
+    Dtk6::Widget
+    DFM6::base
 )
 
 install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
