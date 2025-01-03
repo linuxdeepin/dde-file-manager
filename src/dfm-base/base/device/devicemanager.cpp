@@ -170,6 +170,15 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         return;
     }
 
+    QVariantMap options = opts;
+    const QStringList winFS { "ntfs", "vfat", "exfat" };
+    if (winFS.contains(dev->fileSystem())) {
+        auto optStr = options.value("options").toString();
+        optStr.prepend("dmask=000,fmask=111,");
+        if (optStr.endsWith(",")) optStr.chop(1);
+        options.insert("options", optStr);
+    }
+
     if (dev->optical()) {
         if (d->isMountingOptical) {
             qCWarning(logDFMBase) << "Currently mounting a disc!";
@@ -193,7 +202,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
             qCInfo(logDFMBase) << "query optical item info finished, about to starting mounting it...";
             d->isMountingOptical = false;
-            dev->mountAsync(opts, callback);
+            dev->mountAsync(options, callback);
             delete fw;
         });
         d->isMountingOptical = true;
@@ -236,7 +245,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
                     retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
             };
-            dev->mountAsync(opts, callback);
+            dev->mountAsync(options, callback);
         } else {
             qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
             if (cb)
@@ -1065,38 +1074,32 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
 
     DFMMOUNT::MountPassInfo info;
     QApplication::restoreOverrideCursor();
-    if (dlg.exec() == QDialog::Accepted) {
-        QJsonObject loginInfo = dlg.getLoginData();
-        bool smbIntegrationEnabled = Application::genericAttribute(Application::GenericAttribute::kMergeTheEntriesOfSambaSharedFolders).toBool();
-        if (!uri.startsWith(Global::Scheme::kSmb) || !smbIntegrationEnabled) {
-            if (loginInfo.value(kSavePasswd).toInt() == 1)   // ftp mount with auth one time mode
-                loginInfo.insert(kSavePasswd, 0);   // set to never save password
-        }
 
-        auto data = loginInfo.toVariantMap();
-        using namespace GlobalServerDefines::NetworkMountParamKey;
-        if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
-            info.anonymous = true;
-        } else {
-            info.userName = data.value(kUser).toString();
-            info.domain = data.value(kDomain).toString();
-            QString pwd = data.value(kPasswd).toString();
-            info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
-            info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(
-                    data.value(kPasswdSaveMode).toInt());
-            if (uri.startsWith(Global::Scheme::kSmb)) {
-                QVariantHash pwTypeData = Application::genericSetting()->value(kStashedSmbDevices, kSavedPasswordType, QVariantHash()).toHash();
-                const QString &key = QUrl(uri).toString(QUrl::RemovePath);
-                int newPwType = int(info.savePasswd);
-                int savedPwType = pwTypeData.value(key, -1).toInt();
-                if (savedPwType != int(NetworkMountPasswdSaveMode::kSavePermanently)) {
-                    pwTypeData.insert(key, newPwType);
-                    Application::genericSetting()->setValue(kStashedSmbDevices, kSavedPasswordType, pwTypeData);
-                }
-            }
-        }
-    } else {
+    if (dlg.exec() == QDialog::Rejected) {
         info.cancelled = true;
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        return info;
+    }
+
+    QJsonObject loginInfo = dlg.getLoginData();
+    auto data = loginInfo.toVariantMap();
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    if (data.value(kAnonymous, false).toBool()) {
+        info.anonymous = true;
+    } else {
+        info.userName = data.value(kUser).toString();
+        info.domain = data.value(kDomain).toString();
+        info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
+        QString pwd = data.value(kPasswd).toString();
+        info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
+
+        // save password in session if samba is integrated.
+        if (uri.startsWith(Global::Scheme::kSmb)) {
+            using AppGA = Application::GenericAttribute;
+            bool smbIntegrated = Application::genericAttribute(AppGA::kMergeTheEntriesOfSambaSharedFolders).toBool();
+            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently)
+                info.savePasswd = NetworkMountPasswdSaveMode::kSaveBeforeLogout;
+        }
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);

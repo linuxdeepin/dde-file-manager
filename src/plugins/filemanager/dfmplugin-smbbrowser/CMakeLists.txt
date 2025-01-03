@@ -11,6 +11,9 @@ file(GLOB_RECURSE BROWSER_FILES CONFIGURE_DEPENDS
 )
 
 find_package(Qt5 COMPONENTS Network REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(LibSecret REQUIRED libsecret-1 IMPORTED_TARGET)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -25,6 +28,7 @@ target_link_libraries(
     Qt5::Network
     DFM::base
     DFM::framework
+    PkgConfig::LibSecret
 )
 
 #install library file

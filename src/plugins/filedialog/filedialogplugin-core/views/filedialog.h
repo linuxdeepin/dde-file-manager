@@ -33,6 +33,7 @@ public:
     void cd(const QUrl &url) override;
     bool saveClosedSate() const override;
     void updateAsDefaultSize();
+    QUrl lastVisitedUrl() const;
 
 public:
     QFileDialog::ViewMode currentViewMode() const;
