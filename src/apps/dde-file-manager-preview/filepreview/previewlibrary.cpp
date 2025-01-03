@@ -27,9 +27,9 @@ bool PreviewLibrary::load()
         char path[PATH_MAX] = { 0 };
         const char *defaultPath = realpath("../libdfm-preview", path);
 #else
-        auto defaultPath = PLUGINDIR;
+        auto defaultPath = DFM_PLUGIN_PREVIEW_DIR;
 #endif
-        static_assert(std::is_same<decltype(defaultPath), const char *>::value, "PLUGINDIR is not a string.");
+        static_assert(std::is_same<decltype(defaultPath), const char *>::value, "DFM_PLUGIN_PREVIEW_DIR is not a string.");
 
         QDir dir(defaultPath);
         libPath = dir.absoluteFilePath("libdfm-preview.so");

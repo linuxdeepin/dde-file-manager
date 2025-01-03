@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(dfmmusic-preview)
+project(dde-music-preview-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -12,10 +12,8 @@ FILE(GLOB_RECURSE MUSICPREVIEW_FILES CONFIGURE_DEPENDS
     )
 
 # Qt5
-set(BIN_NAME dfmmusic-preview)
-set(QT_VERSION_MAJOR 5)
-set(DTK_VERSION_MAJOR "")
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Multimedia REQUIRED)
+set(BIN_NAME ${PROJECT_NAME})
+find_package(Qt6 COMPONENTS Widgets Multimedia REQUIRED)
 find_package(ICU COMPONENTS i18n io uc REQUIRED)
 find_package(PkgConfig REQUIRED)
 
@@ -26,13 +24,13 @@ add_library(${BIN_NAME}
     ${MUSICPREVIEW_FILES}
 )
 
-set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../previews)
+set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_PREVIEW_DIR}/previews)
 
 target_link_libraries(${BIN_NAME}
-    DFM::base
-    DFM::framework
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Multimedia
+    DFM6::base
+    DFM6::framework
+    Qt6::Widgets
+    Qt6::Multimedia
     ${taglib_LIBRARIES}
     ICU::i18n
 )
@@ -45,7 +43,7 @@ install(TARGETS
     ${DFM_PLUGIN_PREVIEW_DIR}
 )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ../../previews)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ${DFM_BUILD_PLUGIN_PREVIEW_DIR}/previews)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ${DFM_PLUGIN_PREVIEW_DIR})
 

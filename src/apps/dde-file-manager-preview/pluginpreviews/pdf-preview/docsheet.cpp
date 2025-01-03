@@ -18,7 +18,6 @@
 #include <QClipboard>
 #include <QFileInfo>
 #include <QPropertyAnimation>
-#include <QDesktopWidget>
 #include <QDebug>
 #include <QTemporaryDir>
 #include <QApplication>
@@ -46,7 +45,7 @@ DocSheet::DocSheet(const FileType &fileType, const QString &filePath, QWidget *p
     if (kPDF == fileType)
         sheetSidebar = new SheetSidebar(this, PREVIEW_THUMBNAIL);
     else
-        sheetSidebar = new SheetSidebar(this, nullptr);
+        sheetSidebar = new SheetSidebar(this, PREVIEW_NULL);
 
     sheetSidebar->setFixedWidth(96);
 

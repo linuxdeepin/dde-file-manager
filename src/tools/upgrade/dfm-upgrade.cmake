@@ -5,7 +5,7 @@ FILE(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     )
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/src/apps/config.h.in"
+    "${APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 

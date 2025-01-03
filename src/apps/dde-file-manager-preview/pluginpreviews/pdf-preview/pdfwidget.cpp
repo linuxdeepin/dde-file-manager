@@ -20,7 +20,7 @@ PdfWidget::PdfWidget(QWidget *parent)
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
 
     mainLayout->addItem(stackedLayout);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addSpacing(30);
 
     this->setLayout(mainLayout);
