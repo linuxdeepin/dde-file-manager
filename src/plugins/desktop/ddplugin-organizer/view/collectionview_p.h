@@ -150,6 +150,9 @@ public:
     bool pressedAlreadySelected = false;
     bool ignoreMouseEvent = false;
 
+    QPoint mousePressPosForTouch;
+    bool isTouchDrag { false };
+
     Qt::SortOrder sortOrder = Qt::DescendingOrder;
     int sortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
 

@@ -32,9 +32,11 @@ void ViewSettingUtil::checkTouchDrag(QMouseEvent *event)
         if (themeSettings)
             touchFlickBeginMoveDelay = themeSettings->property("touchFlickBeginMoveDelay");
 
-        //若dde配置了则使用dde的配置，若没有则使用默认的200ms
-        touchDragTimer.setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 200);
-        touchDragTimer.start();
+        //若dde配置了则使用dde的配置，若没有则不延时
+        if (touchFlickBeginMoveDelay.isValid()) {
+            touchDragTimer.setInterval(touchFlickBeginMoveDelay.toInt());
+            touchDragTimer.start();
+        }
     } else {
         touchDragTimer.stop();
     }

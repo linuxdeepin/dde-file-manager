@@ -60,6 +60,8 @@ using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+inline constexpr int kStartDragDistance { 20 };
+
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
@@ -1210,6 +1212,13 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 
 void FileView::mousePressEvent(QMouseEvent *event)
 {
+    if (event->source() == Qt::MouseEventSynthesizedByQt
+            && event->button() == Qt::LeftButton
+            && indexAt(event->pos()).isValid()) {
+        d->isTouchDrag = true;
+        d->mousePressPosForTouch = event->pos();
+    }
+
     if (event->buttons().testFlag(Qt::LeftButton)) {
         d->mouseLeftPressed = true;
         d->mouseLastPos = event->globalPos();
@@ -1300,6 +1309,13 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
     if (d->pressedStartWithExpand)
         return;
 
+    if (event->source() == Qt::MouseEventSynthesizedByQt
+            && d->isTouchDrag) {
+        const QPoint distance = event->pos() - d->mousePressPosForTouch;
+        if (distance.manhattanLength() > kStartDragDistance)
+            startDrag(Qt::MoveAction);
+    }
+
     if (event->buttons() & Qt::LeftButton)
         d->mouseMoveRect = QRect(event->globalPos(), d->mouseLastPos);
 
@@ -1356,6 +1372,7 @@ void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void FileView::dropEvent(QDropEvent *event)
 {
+    d->isTouchDrag = false;
     setViewSelectState(false);
     d->dragDropHelper->drop(event);
     setState(NoState);

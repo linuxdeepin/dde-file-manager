@@ -103,6 +103,9 @@ public:
     bool showGrid = false;
     int screenNum;
 
+    QPoint mousePressPosForTouch;
+    bool isTouchDrag { false };
+
     CanvasInfo canvasInfo;
     QMargins gridMargins;  // grid inner margin.
     QMargins viewMargins;  // view margin is to decrease canvas rect on view.

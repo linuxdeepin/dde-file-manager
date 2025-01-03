@@ -81,6 +81,9 @@ class FileViewPrivate
     QPoint mouseLastPos { QPoint(0, 0) };
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
 
+    QPoint mousePressPosForTouch;
+    bool isTouchDrag { false };
+
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
 
