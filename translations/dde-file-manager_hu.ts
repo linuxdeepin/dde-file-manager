@@ -5719,17 +5719,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Image size</source>
-        <translation type="unfinished"/>
+        <translation>Kép mérete</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Felbontás</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Időtartam</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="317"/>
