@@ -34,8 +34,8 @@ static constexpr char kDialogPluginInterface[] { "org.deepin.plugin.filedialog" 
 static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 
-static constexpr char kDialogCorePluginName[] { "filedialogplugin-core" };
-static constexpr char kDialogCoreLibName[] { "libfiledialogplugin-core.so" };
+static constexpr char kDialogCorePluginName[] { "filedialog-core-plugin" };
+static constexpr char kDialogCoreLibName[] { "libfiledialog-core-plugin.so" };
 static constexpr char kDFMCorePluginName[] { "dfmplugin-core" };
 static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 
@@ -175,7 +175,6 @@ int main(int argc, char *argv[])
 
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
-    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
     a.setWindowIcon(QIcon::fromTheme("dde-file-manager"));
 

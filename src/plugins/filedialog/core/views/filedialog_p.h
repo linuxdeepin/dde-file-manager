@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QEventLoop>
 #include <QFileDialog>
+#include <QRegularExpression>
 
 #include <linux/limits.h>
 #include <mutex>
@@ -56,6 +57,20 @@ private:
     QFileDialog::Options options;
     QUrl currentUrl;
     QUrl lastVisitedDir;
+
+    static QStringList cleanFilterList(const QString &filter)
+    {
+        static const QString filterRegExp = QStringLiteral("^(.*)\\(([a-zA-Z0-9_.,*? +;#\\-\\[\\]@\\{\\}/!<>\\\\]*)\\)$");
+        static const QRegularExpression regexp(filterRegExp);
+        QString f = filter.trimmed();
+
+        QRegularExpressionMatch match = regexp.match(f);
+        if (match.hasMatch()) {
+            QString nameFilter = match.captured(2);
+            return nameFilter.split(QLatin1Char(' '), Qt::SkipEmptyParts);
+        }
+        return QStringList(f);
+    }
 };
 
 }

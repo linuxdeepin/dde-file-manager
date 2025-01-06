@@ -38,11 +38,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <QDesktopWidget>
-#endif
-
-#include <qpa/qplatformdialoghelper.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QDir::Filters);
@@ -171,7 +166,7 @@ bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix
         return false;
 
     for (const QString &nameFilterList : nameFilters) {
-        for (const QString &nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) {
+        for (const QString &nameFilter : cleanFilterList(nameFilterList)) {
             QString realFilter = nameFilter;
             realFilter.replace(".", "\\.");
             realFilter.replace("*", ".*");
@@ -183,10 +178,9 @@ bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix
     }
 
     QMimeDatabase mdb;
-    // get current selected suffix
     int index = q->selectedNameFilterIndex();
     QString filter = nameFilters[index];
-    QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
+    QStringList newNameFilters = cleanFilterList(filter);
     if (newNameFilters.isEmpty())
         return false;
 
@@ -827,7 +821,7 @@ void FileDialog::selectNameFilterByIndex(int index)
     }
 
     QString nameFilter = nameFilters.at(index);
-    QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
+    QStringList newNameFilters = FileDialogPrivate::cleanFilterList(nameFilter);
 
     if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
         QString fileName = statusBar()->lineEdit()->text();

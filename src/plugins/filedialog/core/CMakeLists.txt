@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(filedialogplugin-core)
+project(filedialog-core-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -10,11 +10,11 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt5 COMPONENTS DBus Widgets REQUIRED)
+find_package(Qt6 COMPONENTS DBus Widgets REQUIRED)
 
-qt5_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialog.xml
+qt6_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialog.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialoghandledbus.h FileDialogHandleDBus)
-qt5_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialogmanager.xml
+qt6_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialogmanager.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialogmanagerdbus.h FileDialogManagerDBus)
 
 add_library(${PROJECT_NAME}
@@ -25,14 +25,10 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEDIALOG_DIR})
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
-)
-
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    Qt5::DBus
+    DFM6::base
+    DFM6::framework
+    Qt6::DBus
 )
 
 #install library file
