@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(daemonplugin-tag)
+project(dfmdaemon-tag-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(TagManager_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.TagManager.xml)
@@ -12,18 +12,18 @@ FILE(GLOB_RECURSE SRC_FILES
     "${TagManager_XML}"
     )
 
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS
     DBus
     Sql
     REQUIRED)
 
-qt5_generate_dbus_interface(
+qt6_generate_dbus_interface(
    tagmanagerdbus.h
    ${TagManager_XML}
    OPTIONS -M -S
 )
 
-qt5_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
     tagmanagerdbus.h TagManagerDBus)
 
 add_library(${PROJECT_NAME}
@@ -35,10 +35,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    Qt5::DBus
-    Qt5::Sql
+    DFM6::base
+    DFM6::framework
+    Qt6::DBus
+    Qt6::Sql
 )
 
 #install library file

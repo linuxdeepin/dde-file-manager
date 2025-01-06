@@ -11,13 +11,13 @@ set(SRCS
     main.cpp
 )
 
-find_package(Qt5 COMPONENTS Core)
+find_package(Qt6 COMPONENTS Core)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(
     ${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+    DFM6::base
+    DFM6::framework
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

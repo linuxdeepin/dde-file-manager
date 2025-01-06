@@ -11,20 +11,19 @@ configure_file(
 set(SRCS
     main.cpp
 )
-find_package(Qt5 COMPONENTS Core)
+find_package(Qt6 COMPONENTS Core)
 find_package(PkgConfig REQUIRED)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-        ${DtkWidget_INCLUDE_DIRS}
 )
 
 target_link_libraries(
     ${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+    DFM6::base
+    DFM6::framework
 )
 
 
