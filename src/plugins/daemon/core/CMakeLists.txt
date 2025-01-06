@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(daemonplugin-core)
+project(dfmdaemon-core-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(DeviceManager_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml)
@@ -14,31 +14,31 @@ FILE(GLOB_RECURSE SRC_FILES
     "${OperationsStackManager_XML}"
     )
 # TODO: tag manager
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS
     Core
     DBus
     REQUIRED)
 
 # DBus: DeviceManager
-qt5_generate_dbus_interface(
+qt6_generate_dbus_interface(
    devicemanagerdbus.h
    ${DeviceManager_XML}
    OPTIONS -M -S
 )
-qt5_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
     devicemanagerdbus.h DeviceManagerDBus)
 
 # DBus: OperationsStackManager
-qt5_generate_dbus_interface(
+qt6_generate_dbus_interface(
    operationsstackmanagerdbus.h
    ${OperationsStackManager_XML}
    OPTIONS -M -S
 )
-qt5_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
     operationsstackmanagerdbus.h OperationsStackManagerDbus)
 
 # use TextIndex interface
-qt5_add_dbus_interface(SRC_FILES
+qt6_add_dbus_interface(SRC_FILES
     "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml"
     textindex_interface
 )
@@ -51,12 +51,11 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
-find_package(Qt5 COMPONENTS Core)
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    Qt5::Core
-    Qt5::DBus
+    DFM6::base
+    DFM6::framework
+    Qt6::Core
+    Qt6::DBus
 )
 
 #install library file

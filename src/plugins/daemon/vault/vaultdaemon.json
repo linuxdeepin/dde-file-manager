@@ -1,5 +1,5 @@
 {
-    "Name" : "daemonplugin-vaultdaemon",
+    "Name" : "dfmdaemon-vault-plugin",
     "Version" : "1.0.0",
     "Description" : "The vault helper plugin for the dde-file-manager-daemon.",
     "Depends" : [

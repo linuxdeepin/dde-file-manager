@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(daemonplugin-filemanager1)
+project(dfmdaemon-filemanager1-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(FILEMANGER1_XML ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml)
@@ -12,11 +12,11 @@ FILE(GLOB_RECURSE SRC_FILES
     "${FILEMANGER1_XML}"
     )
 
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS
     DBus
     REQUIRED)
 
-qt5_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
     filemanager1dbus.h FileManager1DBus)
 
 add_library(${PROJECT_NAME}
@@ -28,9 +28,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    Qt5::DBus
+    DFM6::base
+    DFM6::framework
+    Qt6::DBus
 )
 
 #install library file

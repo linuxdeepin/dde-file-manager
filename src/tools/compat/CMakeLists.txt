@@ -8,7 +8,7 @@ set(BIN_NAME dde-file-manager)
 
 # 一些 v5 的库链接了 libdde-file-manager.so.1
 # 然而 v6 中已经移除了它，因此这需要创建一个空的库，保证 v5 升级到 v6 的兼容性
-find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 add_library(${BIN_NAME}_lib SHARED empty.cpp)
 
 if (NOT VERSION)

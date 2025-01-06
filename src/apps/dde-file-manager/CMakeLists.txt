@@ -26,9 +26,9 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/dragmonitor.h
     )
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
+find_package(Dtk6 COMPONENTS Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
@@ -39,11 +39,11 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt5::Widgets
-    Qt5::Network
-    DFM::base
-    DFM::framework
-    Dtk${DTK_VERSION_MAJOR}::Widget
+    Qt6::Widgets
+    Qt6::Network
+    DFM6::base
+    DFM6::framework
+    Dtk6::Widget
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})

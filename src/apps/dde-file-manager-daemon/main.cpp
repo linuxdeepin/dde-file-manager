@@ -21,8 +21,8 @@
 Q_LOGGING_CATEGORY(logAppDaemon, "org.deepin.dde.Filemanager.Daemon")
 
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
-static constexpr char kPluginCore[] { "daemonplugin-core" };
-static constexpr char kLibCore[] { "libdaemonplugin-core.so" };
+static constexpr char kPluginCore[] { "dfmdaemon-core-plugin" };
+static constexpr char kLibCore[] { "libdfmdaemon-core-plugin.so" };
 
 DFMBASE_USE_NAMESPACE
 using namespace GlobalDConfDefines::ConfigPath;
