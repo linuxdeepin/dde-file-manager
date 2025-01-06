@@ -14,13 +14,35 @@ FILE(GLOB_RECURSE CORE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-# Qt6
-if (DFM_BUILD_WITH_QT6)
-    include(ddplugin-organizer-qt6.cmake)
-else()
-    include(ddplugin-organizer-qt5.cmake)
-endif()
+set(BIN_NAME dd-organizer-plugin)
 
+find_package(Qt6 COMPONENTS Core REQUIRED)
+
+# 指定资源文件
+set(QRC_FILE
+    resources/images.qrc
+)
+
+qt_add_resources(QRC_RESOURCES ${QRC_FILE})
+
+add_library(${BIN_NAME}
+    SHARED
+    ${CORE_FILES}
+    ${EXT_FILES}
+    ${QRC_RESOURCES}
+)
+
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
+
+target_link_libraries(${BIN_NAME}
+    DFM6::base
+    DFM6::framework
+)
+
+install(TARGETS ${BIN_NAME}
+    LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
+)
 
 # install dconfig files.
 INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.organizer.json")

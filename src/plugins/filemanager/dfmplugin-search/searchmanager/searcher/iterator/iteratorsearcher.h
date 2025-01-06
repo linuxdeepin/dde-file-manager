@@ -37,7 +37,7 @@ private:
     QRegularExpression regex;
 
     //计时
-    QTime notifyTimer;
+    QElapsedTimer notifyTimer;
     int lastEmit = 0;
 };
 

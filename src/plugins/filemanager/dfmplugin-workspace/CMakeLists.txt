@@ -15,18 +15,18 @@ add_library(${PROJECT_NAME}
     ${WORKSPACE_FILES}
 )
 
+find_package(Dtk6 COMPONENTS Widget REQUIRED)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+    ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+    DFM6::base
+    DFM6::framework
 )
 
 #install library file

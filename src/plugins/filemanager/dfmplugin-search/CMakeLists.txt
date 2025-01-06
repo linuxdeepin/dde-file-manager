@@ -18,7 +18,6 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
     ADD_DEFINITIONS(-DARM_PROCESSOR)
 endif()
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 #full-text search dependences
@@ -28,7 +27,7 @@ pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(PCRE REQUIRED libpcre)
 
 # use TextIndex interface
-qt5_add_dbus_interface(SRC_FILES
+qt6_add_dbus_interface(SRC_FILES
     "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml"
     textindex_interface
 )
@@ -43,16 +42,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
         ${CMAKE_SOURCE_DIR}/3rdparty
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    ${DtkWidget_LIBRARIES}
+    DFM6::base
+    DFM6::framework
     ${GLIB_LIBRARIES}
     ${PCRE_LIBRARIES}
     PkgConfig::Lucene

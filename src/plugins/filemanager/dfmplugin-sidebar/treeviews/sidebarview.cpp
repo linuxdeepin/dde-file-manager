@@ -114,7 +114,7 @@ bool SideBarViewPrivate::canEnter(QDragEnterEvent *event)
     if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent))
         return false;
 
-    SideBarItem *item = q->itemAt(event->pos());
+    SideBarItem *item = q->itemAt(event->position().toPoint());
     if (item) {
         const QUrl &targetItemUrl { item->targetUrl() };
         if (!checkTargetEnable(targetItemUrl))
@@ -136,7 +136,7 @@ bool SideBarViewPrivate::canMove(QDragMoveEvent *event)
             : urlsForDragEvent;
 
     if (!urls.isEmpty()) {
-        SideBarItem *item = q->itemAt(event->pos());
+        SideBarItem *item = q->itemAt(event->position().toPoint());
         if (!item)
             return false;
 
@@ -310,9 +310,9 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (event->source() != this)
-        d->currentHoverIndex = indexAt(event->pos());
+        d->currentHoverIndex = indexAt(event->position().toPoint());
 
-    SideBarItem *item = itemAt(event->pos());
+    SideBarItem *item = itemAt(event->position().toPoint());
     if (item) {
         viewport()->update();
         if (!d->canMove(event)) {
@@ -352,8 +352,8 @@ void SideBarView::dropEvent(QDropEvent *event)
         d->notifyOrderChanged();   // notify to update the persistence data
     }
 
-    d->dropPos = event->pos();
-    SideBarItem *item = itemAt(event->pos());
+    d->dropPos = event->position().toPoint();
+    SideBarItem *item = itemAt(event->position().toPoint());
     if (!item)
         return DTreeView::dropEvent(event);
 
@@ -366,8 +366,8 @@ void SideBarView::dropEvent(QDropEvent *event)
     // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
     // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
     //但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
-    QPoint pt = event->pos();   // mapFromGlobal(QCursor::pos());
-    QRect rc = visualRect(indexAt(event->pos()));
+    QPoint pt = event->position().toPoint();   // mapFromGlobal(QCursor::pos());
+    QRect rc = visualRect(indexAt(event->position().toPoint()));
     if (!rc.contains(pt)) {
         fmDebug() << "mouse not in my area";
         return DTreeView::dropEvent(event);
@@ -693,7 +693,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
 
 bool SideBarView::isAccepteDragEvent(QDropEvent *event)
 {
-    SideBarItem *item = itemAt(event->pos());
+    SideBarItem *item = itemAt(event->position().toPoint());
     if (!item) {
         return false;
     }

@@ -13,12 +13,7 @@ namespace dfmplugin_trashcore {
 class TrashCore : public dpf::Plugin
 {
     Q_OBJECT
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "trashcore.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "trashcore.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPTRASHCORE_NAMESPACE)
     DPF_EVENT_REG_SIGNAL(signal_TrashCore_TrashStateChanged)

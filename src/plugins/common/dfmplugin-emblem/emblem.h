@@ -14,12 +14,7 @@ DPEMBLEM_BEGIN_NAMESPACE
 class Emblem : public dpf::Plugin
 {
     Q_OBJECT
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "emblem.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "emblem.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPEMBLEM_NAMESPACE)
     DPF_EVENT_REG_SLOT(slot_FileEmblems_Paint)

@@ -14,12 +14,7 @@ namespace dfmplugin_bookmark {
 class BookMark : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "bookmark.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "bookmark.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPBOOKMARK_NAMESPACE)
 

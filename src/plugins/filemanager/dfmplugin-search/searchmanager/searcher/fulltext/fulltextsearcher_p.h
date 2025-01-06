@@ -73,7 +73,7 @@ private:
     QMap<QString, QString> bindPathTable;
 
     //计时
-    QTime notifyTimer;
+    QElapsedTimer notifyTimer;
     int lastEmit = 0;
 
     FullTextSearcher *q = nullptr;

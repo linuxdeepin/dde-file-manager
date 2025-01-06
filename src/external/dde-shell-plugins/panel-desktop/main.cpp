@@ -47,8 +47,8 @@ using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop.qt6";
-static const char *const kCommonPluginInterface = "org.deepin.plugin.common.qt6";
+static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
+static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
 static const char *const kPluginCore = "ddplugin-core";
 static const char *const kLibCore = "libdd-core-plugin.so";
 

@@ -4,7 +4,7 @@ project(dfmplugin-disk-encrypt LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Concurrent LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Concurrent LinguistTools)
 
 # 源文件
 file(GLOB_RECURSE SRC
@@ -17,8 +17,8 @@ file(GLOB_RECURSE SRC
 add_library(${PROJECT_NAME} SHARED ${SRC})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    DFM${DTK_VERSION_MAJOR}::base
-    DFM${DTK_VERSION_MAJOR}::framework
+    DFM6::base
+    DFM6::framework
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE DFMPLUGIN_DISK_ENCRYPT_LIBRARY)
@@ -29,9 +29,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 set(TS_DIR "${CMAKE_SOURCE_DIR}/translations/disk-encrypt-plugin")
 file(GLOB TS_FILES "${TS_DIR}/disk-encrypt*.ts")
 
-# 直接使用qt5_add_translation并指定输出路径
+# 直接使用qt6_add_translation并指定输出路径
 set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}")
-qt5_add_translation(QM_FILES ${TS_FILES})
+qt6_add_translation(QM_FILES ${TS_FILES})
 
 # 添加自定义目标以确保翻译文件被构建
 add_custom_target(${PROJECT_NAME}_translations ALL DEPENDS ${QM_FILES})

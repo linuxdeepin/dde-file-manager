@@ -38,11 +38,7 @@ private:
 class WlSetPlugin : public dpf::Plugin
 {
     Q_OBJECT
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "wallpapersetting.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop.qt6" FILE "wallpapersetting.json")
-#endif
 
 public:
     virtual void initialize() override;

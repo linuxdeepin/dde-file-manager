@@ -10,7 +10,7 @@ file(GLOB_RECURSE BROWSER_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt5 COMPONENTS Network REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(LibSecret REQUIRED libsecret-1 IMPORTED_TARGET)
@@ -25,9 +25,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt5::Network
-    DFM::base
-    DFM::framework
+    Qt6::Network
+    DFM6::base
+    DFM6::framework
     PkgConfig::LibSecret
 )
 

@@ -14,7 +14,6 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <DApplicationHelper>
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
 #include <DLabel>
@@ -25,7 +24,7 @@
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
-#include <QGraphicsEffect>
+#    include <QGraphicsEffect>
 #endif
 
 DFMBASE_USE_NAMESPACE
@@ -140,7 +139,7 @@ void AdvanceSearchBarPrivate::initUI()
     formLayout->addWidget(asbCombos[kCreateDateRange], 1, 7);
 
     formLayout->setSpacing(6);
-    formLayout->setMargin(6);
+    formLayout->setContentsMargins(6, 6, 6, 6);
 
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     vLayout->addSpacing(10);
@@ -177,14 +176,16 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
         return;
     }
 
-    static QMap<QVariant, int> dateRangeMap { { 1, 1 },
-                                              { 2, 2 },
-                                              { 7, 3 },
-                                              { 14, 4 },
-                                              { 30, 5 },
-                                              { 60, 6 },
-                                              { 365, 7 },
-                                              { 730, 8 } };
+    static QMap<int, int> dateRangeMap {
+        { 1, 1 },
+        { 2, 2 },
+        { 7, 3 },
+        { 14, 4 },
+        { 30, 5 },
+        { 60, 6 },
+        { 365, 7 },
+        { 730, 8 }
+    };
 
     static QMap<QPair<quint64, quint64>, int> sizeRangeMap { { QPair<quint64, quint64>(0, 100), 1 },
                                                              { QPair<quint64, quint64>(100, 1024), 2 },
@@ -219,7 +220,8 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     // 修改时间
     const auto &dateRange = filter[kDateRange];
     if (dateRange.isValid()) {
-        asbCombos[kDateRange]->setCurrentIndex(dateRangeMap[dateRange]);
+        int days = dateRange.toInt();
+        asbCombos[kDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
     } else {
         asbCombos[kDateRange]->setCurrentIndex(0);
     }
@@ -227,7 +229,8 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     // 访问时间
     const auto &accessDateRange = filter[kAccessDateRange];
     if (accessDateRange.isValid()) {
-        asbCombos[kAccessDateRange]->setCurrentIndex(dateRangeMap[accessDateRange]);
+        int days = accessDateRange.toInt();
+        asbCombos[kAccessDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
     } else {
         asbCombos[kAccessDateRange]->setCurrentIndex(0);
     }
@@ -235,7 +238,8 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     // 创建时间
     const auto &createDateRange = filter[kCreateDateRange];
     if (createDateRange.isValid()) {
-        asbCombos[kCreateDateRange]->setCurrentIndex(dateRangeMap[createDateRange]);
+        int days = createDateRange.toInt();
+        asbCombos[kCreateDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
     } else {
         asbCombos[kCreateDateRange]->setCurrentIndex(0);
     }
@@ -302,7 +306,7 @@ void AdvanceSearchBarPrivate::updateBackgroundColor()
     else
         bgColor.setRgb(40, 40, 40);
 
-    palette.setColor(QPalette::Background, bgColor);
+    palette.setColor(QPalette::Window, bgColor);
     q->setPalette(palette);
 }
 
@@ -406,36 +410,36 @@ AdvanceSearchBarPrivate::FileFilter AdvanceSearchBarPrivate::parseFilterData(con
 
             switch (dateRange) {
             case 1:
-                startTime = QDateTime(today);
-                endTime = QDateTime(tomorrow);
+                startTime = today.startOfDay();
+                endTime = tomorrow.startOfDay();
                 break;
             case 2:
-                startTime = QDateTime(today).addDays(-1);
-                endTime = QDateTime(today);
+                startTime = today.addDays(-1).startOfDay();
+                endTime = today.startOfDay();
                 break;
             case 7:
-                startTime = QDateTime(today).addDays(0 - dayDist);
-                endTime = QDateTime(tomorrow);
+                startTime = today.addDays(0 - dayDist).startOfDay();
+                endTime = tomorrow.startOfDay();
                 break;
             case 14:
-                startTime = QDateTime(today).addDays(-7 - dayDist);
-                endTime = QDateTime(today).addDays(0 - dayDist);
+                startTime = today.addDays(-7 - dayDist).startOfDay();
+                endTime = today.addDays(0 - dayDist).startOfDay();
                 break;
             case 30:
-                startTime = QDateTime(QDate(today.year(), today.month(), 1));
-                endTime = QDateTime(tomorrow);
+                startTime = QDate(today.year(), today.month(), 1).startOfDay();
+                endTime = tomorrow.startOfDay();
                 break;
             case 60:
-                startTime = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
-                endTime = QDateTime(QDate(today.year(), today.month(), 1));
+                startTime = QDate(today.year(), today.month(), 1).addMonths(-1).startOfDay();
+                endTime = QDate(today.year(), today.month(), 1).startOfDay();
                 break;
             case 365:
-                startTime = QDateTime(QDate(today.year(), 1, 1));
-                endTime = QDateTime(tomorrow);
+                startTime = QDate(today.year(), 1, 1).startOfDay();
+                endTime = tomorrow.startOfDay();
                 break;
             case 730:
-                startTime = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
-                endTime = QDateTime(QDate(today.year(), 1, 1));
+                startTime = QDate(today.year(), 1, 1).addYears(-1).startOfDay();
+                endTime = QDate(today.year(), 1, 1).startOfDay();
                 break;
             default:
                 break;

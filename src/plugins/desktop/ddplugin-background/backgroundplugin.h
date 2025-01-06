@@ -15,11 +15,7 @@ DDP_BACKGROUND_BEGIN_NAMESPACE
 class BackgroundPlugin : public dpf::Plugin
 {
     Q_OBJECT
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "background.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop.qt6" FILE "background.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DDP_BACKGROUND_NAMESPACE)
 

@@ -10,11 +10,11 @@ FILE(GLOB_RECURSE RECENT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt5 COMPONENTS Xml REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Qt6 COMPONENTS Xml REQUIRED)
+find_package(Qt6 COMPONENTS DBus REQUIRED)
 
 # generate dbus interface
-qt5_add_dbus_interface(RECENT_FILES
+qt6_add_dbus_interface(RECENT_FILES
     ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.RecentManager.xml
     recentmanager_interface)
 
@@ -27,10 +27,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    Qt5::Xml
-    Qt5::DBus
+    DFM6::base
+    DFM6::framework
+    Qt6::Xml
+    Qt6::DBus
 )
 
 #install library file

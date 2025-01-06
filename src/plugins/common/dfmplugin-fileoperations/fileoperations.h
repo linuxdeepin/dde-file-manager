@@ -13,11 +13,7 @@ DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileOperations : public dpf::Plugin
 {
     Q_OBJECT
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "fileoperations.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "fileoperations.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPFILEOPERATIONS_NAMESPACE)
 

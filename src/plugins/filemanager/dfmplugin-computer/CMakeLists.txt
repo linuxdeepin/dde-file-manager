@@ -13,7 +13,7 @@ FILE(GLOB_RECURSE COMPUTER_FILES CONFIGURE_DEPENDS
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Secret REQUIRED libsecret-1)
 
-find_package(Qt5 COMPONENTS Core)
+find_package(Qt6 COMPONENTS Core)
 add_library(${PROJECT_NAME}
     SHARED
     ${COMPUTER_FILES}
@@ -28,8 +28,8 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+    DFM6::base
+    DFM6::framework
     ${Secret_LIBRARIES}
 )
 

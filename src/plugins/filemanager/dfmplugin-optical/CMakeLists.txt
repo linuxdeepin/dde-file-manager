@@ -10,8 +10,8 @@ FILE(GLOB_RECURSE OPTICAL_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Qt5 COMPONENTS Svg REQUIRED)
-set(SVGLIB Qt5::Svg)
+find_package(Qt6 COMPONENTS DBus Widgets Concurrent SvgWidgets REQUIRED)
+set(SVGLIB Qt6::Svg)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -21,10 +21,14 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(${PROJECT_NAME}
-    ${SVGLIB}
-    DFM::base
-    DFM::framework
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::DBus
+    Qt6::Concurrent
+    Qt6::SvgWidgets
+    DFM6::base
+    DFM6::framework
 )
 
 #install library file

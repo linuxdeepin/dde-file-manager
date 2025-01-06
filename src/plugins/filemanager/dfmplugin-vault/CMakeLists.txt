@@ -13,7 +13,7 @@ FILE(GLOB_RECURSE VAULT_FILES CONFIGURE_DEPENDS
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(openssl REQUIRED libcrypto)
 pkg_check_modules(secret REQUIRED libsecret-1 IMPORTED_TARGET)
-pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
+pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt6-1)
 set(VAULT_EXTRA_LIBRARIES ${polkit_LIBRARIES})
 
 add_library(${PROJECT_NAME}
@@ -24,10 +24,10 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-find_package(Qt5 COMPONENTS Core)
+find_package(Qt6 COMPONENTS Core)
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+    DFM6::base
+    DFM6::framework
     ${VAULT_EXTRA_LIBRARIES}
     ${openssl_LIBRARIES}
     PkgConfig::secret

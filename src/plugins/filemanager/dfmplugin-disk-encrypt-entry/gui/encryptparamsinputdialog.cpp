@@ -152,7 +152,7 @@ QWidget *EncryptParamsInputDialog::createExportPage()
     QVBoxLayout *lay = new QVBoxLayout();
     QWidget *wid = new QWidget(this);
     wid->setLayout(lay);
-    lay->setMargin(0);
+    lay->setContentsMargins(0, 0, 0, 0);
 
     QLabel *hint = new QLabel(tr("In special cases such as forgetting the password or the encryption hardware is damaged, "
                                  "you can decrypt the encrypted partition with the recovery key, please export it to "
@@ -164,7 +164,7 @@ QWidget *EncryptParamsInputDialog::createExportPage()
     hint->setAlignment(Qt::AlignCenter);
 
     keyExportInput = new DFileChooserEdit(this);
-    keyExportInput->setFileMode(QFileDialog::DirectoryOnly);
+    keyExportInput->setFileMode(QFileDialog::Directory);
     if (keyExportInput->fileDialog() && dialog_utils::isWayland())
         keyExportInput->fileDialog()->setWindowFlag(Qt::WindowStaysOnTopHint);
     lay->addWidget(keyExportInput);
