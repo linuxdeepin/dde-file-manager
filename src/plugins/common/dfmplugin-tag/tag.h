@@ -15,11 +15,7 @@ namespace dfmplugin_tag {
 class Tag : public dpf::Plugin
 {
     Q_OBJECT
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "tag.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "tag.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPTAG_NAMESPACE)
     // slot events

@@ -15,11 +15,7 @@ class CanvasPlugin : public dpf::Plugin
 {
     Q_OBJECT
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "canvas.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop.qt6" FILE "canvas.json")
-#endif
 
 public:
     virtual void initialize() override;

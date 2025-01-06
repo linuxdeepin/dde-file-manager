@@ -14,12 +14,7 @@ namespace dfmplugin_burn {
 class Burn : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "burn.json")
-#endif
 
     DPF_EVENT_NAMESPACE(DPBURN_NAMESPACE)
     DPF_EVENT_REG_SLOT(slot_BurnDialog_Show)

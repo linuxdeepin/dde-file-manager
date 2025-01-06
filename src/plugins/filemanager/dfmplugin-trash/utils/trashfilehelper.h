@@ -12,6 +12,7 @@
 #include <dfm-base/utils/clipboard.h>
 
 #include <QObject>
+#include <QUrl>
 
 DPTRASH_BEGIN_NAMESPACE
 

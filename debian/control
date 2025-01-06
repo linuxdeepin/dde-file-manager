@@ -62,6 +62,7 @@ Build-Depends:
  libdfm6-io-dev,
  libdfm6-mount-dev,
  libdfm6-burn-dev,
+ libpolkit-qt6-1-dev,
  libxcb-xfixes0-dev (>= 1.10~),
  libdeepin-service-framework-dev
 Standards-Version: 3.9.8

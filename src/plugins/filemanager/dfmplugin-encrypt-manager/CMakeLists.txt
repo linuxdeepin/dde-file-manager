@@ -4,7 +4,7 @@ project(dfmplugin-encrypt-manager)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core REQUIRED)
 
 file(GLOB_RECURSE SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h
@@ -17,9 +17,9 @@ add_library(${PROJECT_NAME} SHARED
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-    Qt5::Core
-    DFM${DTK_VERSION_MAJOR}::base
-    DFM${DTK_VERSION_MAJOR}::framework
+    Qt6::Core
+    DFM6::base
+    DFM6::framework
 )
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_FILEMANAGER_CORE_DIR})

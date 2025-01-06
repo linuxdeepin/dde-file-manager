@@ -38,16 +38,6 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr int kCrumbBarRectRadius { 8 };
 
-static QString getIconName(const CrumbData &c)
-{
-    QString iconName = c.iconName;
-
-    if (!iconName.isEmpty() && !iconName.startsWith("dfm_") && !iconName.contains("-symbolic"))
-        iconName.append("-symbolic");
-
-    return iconName;
-}
-
 /*!
  * \class CrumbBarPrivate
  * \brief
@@ -142,9 +132,6 @@ UrlPushButton *CrumbBarPrivate::buttonAt(QPoint pos) const
 
 void CrumbBarPrivate::initUI()
 {
-    // Arrows
-    QSize size(24, 24), iconSize(16, 16);
-
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addStretch(1);
@@ -343,7 +330,7 @@ void CrumbBar::setPopupVisible(bool visible)
 
 void CrumbBar::mousePressEvent(QMouseEvent *event)
 {
-    d->clickedPos = event->globalPos();
+    d->clickedPos = event->globalPosition().toPoint();
 
     if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
         event->accept();
@@ -401,7 +388,7 @@ void CrumbBar::enterEvent(QEvent *event)
 
 void CrumbBar::leaveEvent(QEvent *event)
 {
-    QFrame::enterEvent(event);
+    QFrame::leaveEvent(event);
     if (d->hoverFlag) {
         d->hoverFlag = false;
         update();

@@ -14,12 +14,7 @@ namespace dfmplugin_dirshare {
 class DirShare : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "dirshare.json")
-#else
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common.qt6" FILE "dirshare.json")
-#endif
 
     DPF_EVENT_NAMESPACE(dfmplugin_dirshare)
     // *******************begin Share*******************

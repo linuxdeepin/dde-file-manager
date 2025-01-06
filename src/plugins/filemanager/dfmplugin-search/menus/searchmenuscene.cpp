@@ -128,8 +128,10 @@ void SearchMenuScenePrivate::updateSortMenu(QMenu *menu)
     if (contians)
         return;
 
-    actions.size() > 1 ? actions.insert(1, predicateAction[SearchActionId::kSrtPath])
-                       : actions.append(predicateAction[SearchActionId::kSrtPath]);
+    if (actions.size() > 1)
+        actions.insert(1, predicateAction[SearchActionId::kSrtPath]);
+    else
+        actions.append(predicateAction[SearchActionId::kSrtPath]);
 
     menu->addActions(actions);
     auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();

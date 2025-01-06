@@ -62,7 +62,7 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
 
     for (int count = urls.size() - 1; count >= 0; count--) {
         QUrl curUrl { urls.at(count) };
-        QStringList pathList { curUrl.path().split("/", QString::SkipEmptyParts) };
+        QStringList pathList { curUrl.path().split("/", Qt::SkipEmptyParts) };
         QString displayText = pathList.isEmpty() ? "" : pathList.last();
         if (curUrl.scheme() == Global::Scheme::kTrash) {
             if (UniversalUtils::urlEquals(curUrl, FileUtils::trashRootUrl())) {

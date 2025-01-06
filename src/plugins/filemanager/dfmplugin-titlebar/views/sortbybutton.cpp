@@ -18,6 +18,7 @@
 #include <QStyleOptionButton>
 #include <QMouseEvent>
 #include <QStylePainter>
+#include <QActionGroup>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
