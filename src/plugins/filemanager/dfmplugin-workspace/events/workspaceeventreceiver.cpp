@@ -5,7 +5,7 @@
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
-#include "utils/filedatamanager.h""
+#include "utils/filedatamanager.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
