@@ -87,8 +87,7 @@ void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         painter->restore();
 
     } else {
-        //TODO(zhangs): use icon.paint() after Qt6.8
-        painter->drawPixmap(qRound(x), qRound(y), px);
+        icon.paint(painter, opts.rect.toRect());
     }
 }
 

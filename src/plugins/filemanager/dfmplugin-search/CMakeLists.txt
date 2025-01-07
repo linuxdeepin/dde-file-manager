@@ -4,6 +4,8 @@ project(dfmplugin-search)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(Qt6 REQUIRED COMPONENTS DBus)
+
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -27,14 +29,13 @@ pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(PCRE REQUIRED libpcre)
 
 # use TextIndex interface
-qt6_add_dbus_interface(SRC_FILES
-    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml"
-    textindex_interface
-)
+set(DBUS_INTERFACE_FILE "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml")
+qt_add_dbus_interface(INTERFACE_SOURCES ${DBUS_INTERFACE_FILE} textindex_interface)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
+    ${INTERFACE_SOURCES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

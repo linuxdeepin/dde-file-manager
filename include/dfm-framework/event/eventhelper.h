@@ -226,7 +226,7 @@ template<class Result>
 inline QVariant resultGenerator()
 {
     int typeId = qMetaTypeId<Result>();
-    return QVariant(QVariant::Type(typeId));
+    return QVariant(QMetaType(typeId));
 }
 template<>
 inline QVariant resultGenerator<void>()

@@ -299,7 +299,6 @@ int main(int argc, char *argv[])
                                                            "featured with searching, copying, "
                                                            "trash, compression/decompression, file property "
                                                            "and other useful functions."));
-    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     autoReleaseMemory();
 

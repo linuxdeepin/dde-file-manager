@@ -30,19 +30,20 @@ static constexpr char kActionChgPwd[] { "org.deepin.Filemanager.DiskEncrypt.Chan
 ReencryptWorkerV2 *gFstabEncWorker { nullptr };
 
 DiskEncryptDBus::DiskEncryptDBus(QObject *parent)
-    : QDBusService(parent)
-    , QDBusContext()
+    : QDBusService(parent), QDBusContext()
 {
     initPolicy(QDBusConnection::SystemBus, QString(SERVICE_CONFIG_DIR) + "other/diskencrypt-service.json");
 
     dfmmount::DDeviceManager::instance();
 
-    connect(SignalEmitter::instance(), &SignalEmitter::updateEncryptProgress,
+    connect(
+            SignalEmitter::instance(), &SignalEmitter::updateEncryptProgress,
             this, [this](const QString &dev, double progress) {
                 Q_EMIT this->EncryptProgress(dev, deviceName, progress);
             },
             Qt::QueuedConnection);
-    connect(SignalEmitter::instance(), &SignalEmitter::updateDecryptProgress,
+    connect(
+            SignalEmitter::instance(), &SignalEmitter::updateDecryptProgress,
             this, [this](const QString &dev, double progress) {
                 Q_EMIT this->DecryptProgress(dev, deviceName, progress);
             },
@@ -396,7 +397,7 @@ bool DiskEncryptDBus::updateCrypttab()
             continue;
         }
 
-        auto items = line.split(QRegularExpression(R"( |\t)"), QString::SkipEmptyParts);
+        auto items = line.split(QRegularExpression(R"( |\t)"), Qt::SkipEmptyParts);
         if (items.count() < 2) {
             lines.removeAt(i);
             qInfo() << "==== [remove] invalid line:" << line;
