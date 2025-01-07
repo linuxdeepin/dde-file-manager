@@ -650,7 +650,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
-        if (fromSize > bigFileSize) {
+        if (fromSize > bigFileSize && FileUtils::isSameDevice(fromInfo->uri(), targetUrl)) {
             bigFileCopy = true;
             auto result = doCopyLocalByRange(fromInfo, toInfo, skip);
             bigFileCopy = false;
