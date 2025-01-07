@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-search)
+set(BIN_NAME dfm-search-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -32,23 +33,23 @@ pkg_check_modules(PCRE REQUIRED libpcre)
 set(DBUS_INTERFACE_FILE "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml")
 qt_add_dbus_interface(INTERFACE_SOURCES ${DBUS_INTERFACE_FILE} textindex_interface)
 
-add_library(${PROJECT_NAME}
+add_library(${BIN_NAME}
     SHARED
     ${SRC_FILES}
     ${INTERFACE_SOURCES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(${BIN_NAME}
     PUBLIC
         ${CMAKE_SOURCE_DIR}/3rdparty
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
     ${GLIB_LIBRARIES}
@@ -59,7 +60,7 @@ target_link_libraries(${PROJECT_NAME}
 
 #install library file
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}

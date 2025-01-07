@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-recent)
+set(BIN_NAME dfm-recent-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -18,15 +19,15 @@ qt6_add_dbus_interface(RECENT_FILES
     ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.RecentManager.xml
     recentmanager_interface)
 
-add_library(${PROJECT_NAME}
+add_library(${BIN_NAME}
     SHARED
     ${RECENT_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
     Qt6::Xml
@@ -35,7 +36,7 @@ target_link_libraries(${PROJECT_NAME}
 
 #install library file
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}

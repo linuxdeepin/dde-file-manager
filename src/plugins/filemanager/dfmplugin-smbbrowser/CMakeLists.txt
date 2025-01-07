@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-smbbrowser)
+set(BIN_NAME dfm-smbbrowser-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -15,16 +16,16 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(LibSecret REQUIRED libsecret-1 IMPORTED_TARGET)
 
-add_library(${PROJECT_NAME}
+add_library(${BIN_NAME}
     SHARED
     ${BROWSER_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 target_link_libraries(
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     Qt6::Network
     DFM6::base
     DFM6::framework
@@ -33,7 +34,7 @@ target_link_libraries(
 
 #install library file
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}

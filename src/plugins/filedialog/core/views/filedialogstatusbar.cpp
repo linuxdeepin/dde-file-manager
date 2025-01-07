@@ -308,7 +308,7 @@ void FileDialogStatusBar::updateLayout()
     if (curMode == kUnknow)
         return;
 
-    if (!mainWindow)
+    if (!mainWindow || !mainWindow->centralWidget())
         return;
 
     setVisible(true);
@@ -358,6 +358,7 @@ void FileDialogStatusBar::updateLayout()
 
             contentLayout->addWidget(curRejectButton);
             contentLayout->addWidget(curAcceptButton);
+
             mainWindow->centralWidget()->layout()->addWidget(this);
             return;
         }

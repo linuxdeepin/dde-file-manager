@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-vault)
+set(BIN_NAME dfm-vault-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -16,16 +17,16 @@ pkg_check_modules(secret REQUIRED libsecret-1 IMPORTED_TARGET)
 pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt6-1)
 set(VAULT_EXTRA_LIBRARIES ${polkit_LIBRARIES})
 
-add_library(${PROJECT_NAME}
+add_library(${BIN_NAME}
     SHARED
     ${VAULT_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
 find_package(Qt6 COMPONENTS Core)
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
     ${VAULT_EXTRA_LIBRARIES}
@@ -38,7 +39,7 @@ install(FILES polkit/com.deepin.filemanager.vault.policy
 
 #install library file
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
