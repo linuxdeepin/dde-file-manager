@@ -37,7 +37,7 @@ static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 static constexpr char kDialogCorePluginName[] { "filedialog-core-plugin" };
 static constexpr char kDialogCoreLibName[] { "libfiledialog-core-plugin.so" };
 static constexpr char kDFMCorePluginName[] { "dfmplugin-core" };
-static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
+static constexpr char kDFMCoreLibName[] { "libdfm-core-plugin.so" };
 
 static void initLog()
 {

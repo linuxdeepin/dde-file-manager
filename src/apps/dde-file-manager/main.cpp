@@ -48,7 +48,7 @@ using namespace GlobalDConfDefines::BaseConfig;
 static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 static constexpr char kPluginCore[] { "dfmplugin-core" };
-static constexpr char kLibCore[] { "libdfmplugin-core.so" };
+static constexpr char kLibCore[] { "libdfm-core-plugin.so" };
 
 static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
 static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
