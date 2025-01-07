@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "workspacewidget.h"
+#include "workspacepage.h"
 #include "fileview.h"
-#include "enterdiranimationwidget.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
@@ -42,16 +42,9 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     initializeUi();
 }
 
-WorkspaceWidget::ViewPtr WorkspaceWidget::currentViewPtr() const
-{
-    auto scheme = currentUrl().scheme();
-    return views.value(scheme);
-}
-
 Global::ViewMode WorkspaceWidget::currentViewMode() const
 {
-    auto scheme = currentUrl().scheme();
-    auto view = views.value(scheme);
+    auto view = currentView();
     if (!view)
         return Global::ViewMode::kNoneMode;
 
@@ -64,113 +57,72 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
 
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
-    auto curView = currentViewPtr();
-    if (curView) {
-        if (UniversalUtils::urlEquals(url, curView->rootUrl())
-            && !dpfHookSequence->run("dfmplugin_workspace", "hook_Allow_Repeat_Url", url, curView->rootUrl()))
-            return;
-
-        bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterEnable, true).toBool();
-        if (animEnable) {
-            auto contentWidget = curView->contentWidget();
-            if (!contentWidget)
-                contentWidget = curView->widget();
-
-            if (contentWidget) {
-                if (!enterAnim)
-                    enterAnim = new EnterDirAnimationWidget(this);
-
-                auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
-                auto localPos = mapFromGlobal(globalPos);
-                enterAnim->move(localPos);
-                enterAnim->resetWidgetSize(contentWidget->size());
-
-                QPixmap preDirPix = contentWidget->grab();
-                enterAnim->setDisappearPixmap(preDirPix);
-                enterAnim->show();
-                enterAnim->raise();
-
-                enterAnim->playDisappear();
-            }
-        }
-
-        FileView *view = qobject_cast<FileView *>(curView->widget());
-        if (view)
-            view->stopWork();
-    }
-
-    auto lastUrl = workspaceUrl;
-    workspaceUrl = url;
-
-    // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
-    // called causing this function to reentrant!!!
-    if (workspaceUrl != url)
+    if (currentPageId.isEmpty()) {
+        qDebug() << "currentPageId is empty";
         return;
-
-    QString scheme { url.scheme() };
-
-    // do not paly appear animation when create first view.
-    canPlayAppearAnimation = !views.isEmpty();
-
-    if (!views.contains(scheme)) {
-        QString error;
-        ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
-        if (!fileView) {
-            fmWarning() << "Cannot create view for " << url << "Reason: " << error;
-
-            // reset to last view and notify other plugins return to last dir.
-            workspaceUrl = lastUrl;
-            setCurrentView(workspaceUrl);
-            auto windowID = WorkspaceHelper::instance()->windowId(this);
-            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowID, lastUrl);
-            return;
-        }
-#ifdef ENABLE_TESTING
-        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget *>(fileView->widget()), AcName::kAcFileView);
-#endif
-
-        views.insert(url.scheme(), fileView);
-        viewStackLayout->addWidget(fileView->widget());
     }
 
-    setCurrentView(url);
+    if (!pages[currentPageId]) {
+        qDebug() << "current page is not initialized" << currentPageId;
+        return;
+    }
+
+    pages[currentPageId]->setUrl(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const
 {
-    return workspaceUrl;
+    if (currentPageId.isEmpty()) {
+        qDebug() << "currentPageId is empty";
+        return {};
+    }
+
+    if (!pages[currentPageId]) {
+        qDebug() << "current page is not initialized" << currentPageId;
+        return {};
+    }
+
+    return pages[currentPageId]->currentUrl();
 }
 
-AbstractBaseView *WorkspaceWidget::currentView()
+AbstractBaseView *WorkspaceWidget::currentView() const
 {
-    auto scheme = currentUrl().scheme();
-    return views.value(scheme);
+    if (!pages.contains(currentPageId) || !pages[currentPageId]) {
+        qDebug() << "can not find current page" << currentPageId;
+        return nullptr;
+    }
+
+    return pages[currentPageId]->currentViewPtr();
 }
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
-    if (topWidgets.contains(scheme)) {
-        topWidgets[scheme]->setVisible(visible);
-    } else {
-        auto interface = WorkspaceHelper::instance()->createTopWidgetByScheme(scheme);
-        if (interface) {
-            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create(this));
-            if (topWidgetPtr) {
-                widgetLayout->insertWidget(0, topWidgetPtr.get());
-                topWidgets.insert(scheme, topWidgetPtr);
-                topWidgetPtr->setVisible(visible);
-            }
-        }
+    if (currentPageId.isEmpty()) {
+        qDebug() << "Cannot find current page, currentPageId is empty";
+        return;
     }
+
+    if (!pages[currentPageId]) {
+        qDebug() << "Cannot find current page, currentPageId is empty";
+        return;
+    }
+
+    pages[currentPageId]->setCustomTopWidgetVisible(scheme, visible);
 }
 
 bool WorkspaceWidget::getCustomTopWidgetVisible(const QString &scheme)
 {
-    if (topWidgets.contains(scheme)) {
-        return topWidgets[scheme]->isVisible();
+    if (currentPageId.isEmpty()) {
+        qDebug() << "Cannot find current page, currentPageId is empty";
+        return false;
     }
-    return false;
+
+    if (!pages[currentPageId]) {
+        qDebug() << "Cannot find current page, currentPageId is empty";
+        return false;
+    }
+
+    return pages[currentPageId]->getCustomTopWidgetVisible(scheme);
 }
 
 QRectF WorkspaceWidget::viewVisibleGeometry()
@@ -203,6 +155,48 @@ QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
     return {};
 }
 
+void WorkspaceWidget::createNewPage(const QString &uniqueId)
+{
+    if (pages.contains(uniqueId)) {
+        qDebug() << "pages already contains" << uniqueId;
+        return;
+    }
+
+    auto page = new WorkspacePage(this);
+    pages[uniqueId] = page;
+    viewStackLayout->addWidget(page);
+    viewStackLayout->setCurrentWidget(page);
+    currentPageId = uniqueId;
+}
+
+void WorkspaceWidget::removePage(const QString &removedId, const QString &nextId)
+{
+    if (!pages.contains(removedId) || !pages.contains(nextId)) {
+        qDebug() << "pages does not contain" << removedId << nextId;
+        return;
+    }
+
+    if (currentPageId == removedId) {
+        currentPageId = nextId;
+        viewStackLayout->setCurrentWidget(pages[currentPageId]);
+    }
+
+    auto page = pages[removedId];
+    pages.remove(removedId);
+    if (page) {
+        viewStackLayout->removeWidget(page);
+        page->deleteLater();
+    }
+}
+
+void WorkspaceWidget::setCurrentPage(const QString &uniqueId)
+{
+    if (pages.contains(uniqueId)) {
+        currentPageId = uniqueId;
+        viewStackLayout->setCurrentWidget(pages[uniqueId]);
+    }
+}
+
 void WorkspaceWidget::onRefreshCurrentView()
 {
     if (auto view = currentView())
@@ -211,38 +205,13 @@ void WorkspaceWidget::onRefreshCurrentView()
 
 void WorkspaceWidget::handleViewStateChanged()
 {
-    if (!canPlayAppearAnimation)
-        return;
-
-    if (!enterAnim)
-        return;
-
-    if (!appearAnimDelayTimer) {
-        appearAnimDelayTimer = new QTimer(this);
-        appearAnimDelayTimer->setInterval(100);
-        appearAnimDelayTimer->setSingleShot(true);
-        connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspaceWidget::onAnimDelayTimeout);
-    }
-
-    auto view = views[workspaceUrl.scheme()];
-    if (!view)
-        return;
-
-    auto contentWidget = view->contentWidget();
-    if (!contentWidget)
-        contentWidget = view->widget();
-
-    if (!contentWidget) {
-        enterAnim->stopAndHide();
+    if (currentPageId.isEmpty()) {
+        qDebug() << "Cannot find current page, currentPageId is empty";
         return;
     }
 
-    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
-    auto localPos = mapFromGlobal(globalPos);
-    enterAnim->move(localPos);
-    enterAnim->resetWidgetSize(contentWidget->size());
-
-    appearAnimDelayTimer->start();
+    if (auto page = pages[currentPageId])
+        page->viewStateChanged();
 }
 
 void WorkspaceWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
@@ -275,60 +244,25 @@ void WorkspaceWidget::initializeUi()
     initViewLayout();
 }
 
-void WorkspaceWidget::onAnimDelayTimeout()
-{
-    auto view = views[workspaceUrl.scheme()];
-    if (!enterAnim)
-        return;
-
-    if (!view || view->viewState() != AbstractBaseView::ViewState::kViewIdle) {
-        appearAnimDelayTimer->start();
-        return;
-    }
-
-    auto contentWidget = view->contentWidget();
-    if (!contentWidget)
-        contentWidget = view->widget();
-
-    if (!contentWidget) {
-        enterAnim->stopAndHide();
-        return;
-    }
-
-    QPixmap curDirPix = contentWidget->grab();
-    if (curDirPix.isNull()) {
-        enterAnim->stopAndHide();
-        return;
-    }
-
-    auto globalPos = contentWidget->mapToGlobal(QPoint(0, 0));
-    auto localPos = mapFromGlobal(globalPos);
-
-    enterAnim->resize(contentWidget->size());
-    enterAnim->move(localPos);
-
-    enterAnim->setAppearPixmap(curDirPix);
-    enterAnim->playAppear();
-}
-
 void WorkspaceWidget::initViewLayout()
 {
     viewStackLayout = new QStackedLayout;
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
 
-    widgetLayout = new QVBoxLayout;
+    widgetLayout = new QHBoxLayout;
     widgetLayout->addLayout(viewStackLayout, 1);
     widgetLayout->setSpacing(0);
     widgetLayout->setContentsMargins(0, 0, 0, 0);
+
     setLayout(widgetLayout);
 }
 
 void WorkspaceWidget::onCreateNewWindow()
 {
-    ViewPtr fileView = views[workspaceUrl.scheme()];
+    auto fileView = currentView();
     if (!fileView) {
-        fmWarning() << "Cannot find view by url: " << workspaceUrl;
+        fmWarning() << "Cannot find view";
         return;
     }
 
@@ -340,54 +274,4 @@ void WorkspaceWidget::onCreateNewWindow()
     }
 
     WorkspaceEventCaller::sendOpenWindow(urlList);
-}
-
-void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
-{
-    QString scheme { url.scheme() };
-
-    for (auto widget : topWidgets.values()) {
-        if (topWidgets.value(scheme) != widget)
-            widget->hide();
-    }
-
-    auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
-    if (interface == nullptr)
-        return;
-
-    if (!interface->parent())
-        interface->setParent(this);
-
-    if (topWidgets.contains(scheme)) {
-        bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
-        fmDebug() << interface->isKeepShow() << showUrl;
-        topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
-        fmDebug() << topWidgets[scheme]->contentsMargins();
-    } else {
-        TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
-        if (topWidgetPtr) {
-            widgetLayout->insertWidget(0, topWidgetPtr.get());
-            topWidgets.insert(scheme, topWidgetPtr);
-            topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
-        }
-    }
-}
-
-void WorkspaceWidget::setCurrentView(const QUrl &url)
-{
-    auto view = views[url.scheme()];
-    if (!view)
-        return;
-
-    viewStackLayout->setCurrentWidget(view->widget());
-
-    if (canPlayAppearAnimation && enterAnim)
-        enterAnim->raise();
-
-    initCustomTopWidgets(url);
-
-    view->setRootUrl(url);
-
-    if (view->viewState() != AbstractBaseView::ViewState::kViewBusy)
-        handleViewStateChanged();
 }

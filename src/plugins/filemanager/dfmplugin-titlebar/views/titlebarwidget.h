@@ -66,15 +66,18 @@ private:
     void showCrumbBar();
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+    void saveTitleBarState(const QString &uniqueId);
+    void restoreTitleBarState(const QString &uniqueId);
+
 signals:
     void currentUrlChanged(const QUrl &url);
 
 private slots:
     void onAddressBarJump();
-    void onTabCreated();
-    void onTabRemoved(int index);
+    void onTabCreated(const QString &uniqueId);
+    void onTabRemoved(int oldIndex, int nextIndex);
     void onTabMoved(int from, int to);
-    void onTabCurrentChanged(int tabIndex);
+    void onTabCurrentChanged(int oldIndex, int newIndex);
     void onTabCloseRequested(int index, bool remainState);
     void onTabAddButtonClicked();
     void quitSearch();
@@ -97,6 +100,14 @@ private:
     int splitterStartValue { -1 };
     int splitterEndValue { -1 };
     bool isSplitterAnimating { false };
+
+    struct TitleBarState {
+        DFMBASE_NAMESPACE::Global::ViewMode viewMode { DFMBASE_NAMESPACE::Global::ViewMode::kIconMode };
+        bool advancedSearchChecked { false };
+        QString searchText { "" };
+    };
+
+    QMap<QString, TitleBarState> titleBarStateMap;
 };
 
 }

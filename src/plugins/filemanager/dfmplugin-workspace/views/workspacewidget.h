@@ -33,30 +33,28 @@ QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
 
-class TabBar;
-class FileView;
-class EnterDirAnimationWidget;
+class WorkspacePage;
 class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
-    using ViewPtr = DFMBASE_NAMESPACE::AbstractBaseView *;
-    using TopWidgetPtr = QSharedPointer<QWidget>;
-
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
 
-    ViewPtr currentViewPtr() const;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode() const;
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
 
-    DFMBASE_NAMESPACE::AbstractBaseView *currentView();
+    DFMBASE_NAMESPACE::AbstractBaseView *currentView() const;
 
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
 
     QRectF viewVisibleGeometry();
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
+
+    void createNewPage(const QString &uniqueId);
+    void removePage(const QString &removedId, const QString &nextId);
+    void setCurrentPage(const QString &uniqueId);
 
 public slots:
     void onCreateNewWindow();
@@ -68,25 +66,15 @@ protected:
     void showEvent(QShowEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
 
-public slots:
-    void initUiForSizeMode();
-    void onAnimDelayTimeout();
-
 private:
     void initializeUi();
     void initViewLayout();
-    void initCustomTopWidgets(const QUrl &url);
-    void setCurrentView(const QUrl &url);
 
-    QUrl workspaceUrl;
-    QVBoxLayout *widgetLayout { nullptr };
+    QHBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
-    QMap<QString, ViewPtr> views;
-    QMap<QString, TopWidgetPtr> topWidgets;
-    EnterDirAnimationWidget *enterAnim { nullptr };
-    QTimer *appearAnimDelayTimer { nullptr };
 
-    bool canPlayAppearAnimation { false };
+    QMap<QString, WorkspacePage *> pages;
+    QString currentPageId;
 };
 
 }

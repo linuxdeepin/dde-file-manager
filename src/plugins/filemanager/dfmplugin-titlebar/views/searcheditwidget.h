@@ -48,11 +48,16 @@ public:
     void startSpinner();
     void stopSpinner();
 
+    bool isAdvancedButtonChecked() const;
+    void setAdvancedButtonChecked(bool checked);
     void setAdvancedButtonVisible(bool visible);
     bool completerViewVisible();
 
     void updateSearchEditWidget(int parentWidth);
     void setSearchMode(SearchMode mode);
+
+    QString text() const;
+    void setText(const QString &text);
 
 public Q_SLOTS:
     void onUrlChanged(const QUrl &url);
@@ -86,8 +91,6 @@ private:
 
     int showClearSearchHistory();
     void clearSearchHistory();
-
-    QString text() const;
 
     void setCompleter(QCompleter *c);
     void clearCompleterModel();

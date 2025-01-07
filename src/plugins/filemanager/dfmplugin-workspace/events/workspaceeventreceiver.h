@@ -79,6 +79,10 @@ public slots:
 
     bool handleCheckMountedDevPath(const QUrl &url);
 
+    void handleTabCreated(const quint64 windowId, const QString &uniqueId);
+    void handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId);
+    void handleTabChanged(const quint64 windowId, const QString &uniqueId);
+
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };
