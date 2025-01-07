@@ -108,7 +108,7 @@ void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
         splitterEndValue = -1;
         isSplitterAnimating = false;
     }
- 
+
     int newWidth = qMax(0, 95 - position.toInt());
     if (newWidth == placeholder->width())
         return;
@@ -455,7 +455,7 @@ void TitleBarWidget::saveTitleBarState(const QString &uniqueId)
     state.advancedSearchChecked = searchEditWidget->isAdvancedButtonChecked();
     state.searchText = searchEditWidget->text();
     state.viewMode = optionButtonBox->viewMode();
-    
+
     titleBarStateMap[uniqueId] = state;
 }
 
