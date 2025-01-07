@@ -47,10 +47,6 @@ TabBar::TabBar(QWidget *parent)
 
 TabBar::~TabBar()
 {
-    disconnect(this, &TabBar::currentChanged, nullptr, nullptr);
-    for (int index = tabList.count() - 1; index >= 0; --index) {
-        removeTab(index);
-    }
 }
 
 int TabBar::createTab()

@@ -101,7 +101,8 @@ private:
     int splitterEndValue { -1 };
     bool isSplitterAnimating { false };
 
-    struct TitleBarState {
+    struct TitleBarState
+    {
         DFMBASE_NAMESPACE::Global::ViewMode viewMode { DFMBASE_NAMESPACE::Global::ViewMode::kIconMode };
         bool advancedSearchChecked { false };
         QString searchText { "" };
