@@ -142,6 +142,11 @@ void OptionButtonBox::setViewMode(int mode)
     d->switchMode(static_cast<ViewMode>(mode));
 }
 
+ViewMode OptionButtonBox::viewMode() const
+{
+    return d->currentMode;
+}
+
 void OptionButtonBox::updateOptionButtonBox(int parentWidth)
 {
     // If the current url scheme has no button visibility state set, do not hide buttons

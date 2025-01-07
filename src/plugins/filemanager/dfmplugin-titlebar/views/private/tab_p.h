@@ -48,6 +48,8 @@ public:
     bool checked = false;
     bool borderLeft = false;
     bool canDrag = false;
+
+    QString uniqueId;
 };
 
 }

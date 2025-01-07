@@ -59,7 +59,11 @@ int TabBar::createTab()
     tabList.append(tab);
     scene->addItem(tab);
 
-    Q_EMIT newTabCreated();
+    QString prefix = "tab_";
+    QString uniqueId = prefix + QString::number(++nextTabUniqueId);
+    tab->setUniqueId(uniqueId);
+
+    Q_EMIT newTabCreated(uniqueId);
 
     int index = count() - 1;
 
@@ -85,19 +89,26 @@ int TabBar::createTab()
 
 void TabBar::removeTab(const int index, const bool &remainState)
 {
-    Tab *tab = tabList.at(index);
+    int newIndex;
+    if (currentIndex < index) {
+        // Current tab is before the deleted tab, keep current index unchanged
+        newIndex = currentIndex;
+    } else if (currentIndex == index) {
+        // Delete current tab, select next tab (if last tab then select previous)
+        newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index;
+    } else {
+        // Current tab is after deleted tab, decrease index by 1
+        newIndex = currentIndex - 1;
+    }
 
+    Q_EMIT tabRemoved(index, newIndex);
+
+    Tab *tab = tabList.at(index);
     tabList.removeAt(index);
     tab->deleteLater();
 
-    Q_EMIT tabRemoved(index);
-
     playTabAnimation = true;
-    if (currentIndex < index) {
-        updateScreen();
-    } else {
-        setCurrentIndex(qMax(currentIndex - 1, 0));
-    }
+    setCurrentIndex(newIndex);
 
     updateAddTabButtonState();
     updateTabsState();
@@ -130,6 +141,7 @@ void TabBar::setCurrentIndex(const int index)
     if (index < 0 || index >= tabList.count())
         return;
 
+    int oldIndex = currentIndex;
     currentIndex = index;
 
     int counter = 0;
@@ -142,7 +154,7 @@ void TabBar::setCurrentIndex(const int index)
         counter++;
     }
 
-    emit currentChanged(index);
+    emit currentChanged(oldIndex, index);
     updateScreen();
 }
 

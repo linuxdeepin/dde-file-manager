@@ -96,9 +96,22 @@ void TitleBarEventCaller::sendCheckAddressInputStr(QWidget *sender, QString *str
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", id, str);
 }
 
-void TitleBarEventCaller::sendTabChanged(quint64 windowId, int tabIndex)
+void TitleBarEventCaller::sendTabChanged(QWidget *sender, const QString &uniqueId)
 {
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Tab_Changed", windowId, tabIndex);
+    quint64 windowId = TitleBarHelper::windowId(sender);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Tab_Changed", windowId, uniqueId);
+}
+
+void TitleBarEventCaller::sendTabCreated(QWidget *sender, const QString &uniqueId)
+{
+    quint64 windowId = TitleBarHelper::windowId(sender);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Tab_Created", windowId, uniqueId);
+}
+
+void TitleBarEventCaller::sendTabRemoved(QWidget *sender, const QString &removedId, const QString &nextId)
+{
+    quint64 windowId = TitleBarHelper::windowId(sender);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Tab_Removed", windowId, removedId, nextId);
 }
 
 ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)

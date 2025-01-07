@@ -269,6 +269,16 @@ void Tab::setShowCloseButton(bool show)
     }
 }
 
+void Tab::setUniqueId(const QString &id)
+{
+    d->uniqueId = id;
+}
+
+QString Tab::uniqueId() const
+{
+    return d->uniqueId;
+}
+
 void Tab::onFileRootUrlChanged(const QUrl &url)
 {
     setCurrentUrl(url);

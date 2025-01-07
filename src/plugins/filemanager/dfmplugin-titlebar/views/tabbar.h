@@ -46,11 +46,11 @@ public Q_SLOTS:
     void activatePreviousTab();
 
 Q_SIGNALS:
-    void currentChanged(const int &index);
-    void tabCloseRequested(const int &index, const bool &remainState = false);
+    void currentChanged(int oldIndex, int newIndex);
+    void tabCloseRequested(int index, bool remainState = false);
     void requestNewWindow(const QUrl &url);
-    void newTabCreated();
-    void tabRemoved(int index);
+    void newTabCreated(const QString &uniqueId);
+    void tabRemoved(int oldIndex, int nextIndex);
     void tabMoved(int from, int to);
     void tabAddButtonClicked();
 
@@ -93,6 +93,8 @@ private:
     int historyWidth { 0 };
 
     bool isDragging { false };
+
+    int nextTabUniqueId { 0 };
 };
 
 }   // namespace dfmplugin_titlebar

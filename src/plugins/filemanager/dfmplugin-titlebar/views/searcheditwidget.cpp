@@ -77,6 +77,17 @@ void SearchEditWidget::deactivateEdit()
         updateSearchEditWidget(parentWidget()->width());
 }
 
+bool SearchEditWidget::isAdvancedButtonChecked() const
+{
+    return advancedButton->isChecked();
+}
+
+void SearchEditWidget::setAdvancedButtonChecked(bool checked)
+{
+    advancedButton->setVisible(checked);
+    advancedButton->setChecked(checked);
+}
+
 void SearchEditWidget::setAdvancedButtonVisible(bool visible)
 {
     advancedButton->setVisible(visible);
@@ -105,6 +116,11 @@ void SearchEditWidget::setSearchMode(SearchMode mode)
 
     currentMode = mode;
     updateSearchWidgetLayout();
+}
+
+void SearchEditWidget::setText(const QString &text)
+{
+    searchEdit->setText(text);
 }
 
 void SearchEditWidget::onUrlChanged(const QUrl &url)

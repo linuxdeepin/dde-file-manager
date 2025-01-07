@@ -13,16 +13,6 @@
 
 namespace dfmplugin_titlebar {
 
-class ActionButton : public QToolButton
-{
-    Q_OBJECT
-
-public:
-    explicit ActionButton(QWidget *parent = nullptr);
-    void setAction(QAction *action);
-    QAction *action() const;
-};
-
 class ViewOptionsButton;
 class OptionButtonBoxPrivate;
 class OptionButtonBox : public QWidget
@@ -41,6 +31,7 @@ public:
     void setViewOptionsButton(ViewOptionsButton *button);
 
     void setViewMode(int mode);
+    DFMBASE_NAMESPACE::Global::ViewMode viewMode() const;
     void updateOptionButtonBox(int parentWidth);
 
 public slots:

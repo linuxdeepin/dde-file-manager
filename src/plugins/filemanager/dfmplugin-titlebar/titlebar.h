@@ -23,6 +23,9 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_FilterView_Show)
     DPF_EVENT_REG_SIGNAL(signal_InputAdddressStr_Check)
     DPF_EVENT_REG_SIGNAL(signal_Share_SetPassword)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Created)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Removed)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Changed)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_Custom_Register)

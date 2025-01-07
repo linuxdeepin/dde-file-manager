@@ -51,6 +51,9 @@ public:
     
     void setShowCloseButton(bool show);
 
+    void setUniqueId(const QString &id);
+    QString uniqueId() const;
+
 public slots:
     void onFileRootUrlChanged(const QUrl &url);
 

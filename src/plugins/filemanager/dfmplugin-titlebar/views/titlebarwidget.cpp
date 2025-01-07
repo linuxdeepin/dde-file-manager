@@ -449,6 +449,27 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+void TitleBarWidget::saveTitleBarState(const QString &uniqueId)
+{
+    TitleBarState state;
+    state.advancedSearchChecked = searchEditWidget->isAdvancedButtonChecked();
+    state.searchText = searchEditWidget->text();
+    state.viewMode = optionButtonBox->viewMode();
+    
+    titleBarStateMap[uniqueId] = state;
+}
+
+void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
+{
+    if (titleBarStateMap.contains(uniqueId)) {
+        const TitleBarState &state = titleBarStateMap[uniqueId];
+        searchEditWidget->setAdvancedButtonChecked(state.advancedSearchChecked);
+        if (!state.searchText.isEmpty())
+            searchEditWidget->setText(state.searchText);
+        optionButtonBox->setViewMode(static_cast<int>(state.viewMode));
+    }
+}
+
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
@@ -457,14 +478,21 @@ void TitleBarWidget::onAddressBarJump()
     QDir::setCurrent(currentDir);
 }
 
-void TitleBarWidget::onTabCreated()
+void TitleBarWidget::onTabCreated(const QString &uniqueId)
 {
+    TitleBarEventCaller::sendTabCreated(this, uniqueId);
     curNavWidget->addHistroyStack();
 }
 
-void TitleBarWidget::onTabRemoved(int index)
+void TitleBarWidget::onTabRemoved(int oldIndex, int nextIndex)
 {
-    curNavWidget->removeNavStackAt(index);
+
+    Tab *tab = tabBar()->tabAt(oldIndex);
+    Tab *nextTab = tabBar()->tabAt(nextIndex);
+    if (tab && nextTab) {
+        TitleBarEventCaller::sendTabRemoved(this, tab->uniqueId(), nextTab->uniqueId());
+    }
+    curNavWidget->removeNavStackAt(oldIndex);
 }
 
 void TitleBarWidget::onTabMoved(int from, int to)
@@ -481,13 +509,17 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
     searchEditWidget->updateSearchEditWidget(totalWidth);
 }
 
-void TitleBarWidget::onTabCurrentChanged(int tabIndex)
+void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
 {
-    Tab *tab = tabBar()->tabAt(tabIndex);
+    Tab *tab = tabBar()->tabAt(newIndex);
     if (tab) {
+        if (oldIndex >= 0 && oldIndex < tabBar()->count())
+            saveTitleBarState(tabBar()->tabAt(oldIndex)->uniqueId());
         // switch tab must before change url! otherwise NavWidget can not work!
-        curNavWidget->switchHistoryStack(tabIndex);
+        curNavWidget->switchHistoryStack(newIndex);
+        TitleBarEventCaller::sendTabChanged(this, tab->uniqueId());
         TitleBarEventCaller::sendChangeCurrentUrl(this, tab->getCurrentUrl());
+        restoreTitleBarState(tab->uniqueId());
     }
 }
 

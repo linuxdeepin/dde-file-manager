@@ -46,6 +46,12 @@ void WorkspaceEventReceiver::initConnection()
     // signal event
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                    WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Tab_Created",
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTabCreated);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Tab_Removed",
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTabRemoved);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Tab_Changed",
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTabChanged);
 
     // slot event
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterFileView",
@@ -362,7 +368,7 @@ QList<QUrl> WorkspaceEventReceiver::handleGetSelectedUrls(const quint64 windowID
 {
     WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
     if (workspaceWidget) {
-        auto view = workspaceWidget->currentViewPtr();
+        auto view = workspaceWidget->currentView();
         if (view)
             return view->selectedUrlList();
         else
@@ -406,4 +412,25 @@ void WorkspaceEventReceiver::handleAboutToChangeViewWidth(const quint64 windowID
 bool WorkspaceEventReceiver::handleCheckMountedDevPath(const QUrl &url)
 {
     return FileDataManager::instance()->isMountedDevPath(url);
+}
+
+void WorkspaceEventReceiver::handleTabCreated(const quint64 windowId, const QString &uniqueId)
+{
+    auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
+    if (workspace)
+        workspace->createNewPage(uniqueId);
+}
+
+void WorkspaceEventReceiver::handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId)
+{
+    auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
+    if (workspace)
+        workspace->removePage(removedId, nextId);
+}
+
+void WorkspaceEventReceiver::handleTabChanged(const quint64 windowId, const QString &uniqueId)
+{
+    auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
+    if (workspace)
+        workspace->setCurrentPage(uniqueId);
 }

@@ -29,7 +29,9 @@ public:
     static void sendStopSearch(QWidget *sender);
     static void sendShowFilterView(QWidget *sender, bool visible);
     static void sendCheckAddressInputStr(QWidget *sender, QString *str);
-    static void sendTabChanged(quint64 windowId, int tabIndex);
+    static void sendTabChanged(QWidget *sender, const QString &uniqueId);
+    static void sendTabCreated(QWidget *sender, const QString &uniqueId);
+    static void sendTabRemoved(QWidget *sender, const QString &removedId, const QString &nextId);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
     static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentSortRole(QWidget *sender);
     static void sendSetSort(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
