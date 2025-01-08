@@ -22,7 +22,7 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
 
     QPalette pa_label;
 
-    pa_label.setColor(QPalette::Foreground, QColor("#303030"));
+    pa_label.setColor(QPalette::WindowText, QColor("#303030"));
     timeLabel->setPalette(pa_label);
 
     slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
