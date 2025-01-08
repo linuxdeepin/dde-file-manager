@@ -12,6 +12,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/dfm_plugin_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -58,6 +59,24 @@ static const char *const kLibCore = "libdd-core-plugin.so";
 
 namespace desktop {
 
+static bool lazyLoadFilter(const QString &name)
+{
+    static const QStringList kLazyLoadPluginNames { "ddplugin-wallpapersetting", "dfmplugin-bookmark", "dfmplugin-propertydialog",
+                                                    "dfmplugin-tag", "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem" };
+
+    if (kLazyLoadPluginNames.contains(name))
+        return true;
+
+    static const auto &kAllNames {
+        DFMBASE_NAMESPACE::Plugins::Utils::desktopCorePlugins()
+    };
+
+    if (!kAllNames.contains(name))
+        return true;
+
+    return false;
+}
+
 static bool pluginsLoad()
 {
     QString msg;
@@ -79,13 +98,6 @@ static bool pluginsLoad()
 
     qCInfo(logAppDesktop) << "Using plugins dir:" << pluginsDirs;
 
-    // TODO(xust): the GVolumeMonitor object MUST be initialized in MAIN thread, so a initialize operation is added in dbusregister::initialize.
-    // the function `DFMIO::DFMUtils::fileIsRemovable` indirectly initialized the GVolumeMonitor object and the function is invoked everywhere.
-    // solve the indirectly initialize issue and then push the plugin to lazy list.
-    static const QStringList kLazyLoadPluginNames { "ddplugin-wallpapersetting", "dfmplugin-bookmark", "dfmplugin-propertydialog",
-                                                    "dfmplugin-tag", "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem",
-                                                    "dfmplugin-filepreview" };
-
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
 #ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
@@ -95,7 +107,8 @@ static bool pluginsLoad()
         }
     }
 #endif
-    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
+    DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
 
     qCInfo(logAppDesktop) << "Depend library paths:" << DApplication::libraryPaths();
     qCInfo(logAppDesktop) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

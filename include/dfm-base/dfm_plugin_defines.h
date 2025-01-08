@@ -11,6 +11,8 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+// TODO: auto register
+
 namespace Plugins {
 namespace Core {
 inline constexpr std::initializer_list<const char *> kCommon {
@@ -27,6 +29,10 @@ inline constexpr std::initializer_list<const char *> kFileManager {
     "dfmplugin-detailspace", "dfmplugin-sidebar", "dfmplugin-titlebar",
     "dfmplugin-workspace", "dfmplugin-smbbrowser"
 };
+
+inline constexpr std::initializer_list<const char *> kDesktop {
+    "ddplugin-core", "ddplugin-canvas", "ddplugin-background", "ddplugin-organizer"
+};
 }   // namespace Core
 
 namespace Edge {
@@ -37,6 +43,10 @@ inline constexpr std::initializer_list<const char *> kCommon {
 inline constexpr std::initializer_list<const char *> kFileManager {
     "dfmplugin-trash", "dfmplugin-recent", "dfmplugin-avfsbrowser",
     "dfmplugin-search", "dfmplugin-myshares", "dfmplugin-vault"
+};
+
+inline constexpr std::initializer_list<const char *> kDesktop {
+    "ddplugin-wallpapersetting"
 };
 }   // namespace Edge
 
@@ -49,6 +59,7 @@ inline QStringList filemanagerCorePlugins()
     std::copy(Plugins::Core::kFileManager.begin(), Plugins::Core::kFileManager.end(), std::back_inserter(result));
     return result;
 }
+
 inline QStringList filemanagerAllPlugins()
 {
     QStringList result { filemanagerCorePlugins() };
@@ -56,6 +67,24 @@ inline QStringList filemanagerAllPlugins()
     std::copy(Plugins::Edge::kFileManager.begin(), Plugins::Edge::kFileManager.end(), std::back_inserter(result));
     return result;
 }
+
+inline QStringList desktopCorePlugins()
+{
+    QStringList result;
+    std::copy(Plugins::Core::kCommon.begin(), Plugins::Core::kCommon.end(), std::back_inserter(result));
+    std::copy(Plugins::Core::kCommonVirtual.begin(), Plugins::Core::kCommonVirtual.end(), std::back_inserter(result));
+    std::copy(Plugins::Core::kDesktop.begin(), Plugins::Core::kDesktop.end(), std::back_inserter(result));
+    return result;
+}
+
+inline QStringList desktopAllPlugins()
+{
+    QStringList result { desktopCorePlugins() };
+    std::copy(Plugins::Edge::kCommon.begin(), Plugins::Edge::kCommon.end(), std::back_inserter(result));
+    std::copy(Plugins::Edge::kDesktop.begin(), Plugins::Edge::kDesktop.end(), std::back_inserter(result));
+    return result;
+}
+
 }   // namespace Utils
 }   // namespace Plugins
 

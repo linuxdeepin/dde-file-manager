@@ -80,7 +80,7 @@ Depends:
  qtxdg-dev-tools
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
-Recommends: qt5dxcb-plugin, deepin-screensaver, dcc-wallpapersetting-plugin
+Recommends: deepin-screensaver
 Description: deepin desktop-environment - desktop module
  Deepin Desktop Environment (DDE) - desktop module.
 
