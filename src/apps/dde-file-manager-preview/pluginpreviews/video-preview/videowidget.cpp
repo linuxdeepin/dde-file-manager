@@ -15,7 +15,7 @@ VideoWidget::VideoWidget(VideoPreview *preview)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QPalette pa;
-    pa.setColor(QPalette::Foreground, Qt::white);
+    pa.setColor(QPalette::WindowText, Qt::white);
 
     title->setPalette(pa);
 
@@ -31,7 +31,7 @@ QSize VideoWidget::sizeHint() const
     if (window()->windowHandle()) {
         screen_size = window()->windowHandle()->screen()->availableSize();
     } else {
-        screen_size = qApp->desktop()->size();
+        screen_size = QGuiApplication::primaryScreen()->availableSize();
     }
 
     return QSize(p->info.width, p->info.height).scaled(qMin(p->info.width, int(screen_size.width() * 0.5)), qMin(p->info.height, int(screen_size.height() * 0.5)), Qt::KeepAspectRatio);

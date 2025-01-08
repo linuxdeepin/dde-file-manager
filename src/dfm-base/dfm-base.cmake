@@ -88,34 +88,37 @@ else()
 endif()
 
 # TODO: move Widgets to ${DFM_EXTRA_LIBRARIES}
-target_link_libraries(${BIN_NAME} PUBLIC
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Concurrent
-    Qt${QT_VERSION_MAJOR}::DBus
-    Qt${QT_VERSION_MAJOR}::Sql
-    Qt${QT_VERSION_MAJOR}::Network
-    Dtk${DTK_VERSION_MAJOR}::Core
-    Dtk${DTK_VERSION_MAJOR}::Widget
-    Dtk${DTK_VERSION_MAJOR}::Gui
-    dfm${DTK_VERSION_MAJOR}-io
-    dfm${DTK_VERSION_MAJOR}-mount
-    dfm${DTK_VERSION_MAJOR}-burn
-    PkgConfig::mount
-    PkgConfig::gio
-    poppler-cpp
-    ${XCB_LIBRARIES}
-    xcb-xfixes
-    ${DFM_EXTRA_LIBRARIES}
+target_link_libraries(${BIN_NAME} 
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        Qt${QT_VERSION_MAJOR}::DBus
+        Qt${QT_VERSION_MAJOR}::Sql
+        Qt${QT_VERSION_MAJOR}::Network
+        Dtk${DTK_VERSION_MAJOR}::Core
+        Dtk${DTK_VERSION_MAJOR}::Widget
+        Dtk${DTK_VERSION_MAJOR}::Gui
+        dfm${DTK_VERSION_MAJOR}-io
+        dfm${DTK_VERSION_MAJOR}-mount
+        dfm${DTK_VERSION_MAJOR}-burn
+        PkgConfig::mount
+        PkgConfig::gio
+        poppler-cpp
+        ${XCB_LIBRARIES}
+        xcb-xfixes
+        ${DFM_EXTRA_LIBRARIES}
 )
 
-target_include_directories(${BIN_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${DFM_IO_HEADERS}
-    ${DFM_MOUNT_HEADERS}
-    ${DFM_BURN_HEADERS}
+target_include_directories(${BIN_NAME} 
+    PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        ${DFM_IO_HEADERS}
+        ${DFM_MOUNT_HEADERS}
+        ${DFM_BURN_HEADERS}
     )
 
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install
@@ -133,12 +136,23 @@ set_target_properties(${BIN_NAME} PROPERTIES
 )
 
 # install library file
-install(TARGETS ${BIN_NAME} LIBRARY DESTINATION  ${LIB_INSTALL_DIR})
+install(TARGETS ${BIN_NAME} EXPORT ${BIN_NAME}Targets
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT ${BIN_NAME}Targets
+    FILE ${BIN_NAME}Targets.cmake
+    NAMESPACE DFM${DTK_VERSION_MAJOR}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME}
+)
 
 # for pc file config
 set(PC_LIBS_PRIVATE Qt${QT_VERSION_MAJOR}Core)
-set(PC_REQ_PRIVATE)
-set(PC_REQ_PUBLIC)
+set(PC_REQ_PRIVATE "")
+set(PC_REQ_PUBLIC "dfm${QT_VERSION_MAJOR}-io dfm${QT_VERSION_MAJOR}-mount dfm${QT_VERSION_MAJOR}-burn Qt${QT_VERSION_MAJOR}Core Qt${QT_VERSION_MAJOR}Widgets Qt${QT_VERSION_MAJOR}Gui Qt${QT_VERSION_MAJOR}Concurrent Qt${QT_VERSION_MAJOR}DBus Qt${QT_VERSION_MAJOR}Sql Qt${QT_VERSION_MAJOR}Network dtk${DTK_VERSION_MAJOR}core dtk${DTK_VERSION_MAJOR}gui dtk${DTK_VERSION_MAJOR}widget")
 
 # config pkgconfig file
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}.pc.in ${BIN_NAME}.pc @ONLY)

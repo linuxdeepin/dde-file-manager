@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(deepin-video-preview-plugin)
+project(dde-video-preview-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
