@@ -226,7 +226,17 @@ void FolderListWidget::keyPressEvent(QKeyEvent *event)
         QString pressedText = event->text();
         if (!pressedText.isEmpty() && pressedText[0].isPrint()) {
             QModelIndex currentIndex = d->folderView->currentIndex();
-            int startRow = currentIndex.isValid() ? currentIndex.row() : -1;
+            int startRow = -1;
+            if(!currentIndex.isValid()){
+                // 如果没有激活选中某一项的时候，就以鼠标悬浮所在项为基准去往后查找
+                QPoint mousePos = mapFromGlobal(QCursor::pos());
+                QModelIndex hoverIndex = d->folderView->indexAt(mousePos);
+                startRow = hoverIndex.isValid() ? hoverIndex.row() : -1;
+            }
+            else{
+                startRow = currentIndex.row();
+            }
+
             findAndSelectMatch(pressedText, startRow);
         }
     }
