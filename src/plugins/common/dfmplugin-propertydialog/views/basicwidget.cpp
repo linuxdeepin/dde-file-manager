@@ -90,16 +90,15 @@ void BasicWidget::initUI()
     fileCount = createValueLabel(frameMain, tr("Contains"));
     fileType = createValueLabel(frameMain, tr("Type"));
     filePosition = createValueLabel(frameMain, tr("Location"));
-    fileCreated = createValueLabel(frameMain, tr("Time created"));
-    fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
-    fileModified = createValueLabel(frameMain, tr("Time modified"));
+    fileCreated = createValueLabel(frameMain, tr("Created"));
+    fileAccessed = createValueLabel(frameMain, tr("Accessed"));
+    fileModified = createValueLabel(frameMain, tr("Modified"));
 
     hideFile = new DCheckBox(frameMain);
     DFontSizeManager::instance()->bind(hideFile, DFontSizeManager::SizeType::T7, QFont::Normal);
     hideFile->setText(tr("Hide this file"));
     hideFile->setToolTip(hideFile->text());
 
-    fileImgSize = createValueLabel(frameMain, tr("Image size"));
     fileMediaResolution = createValueLabel(frameMain, tr("Resolution"));
     fileMediaDuration = createValueLabel(frameMain, tr("Duration"));
 }
@@ -226,10 +225,6 @@ void BasicWidget::basicFieldFilter(const QUrl &url)
         fieldMap.remove(BasicFieldExpandEnum::kFileModifiedTime);
         fileModified->deleteLater();
         fileModified = nullptr;
-    } else if (fieldFilter & PropertyFilterType::kFileImageSizeFiled) {
-        fieldMap.remove(BasicFieldExpandEnum::kFileImageSize);
-        fileImgSize->deleteLater();
-        fileImgSize = nullptr;
     } else if (fieldFilter & PropertyFilterType::kFileMediaResolutionFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileMediaResolution);
         fileMediaResolution->deleteLater();
@@ -303,8 +298,7 @@ void BasicWidget::basicFill(const QUrl &url)
         fCount = 1;
         fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
     }
-    if (fileImgSize && fileImgSize->RightValue().isEmpty())
-        fileImgSize->setVisible(false);
+
     if (fileMediaResolution && fileMediaResolution->RightValue().isEmpty())
         fileMediaResolution->setVisible(false);
     if (fileMediaDuration && fileMediaDuration->RightValue().isEmpty())
@@ -370,7 +364,6 @@ void BasicWidget::initFileMap()
     fieldMap.insert(BasicFieldExpandEnum::kFileCreateTime, fileCreated);
     fieldMap.insert(BasicFieldExpandEnum::kFileAccessedTime, fileAccessed);
     fieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, fileModified);
-    fieldMap.insert(BasicFieldExpandEnum::kFileImageSize, fileImgSize);
     fieldMap.insert(BasicFieldExpandEnum::kFileMediaResolution, fileMediaResolution);
     fieldMap.insert(BasicFieldExpandEnum::kFileMediaDuration, fileMediaDuration);
 }
@@ -438,8 +431,8 @@ void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
     const QString &imgSizeStr = QString::number(width) + "x" + QString::number(height);
 
-    fileImgSize->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileImgSize->setVisible(true);
+    fileMediaResolution->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
+    fileMediaResolution->setVisible(true);
 }
 
 void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)

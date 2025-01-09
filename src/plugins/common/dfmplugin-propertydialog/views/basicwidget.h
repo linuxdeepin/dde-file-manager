@@ -63,7 +63,6 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     QCheckBox *hideFile { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileImgSize { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaResolution { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaDuration { nullptr };
     bool hideCheckBox { false };
