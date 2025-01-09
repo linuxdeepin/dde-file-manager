@@ -49,7 +49,17 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
     if (!supported.contains(url.scheme()))
         return nullptr;
 
-    auto info = InfoFactory::create<FileInfo>(url);
+    QFileInfo fileInfo(url.toLocalFile());
+    if (!fileInfo.exists())
+        return nullptr;
+
+    QString canonicalPath = fileInfo.canonicalFilePath();
+    if (canonicalPath.isEmpty())
+        return nullptr;
+
+    QUrl canonicalUrl = QUrl::fromLocalFile(canonicalPath);
+    auto info = InfoFactory::create<FileInfo>(canonicalUrl);
+
     bool disableWidget = UserShareHelper::needDisableShareWidget(info);
     if (!UserShareHelper::canShare(info))
         return nullptr;
