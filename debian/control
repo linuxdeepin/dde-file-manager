@@ -64,6 +64,8 @@ Build-Depends:
  libdfm6-burn-dev,
  libpolkit-qt6-1-dev,
  libxcb-xfixes0-dev (>= 1.10~),
+ libopenjp2-7-dev,
+ liblcms2-dev,
  libdeepin-service-framework-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
