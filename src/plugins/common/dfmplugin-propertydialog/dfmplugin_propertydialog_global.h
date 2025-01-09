@@ -38,9 +38,8 @@ enum PropertyFilterType {
     kFileCreateTimeFiled = 1 << 7,
     kFileAccessedTimeFiled = 1 << 8,
     kFileModifiedTimeFiled = 1 << 9,
-    kFileImageSizeFiled = 1 << 10,
-    kFileMediaResolutionFiled = 1 << 11,
-    kFileMediaDurationFiled = 1 << 12
+    kFileMediaResolutionFiled = 1 << 10,
+    kFileMediaDurationFiled = 1 << 11
 };
 Q_ENUM_NS(PropertyFilterType)
 
@@ -53,7 +52,6 @@ enum BasicFieldExpandEnum : int {
     kFileCreateTime,
     kFileAccessedTime,
     kFileModifiedTime,
-    kFileImageSize,
     kFileMediaResolution,
     kFileMediaDuration,
 };

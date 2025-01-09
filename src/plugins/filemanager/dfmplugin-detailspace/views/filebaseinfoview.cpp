@@ -41,7 +41,7 @@ void FileBaseInfoView::initUI()
     fileSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileViewSize = new KeyValueLabel(this);
     fileViewSize->setMaximumHeight(30);
-    fileViewSize->setLeftValue(tr("Dimension"), Qt::ElideMiddle, Qt::AlignLeft);
+    fileViewSize->setLeftValue(tr("Resolution"), Qt::ElideMiddle, Qt::AlignLeft);
     fileViewSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileViewSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileDuration = new KeyValueLabel(this);
