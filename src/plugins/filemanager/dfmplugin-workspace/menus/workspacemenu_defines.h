@@ -15,6 +15,7 @@ inline constexpr char kRefresh[] = "refresh";
 // sort by
 inline constexpr char kSrtName[] = "sort-by-name";
 inline constexpr char kSrtTimeModified[] = "sort-by-time-modified";
+inline constexpr char kSrtTimeCreated[] = "sort-by-time-created";
 inline constexpr char kSrtSize[] = "sort-by-size";
 inline constexpr char kSrtType[] = "sort-by-type";
 

@@ -54,7 +54,7 @@ inline constexpr int kIconViewSpacing { 10 };   // icon模式下的间距的一�
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
-inline constexpr int kDefaultItemFileLastModifiedWidth { 145 };
+inline constexpr int kDefaultItemFileTimeWidth { 145 };
 inline constexpr int kMinimumHeaderSectionWidth { 120 };
 inline constexpr int kListViewHeaderHeight { 36 };
 inline constexpr int kListViewIconSize { 24 };

@@ -143,6 +143,7 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     // 排序子菜单
     d->predicateName[ActionID::kSrtName] = tr("Name");
     d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
+    d->predicateName[ActionID::kSrtTimeCreated] = tr("Time created");
     d->predicateName[ActionID::kSrtSize] = tr("Size");
     d->predicateName[ActionID::kSrtType] = tr("Type");
 
@@ -294,7 +295,8 @@ bool CanvasMenuScene::triggered(QAction *action)
                 { ActionID::kSrtName, Global::ItemRoles::kItemFileDisplayNameRole },
                 { ActionID::kSrtSize, Global::ItemRoles::kItemFileSizeRole },
                 { ActionID::kSrtType, Global::ItemRoles::kItemFileMimeTypeRole },
-                { ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole }
+                { ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole },
+                { ActionID::kSrtTimeCreated, Global::ItemRoles::kItemFileCreatedRole },
             };
 
             if (sortRole.contains(actionId)) {
@@ -554,6 +556,10 @@ QMenu *CanvasMenuScene::sortBySubActions(QMenu *menu)
     tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtTimeModified));
     d->predicateAction[ActionID::kSrtTimeModified] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeModified));
+
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtTimeCreated));
+    d->predicateAction[ActionID::kSrtTimeCreated] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeCreated));
 
     tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtSize));
     d->predicateAction[ActionID::kSrtSize] = tempAction;

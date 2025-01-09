@@ -1450,6 +1450,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     switch (orgSortRole) {
     case kItemFileDisplayNameRole:
     case kItemFileLastModifiedRole:
+    case kItemFileCreatedRole:
     case kItemFileMimeTypeRole:
         return FileUtils::compareByStringEx(leftData.toString(), rightData.toString());
     case kItemFileSizeRole: {
@@ -1477,6 +1478,10 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
     case kItemFileLastModifiedRole: {
         auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
+    }
+    case kItemFileCreatedRole: {
+        auto created = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemIconRole:
         return info->fileIcon();

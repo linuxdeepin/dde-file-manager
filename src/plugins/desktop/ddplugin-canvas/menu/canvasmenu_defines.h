@@ -18,6 +18,7 @@ inline constexpr char kAutoArrange[] { "auto-arrange" };   // 1071: removed
 // sort by
 inline constexpr char kSrtName[] { "sort-by-name" };
 inline constexpr char kSrtTimeModified[] { "sort-by-time-modified" };
+inline constexpr char kSrtTimeCreated[] { "sort-by-time-created" };
 inline constexpr char kSrtSize[] { "sort-by-size" };
 inline constexpr char kSrtType[] { "sort-by-type" };
 

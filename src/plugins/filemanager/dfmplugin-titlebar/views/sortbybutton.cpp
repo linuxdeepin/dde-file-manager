@@ -32,6 +32,7 @@ static constexpr int kSortToolHMargin { 6 };
 static constexpr int kSortToolVMargin { 9 };
 static constexpr char kSortToolName[] = "sort-by-name";
 static constexpr char kSortToolTimeModified[] = "sort-by-time-modified";
+static constexpr char kSortToolTimeCreated[] = "sort-by-time-created";
 static constexpr char kSortToolSize[] = "sort-by-size";
 static constexpr char kSortToolType[] = "sort-by-type";
 
@@ -54,6 +55,12 @@ void SortByButtonPrivate::setItemSortRoles()
     } break;
     case DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole: {
         auto action = menu->findChild<QAction *>(kSortToolTimeModified);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileCreatedRole: {
+        auto action = menu->findChild<QAction *>(kSortToolTimeCreated);
         if (action) {
             action->setChecked(true);
         }
@@ -98,6 +105,11 @@ void SortByButtonPrivate::initializeUi()
     action->setCheckable(true);
     actionGroup->addAction(action);
 
+    action = menu->addAction(tr("Time created"));
+    action->setObjectName(kSortToolTimeCreated);
+    action->setCheckable(true);
+    actionGroup->addAction(action);
+
     action = menu->addAction(tr("Size"));
     action->setObjectName(kSortToolSize);
     action->setCheckable(true);
@@ -122,6 +134,8 @@ void SortByButtonPrivate::menuTriggered(QAction *action)
         TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole);
     } else if (action->objectName() == kSortToolTimeModified) {
         TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole);
+    } else if (action->objectName() == kSortToolTimeCreated) {
+        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileCreatedRole);
     } else if (action->objectName() == kSortToolSize) {
         TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileSizeRole);
     } else if (action->objectName() == kSortToolType) {
