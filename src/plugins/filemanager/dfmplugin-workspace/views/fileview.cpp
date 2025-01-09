@@ -991,6 +991,15 @@ void FileView::aboutToChangeWidth(int deltaWidth)
     d->animationHelper->playAnimationWithWidthChange(deltaWidth);
 }
 
+void FileView::initDefaultHeaderView()
+{
+    if (!model())
+        return;
+
+    auto roleName = model()->roleDisplayString(kItemFileCreatedRole);
+    d->columnForRoleHiddenMap[roleName] = true;
+}
+
 void FileView::onHeaderViewMousePressed()
 {
     d->oldHeaderViewLenght = d->headerView->length();
@@ -2260,8 +2269,8 @@ void FileView::updateListHeaderView()
             if (colWidth > 0) {
                 d->headerView->resizeSection(model()->getColumnByRole(curRole), colWidth);
             } else {
-                if (curRole == kItemFileLastModifiedRole) {
-                    d->headerView->resizeSection(model()->getColumnByRole(curRole), kDefaultItemFileLastModifiedWidth);
+                if (curRole == kItemFileLastModifiedRole || curRole == kItemFileCreatedRole) {
+                    d->headerView->resizeSection(model()->getColumnByRole(curRole), kDefaultItemFileTimeWidth);
                 }
             }
         } else {

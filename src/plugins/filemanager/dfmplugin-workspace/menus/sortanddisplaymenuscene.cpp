@@ -37,6 +37,7 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
     // 排序子菜单
     d->predicateName[ActionID::kSrtName] = tr("Name");
     d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
+    d->predicateName[ActionID::kSrtTimeCreated] = tr("Time created");
     d->predicateName[ActionID::kSrtSize] = tr("Size");
     d->predicateName[ActionID::kSrtType] = tr("Type");
 
@@ -130,13 +131,19 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
                 return true;
             }
 
+            // sort by time created
+            if (actionId == ActionID::kSrtTimeCreated) {
+                d->sortByRole(Global::ItemRoles::kItemFileCreatedRole);
+                return true;
+            }
+
             // sort by size
             if (actionId == ActionID::kSrtSize) {
                 d->sortByRole(Global::ItemRoles::kItemFileSizeRole);
                 return true;
             }
 
-            // sort by size
+            // sort by type
             if (actionId == ActionID::kSrtType) {
                 d->sortByRole(Global::ItemRoles::kItemFileMimeTypeRole);
                 return true;
@@ -179,6 +186,11 @@ QMenu *SortAndDisplayMenuScenePrivate::addSortByActions(QMenu *menu)
     tempAction->setCheckable(true);
     predicateAction[ActionID::kSrtTimeModified] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeModified));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kSrtTimeCreated));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kSrtTimeCreated] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeCreated));
 
     tempAction = subMenu->addAction(predicateName.value(ActionID::kSrtSize));
     tempAction->setCheckable(true);
@@ -242,6 +254,9 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         break;
     case kItemFileLastModifiedRole:
         predicateAction[ActionID::kSrtTimeModified]->setChecked(true);
+        break;
+    case kItemFileCreatedRole:
+        predicateAction[ActionID::kSrtTimeCreated]->setChecked(true);
         break;
     case kItemFileSizeRole:
         predicateAction[ActionID::kSrtSize]->setChecked(true);

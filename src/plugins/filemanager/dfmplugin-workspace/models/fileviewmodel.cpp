@@ -583,6 +583,7 @@ QList<ItemRoles> FileViewModel::getColumnRoles() const
     } else if (!customOnly) {
         static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
+                                                                           << kItemFileCreatedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;
 
@@ -616,6 +617,7 @@ ItemRoles FileViewModel::columnToRole(int column) const
     } else if (!customOnly) {
         static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
+                                                                           << kItemFileCreatedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;
 
@@ -639,6 +641,8 @@ QString FileViewModel::roleDisplayString(int role) const
         return tr("Name");
     case kItemFileLastModifiedRole:
         return tr("Time modified");
+    case kItemFileCreatedRole:
+        return tr("Time created");
     case kItemFileSizeRole:
         return tr("Size");
     case kItemFileMimeTypeRole:

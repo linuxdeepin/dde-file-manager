@@ -126,6 +126,13 @@ QVariant FileItemData::data(int role) const
         }
         return "-";
     }
+    case kItemFileCreatedRole: {
+        if (info) {
+            auto created = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+            return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
+        }
+        return "-";
+    }
     case kItemIconRole:
         return fileIcon();
     case kItemFileSizeRole:

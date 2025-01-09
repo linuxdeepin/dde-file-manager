@@ -117,6 +117,8 @@ public:
     QRect calcVisualRect(int widgetWidth, int index) const;
     void aboutToChangeWidth(int deltaWidth);
 
+    void initDefaultHeaderView();
+
     using DListView::edit;
     using DListView::updateGeometries;
     using DListView::viewportMargins;

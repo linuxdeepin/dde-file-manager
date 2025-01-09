@@ -210,7 +210,8 @@ bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
         { ddplugin_canvas::ActionID::kSrtName, Global::ItemRoles::kItemFileDisplayNameRole },
         { ddplugin_canvas::ActionID::kSrtSize, Global::ItemRoles::kItemFileSizeRole },
         { ddplugin_canvas::ActionID::kSrtType, Global::ItemRoles::kItemFileMimeTypeRole },
-        { ddplugin_canvas::ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole }
+        { ddplugin_canvas::ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole },
+        { ddplugin_canvas::ActionID::kSrtTimeCreated, Global::ItemRoles::kItemFileCreatedRole }
     };
 
     if (sortRole.contains(actionId)) {

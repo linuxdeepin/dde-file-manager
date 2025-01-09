@@ -118,6 +118,7 @@ void FileViewPrivate::initListModeView()
     }
 
     if (!headerView) {
+        q->initDefaultHeaderView();
         auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
 
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);

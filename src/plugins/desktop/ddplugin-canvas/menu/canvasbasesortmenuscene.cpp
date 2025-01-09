@@ -257,6 +257,7 @@ QMap<QString, QStringList> CanvasBaseSortMenuScenePrivate::secondaryMenuRule()
                                  "sort-by-source-path",
                                  "sort-by-lastRead",
                                  "sort-by-time-modified",
+                                 "sort-by-time-created",
                                  "sort-by-time-deleted",
                                  "sort-by-size",
                                  "sort-by-type" });   // 排序方式
