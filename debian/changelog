@@ -1,3 +1,9 @@
+dde-file-manager (6.5.23) unstable; urgency=medium
+
+  * update 6.5.23 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Thu, 09 Jan 2025 15:42:36 +0800
+
 dde-file-manager (6.5.22) unstable; urgency=medium
 
   * fix: fix crash when closing folder list widget
