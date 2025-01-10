@@ -1,3 +1,10 @@
+dde-file-manager (6.5.25) unstable; urgency=medium
+
+  *update 6.5.25
+  *update libdfm6-io-dev, libdfm6-mount-dev, libdfm6-burn-dev 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Fri, 10 Jan 2025 11:16:58 +0800
+
 dde-file-manager (6.5.24) unstable; urgency=medium
 
   * update 6.5.24 
