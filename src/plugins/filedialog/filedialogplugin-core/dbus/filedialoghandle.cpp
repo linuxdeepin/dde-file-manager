@@ -68,10 +68,14 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d_func()->dialog->internalWinId()));
     if (window) {
         QObject::connect(window, &FileDialog::initialized, this, [this]() {
-            if (!d_func()->lastFilterGroup.isEmpty())
+            if (!d_func()->lastFilterGroup.isEmpty()) {
                 d_func()->dialog->setNameFilters(d_func()->lastFilterGroup);
-            if (!d_func()->lastFilter.isEmpty())
+                d_func()->lastFilterGroup.clear();
+            }
+            if (!d_func()->lastFilter.isEmpty()) {
                 d_func()->dialog->selectNameFilter(d_func()->lastFilter);
+                d_func()->lastFilter.clear();
+            }
         });
     }
 }
