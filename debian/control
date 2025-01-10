@@ -166,7 +166,7 @@ Description: Development package for libdfm-extension
 Package: dde-file-manager-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager (=${binary:Version}),
- libdfm-io-dev, libdfm-mount-dev, libdfm-burn-dev
+ libdfm6-io-dev, libdfm6-mount-dev, libdfm6-burn-dev
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
