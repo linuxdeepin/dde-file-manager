@@ -1,3 +1,9 @@
+dde-file-manager (6.5.22.1) unstable; urgency=medium
+
+  * fix: calc dock rect when visible geometry
+
+ -- liuyangming <liuyangming@uniontech.com>  Tue, 14 Jan 2025 20:56:06 +0800
+
 dde-file-manager (6.5.22) unstable; urgency=medium
 
   * fix: fix crash when closing folder list widget
