@@ -4,6 +4,7 @@
 
 #include "tabbar.h"
 #include "tab.h"
+#include "custombutton.h"
 #include "titlebarwidget.h"
 #include "dfmplugin_titlebar_global.h"
 #include "utils/titlebarhelper.h"
@@ -453,7 +454,7 @@ void TabBar::initializeUI()
     setScene(scene);
     scene->installEventFilter(this);
 
-    tabAddButton = new DIconButton(DStyle::SP_IncreaseElement, this);
+    tabAddButton = new CustomDIconButton(DStyle::SP_IncreaseElement, this);
     tabAddButton->setObjectName("NewTabButton");
     tabAddButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     tabAddButton->setFlat(true);
