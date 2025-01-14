@@ -1899,7 +1899,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Aangemaakt op</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -4203,7 +4203,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolutie</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -5692,17 +5692,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>Gemaakt op</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Geopend op/om</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Bewerkt op/om</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="99"/>
@@ -6531,7 +6531,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Aangemaakt op</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
@@ -7552,7 +7552,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Aangemaakt op</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="647"/>
@@ -7614,7 +7614,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Aangemaakt op</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
