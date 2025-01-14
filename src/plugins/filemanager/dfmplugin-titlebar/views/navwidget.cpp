@@ -5,6 +5,7 @@
 #include "views/private/navwidget_p.h"
 #include "views/navwidget.h"
 #include "events/titlebareventcaller.h"
+#include "views/custombutton.h"
 
 #include <dfm-base/base/device/deviceproxymanager.h>
 
@@ -157,12 +158,12 @@ void NavWidget::onNewWindowOpended()
 
 void NavWidget::initializeUi()
 {
-    d->navBackButton = new DIconButton(DStyle::SP_ArrowLeave, this);
+    d->navBackButton = new CustomDIconButton(DStyle::SP_ArrowLeave, this);
     d->navBackButton->setFlat(true);
     d->navBackButton->setDisabled(true);
     d->navBackButton->setToolTip(tr("back"));
 
-    d->navForwardButton = new DIconButton(DStyle::SP_ArrowEnter, this);
+    d->navForwardButton = new CustomDIconButton(DStyle::SP_ArrowEnter, this);
     d->navForwardButton->setFlat(true);
     d->navForwardButton->setDisabled(true);
     d->navForwardButton->setToolTip(tr("forward"));

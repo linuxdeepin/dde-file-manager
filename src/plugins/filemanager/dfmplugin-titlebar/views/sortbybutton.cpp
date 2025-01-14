@@ -165,6 +165,14 @@ void SortByButton::paintEvent(QPaintEvent *event)
         QStyleOptionToolButton option;
         QToolButton::initStyleOption(&option);
         option.state |= QStyle::State_MouseOver;
+
+        bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+
+        QColor hoverColor = isDarkTheme ? QColor(255, 255, 255, 15)
+                                        : QColor(0, 0, 0, 26);
+
+        option.palette.setBrush(QPalette::Button, hoverColor);
+
         option.rect.adjust(1, 1, -1, -1);
         painter.drawComplexControl(QStyle::CC_ToolButton, option);
     }

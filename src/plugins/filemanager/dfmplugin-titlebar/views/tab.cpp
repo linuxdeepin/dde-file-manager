@@ -188,9 +188,9 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     // draw backgound
     if (d->hovered) {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            color = QColor(235, 235, 235, 204);
+            color = QColor(0, 0, 0, 26);
         else
-            color = QColor(30, 30, 30, 204);
+            color = QColor(255, 255, 255, 15);
         painter->fillRect(boundingRect(), color);
 
     } else {

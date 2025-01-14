@@ -9,10 +9,13 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
+#include <DGuiApplicationHelper>
+
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
 #include <QTimer>
 
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -81,10 +84,20 @@ void ViewOptionsButton::paintEvent(QPaintEvent *event)
 
     QStyleOptionToolButton option;
     QToolButton::initStyleOption(&option);
-    if (d->hoverFlag || d->popupVisible())
+
+    if (d->hoverFlag || d->popupVisible()) {
         option.state |= QStyle::State_MouseOver;
-    else
+
+        bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+
+        QColor hoverColor = isDarkTheme ? QColor(255, 255, 255, 15)
+                                        : QColor(0, 0, 0, 26);
+
+        option.palette.setBrush(QPalette::Button, hoverColor);
+    } else {
         option.state &= ~QStyle::State_MouseOver;
+    }
+
     painter.drawComplexControl(QStyle::CC_ToolButton, option);
 }
 
