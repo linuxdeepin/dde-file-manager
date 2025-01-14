@@ -8,6 +8,7 @@
 #include "events/titlebareventcaller.h"
 #include "views/completerview.h"
 #include "views/completerviewdelegate.h"
+#include "views/custombutton.h"
 #include "models/completerviewmodel.h"
 
 #include <dfm-base/utils/fileutils.h>
@@ -21,10 +22,13 @@
 #include <DSearchEdit>
 #include <DSpinner>
 #include <DDialog>
+#include <DGuiApplicationHelper>
+#include <DPalette>
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
 
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
@@ -341,7 +345,7 @@ void SearchEditWidget::initUI()
     layout->setSpacing(0);
 
     // search button
-    searchButton = new DIconButton(this);
+    searchButton = new CustomDIconButton(this);
     searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
     searchButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     searchButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
@@ -357,7 +361,7 @@ void SearchEditWidget::initUI()
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
     // advanced search button
-    advancedButton = new DToolButton(this);
+    advancedButton = new CustomDToolButton(this);
     advancedButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
     advancedButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     advancedButton->setFocusPolicy(Qt::NoFocus);

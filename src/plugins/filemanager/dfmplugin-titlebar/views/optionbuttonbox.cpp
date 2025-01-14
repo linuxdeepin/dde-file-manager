@@ -8,6 +8,7 @@
 #include "utils/optionbuttonmanager.h"
 #include "views/sortbybutton.h"
 #include "views/viewoptionsbutton.h"
+#include "views/custombutton.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -219,7 +220,7 @@ void OptionButtonBox::initializeUi()
     setContentsMargins(5, 0, 5, 0);
     d->buttonGroup = new QButtonGroup(this);
 
-    d->iconViewButton = new DToolButton;
+    d->iconViewButton = new CustomDToolButton;
     d->iconViewButton->setCheckable(true);
     d->iconViewButton->setChecked(true);
     d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
@@ -227,7 +228,7 @@ void OptionButtonBox::initializeUi()
     d->iconViewButton->setToolTip(tr("Icon view"));
     d->iconViewButton->setIconSize(buttonIconSize);
 
-    d->listViewButton = new DToolButton;
+    d->listViewButton = new CustomDToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     d->listViewButton->setFixedSize(buttonSize);
@@ -237,7 +238,7 @@ void OptionButtonBox::initializeUi()
     d->buttonGroup->addButton(d->listViewButton);
 
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
-        d->treeViewButton = new DToolButton;
+        d->treeViewButton = new CustomDToolButton;
         d->treeViewButton->setCheckable(true);
         d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
         d->treeViewButton->setFixedSize(buttonSize);
