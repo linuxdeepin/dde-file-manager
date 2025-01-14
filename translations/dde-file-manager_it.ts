@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="295"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="293"/>
         <source>File Manager</source>
         <translation>Gestore File</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="299"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="297"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Gestore File di Deepin è uno strumento di gestione file con funzionalità di ricerca, copia, compressione/decompressione, dettagli dei file ed altre funzionalità.
 Localizzazione italiana a cura di Massimo A. Carofano. </translation>
@@ -32,14 +32,6 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
         <source>Decrypting...</source>
         <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>DesktopMain</name>
-    <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="285"/>
-        <source>Desktop</source>
-        <translation>Desktop</translation>
     </message>
 </context>
 <context>
@@ -105,7 +97,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>FileDialogHandle</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/dbus/filedialoghandle.cpp" line="563"/>
+        <location filename="../src/plugins/filedialog/core/dbus/filedialoghandle.cpp" line="563"/>
         <source>All Files </source>
         <translation>Tutti i file</translation>
     </message>
@@ -425,7 +417,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="662"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="670"/>
         <source>Built-in disks</source>
         <translation>Dischi interni</translation>
     </message>
@@ -449,7 +441,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="662"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="670"/>
         <source>Loop partitions</source>
         <translation>Partizioni loop</translation>
     </message>
@@ -457,7 +449,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="663"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="671"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
         <source>Mounted sharing folders</source>
         <translation>Cartelle condivise montate</translation>
@@ -481,7 +473,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="663"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="671"/>
         <source>Mounted partitions and discs</source>
         <translation>Partizioni e dischi montati</translation>
     </message>
@@ -868,10 +860,10 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="75"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="106"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="431"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="447"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -930,7 +922,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="432"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="448"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Conferma</translation>
@@ -943,7 +935,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="83"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
         <source>Open in new window</source>
@@ -957,7 +949,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="86"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>Apri in una nuova scheda</translation>
@@ -1170,8 +1162,8 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <translation>Errore sconosciuto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="291"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="335"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="340"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Chiudi</translation>
@@ -1257,23 +1249,23 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <translation>Rinomina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="73"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Il file sarà nascosto se il suo nome inizierà per punto &apos;.&apos;, desideri confermarlo?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="74"/>
         <source>Hide</source>
         <comment>button</comment>
         <translation>Nascondi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="104"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="104"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 esiste già, desideri sostituirlo?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="107"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="107"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Sostituisci</translation>
@@ -1315,43 +1307,43 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <translation>Accesso non consentito</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
         <source>User directory</source>
         <translation>Cartella Utente</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="281"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
         <source>Local disk</source>
         <translation>Disco locale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="283"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="286"/>
         <source>Removable disk</source>
         <translation>Disco rimovibile</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="288"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="291"/>
         <source>Network shared directory</source>
         <translation>Directory condivisa di rete</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="290"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
         <source>Android mobile device</source>
         <translation>Dispositivo Mobile Android</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="296"/>
         <source>Apple mobile device</source>
         <translation>Dispositivo Mobile Apple</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="301"/>
         <source>Unknown device</source>
         <translation>Dispositivo sconosciuto</translation>
     </message>
@@ -1419,12 +1411,12 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <translation>Impostazioni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="296"/>
         <source>Copy path</source>
         <translation>Copia percorso</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
         <source>Edit address</source>
         <translation>Modifica percorso</translation>
     </message>
@@ -1747,11 +1739,11 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="157"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="215"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="230"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="474"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="575"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="173"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="591"/>
         <source>Clear search history</source>
         <translation type="unfinished"/>
     </message>
@@ -1761,17 +1753,17 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="349"/>
         <source>search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="348"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="364"/>
         <source>advanced search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="429"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="445"/>
         <source>Are you sure clear search histories?</source>
         <translation type="unfinished"/>
     </message>
@@ -1907,36 +1899,41 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
+        <source>Time created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
         <source>Size</source>
         <translation>Dimensione</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="148"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="151"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <source>Tiny</source>
         <translation>Molto piccole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
         <source>Small</source>
         <translation>Piccola</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="154"/>
         <source>Medium</source>
         <translation>Media</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="154"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="155"/>
         <source>Large</source>
         <translation>Grande</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="155"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="156"/>
         <source>Super large</source>
         <translation>Molto grandi</translation>
     </message>
@@ -2148,52 +2145,52 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Organize desktop</source>
         <translation>Organizza il desktop</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="231"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
         <source>Enable desktop organization</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>View options</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Organize by</source>
         <translation>Organizzato da</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="237"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
         <source>Custom collection</source>
         <translation>Collezione personalizzata</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
         <source>Time accessed</source>
         <translation>Ultimo accesso</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
         <source>Time modified</source>
         <translation>Ultima modifica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="242"/>
         <source>Time created</source>
         <translation>Data creazione</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="243"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="244"/>
         <source>Create a collection</source>
         <translation>Crea una collezione</translation>
     </message>
@@ -3845,71 +3842,71 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>dfmplugin_burn::BurnJobManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="223"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="225"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="237"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="240"/>
         <source>Disc erase failed</source>
         <translation>Cancellazione disco fallita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
         <source>Burn process failed</source>
         <translation>Processo di scrittura fallito</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
         <source>Data verification failed</source>
         <translation>Verifica data fallita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="263"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="266"/>
         <source>Show details</source>
         <translation>Mostra dettagli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="267"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="270"/>
         <source>Hide details</source>
         <translation>Nascondi dettagli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="268"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="271"/>
         <source>Error</source>
         <translation>Errore</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="280"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Mostra dettagli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="278"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="281"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Conferma</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="292"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>Visualizza file immagine</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="311"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="315"/>
         <source>Image successfully created</source>
         <translation>Immagine creata con successo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="345"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="350"/>
         <source>Image creation failed</source>
         <translation>Creazione immagine fallita</translation>
     </message>
@@ -4206,8 +4203,8 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
-        <source>Dimension</source>
-        <translation>Dimensioni</translation>
+        <source>Resolution</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -5695,18 +5692,18 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
-        <source>Time created</source>
-        <translation>Data creazione</translation>
+        <source>Created</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
-        <source>Time accessed</source>
-        <translation>Ultimo accesso</translation>
+        <source>Accessed</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
-        <source>Time modified</source>
-        <translation>Ultima modifica</translation>
+        <source>Modified</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="99"/>
@@ -5715,27 +5712,22 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
-        <source>Image size</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Resolution</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Duration</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="317"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="412"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="311"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="405"/>
         <source>%1 item</source>
         <translation>%1 oggetto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="412"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="405"/>
         <source>%1 items</source>
         <translation>%1 oggetti</translation>
     </message>
@@ -5950,127 +5942,127 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
         <source>Search:</source>
         <translation>Cerca: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
         <source>File Type:</source>
         <translation>Tipo file: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
         <source>File Size:</source>
         <translation>Dimensione file: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>Time Modified:</source>
         <translation>Ultima modifica: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
         <source>Time Accessed:</source>
         <translation>Ultimo accesso:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>Time Created:</source>
         <translation>Data creazione:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Reset</source>
         <translation>Reset</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
         <source>All subdirectories</source>
         <translation>Tutte le sottocartelle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
         <source>Current directory</source>
         <translation>Cartella corrente</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
         <source>Application</source>
         <translation>Applicazioni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Image</source>
         <translation>Immagini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
         <source>Archive</source>
         <translation>Archivio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
         <source>Text</source>
         <translation>Testo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
         <source>Executable</source>
         <translation>Eseguibile</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
         <source>Backup file</source>
         <translation>Backup del file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
         <source>Today</source>
         <translation>Oggi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
         <source>Yesterday</source>
         <translation>Ieri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>This week</source>
         <translation>Questa settimana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Last week</source>
         <translation>La settimana scorsa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>This month</source>
         <translation>Questo mese</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>Last month</source>
         <translation>Il mese scorso</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
         <source>This year</source>
         <translation>Quest&apos;anno</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
         <source>Last year</source>
         <translation>L&apos;anno scorso</translation>
     </message>
@@ -6125,17 +6117,17 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="171"/>
         <source>Open file location</source>
         <translation>Apri la cartella del file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="172"/>
         <source>Select all</source>
         <translation>Seleziona tutto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="173"/>
         <source>Path</source>
         <translation>Percorso</translation>
     </message>
@@ -6497,30 +6489,30 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="222"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
         <source>Icon view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="229"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="308"/>
         <source>List view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="239"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="312"/>
         <source>Tree view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
         <source>Sort by</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="270"/>
         <source>View options</source>
         <translation type="unfinished"/>
     </message>
@@ -6528,22 +6520,27 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
 <context>
     <name>dfmplugin_titlebar::SortByButtonPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
+        <source>Time created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
         <translation type="unfinished"/>
     </message>
@@ -7532,12 +7529,12 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2125"/>
         <source>Mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2126"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation type="unfinished"/>
     </message>
@@ -7545,22 +7542,27 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="639"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="641"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="641"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="643"/>
         <source>Time modified</source>
         <translation>Ultima modifica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="643"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
+        <source>Time created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="647"/>
         <source>Size</source>
         <translation>Dimensione</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="649"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
@@ -7613,26 +7615,31 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
+        <source>Time created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Size</source>
         <translation>Dimensione</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Icon</source>
         <translation>Icona</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Tree</source>
         <translation>Alberatura</translation>
     </message>
@@ -7648,7 +7655,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="958"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="952"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Salva</translation>
@@ -7657,42 +7664,42 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>filedialog_core::FileDialogStatusBar</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="51"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="51"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="51"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="51"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Apri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="59"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="59"/>
         <source>Save File</source>
         <comment>button</comment>
         <translation>Salva file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="59"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="59"/>
         <source>Open File</source>
         <comment>button</comment>
         <translation>Apri file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="241"/>
         <source>File Name</source>
         <translation>Nome file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="242"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="242"/>
         <source>Format</source>
         <translation>Formatta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="272"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="274"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annulla</translation>
