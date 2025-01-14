@@ -26,6 +26,7 @@ public:
 
 private:
     bool checkAvailableGeometry(const QRect &ava, const QRect &scr) const;
+    QRect calcDockRect(QSize winSize, int pos, int w, int h) const;
     QScreen *qscreen = nullptr;
 };
 
