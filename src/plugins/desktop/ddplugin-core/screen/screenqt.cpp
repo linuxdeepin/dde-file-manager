@@ -60,18 +60,19 @@ QRect ScreenQt::availableGeometry() const
     }
 
     DockRect dockrectI = DockInfoIns->frontendWindowRect();   //原始dock大小
-    const QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());   //缩放处理
-
-    const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+    const int dockPos = DockInfoIns->position();
     const QRect hRect = handleGeometry();
 
-    if (!hRect.contains(dockrectI)) {   //使用原始大小判断的dock区所在的屏幕
-        fmDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
+    const QRect actualDockRect = calcDockRect(hRect.size(), dockPos, dockrectI.width, dockrectI.height);
+    const QRect dockrect = GlobalPrivate::dealRectRatio(actualDockRect);   //缩放处理
+    const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+
+    if (!hRect.contains(actualDockRect)) {   //使用原始大小判断的dock区所在的屏幕
+        fmDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrect:" << actualDockRect;
         return ret;
     }
 
     fmDebug() << "ScreenQt ret " << ret << name();
-    const int dockPos = DockInfoIns->position();
     switch (dockPos) {
     case 0:   //上
         ret.setY(dockrect.bottom());
@@ -132,4 +133,27 @@ bool ScreenQt::checkAvailableGeometry(const QRect &ava, const QRect &scr) const
         || ((scr.width() * min) > ava.width()))
         return false;
     return true;
+}
+
+QRect ScreenQt::calcDockRect(QSize winSize, int pos, int w, int h) const
+{
+    QRect rDock;
+    switch (pos) {
+    case 0:  // top
+        rDock = QRect(0, 0, w, h);
+        break;
+    case 1:  // right
+        rDock = QRect(winSize.width() - w, 0, w, h);
+        break;
+    case 2:  // bottom
+        rDock = QRect(0, winSize.height() - h, w, h);
+        break;
+    case 3:  // left
+        rDock = QRect(0, 0, w, h);
+        break;
+    default:
+        break;
+    }
+
+    return rDock;
 }
