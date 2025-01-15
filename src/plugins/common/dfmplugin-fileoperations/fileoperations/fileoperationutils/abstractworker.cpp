@@ -260,6 +260,7 @@ bool AbstractWorker::statisticsFilesSize()
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished,
                 this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::sizeChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
+        statisticsFilesSizeJob->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
         statisticsFilesSizeJob->start(sourceUrls);
     }
     return true;
