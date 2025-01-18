@@ -2214,7 +2214,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>إغلاق</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
