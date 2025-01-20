@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QSet>
 #include <QDBusInterface>
+#include <QImageReader>
 
 static constexpr int kSpacingHeight { 2 };
 static constexpr int kLeftContentsMargins { 0 };
@@ -420,15 +421,29 @@ void BasicWidget::closeEvent(QCloseEvent *event)
 
 void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (url != currentUrl) {
+    if (url != currentUrl || properties.isEmpty()) {
         return;
     }
-    
-    if (properties.isEmpty()) {
-        return;
-    }
+
+    // Try to get dimensions from properties
     int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
+
+    // not all formats of image files have width and height in properties
+    // if properties failed, use QImageReader as fallback
+    if (width == 0 || height == 0) {
+        QImageReader reader(url.toLocalFile());
+        if (reader.canRead()) {
+            QSize size = reader.size();
+            width = size.width();
+            height = size.height();
+        }
+    }
+
+    if (width == 0 || height == 0) {
+        return;
+    }
+
     const QString &imgSizeStr = QString::number(width) + "x" + QString::number(height);
 
     fileMediaResolution->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
