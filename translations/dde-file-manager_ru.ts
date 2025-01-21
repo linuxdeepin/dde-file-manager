@@ -3119,43 +3119,43 @@
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Домой</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Рабочий стол</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="293"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Videos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Music</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Картинки</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Документы</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Downloads</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
@@ -5430,17 +5430,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Вставить</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>Cu&amp;t</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Копировать</translation>
     </message>
 </context>
 <context>
