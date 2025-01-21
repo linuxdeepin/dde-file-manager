@@ -174,13 +174,26 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     int buttonMargin = (d->hovered && d->showCloseButton) ? 4 : 0;
 
     int textMargin = blueSquareWidth + blueSquareMargin;
-    int closeButtonMargin = buttonSize + buttonMargin;
-
+    
     painter->setFont(font);
     QFontMetrics fm(font);
     QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
+    
+    // 1. 计算文本宽度时不考虑按钮空间，这样文本位置在hover和非hover时保持一致
     QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - tabMargin - textMargin);
-    QString buttonHoveredStr = fm.elidedText(tabName, Qt::ElideRight, d->width - tabMargin - textMargin - buttonSize);
+    
+    // 2. 计算文本绘制位置，保持居中
+    int textX = (d->width - fm.horizontalAdvance(str) - textMargin) / 2 + textMargin;
+    
+    // 3. 如果文本会与关闭按钮重叠，重新计算文本宽度
+    if (d->hovered && d->showCloseButton) {
+        int textEndX = textX + fm.horizontalAdvance(str);
+        int buttonStartX = d->width - buttonSize - buttonMargin;
+        if (textEndX > buttonStartX) {
+            // 重新计算文本宽度，确保不重叠
+            str = fm.elidedText(tabName, Qt::ElideRight, buttonStartX - textX);
+        }
+    }
 
     DPalette pal = DPaletteHelper::instance()->palette(widget);
     QColor color;
@@ -198,16 +211,19 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->fillRect(boundingRect(), color);
     }
 
+    // 绘制蓝色方块
     if (isChecked()) {
         painter->save();
         QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
         painter->setPen(Qt::NoPen);
         painter->setBrush(blueColor);
-        painter->drawRoundedRect(QRect((d->width - fm.horizontalAdvance(str) - textMargin) / 2, (d->height - blueSquareWidth) / 2, blueSquareWidth, blueSquareWidth), 1, 1);
+        painter->drawRoundedRect(QRect(textX - textMargin, 
+                                     (d->height - blueSquareWidth) / 2, 
+                                     blueSquareWidth, blueSquareWidth), 1, 1);
         painter->restore();
     }
 
-    // draw text
+    // 绘制文本
     if (isChecked()) {
         color = pal.color(QPalette::Active, QPalette::Text);
         QPen tPen = painter->pen();
@@ -219,8 +235,9 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         tPen.setColor(color);
         painter->setPen(tPen);
     }
-    painter->drawText((d->width - fm.horizontalAdvance(str) - textMargin) / 2 + textMargin, (d->height - fm.height()) / 2,
-                      fm.horizontalAdvance(str), fm.height(), 0, buttonHoveredStr);
+    painter->drawText(textX, (d->height - fm.height()) / 2,
+                     fm.horizontalAdvance(str), fm.height(), 
+                     0, str);
 
     // 绘制边框线
     painter->save();
@@ -249,7 +266,10 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
 
-        d->closeButtonRect = QRect(d->width - buttonSize - buttonMargin, (d->height - buttonSize) / 2, buttonSize, buttonSize);
+        d->closeButtonRect = QRect(d->width - buttonSize - buttonMargin, 
+                                 (d->height - buttonSize) / 2, 
+                                 buttonSize, 
+                                 buttonSize);
 
         QColor buttonColor = d->closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
         painter->setPen(QPen(buttonColor, 1.5));
