@@ -122,7 +122,7 @@ int EventReceiver::encryptByTpmProcess(const QVariantMap &encryptParams)
         }
     }
 
-    EncryptParams params;
+    TpmEncryptArgs params;
     params.sessionHashAlgo = encryptParams.value(PropertyKey::kSessionHashAlgo).toString();
     params.sessionKeyAlgo = encryptParams.value(PropertyKey::kSessionKeyAlgo).toString();
     params.primaryHashAlgo = encryptParams.value(PropertyKey::kPrimaryHashAlgo).toString();
@@ -182,7 +182,7 @@ int EventReceiver::decryptByTpmProcess(const QVariantMap &decryptParams, QString
         }
     }
 
-    DecryptParams params;
+    TpmDecryptArgs params;
     params.sessionHashAlgo = decryptParams.value(PropertyKey::kSessionHashAlgo).toString();
     params.sessionKeyAlgo = decryptParams.value(PropertyKey::kSessionKeyAlgo).toString();
     params.primaryHashAlgo = decryptParams.value(PropertyKey::kPrimaryHashAlgo).toString();

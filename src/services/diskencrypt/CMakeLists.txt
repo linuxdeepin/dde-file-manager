@@ -10,6 +10,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Concurrent DBus)
 find_package(deepin-qdbus-service REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(CryptSetup REQUIRED libcryptsetup)
+pkg_check_modules(DevMapper REQUIRED devmapper)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1 IMPORTED_TARGET)
 pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1 IMPORTED_TARGET)
 
@@ -23,14 +24,14 @@ file(GLOB_RECURSE SRCS
 # generate dbus xml and adaptor
 # DBus: DiskEncryptDBus
 qt5_generate_dbus_interface(
-   diskencryptdbus.h
+   dbus/diskencryptsetup.h
    ${DiskEncrypt_XML}
    OPTIONS -M -S
 )
 qt5_add_dbus_adaptor(SRCS
                      ${DiskEncrypt_XML}
-                     diskencryptdbus.h
-                     DiskEncryptDBus)
+                     dbus/diskencryptsetup.h
+                     DiskEncryptSetup)
 
 
 add_executable(${BIN_NAME}
@@ -45,6 +46,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     PkgConfig::PolkitAgent
     PkgConfig::PolkitQt5
     ${CryptSetup_LIBRARIES}
+    ${DevMapper_LIBRARIES}
     ${deepin-qdbus-service_LIBRARIES}
 )
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "diskencryptdbus.h"
+#include "dbus/diskencryptsetup.h"
 #include "diskencryptadaptor.h"
 
 #include <DConfig>
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    DiskEncryptDBus encryptServer;
+    DiskEncryptSetup encryptServer;
     new DiskEncryptAdaptor(&encryptServer);
 
     QDBusConnection connection = encryptServer.qDbusConnection();

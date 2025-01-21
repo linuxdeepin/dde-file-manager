@@ -54,13 +54,13 @@ void EventsHandler::bindDaemonSignals()
                                              this,
                                              slot);
     };
-    conn("PrepareEncryptDiskResult", SLOT(onPreencryptResult(const QString &, const QString &, const QString &, int)));
-    conn("EncryptDiskResult", SLOT(onEncryptResult(const QString &, const QString &, int, const QString &)));
     conn("EncryptProgress", SLOT(onEncryptProgress(const QString &, const QString &, double)));
-    conn("DecryptDiskResult", SLOT(onDecryptResult(const QString &, const QString &, const QString &, int)));
     conn("DecryptProgress", SLOT(onDecryptProgress(const QString &, const QString &, double)));
-    conn("ChangePassphressResult", SLOT(onChgPassphraseResult(const QString &, const QString &, const QString &, int)));
-    conn("RequestEncryptParams", SLOT(onRequestEncryptParams(const QVariantMap &)));
+    conn("InitEncResult", SLOT(onInitEncryptFinished(const QVariantMap &)));
+    conn("EncryptResult", SLOT(onEncryptFinished(const QVariantMap &)));
+    conn("DecryptResult", SLOT(onDecryptFinished(const QVariantMap &)));
+    conn("ChangePassResult", SLOT(onChgPwdFinished(const QVariantMap &)));
+    conn("WaitAuthInput", SLOT(onRequestAuthArgs(const QVariantMap &)));
 }
 
 void EventsHandler::hookEvents()
@@ -79,12 +79,12 @@ bool EventsHandler::isTaskWorking()
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    QDBusReply<bool> reply = iface.call("IsWorkerRunning");
+    QDBusReply<bool> reply = iface.call("IsTaskRunning");
     return reply.isValid() && reply.value();
 }
 
 /**
- * @brief EventsHandler::hasPendingTask, if task files existed in /boot/usec-crypt/
+ * @brief EventsHandler::hasPendingTask, if task files existed in /etc/usec-crypt/
  * @return
  */
 bool EventsHandler::hasPendingTask()
@@ -93,8 +93,8 @@ bool EventsHandler::hasPendingTask()
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    QDBusReply<bool> reply = iface.call("HasPendingTask");
-    return reply.isValid() && reply.value();
+    QDBusReply<bool> reply = iface.call("IsTaskEmpty");
+    return reply.isValid() && !reply.value();
 }
 
 QString EventsHandler::unfinishedDecryptJob()
@@ -103,7 +103,7 @@ QString EventsHandler::unfinishedDecryptJob()
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    QDBusReply<QString> reply = iface.call("UnfinishedDecryptJob");
+    QDBusReply<QString> reply = iface.call("PendingDecryptionDevice");
     return reply.value();
 }
 
@@ -125,7 +125,7 @@ int EventsHandler::deviceEncryptStatus(const QString &device)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    QDBusReply<int> reply = iface.call("EncryptStatus", device);
+    QDBusReply<int> reply = iface.call("DeviceStatus", device);
     if (reply.isValid())
         return reply.value();
     return -1;
@@ -140,27 +140,32 @@ void EventsHandler::resumeEncrypt(const QString &device)
     iface.asyncCall("ResumeEncryption", device);
 }
 
-void EventsHandler::onPreencryptResult(const QString &dev, const QString &devName, const QString &, int code)
+void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
 {
     QApplication::restoreOverrideCursor();
 
-    if (code != kSuccess && code != -kRebootRequired) {
-        showPreEncryptError(dev, devName, code);
+    auto code = result.value(encrypt_param_keys::kKeyOperationResult).toInt();
+    auto dev = result.value(encrypt_param_keys::kKeyDevice).toString();
+    auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
+
+    if (code == -kRebootRequired) {
+        qInfo() << "ask user to reboot machine.";
+        requestReboot();
+    } else if (code < 0) {
+        showPreEncryptError(dev, name, code);
         return;
     }
 
-    // set dde-file-manager autostart without GUI to automatically raise the encrypt dialog.
     autoStartDFM();
-
-    if (code == -kRebootRequired) {
-        qInfo() << "reboot is required..." << dev;
-        requestReboot();
-    }
 }
 
-void EventsHandler::onEncryptResult(const QString &dev, const QString &devName, int code, const QString &info)
+void EventsHandler::onEncryptFinished(const QVariantMap &result)
 {
     QApplication::restoreOverrideCursor();
+
+    auto code = result.value(encrypt_param_keys::kKeyOperationResult).toInt();
+    auto dev = result.value(encrypt_param_keys::kKeyDevice).toString();
+    auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
 
     // delay delete input dialogs. avoid when new request comes new dialog raises.
     QTimer::singleShot(1000, this, [=] {
@@ -168,7 +173,7 @@ void EventsHandler::onEncryptResult(const QString &dev, const QString &devName, 
             encryptInputs.take(dev)->deleteLater();
     });
 
-    QString device = QString("%1(%2)").arg(devName).arg(dev.mid(5));
+    QString device = QString("%1(%2)").arg(name).arg(dev.mid(5));
     QString title, msg;
     bool success = false;
     switch (-code) {
@@ -196,7 +201,8 @@ void EventsHandler::onEncryptResult(const QString &dev, const QString &devName, 
         auto pos = dialog->geometry().topLeft();
         dialog->showResultPage(success, title, msg);
         if (code == -KErrorRequestExportRecKey) {
-            dialog->setRecoveryKey(info, dev);
+            auto recKey = result.value(encrypt_param_keys::kKeyRecoveryKey).toString();
+            dialog->setRecoveryKey(recKey, dev);
             dialog->showExportPage();
         }
         dialog->move(pos);
@@ -209,13 +215,18 @@ void EventsHandler::onEncryptResult(const QString &dev, const QString &devName, 
     qInfo() << "autostart file has been removed:" << ret;
 }
 
-void EventsHandler::onDecryptResult(const QString &dev, const QString &devName, const QString &, int code)
+void EventsHandler::onDecryptFinished(const QVariantMap &result)
 {
     QApplication::restoreOverrideCursor();
+
+    auto code = result.value(encrypt_param_keys::kKeyOperationResult).toInt();
+    auto dev = result.value(encrypt_param_keys::kKeyDevice).toString();
+    auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
+
     if (code == -kRebootRequired) {
         requestReboot();
     } else {
-        showDecryptError(dev, devName, code);
+        showDecryptError(dev, name, code);
 
         // delete auto start file.
         auto configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
@@ -225,18 +236,23 @@ void EventsHandler::onDecryptResult(const QString &dev, const QString &devName, 
     }
 }
 
-void EventsHandler::onChgPassphraseResult(const QString &dev, const QString &devName, const QString &, int code)
+void EventsHandler::onChgPwdFinished(const QVariantMap &result)
 {
+    auto code = result.value(encrypt_param_keys::kKeyOperationResult).toInt();
+    auto dev = result.value(encrypt_param_keys::kKeyDevice).toString();
+    auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
+
     QApplication::restoreOverrideCursor();
-    showChgPwdError(dev, devName, code);
+    showChgPwdError(dev, name, code);
 }
 
-void EventsHandler::onRequestEncryptParams(const QVariantMap &encConfig)
+void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 {
     qApp->restoreOverrideCursor();
-    QString devPath = encConfig.value("device-path").toString();
+
+    QString devPath = devInfo.value(encrypt_param_keys::kKeyDevice).toString();
     if (devPath.isEmpty()) {
-        qWarning() << "invalid encrypt config!" << encConfig;
+        qWarning() << "invalid encrypt config!" << devInfo;
         return;
     }
 
@@ -245,13 +261,7 @@ void EventsHandler::onRequestEncryptParams(const QVariantMap &encConfig)
 
     QString objPath = "/org/freedesktop/UDisks2/block_devices/" + devPath.mid(5);
     auto blkDev = device_utils::createBlockDevice(objPath);
-    disk_encrypt::DeviceEncryptParam param;
-    param.devDesc = devPath;
-    param.initOnly = false;
-    param.clearDevUUID = encConfig.value("file-system-uuid").toString().remove("UUID=");
-    param.backingDevUUID = blkDev ? blkDev->getProperty(dfmmount::Property::kBlockIDUUID).toString() : "";
-    param.deviceDisplayName = encConfig.value("device-name").toString();
-    auto dlg = new EncryptParamsInputDialog(param, qApp->activeWindow());
+    auto dlg = new EncryptParamsInputDialog(devInfo, qApp->activeWindow());
     encryptInputs.insert(devPath, dlg);
 
     connect(dlg, &DDialog::finished, this, [=](auto ret) {
@@ -271,7 +281,7 @@ void EventsHandler::ignoreParamRequest()
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    iface.asyncCall("IgnoreParamRequest");
+    iface.asyncCall("IgnoreAuthSetup");
     qInfo() << "ignore param request...";
 }
 
@@ -325,7 +335,7 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
     int type = device_utils::encKeyType(dev);
 
     // test tpm
-    bool testTPM = (type == kTPMAndPIN || type == kTPMOnly);
+    bool testTPM = (type == kPin || type == kTpm);
     if (testTPM && tpm_utils::checkTPM() != 0) {
         qWarning() << "TPM service is not available.";
         int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"),
@@ -338,13 +348,13 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
     }
 
     switch (type) {
-    case SecKeyType::kTPMAndPIN:
+    case SecKeyType::kPin:
         *pwd = acquirePassphraseByPIN(dev, *cancelled);
         break;
-    case SecKeyType::kTPMOnly:
+    case SecKeyType::kTpm:
         *pwd = acquirePassphraseByTPM(dev, *cancelled);
         break;
-    case SecKeyType::kPasswordOnly:
+    case SecKeyType::kPwd:
         *pwd = acquirePassphrase(dev, *cancelled);
         break;
     default:
@@ -353,9 +363,9 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
 
     if (pwd->isEmpty() && !*cancelled) {
         QString title;
-        if (type == kTPMAndPIN)
+        if (type == kPin)
             title = tr("Wrong PIN");
-        else if (type == kPasswordOnly)
+        else if (type == kPwd)
             title = tr("Wrong passphrase");
         else
             title = tr("TPM error");
@@ -492,7 +502,7 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
     int encType = device_utils::encKeyType(dev);
     QString codeType;
     switch (encType) {
-    case SecKeyType::kPasswordOnly:
+    case SecKeyType::kPwd:
         codeType = tr("passphrase");
         break;
     default:
@@ -550,7 +560,7 @@ bool EventsHandler::canUnlock(const QString &device)
     }
 
     int states = EventsHandler::instance()->deviceEncryptStatus(device);
-    if ((states & kStatusOnline) && (states & kStatusEncrypt) && !(states & kStatusNoEncryptConfig)) {
+    if ((states & kStatusOnline) && (states & kStatusEncrypt)) {
         dialog_utils::showDialog(tr("Unlocking device failed"),
                                  tr("Please click the right disk menu \"Continue partition encryption\" to complete partition encryption."),
                                  dialog_utils::DialogType::kError);

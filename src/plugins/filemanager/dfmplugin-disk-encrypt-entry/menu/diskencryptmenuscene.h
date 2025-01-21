@@ -68,8 +68,6 @@ protected:
                   kLock };
     static void onUnmountError(OpType t, const QString &dev, const dfmmount::OperationErrorInfo &err);
 
-    static QString encryptPasswd(const QString &passwd);
-
     void sortActions(QMenu *parent);
     void updateActions();
 

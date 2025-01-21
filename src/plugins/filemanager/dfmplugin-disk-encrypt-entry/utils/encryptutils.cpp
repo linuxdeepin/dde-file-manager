@@ -88,7 +88,7 @@ int device_utils::encKeyType(const QString &dev)
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
     if (iface.isValid()) {
-        QDBusReply<QString> reply = iface.call("QueryTPMToken", dev);
+        QDBusReply<QString> reply = iface.call("TpmToken", dev);
         if (!reply.isValid()) return 0;
         QString tokenJson = reply.value();
         if (tokenJson.isEmpty()) return 0;
