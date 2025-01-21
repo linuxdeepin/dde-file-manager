@@ -23,10 +23,15 @@ public:
 
     QSize sizeHint() const override;
 
+    void playFile(const QUrl &url);
+
     void mouseReleaseEvent(QMouseEvent *event) override;
+
+    void showEvent(QShowEvent *event) override;
 
     VideoPreview *p;
     QLabel *title;
+    QUrl videoUrl;
 };
 }
 #endif   // PLAYERWIDGET_H

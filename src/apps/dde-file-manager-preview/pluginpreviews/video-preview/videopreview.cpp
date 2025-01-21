@@ -91,7 +91,7 @@ Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
 void VideoPreview::play()
 {
     if (playerWidget && videoUrl.isValid()) {
-        playerWidget->play(videoUrl);
+        playerWidget->playFile(videoUrl);
     }
 }
 
