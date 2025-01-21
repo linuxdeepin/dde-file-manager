@@ -37,9 +37,22 @@ QSize VideoWidget::sizeHint() const
     return QSize(p->info.width, p->info.height).scaled(qMin(p->info.width, int(screen_size.width() * 0.5)), qMin(p->info.height, int(screen_size.height() * 0.5)), Qt::KeepAspectRatio);
 }
 
+void VideoWidget::playFile(const QUrl &url)
+{
+    videoUrl = url;
+}
+
 void VideoWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     p->pause();
 
     dmr::PlayerWidget::mouseReleaseEvent(event);
+}
+
+void VideoWidget::showEvent(QShowEvent *event)
+{
+    if (!videoUrl.isEmpty())
+        play(videoUrl);
+
+    return dmr::PlayerWidget::showEvent(event);
 }
