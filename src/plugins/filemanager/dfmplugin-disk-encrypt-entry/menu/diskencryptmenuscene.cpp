@@ -4,7 +4,6 @@
 
 #include "dfmplugin_disk_encrypt_global.h"
 #include "diskencryptmenuscene.h"
-#include "gui/encryptparamsinputdialog.h"
 #include "gui/decryptparamsinputdialog.h"
 #include "gui/chgpassphrasedialog.h"
 #include "events/eventshandler.h"
@@ -42,6 +41,8 @@ static constexpr char kActIDUnlock[] { "de_0_unlock" };
 static constexpr char kActIDDecrypt[] { "de_1_decrypt" };
 static constexpr char kActIDResumeDecrypt[] { "de_1_resumeDecrypt" };
 static constexpr char kActIDChangePwd[] { "de_2_changePwd" };
+
+static constexpr char kOverleyEncPrefix[] { "/dev/mapper/usec-overlay" };
 
 DiskEncryptMenuScene::DiskEncryptMenuScene(QObject *parent)
     : AbstractMenuScene(parent)
@@ -85,7 +86,9 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
 
     const QString &idType = selectedItemInfo.value("IdType").toString();
     auto preferDev = selectedItemInfo.value("PreferredDevice", "").toString();
-    if (device.startsWith("/dev/dm-") && idType != "crypto_LUKS") {
+    if (device.startsWith("/dev/dm-")
+        && idType != "crypto_LUKS"
+        && !preferDev.startsWith(kOverleyEncPrefix)) {
         qInfo() << "mapper device is not supported to be encrypted yet." << device << preferDev;
         return false;
     }
@@ -108,7 +111,10 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         return false;
     }
 
-    param.initOnly = false;
+    param.jobType = job_type::TypeNormal;
+    if (preferDev.startsWith(kOverleyEncPrefix))
+        param.jobType = job_type::TypeOverlay;
+
     auto configJson = selectedItemInfo.value("Configuration", "").toString();
     if (!configJson.isEmpty()) {
         QJsonParseError err;
@@ -118,25 +124,24 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
             return false;
         }
         auto obj = doc.object();
-        param.initOnly = obj.contains("fstab");
+        param.jobType = job_type::TypeFstab;
     }
     param.devID = selectedItemInfo.value("Id").toString();
     param.devDesc = device;
     param.mountPoint = devMpt;
     param.uuid = selectedItemInfo.value("IdUUID", "").toString();
     param.deviceDisplayName = info->displayOf(dfmbase::FileInfo::kFileDisplayName);
-    param.type = SecKeyType::kPasswordOnly;
+    param.secType = SecKeyType::kPwd;
     param.backingDevUUID = param.uuid;
-    param.isDetachedHeader = false;
 
     QVariantHash clearInfo = selectedItemInfo.value("ClearBlockDeviceInfo").toHash();
     if (!clearInfo.isEmpty()) {
         param.clearDevUUID = clearInfo.value("IdUUID", "").toString();
-        param.prefferDevName = clearInfo.value("PreferredDevice").toString().mid(12);   // /dev/mapper/xxxx ==> xxxx
+        param.devUnlockName = clearInfo.value("PreferredDevice").toString().mid(12);   // /dev/mapper/xxxx ==> xxxx
     }
 
     if (hasCryptHeader)
-        param.type = static_cast<SecKeyType>(device_utils::encKeyType(device));
+        param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
 
     return true;
 }
@@ -153,7 +158,7 @@ bool DiskEncryptMenuScene::create(QMenu *)
     act->setProperty(ActionPropertyKey::kActionID, kActIDDecrypt);
     actions.insert(kActIDDecrypt, act);
 
-    QString keyType = (param.type == kTPMAndPIN) ? "PIN" : tr("passphrase");
+    QString keyType = (param.secType == kPin) ? "PIN" : tr("passphrase");
     act = new QAction(tr("Changing the encryption %1").arg(keyType));
     act->setProperty(ActionPropertyKey::kActionID, kActIDChangePwd);
     actions.insert(kActIDChangePwd, act);
@@ -183,9 +188,11 @@ bool DiskEncryptMenuScene::triggered(QAction *action)
         EventsHandler::instance()->resumeEncrypt(param.devDesc);
     } else if (actID == kActIDDecrypt || actID == kActIDResumeDecrypt) {
         QString displayName = QString("%1(%2)").arg(param.deviceDisplayName).arg(param.devDesc.mid(5));
-        if (dialog_utils::showConfirmDecryptionDialog(displayName, param.initOnly) != QDialog::Accepted)
+        if (dialog_utils::showConfirmDecryptionDialog(displayName, param.jobType == job_type::TypeFstab) != QDialog::Accepted)
             return true;
-        param.initOnly ? doDecryptDevice(param) : unmountBefore(decryptDevice, param);
+        param.jobType == job_type::TypeNormal
+                ? unmountBefore(decryptDevice, param)
+                : doDecryptDevice(param);
     } else if (actID == kActIDChangePwd) {
         changePassphrase(param);
     } else if (actID == kActIDUnlock) {
@@ -205,20 +212,20 @@ void DiskEncryptMenuScene::updateState(QMenu *parent)
 void DiskEncryptMenuScene::encryptDevice(const DeviceEncryptParam &param)
 {
     QString displayName = QString("%1(%2)").arg(param.deviceDisplayName).arg(param.devDesc.mid(5));
-    bool needreboot = param.isDetachedHeader ? false : param.initOnly;
+    bool needreboot = param.jobType == job_type::TypeFstab;
     int ret = dialog_utils::showConfirmEncryptionDialog(displayName, needreboot);
-    if (ret == QDialog::Accepted) {
-        if (param.initOnly)
-            doEncryptDevice(param);
-        else
-            unmountBefore(doEncryptDevice, param);
-    }
+    if (ret != QDialog::Accepted) return;
+
+    if (param.jobType == job_type::TypeNormal)
+        unmountBefore(doEncryptDevice, param);
+    else
+        doEncryptDevice(param);
 }
 
 void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
 {
     auto inputs = param;
-    if (inputs.type == kTPMOnly) {
+    if (inputs.secType == kTpm) {
         QString passphrase = tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(inputs.devDesc, "");
         inputs.key = passphrase;
         if (passphrase.isEmpty()) {
@@ -232,7 +239,7 @@ void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
     }
 
     DecryptParamsInputDialog dlg(inputs.devDesc);
-    if (inputs.type == kTPMAndPIN)
+    if (inputs.secType == kPin)
         dlg.setInputPIN(true);
 
     if (dlg.exec() != QDialog::Accepted)
@@ -240,7 +247,7 @@ void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
 
     qDebug() << "start decrypting device" << inputs.devDesc;
     inputs.key = dlg.getKey();
-    if (dlg.usingRecKey() || inputs.type == kPasswordOnly)
+    if (dlg.usingRecKey() || inputs.secType == kPwd)
         doDecryptDevice(inputs);
     else {
         inputs.key = tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(inputs.devDesc, inputs.key);
@@ -262,7 +269,7 @@ void DiskEncryptMenuScene::changePassphrase(DeviceEncryptParam param)
     auto inputs = dlg.getPassphrase();
     QString oldKey = inputs.first;
     QString newKey = inputs.second;
-    if (param.type == SecKeyType::kTPMAndPIN) {
+    if (param.secType == SecKeyType::kPin) {
         if (!dlg.validateByRecKey()) {
             oldKey = tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(dev, oldKey);
             if (oldKey.isEmpty()) {
@@ -304,44 +311,19 @@ void DiskEncryptMenuScene::unlockDevice(const QString &devObjPath)
 
 void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
 {
-    // if tpm selected, use tpm to generate the key
-    QString tpmConfig, tpmToken;
-    if (param.type != kPasswordOnly) {
-        tpmConfig = generateTPMConfig();
-        tpmToken = generateTPMToken(param.devDesc, param.type == kTPMAndPIN);
-    }
-
     QDBusInterface iface(kDaemonBusName,
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
     if (iface.isValid()) {
-        auto blkDev = device_utils::createBlockDevice(param.devID);
-        if (!blkDev) {
-            qCritical() << "Create block device failed, the object is: " << param.devID;
-            return;
-        }
-        QString partUuid { blkDev->getProperty(dfmmount::Property::kPartitionUUID).toString() };
         QVariantMap params {
             { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyUUID, param.uuid },
-            { encrypt_param_keys::kKeyCipher, config_utils::cipherType() },
-            { encrypt_param_keys::kKeyPassphrase, encryptPasswd(param.key) },
-            { encrypt_param_keys::kKeyInitParamsOnly, param.isDetachedHeader ? false : param.initOnly },
-            { encrypt_param_keys::kKeyRecoveryExportPath, param.exportPath },
-            { encrypt_param_keys::kKeyEncMode, static_cast<int>(param.type) },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
             { encrypt_param_keys::kKeyMountPoint, param.mountPoint },
-            { encrypt_param_keys::kKeyIsDetachedHeader, param.isDetachedHeader },
-            { encrypt_param_keys::kKeyPrefferDevice, param.prefferDevName },
-            { encrypt_param_keys::kKeyClearDevUUID, param.clearDevUUID },
-            { encrypt_param_keys::kKeyPartUUID, partUuid }
+            { encrypt_param_keys::kKeyJobType, param.jobType }
         };
-        if (!tpmConfig.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMConfig, tpmConfig);
-        if (!tpmToken.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMToken, tpmToken);
 
-        QDBusReply<QString> reply = iface.call("PrepareEncryptDisk", params);
-        qDebug() << "preencrypt device jobid:" << reply.value();
+        iface.call("InitEncryption", params);
         QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 }
@@ -349,11 +331,9 @@ void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
 void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 {
     // if tpm selected, use tpm to generate the key
-    QString tpmConfig, tpmToken;
-    if (param.type != kPasswordOnly) {
-        tpmConfig = generateTPMConfig();
-        tpmToken = generateTPMToken(param.devDesc, param.type == kTPMAndPIN);
-    }
+    QString tpmToken;
+    if (param.secType != kPwd)
+        tpmToken = generateTPMToken(param.devDesc, param.secType == kPin);
 
     QDBusInterface iface(kDaemonBusName,
                          kDaemonBusPath,
@@ -362,21 +342,12 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
     if (iface.isValid()) {
         QVariantMap params {
             { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyUUID, param.uuid },
-            { encrypt_param_keys::kKeyCipher, config_utils::cipherType() },
-            { encrypt_param_keys::kKeyPassphrase, encryptPasswd(param.key) },
-            { encrypt_param_keys::kKeyInitParamsOnly, param.initOnly },
-            { encrypt_param_keys::kKeyRecoveryExportPath, param.exportPath },
-            { encrypt_param_keys::kKeyEncMode, static_cast<int>(param.type) },
-            { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
-            { encrypt_param_keys::kKeyMountPoint, param.mountPoint },
-            { encrypt_param_keys::kKeyBackingDevUUID, param.backingDevUUID },
-            { encrypt_param_keys::kKeyClearDevUUID, param.clearDevUUID }
+            { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) },
+            { encrypt_param_keys::kKeyExportToPath, param.exportPath },
         };
-        if (!tpmConfig.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMConfig, tpmConfig);
         if (!tpmToken.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMToken, tpmToken);
 
-        QDBusReply<void> reply = iface.call("SetEncryptParams", params);
+        iface.call("SetupAuthArgs", params);
         qDebug() << "start reencrypt device";
         QApplication::setOverrideCursor(Qt::WaitCursor);
     }
@@ -384,23 +355,18 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 
 void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
 {
-    // if tpm selected, use tpm to generate the key
     QDBusInterface iface(kDaemonBusName,
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
     if (iface.isValid()) {
         QVariantMap params {
+            { encrypt_param_keys::kKeyJobType, param.jobType },
             { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyPassphrase, encryptPasswd(param.key) },
-            { encrypt_param_keys::kKeyInitParamsOnly, param.initOnly },
-            { encrypt_param_keys::kKeyUUID, param.uuid },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
-            { encrypt_param_keys::kKeyPrefferDevice, param.prefferDevName },
-            { encrypt_param_keys::kKeyClearDevUUID, param.clearDevUUID }
+            { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) }
         };
-        QDBusReply<QString> reply = iface.call("DecryptDisk", params);
-        qDebug() << "preencrypt device jobid:" << reply.value();
+        iface.call("Decryption", params);
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         EventsHandler::instance()->autoStartDFM();
@@ -410,7 +376,7 @@ void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
 void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
 {
     QString token;
-    if (param.type != SecKeyType::kPasswordOnly) {
+    if (param.secType != SecKeyType::kPwd) {
         // new tpm token should be setted.
         QFile f(kGlobalTPMConfigPath + param.devDesc + "/token.json");
         if (!f.open(QIODevice::ReadOnly)) {
@@ -421,7 +387,7 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
         f.close();
         QJsonObject oldTokenObj = oldTokenDoc.object();
 
-        QString newToken = generateTPMToken(param.devDesc, param.type == SecKeyType::kTPMAndPIN);
+        QString newToken = generateTPMToken(param.devDesc, param.secType == SecKeyType::kPin);
         QJsonDocument newTokenDoc = QJsonDocument::fromJson(newToken.toLocal8Bit());
         QJsonObject newTokenObj = newTokenDoc.object();
 
@@ -440,14 +406,13 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
     if (iface.isValid()) {
         QVariantMap params {
             { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyPassphrase, encryptPasswd(param.newKey) },
-            { encrypt_param_keys::kKeyOldPassphrase, encryptPasswd(param.key) },
+            { encrypt_param_keys::kKeyPassphrase, toBase64(param.newKey) },
+            { encrypt_param_keys::kKeyOldPassphrase, toBase64(param.key) },
             { encrypt_param_keys::kKeyValidateWithRecKey, param.validateByRecKey },
             { encrypt_param_keys::kKeyTPMToken, token },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName }
         };
-        QDBusReply<QString> reply = iface.call("ChangeEncryptPassphress", params);
-        qDebug() << "modify device passphrase jobid:" << reply.value();
+        iface.call("ChangePassphrase", params);
         QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 }
@@ -636,20 +601,14 @@ void DiskEncryptMenuScene::updateActions()
             bool unlocked = selectedItemInfo.value("CleartextDevice").toString() != "/";
             actions[kActIDDecrypt]->setVisible(true);
             actions[kActIDUnlock]->setVisible(!unlocked);
-            if (param.type != disk_encrypt::kTPMOnly)
+            if (param.secType != disk_encrypt::kTpm)
                 actions[kActIDChangePwd]->setVisible(true);
         }
         // not finished
         else if (states & kStatusOnline) {
             // encrytp not finish
             if (states & kStatusEncrypt) {
-                if (states & kStatusNoEncryptConfig) {
-                    param.isDetachedHeader = true;
-                    actions[kActIDEncrypt]->setVisible(true);
-                } else {
-                    param.isDetachedHeader = false;
-                    actions[kActIDResumeEncrypt]->setVisible(true);
-                }
+                actions[kActIDResumeEncrypt]->setVisible(true);
             }
             // decrypt not finish
             else if (states & kStatusDecrypt) {
@@ -672,11 +631,4 @@ void DiskEncryptMenuScene::updateActions()
         actions[kActIDEncrypt]->setText(tr("Reboot to continue encrypt"));
         actions[kActIDDecrypt]->setText(tr("Reboot to finish decrypt"));
     }
-}
-
-QString DiskEncryptMenuScene::encryptPasswd(const QString &passwd)
-{
-    QByteArray byteArray = passwd.toUtf8();
-    QByteArray encodedByteArray = byteArray.toBase64();
-    return QString::fromUtf8(encodedByteArray);
 }

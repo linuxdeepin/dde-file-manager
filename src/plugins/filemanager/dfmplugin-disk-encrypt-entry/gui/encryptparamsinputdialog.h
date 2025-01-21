@@ -27,7 +27,7 @@ class EncryptParamsInputDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
-    explicit EncryptParamsInputDialog(const disk_encrypt::DeviceEncryptParam &params, QWidget *parent = nullptr);
+    explicit EncryptParamsInputDialog(const QVariantMap &args, QWidget *parent = nullptr);
     disk_encrypt::DeviceEncryptParam getInputs();
 
 protected:
@@ -64,7 +64,7 @@ private:
     bool expPathValid { false };
     bool exportRecKeyEnabled { false };
     QString tpmPassword;
-    disk_encrypt::DeviceEncryptParam params;
+    QVariantMap args;
 };
 
 }

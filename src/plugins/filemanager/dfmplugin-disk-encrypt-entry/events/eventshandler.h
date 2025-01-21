@@ -27,13 +27,13 @@ public:
     void autoStartDFM();
 
 private Q_SLOTS:
-    void onPreencryptResult(const QString &, const QString &, const QString &, int);
-    void onEncryptResult(const QString &, const QString &, int, const QString &);
     void onEncryptProgress(const QString &, const QString &, double);
-    void onDecryptResult(const QString &, const QString &, const QString &, int);
     void onDecryptProgress(const QString &, const QString &, double);
-    void onChgPassphraseResult(const QString &, const QString &, const QString &, int);
-    void onRequestEncryptParams(const QVariantMap &encConfig);
+    void onInitEncryptFinished(const QVariantMap &);
+    void onEncryptFinished(const QVariantMap &);
+    void onDecryptFinished(const QVariantMap &);
+    void onChgPwdFinished(const QVariantMap &);
+    void onRequestAuthArgs(const QVariantMap &);
 
     void ignoreParamRequest();
 

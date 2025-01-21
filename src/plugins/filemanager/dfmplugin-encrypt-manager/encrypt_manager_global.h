@@ -21,7 +21,7 @@ enum TPMType {
     kTpmAndPcrAndPin
 };
 
-struct EncryptParams
+struct TpmEncryptArgs
 {
     TPMType type;
     QString sessionHashAlgo;
@@ -39,7 +39,7 @@ struct EncryptParams
     QString pcr_bank;
 };
 
-struct DecryptParams
+struct TpmDecryptArgs
 {
     TPMType type;
     QString sessionHashAlgo;
@@ -71,4 +71,4 @@ inline constexpr char kPcrBank[] { "PropertyKey_PcrBank" };
 
 }
 
-#endif // ENCRYPT_MANAGER_GLOBAL_H
+#endif   // ENCRYPT_MANAGER_GLOBAL_H

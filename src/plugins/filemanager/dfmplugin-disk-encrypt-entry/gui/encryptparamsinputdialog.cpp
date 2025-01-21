@@ -33,10 +33,10 @@ enum StepPage {
     kExportKeyPage,
 };
 
-EncryptParamsInputDialog::EncryptParamsInputDialog(const disk_encrypt::DeviceEncryptParam &params,
+EncryptParamsInputDialog::EncryptParamsInputDialog(const QVariantMap &args,
                                                    QWidget *parent)
     : DTK_WIDGET_NAMESPACE::DDialog(parent),
-      params(params)
+      args(args)
 {
     exportRecKeyEnabled = config_utils::exportKeyEnabled();
     initUi();
@@ -48,17 +48,20 @@ EncryptParamsInputDialog::EncryptParamsInputDialog(const disk_encrypt::DeviceEnc
 DeviceEncryptParam EncryptParamsInputDialog::getInputs()
 {
     QString password;
-    if (kTPMAndPIN == encType->currentIndex() || kTPMOnly == encType->currentIndex()) {
+    if (kPin == encType->currentIndex() || kTpm == encType->currentIndex()) {
         password = tpmPassword;
         tpmPassword.clear();
-    } else if (kPasswordOnly == encType->currentIndex()) {
+    } else if (kPwd == encType->currentIndex()) {
         password = encKeyEdit1->text();
     }
 
-    params.type = static_cast<SecKeyType>(encType->currentIndex());
-    params.key = password;
-    params.exportPath = keyExportInput->text();
-    return params;
+    DeviceEncryptParam encArgs;
+    encArgs.devDesc = args.value(encrypt_param_keys::kKeyDevice).toString();
+    encArgs.deviceDisplayName = args.value(encrypt_param_keys::kKeyDeviceName).toString();
+    encArgs.key = password;
+    encArgs.exportPath = keyExportInput->text();
+    encArgs.secType = static_cast<SecKeyType>(encType->currentIndex());
+    return encArgs;
 }
 
 void EncryptParamsInputDialog::initUi()
@@ -137,11 +140,11 @@ QWidget *EncryptParamsInputDialog::createPasswordPage()
         encType->removeItem(1);
         encType->removeItem(1);
 
-        encType->setCurrentIndex(kPasswordOnly);
-        onEncTypeChanged(kPasswordOnly);
+        encType->setCurrentIndex(kPwd);
+        onEncTypeChanged(kPwd);
     } else {
-        encType->setCurrentIndex(kTPMAndPIN);
-        onEncTypeChanged(kTPMAndPIN);
+        encType->setCurrentIndex(kPin);
+        onEncTypeChanged(kPin);
     }
 
     return wid;
@@ -179,16 +182,16 @@ bool EncryptParamsInputDialog::validatePassword()
     if (pagesLay->currentIndex() != kPasswordInputPage)
         return false;
 
-    if (encType->currentIndex() == kTPMOnly)
+    if (encType->currentIndex() == kTpm)
         return true;
 
     QString pwd1 = encKeyEdit1->text().trimmed();
     QString pwd2 = encKeyEdit2->text().trimmed();
 
     QString keyType;
-    if (encType->currentIndex() == kTPMAndPIN)
+    if (encType->currentIndex() == kPin)
         keyType = "PIN";
-    else if (encType->currentIndex() == kPasswordOnly)
+    else if (encType->currentIndex() == kPwd)
         keyType = tr("Passphrase");
 
     QString hint = tr("%1 cannot be empty").arg(keyType);
@@ -244,7 +247,7 @@ bool EncryptParamsInputDialog::validateExportPath(const QString &path, QString *
 
     QStorageInfo storage(path);
     QString dev = storage.device();
-    if (dev == params.devDesc) {
+    if (dev == args.value(encrypt_param_keys::kKeyDevice).toString()) {
         setMsg(tr("Please export to an external device such as a non-encrypted partition or USB flash drive."));
         return false;
     }
@@ -285,7 +288,7 @@ void EncryptParamsInputDialog::onButtonClicked(int idx)
 
     int currPage = pagesLay->currentIndex();
     if (currPage == kPasswordInputPage) {
-        if (!validatePassword() && !params.initOnly)
+        if (!validatePassword())
             return;
 
         if (exportRecKeyEnabled) {
@@ -312,7 +315,9 @@ void EncryptParamsInputDialog::onPageChanged(int page)
     pagesLay->setCurrentIndex(page);
     clearButtons();
     if (page == kPasswordInputPage) {
-        QString devName = QString("%1(%2)").arg(params.deviceDisplayName).arg(params.devDesc.mid(5));
+        auto displayName = args.value(encrypt_param_keys::kKeyDeviceName).toString();
+        auto devName = args.value(encrypt_param_keys::kKeyDevice).toString();
+        devName = QString("%1(%2)").arg(displayName).arg(devName.mid(5));
         setTitle(tr("Please continue to encrypt partition %1").arg(devName));
         exportRecKeyEnabled ? addButton(tr("Next")) : addButton(tr("Confirm encrypt"));
         encKeyEdit1->setFocus();
@@ -331,30 +336,27 @@ void EncryptParamsInputDialog::onEncTypeChanged(int type)
     QString placeholder1 = tr("At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols");
     QString placeholder2 = tr("Please enter the %1 again");
 
-    if (type == kPasswordOnly) {
+    if (type == kPwd) {
         setPasswordInputVisible(true);
         keyHint1->setText(filed1.arg(tr("passphrase")));
         keyHint2->setText(filed2.arg(tr("passphrase")));
         encKeyEdit1->setPlaceholderText(placeholder1);
         encKeyEdit2->setPlaceholderText(placeholder2.arg(tr("Passphrase")));
         unlockTypeHint->setText(tr("Access to the partition will be unlocked using a passphrase."));
-    } else if (type == kTPMAndPIN) {
+    } else if (type == kPin) {
         setPasswordInputVisible(true);
         keyHint1->setText(filed1.arg(tr("PIN")));
         keyHint2->setText(filed2.arg(tr("PIN")));
         encKeyEdit1->setPlaceholderText(placeholder1);
         encKeyEdit2->setPlaceholderText(placeholder2.arg(tr("PIN")));
         unlockTypeHint->setText(tr("Access to the partition will be unlocked using the TPM security chip and PIN."));
-    } else if (type == kTPMOnly) {
+    } else if (type == kTpm) {
         setPasswordInputVisible(false);
         unlockTypeHint->setText(tr("Access to the partition will be automatically unlocked using the TPM security chip, "
                                    "no passphrase checking is required."));
     } else {
         qWarning() << "wrong encrypt type!" << type;
     }
-
-    if (params.initOnly)
-        setPasswordInputVisible(false);
 }
 
 void EncryptParamsInputDialog::onExpPathChanged(const QString &path, bool silent)
@@ -396,7 +398,7 @@ bool EncryptParamsInputDialog::encryptByTpm(const QString &deviceName)
     spinner.start();
     spinner.show();
 
-    QString pin = (encType->currentIndex() == SecKeyType::kTPMAndPIN)
+    QString pin = (encType->currentIndex() == SecKeyType::kPin)
             ? encKeyEdit1->text()
             : "";
     int exitCode = tpm_passphrase_utils::genPassphraseFromTPM_NonBlock(deviceName, pin, &tpmPassword);
@@ -411,11 +413,11 @@ bool EncryptParamsInputDialog::encryptByTpm(const QString &deviceName)
 
 void EncryptParamsInputDialog::confirmEncrypt()
 {
-    if (encType->currentIndex() == kPasswordOnly) {
+    if (encType->currentIndex() == kPwd) {
         accept();
         return;
     }
-    if (!params.initOnly && !encryptByTpm(params.devDesc)) {
+    if (!encryptByTpm(args.value(encrypt_param_keys::kKeyDevice).toString())) {
         qWarning() << "encrypt by TPM failed!";
         if (tpm_utils::ownerAuthStatus() == 1) {
             QString msg = tr("TPM is locked and cannot be used for partition encryption. "

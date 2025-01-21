@@ -22,25 +22,4 @@
 #define FILE_ENCRYPT_END_NS }
 #define FILE_ENCRYPT_USE_NS using namespace FILE_ENCRYPT_NS;
 
-FILE_ENCRYPT_BEGIN_NS
-
-struct EncryptParams
-{
-    QString device;
-    QString passphrase;
-    QString cipher;
-    QString recoveryPath;
-    QString tpmToken;
-
-    bool isValid() const
-    {
-        return !(device.isEmpty()
-                 && passphrase.isEmpty()
-                 && cipher.isEmpty());
-    }
-};
-
-inline constexpr char kDecryptHeaderPrefix[] { "dm_header_decrypt_" };
-
-FILE_ENCRYPT_END_NS
 #endif   // DAEMONPLUGIN_FILE_ENCRYPT_GLOBAL_H

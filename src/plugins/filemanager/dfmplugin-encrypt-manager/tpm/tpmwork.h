@@ -32,8 +32,8 @@ public:
     int checkTPMAvailbableByTools();
     int getRandomByTools(int size, QString *output);
     int isSupportAlgoByTools(const QString &algoName, bool *support);
-    int encryptByTools(const EncryptParams &params);
-    int decryptByTools(const DecryptParams &params, QString *pwd);
+    int encryptByTools(const TpmEncryptArgs &params);
+    int decryptByTools(const TpmDecryptArgs &params, QString *pwd);
     int ownerAuthStatus();
 
 private:

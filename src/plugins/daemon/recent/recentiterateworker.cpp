@@ -49,7 +49,7 @@ void RecentIterateWorker::onRequestReload(const QString &xbelPath, qint64 timest
         if (reader.readNext() == QXmlStreamReader::EndDocument)
             continue;
 
-        if (!reader.isStartElement() || reader.name() != "bookmark")
+        if (!reader.isStartElement() || reader.name() != QString("bookmark"))
             continue;
 
         processBookmarkElement(reader, curPathList);

@@ -268,7 +268,7 @@ int TPMWork::isSupportAlgoByTools(const QString &algoName, bool *support)
     return re;
 }
 
-int TPMWork::encryptByTools(const EncryptParams &params)
+int TPMWork::encryptByTools(const TpmEncryptArgs &params)
 {
     if (!tpmLib->isLoaded())
         return -1;
@@ -324,7 +324,7 @@ int TPMWork::encryptByTools(const EncryptParams &params)
     return re;
 }
 
-int TPMWork::decryptByTools(const DecryptParams &params, QString *pwd)
+int TPMWork::decryptByTools(const TpmDecryptArgs &params, QString *pwd)
 {
     if (!tpmLib->isLoaded())
         return -1;
