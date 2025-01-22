@@ -1899,7 +1899,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Data da criação</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -3200,12 +3200,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho padrão do ícone:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho padrão de lista</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
@@ -4203,7 +4203,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolução</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4604,7 +4604,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Continuar a descriptografar a partição</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
@@ -5063,12 +5063,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo não foi totalmente descriptografado, finalize a descriptografia antes de acessar.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao desbloquear o dispositivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
@@ -5692,17 +5692,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>Criado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Acessado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Modificado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="99"/>
