@@ -282,7 +282,7 @@ void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
     ConnectToServerDialog *dialog = new ConnectToServerDialog(window->currentUrl(), window);
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(dialog, &ConnectToServerDialog::finished, dialog, &ConnectToServerDialog::onButtonClicked);
+    QObject::connect(dialog, &DDialog::buttonClicked, dialog, &ConnectToServerDialog::onButtonClicked);
     window->setProperty("ConnectToServerDialogShown", true);
     QObject::connect(dialog, &ConnectToServerDialog::closed, [window] {
         window->setProperty("ConnectToServerDialogShown", false);
@@ -299,7 +299,7 @@ void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
     UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(window);
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::buttonClicked, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
     QObject::connect(dialog, &UserSharePasswordSettingDialog::inputPassword, [=](const QString &password) {
         dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Share_SetPassword", password);
     });
