@@ -421,6 +421,14 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     return pixmap;
 }
 
+void CollectionView::focusOutEvent(QFocusEvent *event)
+{
+    if (selectionModel()) 
+        selectionModel()->clearSelection();
+
+    QAbstractItemView::focusOutEvent(event);
+}
+
 bool CollectionViewPrivate::checkClientMimeData(QDragEnterEvent *event) const
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {

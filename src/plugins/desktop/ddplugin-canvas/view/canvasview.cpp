@@ -474,6 +474,10 @@ void CanvasView::focusOutEvent(QFocusEvent *event)
 {
     d->dodgeOper->stopDelayDodge();
     d->dodgeOper->updatePrepareDodgeValue(event);
+
+    if (selectionModel()) 
+        selectionModel()->clearSelection();
+    
     QAbstractItemView::focusOutEvent(event);
 }
 
