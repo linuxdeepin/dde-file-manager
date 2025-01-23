@@ -653,8 +653,7 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
     FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
         // 光驱的url对应挂载点和虚拟url两个值
         if (routeMapper.contains(itemUrl)) {
-            const auto values = routeMapper.values();
-            const QList<QUrl> urls(values.begin(), values.end());
+            const QList<QUrl> &urls { routeMapper.values(itemUrl) };
             return std::any_of(urls.begin(), urls.end(), [&targetUrl](const QUrl &url) {
                 return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, targetUrl);
             });
