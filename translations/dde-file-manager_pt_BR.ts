@@ -410,7 +410,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
-        <translation>Pesquisar no conteúdo dos arquivos</translation>
+        <translation>Pesquisa de texto completo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
@@ -6087,7 +6087,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="153"/>
         <source>Full-Text search</source>
-        <translation>Pesquisar texto integral</translation>
+        <translation>Pesquisa de texto completo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="157"/>
@@ -6141,7 +6141,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="82"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
-        <translation>A atualização do índice falhou, ative novamente o &quot;Pesquisar texto completo&quot;</translation>
+        <translation>A atualização do índice falhou, ative novamente o &quot;Pesquisa de texto completo&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="96"/>
