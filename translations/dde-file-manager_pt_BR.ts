@@ -5073,7 +5073,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Clique no menu do disco “Continuar com a criptografia de partição” para concluir a criptografia da partição.</translation>
     </message>
 </context>
 <context>
