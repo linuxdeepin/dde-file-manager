@@ -5712,12 +5712,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolução</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Duração</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="311"/>
@@ -5968,7 +5968,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>Time Created:</source>
-        <translation>Data da Criação:</translation>
+        <translation>Criado em:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
