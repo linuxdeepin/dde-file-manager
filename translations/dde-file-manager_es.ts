@@ -3205,7 +3205,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Altura de lista predeterminada:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
@@ -3230,7 +3230,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño de icono predeterminado:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
@@ -4203,7 +4203,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolución</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4604,7 +4604,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Continuar el descifrado de la partición</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
@@ -4652,7 +4652,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Desmontar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
@@ -5063,12 +5063,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>El dispositivo no se descifro completamente , finalice el descifrado antes de acceder.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Error al desbloquear dispositivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
