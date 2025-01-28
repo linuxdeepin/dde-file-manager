@@ -6503,17 +6503,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="244"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="312"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Vista de árbol</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Ordenar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="270"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Ver opciones</translation>
     </message>
 </context>
 <context>
@@ -6521,27 +6521,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Fecha de modificación</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Fecha de creación</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo</translation>
     </message>
 </context>
 <context>
@@ -6549,27 +6549,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Ver opciones</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño de icono</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="101"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño de la parrilla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="134"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Altura de la lista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="161"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Vista previa de la pantalla</translation>
     </message>
 </context>
 <context>
@@ -7552,7 +7552,7 @@ borre los archivos de ese directorio e intente desbloquear la caja fuerte de nue
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Fecha de creación</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="647"/>
@@ -7614,7 +7614,7 @@ borre los archivos de ese directorio e intente desbloquear la caja fuerte de nue
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Hora de creación</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
