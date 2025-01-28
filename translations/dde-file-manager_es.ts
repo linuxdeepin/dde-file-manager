@@ -3225,7 +3225,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="242"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>Activar ventana existente al volver a abrir carpeta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
@@ -5073,7 +5073,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Haga clic en el menú del disco derecho &quot;Continuar cifrado de partición&quot; para completar el cifrado de partición.</translation>
     </message>
 </context>
 <context>
@@ -5692,17 +5692,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>Creado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Accedido</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Modificado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="99"/>
@@ -5712,12 +5712,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolución</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Duración</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="311"/>
@@ -6136,17 +6136,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="76"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Actualización del índice completada, hora de la última actualización: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="82"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
-        <translation type="unfinished"/>
+        <translation>La actualización del índice falló, vuelva a activar el interruptor de &quot;Búsqueda de texto completo&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="96"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Índice en construcción, %1 archivos indexados</translation>
     </message>
 </context>
 <context>
@@ -6288,7 +6288,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Introducir dirección</translation>
     </message>
 </context>
 <context>
@@ -6491,13 +6491,13 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="227"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Vista de iconos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="234"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="308"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Vista de lista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="244"/>
