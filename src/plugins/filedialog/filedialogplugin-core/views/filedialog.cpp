@@ -62,8 +62,11 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
 {
     if (acceptCanOpenOnSave) {
         auto &&urls = CoreEventsCaller::sendGetSelectedFiles(q->internalWinId());
-        if (!urls.isEmpty())
+        if (!urls.isEmpty()) {
+            q->statusBar()->acceptButton()->setText(tr("Save"));
+            acceptCanOpenOnSave = false;
             q->cd(urls.first());
+        }
         return;
     }
 
@@ -886,6 +889,31 @@ void FileDialog::updateAcceptButtonState()
     }
 }
 
+void FileDialog::updateAcceptButtonText()
+{
+    if (!d->isFileView)
+        return;
+
+    if (d->acceptMode != QFileDialog::AcceptSave)
+        return;
+
+    const QList<QUrl> &urls { dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", internalWinId()).value<QList<QUrl>>() };
+    if (!urls.isEmpty()) {
+        QUrl selectUrl = urls.at(0);
+        auto fileInfo = InfoFactory::create<FileInfo>(selectUrl);
+        if (!fileInfo || !fileInfo->isAttributes(FileInfo::FileIsType::kIsDir) || !statusBar() || !statusBar()->acceptButton())
+            return;
+        QUrl curUrl = currentUrl();
+        if (!UniversalUtils::urlEquals(selectUrl, curUrl)) {
+            statusBar()->acceptButton()->setText(tr("Open"));
+            d->acceptCanOpenOnSave = true;
+        }
+    } else {
+        statusBar()->acceptButton()->setText(tr("Save"));
+        d->acceptCanOpenOnSave = false;
+    }
+}
+
 void FileDialog::handleEnterPressed()
 {
     if (!statusBar()->acceptButton()->isEnabled() || !d->isFileView)
@@ -927,8 +955,8 @@ void FileDialog::handleUrlChanged(const QUrl &url)
 
     updateAcceptButtonState();
 
-    if (d->acceptMode == QFileDialog::AcceptSave) {
-        setLabelText(QFileDialog::Accept, tr("Save", "button"));
+    if (d->acceptMode == QFileDialog::AcceptSave && statusBar() && statusBar()->acceptButton()) {
+        statusBar()->acceptButton()->setText(tr("Save"));
         d->acceptCanOpenOnSave = false;
         onCurrentInputNameChanged();
     }
@@ -1087,6 +1115,7 @@ void FileDialog::initConnect()
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &FileDialog::selectedNameFilterChanged);
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
+    connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonText);
 }
 
 void FileDialog::initEventsConnect()
