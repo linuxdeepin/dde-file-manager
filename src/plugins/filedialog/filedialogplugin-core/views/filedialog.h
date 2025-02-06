@@ -111,6 +111,7 @@ private Q_SLOTS:
     void onRejectButtonClicked();
     void onCurrentInputNameChanged();
     void updateAcceptButtonState();
+    void updateAcceptButtonText();
     void handleEnterPressed();
     void handleUrlChanged(const QUrl &url);
     void onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
