@@ -1,3 +1,14 @@
+dde-file-manager (6.5.27) unstable; urgency=medium
+
+ * fix: improve file type detection using statx
+ * feat: improve image dimension detection in property dialog
+ * fix: findMeCb cannot work
+ * fix: Cannot reconnect to server after unmounting FTP without closing file manager
+ * Fix: Adjust the close button and the calculation method of text display.
+ * fix: Fixed the issue that video playback failed
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 07 Feb 2025 14:25:21 +0800
+
 dde-file-manager (6.5.26) unstable; urgency=medium
 
   * update 6.5.26.
