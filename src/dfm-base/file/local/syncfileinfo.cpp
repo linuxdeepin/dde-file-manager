@@ -650,13 +650,23 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
     // In addition we want to follow symlinks.
-    const QString &absoluteFilePath = filePath();
-    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
-    QT_STATBUF statBuffer;
     auto fileMode = attribute(DFileInfo::AttributeID::kUnixMode).toUInt();
-    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
-        return fileType;
-    fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
+    if (fileMode <= 0) {
+        const QString &path = filePath();
+        struct statx stx;
+
+        if (statx(AT_FDCWD, path.toUtf8().constData(),
+                  AT_SYMLINK_NOFOLLOW,
+                  STATX_TYPE,
+                  &stx)
+            == 0) {
+            fileMode = (stx.stx_mode & S_IFMT);
+        } else {
+            qWarning() << "Failed to get file status for:" << path
+                       << "error:" << strerror(errno);
+        }
+    }
+
     if (S_ISDIR(fileMode))
         fileType = FileInfo::FileType::kDirectory;
     else if (S_ISCHR(fileMode))
@@ -669,6 +679,8 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
         fileType = FileInfo::FileType::kSocketFile;
     else if (S_ISREG(fileMode))
         fileType = FileInfo::FileType::kRegularFile;
+    else
+        fileType = FileInfo::FileType::kUnknown;
 
     QWriteLocker locker(&lock);
     this->fileType = FileInfo::FileType(fileType);

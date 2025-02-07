@@ -27,14 +27,7 @@
 #include <qplatformdefs.h>
 
 #include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <mntent.h>
 
-/*!
- * \class SyncFileInfo 本地文件信息类
- * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
- */
 namespace dfmbase {
 
 AsyncFileInfo::AsyncFileInfo(const QUrl &url)
@@ -774,7 +767,10 @@ QString AsyncFileInfoPrivate::mimeTypeName() const
     // At present, there is no dfmio library code. For temporary repair
     // local file use the method on v20 to obtain mimeType
     if (ProtocolUtils::isRemoteFile(q->fileUrl())) {
-        return asyncAttribute(FileInfo::FileInfoAttributeID::kStandardContentType).toString();
+        auto contentType = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardContentType).toString();
+        if (contentType.isEmpty())
+            contentType = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFastContentType).toString();
+        return contentType;
     }
     return q->fileMimeType().name();
 }
@@ -1039,19 +1035,26 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     const QUrl &fileUrl = q->fileUrl();
     if (FileUtils::isTrashFile(fileUrl)
         && asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsSymlink).toBool()) {
-        fileType = FileInfo::FileType::kRegularFile;
-        return fileType;
+        return FileInfo::FileType::kRegularFile;
     }
 
-    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
-    // In addition we want to follow symlinks.
-    const QString &absoluteFilePath = filePath();
-    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
-    QT_STATBUF statBuffer;
     auto fileMode = attribute(DFileInfo::AttributeID::kUnixMode).toUInt();
-    if (fileMode <= 0 || QT_STAT(nativeFilePath.constData(), &statBuffer) != 0)
-        return fileType;
-    fileMode = fileMode <= 0 ? statBuffer.st_mode : fileMode;
+    if (fileMode <= 0) {
+        const QString &path = filePath();
+        struct statx stx;
+
+        if (statx(AT_FDCWD, path.toUtf8().constData(),
+                  AT_SYMLINK_NOFOLLOW,
+                  STATX_TYPE,
+                  &stx)
+            == 0) {
+            fileMode = (stx.stx_mode & S_IFMT);
+        } else {
+            qWarning() << "Failed to get file status for:" << path
+                       << "error:" << strerror(errno);
+        }
+    }
+
     if (S_ISDIR(fileMode))
         fileType = FileInfo::FileType::kDirectory;
     else if (S_ISCHR(fileMode))
@@ -1064,6 +1067,8 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
         fileType = FileInfo::FileType::kSocketFile;
     else if (S_ISREG(fileMode))
         fileType = FileInfo::FileType::kRegularFile;
+    else
+        fileType = FileInfo::FileType::kUnknown;
 
     return fileType;
 }
@@ -1151,6 +1156,8 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
         tmp.insert(FileInfo::FileInfoAttributeID::kAccessPermissions, QVariant::fromValue(tmpdfmfileinfo->permissions()));
     // GenericIconName
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardContentType, attribute(DFileInfo::AttributeID::kStandardContentType));
+    tmp.insert(FileInfo::FileInfoAttributeID::kStandardFastContentType, attribute(DFileInfo::AttributeID::kStandardFastContentType));
+
     // iconname
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIcon, attribute(DFileInfo::AttributeID::kStandardIcon));
     tmp.insert(FileInfo::FileInfoAttributeID::kStandardIsLocalDevice, false);
