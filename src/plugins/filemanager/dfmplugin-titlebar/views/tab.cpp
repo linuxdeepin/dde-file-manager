@@ -53,14 +53,6 @@ void Tab::setCurrentUrl(const QUrl &url)
     d->url = url;
 
     QString fileName = getDisplayNameByUrl(url);
-    // Check for possible display text.
-    auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
-    if (infoPointer) {
-        const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
-        if (!displayName.isEmpty())
-            fileName = displayName;
-    }
-
     d->tabAlias.clear();
     dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &d->tabAlias);
 
@@ -174,17 +166,17 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     int buttonMargin = (d->hovered && d->showCloseButton) ? 4 : 0;
 
     int textMargin = blueSquareWidth + blueSquareMargin;
-    
+
     painter->setFont(font);
     QFontMetrics fm(font);
     QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
-    
+
     // 1. 计算文本宽度时不考虑按钮空间，这样文本位置在hover和非hover时保持一致
     QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - tabMargin - textMargin);
-    
+
     // 2. 计算文本绘制位置，保持居中
     int textX = (d->width - fm.horizontalAdvance(str) - textMargin) / 2 + textMargin;
-    
+
     // 3. 如果文本会与关闭按钮重叠，重新计算文本宽度
     if (d->hovered && d->showCloseButton) {
         int textEndX = textX + fm.horizontalAdvance(str);
@@ -217,9 +209,10 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
         painter->setPen(Qt::NoPen);
         painter->setBrush(blueColor);
-        painter->drawRoundedRect(QRect(textX - textMargin, 
-                                     (d->height - blueSquareWidth) / 2, 
-                                     blueSquareWidth, blueSquareWidth), 1, 1);
+        painter->drawRoundedRect(QRect(textX - textMargin,
+                                       (d->height - blueSquareWidth) / 2,
+                                       blueSquareWidth, blueSquareWidth),
+                                 1, 1);
         painter->restore();
     }
 
@@ -236,14 +229,14 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->setPen(tPen);
     }
     painter->drawText(textX, (d->height - fm.height()) / 2,
-                     fm.horizontalAdvance(str), fm.height(), 
-                     0, str);
+                      fm.horizontalAdvance(str), fm.height(),
+                      0, str);
 
     // 绘制边框线
     painter->save();
     QColor lineColor = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType
-            ? QColor(255, 255, 255, 20)     // 深色模式：白色 8%
-            : QColor(0, 0, 0, 20);          // 浅色模式为8% 的黑色
+            ? QColor(255, 255, 255, 20)   // 深色模式：白色 8%
+            : QColor(0, 0, 0, 20);   // 浅色模式为8% 的黑色
 
     pen.setColor(lineColor);
     painter->setPen(pen);
@@ -266,10 +259,10 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
 
-        d->closeButtonRect = QRect(d->width - buttonSize - buttonMargin, 
-                                 (d->height - buttonSize) / 2, 
-                                 buttonSize, 
-                                 buttonSize);
+        d->closeButtonRect = QRect(d->width - buttonSize - buttonMargin,
+                                   (d->height - buttonSize) / 2,
+                                   buttonSize,
+                                   buttonSize);
 
         QColor buttonColor = d->closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
         painter->setPen(QPen(buttonColor, 1.5));
@@ -478,9 +471,15 @@ QString Tab::getDisplayNameByUrl(const QUrl &url) const
     if (SystemPathUtil::instance()->isSystemPath(url.path()))
         return SystemPathUtil::instance()->systemPathDisplayNameByPath(url.path());
 
-    if (url.fileName().isEmpty()) {
-        auto info = InfoFactory::create<FileInfo>(url);
-        return info->nameOf(DFMBASE_NAMESPACE::FileInfo::FileNameInfoType::kFileName);
+    auto info = InfoFactory::create<FileInfo>(url);
+    if (info) {
+        QString name = info->displayOf(DisPlayInfoType::kFileDisplayName);
+        if (!name.isEmpty())
+            return name;
+
+        name = info->nameOf(DFMBASE_NAMESPACE::FileInfo::FileNameInfoType::kFileName);
+        if (!name.isEmpty())
+            return name;
     }
 
     return url.fileName();

@@ -67,17 +67,13 @@ bool ComputerEventReceiver::handleSortItem(const QString &group, const QString &
 
 bool ComputerEventReceiver::handleSetTabName(const QUrl &url, QString *tabName)
 {
-    // if the url is the mount point of inner disk, set it to alias if alias if not empty.
     auto devs = DevProxyMng->getAllBlockIds(GlobalServerDefines::kMounted | GlobalServerDefines::kSystem);
     for (const auto &dev : devs) {
-        auto devInfo = DevProxyMng->queryBlockInfo(dev);
-        auto mpt = QUrl::fromLocalFile(devInfo.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString());
-        if (UniversalUtils::urlEquals(mpt, url)) {
-            auto info = InfoFactory::create<EntryFileInfo>(ComputerUtils::makeBlockDevUrl(dev));
-            if (info) {
-                *tabName = info->displayName();
-                return true;
-            }
+        // 一些分区会有自己的别名，tab应该显示用户定义的别名
+        auto info = InfoFactory::create<EntryFileInfo>(ComputerUtils::makeBlockDevUrl(dev));
+        if (info && UniversalUtils::urlEquals(info->targetUrl(), url)) {
+            *tabName = info->displayName();
+            return true;
         }
     }
     return false;
