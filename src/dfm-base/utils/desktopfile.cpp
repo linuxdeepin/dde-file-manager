@@ -40,8 +40,8 @@ DesktopFile::DesktopFile(const QString &fileName)
         hidden = desktop.value("Hidden", settings.value("Hidden").toBool()).toBool();
     }
 
-    //由于获取的系统语言简写与.desktop的语言简写存在不对应关系，经决定先采用获取的系统值匹配
-    //若没匹配到则采用系统值"_"左侧的字符串进行匹配，均为匹配到，才走原未匹配流程
+    // 由于获取的系统语言简写与.desktop的语言简写存在不对应关系，经决定先采用获取的系统值匹配
+    // 若没匹配到则采用系统值"_"左侧的字符串进行匹配，均为匹配到，才走原未匹配流程
     auto getValueFromSys = [&desktop, &settings](const QString &type, const QString &sysName) -> QString {
         const QString key = QString("%0[%1]").arg(type).arg(sysName);
         return desktop.value(key, settings.value(key)).toString();
@@ -142,7 +142,12 @@ QString DesktopFile::desktopDeepinVendor() const
 
 bool DesktopFile::isNoShow() const
 {
-    return noDisplay || hidden;
+    if (hidden)
+        return true;
+    // task: 369003
+    if (noDisplay && mimeType.isEmpty())
+        return true;
+    return false;
 }
 
 //---------------------------------------------------------------------------
