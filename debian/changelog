@@ -1,3 +1,9 @@
+dde-file-manager (6.5.28) unstable; urgency=medium
+
+  * remove gio-qt
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 08 Feb 2025 17:37:50 +0800
+
 dde-file-manager (6.5.27) unstable; urgency=medium
 
  * fix: improve file type detection using statx
