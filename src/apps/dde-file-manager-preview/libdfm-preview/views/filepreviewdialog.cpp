@@ -39,7 +39,8 @@ FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget 
     }
     firstEnterSwitchToPage = true;
     switchToPage(0);
-    windowHandle()->installEventFilter(this);
+    if (windowHandle())
+        windowHandle()->installEventFilter(this);
 }
 
 FilePreviewDialog::~FilePreviewDialog()
@@ -151,7 +152,7 @@ void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
     DAbstractDialog::resizeEvent(event);
     QTimer::singleShot(50, this, [=]() {   //! 50ms这个时间视机器性能而定
-        repaint();   //通过重绘来解决调整大小前的窗口残留的问题
+        repaint();   // 通过重绘来解决调整大小前的窗口残留的问题
     });
 }
 
