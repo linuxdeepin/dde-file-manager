@@ -5,6 +5,7 @@
 #include "basicwidget.h"
 #include "events/propertyeventcall.h"
 #include "utils/propertydialogmanager.h"
+#include "utils/mediainfofetchworker.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -46,15 +47,25 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
 BasicWidget::BasicWidget(QWidget *parent)
-    : DArrowLineDrawer(parent)
+    : DArrowLineDrawer(parent),
+      fetchThread(new QThread),
+      infoFetchWorker(new MediaInfoFetchWorker)
+
 {
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
+
+    infoFetchWorker->moveToThread(fetchThread);
+    fetchThread->start();
 }
 
 BasicWidget::~BasicWidget()
 {
     fileCalculationUtils->deleteLater();
+    if (fetchThread->isRunning()) {
+        fetchThread->quit();
+        fetchThread->wait(5000);
+    }
 }
 
 int BasicWidget::expansionPreditHeight()
@@ -462,18 +473,32 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
     const QString &videoResolutionStr = QString::number(width) + "x" + QString::number(height);
-
-    QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
-
-    QTime t(0, 0, 0);
-    t = t.addMSecs(duration.toInt());
-
-    const QString &durationStr = t.toString("hh:mm:ss");
-
     fileMediaResolution->setRightValue(videoResolutionStr, Qt::ElideNone, Qt::AlignVCenter, true);
     fileMediaResolution->setVisible(true);
-    fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaDuration->setVisible(true);
+
+    int duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration].toInt();
+
+    if (duration != 0) {
+        QTime t(0, 0, 0);
+        t = t.addMSecs(duration);
+
+        const QString &durationStr = t.toString("hh:mm:ss");
+
+        fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
+        fileMediaDuration->setVisible(true);
+    } else {
+        QString localFile = url.toLocalFile();
+        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady, 
+            this, [this](const QString &duration){
+                if (!duration.isEmpty()) {
+                    fileMediaDuration->setRightValue(duration);
+                    fileMediaDuration->setVisible(true);
+                }
+            });
+
+        QMetaObject::invokeMethod(infoFetchWorker, "getDuration",
+                                  Qt::QueuedConnection, Q_ARG(QString, localFile));
+    }
 }
 
 void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
@@ -485,12 +510,27 @@ void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
         return;
     }
 
-    QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
-    QTime t(0, 0, 0);
-    t = t.addMSecs(duration.toInt());
+    int duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration].toInt();
 
-    const QString &durationStr = t.toString("hh:mm:ss");
+    if (duration != 0) {
+        QTime t(0, 0, 0);
+        t = t.addMSecs(duration);
 
-    fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaDuration->setVisible(true);
+        const QString &durationStr = t.toString("hh:mm:ss");
+
+        fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
+        fileMediaDuration->setVisible(true);
+    } else {
+        QString localFile = url.toLocalFile();
+        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady, 
+            this, [this](const QString &duration){
+                if (!duration.isEmpty()) {
+                    fileMediaDuration->setRightValue(duration);
+                    fileMediaDuration->setVisible(true);
+                }
+            });
+
+        QMetaObject::invokeMethod(infoFetchWorker, "getDuration",
+                                  Qt::QueuedConnection, Q_ARG(QString, localFile));
+    }
 }

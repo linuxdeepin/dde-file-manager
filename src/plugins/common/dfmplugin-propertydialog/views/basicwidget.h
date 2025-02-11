@@ -14,6 +14,7 @@
 #include <DCheckBox>
 
 namespace dfmplugin_propertydialog {
+class MediaInfoFetchWorker;
 class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -73,6 +74,9 @@ private:
     QFrame *frameMain { nullptr };
     QGridLayout *layoutMain { nullptr };
     QUrl currentUrl;
+
+    QThread *fetchThread { nullptr };
+    MediaInfoFetchWorker *infoFetchWorker { nullptr };
 };
 }
 #endif   // BASICWIDGET_H
