@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2021 - 2024 UnionTech Software Technology Co., Ltd.
 //
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-later
 
 #ifndef DFMEXTWINDOWPLUGIN_H
 #define DFMEXTWINDOWPLUGIN_H
