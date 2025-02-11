@@ -14,6 +14,8 @@
 #include "datas/enterdirreportdata.h"
 #include "datas/desktopstartupreportdata.h"
 
+#include "config.h"
+
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/base/application/application.h>
@@ -33,7 +35,6 @@ DFMBASE_USE_NAMESPACE
 ReportLogWorker::ReportLogWorker(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 ReportLogWorker::~ReportLogWorker()
@@ -58,6 +59,8 @@ bool ReportLogWorker::init()
         new EnterDirReportData,
         new DesktopStartUpReportData
     };
+
+    commonData.insert("app_version", VERSION);
 
     std::for_each(datas.cbegin(), datas.cend(), [this](ReportDataInterface *dat) { registerLogData(dat->type(), dat); });
 
