@@ -17,8 +17,8 @@ class DFMExtFileOperationHookPrivate;
 class DFMExtFileOperationHook
 {
 public:
-    using PathList = std::vector<std::string>;
-    using OpenFilesFunc = std::function<bool(const PathList &)>;
+    using OpenFilesFunc = std::function<bool(const std::vector<std::string> &srcPaths,
+                                             std::vector<std::string> *ignorePaths)>;
 
 public:
     DFMExtFileOperationHook(DFMExtFileOperationHookPrivate *);
