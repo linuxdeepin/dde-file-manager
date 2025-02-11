@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 ~ 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 #include <dfm-extension/dfm-extension.h>
 
 #include "mymenuplugin.h"
