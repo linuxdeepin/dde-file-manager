@@ -8,6 +8,7 @@
 #include <dfm-extension/menu/dfmextmenuplugin.h>
 #include <dfm-extension/emblemicon/dfmextemblemiconplugin.h>
 #include <dfm-extension/window/dfmextwindowplugin.h>
+#include <dfm-extension/file/dfmextfileplugin.h>
 
 BEGEN_DFMEXT_NAMESPACE
 
@@ -16,6 +17,7 @@ extern "C" void dfm_extension_shutdown();
 extern "C" DFMExtMenuPlugin *dfm_extension_menu();
 extern "C" DFMExtEmblemIconPlugin *dfm_extension_emblem();
 extern "C" DFMExtWindowPlugin *dfm_extension_window();
+extern "C" DFMExtFilePlugin *dfm_extension_file();
 
 END_DFMEXT_NAMESPACE
 
