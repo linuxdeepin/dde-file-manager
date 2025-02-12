@@ -225,8 +225,8 @@ SideBarModel *SideBarView::model() const
 
 void SideBarView::mousePressEvent(QMouseEvent *event)
 {
-    //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
-    //暂时抛去部分频繁点击来规避这个问题
+    // 频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
+    // 暂时抛去部分频繁点击来规避这个问题
     if (!d->checkOpTime())
         return;
 
@@ -365,7 +365,7 @@ void SideBarView::dropEvent(QDropEvent *event)
 
     // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
     // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
-    //但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
+    // 但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
     QPoint pt = event->position().toPoint();   // mapFromGlobal(QCursor::pos());
     QRect rc = visualRect(indexAt(event->position().toPoint()));
     if (!rc.contains(pt)) {
@@ -653,8 +653,8 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         if (!fileInfo->isAttributes(OptInfoType::kIsReadable)) {
             return Qt::IgnoreAction;
         }
-        //部分文件不能复制或剪切，需要在拖拽时忽略
-        if (!fileInfo->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+        // 部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canAttributes(CanableInfoType::kCanMoveOrCopy) && !fileInfo->canAttributes(CanableInfoType::kCanRename)) {
             return Qt::IgnoreAction;
         }
     }
