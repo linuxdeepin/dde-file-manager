@@ -275,9 +275,7 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
 void FileUtils::refreshIconCache()
 {
     // https://bugreports.qt.io/browse/QTBUG-112257
-    QString currentTheme = QIcon::themeName();
-    QIcon::setThemeName(QString());
-    QIcon::setThemeName(currentTheme);
+    QIcon::setThemeSearchPaths(QIcon::themeSearchPaths());
 }
 
 bool FileUtils::isTrashDesktopFile(const QUrl &url)
@@ -454,7 +452,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
 
         bool isDesktopApp = info->nameOf(NameInfoType::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
-        ///###: symlink is also processed here.
+        /// ###: symlink is also processed here.
         const QString &suffix = info->nameOf(NameInfoType::kSuffix).isEmpty()
                 ? QString()
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
@@ -542,14 +540,14 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
 
 QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
-    if (originUrls.isEmpty() || pair.first.isEmpty() || pair.second.isEmpty()) {   //###: here, jundge whether there are fileUrls in originUrls.
+    if (originUrls.isEmpty() || pair.first.isEmpty() || pair.second.isEmpty()) {   // ###: here, jundge whether there are fileUrls in originUrls.
         return QMap<QUrl, QUrl> {};
     }
 
     unsigned long long serialNumber { pair.second.toULongLong() };
     unsigned long long index { 0 };
 
-    if (serialNumber == ULONG_LONG_MAX) {   //##: Maybe, this value will be equal to the max value of the type of unsigned long long
+    if (serialNumber == ULONG_LONG_MAX) {   // ##: Maybe, this value will be equal to the max value of the type of unsigned long long
         index = serialNumber - originUrls.size();
     } else {
         index = serialNumber;
@@ -739,7 +737,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
             if (parentDir.exists(linkBaseName)) {
                 ++number;
             } else {
-                //链接文件失效后exists会返回false，通过lstat再次判断链接文件本身是否存在
+                // 链接文件失效后exists会返回false，通过lstat再次判断链接文件本身是否存在
                 auto strLinkPath = parentDir.filePath(linkBaseName).toStdString();
                 struct stat st;
                 if ((lstat(strLinkPath.c_str(), &st) == 0) && S_ISLNK(st.st_mode))
@@ -1010,8 +1008,8 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
         return;
     }
 }
-//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
-//QCollator sortCollator;
+// fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
+// QCollator sortCollator;
 class DCollator : public QCollator
 {
 public:
@@ -1235,7 +1233,7 @@ QString FileUtils::nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer ta
     QString fileBaseName = fromInfo->nameOf(NameInfoType::kCompleteBaseName);
     QString suffix = fromInfo->nameOf(NameInfoType::kSuffix);
     QString fileName = fromInfo->nameOf(NameInfoType::kFileName);
-    //在7z分卷压缩后的名称特殊处理7z.003
+    // 在7z分卷压缩后的名称特殊处理7z.003
     const QString &reg = ".7z.[0-9]{3,10}$";
     if (fileName.contains(QRegularExpression(reg))) {
         const int &index = fileName.indexOf(QRegularExpression(reg));
@@ -1360,8 +1358,8 @@ QUrl DesktopAppUrl::homeDesktopFileUrl()
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-///###: Do not modify it.
-///###: it's auxiliary.
+/// ###: Do not modify it.
+/// ###: it's auxiliary.
 float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
 {
     qreal hepCount = 0;
