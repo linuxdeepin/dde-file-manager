@@ -243,44 +243,58 @@ void ConnectToServerDialog::updateAddButtonState(bool collected)
 void ConnectToServerDialog::initServerDatas()
 {
     QStringList hosts;
-    const static QStringList expectedSchemes { "smb", "ftp", "sftp" };
-    QStringList searchList = SearchHistroyManager::instance()->getSearchHistroy();
+    const QStringList expectedSchemes { "smb", "ftp", "sftp" };
+
+    auto processUrl = [this, &hosts, &expectedSchemes](const QString &urlStr, CharsetOption opt = kDefault) {
+        QString processedUrl = urlStr.toLower().replace("/?", "?");
+        while (processedUrl.endsWith("/")) {
+            processedUrl.chop(1);
+        }
+
+        QUrl url(processedUrl);
+        if (!expectedSchemes.contains(url.scheme()) || url.host().isEmpty()) {
+            return;
+        }
+
+        processedUrl = processedUrl.section('?', 0, 0);
+        if (!hosts.contains(processedUrl)) {
+            hosts.prepend(processedUrl);
+            serverComboBox->insertItem(0, processedUrl, opt);
+        }
+    };
+
+    const QList<IPHistroyData> ipHistoryData = SearchHistroyManager::instance()->getIPHistory();
+    for (const auto &ipData : ipHistoryData) {
+        if (ipData.isRecentlyAccessed()) {
+            const QString ipStr = QString("%1://%2").arg(ipData.accessedType, ipData.ipData);
+            processUrl(ipStr);
+        }
+    }
+
+    const QStringList searchList = SearchHistroyManager::instance()->getSearchHistroy();
     for (int i = searchList.count() - 1; i >= 0 && hosts.count() < kMaxHistoryItems - 1; --i) {
         QString urlStr = searchList.at(i);
-        urlStr = urlStr.toLower();   // ....charset=UTF8 ==> charset=utf8
-        urlStr.replace("/?", "?");   // ftp://1.2.3.4/?charset=xxx ==> ..3.4?charset=xxx
-        while (urlStr.endsWith("/"))   // ftp://1.2.3.4/ ==> ftp://1.2.3.4
-            urlStr.chop(1);
-
-        QUrl url(urlStr);
-        if (!expectedSchemes.contains(url.scheme()) || url.host().isEmpty())
-            continue;
-
         CharsetOption opt = kDefault;
-        const QString &query = url.query();
+        const QString &query = QUrl(urlStr).query();
         if (!query.isEmpty()) {
             const static QRegularExpression charsetRegx(R"(charset=([^&]*))");
-            auto match = charsetRegx.match(query);
+            const auto match = charsetRegx.match(query);
             if (match.hasMatch()) {
-                QString charset = match.captured(1);
+                const QString charset = match.captured(1);
                 if (charset == kGBKCharset)
                     opt = kGbk;
                 else if (charset == kUTF8CharSet || charset == kUTF8CharSet2)
                     opt = kUtf8;
             }
         }
-
-        urlStr = urlStr.mid(0, urlStr.indexOf("?"));   // ftp://1.2.3.4?charset=xxx ==> ftp://1.2.3.4
-        if (!hosts.contains(urlStr)) {
-            hosts.insert(0, urlStr);
-            serverComboBox->insertItem(0, urlStr, opt);
-        }
+        processUrl(urlStr, opt);
     }
+
     completer->setModel(new QStringListModel(hosts));
 
-    // select latest one
-    if (hosts.count() > 0)
+    if (!hosts.isEmpty()) {
         onCurrentInputChanged(hosts.last());
+    }
 }
 
 QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, bool insertWhenNoExist)
