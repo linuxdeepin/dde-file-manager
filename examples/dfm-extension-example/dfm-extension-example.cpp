@@ -6,8 +6,12 @@
 
 #include "mymenuplugin.h"
 #include "myemblemiconplugin.h"
-#include "mywindowplugin.h"
-#include "myfileplugin.h"
+#ifdef DFMEXT_INTERFACE_Window
+#    include "mywindowplugin.h"
+#endif
+#ifdef DFMEXT_INTERFACE_File
+#    include "myfileplugin.h"
+#endif
 
 // 右键菜单的扩展
 static DFMEXT::DFMExtMenuPlugin *myMenu { nullptr };
