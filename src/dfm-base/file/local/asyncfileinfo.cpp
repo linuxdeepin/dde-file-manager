@@ -215,6 +215,11 @@ bool AsyncFileInfo::canAttributes(const CanableInfoType type) const
         if (ProtocolUtils::isGphotoFile(url))
             return false;
         return true;
+    case FileCanType::kCanMoveOrCopy:
+        // file can not read or dir can not execte，will can not copy
+        if (!d->asyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRead).toBool() || (d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsDir).toBool() && !d->asyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanExecute).toBool()))
+            return false;
+        return FileInfo::canAttributes(type);
     default:
         return FileInfo::canAttributes(type);
     }
@@ -948,8 +953,12 @@ bool AsyncFileInfoPrivate::canRename() const
 
     bool canRename = false;
     canRename = SysInfoUtils::isRootUser();
-    if (!canRename)
+    if (!canRename) {
+        // dir can not write, will can not rename
+        if (this->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool() && !this->attribute(DFileInfo::AttributeID::kAccessCanWrite).toBool())
+            return false;
         return this->attribute(DFileInfo::AttributeID::kAccessCanRename).toBool();
+    }
 
     return canRename;
 }

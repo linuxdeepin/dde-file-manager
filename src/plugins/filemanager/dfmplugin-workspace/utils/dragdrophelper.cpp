@@ -69,7 +69,8 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 
     for (const QUrl &url : currentDragUrls) {
         auto info = InfoFactory::create<FileInfo>(url);
-        if (!info || !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+        if (!info
+            || (!info->canAttributes(CanableInfoType::kCanMoveOrCopy) && !info->canAttributes(CanableInfoType::kCanRename))) {
             event->ignore();
             return true;
         }
@@ -105,7 +106,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     // NOTE: if drag file hover on a file item in list view, allow drop the file to root dir.
     // so, check kCanDrop attributes of dir file only
     if (!checkTargetEnable(toUrl)
-            || (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop) && hoverFileInfo->isAttributes(OptInfoType::kIsDir))) {
+        || (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop) && hoverFileInfo->isAttributes(OptInfoType::kIsDir))) {
         event->ignore();
         currentHoverIndexUrl = toUrl;
         return true;
@@ -125,7 +126,6 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         return true;
     }
 
-
     for (const QUrl &url : fromUrls) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
@@ -134,14 +134,12 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
         }
 
-        // target is not local device, origin is dir and can not write, prohibit drop
+        // copy action must origin file can copy
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
-        if (!hoverFileInfo->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
-            if (!info->isAttributes(OptInfoType::kIsWritable)) {
-                view->setViewSelectState(false);
-                event->ignore();
-                return true;
-            }
+        if (event->dropAction() == Qt::DropAction::CopyAction && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+            view->setViewSelectState(false);
+            event->ignore();
+            return true;
         }
 
         if (UniversalUtils::urlEquals(targetUrl, url)) {
@@ -234,9 +232,7 @@ bool DragDropHelper::drop(QDropEvent *event)
     } else {
         QModelIndex hoverIndex = view->indexAt(event->pos());
 
-        if (event->source() == view && dragFileFromCurrent &&
-                (!hoverIndex.isValid() || view->isSelected(hoverIndex)) &&
-                !WindowUtils::keyCtrlIsPressed())
+        if (event->source() == view && dragFileFromCurrent && (!hoverIndex.isValid() || view->isSelected(hoverIndex)) && !WindowUtils::keyCtrlIsPressed())
             return true;
 
         if (!hoverIndex.isValid()) {
@@ -291,7 +287,7 @@ bool DragDropHelper::drop(QDropEvent *event)
             if (!urls.isEmpty()) {
                 const QUrl from = QUrl(urls.first());
                 if (from.path().contains("/.deepinwine/")
-                        && view->model()->dropMimeData(event->mimeData(), Qt::CopyAction, hoverIndex.row(), hoverIndex.column(), hoverIndex.parent())) {
+                    && view->model()->dropMimeData(event->mimeData(), Qt::CopyAction, hoverIndex.row(), hoverIndex.column(), hoverIndex.parent())) {
                     event->acceptProposedAction();
                 }
             }
