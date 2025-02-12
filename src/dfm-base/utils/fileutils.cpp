@@ -1278,7 +1278,7 @@ int FileUtils::dirFfileCount(const QUrl &url)
 bool FileUtils::fileCanTrash(const QUrl &url)
 {
     // gio does not support root user to move ordinary user files to trash
-    auto info = InfoFactory::create<FileInfo>(url);
+    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (SysInfoUtils::isRootUser()) {
         int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
         if (ownerId != 0)
