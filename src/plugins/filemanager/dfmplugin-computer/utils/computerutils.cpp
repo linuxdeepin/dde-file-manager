@@ -331,12 +331,13 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 
     QUrl converted = url;
     QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransformToLocal({ converted }, &urls);
+    UniversalUtils::urlsTransformToLocal({ converted }, &urls);
 
-    if (ok && !urls.isEmpty())
+    if (!urls.isEmpty())
         converted = urls.first();
     else
         converted = QUrl();
+
     QString devId;
     if (converted.scheme() == Global::Scheme::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
         if (devId.startsWith(kBlockDeviceIdPrefix))
