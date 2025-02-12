@@ -147,7 +147,10 @@ bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
 {
     d->initMounts();
-    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    if (path == "/")
+        path = "/sysroot/";
+
     QReadLocker lk(&d->lock);
     id = d->allMounts.key(path, "");
     return !id.isEmpty();
