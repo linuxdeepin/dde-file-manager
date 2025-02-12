@@ -15,7 +15,7 @@ class DFMExtFileOperationHookPrivate
 public:
     DFMExtFileOperationHookPrivate();
 
-    DFMExtFileOperationHook::OpenFilesFunc openFilesFunc;
+    DFMExtFileOperationHook::OpenFilesFunc openFilesFunc { nullptr };
 };
 
 END_DFMEXT_NAMESPACE

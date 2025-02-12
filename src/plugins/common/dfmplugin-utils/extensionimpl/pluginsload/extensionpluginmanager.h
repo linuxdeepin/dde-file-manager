@@ -41,7 +41,7 @@ public:
     QList<DFMEXT::DFMExtMenuPlugin *> menuPlugins() const;
     QList<DFMEXT::DFMExtEmblemIconPlugin *> emblemPlugins() const;
     QList<DFMEXT::DFMExtWindowPlugin *> windowPlugins() const;
-
+    QList<DFMEXT::DFMExtFilePlugin *> filePlugins() const;
     DFMEXT::DFMExtMenuProxy *pluginMenuProxy() const;
 
 Q_SIGNALS:

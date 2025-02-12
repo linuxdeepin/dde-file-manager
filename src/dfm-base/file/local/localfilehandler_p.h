@@ -83,8 +83,7 @@ public:
     LocalFileHandler *q { nullptr };
     DFMIOError lastError;
     GlobalEventType lastEvent = GlobalEventType::kUnknowType;
-    QList<QUrl> invalidPath;   //BUG:259909,记录无效链接路径
-    AppLaunchUtils appLauncher;
+    QList<QUrl> invalidPath;   // BUG:259909,记录无效链接路径
 };
 
 }

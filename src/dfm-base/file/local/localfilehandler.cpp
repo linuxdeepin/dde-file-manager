@@ -279,7 +279,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     for (const QUrl &fileUrl : fileUrls) {
         // 1. 处理符号链接
         auto resolvedUrl = d->resolveSymlink(fileUrl);
-        if (!resolvedUrl)  // 如果解析失败则继续下一个
+        if (!resolvedUrl)   // 如果解析失败则继续下一个
             continue;
 
         // 2. 处理可执行文件
@@ -610,7 +610,7 @@ bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QS
 
     // url path will be truncated at the index of '#', so replace it if it's real existed in url. (mostly it's for avfs archive paths)
     std::for_each(newFileUrls.begin(), newFileUrls.end(), [](QString &path) { path.replace("#", "%23"); });
-    return appLauncher.launchApp(desktopFilePath, newFileUrls);
+    return AppLaunchUtils::instance().launchApp(desktopFilePath, newFileUrls);
 }
 
 bool LocalFileHandlerPrivate::isFileManagerSelf(const QString &desktopFile)
@@ -932,7 +932,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     for (const QUrl &url : urls) {
         FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
         if (info->nameOf(NameInfoType::kSuffix) == Global::Scheme::kDesktop) {
-            ret = launchApp(url.path()) || ret;   //有一个成功就成功
+            ret = launchApp(url.path()) || ret;   // 有一个成功就成功
             transUrls.removeOne(url);
             continue;
         }
@@ -1033,7 +1033,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     if (!result) {
         result = false;
         for (const QUrl &url : transUrls)
-            result = QDesktopServices::openUrl(url) || result;   //有一个成功就成功
+            result = QDesktopServices::openUrl(url) || result;   // 有一个成功就成功
     }
     return result;
 }
@@ -1083,7 +1083,7 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
                 return true;
         }
 
-        ///###: just cache files that rename successfully.
+        /// ###: just cache files that rename successfully.
         if (renameFile(currentName, expectedName, false)) {
             successUrls[currentName] = expectedName;
         }
@@ -1200,7 +1200,7 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
     while (fileInfo.isSymLink()) {
         // 获取链接目标的绝对路径(会自动处理相对路径)
         QString canonicalPath = fileInfo.canonicalFilePath();
-        
+
         // 如果获取规范路径失败,说明链接可能已失效
         if (canonicalPath.isEmpty()) {
             DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
@@ -1209,8 +1209,8 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
         // 检查循环链接
         if (visitedPaths.contains(canonicalPath))
-            break;  // 发现循环,使用最后一个有效路径
-            
+            break;   // 发现循环,使用最后一个有效路径
+
         visitedPaths << canonicalPath;
 
         // 网络文件检查

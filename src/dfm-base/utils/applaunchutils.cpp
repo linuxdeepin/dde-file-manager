@@ -26,13 +26,13 @@ AppLaunchUtilsPrivate::AppLaunchUtilsPrivate()
     strategies.push_back({
             std::bind(&AppLaunchUtilsPrivate::launchByDBus, this,
                       std::placeholders::_1, std::placeholders::_2),
-            1   // DBus has higher priority
+            10   // DBus has higher priority
     });
 
     strategies.push_back({
             std::bind(&AppLaunchUtilsPrivate::launchByGio, this,
                       std::placeholders::_1, std::placeholders::_2),
-            2   // GIO has lower priority
+            20   // GIO has lower priority
     });
 }
 
@@ -96,24 +96,16 @@ bool AppLaunchUtilsPrivate::launchByDBus(const QString &desktopFile, const QStri
 
     QVariantMap options;
 
-    // NOTE: There may be performance issue
-    QStringList paths;
-    paths.reserve(filePaths.size());
-    std::transform(filePaths.begin(), filePaths.end(), std::back_inserter(paths),
-                   [](const QString &urlStr) -> QString {
-                       return QUrl(urlStr).toLocalFile();
-                   });
-
     QDBusMessage reply = interface->callWithArgumentList(QDBus::Block,
                                                          "Launch",
-                                                         { QString(), paths, options });
+                                                         { QString(), filePaths, options });
 
     if (reply.type() == QDBusMessage::ErrorMessage) {
         qCWarning(logDFMBase) << "DBus launch failed:" << reply.errorMessage();
         return false;
     }
 
-    qCDebug(logDFMBase) << "Successfully launched application via DBus";
+    qCDebug(logDFMBase) << "Successfully launched application via DBus, launch: " << filePaths;
     return true;
 }
 
@@ -132,7 +124,8 @@ bool AppLaunchUtilsPrivate::launchByGio(const QString &desktopFile, const QStrin
     }
 
     GList *gfiles = nullptr;
-    for (const QString &url : filePaths) {
+    for (const QString &path : filePaths) {
+        QString url = QUrl::fromLocalFile(path).toString();
         const QByteArray &cFilePath = url.toLocal8Bit();
         GFile *gfile = g_file_new_for_uri(cFilePath.data());
         gfiles = g_list_append(gfiles, gfile);
@@ -163,7 +156,11 @@ AppLaunchUtils::AppLaunchUtils()
 {
 }
 
-AppLaunchUtils::~AppLaunchUtils() = default;
+AppLaunchUtils &AppLaunchUtils::instance()
+{
+    static AppLaunchUtils ins;
+    return ins;
+}
 
 void AppLaunchUtils::addStrategy(AppLaunchFunc launcher, int priority)
 {
@@ -173,20 +170,44 @@ void AppLaunchUtils::addStrategy(AppLaunchFunc launcher, int priority)
               [](const auto &a, const auto &b) { return a.priority < b.priority; });
 }
 
-bool AppLaunchUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
+bool AppLaunchUtils::launchApp(const QString &desktopFile, const QStringList &urlStrs)
 {
     qCDebug(logDFMBase) << "Attempting to launch application with available strategies:"
                         << "\n  Desktop file:" << desktopFile
-                        << "\n  Files:" << filePaths;
+                        << "\n  Files:" << urlStrs;
+
+    // NOTE: There may be performance issue
+    QStringList localPaths;
+    localPaths.reserve(urlStrs.size());
+    std::transform(urlStrs.begin(), urlStrs.end(), std::back_inserter(localPaths),
+                   [](const QString &urlStr) -> QString {
+                       return QUrl(urlStr).toLocalFile();
+                   });
 
     for (const auto &strategy : d->strategies) {
-        if (strategy.launcher(desktopFile, filePaths)) {
+        if (strategy.launcher(desktopFile, localPaths)) {
             qCDebug(logDFMBase) << "Successfully launched application";
             return true;
         }
     }
 
     qCWarning(logDFMBase) << "All launch strategies failed";
+    return false;
+}
+
+bool AppLaunchUtils::defaultLaunchApp(const QString &desktopFile, const QStringList &paths)
+{
+    qCDebug(logDFMBase) << "Attempting to launch application with default:"
+                        << "\n  Desktop file:" << desktopFile
+                        << "\n  Files:" << paths;
+
+    // 避免自定义策略陷入死循环
+    if (d->launchByDBus(desktopFile, paths))
+        return true;
+
+    if (d->launchByGio(desktopFile, paths))
+        return true;
+
     return false;
 }
 
