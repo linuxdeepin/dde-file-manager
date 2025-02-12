@@ -129,4 +129,21 @@ DFMEXT::DFMExtWindowPlugin *ExtensionPluginLoader::resolveWindowPlugin()
     return windowFunc();
 }
 
+DFMEXT::DFMExtFilePlugin *ExtensionPluginLoader::resolveFilePlugin()
+{
+    if (!loader.isLoaded()) {
+        errorMessage = "Failed, called 'resolveFilePlugin' get interface, "
+                       "need call 'initialize' function befor that";
+        return {};
+    }
+
+    fileFunc = reinterpret_cast<ExtFileFuncType>(loader.resolve("dfm_extension_file"));
+    if (!fileFunc) {
+        errorMessage = "Failed, get 'dfm_extension_file' import function";
+        return {};
+    }
+
+    return fileFunc();
+}
+
 DPUTILS_END_NAMESPACE

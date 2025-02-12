@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <cassert>
+#include <sstream>
 
 #include <dfm-extension/file/dfmextfileoperationhook.h>
 
@@ -74,13 +75,24 @@ static bool openFiles(const std::vector<std::string> &srcPaths, std::vector<std:
     pid_t pid = fork();
     if (pid == 0) {
         // 子进程
-        char *argv[] = {
-            const_cast<char *>("/usr/bin/kate"),
-            const_cast<char *>(xmlFiles.c_str()),
-            nullptr
-        };
-        execvp(argv[0], argv);
-        exit(1);   // 如果execvp失败则退出
+        // 将文件字符串按空格分割成数组
+        std::vector<std::string> files;
+        std::istringstream iss(xmlFiles);
+        std::string file;
+        while (iss >> file) {
+            files.push_back(file);
+        }
+
+        // 创建参数数组：程序名 + 所有文件 + nullptr
+        std::vector<char*> argv(files.size() + 2);
+        argv[0] = const_cast<char*>("/usr/bin/kate");
+        for (size_t i = 0; i < files.size(); ++i) {
+            argv[i + 1] = const_cast<char*>(files[i].c_str());
+        }
+        argv[files.size() + 1] = nullptr;
+
+        execvp(argv[0], argv.data());
+        exit(1);  // 如果execvp失败则退出
     } else if (pid > 0) {
         // 父进程
         int status;

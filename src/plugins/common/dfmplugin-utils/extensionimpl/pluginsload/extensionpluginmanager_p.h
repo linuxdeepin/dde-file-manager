@@ -44,6 +44,7 @@ public:
     using DFMExtMenuPluginMap = QMap<QString, DFMEXT::DFMExtMenuPlugin *>;
     using DFMExtEmblemPluginMap = QMap<QString, DFMEXT::DFMExtEmblemIconPlugin *>;
     using DFMExtWindowPluginMap = QMap<QString, DFMEXT::DFMExtWindowPlugin *>;
+    using DFMExtFilePluginMap = QMap<QString, DFMEXT::DFMExtFilePlugin *>;
 
     explicit ExtensionPluginManagerPrivate(ExtensionPluginManager *qq);
     ~ExtensionPluginManagerPrivate() override;
@@ -66,6 +67,7 @@ public:
     DFMExtMenuPluginMap menuMap;
     DFMExtEmblemPluginMap emblemMap;
     DFMExtWindowPluginMap windowMap;
+    DFMExtFilePluginMap fileMap;
 
     QScopedPointer<DFMEXT::DFMExtMenuProxy> proxy { new DFMExtMenuImplProxy };
     AbstractFileWatcherPointer extPluginsPathWatcher;

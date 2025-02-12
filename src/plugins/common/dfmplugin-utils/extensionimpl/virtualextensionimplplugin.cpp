@@ -6,6 +6,7 @@
 #include "menuimpl/extensionlibmenuscene.h"
 #include "emblemimpl/extensionemblemmanager.h"
 #include "windowimpl/extensionwindowsmanager.h"
+#include "fileimpl/extensionfilemanager.h"
 #include "pluginsload/extensionpluginmanager.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -23,6 +24,7 @@ void VirtualExtensionImplPlugin::initialize()
     connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
     ExtensionEmblemManager::instance().initialize();
     ExtensionWindowsManager::instance().initialize();
+    ExtensionFileManager::instance().initialize();
 
     followEvents();
 }
@@ -64,7 +66,8 @@ void VirtualExtensionImplPlugin::followEvents()
         dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
                                 &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
     } else {
-        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
                 [](const QString &iid, const QString &name) {
                     Q_UNUSED(iid)
                     if (name == "dfmplugin-emblem")

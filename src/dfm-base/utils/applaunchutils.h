@@ -18,19 +18,20 @@ using AppLaunchFunc = std::function<bool(const QString &desktopFile, const QStri
 class AppLaunchUtilsPrivate;
 class AppLaunchUtils
 {
+    Q_DISABLE_COPY(AppLaunchUtils)
 public:
-    AppLaunchUtils();
-    ~AppLaunchUtils();
+    static AppLaunchUtils &instance();
 
     // 添加启动策略，优先级数字越小优先级越高
     void addStrategy(AppLaunchFunc launcher, int priority);
 
     // 启动应用
-    bool launchApp(const QString &desktopFile, const QStringList &filePaths);
+    bool launchApp(const QString &desktopFile, const QStringList &urlStrs);
+
+    bool defaultLaunchApp(const QString &desktopFile, const QStringList &paths);
 
 private:
-    AppLaunchUtils(const AppLaunchUtils &) = delete;
-    AppLaunchUtils &operator=(const AppLaunchUtils &) = delete;
+    AppLaunchUtils();
 
     std::unique_ptr<AppLaunchUtilsPrivate> d;
 };
