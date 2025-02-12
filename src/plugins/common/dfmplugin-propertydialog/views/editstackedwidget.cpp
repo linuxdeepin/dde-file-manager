@@ -223,6 +223,7 @@ void EditStackedWidget::initUI()
 
 void EditStackedWidget::initTextShowFrame(QString fileName)
 {
+    auto originalFileName = fileName; // 存储原始文件名
     QRect rect(QPoint(0, 0), QSize(200, 66));
     QStringList labelTexts;
     ElideTextLayout layout(fileName);
@@ -281,6 +282,12 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     }
     this->setCurrentIndex(1);
     this->setFixedHeight(textShowFrame->height());
+
+    // 对于多行显示的情况，给整个frame添加tooltip
+    if (labelTexts.join("") != originalFileName) {
+        textShowFrame->setToolTip(originalFileName);
+        textShowFrame->setCursor(Qt::PointingHandCursor);
+    }
 }
 
 void EditStackedWidget::renameFile()
