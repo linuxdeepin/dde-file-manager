@@ -60,11 +60,11 @@ bool MyMenuPlugin::buildNormalMenu(DFMExtMenu *main, const std::string &currentP
     (void)currentPath;
     (void)focusPath;
 
-    // 通过代理创建 action，此 action 在堆区分配，不自行释放将内存泄露！
+    // 通过代理创建 action
     auto rootAction { m_proxy->createAction() };
     rootAction->setText("角标管理");
 
-    // 通过代理创建 menu，此 menu 在堆区分配，不自行释放将内存泄露！
+    // 通过代理创建 menu
     auto menu { m_proxy->createMenu() };
 
     // 二级菜单在 Hover 中创建，以减少一级菜单显示的性能开销
