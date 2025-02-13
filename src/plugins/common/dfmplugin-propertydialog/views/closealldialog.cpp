@@ -19,6 +19,9 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
+
+constexpr int kFontSize = 13;
+
 CloseAllDialog::CloseAllDialog(QWidget *parent)
     : DAbstractDialog(parent)
 {
@@ -39,14 +42,15 @@ void CloseAllDialog::initUI()
 {
     messageLabel = new DLabel(this);
     auto font = messageLabel->font();
-    font.setPixelSize(12);
+    font.setPixelSize(kFontSize);
     messageLabel->setFont(font);
     //    AC_SET_OBJECT_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
     //    AC_SET_ACCESSIBLE_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
 
     closeButton = new DCommandLinkButton(tr("Close all"), this);
+    // 设置按钮无焦点
+    closeButton->setFocusPolicy(Qt::NoFocus);
     font = closeButton->font();
-    font.setPixelSize(14);
     closeButton->setFont(font);
     //    AC_SET_OBJECT_NAME(closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
     //    AC_SET_ACCESSIBLE_NAME(closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
@@ -55,7 +59,7 @@ void CloseAllDialog::initUI()
     mainLayout->addWidget(messageLabel, Qt::AlignCenter);
     mainLayout->addWidget(closeButton, Qt::AlignRight);
     mainLayout->addSpacing(0);
-    mainLayout->setContentsMargins(15, 8, 12, 11);
+    mainLayout->setContentsMargins(15, 9, 12, 10);
     setLayout(mainLayout);
 
     setTotalMessage(0, 0);
