@@ -46,6 +46,7 @@ private:
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
+    void regToPropertyDialog();
 
 private Q_SLOTS:
     void onShareStateChanged(const QString &path);

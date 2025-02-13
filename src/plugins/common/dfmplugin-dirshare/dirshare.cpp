@@ -13,6 +13,7 @@
 
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QDebug>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
@@ -36,8 +37,18 @@ bool DirShare::start()
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
 
-    CustomViewExtensionView func { DirShare::createShareControlWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
+    auto propertyPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
+    if (propertyPlugin && propertyPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        regToPropertyDialog();
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-propertydialog")
+                        regToPropertyDialog();
+                },
+                Qt::DirectConnection);
+    }
 
     return true;
 }
@@ -45,26 +56,51 @@ bool DirShare::start()
 QWidget *DirShare::createShareControlWidget(const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
-    static QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
-    if (!supported.contains(url.scheme()))
-        return nullptr;
+    fmDebug() << "Creating share control widget for URL:" << url.toString();
 
-    QFileInfo fileInfo(url.toLocalFile());
-    if (!fileInfo.exists())
+    // Check if scheme is supported
+    static const QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
+    if (!supported.contains(url.scheme())) {
+        fmWarning() << "Unsupported URL scheme:" << url.scheme();
         return nullptr;
+    }
+
+    // Validate file existence and get canonical path
+    QFileInfo fileInfo(url.toLocalFile());
+    if (!fileInfo.exists()) {
+        fmWarning() << "File does not exist:" << url.toLocalFile();
+        return nullptr;
+    }
 
     QString canonicalPath = fileInfo.canonicalFilePath();
-    if (canonicalPath.isEmpty())
+    if (canonicalPath.isEmpty()) {
+        fmWarning() << "Failed to get canonical path for:" << url.toLocalFile();
         return nullptr;
+    }
 
+    // Create file info for share permission check
     QUrl canonicalUrl = QUrl::fromLocalFile(canonicalPath);
+    fmDebug() << "Canonical URL:" << canonicalUrl.toString();
+
     auto info = InfoFactory::create<FileInfo>(canonicalUrl);
+    if (!info) {
+        fmWarning() << "Failed to create FileInfo for:" << canonicalUrl.toString();
+        return nullptr;
+    }
+
+    // Check sharing permissions
+    if (!UserShareHelper::canShare(info)) {
+        fmWarning() << "User cannot share this item";
+        return nullptr;
+    }
 
     bool disableWidget = UserShareHelper::needDisableShareWidget(info);
-    if (!UserShareHelper::canShare(info))
-        return nullptr;
+    fmDebug() << "Share widget disabled status:" << disableWidget;
 
-    return new ShareControlWidget(url, disableWidget);
+    // Create and return the share control widget
+    auto widget = new ShareControlWidget(url, disableWidget);
+    fmDebug() << "Successfully created share control widget";
+    return widget;
 }
 
 void DirShare::bindScene(const QString &parentScene)
@@ -102,6 +138,12 @@ void DirShare::bindEvents()
     dpfSlotChannel->connect(kEventSpace, "slot_Share_WhoSharedByShareName", UserShareHelperInstance, &UserShareHelper::whoShared);
 
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Share_SetPassword", UserShareHelperInstance, &UserShareHelper::handleSetPassword);
+}
+
+void DirShare::regToPropertyDialog()
+{
+    CustomViewExtensionView func { DirShare::createShareControlWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
 }
 
 void DirShare::onShareStateChanged(const QString &path)
