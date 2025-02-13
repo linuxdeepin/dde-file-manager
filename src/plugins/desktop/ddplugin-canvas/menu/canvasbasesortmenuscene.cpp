@@ -275,6 +275,7 @@ QMap<QString, QStringList> CanvasBaseSortMenuScenePrivate::secondaryMenuRule()
         QStringList sendToList;
         sendToList << "create-system-link";
         sendToList << "send-to-desktop";
+        sendToList << "send-to-bluetooth";
         sendToList << sendToRule();
 
         ret.insert("send-to",
