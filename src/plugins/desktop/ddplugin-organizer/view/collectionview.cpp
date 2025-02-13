@@ -40,7 +40,7 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
 // no need view margin, this 2px used to draw inner and out order.
-static constexpr int kCollectionViewMargin = 0;   //2
+static constexpr int kCollectionViewMargin = 0;   // 2
 
 static constexpr int kCollectionItemVerticalMargin = 2;
 static constexpr int kIconOffset = 10;
@@ -204,7 +204,7 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 
 void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
 {
-    //fileUrl is file:///xxxx
+    // fileUrl is file:///xxxx
     QItemSelection seleted;
     for (const QUrl &url : fileUrl) {
         auto desktopUrl = url.toString();
@@ -366,10 +366,10 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0; --i) {
         painter.save();
 
-        //opacity 50% 40% 30% 20%
+        // opacity 50% 40% 30% 20%
         painter.setOpacity(1.0 - (i + 5) * opacityBase);
 
-        //rotate
+        // rotate
         {
             qreal rotate = rotateBase * (qRound((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
             auto tf = painter.transform();
@@ -379,7 +379,7 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
             painter.setTransform(tf);
         }
 
-        //paint icon
+        // paint icon
         q->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
 
         painter.restore();
@@ -392,7 +392,6 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         painter.setOpacity(0.8);
         topIconSize = q->itemDelegate()->paintDragIcon(&painter, option, foucs);
         painter.restore();
-        ;
     }
 
     // paint text
@@ -400,7 +399,7 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         int length = 0;
         QString text;
         if (indexCount > maxTextCount) {
-            length = 28;   //there are three characters showed.
+            length = 28;   // there are three characters showed.
             text = QString::number(maxTextCount).append("+");
         } else {
             length = 24;   // one or two characters
@@ -706,7 +705,7 @@ void CollectionViewPrivate::showFilesProperty()
 
 bool CollectionViewPrivate::dropFilter(QDropEvent *event)
 {
-    //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
+    // Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
     {
         QModelIndex index = q->indexAt(event->pos());
         if (index.isValid()) {
@@ -1834,7 +1833,7 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
         if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
             // reselect index(maybe the user wants to drag and copy by Ctrl)
             selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
-        } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) {   //pressed on blank space.
+        } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) {   // pressed on blank space.
             setCurrentIndex(QModelIndex());
         }
 
@@ -1882,7 +1881,7 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
         QRect rect(d->pressedPosition, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
         d->elasticBand = rect.normalized();
 
-        //update selection
+        // update selection
         d->selectRect(d->elasticBand);
         update();
     } else {
