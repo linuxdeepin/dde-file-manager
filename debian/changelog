@@ -1,3 +1,31 @@
+dde-file-manager (6.5.29) unstable; urgency=medium
+
+  * fix: random event registration failure due to plugin startup order
+  * chore: remove redunant comments
+  * fix: icon scaling and improve performance in item delegates
+  * fix: Resolve display issue with Close All button in property dialog for multiple directory selection.
+  * fix: sort "send-to-bluetooth" option in canvas menu
+  * feat: add tooltip for multi-line display in property dialog
+  * fix: update path handling in isMptOfDevice method
+  * fix: Modify the history record logic of the address bar connecting to the remote file server.
+  * fix: Fixed the issue of not entering the username and password during mount, and directly closing the authentication window, prompting for incorrect information.
+  * fix: improve drag and drop permission checks
+  * fix: add conditional compilation for window and file plugins
+  * fix: ensure file info attributes are properly retrieved
+  * fix: improve icon cache refresh mechanism
+  * feat: Impl OpenFiles extension
+  * chore: update License
+  * feat: Impl example for openFiles
+  * feat: add debian config for dfm-extension-example
+  * chore: remove `dfm-gui`
+  * feat: add ext interfaces for file operation
+  * fix: Modify the translation
+  * fix: add application version to common log data
+  * fix: use error message from operation when mounting network device fails
+  * fix: [propertydialog] optimize media info parsing with background worker
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 14 Feb 2025 10:31:38 +0800
+
 dde-file-manager (6.5.28) unstable; urgency=medium
 
   * remove gio-qt
