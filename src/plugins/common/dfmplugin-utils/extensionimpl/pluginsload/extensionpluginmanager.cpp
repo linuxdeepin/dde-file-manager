@@ -192,6 +192,10 @@ void ExtensionPluginManagerPrivate::doAppendExt(const QString &name, ExtPluginLo
     DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
     if (window)
         windowMap.insert(name, window);
+
+    DFMEXT::DFMExtFilePlugin *file { loader->resolveFilePlugin() };
+    if (file)
+        fileMap.insert(name, file);
 }
 
 void ExtensionPluginManagerPrivate::release()
@@ -256,6 +260,13 @@ QList<DFMEXT::DFMExtWindowPlugin *> ExtensionPluginManager::windowPlugins() cons
     Q_D(const ExtensionPluginManager);
 
     return d->windowMap.values();
+}
+
+QList<DFMEXT::DFMExtFilePlugin *> ExtensionPluginManager::filePlugins() const
+{
+    Q_D(const ExtensionPluginManager);
+
+    return d->fileMap.values();
 }
 
 DFMEXT::DFMExtMenuProxy *ExtensionPluginManager::pluginMenuProxy() const
