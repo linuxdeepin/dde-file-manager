@@ -626,7 +626,7 @@ void ShareControlWidget::showSharePasswordSettingsDialog()
     dialog->show();
     dialog->moveToCenter();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::buttonClicked, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
     this->setProperty("UserSharePwdSettingDialogShown", true);
     QObject::connect(dialog, &UserSharePasswordSettingDialog::inputPassword, [=](const QString &password) {
         QString userName = UserShareHelperInstance->currentUserName();
