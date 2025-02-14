@@ -9,6 +9,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <DTitlebar>
+#include <DLabel>
 
 #include <QApplication>
 #include <QScreen>
@@ -86,8 +87,13 @@ bool OptionsWindow::initialize()
     auto titleBar = new DTitlebar(this);
     titleBar->setMenuVisible(false);
     titleBar->setBackgroundTransparent(true);
-    titleBar->setTitle(tr("Desktop options"));
     mainLayout->addWidget(titleBar, 0, Qt::AlignTop);
+    DLabel *titleLabel = new DLabel(tr("Desktop options"), this);
+    auto font = titleLabel->font();
+    font.setWeight(QFont::Medium);
+    titleLabel->setFont(font);
+    mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(10);
 
     // content
     d->contentWidget = new QWidget(this);
