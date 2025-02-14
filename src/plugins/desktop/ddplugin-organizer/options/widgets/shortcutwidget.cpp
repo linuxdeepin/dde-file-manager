@@ -17,6 +17,13 @@ ShortcutWidget::ShortcutWidget(const QString &title, QWidget *parent)
     label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     keyEdit = qobject_cast<DKeySequenceEdit *>(rightWidget);
     keyEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    auto p = keyEdit->palette();
+    p.setColor(QPalette::Base, Qt::transparent);
+    p.setColor(QPalette::Button, Qt::transparent);
+    keyEdit->setPalette(p);
+    keyEdit->setAutoFillBackground(true);
+
     connect(keyEdit, &DKeySequenceEdit::editingFinished, this, [this](const QKeySequence &seq) {
         keyEdit->clearFocus();
         if (!modifierMatched(seq)) {
