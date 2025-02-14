@@ -11,6 +11,7 @@
 #include <dfm-extension/menu/dfmextmenuplugin.h>
 #include <dfm-extension/emblemicon/dfmextemblemiconplugin.h>
 #include <dfm-extension/window/dfmextwindowplugin.h>
+#include <dfm-extension/file/dfmextfileplugin.h>
 
 #include <QObject>
 #include <QLibrary>
@@ -28,10 +29,11 @@ public:
     using ExtMenuFuncType = DFMEXT::DFMExtMenuPlugin *(*)();
     using ExtEmblemFuncType = DFMEXT::DFMExtEmblemIconPlugin *(*)();
     using ExtWindowFuncType = DFMEXT::DFMExtWindowPlugin *(*)();
+    using ExtFileFuncType = DFMEXT::DFMExtFilePlugin *(*)();
 
 public:
     explicit ExtensionPluginLoader(const QString &filaName, QObject *parent = nullptr);
-    ~ExtensionPluginLoader() override {}
+    ~ExtensionPluginLoader() override { }
 
     QString fileName() const;
     QString lastError() const;
@@ -43,6 +45,7 @@ public:
     [[nodiscard]] DFMEXT::DFMExtMenuPlugin *resolveMenuPlugin();
     [[nodiscard]] DFMEXT::DFMExtEmblemIconPlugin *resolveEmblemPlugin();
     [[nodiscard]] DFMEXT::DFMExtWindowPlugin *resolveWindowPlugin();
+    [[nodiscard]] DFMEXT::DFMExtFilePlugin *resolveFilePlugin();
 
 private:
     QLibrary loader;
@@ -53,6 +56,7 @@ private:
     ExtMenuFuncType menuFunc { nullptr };
     ExtEmblemFuncType emblemFunc { nullptr };
     ExtWindowFuncType windowFunc { nullptr };
+    ExtFileFuncType fileFunc { nullptr };
 };
 
 using ExtPluginLoaderPointer = QSharedPointer<ExtensionPluginLoader>;
