@@ -1151,7 +1151,6 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
     askForChoice.setTitle(title);
     askForChoice.setMessage(newMsg);
     askForChoice.addButtons(choices);
-    askForChoice.setMaximumWidth(480);
 
     return askForChoice.exec();
 }
