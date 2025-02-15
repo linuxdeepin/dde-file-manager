@@ -152,7 +152,7 @@ void RetrievePasswordView::buttonClicked(int index, const QString &text)
         break;
     case 1:
         //! 用户权限认证(异步授权)
-        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRetrieve);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &RetrievePasswordView::slotCheckAuthorizationFinished);
         break;
