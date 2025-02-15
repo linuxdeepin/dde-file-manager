@@ -183,6 +183,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
     FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
                                         : new FMWindow(showedUrl);
+
     window->winId();
 
     {
@@ -233,7 +234,7 @@ void FileManagerWindowsManager::showWindow(FileManagerWindowsManager::FMWindow *
     Q_ASSERT(window);
     window->show();
     qApp->setActiveWindow(window);
-    emit window->currentUrlChanged(window->currentUrl());   //The URL needs to notify the subscribers when the first window opened.
+    emit window->currentUrlChanged(window->currentUrl());   // The URL needs to notify the subscribers when the first window opened.
 }
 
 /*!
@@ -301,9 +302,9 @@ void FileManagerWindowsManager::resetPreviousActivedWindowId()
 {
     d->previousActivedWindowId = 0;
     QHashIterator<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> it(d->windows);
-    //Before creating a new window, save the current actived window id to `previousActivedWindowId`,
-    //since many times we need to synchronize some informations from the trigger window to the new window
-    //such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
+    // Before creating a new window, save the current actived window id to `previousActivedWindowId`,
+    // since many times we need to synchronize some informations from the trigger window to the new window
+    // such as the sidebar expanding states, so `previousActivedWindowId` is help for that.
     while (it.hasNext()) {
         it.next();
         if (it.value()->isActiveWindow()) {
