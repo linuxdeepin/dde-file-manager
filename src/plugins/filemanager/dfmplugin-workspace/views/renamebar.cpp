@@ -7,6 +7,7 @@
 #include "utils/fileoperatorhelper.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include "workspacewidget.h"
+#include "workspacepage.h"
 #include "views/fileview.h"
 
 #include <QComboBox>
@@ -329,14 +330,16 @@ void RenameBar::initConnect()
 
 QList<QUrl> RenameBar::getSelectFiles()
 {
-    auto widget = qobject_cast<WorkspaceWidget *>(parentWidget());
-    if (widget) {
-        auto view = dynamic_cast<FileView *>(widget->currentView());
-        if (view)
-            return view->selectedUrlList();
-    }
+    WorkspacePage* page = qobject_cast<WorkspacePage *>(parentWidget());
+    if (!page)
+        return {};
 
-    return {};
+    FileView* view = dynamic_cast<FileView *>(page->currentViewPtr());
+    if (!view)
+        return {};
+
+    return view->selectedUrlList();
+
 }
 
 
