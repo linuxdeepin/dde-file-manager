@@ -44,14 +44,27 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
         return item1 && item2 && item1->group() == item2->group();
     };
 
+    auto isSourceItemValid = [this](SideBarItem *item) -> bool {
+        for (const auto &group : groupItems()) {
+            for (int row = 0; row < group->rowCount(); ++row) {
+                if (group->child(row) == item) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
     SideBarItem *targetItem = this->itemFromIndex(row, parent);
 
-    if (isSeparator(targetItem))   //According to the requirement，sparator does not support to drop.
+    if (isSeparator(targetItem))   // According to the requirement，sparator does not support to drop.
         return false;
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction) {
         SideBarItem *sourceItem = curDragItem;
+
+        if (!isSourceItemValid(sourceItem))
+            return false;
 
         // normal drag tag or bookmark or quick access
         if (isItemDragEnabled(targetItem) && isTheSameGroup(sourceItem, targetItem))
@@ -166,10 +179,10 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
         return true;
 
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
-    if (groupItem) {   //top item
-        QStandardItemModel::insertRow(row + 1, item);   //insert the top item
+    if (groupItem) {   // top item
+        QStandardItemModel::insertRow(row + 1, item);   // insert the top item
         return true;
-    } else {   //sub item
+    } else {   // sub item
         int count = this->rowCount();
         for (int i = 0; i < count; i++) {
             const QModelIndex &index = this->index(i, 0);
@@ -205,11 +218,11 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
 
     SideBarItemSeparator *topItem = dynamic_cast<SideBarItemSeparator *>(item);
     SideBarItem *groupOther = nullptr;
-    if (topItem) {   //Top item
+    if (topItem) {   // Top item
         auto t = topItem->group();
         QStandardItemModel::appendRow(item);
-        return rowCount() - 1;   //The return value is the index of top item.
-    } else {   //Sub item
+        return rowCount() - 1;   // The return value is the index of top item.
+    } else {   // Sub item
         int count = this->rowCount();
         for (int i = 0; i < count; i++) {
             const QModelIndex &index = this->index(i, 0);
@@ -229,8 +242,8 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
                 if (!tmpItem)
                     continue;
 
-                //Sort for devices group and network group, all so for quick access group.
-                //Both of Computer plugin and bookmark plugin are following the the `hook_Group_Sort` event.
+                // Sort for devices group and network group, all so for quick access group.
+                // Both of Computer plugin and bookmark plugin are following the the `hook_Group_Sort` event.
                 bool sorted = { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
                 if (sorted) {
                     groupItem->insertRow(row, item);
@@ -244,7 +257,7 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
             return row;   // The position after sorted
         }
     }
-    if (groupOther && !topItem) {   //If can not find out the parent item, just append it to Group_Other
+    if (groupOther && !topItem) {   // If can not find out the parent item, just append it to Group_Other
         groupOther->appendRow(item);
         fmInfo() << "Item added to groupOther";
         return groupOther->rowCount() - 1;
@@ -261,7 +274,7 @@ bool SideBarModel::removeRow(const QUrl &url)
 
     int count = this->rowCount();
     for (int i = 0; i < count; i++) {
-        const QModelIndex &index = this->index(i, 0);   //top item index
+        const QModelIndex &index = this->index(i, 0);   // top item index
         if (index.isValid()) {
             QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
             SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
@@ -289,7 +302,7 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
     if (!url.isValid())
         return;
     for (int r = 0; r < rowCount(); r++) {
-        auto item = itemFromIndex(r);   //Top item
+        auto item = itemFromIndex(r);   // Top item
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
         if (!groupItem)
             continue;
@@ -323,9 +336,9 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
 {
     QModelIndex retIndex;
 
-    int count = this->rowCount();   //The top row count
+    int count = this->rowCount();   // The top row count
     for (int i = 0; i < count; i++) {
-        const QModelIndex &index = this->index(i, 0);   //top item index
+        const QModelIndex &index = this->index(i, 0);   // top item index
         if (index.isValid()) {
             QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
             SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
@@ -348,9 +361,9 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
 
 void SideBarModel::addEmptyItem()
 {
-    //Attention!
-    //The current sidebar does not support external plugins to add groups.
-    //If this feature is implemented in the future, it is necessary to move the emptyItem item appropriately
+    // Attention!
+    // The current sidebar does not support external plugins to add groups.
+    // If this feature is implemented in the future, it is necessary to move the emptyItem item appropriately
     int count = rowCount();
     QSize emptyItemsize = QSize(10, 10);
     if (count > 0) {
