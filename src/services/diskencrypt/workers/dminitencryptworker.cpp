@@ -56,7 +56,7 @@ void DMInitEncryptWorker::run()
 
     auto phyPtr = blockdev_helper::createDevPtr(phyDevPath);
     auto source = phyPtr
-            ? phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
+            ? "PARTUUID=" + phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
             : phyDevPath;
     crypttab_helper::insertCryptItem({ activeDmName,
                                        source,

@@ -123,6 +123,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
     datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
     datas[kPreferredDevice] = getNullStrIfNotValid(Property::kBlockPreferredDevice);
+    datas[kSymlinks] = dev->getProperty(dfmmount::Property::kBlockSymlinks).toStringList();
 
     auto config = dev->getProperty(Property::kBlockConfiguration).toMap();
     if (!config.isEmpty()) {

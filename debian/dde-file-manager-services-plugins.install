@@ -7,3 +7,4 @@ usr/share/dbus-1/system-services/*.service
 usr/share/dbus-1/system.d/org.deepin.filemanager.diskencrypt.conf
 etc/systemd/system/deepin-service-group@.service.d/*
 etc/polkit-1/localauthority/10-vendor.d/99-dde-file-manager-encrypt.pkla
+run/udev/rules.d/*.rules

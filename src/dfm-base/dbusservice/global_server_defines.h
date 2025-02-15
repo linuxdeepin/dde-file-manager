@@ -81,6 +81,7 @@ inline constexpr char kUDisks2Size[] { "UDisks2Size" };
 inline constexpr char kDriveModel[] { "DriveModel" };
 inline constexpr char kPreferredDevice[] { "PreferredDevice" };
 inline constexpr char kConfiguration[] { "Configuration" };
+inline constexpr char kSymlinks[] { "Symlinks" };
 }   // namespace DeviceProperty
 
 /*!

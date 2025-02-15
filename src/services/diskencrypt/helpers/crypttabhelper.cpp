@@ -133,6 +133,7 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
         contents.append(line);
     }
     auto data = contents.join('\n').toLocal8Bit();
+    data.append('\n');
 
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         qWarning() << "cannot open crypttab for write!";

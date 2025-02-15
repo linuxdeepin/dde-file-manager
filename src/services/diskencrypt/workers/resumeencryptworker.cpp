@@ -58,6 +58,12 @@ void ResumeEncryptWorker::run()
         return;
     }
 
+    auto status = crypt_setup_helper::encryptStatus(m_jobArgs.devPath);
+    if (!(status & disk_encrypt::EncryptState::kStatusEncrypt)) {
+        qInfo() << "device is not under encrypting, give up." << m_jobArgs.devPath;
+        return;
+    }
+
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath);
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName);
 
