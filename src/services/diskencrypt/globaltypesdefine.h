@@ -52,7 +52,8 @@ inline const QStringList kDisabledEncryptPath {
     "/",
     "/boot",
     "/boot/efi",
-    "/recovery"
+    "/recovery",
+    "/sysroot"
 };
 
 enum EncryptOperationStatus {
@@ -105,27 +106,6 @@ enum SecKeyType {
     kTpm,
 };
 
-struct DeviceEncryptParam
-{
-    QString devID;
-    QString devDesc;
-    QString jobType;
-    QString devPreferPath;
-    QString devUnlockName;
-    QString key;
-    QString exportPath;
-    SecKeyType secType;
-
-    QString uuid;
-    QString newKey;
-    QString deviceDisplayName;
-    QString mountPoint;
-    QString backingDevUUID;
-    QString clearDevUUID;
-    QString prefferDevName;
-    bool validateByRecKey;
-};
-
 enum EncryptState {
     kStatusNotEncrypted = 0,
     kStatusFinished = 1,
@@ -138,6 +118,29 @@ enum EncryptState {
 Q_ENUMS(EncryptState)
 Q_DECLARE_FLAGS(EncryptStates, EncryptState)
 Q_DECLARE_OPERATORS_FOR_FLAGS(EncryptStates)
+
+struct DeviceEncryptParam
+{
+    QString devID;
+    QString devDesc;
+    QString jobType;
+    QString devPreferPath;
+    QString devUnlockName;
+    QString key;
+    QString exportPath;
+    EncryptStates states;
+    SecKeyType secType;
+
+    QString uuid;
+    QString newKey;
+    QString deviceDisplayName;
+    QString mountPoint;
+    QString backingDevUUID;
+    QString clearDevUUID;
+    QString prefferDevName;
+    bool validateByRecKey;
+};
+
 }
 
 #endif   // GLOBALTYPESDEFINE_H

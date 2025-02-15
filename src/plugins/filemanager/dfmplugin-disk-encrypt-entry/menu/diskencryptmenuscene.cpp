@@ -42,7 +42,7 @@ static constexpr char kActIDDecrypt[] { "de_1_decrypt" };
 static constexpr char kActIDResumeDecrypt[] { "de_1_resumeDecrypt" };
 static constexpr char kActIDChangePwd[] { "de_2_changePwd" };
 
-static constexpr char kOverleyEncPrefix[] { "/dev/mapper/usec-overlay" };
+static constexpr char kOverleyEncPrefix[] { "usec-overlay-" };
 
 DiskEncryptMenuScene::DiskEncryptMenuScene(QObject *parent)
     : AbstractMenuScene(parent)
@@ -85,20 +85,24 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         return false;
 
     const QString &idType = selectedItemInfo.value("IdType").toString();
-    auto preferDev = selectedItemInfo.value("PreferredDevice", "").toString();
+    auto devSymlinks = selectedItemInfo.value("Symlinks").toStringList();
+    bool isOverlay = std::any_of(devSymlinks.cbegin(),
+                                 devSymlinks.cend(),
+                                 [](QString symlink) { return symlink.contains(kOverleyEncPrefix); });
     if (device.startsWith("/dev/dm-")
         && idType != "crypto_LUKS"
-        && !preferDev.startsWith(kOverleyEncPrefix)) {
-        qInfo() << "mapper device is not supported to be encrypted yet." << device << preferDev;
+        && !isOverlay) {
+        qInfo() << "mapper device is not supported to be encrypted yet." << device << devSymlinks;
         return false;
     }
 
     const QStringList &supportedFS { "ext4", "ext3", "ext2" };
-    if (idType == "crypto_LUKS") {
-        if (selectedItemInfo.value("IdVersion").toString() == "1")
-            return false;
-        hasCryptHeader = true;
-    } else if (!supportedFS.contains(idType)) {
+    param.states = static_cast<EncryptStates>(EventsHandler::instance()->deviceEncryptStatus(device));
+    if (param.states & EncryptState::kStatusNotEncrypted
+        && !supportedFS.contains(idType)) {
+        return false;
+    } else if (idType == "crypto_LUKS"
+               && selectedItemInfo.value("IdVersion").toString() == "1") {
         return false;
     }
 
@@ -112,7 +116,7 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
     }
 
     param.jobType = job_type::TypeNormal;
-    if (preferDev.startsWith(kOverleyEncPrefix))
+    if (isOverlay)
         param.jobType = job_type::TypeOverlay;
 
     auto configJson = selectedItemInfo.value("Configuration", "").toString();
@@ -140,7 +144,7 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         param.devUnlockName = clearInfo.value("PreferredDevice").toString().mid(12);   // /dev/mapper/xxxx ==> xxxx
     }
 
-    if (hasCryptHeader)
+    if (param.states & EncryptState::kStatusFinished)
         param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
 
     return true;
@@ -190,9 +194,12 @@ bool DiskEncryptMenuScene::triggered(QAction *action)
         QString displayName = QString("%1(%2)").arg(param.deviceDisplayName).arg(param.devDesc.mid(5));
         if (dialog_utils::showConfirmDecryptionDialog(displayName, param.jobType == job_type::TypeFstab) != QDialog::Accepted)
             return true;
-        param.jobType == job_type::TypeNormal
-                ? unmountBefore(decryptDevice, param)
-                : doDecryptDevice(param);
+        if (param.jobType == job_type::TypeNormal)
+            unmountBefore(decryptDevice, param);
+        else if (param.jobType == job_type::TypeOverlay)
+            decryptDevice(param);
+        else if (param.jobType == job_type::TypeFstab)
+            doDecryptDevice(param);
     } else if (actID == kActIDChangePwd) {
         changePassphrase(param);
     } else if (actID == kActIDUnlock) {
@@ -594,10 +601,9 @@ void DiskEncryptMenuScene::updateActions()
     actions[kActIDUnlock]->setEnabled(!currDevOperating);
 
     // update visibility
-    if (hasCryptHeader) {
-        int states = EventsHandler::instance()->deviceEncryptStatus(param.devDesc);
+    if (param.states & ~EncryptState::kStatusNotEncrypted) {
         // fully encrypted
-        if (states & kStatusFinished) {
+        if (param.states & kStatusFinished) {
             bool unlocked = selectedItemInfo.value("CleartextDevice").toString() != "/";
             actions[kActIDDecrypt]->setVisible(true);
             actions[kActIDUnlock]->setVisible(!unlocked);
@@ -605,18 +611,18 @@ void DiskEncryptMenuScene::updateActions()
                 actions[kActIDChangePwd]->setVisible(true);
         }
         // not finished
-        else if (states & kStatusOnline) {
+        else if (param.states & kStatusOnline) {
             // encrytp not finish
-            if (states & kStatusEncrypt) {
+            if (param.states & kStatusEncrypt) {
                 actions[kActIDResumeEncrypt]->setVisible(true);
             }
             // decrypt not finish
-            else if (states & kStatusDecrypt) {
+            else if (param.states & kStatusDecrypt) {
                 actions[kActIDDecrypt]->setVisible(false);
                 actions[kActIDResumeDecrypt]->setVisible(true);
             }
         } else {
-            qWarning() << "unmet status!" << param.devDesc << states;
+            qWarning() << "unmet status!" << param.devDesc << param.states;
         }
     } else if (EventsHandler::instance()->unfinishedDecryptJob() == param.devDesc) {
         actions[kActIDResumeDecrypt]->setVisible(true);
