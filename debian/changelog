@@ -1,3 +1,16 @@
+dde-file-manager (6.5.30) unstable; urgency=medium
+
+  * fix: Resolved the issue where the prompt message was incomplete during the first SFTP access
+  * feat: Add slider configuration with custom value list
+  * fix: the frontend logic of decrypt device.
+  * refactor: Improve sidebar item validation and drag-and-drop handling
+  * fix: Disable titlebar menu for file dialog and improve window handling
+  * fix: Fixed the issue of failing to rename multiple files simultaneously
+  * feat: refact the encrypt backend
+  * fix: Fixed the issue where changing the password only responded the first time
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 15 Feb 2025 15:30:10 +0800
+
 dde-file-manager (6.5.29) unstable; urgency=medium
 
   * fix: random event registration failure due to plugin startup order
