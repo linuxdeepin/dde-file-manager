@@ -197,7 +197,6 @@ int main(int argc, char *argv[])
 
     int ret { a.exec() };
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
-    qWarning() << "Main thread quit";
     if (qApp->property("SIGTERM").toBool()) {
         qWarning() << "Exit app by SIGTERM, reuturn: " << ret;
         _Exit(ret);

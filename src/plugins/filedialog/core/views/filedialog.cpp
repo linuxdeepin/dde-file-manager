@@ -219,6 +219,8 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
     : FileManagerWindow(url, parent),
       d(new FileDialogPrivate(this))
 {
+    setProperty("WINDOW_DISABLE_TITLEBAR_MENU", true);
+
     initializeUi();
     initConnect();
     initEventsConnect();
@@ -516,7 +518,7 @@ void FileDialog::setOptions(QFileDialog::Options options)
         return;
 
     // （此处修改比较特殊，临时方案）与产品沟通后，使用uos文管保存框保存文件时，如果当前目录下有同名文件，
-    // 必须要弹出提示框 “是否覆盖重名文件”。
+    // 必须要弹出提示框 "是否覆盖重名文件"。
     // 所以options中的QFileDialog::DontConfirmOverwrite标志位将失去意义，
     // 所以此处直接将该标志位赋值为0。
     options &= ~QFileDialog::DontConfirmOverwrite;
@@ -1080,11 +1082,6 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
 void FileDialog::initializeUi()
 {
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
-
-    if (titlebar()) {
-        titlebar()->setDisableFlags(Qt::WindowSystemMenuHint);
-        titlebar()->setMenuVisible(false);
-    }
 
     // init status bar
     d->statusBar = new FileDialogStatusBar(this);

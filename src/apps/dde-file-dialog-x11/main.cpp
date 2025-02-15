@@ -49,9 +49,6 @@ static void initLog()
 
 static void initEnv()
 {
-    // Note: x11 flag!!!
-    qputenv("QT_QPA_PLATFORM", "xcb");
-
     // for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");

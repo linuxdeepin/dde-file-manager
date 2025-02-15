@@ -28,7 +28,7 @@ class FileDialogHandlePrivate
 {
 public:
     explicit FileDialogHandlePrivate(FileDialogHandle *qq)
-        : q_ptr(qq) {}
+        : q_ptr(qq) { }
 
     QPointer<FileDialog> dialog;
     QStringList lastFilterGroup;
@@ -55,7 +55,7 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
 
     //! no need to hide, if the dialog is showed in creating, it must be bug.
     //! see bug#22564
-    //d_func()->dialog->hide();
+    // d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
     connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);
@@ -576,8 +576,13 @@ void FileDialogHandle::setWindowStayOnTop()
             if (setWindowProperty && d->dialog)
                 reinterpret_cast<void (*)(QWindow *, const char *, const QVariant &)>(setWindowProperty)(d->dialog->windowHandle(), "_d_dwayland_staysontop", true);
         } else {
-            if (d->dialog)
-                d->dialog->setWindowFlag(Qt::WindowStaysOnTopHint, true);
+            // BUG: 217379
+            // BUG: 302951
+            // TODO(zhangs): Maybe a bug in Qt6
+            // The winId() interface fails to return correctly when WindowStaysOnTopHint is used.
+
+            // if (d->dialog)
+            //     d->dialog->setWindowFlag(Qt::WindowStaysOnTopHint, true);
         }
     }
 }

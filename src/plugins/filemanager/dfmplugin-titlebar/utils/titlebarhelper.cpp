@@ -68,6 +68,18 @@ quint64 TitleBarHelper::windowId(QWidget *sender)
 
 void TitleBarHelper::createSettingsMenu(quint64 id)
 {
+    auto window = FMWindowsIns.findWindowById(id);
+    Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
+    auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
+    if (!titleBarWidget || !titleBarWidget->titleBar())
+        return;
+
+    if (window->property("WINDOW_DISABLE_TITLEBAR_MENU").toBool()) {
+        titleBarWidget->titleBar()->setDisableFlags(Qt::WindowSystemMenuHint);
+        titleBarWidget->titleBar()->setMenuVisible(false);
+        return;
+    }
+
     QMenu *menu = new QMenu();
 
     QAction *action { new QAction(QObject::tr("New window"), menu) };
@@ -105,19 +117,14 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
             handleSettingMenuTriggered(id, val);
     });
 
-    auto window = FMWindowsIns.findWindowById(id);
-    Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
-    if (auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar())) {
-        auto defaultMenu = titleBarWidget->titleBar()->menu();
-        if (defaultMenu && !defaultMenu->isEmpty()) {
-            for (auto *act : defaultMenu->actions()) {
-                act->setParent(menu);
-                menu->addAction(act);
-            }
+    auto defaultMenu = titleBarWidget->titleBar()->menu();
+    if (defaultMenu && !defaultMenu->isEmpty()) {
+        for (auto *act : defaultMenu->actions()) {
+            act->setParent(menu);
+            menu->addAction(act);
         }
-
-        titleBarWidget->titleBar()->setMenu(menu);
     }
+    titleBarWidget->titleBar()->setMenu(menu);
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
