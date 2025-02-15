@@ -50,6 +50,7 @@ private:
 
 protected:
     void paintEvent(QPaintEvent *evt) override;
+    bool eventFilter(QObject *object, QEvent *event) override;
 
 private slots:
     void onComboBoxChanged();

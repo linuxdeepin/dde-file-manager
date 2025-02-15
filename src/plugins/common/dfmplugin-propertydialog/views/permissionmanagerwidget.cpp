@@ -22,6 +22,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
+#include <QWheelEvent>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -155,14 +156,17 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
+    ownerComboBox->installEventFilter(this);
 
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
+    groupComboBox->installEventFilter(this);
 
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
+    otherComboBox->installEventFilter(this);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
@@ -307,6 +311,17 @@ void PermissionManagerWidget::paintEvent(QPaintEvent *evt)
     DArrowLineDrawer::paintEvent(evt);
 }
 
+bool PermissionManagerWidget::eventFilter(QObject *object, QEvent *event)
+{
+    if (object->inherits("QComboBox") && event->type() == QEvent::Wheel) {
+        QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
+        QCoreApplication::sendEvent(this, wheelEvent);
+        return true;
+    }
+
+    return DArrowLineDrawer::eventFilter(object, event);
+}
+
 void PermissionManagerWidget::onComboBoxChanged()
 {
     FileInfoPointer info = InfoFactory::create<FileInfo>(selectUrl);
@@ -321,7 +336,7 @@ void PermissionManagerWidget::onComboBoxChanged()
     int groupFlags = groupComboBox->currentData().toInt();
     int otherFlags = otherComboBox->currentData().toInt();
     QFile::Permissions permissions = info->permissions();
-    //点击combobox都需要保持执行权限，否则将失去相关权限位
+    // 点击combobox都需要保持执行权限，否则将失去相关权限位
     ownerFlags |= (permissions & QFile::ExeOwner);
     groupFlags |= (permissions & QFile::ExeGroup);
     otherFlags |= (permissions & QFile::ExeOther);
