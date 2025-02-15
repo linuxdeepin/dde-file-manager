@@ -335,6 +335,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                         "dfm_viewoptions_maxicon",
                         iconSizeLevelMax,
                         iconSizeLevelMin,
+                        viewDefines.getIconSizeList(),
                         5);
     int iconGridDensityLevelMax = viewDefines.iconGridDensityCount() - 1;
     int iconGridDensityLevelMin = 0;
@@ -344,6 +345,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                         "dfm_viewoptions_maxgrid",
                         iconGridDensityLevelMax,
                         iconGridDensityLevelMin,
+                        viewDefines.getIconGridDensityList(),
                         2);
     int listHeightLevelMax = viewDefines.listHeightCount() - 1;
     int listHeightLevelMin = 0;
@@ -353,6 +355,7 @@ void SettingBackend::initWorkspaceSettingConfig()
                         "dfm_viewoptions_maxlist",
                         listHeightLevelMax,
                         listHeightLevelMin,
+                        viewDefines.getListHeightList(),
                         1);
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };

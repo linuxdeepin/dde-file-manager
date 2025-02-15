@@ -59,6 +59,7 @@ public:
     bool addComboboxConfig(const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal = QVariant());
     bool addSliderConfig(const QString &key, const QString &name, int maxVal, int minVal, int defaultVal = 0);
     bool addSliderConfig(const QString &key, const QString &name, const QString &leftIcon, const QString &rightIcon, int maxVal, int minVal, int defaultVal = 0);
+    bool addSliderConfig(const QString &key, const QString &name, const QString &leftIcon, const QString &rightIcon, int maxVal, int minVal, QVariantList valueList, int defaultVal = 0);
 
 protected:
     SettingJsonGenerator();

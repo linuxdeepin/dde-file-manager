@@ -21,6 +21,7 @@
 #include <DSlider>
 #include <DLabel>
 
+#include <QToolTip>
 #include <QWindow>
 #include <QFile>
 #include <QFrame>
@@ -338,6 +339,25 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
     }
     slider->setValue(option->value().toInt());
     slider->setIconSize(QSize(20, 20));
+
+    QVariantList valList = option->data("values").toList();
+    if (!valList.isEmpty()) {
+        QObject::connect(slider, &DSlider::sliderMoved, slider, [ = ](int position) {
+            if (position >= valList.count())
+                return;
+            int stepLength = (slider->slider()->width() - 28) / option->data("max").toInt();
+            QPoint pos = slider->slider()->mapToGlobal(QPoint(4 + position * stepLength, -48));
+            QToolTip::showText(pos, valList.at(position).toString(), slider);
+        });
+        QObject::connect(slider, &DSlider::sliderPressed, slider, [ = ]{
+            int position = slider->slider()->sliderPosition();
+            if (position >= valList.count())
+                return;
+            int stepLength = (slider->slider()->width() - 28) / option->data("max").toInt();
+            QPoint pos = slider->slider()->mapToGlobal(QPoint(4 + position * stepLength, -48));
+            QToolTip::showText(pos, valList.at(position).toString(), slider);
+        });
+    }
 
     option->connect(slider, &DSlider::valueChanged,
     option, [ = ](int value) {
