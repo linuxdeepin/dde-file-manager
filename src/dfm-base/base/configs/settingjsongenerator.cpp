@@ -227,6 +227,18 @@ bool SettingJsonGenerator::addSliderConfig(const QString &key,
                                            int minVal,
                                            int defaultVal)
 {
+    return addSliderConfig(key, name, leftIcon, rightIcon, maxVal, minVal, {}, defaultVal);
+}
+
+bool SettingJsonGenerator::addSliderConfig(const QString &key,
+                                           const QString &name,
+                                           const QString &leftIcon,
+                                           const QString &rightIcon,
+                                           int maxVal,
+                                           int minVal,
+                                           QVariantList valueList,
+                                           int defaultVal)
+{
     QVariantMap config {
         { "key", key.mid(key.lastIndexOf(".") + 1) },
         { "name", name },
@@ -235,7 +247,8 @@ bool SettingJsonGenerator::addSliderConfig(const QString &key,
         { "min", minVal},
         { "default", defaultVal },
         { "left-icon", leftIcon },
-        { "right-icon", rightIcon }
+        { "right-icon", rightIcon },
+        { "values", valueList}
     };
     return addConfig(key, config);
 }

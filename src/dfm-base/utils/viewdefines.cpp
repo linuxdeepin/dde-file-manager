@@ -4,6 +4,8 @@
 
 #include "viewdefines.h"
 
+#include <QVariant>
+
 DFMBASE_USE_NAMESPACE
 
 ViewDefines::ViewDefines()
@@ -26,6 +28,11 @@ int ViewDefines::indexOfIconSize(int size) const
     return iconSizeList.indexOf(size);
 }
 
+QVariantList ViewDefines::getIconSizeList() const
+{
+    return transToVariantList(iconSizeList);
+}
+
 int ViewDefines::iconGridDensityCount() const
 {
     return iconGridDensityList.size();
@@ -41,6 +48,11 @@ int ViewDefines::indexOfIconGridDensity(int density) const
     return iconGridDensityList.indexOf(density);
 }
 
+QVariantList ViewDefines::getIconGridDensityList() const
+{
+    return transToVariantList(iconGridDensityList);
+}
+
 int ViewDefines::listHeightCount() const
 {
     return listHeightList.size();
@@ -54,6 +66,11 @@ int ViewDefines::listHeight(int index) const
 int ViewDefines::indexOfListHeight(int height) const
 {
     return listHeightList.indexOf(height);
+}
+
+QVariantList ViewDefines::getListHeightList() const
+{
+    return transToVariantList(listHeightList);
 }
 
 void ViewDefines::initDefines()
@@ -81,5 +98,14 @@ void ViewDefines::initDefines()
 
     // init list height
     listHeightList = { 24, 32, 48 };
+}
+
+QVariantList ViewDefines::transToVariantList(const QList<int> list) const
+{
+    QVariantList ret {};
+    for (int val : list)
+        ret.append(QVariant(QString::number(val)));
+
+    return ret;
 }
 

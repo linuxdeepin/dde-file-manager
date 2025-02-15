@@ -28,14 +28,18 @@ public:
     int iconSizeCount() const;
     int iconSize(int index) const;
     int indexOfIconSize(int size) const;
+    QVariantList getIconSizeList() const;
     int iconGridDensityCount() const;
     int iconGridDensity(int index) const;
     int indexOfIconGridDensity(int density) const;
+    QVariantList getIconGridDensityList() const;
     int listHeightCount() const;
     int listHeight(int index) const;
     int indexOfListHeight(int height) const;
+    QVariantList getListHeightList() const;
 private:
     void initDefines();
+    QVariantList transToVariantList(const QList<int> list) const;
 
     QList<int> iconSizeList {};
     QList<int> iconGridDensityList {};
