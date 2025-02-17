@@ -203,7 +203,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
 
             auto size = info->size();
             if (size > 0) {
-                totalSize += size;
+                totalSize += isSyslink ? 0 : size;
                 emitSizeChanged();
             }
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
