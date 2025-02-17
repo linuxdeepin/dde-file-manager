@@ -90,8 +90,8 @@ void NameTextEdit::slotTextChanged()
         text.chop(1);
     }
 
-    if (text.count() != old_text.count()) {
-        this->setText(text);
+    if (text.size() != old_text.size()) {
+        this->setPlainText(text);
     }
 
     QTextCursor cursor = this->textCursor();
@@ -138,7 +138,7 @@ void NameTextEdit::showAlertMessage(const QString &text, int duration)
     if (!tooltip) {
         tooltip = createTooltip();
         tooltip->setBackgroundColor(palette().color(backgroundRole()));
-        QTimer::singleShot(duration, this, [ = ] {
+        QTimer::singleShot(duration, this, [=] {
             if (tooltip) {
                 tooltip->hide();
                 tooltip->deleteLater();
@@ -223,7 +223,7 @@ void EditStackedWidget::initUI()
 
 void EditStackedWidget::initTextShowFrame(QString fileName)
 {
-    auto originalFileName = fileName; // 存储原始文件名
+    auto originalFileName = fileName;   // 存储原始文件名
     QRect rect(QPoint(0, 0), QSize(200, 66));
     QStringList labelTexts;
     ElideTextLayout layout(fileName);
@@ -250,6 +250,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     QVBoxLayout *textShowLayout = new QVBoxLayout;
     for (const auto &labelText : labelTexts) {
         DLabel *fileNameLabel = new DLabel(labelText, textShowFrame);
+        fileNameLabel->setTextFormat(Qt::PlainText);
         fileNameLabel->setAlignment(Qt::AlignHCenter);
         textHeight += fileNameLabel->fontInfo().pixelSize() + 10;
 

@@ -25,6 +25,7 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     iconLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     nameLabel = new QLabel(contentView);
     nameLabel->setObjectName("NameLabel");
+    nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QFont font;
     font.setWeight(QFont::DemiBold);
