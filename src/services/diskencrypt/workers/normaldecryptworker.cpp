@@ -15,6 +15,8 @@ NormalDecryptWorker::NormalDecryptWorker(const QVariantMap &args, QObject *paren
 
 void NormalDecryptWorker::run()
 {
+    qInfo() << "about to decrypt normal device...";
+
     auto fd = inhibit_helper::inhibit(tr("Decrypting..."));
 
     using namespace disk_encrypt::encrypt_param_keys;
@@ -35,4 +37,6 @@ void NormalDecryptWorker::run()
         setExitCode(r);
         return;
     }
+
+    qInfo() << "normal device decrypted." << devPath;
 }

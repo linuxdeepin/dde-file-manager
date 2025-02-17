@@ -50,6 +50,8 @@ void ResumeEncryptWorker::ignoreAuthRequest()
 
 void ResumeEncryptWorker::run()
 {
+    qInfo() << "about to resume encryption...";
+
     auto fd = inhibit_helper::inhibit(tr("Encrypting..."));
 
     job_file_helper::loadEncryptJobFile(&m_jobArgs);

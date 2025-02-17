@@ -102,11 +102,11 @@ int job_file_helper::loadEncryptJobFile(JobDescArgs *args, const QString &dev)
 
     QFile f(fileName);
     if (!f.exists()) {
+        fileName.clear();
         qWarning() << "no fstab encrypt config exists!";
 
         QDir d(disk_encrypt::kUSecConfigDir);
         auto configs = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
-        qWarning() << configs;
         if (configs.isEmpty())
             return 0;
         for (auto file : configs) {
@@ -115,6 +115,9 @@ int job_file_helper::loadEncryptJobFile(JobDescArgs *args, const QString &dev)
                 break;
             }
         }
+
+        if (fileName.isEmpty())
+            return 0;
         qInfo() << "found unfinished job file:" << fileName;
     }
 

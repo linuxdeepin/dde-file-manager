@@ -346,14 +346,14 @@ int crypt_setup_helper::onDecrypting(uint64_t size, uint64_t offset, void *usrpt
 
 int crypt_setup_helper::backupHeaderFile(const QString &dev, QString *fileHeader)
 {
-    auto path = kUSecBackupHeaderPrefix + dev.mid(5);
+    auto path = kUSecBackupHeaderPrefix + dev.mid(5) + ".bin";
     struct crypt_device *cdev = nullptr;
     dfmbase::FinallyUtil atFinish([&] {
         if (cdev) crypt_free(cdev);
     });
 
     if (QFile(path).exists()) {
-        qInfo() << "backup header already exists!";
+        qInfo() << "backup header already exists.";
         if (fileHeader) *fileHeader = path;
         return disk_encrypt::kSuccess;
     }
@@ -439,7 +439,7 @@ int crypt_setup_helper::headerStatus(const QString &fileHeader)
     return kInvalidHeader;
 }
 
-int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const QString &displayName)
+int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const QString &displayName, const QString &activeName)
 {
     QString backupHeader;
     int r = crypt_setup_helper::backupHeaderFile(dev, &backupHeader);
@@ -514,18 +514,22 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                          name.toStdString().c_str());
     }
 
+    auto shift = crypt_get_data_offset(cdev);
     struct crypt_params_reencrypt encArgs
     {
         .mode = CRYPT_REENCRYPT_DECRYPT,
-        .direction = CRYPT_REENCRYPT_BACKWARD,
-        .resilience = "checksum",
+        .direction = CRYPT_REENCRYPT_FORWARD,
+        .resilience = "datashift-checksum",
         .hash = "sha256",
-        .data_shift = 0,
+        .data_shift = shift,
         .max_hotzone_size = 0,
-        .device_size = 0
+        .device_size = 0,
+        .flags = CRYPT_REENCRYPT_MOVE_FIRST_SEGMENT
     };
+
+    auto name = activeName.toStdString();
     r = crypt_reencrypt_init_by_passphrase(cdev,
-                                           nullptr,
+                                           activeName.isEmpty() ? nullptr : name.c_str(),
                                            passphrase.toStdString().c_str(),
                                            passphrase.length(),
                                            CRYPT_ANY_SLOT,
@@ -546,13 +550,6 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
         qWarning() << "decrypt device failed!" << dev << r;
         return -disk_encrypt::kErrorReencryptFailed;
     }
-
-    Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 0.99);
-    if (!filesystem_helper::moveFsForward(dev)) {
-        qWarning() << "recovery filesystem failed!" << dev;
-        return -disk_encrypt::kErrorResizeFs;
-    }
-    Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 1);
 
     ::remove(backupHeader.toStdString().c_str());
 

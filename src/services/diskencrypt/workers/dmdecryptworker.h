@@ -16,6 +16,8 @@ public:
 
 protected:
     void run() override;
+
+    void getDevPath(QString *phyDev, QString *clearDev);
 };
 
 FILE_ENCRYPT_END_NS
