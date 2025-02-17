@@ -144,7 +144,7 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
     f.flush();
     f.close();
 
-    // updateInitramfs();
+    updateInitramfs();
 }
 
 void crypttab_helper::updateInitramfs()

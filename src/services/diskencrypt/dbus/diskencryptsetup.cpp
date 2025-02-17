@@ -313,6 +313,9 @@ void DiskEncryptSetupPrivate::onResumeEncryptFinished()
     auto code = worker->exitCode();
     auto args = worker->args();
 
+    if (code == -disk_encrypt::kIgnoreRequest)
+        return;
+
     using namespace disk_encrypt::encrypt_param_keys;
     if (args.value(kKeyDevice).toString().isEmpty())
         return;
