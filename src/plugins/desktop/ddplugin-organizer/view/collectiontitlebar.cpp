@@ -60,6 +60,8 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
 
     menuBtn = new OptionButton(q);
     menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
+    menuBtn->setCursor(Qt::ArrowCursor);
+    menuBtn->setToolTip(tr("Collection size"));
 
     mainLayout = new QHBoxLayout(q);
     mainLayout->setContentsMargins(8, 2, 8, 2);
