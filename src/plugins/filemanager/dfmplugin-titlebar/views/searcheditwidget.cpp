@@ -371,8 +371,8 @@ void SearchEditWidget::initUI()
 
     layout->addWidget(searchButton);
     layout->addWidget(searchEdit);
+    layout->addSpacing(10);
     layout->addWidget(advancedButton);
-
     // pause button
     pauseButton = new DIconButton(searchEdit);
     pauseButton->setFixedSize(QSize(16, 16));
