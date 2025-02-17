@@ -109,6 +109,9 @@ void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
         isSplitterAnimating = false;
     }
 
+    tabBar()->updateGeometry();
+    tabBar()->adjustSize();
+
     int newWidth = qMax(0, 95 - position.toInt());
     if (newWidth == placeholder->width())
         return;
