@@ -141,7 +141,12 @@ QString DesktopFile::desktopDeepinVendor() const
 
 bool DesktopFile::isNoShow() const
 {
-    return noDisplay || hidden;
+    if (hidden)
+        return true;
+    // task: 369003
+    if (noDisplay && mimeType.isEmpty())
+        return true;
+    return false;
 }
 
 //---------------------------------------------------------------------------
