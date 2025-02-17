@@ -12,7 +12,7 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#define CONTENTSIZE QSize(275, 25)
+#define CONTENTWIDTH 275
 #define HSPACEWIDTH 30
 #define VSPACEWIDTH 10
 #define MARGINWIDTH 0
@@ -66,7 +66,7 @@ void RenameDialogPrivate::initParameters()
     label->setText(tr("Mode:"));
     comboBox = std::get<1>(modeSelection);
     comboBox->addItems(QStringList() << tr("Replace Text") << tr("Add Text") << tr("Custom Text"));
-    comboBox->setFixedSize(CONTENTSIZE);
+    comboBox->setFixedWidth(CONTENTWIDTH);
 
     // mode:replace
     label = std::get<0>(replaceForFinding);
@@ -74,13 +74,13 @@ void RenameDialogPrivate::initParameters()
     lineEdit = std::get<1>(replaceForFinding);
     lineEdit->setFocus();
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(replaceForReplacing);
     label->setText(tr("Replace:"));
     lineEdit = std::get<1>(replaceForReplacing);
     lineEdit->setPlaceholderText(tr("Optional"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     // mode:add
     label = std::get<0>(addForAdding);
@@ -88,26 +88,26 @@ void RenameDialogPrivate::initParameters()
     lineEdit = std::get<1>(addForAdding);
     lineEdit->setPlaceholderText(tr("Required"));
     lineEdit->setMaxLength(300);
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(addForLocating);
     label->setText(tr("Location:"));
     comboBox = std::get<1>(addForLocating);
     comboBox->addItems(QStringList() << tr("Before file name") << tr("After file name"));
-    comboBox->setFixedSize(CONTENTSIZE);
+    comboBox->setFixedWidth(CONTENTWIDTH);
 
     // mode:custom
     label = std::get<0>(customForName);
     label->setText(tr("File name:"));
     lineEdit = std::get<1>(customForName);
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(customForNumber);
     label->setText(tr("Start at:"));
     lineEdit = std::get<1>(customForNumber);
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
     lineEdit->setValidator(validator.data());
     lineEdit->setText(QStringLiteral("1"));
 
@@ -210,7 +210,7 @@ void RenameDialogPrivate::initLayout()
     // total layout
     mainLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     mainLayout->addWidget(titleLabel);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(14);
     mainLayout->addLayout(std::get<2>(modeSelection));
     mainLayout->addSpacing(VSPACEWIDTH);
 
@@ -224,6 +224,7 @@ void RenameDialogPrivate::initLayout()
     mainLayout->addSpacing(15);
 
     mainFrame->setLayout(mainLayout);
+    q->setIcon(QIcon::fromTheme("dde-file-manager"));
 }
 
 void RenameDialogPrivate::initConnect()
