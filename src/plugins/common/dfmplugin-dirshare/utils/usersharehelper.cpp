@@ -150,11 +150,12 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
     Q_EMIT sambaPasswordSet(result);
 }
 
-void UserShareHelper::removeShareByPath(const QString &path)
+bool UserShareHelper::removeShareByPath(const QString &path)
 {
     const QString &&shareName = shareNameByPath(path);
     if (!shareName.isEmpty())
-        removeShareByShareName(shareName);
+        return removeShareByShareName(shareName);
+    return false;
 }
 
 int UserShareHelper::readPort()
@@ -453,17 +454,19 @@ void UserShareHelper::initMonitorPath()
         watcherManager->add(info.value(ShareInfoKeys::kPath).toString());
 }
 
-void UserShareHelper::removeShareByShareName(const QString &name, bool silent)
+bool UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
     QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
         runNetCmd(QStringList() << "usershare"
                                 << "delete" << name);
-    } else {
-        fmWarning() << "share close failed: " << name << ", " << reply.error();
-        // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
+        return true;
     }
+
+    fmWarning() << "share close failed: " << name << ", " << reply.error();
+    // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
+    return false;
 }
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
@@ -543,7 +546,7 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
         return;
     }
 
-    //计算机名称过长会报错
+    // 计算机名称过长会报错
     if (err.contains("gethostname failed") && err.contains("net usershare add: cannot convert name")) {
         DialogManagerInstance->showErrorDialog(tr("Sharing failed"), tr("The computer name is too long"));
         return;

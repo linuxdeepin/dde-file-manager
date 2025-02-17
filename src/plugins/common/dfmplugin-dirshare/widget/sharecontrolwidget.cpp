@@ -459,19 +459,23 @@ bool ShareControlWidget::validateShareName()
 
 void ShareControlWidget::updateShare()
 {
-    shareFolder();
-}
-
-void ShareControlWidget::shareFolder()
-{
-    if (!shareSwitcher->isChecked())
-        return;
-
-    if (!validateShareName()) {
+    if (!shareFolder() && !UserShareHelperInstance->isShared(url.path())) {
         shareSwitcher->setChecked(false);
         sharePermissionSelector->setEnabled(false);
         shareAnonymousSelector->setEnabled(false);
-        return;
+    }
+}
+
+bool ShareControlWidget::shareFolder()
+{
+    if (!shareSwitcher->isChecked()) {
+        fmWarning() << "Share Folder failed, error check state";
+        return false;
+    }
+
+    if (!validateShareName()) {
+        fmWarning() << "Share Folder failed, error folder name";
+        return false;
     }
 
     bool writable = sharePermissionSelector->currentIndex() == 0;
@@ -509,16 +513,19 @@ void ShareControlWidget::shareFolder()
         { ShareInfoKeys::kAnonymous, anonymous }
     };
     bool success = UserShareHelperInstance->share(info);
-    if (!success) {
-        shareSwitcher->setChecked(false);
-        sharePermissionSelector->setEnabled(false);
-        shareAnonymousSelector->setEnabled(false);
-    }
+    if (!success)
+        fmWarning() << "share folder failed";
+    return success;
 }
 
-void ShareControlWidget::unshareFolder()
+bool ShareControlWidget::unshareFolder()
 {
-    UserShareHelperInstance->removeShareByPath(url.path());
+    if (shareSwitcher->isChecked()) {
+        fmWarning() << "Unshare Folder failed, error check state";
+        return false;
+    }
+
+    return UserShareHelperInstance->removeShareByPath(url.path());
 }
 
 void ShareControlWidget::updateWidgetStatus(const QString &filePath)
@@ -590,18 +597,24 @@ void ShareControlWidget::showMoreInfo(bool showMore)
 
 void ShareControlWidget::userShareOperation(bool checked)
 {
-    if (!isSharePasswordSet && checked)
-        showSharePasswordSettingsDialog();
+    bool success { false };
+    if (checked) {
+        if (!isSharePasswordSet)
+            showSharePasswordSettingsDialog();
+        success = shareFolder();
+    } else {
+        success = unshareFolder();
+    }
 
-    sharePermissionSelector->setEnabled(checked);
-    shareAnonymousSelector->setEnabled(checked);
+    if (success) {
+        sharePermissionSelector->setEnabled(checked);
+        shareAnonymousSelector->setEnabled(checked);
+    } else {
+        shareSwitcher->setChecked(!checked);
+    }
+
     shareSwitcher->setEnabled(false);
     timer->start();
-    if (checked)
-        this->shareFolder();
-    else
-        this->unshareFolder();
-
     showMoreInfo(checked);
 }
 

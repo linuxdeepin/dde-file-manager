@@ -46,7 +46,7 @@ protected:
     void setupShareNameEditor();
     void setupSharePermissionSelector();
     void setupShareAnonymousSelector();
-    QHBoxLayout* setupNetworkPath();
+    QHBoxLayout *setupNetworkPath();
     QHBoxLayout *setupUserName();
     QHBoxLayout *setupSharePassword();
     void setupShareNotes();
@@ -56,8 +56,8 @@ protected:
 
 protected Q_SLOTS:
     void updateShare();
-    void shareFolder();
-    void unshareFolder();
+    bool shareFolder();
+    bool unshareFolder();
     void updateWidgetStatus(const QString &filePath);
     void updateFile(const QUrl &oldOne, const QUrl &newOne);
     void onSambaPasswordSet(bool result);
@@ -88,7 +88,7 @@ private:
     bool isSharePasswordSet { false };
     QTimer *refreshIp { Q_NULLPTR };
 
-    //QTimer *m_jobTimer;
+    // QTimer *m_jobTimer;
     QString selfIp;
 
     QTimer *timer { Q_NULLPTR };
