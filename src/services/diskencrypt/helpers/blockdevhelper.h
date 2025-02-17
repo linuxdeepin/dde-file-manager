@@ -19,6 +19,7 @@ DevPtr createDevPtr(const QString &dev);
 DevPtr createDevPtr2(const QString &objPath);
 QString resolveDevObjPath(const QString &source);
 int devCryptVersion(const QString &dev);
+QString getUSecName(const QString &dmDev);
 
 enum CryptVersion {
     kNotEncrypted,

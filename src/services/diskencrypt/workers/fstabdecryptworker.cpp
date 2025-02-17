@@ -19,6 +19,8 @@ FstabDecryptWorker::FstabDecryptWorker(const QVariantMap &args, QObject *parent)
 
 void FstabDecryptWorker::run()
 {
+    qInfo() << "about to decrypt fstab device...";
+
     auto fd = inhibit_helper::inhibit(tr("Decrypting..."));
 
     using namespace disk_encrypt::encrypt_param_keys;
@@ -45,6 +47,8 @@ void FstabDecryptWorker::run()
         fstab_helper::setFstabPassno("UUID=" + clearUUID, 0);
     common_helper::createRebootFlagFile(devPath);
     setExitCode(-disk_encrypt::kRebootRequired);
+
+    qInfo() << "fstab device decrypt job created, request for reboot.";
 }
 
 QString FstabDecryptWorker::clearDeviceUUID(const QString &dev)

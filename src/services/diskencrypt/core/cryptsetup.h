@@ -12,7 +12,8 @@ FILE_ENCRYPT_BEGIN_NS
 namespace crypt_setup {
 int csInitEncrypt(const QString &dev);
 int csResumeEncrypt(const QString &dev, const QString &activeName, const QString &displayName);
-int csDecrypt(const QString &dev, const QString &passphrase, const QString &displayName);
+int csDecrypt(const QString &dev, const QString &passphrase,
+              const QString &displayName, const QString &activeName = QString());
 int csAddPassphrase(const QString &dev, const QString &validPwd, const QString &newPwd);
 int csChangePassphrase(const QString &dev, const QString &oldPwd, const QString &newPwd);
 int csActivateDevice(const QString &dev, const QString &activateName);

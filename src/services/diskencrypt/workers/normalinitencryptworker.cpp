@@ -17,6 +17,8 @@ NormalInitEncryptWorker::NormalInitEncryptWorker(const QVariantMap &args, QObjec
 
 void NormalInitEncryptWorker::run()
 {
+    qInfo() << "about to encrypt normal device...";
+
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
 
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
@@ -34,6 +36,7 @@ void NormalInitEncryptWorker::run()
 
     job_file_helper::createEncryptJobFile(initJobArgs(blkPtr));
     setExitCode(disk_encrypt::kSuccess);
+    qInfo() << "normal device encryption inited." << devPath;
 }
 
 job_file_helper::JobDescArgs NormalInitEncryptWorker::initJobArgs(DevPtr ptr)

@@ -18,6 +18,8 @@ FstabInitEncryptWorker::FstabInitEncryptWorker(const QVariantMap &args, QObject 
 
 void FstabInitEncryptWorker::run()
 {
+    qInfo() << "about to encrypt fstab device...";
+
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
 
@@ -40,6 +42,8 @@ void FstabInitEncryptWorker::run()
     common_helper::createRebootFlagFile(devPath);
     job_file_helper::createEncryptJobFile(initJobArgs(devPath));
     setExitCode(-disk_encrypt::kRebootRequired);
+
+    qInfo() << "fstab device encrypt job created, request for reboot.";
 }
 
 job_file_helper::JobDescArgs FstabInitEncryptWorker::initJobArgs(const QString &dev)

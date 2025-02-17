@@ -41,7 +41,7 @@ int dm_setup::dmSetDeviceTable(const QString &dmDev, const DMTable &table, int t
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name!" << err;
+        qWarning() << "cannot set dm name!" << err << dmDev;
         return -err;
     }
 
@@ -81,14 +81,14 @@ int dm_setup::dmSuspendDevice(const QString &dmDev)
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
+        qWarning() << "cannot set dm name for suspend!" << err << dmDev;
         return -err;
-        qWarning() << "cannot set dm name for suspend!" << err;
     }
 
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run suspend task!" << err;
+        qWarning() << "cannot run suspend task!" << err << dmDev;
         return -err;
     }
     return 0;
@@ -103,14 +103,14 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name for resume!" << err;
+        qWarning() << "cannot set dm name for resume!" << err << dmDev;
         return -err;
     }
 
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run resume task!" << err;
+        qWarning() << "cannot run resume task!" << err << dmDev;
         return -err;
     }
 
@@ -171,32 +171,27 @@ QList<dm_setup_helper::ProcPartition> dm_setup_helper::procPartitions()
     return partitions;
 }
 
-// QList<dm_setup_helper::HolderChain> dm_setup_helper::holderChain(const QString &dev)
-// {
-//     const auto &&parts = procPartitions();
-//     auto getHolder = [&](const QString &dev) {
-//         QString devNum;
-//         for (auto part : parts) {
-//             if (part.name == dev.mid(5)) {
-//                 devNum = part.devNum();
-//                 break;
-//             }
-//         }
-//         if (devNum.isEmpty())
-//             return QSet<QString>();
-//         QString path("/sys/dev/block/%1/holders");
-//         QDir d(path.arg(devNum));
-//         auto entries = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
-//         return QSet<QString>(entries.begin(), entries.end());
-//     };
+int dm_setup::dmRemoveDevice(const QString &dmDev)
+{
+    auto h = DMTaskHelper(DM_DEVICE_REMOVE);
+    if (!h.task())
+        return -1;
 
-//     QList<QSet<QString>> holderChains;
-//     for (auto part : parts) {
-//         holderChains.append({ part.name });
-//         holderChains.append(getHolder(part.name));
-//     }
+    int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
+    if (r == 0) {
+        auto err = dm_task_get_errno(h.task());
+        qWarning() << "cannot set dm name for remove!" << err << dmDev;
+        return -err;
+    }
 
-//     // TODO
+    r = dm_task_run(h.task());
+    if (r == 0) {
+        auto err = dm_task_get_errno(h.task());
+        qWarning() << "cannot run remove task!" << err << dmDev;
+        return -err;
+    }
 
-//     return {};
-// }
+    dm_task_update_nodes();
+
+    return 0;
+}

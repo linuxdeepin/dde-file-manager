@@ -105,3 +105,22 @@ DevPtr blockdev_helper::createDevPtr2(const QString &objPath)
     return monitor->createDeviceById(objPath)
             .objectCast<dfmmount::DBlockDevice>();
 }
+
+QString blockdev_helper::getUSecName(const QString &dmDev)
+{
+    auto ptr = blockdev_helper::createDevPtr(dmDev);
+    if (!ptr) {
+        qWarning() << "cannot create device object!" << dmDev;
+        return "";
+    }
+
+    auto symlinks = ptr->getProperty(dfmmount::Property::kBlockSymlinks).toStringList();
+    for (auto link : symlinks) {
+        if (link.contains("usec-overlay")) {
+            auto name = link;
+            name = name.remove("/dev/disk/by-id/dm-name-");
+            return name;
+        }
+    }
+    return "";
+}

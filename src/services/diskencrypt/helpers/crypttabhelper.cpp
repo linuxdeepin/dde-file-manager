@@ -48,7 +48,7 @@ bool crypttab_helper::updateCryptTab()
     QList<CryptItem> newItems;
     bool needUpdate { false };
     for (auto item : items) {
-        if (item.source.startsWith("#")) {
+        if (item.target.startsWith("#")) {
             newItems.append(item);
             continue;
         }

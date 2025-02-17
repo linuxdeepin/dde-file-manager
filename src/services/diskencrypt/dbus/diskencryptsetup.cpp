@@ -294,8 +294,10 @@ void DiskEncryptSetupPrivate::onInitEncryptFinished()
 
     auto args = worker->args();
     auto code = worker->exitCode();
-    if (code == disk_encrypt::kSuccess)
+    if (code == disk_encrypt::kSuccess) {
+        system("udevadm trigger");
         resumeEncryption();
+    }
 
     using namespace disk_encrypt::encrypt_param_keys;
     auto result = QVariantMap { { kKeyDevice, args.value(kKeyDevice).toString() },

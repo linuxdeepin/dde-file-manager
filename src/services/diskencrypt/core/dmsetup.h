@@ -22,6 +22,7 @@ int dmCreateDevice(const QString &dmDev, const DMTable &table);
 int dmSuspendDevice(const QString &dmDev);
 int dmResumeDevice(const QString &dmDev);
 int dmReloadDevice(const QString &dmDev, const DMTable &table);
+int dmRemoveDevice(const QString &dmDev);
 }   // namespace dm_setup
 
 namespace dm_setup_helper {
@@ -39,8 +40,6 @@ struct ProcPartition   // /proc/partitions item
     }
 };
 QList<ProcPartition> procPartitions();
-// typedef QList<ProcPartition> HolderChain;
-// QList<HolderChain> holderChain(const QString &dev);
 }   // namespace dm_setup_helper
 
 #endif   // DMSETUP_H
