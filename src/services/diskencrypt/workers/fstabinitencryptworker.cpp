@@ -54,7 +54,7 @@ job_file_helper::JobDescArgs FstabInitEncryptWorker::initJobArgs(const QString &
 
     args.device = "PARTUUID=" + ptr->getProperty(dfmmount::Property::kPartitionUUID).toString();
     args.volume = "dm-" + dev.mid(5);
-    args.cipher = common_helper::encryptCipher();
+    args.cipher = common_helper::encryptCipher() + "-xts-plain64";
     args.keySze = "256";
 
     args.devPath = dev;

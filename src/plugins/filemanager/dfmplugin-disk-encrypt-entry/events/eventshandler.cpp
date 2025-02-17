@@ -137,7 +137,7 @@ void EventsHandler::resumeEncrypt(const QString &device)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    iface.asyncCall("ResumeEncryption", device);
+    iface.asyncCall("ResumeEncryption", QVariantMap());
 }
 
 void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
