@@ -125,7 +125,7 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
         fontW = fontMinWidth;
     QString elideNote = fontM.elidedText(value, elideMode, fontW);
     rightValueEdit->setCompleteText(value);
-    rightValueEdit->setText(elideNote);
+    rightValueEdit->setPlainText(elideNote);
     if (toolTipVisibility) {
         if (elideNote != value)
             rightValueEdit->setToolTip(value);
