@@ -674,7 +674,6 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
     if (e->reason() == Qt::PopupFocusReason
-        || e->reason() == Qt::OtherFocusReason
         || e->reason() == Qt::ActiveWindowFocusReason) {
         e->accept();
         if (!searchEdit->text().isEmpty())
