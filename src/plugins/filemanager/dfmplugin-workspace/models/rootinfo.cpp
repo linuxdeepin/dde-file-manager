@@ -424,6 +424,7 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 {
     QList<SortInfoPointer> newSortInfo;
 
+    bool hasHiddenFile = false;
     for (auto url : urlList) {
         url.setPath(url.path());
 
@@ -431,6 +432,9 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 
         if (!child)
             continue;
+
+        if (UniversalUtils::urlEquals(url, hiddenFileUrl))
+            hasHiddenFile = true;
 
         auto sortInfo = addChild(child);
         if (sortInfo)
@@ -441,6 +445,9 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
         originSortRole = dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault;
         emit watcherAddFiles(newSortInfo);
     }
+
+    if (hasHiddenFile)
+        Q_EMIT watcherUpdateHideFile(hiddenFileUrl);
 }
 
 void RootInfo::addChildren(const QList<FileInfoPointer> &children)
