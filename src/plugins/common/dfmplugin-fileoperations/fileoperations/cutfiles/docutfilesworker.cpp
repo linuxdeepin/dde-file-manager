@@ -225,9 +225,9 @@ void DoCutFilesWorker::onUpdateProgress()
 void DoCutFilesWorker::endWork()
 {
     // delete all cut source files
-    bool skip { false };
     for (const auto &info : cutAndDeleteFiles) {
-        if (!deleteFile(info->uri(), targetOrgUrl, &skip)) {
+        bool ret = localFileHandler->deleteFile(info->uri());
+        if (!ret) {
             fmWarning() << "delete file error, so do not delete other files!!!!";
             break;
         }
@@ -263,14 +263,17 @@ bool DoCutFilesWorker::doMergDir(const DFileInfoPointer &fromInfo, const DFileIn
         const QUrl &url = iterator->next();
         DFileInfoPointer info(new DFileInfo(url));
         info->initQuerier();
-        bool ok = doCutFile(info, toInfo, skip);
-        if (!ok && (!skip || !*skip)) {
+        bool skip = false;
+        bool ok = doCutFile(info, toInfo, &skip);
+        if (!ok && !skip) {
             return false;
         }
 
         if (!ok)
             continue;
     }
+
+    cutAndDeleteFiles.append(fromInfo);
 
     return true;
 }
