@@ -25,7 +25,9 @@ bool filesystem_helper::shrinkFileSystem_ext(const QString &device)
         return false;
     }
 
-    cmd = QString("resize2fs -M %1").arg(device);
+    auto size = blockdev_helper::devDeviceSize(device) / 1024 / 1024;
+    qInfo() << device << "will be resize to" << (size - 32) << "MB";
+    cmd = QString("resize2fs %1 %2M").arg(device).arg(size - 32);
     ret = ::system(cmd.toStdString().c_str());
     if (ret != 0) {
         qWarning() << "resize2fs failed"
