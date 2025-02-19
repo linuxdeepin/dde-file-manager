@@ -91,8 +91,3 @@ void DiskPluginItem::resizeEvent(QResizeEvent *e)
 
     updateIcon();
 }
-
-QSize DiskPluginItem::sizeHint() const
-{
-    return QSize(26, 26);
-}
