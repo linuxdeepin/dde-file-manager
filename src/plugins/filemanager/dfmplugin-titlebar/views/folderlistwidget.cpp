@@ -86,22 +86,49 @@ void FolderListWidgetPrivate::returnPressed()
     clicked(folderView->currentIndex());
 }
 
+QModelIndex FolderListWidgetPrivate::getStartIndexFromHover(bool isUp)
+{
+    const int rowCount = folderModel->rowCount();
+    if (rowCount <= 0)
+        return QModelIndex();
+
+    int nextRow = 0;
+    QModelIndex currentIndex = folderView->currentIndex();
+    if (currentIndex.isValid()) {
+        nextRow = currentIndex.row();
+    } 
+    else {
+        QPoint mousePos = q->mapFromGlobal(QCursor::pos());
+        QModelIndex hoverIndex = folderView->indexAt(mousePos);
+        nextRow = hoverIndex.isValid() ? hoverIndex.row() : (isUp ? rowCount - 1 : 0);
+    }
+
+    if (isUp) {
+        nextRow = (nextRow - 1 + rowCount) % rowCount;
+    } else {
+        nextRow = (nextRow + 1) % rowCount;
+    }
+    
+    return folderModel->index(nextRow, 0);
+}
+
 void FolderListWidgetPrivate::selectUp()
 {
     if (!folderView) {
         q->hide();
         return;
     }
+    
     auto curIndex = folderView->currentIndex();
     if (!curIndex.isValid()) {
-        if (folderModel->rowCount() > 0)
-            curIndex = folderModel->index(folderModel->rowCount() - 1, 0);
+        curIndex = getStartIndexFromHover(true);
     } else {
         int row = curIndex.row() - 1;
         if (row < 0)
             row = folderModel->rowCount() - 1;
         curIndex = folderModel->index(row, 0);
     }
+    
     if (curIndex.isValid())
         folderView->setCurrentIndex(curIndex);
 }
@@ -112,18 +139,38 @@ void FolderListWidgetPrivate::selectDown()
         q->hide();
         return;
     }
+    
     auto curIndex = folderView->currentIndex();
     if (!curIndex.isValid()) {
-        if (folderModel->rowCount() > 0)
-            curIndex = folderModel->index(0, 0);
+        curIndex = getStartIndexFromHover(false);
     } else {
         int row = curIndex.row() + 1;
         if (row >= folderModel->rowCount())
             row = 0;
         curIndex = folderModel->index(row, 0);
     }
+    
     if (curIndex.isValid())
         folderView->setCurrentIndex(curIndex);
+}
+
+void FolderListWidgetPrivate::handleKeyInput(const QString &pressedText)
+{
+    if (pressedText.isEmpty() || !pressedText[0].isPrint())
+        return;
+        
+    QModelIndex currentIndex = folderView->currentIndex();
+    int startRow = -1;
+    if (!currentIndex.isValid()) {
+        // 如果没有激活选中某一项的时候，就以鼠标悬浮所在项为基准去往后查找
+        QPoint mousePos = q->mapFromGlobal(QCursor::pos());
+        QModelIndex hoverIndex = folderView->indexAt(mousePos);
+        startRow = hoverIndex.isValid() ? hoverIndex.row() : -1;
+    } else {
+        startRow = currentIndex.row();
+    }
+
+    findAndSelectMatch(pressedText, startRow);
 }
 
 FolderListWidget::FolderListWidget(QWidget *parent)
@@ -221,24 +268,8 @@ void FolderListWidget::keyPressEvent(QKeyEvent *event)
         d->selectDown();
     } else if (event->key() == Qt::Key_Return) {
         d->returnPressed();
-    }
-    else {
-        QString pressedText = event->text();
-        if (!pressedText.isEmpty() && pressedText[0].isPrint()) {
-            QModelIndex currentIndex = d->folderView->currentIndex();
-            int startRow = -1;
-            if(!currentIndex.isValid()){
-                // 如果没有激活选中某一项的时候，就以鼠标悬浮所在项为基准去往后查找
-                QPoint mousePos = mapFromGlobal(QCursor::pos());
-                QModelIndex hoverIndex = d->folderView->indexAt(mousePos);
-                startRow = hoverIndex.isValid() ? hoverIndex.row() : -1;
-            }
-            else{
-                startRow = currentIndex.row();
-            }
-
-            findAndSelectMatch(pressedText, startRow);
-        }
+    } else {
+        d->handleKeyInput(event->text());
     }
     DBlurEffectWidget::keyPressEvent(event);
 }
@@ -249,7 +280,7 @@ void FolderListWidget::hideEvent(QHideEvent *event)
     DBlurEffectWidget::hideEvent(event);
 }
 
-bool FolderListWidget::matchText(const QString &source, const QString &input) const
+bool FolderListWidgetPrivate::matchText(const QString &source, const QString &input) const
 {
     if (input.isEmpty() || source.isEmpty())
         return false;
@@ -268,15 +299,15 @@ bool FolderListWidget::matchText(const QString &source, const QString &input) co
     return false;
 }
 
-bool FolderListWidget::findAndSelectMatch(const QString &text, int startRow) const
+bool FolderListWidgetPrivate::findAndSelectMatch(const QString &text, int startRow) const
 {
     bool foundCurrent = false;
 
     // 实现列表的循环查找，比如当前选中的满足输入的字符，则去匹配下一个
     for (int round = 0; round < 2; ++round) {
-        for (int i = 0; i < d->folderModel->rowCount(); ++i) {
-            int currentRow = (startRow + i + 1) % d->folderModel->rowCount();
-            QString itemText = d->folderModel->item(currentRow)->text();
+        for (int i = 0; i < folderModel->rowCount(); ++i) {
+            int currentRow = (startRow + i + 1) % folderModel->rowCount();
+            QString itemText = folderModel->item(currentRow)->text();
 
             if (matchText(itemText, text)) {
                 if (!foundCurrent && currentRow == startRow) {
@@ -284,9 +315,9 @@ bool FolderListWidget::findAndSelectMatch(const QString &text, int startRow) con
                     continue;
                 }
 
-                QModelIndex index = d->folderModel->index(currentRow, 0);
-                d->folderView->setCurrentIndex(index);
-                d->folderView->scrollTo(index);
+                QModelIndex index = folderModel->index(currentRow, 0);
+                folderView->setCurrentIndex(index);
+                folderView->scrollTo(index);
                 return true;
             }
         }
