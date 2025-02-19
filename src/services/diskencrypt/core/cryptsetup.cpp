@@ -42,7 +42,7 @@ int crypt_setup::csInitEncrypt(const QString &dev)
 
 int crypt_setup_helper::createHeaderFile(const QString &dev, QString *headerPath)
 {
-    auto path = QString("/tmp/%1_dfm_enc_init_header").arg(dev.mid(5));
+    auto path = QString("/tmp/%1_dfm_enc_init_header.bin").arg(dev.mid(5));
     int fd = open(path.toStdString().c_str(),
                   O_CREAT | O_EXCL | O_WRONLY | S_IRUSR | S_IWUSR);
     if (fd < 0) {
@@ -87,7 +87,10 @@ int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
     }
 
     // shrink file system leave space to hold crypt header.
-    filesystem_helper::shrinkFileSystem_ext(dev);
+    if (!filesystem_helper::shrinkFileSystem_ext(dev)) {
+        qWarning() << "cannot resize filesytem!" << dev;
+        return -disk_encrypt::kErrorResizeFs;
+    }
 
     struct crypt_device *cdev { nullptr };
     // do clean.
@@ -96,7 +99,7 @@ int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
             crypt_free(cdev);
         if (r < 0) {
             ::remove(headerPath.toStdString().c_str());
-            filesystem_helper::expandFileSystem_ext(dev);
+            // filesystem_helper::expandFileSystem_ext(dev);
         }
     });
 
@@ -192,7 +195,7 @@ int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
     if (r < 0) {
         qWarning() << "activate devcie failed!" << dev << r;
     } else {
-        filesystem_helper::expandFileSystem_ext("/dev/mapper/" + name);
+        // filesystem_helper::expandFileSystem_ext("/dev/mapper/" + name);
         crypt_deactivate(cdev, name.toStdString().c_str());
     }
 
