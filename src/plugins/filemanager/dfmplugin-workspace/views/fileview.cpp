@@ -1988,6 +1988,8 @@ void FileView::paintEvent(QPaintEvent *event)
         return;
     }
 
+    if (d->horizontalOffset == 0)
+        d->updateHorizontalOffset();
     DListView::paintEvent(event);
 
     if (d->isShowViewSelectBox) {
