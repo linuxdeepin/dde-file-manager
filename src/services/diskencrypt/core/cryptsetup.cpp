@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #include <libcryptsetup.h>
 
 static constexpr char kUSecBackupHeaderPrefix[] { "/etc/usec-crypt/dm-decrypt-backup-" };
@@ -42,21 +43,22 @@ int crypt_setup::csInitEncrypt(const QString &dev)
 
 int crypt_setup_helper::createHeaderFile(const QString &dev, QString *headerPath)
 {
-    auto path = QString("/tmp/%1_dfm_enc_init_header.bin").arg(dev.mid(5));
-    int fd = open(path.toStdString().c_str(),
-                  O_CREAT | O_EXCL | O_WRONLY | S_IRUSR | S_IWUSR);
+    auto headerName = QString("%1_dfm_encrypt_header.bin").arg(dev.mid(5));
+    int fd = shm_open(headerName.toStdString().c_str(),
+                      O_CREAT | O_EXCL | O_WRONLY | S_IRUSR | S_IWUSR,
+                      0777);
     if (fd < 0) {
-        qWarning() << "cannot create header file at" << path;
+        qWarning() << "cannot create header file at" << headerName;
         return -1;
     }
-    int r = posix_fallocate(fd, 0, 32 * 1024 * 1024);   // allocate 32M space
+    int r = ftruncate(fd, 32 * 1024 * 1024);   // allocate 32M space
     close(fd);
     if (r != 0) {
-        qWarning() << "cannot allocate header file space!" << path;
+        qWarning() << "cannot allocate header file space!" << headerName;
         return -1;
     }
 
-    if (headerPath) *headerPath = path;
+    if (headerPath) *headerPath = "/dev/shm/" + headerName;
     return disk_encrypt::kSuccess;
 }
 
