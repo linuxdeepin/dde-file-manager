@@ -40,9 +40,11 @@ public Q_SLOTS:
 
 private:
     void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QModelIndex &index,
-                  const QRect &itemRect, bool isEjectable, QSize iconSize, QIcon::Mode iconMode, QPalette::ColorGroup cg) const;
+                  const QRect &itemRect, bool isEjectable, QSize iconSize,
+                  QIcon::Mode iconMode, QPalette::ColorGroup cg, bool keepHighlighted) const;
     void drawDciIcon(const QStyleOptionViewItem &option, QPainter *painter,
-                     const DTK_GUI_NAMESPACE::DDciIcon &dciIcon, const QRect &iconRect, const QPalette::ColorGroup &cg) const;
+                     const DTK_GUI_NAMESPACE::DDciIcon &dciIcon, const QRect &iconRect,
+                     const QPalette::ColorGroup &cg, bool keepHighlighted) const;
 
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
