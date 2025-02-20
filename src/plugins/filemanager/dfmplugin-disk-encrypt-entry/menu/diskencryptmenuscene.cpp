@@ -98,7 +98,7 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
 
     const QStringList &supportedFS { "ext4", "ext3", "ext2" };
     param.states = static_cast<EncryptStates>(EventsHandler::instance()->deviceEncryptStatus(device));
-    if (param.states & EncryptState::kStatusNotEncrypted
+    if ((param.states == EncryptState::kStatusNotEncrypted)
         && !supportedFS.contains(idType)) {
         return false;
     } else if (idType == "crypto_LUKS"
