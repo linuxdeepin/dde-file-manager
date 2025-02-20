@@ -8,10 +8,13 @@
 
 #include <dfm-base/base/standardpaths.h>
 
+#include <DDciIcon>
+
 #include <QObject>
 #include <QVariant>
 
 DPSIDEBAR_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 SideBarItem::SideBarItem(const QUrl &url)
     : SideBarItem(QIcon(), QString(), QString(), url)
@@ -24,16 +27,16 @@ SideBarItem::~SideBarItem()
 
 SideBarItem::SideBarItem(const SideBarItem &item)
 {
+    setIcon(item.icon());
     setUrl(item.url());
     setGroup(item.group());
-    setIcon(item.icon());
     setText(item.text());
 
     setData(kSidebarItem, kItemTypeRole);
 }
 
 SideBarItem::SideBarItem(const QIcon &icon, const QString &text, const QString &group, const QUrl &url)
-    : DStandardItem(icon, text)
+    : DStandardItem(text)
 {
     setIcon(icon);
     setText(text);
@@ -61,6 +64,16 @@ QUrl SideBarItem::targetUrl() const
 void SideBarItem::setUrl(const QUrl &url)
 {
     setData(QVariant::fromValue(url), kItemUrlRole);
+}
+
+void SideBarItem::setIcon(const QIcon &icon)
+{
+    const auto &iconName = icon.name();
+    DDciIcon dciIcon = DDciIcon::fromTheme(iconName);
+    if (!dciIcon.isNull())
+        setDciIcon(dciIcon);
+    else
+        setData(icon, Qt::DecorationRole);
 }
 
 void SideBarItem::setGroup(const QString &group)

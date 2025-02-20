@@ -8,6 +8,7 @@
 #include "dfmplugin_sidebar_global.h"
 
 #include <DStandardItem>
+
 #include <QUrl>
 
 DWIDGET_USE_NAMESPACE
@@ -41,6 +42,7 @@ public:
     QUrl url() const;
     QUrl targetUrl() const;
     void setUrl(const QUrl &url);
+    void setIcon(const QIcon &icon);
 
     QString group() const;
     void setGroup(const QString &group = "");
@@ -71,4 +73,4 @@ DPSIDEBAR_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DPSIDEBAR_NAMESPACE::SideBarItemSeparator)
 
-#endif   //DFMSIDEBARITEM_H
+#endif   // DFMSIDEBARITEM_H
