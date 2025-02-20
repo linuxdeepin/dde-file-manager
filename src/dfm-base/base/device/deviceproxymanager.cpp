@@ -91,6 +91,7 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     d->initConnection();
+    QTimer::singleShot(1000, this, [this] { d->initMounts(); });
     return isDBusRuning();
 }
 
@@ -101,6 +102,9 @@ bool DeviceProxyManager::isDBusRuning()
 
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QStringList &&mpts = d->externalMounts.values();
     QString path = filePath.endsWith("/") ? filePath : filePath + "/";
@@ -110,6 +114,9 @@ bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     QReadLocker lk(&d->lock);
@@ -122,6 +129,9 @@ bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     QReadLocker lk(&d->lock);
@@ -224,7 +234,9 @@ void DeviceProxyManagerPrivate::initMounts()
     std::call_once(flag, [this]() {
         using namespace GlobalServerDefines;
 
-        auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
+        auto func = [this](const QStringList &devs,
+                           std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query,
+                           bool pass = false) {
             for (const auto &dev : devs) {
                 auto &&info = query(q, dev, false);
                 auto mpt = info.value(DeviceProperty::kMountPoint).toString();
@@ -234,7 +246,7 @@ void DeviceProxyManagerPrivate::initMounts()
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
                     // FIXME(xust): fix later, the kRemovable is not always correct.
                     QWriteLocker lk(&lock);
-                    if (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isBuiltInDisk(info))
+                    if (pass || (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isBuiltInDisk(info)))
                         externalMounts.insert(dev, mpt);
                     allMounts.insert(dev, mpt);
                 }
@@ -244,7 +256,8 @@ void DeviceProxyManagerPrivate::initMounts()
         auto blks = q->getAllBlockIds();
         auto protos = q->getAllProtocolIds();
         func(blks, &DeviceProxyManager::queryBlockInfo);
-        func(protos, &DeviceProxyManager::queryProtocolInfo);
+        // All protocol devices should be added to externalMounts
+        func(protos, &DeviceProxyManager::queryProtocolInfo, true);
     });
 }
 
@@ -351,11 +364,14 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
     if (!id.startsWith(kBlockDeviceIdPrefix) && DeviceUtils::isMountPointOfDlnfs(p))
         return;
 
+    // NOTE: Moving positions may cause deadlock
+    Q_EMIT q->mountPointAboutToAdded(mpt);
+
     QWriteLocker lk(&lock);
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
-                && !DeviceUtils::isBuiltInDisk(info))
+            && !DeviceUtils::isBuiltInDisk(info))
             externalMounts.insert(id, p);
     } else {
         externalMounts.insert(id, p);
@@ -365,6 +381,14 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 
 void DeviceProxyManagerPrivate::removeMounts(const QString &id)
 {
+    // NOTE: Moving positions may cause deadlock
+    QString mpt;
+    {
+        QReadLocker locker(&lock);
+        mpt = externalMounts.value(id);
+    }
+    Q_EMIT q->mountPointAboutToRemoved(mpt);
+
     QWriteLocker lk(&lock);
     externalMounts.remove(id);
     allMounts.remove(id);

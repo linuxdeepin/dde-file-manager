@@ -77,8 +77,6 @@ public slots:
     void handleSetAlwaysOpenInCurrentWindow(const quint64 windowID);
     void handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
 
-    bool handleCheckMountedDevPath(const QUrl &url);
-
     void handleTabCreated(const quint64 windowId, const QString &uniqueId);
     void handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId);
     void handleTabChanged(const quint64 windowId, const QString &uniqueId);

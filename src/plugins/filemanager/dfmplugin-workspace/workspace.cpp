@@ -87,8 +87,6 @@ bool Workspace::start()
     if (!ret)
         fmWarning() << "File Preview: create dconfig failed: " << err;
 
-    FileDataManager::instance()->initMntedDevsCache();
-
     return true;
 }
 
@@ -109,7 +107,8 @@ void Workspace::onWindowClosed(quint64 windId)
     WorkspaceHelper::instance()->removeWorkspace(windId);
 }
 
-void Workspace::initConfig() {
+void Workspace::initConfig()
+{
     SyncPair thumbnailPair {
         { SettingType::kGenAttr, Application::kShowThunmbnailInRemote },
         { DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey },
