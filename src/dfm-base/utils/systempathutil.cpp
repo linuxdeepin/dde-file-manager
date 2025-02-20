@@ -239,3 +239,30 @@ QList<QUrl> SystemPathUtil::canonicalUrlList(const QList<QUrl> &urls)
 
     return processedUrls;
 }
+
+QString SystemPathUtil::getRealpathSafely(const QString &path) const
+{
+    QStringList components = path.split('/', Qt::SkipEmptyParts);
+    QString result = "/";
+    QString accumulatedPath = "/";
+
+    for (const QString &component : components) {
+        accumulatedPath += component;
+
+        QFileInfo fileInfo(accumulatedPath);
+        if (fileInfo.exists()) {
+            // 如果路径存在，获取真实路径
+            result = fileInfo.canonicalFilePath();
+        } else {
+            // 如果路径不存在，直接拼接
+            if (!result.endsWith('/')) {
+                result += '/';
+            }
+            result += component;
+        }
+
+        accumulatedPath += '/';
+    }
+
+    return result;
+}

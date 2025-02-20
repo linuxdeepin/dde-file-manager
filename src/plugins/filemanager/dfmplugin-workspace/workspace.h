@@ -39,7 +39,6 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_CheckSchemeViewIsFileView)
     DPF_EVENT_REG_SLOT(slot_RefreshDir)
     DPF_EVENT_REG_SLOT(slot_NotSupportTreeView)
-    DPF_EVENT_REG_SLOT(slot_CheckMountedDevPath)
 
     DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
     DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)

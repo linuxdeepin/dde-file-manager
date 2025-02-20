@@ -54,7 +54,7 @@ RootInfo::~RootInfo()
 bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder)
 {
     // clear old dir iterator thread
-    for (auto it = discardedThread.begin(); it != discardedThread.end(); ) {
+    for (auto it = discardedThread.begin(); it != discardedThread.end();) {
         if (!(*it)->isRunning()) {
             it = discardedThread.erase(it);
         } else {
@@ -225,13 +225,13 @@ void RootInfo::doWatcherEvent()
     qint64 oldtime = 0;
     int emptyLoopCount = 0;
     while (checkFileEventQueue() || timer.elapsed() < 200) {
-        //检查超时，重新设置起始时间
+        // 检查超时，重新设置起始时间
         if (timer.elapsed() - oldtime >= 200) {
             // 处理添加文件
             if (!adds.isEmpty())
                 addChildren(adds);
             if (!updates.isEmpty())
-                updateChildren(updates); 
+                updateChildren(updates);
             if (!removes.isEmpty())
                 removeChildren(removes);
 
@@ -321,7 +321,7 @@ void RootInfo::doThreadWatcherEvent()
 {
     if (processFileEventRuning)
         return;
-    for (auto it = watcherEventFutures.begin(); it != watcherEventFutures.end(); ) {
+    for (auto it = watcherEventFutures.begin(); it != watcherEventFutures.end();) {
         if (it->isFinished()) {
             it = watcherEventFutures.erase(it);
         } else {

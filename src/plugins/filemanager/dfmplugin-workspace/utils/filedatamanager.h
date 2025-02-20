@@ -36,13 +36,10 @@ public:
     void cleanRoot(const QUrl &rootUrl);
     void setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active);
 
-    bool isMountedDevPath(const QUrl &url);
-
 public Q_SLOTS:
     void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
     void onHandleFileDeleted(const QUrl url);
     void removeCachedMnts(const QString &id);
-    void cacheMnt(const QString &id, const QString &mnt);
 
 private:
     explicit FileDataManager(QObject *parent = nullptr);
@@ -60,8 +57,6 @@ private:
     // scheme in cacheDataSchemes will have cache
     QList<QString> cacheDataSchemes {};
     QMap<QUrl, int> dataRefMap {};
-
-    QMultiHash<QString, QUrl> allMntedDevs {};
 };
 
 }

@@ -72,8 +72,6 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_NotSupportTreeView",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleNotSupportTreeView);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_CheckMountedDevPath",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCheckMountedDevPath);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
@@ -407,11 +405,6 @@ void WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow(const quint64 wi
 void WorkspaceEventReceiver::handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
 {
     WorkspaceHelper::instance()->aboutToChangeViewWidth(windowID, deltaWidth);
-}
-
-bool WorkspaceEventReceiver::handleCheckMountedDevPath(const QUrl &url)
-{
-    return FileDataManager::instance()->isMountedDevPath(url);
 }
 
 void WorkspaceEventReceiver::handleTabCreated(const quint64 windowId, const QString &uniqueId)

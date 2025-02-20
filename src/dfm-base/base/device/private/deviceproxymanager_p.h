@@ -52,7 +52,7 @@ private:
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
     QReadWriteLock lock;
     QMap<QString, QString> externalMounts;
-    QMap<QString, QString> allMounts;
+    QMap<QString, QString> allMounts;   // contain system disk
 
     enum {
         kNoneConnection = -1,

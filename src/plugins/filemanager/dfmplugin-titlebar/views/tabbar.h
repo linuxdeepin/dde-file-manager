@@ -72,6 +72,10 @@ private:
     void handleTabAnimationFinished(const int index);
     void updateTabsState();
     void updateAddTabButtonState();
+    bool shouldCloseTab(Tab *tab, const QUrl &targetUrl) const;
+    void handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl);
+    QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
+    QUrl findValidParentPath(const QUrl &url) const;
 
     inline int getTabAreaWidth() const
     {

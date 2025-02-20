@@ -15,8 +15,11 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/dfm_global_defines.h>
+
 #include <dfm-framework/event/event.h>
 
 #include <DIconButton>
@@ -44,6 +47,7 @@ TabBar::TabBar(QWidget *parent)
 {
     setObjectName("TabBar");
     initializeUI();
+    initializeConnections();
 }
 
 TabBar::~TabBar()
@@ -173,60 +177,13 @@ void TabBar::closeTab(const QUrl &url)
         if (!tab)
             continue;
 
-        QUrl curUrl = tab->getCurrentUrl();
-        // Some URLs cannot be compared universally
-        bool closeable { dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_Closeable",
-                                              curUrl, url) };
+        if (!shouldCloseTab(tab, url))
+            continue;
 
-        static const QUrl &kGotoWhenDevRemoved = QUrl("computer:///");
-        if (closeable || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
-            if (count() == 1) {
-                QUrl redirectToWhenDelete;
-                if (dpfSlotChannel->push("dfmplugin_workspace", "slot_CheckMountedDevPath", url).toBool()) {
-                    redirectToWhenDelete = kGotoWhenDevRemoved;
-                } else if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer", curUrl, &redirectToWhenDelete)) {
-                    if (!redirectToWhenDelete.isValid())
-                        redirectToWhenDelete = kGotoWhenDevRemoved;
-                } else if (url.scheme() == Global::Scheme::kFile) {   // redirect to upper directory
-                    QString localPath = url.path();
-                    do {
-                        QStringList pathFragment = localPath.split("/");
-                        pathFragment.removeLast();
-                        localPath = pathFragment.join("/");
-                    } while (!QDir(localPath).exists());
-                    redirectToWhenDelete.setScheme(Global::Scheme::kFile);
-                    redirectToWhenDelete.setPath(localPath);
-
-                    {
-                        /* NOTE(xust)
-                         * BUG-236625
-                         * this is a workaround.
-                         * when android phone mounted with MTP protocol, cd into the internal storage.
-                         * eject the phone by sidebar button or dock widget
-                         * the 'fileRemoved' signal with the internal storage path is emitted first
-                         * and then runs into current 'else' branch, and try to find it's parent path to cd to
-                         * and the gvfs mount root path was found
-                         * while cd to 'computer:///' is expected.
-                         * so if final cd path is gvfs root, then change it to computer root to solve this bug.
-                         *
-                         * but this solution would introduce another lower level bug.
-                         * */
-                        static const QStringList &kGvfsMpts {
-                            QString("/run/user/%1/gvfs").arg(getuid()),
-                            "/root/.gvfs"
-                        };
-                        if (kGvfsMpts.contains(localPath))
-                            redirectToWhenDelete = kGotoWhenDevRemoved;
-                    }
-                } else {
-                    redirectToWhenDelete = kGotoWhenDevRemoved;
-                }
-
-                auto winId = TitleBarHelper::windowId(this);
-                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
-            } else {
-                removeTab(i);
-            }
+        if (count() == 1) {
+            handleLastTabClose(tab->getCurrentUrl(), url);
+        } else {
+            removeTab(i);
         }
     }
 }
@@ -308,7 +265,7 @@ void TabBar::onTabDragFinished()
 
     updateScreen();
 
-    //hide border left line
+    // hide border left line
     for (auto it : tabList)
         if (it->borderLeft())
             it->setBorderLeft(false);
@@ -467,13 +424,14 @@ void TabBar::initializeUI()
 
     setMouseTracking(true);
     setFrameShape(QFrame::NoFrame);
-
-    initializeConnections();
 }
 
 void TabBar::initializeConnections()
 {
-    QObject::connect(tabAddButton, &DIconButton::clicked, this, &TabBar::tabAddButtonClicked);
+    connect(tabAddButton, &DIconButton::clicked, this, &TabBar::tabAddButtonClicked);
+    connect(DevProxyMng, &DeviceProxyManager::mountPointAboutToRemoved, this, [this](QStringView mpt) {
+        closeTab(QUrl::fromLocalFile(mpt.toString()));
+    });
 }
 
 void TabBar::updateScreen()
@@ -560,4 +518,100 @@ void TabBar::updateTabsState()
 void TabBar::updateAddTabButtonState()
 {
     tabAddButton->setEnabled(count() < kMaxTabCount);
+}
+
+bool TabBar::shouldCloseTab(Tab *tab, const QUrl &targetUrl) const
+{
+    QUrl currentUrl = tab->getCurrentUrl();
+
+    // Check if tab can be closed through hook
+    bool closeable = dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_Closeable",
+                                          currentUrl, targetUrl);
+
+    if (closeable
+        || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(currentUrl, targetUrl)
+        || targetUrl.isParentOf(currentUrl)) {
+        return true;
+    }
+
+    if (currentUrl.isLocalFile() && targetUrl.isLocalFile()) {
+        // 软链接场景下，如果是CIFS下的符号链接, canonicalFilePath 无法解析
+        QString realCurrentPath = SystemPathUtil::instance()->getRealpathSafely(currentUrl.toLocalFile());
+        QString realTargetPath = SystemPathUtil::instance()->getRealpathSafely(targetUrl.toLocalFile());
+
+        if (!realCurrentPath.isEmpty() && !realTargetPath.isEmpty()) {
+            if (realCurrentPath == realTargetPath)
+                return true;
+            if (realCurrentPath.startsWith(realTargetPath))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void TabBar::handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl)
+{
+    QUrl redirectUrl = determineRedirectUrl(currentUrl, targetUrl);
+    auto winId = TitleBarHelper::windowId(this);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectUrl);
+}
+
+QUrl TabBar::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
+{
+    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+
+    // BUG: 303643
+    QString targetPath = targetUrl.toLocalFile();
+    targetPath = SystemPathUtil::instance()->getRealpathSafely(targetPath);
+    if (DevProxyMng->isFileOfExternalMounts(targetPath))
+        return defaultUrl;
+
+    QUrl redirectUrl;
+    if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer",
+                             currentUrl, &redirectUrl)) {
+        return redirectUrl.isValid() ? redirectUrl : defaultUrl;
+    }
+
+    if (targetUrl.isLocalFile()) {
+        redirectUrl = findValidParentPath(targetUrl);
+        /* NOTE(xust)
+         * BUG-236625
+         * this is a workaround.
+         * when android phone mounted with MTP protocol, cd into the internal storage.
+         * eject the phone by sidebar button or dock widget
+         * the 'fileRemoved' signal with the internal storage path is emitted first
+         * and then runs into current 'else' branch, and try to find it's parent path to cd to
+         * and the gvfs mount root path was found
+         * while cd to 'computer:///' is expected.
+         * so if final cd path is gvfs root, then change it to computer root to solve this bug.
+         * but this solution would introduce another lower level bug.
+         * */
+        static const QStringList &kGvfsMpts {
+            QString("/run/user/%1/gvfs").arg(getuid()),
+            "/root/.gvfs"
+        };
+        if (kGvfsMpts.contains(redirectUrl.toLocalFile()))
+            return defaultUrl;
+
+        return redirectUrl;
+    }
+
+    return defaultUrl;
+}
+
+QUrl TabBar::findValidParentPath(const QUrl &url) const
+{
+    QString localPath = url.path();
+
+    do {
+        QStringList pathFragment = localPath.split("/");
+        pathFragment.removeLast();
+        localPath = pathFragment.join("/");
+    } while (!QDir(localPath).exists());
+
+    QUrl parentUrl;
+    parentUrl.setScheme(Global::Scheme::kFile);
+    parentUrl.setPath(localPath);
+    return parentUrl;
 }
