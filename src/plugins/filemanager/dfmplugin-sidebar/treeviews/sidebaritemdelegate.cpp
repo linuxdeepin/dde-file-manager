@@ -179,7 +179,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         iconMode = QIcon::Selected;
     if (opt.features & QStyleOptionViewItem::HasDecoration)
-        drawIcon(opt, painter, index, itemRect, isEjectable, iconSize, iconMode, cg);
+        drawIcon(opt, painter, index, itemRect, isEjectable, iconSize, iconMode, cg, keepDrawingHighlighted);
 
     // Draw item text
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
@@ -391,7 +391,8 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
                                    bool isEjectable,
                                    QSize iconSize,
                                    QIcon::Mode iconMode,
-                                   QPalette::ColorGroup cg) const
+                                   QPalette::ColorGroup cg,
+                                   bool keepHighlighted) const
 {
     if (option.state & QStyle::State_Selected) {
         painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
@@ -412,7 +413,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
         option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
     } else {
-        drawDciIcon(option, painter, dciIcon, iconRect, cg);
+        drawDciIcon(option, painter, dciIcon, iconRect, cg, keepHighlighted);
     }
 
     // draw ejectable device icon
@@ -437,21 +438,21 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
             QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
             style->drawItemPixmap(painter, iconRect, Qt::AlignCenter, px);
         } else {
-            drawDciIcon(option, painter, dciIcon, iconRect, cg);
+            drawDciIcon(option, painter, dciIcon, iconRect, cg, keepHighlighted);
         }
     }
 }
 
 void SideBarItemDelegate::drawDciIcon(const QStyleOptionViewItem &option, QPainter *painter,
                                       const DTK_GUI_NAMESPACE::DDciIcon &dciIcon, const QRect &iconRect,
-                                      const QPalette::ColorGroup &cg) const
+                                      const QPalette::ColorGroup &cg, bool keepHighlighted) const
 {
     DDciIcon::Mode mode = DStyle::toDciIconMode(&option);
     auto appTheme = DGuiApplicationHelper::toColorType(option.palette);
     DDciIcon::Theme theme = appTheme == DGuiApplicationHelper::LightType ? DDciIcon::Light : DDciIcon::Dark;
     DDciIconPalette palette { option.palette.color(cg, QPalette::WindowText), option.palette.color(cg, QPalette::Window),
                               option.palette.color(cg, QPalette::Highlight), option.palette.color(cg, QPalette::HighlightedText) };
-    if (option.state & QStyle::State_Selected)
+    if (keepHighlighted)
         palette.setForeground(option.palette.color(cg, QPalette::HighlightedText));
     dciIcon.paint(painter, iconRect, painter->device() ? painter->device()->devicePixelRatioF() : qApp->devicePixelRatio(),
                   theme, mode, Qt::AlignCenter, palette);
