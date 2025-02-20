@@ -116,20 +116,22 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
     }
 
     param.jobType = job_type::TypeNormal;
-    if (isOverlay)
+    if (isOverlay) {
         param.jobType = job_type::TypeOverlay;
-
-    auto configJson = selectedItemInfo.value("Configuration", "").toString();
-    if (!configJson.isEmpty()) {
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(configJson.toLocal8Bit(), &err);
-        if (err.error != QJsonParseError::NoError) {
-            qWarning() << "device configuration not valid!" << device << configJson;
-            return false;
+    } else {
+        auto configJson = selectedItemInfo.value("Configuration", "").toString();
+        if (!configJson.isEmpty()) {
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(configJson.toLocal8Bit(), &err);
+            if (err.error != QJsonParseError::NoError) {
+                qWarning() << "device configuration not valid!" << device << configJson;
+                return false;
+            }
+            auto obj = doc.object();
+            param.jobType = job_type::TypeFstab;
         }
-        auto obj = doc.object();
-        param.jobType = job_type::TypeFstab;
     }
+
     param.devID = selectedItemInfo.value("Id").toString();
     param.devDesc = device;
     param.mountPoint = devMpt;
