@@ -78,4 +78,33 @@
         <file>icons/deepin/builtin/texts/dfm_viewoptions_minlist_16px.svg</file>
         <file>icons/deepin/builtin/texts/dfm_viewoptions_maxlist_16px.svg</file>
     </qresource>
+    <qresource prefix="/dsg">
+        <file>built-in-icons/computer-symbolic.dci</file>
+        <file>built-in-icons/document-open-recent-symbolic.dci</file>
+        <file>built-in-icons/drive-harddisk-encrypted-symbolic.dci</file>
+        <file>built-in-icons/drive-harddisk-root-symbolic.dci</file>
+        <file>built-in-icons/drive-harddisk-symbolic.dci</file>
+        <file>built-in-icons/drive-removable-media-symbolic.dci</file>
+        <file>built-in-icons/folder-bookmark-symbolic.dci</file>
+        <file>built-in-icons/folder-documents-symbolic.dci</file>
+        <file>built-in-icons/folder-downloads-symbolic.dci</file>
+        <file>built-in-icons/folder-music-symbolic.dci</file>
+        <file>built-in-icons/folder-pictures-symbolic.dci</file>
+        <file>built-in-icons/folder-publicshare-symbolic.dci</file>
+        <file>built-in-icons/folder-remote-symbolic.dci</file>
+        <file>built-in-icons/folder-symbolic.dci</file>
+        <file>built-in-icons/folder-videos-symbolic.dci</file>
+        <file>built-in-icons/media-optical-symbolic.dci</file>
+        <file>built-in-icons/network-server-symbolic.dci</file>
+        <file>built-in-icons/phone-apple-iphone-symbolic.dci</file>
+        <file>built-in-icons/phone-symbolic.dci</file>
+        <file>built-in-icons/udrive-harddisk-enterprise-symbolic.dci</file>
+        <file>built-in-icons/udrive-harddisk-individual-symbolic.dci</file>
+        <file>built-in-icons/udrive-harddisk-symbolic.dci</file>
+        <file>built-in-icons/user-bookmarks-symbolic.dci</file>
+        <file>built-in-icons/user-desktop-symbolic.dci</file>
+        <file>built-in-icons/user-home-symbolic.dci</file>
+        <file>built-in-icons/user-trash-symbolic.dci</file>
+        <file>built-in-icons/media-eject-symbolic.dci</file>
+    </qresource>
 </RCC>

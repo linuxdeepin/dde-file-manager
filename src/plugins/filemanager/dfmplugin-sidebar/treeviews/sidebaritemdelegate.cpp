@@ -21,6 +21,8 @@
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
 #include <DPalette>
+#include <DDciIcon>
+#include <DStyle>
 
 #include <QLineEdit>
 #include <QPainter>
@@ -43,6 +45,7 @@ DFMBASE_USE_NAMESPACE
 
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
 static constexpr int kExpandIconSize = 12;
@@ -84,6 +87,10 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QStyleOptionViewItem opt = option;
 
     DStyledItemDelegate::initStyleOption(&opt, index);
+    if (opt.widget && opt.widget->isActiveWindow())
+        opt.state |= QStyle::State_Active;
+    else
+        opt.state &= (~QStyle::State_Active);
 
     painter->setRenderHint(QPainter::Antialiasing);
 
@@ -171,7 +178,8 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         iconMode = QIcon::Disabled;
     if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         iconMode = QIcon::Selected;
-    drawIcon(opt, painter, itemRect, isEjectable, iconSize, iconMode, cg);
+    if (opt.features & QStyleOptionViewItem::HasDecoration)
+        drawIcon(opt, painter, index, itemRect, isEjectable, iconSize, iconMode, cg);
 
     // Draw item text
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
@@ -376,7 +384,14 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
     }
 }
 
-void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QRect &itemRect, bool isEjectable, QSize iconSize, QIcon::Mode iconMode, QPalette::ColorGroup cg) const
+void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
+                                   QPainter *painter,
+                                   const QModelIndex &index,
+                                   const QRect &itemRect,
+                                   bool isEjectable,
+                                   QSize iconSize,
+                                   QIcon::Mode iconMode,
+                                   QPalette::ColorGroup cg) const
 {
     if (option.state & QStyle::State_Selected) {
         painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
@@ -389,7 +404,16 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QRect iconRect(iconTopLeft.toPoint(), iconSize);
 
-    option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, QIcon::On);
+    QVariant icon = index.data(Qt::DecorationRole);
+    DDciIcon dciIcon;
+    if (icon.canConvert<DTK_GUI_NAMESPACE::DDciIcon>())
+        dciIcon = qvariant_cast<DDciIcon>(icon);
+    if (dciIcon.isNull()) {
+        QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+        option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
+    } else {
+        drawDciIcon(option, painter, dciIcon, iconRect, cg);
+    }
 
     // draw ejectable device icon
     if (isEjectable) {
@@ -405,11 +429,32 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter 
         QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
-        QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-        auto px { ejectIcon.pixmap(iconSize, pixmapMode, QIcon::On) };
-        QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
-        style->drawItemPixmap(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignCenter, px);
+        iconRect = QRect(ejectIconTopLeft, ejectIconBottomRight);
+        DDciIcon dciIcon = DDciIcon::fromTheme("media-eject-symbolic");
+        if (dciIcon.isNull()) {
+            QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
+            auto px { ejectIcon.pixmap(iconSize, pixmapMode, QIcon::On) };
+            QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
+            style->drawItemPixmap(painter, iconRect, Qt::AlignCenter, px);
+        } else {
+            drawDciIcon(option, painter, dciIcon, iconRect, cg);
+        }
     }
+}
+
+void SideBarItemDelegate::drawDciIcon(const QStyleOptionViewItem &option, QPainter *painter,
+                                      const DTK_GUI_NAMESPACE::DDciIcon &dciIcon, const QRect &iconRect,
+                                      const QPalette::ColorGroup &cg) const
+{
+    DDciIcon::Mode mode = DStyle::toDciIconMode(&option);
+    auto appTheme = DGuiApplicationHelper::toColorType(option.palette);
+    DDciIcon::Theme theme = appTheme == DGuiApplicationHelper::LightType ? DDciIcon::Light : DDciIcon::Dark;
+    DDciIconPalette palette { option.palette.color(cg, QPalette::WindowText), option.palette.color(cg, QPalette::Window),
+                              option.palette.color(cg, QPalette::Highlight), option.palette.color(cg, QPalette::HighlightedText) };
+    if (option.state & QStyle::State_Selected)
+        palette.setForeground(option.palette.color(cg, QPalette::HighlightedText));
+    dciIcon.paint(painter, iconRect, painter->device() ? painter->device()->devicePixelRatioF() : qApp->devicePixelRatio(),
+                  theme, mode, Qt::AlignCenter, palette);
 }
 
 void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const

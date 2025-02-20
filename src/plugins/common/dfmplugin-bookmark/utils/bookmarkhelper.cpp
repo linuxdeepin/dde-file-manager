@@ -69,4 +69,4 @@ bool BookMarkHelper::isValidQuickAccessConf(const QVariantList &list)
 }
 
 BookMarkHelper::BookMarkHelper(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent) { }
