@@ -10,6 +10,8 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-framework/dpf.h>
 
@@ -33,6 +35,10 @@ FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget 
       dialogManager(DialogManagerInstance)
 {
     initUI();
+
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
+            &FilePreviewDialog::handleFileInfoRefreshFinished, Qt::QueuedConnection);
+
     if (previewUrllist.count() < 2) {
         statusBar->preButton()->hide();
         statusBar->nextButton()->hide();
@@ -120,6 +126,13 @@ void FilePreviewDialog::openFile()
     bool succ = PreviewFileOperation::openFileHandle(currentWinID, fileList.at(currentPageIndex));
     if (succ)
         close();
+}
+
+void FilePreviewDialog::handleFileInfoRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg)
+{
+    if (UniversalUtils::urlEquals(url, fileList.at(currentPageIndex))) {
+        switchToPage(currentPageIndex);
+    }
 }
 
 void FilePreviewDialog::childEvent(QChildEvent *event)
@@ -253,6 +266,8 @@ void FilePreviewDialog::switchToPage(int index)
 
         return switchToPage(index);
     }
+
+    info->updateAttributes();
 
     AbstractBasePreview *view = nullptr;
     const QMimeType &mimeType = DMimeDatabase().mimeTypeForUrl(fileList.at(index));

@@ -39,6 +39,8 @@ public slots:
 
     void openFile();
 
+    void handleFileInfoRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg);
+
 private:
     void childEvent(QChildEvent *event) override;
     void showEvent(QShowEvent *event) override;
