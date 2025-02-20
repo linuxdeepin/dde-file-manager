@@ -1,3 +1,9 @@
+dde-file-manager (6.5.31) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Feb 2025 21:24:09 +0800
+
 dde-file-manager (6.5.30) unstable; urgency=medium
 
   * fix: Resolved the issue where the prompt message was incomplete during the first SFTP access
