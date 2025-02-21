@@ -32,8 +32,6 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
-    bool matchText(const QString &source, const QString &input) const;
-    bool findAndSelectMatch(const QString &text, int startRow) const;
     QRect availableGeometry(const QPoint& popUpPos) const;
 };
 
