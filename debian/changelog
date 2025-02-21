@@ -1,3 +1,9 @@
+dde-file-manager (6.5.33) unstable; urgency=medium
+
+  * revert a commit for CI
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Feb 2025 17:40:35 +0800
+
 dde-file-manager (6.5.32) unstable; urgency=medium
 
   * fix bugs 
