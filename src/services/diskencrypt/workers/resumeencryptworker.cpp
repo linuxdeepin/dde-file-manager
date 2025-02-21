@@ -97,10 +97,6 @@ void ResumeEncryptWorker::run()
 bool ResumeEncryptWorker::waitForAuthInfo()
 {
     while (1) {
-        using namespace job_file_helper;
-        Q_EMIT requestAuthInfo({ { disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath },
-                                 { disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName } });
-
         {
             QReadLocker lk(&m_lock);
 
@@ -111,6 +107,8 @@ bool ResumeEncryptWorker::waitForAuthInfo()
                 return true;
         }
 
+        Q_EMIT requestAuthInfo({ { disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath },
+                                 { disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName } });
         qInfo() << "wait for secret info..." << m_jobArgs.devPath;
         QThread::sleep(3);
     }
