@@ -27,6 +27,7 @@ int csAddPassphrase(const QString &dev, const QString &validPwd, const QString &
 int csChangePassphrase(const QString &dev, const QString &oldPwd, const QString &newPwd);
 int csActivateDevice(const QString &dev, const QString &activateName, const QString &passphrase = QString());
 int csActivateDeviceByVolume(const QString &dev, const QString &activateName, const QByteArray &volume);
+int csSetLabel(const QString &dev, const QString &label);
 }   // namespace crypt_setup
 
 namespace crypt_setup_helper {

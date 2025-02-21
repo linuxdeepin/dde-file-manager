@@ -42,6 +42,7 @@ protected:
     bool waitForAuthInfo();
     void setPassphrase();
     void setRecoveryKey();
+    void setPhyDevLabel();
     void updateCryptTab();
     void saveRecoveryKey();
 
