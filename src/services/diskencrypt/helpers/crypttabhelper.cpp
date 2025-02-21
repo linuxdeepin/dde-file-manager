@@ -76,6 +76,12 @@ bool crypttab_helper::updateCryptTab()
 bool crypttab_helper::insertCryptItem(const CryptItem &item)
 {
     auto items = cryptItems();
+    for (int i = items.count() - 1; i >= 0; --i) {
+        if (items.at(i).source == item.source) {
+            qInfo() << "duplicated item, will be removed..." << item.source << item.target;
+            items.removeAt(i);
+        }
+    }
     items.append(item);
 
     qInfo() << "new crypt item is added." << item.source << item.target;

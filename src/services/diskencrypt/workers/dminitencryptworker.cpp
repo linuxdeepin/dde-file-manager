@@ -62,7 +62,11 @@ void DMInitEncryptWorker::run()
     job_file_helper::createEncryptJobFile(initJobArgs(phyPath));
     qInfo() << "overlay encrypt initialized." << phyPath;
 
-    RetOnFail(crypt_setup::csActivateDeviceByVolume(phyPath, unlockName, proc.volumeKey), EActive + phyPath);
+    int r = crypt_setup::csActivateDeviceByVolume(phyPath, unlockName, proc.volumeKey);
+    if (r < 0) {
+        qWarning() << "cannot activate device by volume key, try using passphrase." << phyPath;
+        RetOnFail(crypt_setup::csActivateDevice(phyPath, unlockName), EActive + phyPath);
+    }
     qInfo() << "overlay device activated." << phyPath << unlockName;
 
     // reload midDev to unlocked dev. and resume topDev.
