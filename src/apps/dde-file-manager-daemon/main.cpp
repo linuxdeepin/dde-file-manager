@@ -37,11 +37,15 @@ using namespace GlobalDConfDefines::BaseConfig;
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
-static void initLog()
+static void initLogFilter()
 {
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+}
+
+static void initLogSetting()
+{
     dpfLogManager->applySuggestedLogSettings();
 }
 
@@ -111,8 +115,12 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    initLog();
+    initLogFilter();
     DApplication a(argc, argv);
+
+    // BUG-278055
+    initLogSetting();
+
     a.setOrganizationName(ORGANIZATION_NAME);
     {
         // load translation
