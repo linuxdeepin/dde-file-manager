@@ -43,7 +43,7 @@ int crypt_setup::csInitEncrypt(const QString &dev, CryptPreProcessor *processor)
 
 int crypt_setup_helper::createHeaderFile(const QString &dev, QString *headerPath)
 {
-    auto headerName = QString("%1_dfm_encrypt_header.bin").arg(dev.mid(5));
+    auto headerName = QString("%1_dfm_encrypt_header_%2.bin").arg(dev.mid(5)).arg(QDateTime::currentMSecsSinceEpoch());
     int fd = shm_open(headerName.toStdString().c_str(),
                       O_CREAT | O_EXCL | O_RDWR,
                       S_IRUSR | S_IWUSR);
@@ -333,10 +333,12 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
         return -disk_encrypt::kErrorInitReencrypt;
     }
 
+    qInfo() << "processing encryption..." << dev;
     QPair<QString, QString> devInfo { dev, displayName };
     r = crypt_reencrypt_run(cdev,
                             crypt_setup_helper::onEncrypting,
                             (void *)&devInfo);
+    qInfo() << "encryption process finished" << dev << r;
     if (r < 0) {
         qWarning() << "run reencrypt failed!" << dev << r;
         return -disk_encrypt::kErrorReencryptFailed;
@@ -560,17 +562,20 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
         return -disk_encrypt::kErrorWrongPassphrase;   // might not pass wrong.
     }
 
+    qInfo() << "processing decryption..." << dev;
     QPair<QString, QString> devInfo { dev, displayName };
     r = crypt_reencrypt_run(cdev,
                             crypt_setup_helper::onDecrypting,
                             (void *)&devInfo);
+    qInfo() << "decryption process finished" << dev << r;
     if (r < 0) {
         qWarning() << "decrypt device failed!" << dev << r;
         return -disk_encrypt::kErrorReencryptFailed;
     }
 
-    ::remove(backupHeader.toStdString().c_str());
-
+    remove(backupHeader.toStdString().c_str());
+    system("udevadm trigger");
+    system("udevadm settle");
     return disk_encrypt::kSuccess;
 }
 
