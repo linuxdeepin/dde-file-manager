@@ -385,6 +385,10 @@ QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
         if (label.startsWith("_dde_"))
             return datas.value(kIdLabel).toString().mid(5);
     }
+
+    if (datas.value(kIsEncrypted).toBool() && clearInfo.isEmpty())
+        return QObject::tr("%1 Encrypted").arg(label);
+
     return nameOfDefault(label, size);
 }
 
