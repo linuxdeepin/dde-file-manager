@@ -86,6 +86,7 @@ void ResumeEncryptWorker::run()
         return;
     }
 
+    setPhyDevLabel();
     setPassphrase();
     setRecoveryKey();
     updateCryptTab();
@@ -163,6 +164,16 @@ void ResumeEncryptWorker::setRecoveryKey()
     qInfo() << "recovery key setted." << m_jobArgs.devPath;
 
     saveRecoveryKey();
+}
+
+void ResumeEncryptWorker::setPhyDevLabel()
+{
+    int r = crypt_setup::csSetLabel(m_jobArgs.devPath, m_jobArgs.devName);
+    if (r < 0) {
+        qWarning() << "cannot set label!" << m_jobArgs.devPath << m_jobArgs.devName;
+        return;
+    }
+    qInfo() << "device label setted." << m_jobArgs.devPath << m_jobArgs.devName;
 }
 
 void ResumeEncryptWorker::updateCryptTab()

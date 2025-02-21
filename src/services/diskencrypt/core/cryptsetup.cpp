@@ -848,3 +848,29 @@ int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &act
     }
     return disk_encrypt::kSuccess;
 }
+
+int crypt_setup::csSetLabel(const QString &dev, const QString &label)
+{
+    struct crypt_device *cdev { nullptr };
+    dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
+
+    int r = crypt_init(&cdev,
+                       dev.toStdString().c_str());
+    if (r < 0) {
+        qWarning() << "cannot init crypt device!" << dev << r;
+        return -disk_encrypt::kErrorInitCrypt;
+    }
+
+    r = crypt_load(cdev, CRYPT_LUKS, nullptr);
+    if (r < 0) {
+        qWarning() << "cannot load crypt device!" << dev << r;
+        return -disk_encrypt::kErrorLoadCrypt;
+    }
+
+    r = crypt_set_label(cdev, label.toStdString().c_str(), nullptr);
+    if (r < 0) {
+        qWarning() << "cannot set lable on device!" << label << dev << r;
+        return -disk_encrypt::kErrorSetLabel;
+    }
+    return disk_encrypt::kSuccess;
+}
