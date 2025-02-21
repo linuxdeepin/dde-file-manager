@@ -11,12 +11,16 @@
 
 #include <QFile>
 
-#define RetOnFail(ret, msg) \
-    if (ret < 0) {          \
-        setExitCode(ret);   \
-        qWarning() << msg;  \
-        return;             \
+#define RetOnFail(ret, msg)    \
+    {                          \
+        int r = ret;           \
+        if (r < 0) {           \
+            setExitCode(r);    \
+            qWarning() << msg; \
+            return;            \
+        }                      \
     }
+
 #define ESuspend "error when SUSPEND dm device"
 #define EResume "error when RESUME dm device"
 #define EReload "error when RELOAD dm device"

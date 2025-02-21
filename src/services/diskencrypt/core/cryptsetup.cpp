@@ -28,13 +28,13 @@ static const int kDefaultPassphraseLen { 0 };
 
 FILE_ENCRYPT_USE_NS
 
-int crypt_setup::csInitEncrypt(const QString &dev)
+int crypt_setup::csInitEncrypt(const QString &dev, CryptPreProcessor *processor)
 {
     int r = crypt_setup_helper::initiable(dev);
     if (r < 0) return r;
 
     QString fileHeader;
-    r = crypt_setup_helper::initFileHeader(dev, &fileHeader);
+    r = crypt_setup_helper::initFileHeader(dev, processor, &fileHeader);
     if (r < 0) return r;
 
     r = crypt_setup_helper::initDeviceHeader(dev, fileHeader);
@@ -45,10 +45,10 @@ int crypt_setup_helper::createHeaderFile(const QString &dev, QString *headerPath
 {
     auto headerName = QString("%1_dfm_encrypt_header.bin").arg(dev.mid(5));
     int fd = shm_open(headerName.toStdString().c_str(),
-                      O_CREAT | O_EXCL | O_WRONLY | S_IRUSR | S_IWUSR,
-                      0777);
+                      O_CREAT | O_EXCL | O_RDWR,
+                      S_IRUSR | S_IWUSR);
     if (fd < 0) {
-        qWarning() << "cannot create header file at" << headerName;
+        qWarning() << "cannot create header file at" << headerName << strerror(errno);
         return -1;
     }
     int r = ftruncate(fd, 32 * 1024 * 1024);   // allocate 32M space
@@ -78,7 +78,9 @@ int crypt_setup_helper::initiable(const QString &dev)
     return disk_encrypt::kSuccess;
 }
 
-int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
+int crypt_setup_helper::initFileHeader(const QString &dev,
+                                       crypt_setup::CryptPreProcessor *processor,
+                                       QString *fileHeader)
 {
     int r = 0;
     QString headerPath;
@@ -88,8 +90,12 @@ int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
         return -disk_encrypt::kErrorCreateHeader;
     }
 
+    // just use processor to determind whether to adjust the filesystem.
+    // the normal initialize process passes a null processor and the usec-overlay mode passes a valid one.
+    // so only normal process need to adjust fs.
+    bool adjustFs = (processor == nullptr);
     // shrink file system leave space to hold crypt header.
-    if (!filesystem_helper::shrinkFileSystem_ext(dev)) {
+    if (adjustFs && !filesystem_helper::shrinkFileSystem_ext(dev)) {
         qWarning() << "cannot resize filesytem!" << dev;
         return -disk_encrypt::kErrorResizeFs;
     }
@@ -171,34 +177,41 @@ int crypt_setup_helper::initFileHeader(const QString &dev, QString *fileHeader)
         .flags = CRYPT_REENCRYPT_INITIALIZE_ONLY | CRYPT_REENCRYPT_MOVE_FIRST_SEGMENT
     };
 
-    r = crypt_reencrypt_init_by_passphrase(cdev,
-                                           nullptr,
-                                           "",
-                                           0,
-                                           CRYPT_ANY_SLOT,
-                                           0,
-                                           cipher.c_str(),
-                                           mode,
-                                           &encArgs);
+    auto func = processor ? processor->proc : nullptr;
+    auto argc = processor ? processor->argc : 0;
+    auto argv = processor ? processor->argv : nullptr;
+    r = crypt_reencrypt_init_by_passphrase_with_data_device_preprocess(cdev,
+                                                                       nullptr,
+                                                                       "",
+                                                                       0,
+                                                                       CRYPT_ANY_SLOT,
+                                                                       0,
+                                                                       cipher.c_str(),
+                                                                       mode,
+                                                                       &encArgs,
+                                                                       func,
+                                                                       argc,
+                                                                       argv);
     if (r < 0) {
         qWarning() << "cannot init reencrypt!" << dev << r;
         return -disk_encrypt::kErrorInitReencrypt;
     }
 
-    // code below does not block the encrypt.
-    // unlock to expand clear device fs
-    QString name = "dm-" + dev.mid(5);   // dm-nvme0n1p7
-    r = crypt_activate_by_passphrase(cdev,
-                                     name.toStdString().c_str(),
-                                     CRYPT_ANY_SLOT,
-                                     kDefaultPassphrase,
-                                     kDefaultPassphraseLen,
-                                     CRYPT_ACTIVATE_NO_JOURNAL);
-    if (r < 0) {
-        qWarning() << "activate devcie failed!" << dev << r;
-    } else {
-        // filesystem_helper::expandFileSystem_ext("/dev/mapper/" + name);
-        crypt_deactivate(cdev, name.toStdString().c_str());
+    if (processor) {
+        size_t keySize = crypt_get_volume_key_size(cdev);
+        std::string key;
+        key.resize(keySize);
+        r = crypt_volume_key_get(cdev,
+                                 0,
+                                 key.data(),
+                                 &keySize,
+                                 nullptr,   // use null so that volume key can be get dirrectly from cdev rather than calculate by passphrase
+                                 kDefaultPassphraseLen);
+        if (r < 0) {
+            qWarning() << "cannot get volume key!" << dev << r;
+            return -disk_encrypt::kErrorUnknown;
+        }
+        processor->volumeKey = key.data();
     }
 
     if (fileHeader) *fileHeader = headerPath;
@@ -703,7 +716,7 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
     return disk_encrypt::kSuccess;
 }
 
-int crypt_setup::csActivateDevice(const QString &dev, const QString &activateName)
+int crypt_setup::csActivateDevice(const QString &dev, const QString &activateName, const QString &passphrase)
 {
     struct crypt_device *cdev { nullptr };
     dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
@@ -729,8 +742,8 @@ int crypt_setup::csActivateDevice(const QString &dev, const QString &activateNam
         r = crypt_activate_by_passphrase(cdev,
                                          activateName.toStdString().c_str(),
                                          CRYPT_ANY_SLOT,
-                                         kDefaultPassphrase,
-                                         kDefaultPassphraseLen,
+                                         passphrase.toStdString().c_str(),
+                                         passphrase.length(),
                                          CRYPT_ACTIVATE_NO_JOURNAL);
         if (r < 0) {
             qWarning() << "cannot activate device!" << dev << r;
@@ -798,4 +811,40 @@ int crypt_setup_helper::encryptStatus(const QString &dev)
     if (flags & CRYPT_REQUIREMENT_UNKNOWN)
         status = disk_encrypt::kStatusUnknown;
     return status;
+}
+
+int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &activateName, const QByteArray &volume)
+{
+    struct crypt_device *cdev { nullptr };
+    dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
+
+    int r = crypt_init(&cdev,
+                       dev.toStdString().c_str());
+    if (r < 0) {
+        qWarning() << "cannot init crypt device!" << dev << r;
+        return -disk_encrypt::kErrorInitCrypt;
+    }
+
+    r = crypt_load(cdev,
+                   CRYPT_LUKS,
+                   nullptr);
+    if (r < 0) {
+        qWarning() << "cannot load crypt device!" << dev << r;
+        return -disk_encrypt::kErrorLoadCrypt;
+    }
+
+    r = crypt_status(cdev,
+                     activateName.toStdString().c_str());
+    if (r == CRYPT_INACTIVE) {
+        r = crypt_activate_by_volume_key(cdev,
+                                         activateName.toStdString().c_str(),
+                                         volume.data(),
+                                         volume.length(),
+                                         0);
+        if (r < 0) {
+            qWarning() << "cannot activate device!" << dev << r;
+            return -disk_encrypt::kErrorActive;
+        }
+    }
+    return disk_encrypt::kSuccess;
 }

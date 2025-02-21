@@ -10,18 +10,28 @@
 FILE_ENCRYPT_BEGIN_NS
 
 namespace crypt_setup {
-int csInitEncrypt(const QString &dev);
+struct CryptPreProcessor
+{
+    typedef int (*Processor)(int argc, const char *argv[]);
+    int argc = 0;
+    const char **argv = nullptr;
+    Processor proc = nullptr;
+    QByteArray volumeKey;
+};
+
+int csInitEncrypt(const QString &dev, CryptPreProcessor *processor = nullptr);
 int csResumeEncrypt(const QString &dev, const QString &activeName, const QString &displayName);
 int csDecrypt(const QString &dev, const QString &passphrase,
               const QString &displayName, const QString &activeName = QString());
 int csAddPassphrase(const QString &dev, const QString &validPwd, const QString &newPwd);
 int csChangePassphrase(const QString &dev, const QString &oldPwd, const QString &newPwd);
-int csActivateDevice(const QString &dev, const QString &activateName);
+int csActivateDevice(const QString &dev, const QString &activateName, const QString &passphrase = QString());
+int csActivateDeviceByVolume(const QString &dev, const QString &activateName, const QByteArray &volume);
 }   // namespace crypt_setup
 
 namespace crypt_setup_helper {
 int initiable(const QString &dev);
-int initFileHeader(const QString &dev, QString *fileHeader = nullptr);
+int initFileHeader(const QString &dev, crypt_setup::CryptPreProcessor *processor, QString *fileHeader = nullptr);
 int initDeviceHeader(const QString &dev, const QString &fileHeader);
 int backupHeaderFile(const QString &dev, QString *fileHeader = nullptr);
 int headerStatus(const QString &fileHeader);

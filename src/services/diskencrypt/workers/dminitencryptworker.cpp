@@ -11,18 +11,22 @@
 
 #include <sys/mount.h>
 
-#define RetOnFail(ret, msg) \
-    if (ret < 0) {          \
-        setExitCode(ret);   \
-        qWarning() << msg;  \
-        return;             \
+#define RetOnFail(ret, msg)    \
+    {                          \
+        int r = ret;           \
+        if (r < 0) {           \
+            setExitCode(r);    \
+            qWarning() << msg; \
+            return;            \
+        }                      \
     }
-#define ESuspend "error when SUSPEND dm device"
-#define ECreatDM "error when CREATE dm device"
-#define EResume "error when RESUME dm device"
-#define EReload "error when RELOAD dm device"
-#define EInitEnc "error when INITIAL encrytion"
-#define EActive "error when ACTIVATE device"
+
+#define ESuspend QString("error when SUSPEND dm device ")
+#define ECreatDM QString("error when CREATE dm devic e")
+#define EResume QString("error when RESUME dm device ")
+#define EReload QString("error when RELOAD dm device ")
+#define EInitEnc QString("error when INITIAL encrytion ")
+#define EActive QString("error when ACTIVATE device ")
 
 FILE_ENCRYPT_USE_NS
 
@@ -34,101 +38,42 @@ DMInitEncryptWorker::DMInitEncryptWorker(const QVariantMap &args, QObject *paren
 void DMInitEncryptWorker::run()
 {
     qInfo() << "about to encrypt overlay device...";
-
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
 
     const QString &devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();   // /dev/dm-0
-    auto dev = blockdev_helper::createDevPtr(devPath);
-    if (!dev) {
-        qWarning() << "cannot create device!" << devPath;
-        return;
-    }
+    auto topName = blockdev_helper::getUSecName(devPath);   // usec-overlay-xxxx
+    auto midName = QString(topName).replace("overlay", "overlay-mid");
+    auto unlockName = QString(topName).replace("overlay", "overlay-unlock");
 
-    QString phyDevPath = dm_setup_helper::findHolderDev(devPath);
-    auto topDmName = blockdev_helper::getUSecName(devPath);   // usec-overlay-xxxx
-
-    auto midDmName(topDmName);
-    midDmName.replace("overlay", "overlay-mid");   // usec-overlay-mid-xxxx
-    auto midDmPath = "/dev/mapper/" + midDmName;
-
-    auto activeDmName(topDmName);
-    activeDmName.replace("overlay", "overlay-unlock");   // usec-overlay-unlock-xxxx
-
-    auto phyPtr = blockdev_helper::createDevPtr(phyDevPath);
+    QString phyPath = dm_setup_helper::findHolderDev(devPath);
+    auto phyPtr = blockdev_helper::createDevPtr(phyPath);
     auto source = phyPtr
             ? "PARTUUID=" + phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
-            : phyDevPath;
-    crypttab_helper::insertCryptItem({ activeDmName,
-                                       source,
-                                       "none",
-                                       { "luks", "initramfs" } });
-
-    // create a new dm device
-    RetOnFail(dm_setup::dmSuspendDevice(topDmName), ESuspend);
-    auto r = dm_setup::dmCreateDevice(midDmName,
-                                      { "linear", phyDevPath + " 0", 0, blockdev_helper::devBlockSize(phyDevPath) });
-    if (r < 0) {
-        qWarning() << ECreatDM << midDmPath << phyDevPath;
-        setExitCode(r);
-        r = dm_setup::dmResumeDevice(topDmName);
-        qWarning() << "try resume suspended device:" << topDmName << r;
-        return;
-    }
-    RetOnFail(dm_setup::dmResumeDevice(topDmName), EResume);
-
-    // avoid new created dm device automatically mounted.
-    umount(midDmPath.toStdString().c_str());
-
-    // reload top dm dev to mid dm dev.
-    RetOnFail(dm_setup::dmSuspendDevice(topDmName), ESuspend);
-    r = dm_setup::dmReloadDevice(topDmName,
-                                 { "linear", midDmPath + " 0", 0, blockdev_helper::devBlockSize(midDmPath) });
-    if (r < 0) {
-        qWarning() << EReload << midDmPath << phyDevPath;
-        setExitCode(r);
-        r = dm_setup::dmResumeDevice(topDmName);
-        qWarning() << "try resume suspended device:" << topDmName << r;
-        return;
-    }
-    RetOnFail(dm_setup::dmResumeDevice(topDmName), EResume);
-
-    // reload mid dm to zero dm dev
-    RetOnFail(dm_setup::dmSuspendDevice(midDmName), ESuspend);
-    r = dm_setup::dmReloadDevice(midDmName,
-                                 { "zero", "", 0, blockdev_helper::devBlockSize(midDmPath) });
-    if (r < 0) {
-        qWarning() << EReload << midDmPath << phyDevPath;
-        setExitCode(r);
-        r = dm_setup::dmResumeDevice(midDmName);
-        qWarning() << "try resume suspended device:" << topDmName << r;
-        return;
-    }
-    RetOnFail(dm_setup::dmResumeDevice(midDmName), EResume);
+            : phyPath;
+    crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs" } });
 
     // now we can do encrypt on phyDevPath
-    RetOnFail(crypt_setup::csInitEncrypt(phyDevPath), EInitEnc);
-    job_file_helper::createEncryptJobFile(initJobArgs(phyDevPath));
+    auto _dev = phyPath.toStdString();
+    auto _topName = topName.toStdString();
+    auto _midName = midName.toStdString();
+    const char *argv[] = { _dev.c_str(), _topName.c_str(), _midName.c_str() };
+    crypt_setup::CryptPreProcessor proc { .argc = 3, .argv = argv, .proc = detachPhyDevice };
+    RetOnFail(crypt_setup::csInitEncrypt(phyPath, &proc), EInitEnc + phyPath);
+    job_file_helper::createEncryptJobFile(initJobArgs(phyPath));
+    qInfo() << "overlay encrypt initialized." << phyPath;
 
-    // open crypt device
-    RetOnFail(crypt_setup::csActivateDevice(phyDevPath, activeDmName), EActive);
+    RetOnFail(crypt_setup::csActivateDeviceByVolume(phyPath, unlockName, proc.volumeKey), EActive + phyPath);
+    qInfo() << "overlay device activated." << phyPath << unlockName;
 
-    // reload mid dm to activeDmPath
-    auto activeDmPath = "/dev/mapper/" + activeDmName;
-    RetOnFail(dm_setup::dmSuspendDevice(midDmName), ESuspend);
-    r = dm_setup::dmReloadDevice(midDmName,
-                                 { "linear", activeDmPath + " 0", 0, blockdev_helper::devBlockSize(activeDmPath) });
-    if (r < 0) {
-        qWarning() << EReload << midDmPath << phyDevPath;
-        setExitCode(r);
-        r = dm_setup::dmResumeDevice(midDmName);
-        qWarning() << "try resume suspended device:" << topDmName << r;
-        return;
-    }
-    RetOnFail(dm_setup::dmResumeDevice(midDmName), EResume);
+    // reload midDev to unlocked dev. and resume topDev.
+    auto unlockPath = "/dev/mapper/" + unlockName;
+    dm_setup::DMTable reloadTab { "linear", unlockPath + " 0", 0, blockdev_helper::devBlockSize(unlockPath) };
+    RetOnFail(dm_setup::dmReloadDevice(midName, reloadTab), EReload + midName);
+    RetOnFail(dm_setup::dmResumeDevice(midName), EResume + midName);
+    // top dev is suspend in `detachPhyDevice`
+    RetOnFail(dm_setup::dmResumeDevice(topName), EResume + topName);
 
-    crypttab_helper::updateInitramfs();
-
-    qInfo() << "overlay device encryption inited." << phyDevPath;
+    qInfo() << "overlay device encryption inited." << phyPath;
 }
 
 job_file_helper::JobDescArgs DMInitEncryptWorker::initJobArgs(const QString &phyDev)
@@ -147,4 +92,59 @@ job_file_helper::JobDescArgs DMInitEncryptWorker::initJobArgs(const QString &phy
     args.devType = disk_encrypt::job_type::TypeOverlay;
 
     return args;
+}
+
+int DMInitEncryptWorker::detachPhyDevice(int argc, const char *argv[])
+{
+    if (argc < 3) {
+        qWarning() << "parameter error!" << argc << *argv;
+        return -disk_encrypt::kErrorUnknown;
+    }
+
+    QString dev(argv[0]), topName(argv[1]), midName(argv[2]);
+    auto devSize = blockdev_helper::devBlockSize(dev);
+    dm_setup::DMTable initTab { "linear", dev + " 0", 0, devSize };
+    dm_setup::DMTable zeroTab { "zero", "", 0, devSize };
+    dm_setup::DMTable reloadTab { "linear", "/dev/mapper/" + midName + " 0", 0, devSize };
+
+    qInfo() << "start suspend device" << topName;
+
+    int r = disk_encrypt::kSuccess;
+    do {
+        // create midDev
+        r = dm_setup::dmSuspendDevice(topName);
+        if (r != 0) break;
+        r = dm_setup::dmCreateDevice(midName, initTab);
+        if (r != 0) break;
+        r = dm_setup::dmResumeDevice(topName);
+        if (r != 0) break;
+
+        // reload top to mid
+        r = dm_setup::dmSuspendDevice(topName);
+        if (r != 0) break;
+        r = dm_setup::dmReloadDevice(topName, reloadTab);
+        if (r != 0) break;
+        r = dm_setup::dmResumeDevice(topName);
+        if (r != 0) break;
+
+        // should be resumed after physical device unlocked.
+        r = dm_setup::dmSuspendDevice(topName);
+        if (r != 0) break;
+
+        // reload mid to zero
+        r = dm_setup::dmSuspendDevice(midName);
+        if (r != 0) break;
+        r = dm_setup::dmReloadDevice(midName, zeroTab);
+        if (r != 0) break;
+        r = dm_setup::dmResumeDevice(midName);
+        if (r != 0) break;
+
+        // physical device already detached.
+        return disk_encrypt::kSuccess;
+    } while (0);
+
+    dm_setup::dmReloadDevice(topName, initTab);
+    dm_setup::dmResumeDevice(topName);
+    qWarning() << "dmsetup failed! reload to initial status." << topName;
+    return r;
 }
