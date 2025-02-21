@@ -243,11 +243,15 @@ static void initEnv()
         setEnvForRoot();
 }
 
-static void initLog()
+static void initLogFilter()
 {
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+}
+
+static void initLogSetting()
+{
     dpfLogManager->applySuggestedLogSettings();
 }
 
@@ -305,7 +309,7 @@ int main(int argc, char *argv[])
     initEnv();
 
     // Warning: set log filter must before QApplication inited
-    initLog();
+    initLogFilter();
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     // Fixed the locale codec to utf-8
@@ -313,6 +317,9 @@ int main(int argc, char *argv[])
 #endif
 
     SingleApplication a(argc, argv);
+
+    // BUG-278055
+    initLogSetting();
 
     a.setOrganizationName(ORGANIZATION_NAME);
     a.loadTranslator();
