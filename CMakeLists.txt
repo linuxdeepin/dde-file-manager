@@ -24,13 +24,6 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 
-find_package(Dtk6CMake REQUIRED)
-if (${DEEPIN_OS_VERSION} MATCHES "23")
-    add_definitions(-DFEATURE_DISABLE_ENCRYPT)
-    set(FEATURE_DISABLE_ENCRYPT TRUE)
-    message("DISABLE encrypt feature on " ${DEEPIN_OS_VERSION})
-endif()
-
 # Qt6
 set(DFM_BUILD_WITH_QT6 TRUE)
 set(COMPILE_ON_V2X TRUE)
