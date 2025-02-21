@@ -36,6 +36,8 @@ private:
     void initConnect();
     QModelIndex getStartIndexFromHover(bool isUp = false);
     int getStartRowFromHover();
+    bool findAndSelectMatch(const QString &text, int startRow) const;
+    bool matchText(const QString &source, const QString &input) const;
 
 private Q_SLOTS:
     void clicked(const QModelIndex &index);
