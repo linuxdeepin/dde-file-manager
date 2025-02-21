@@ -1,3 +1,10 @@
+dde-file-manager (6.5.10.4) unstable; urgency=medium
+
+  * fix log initialization bug due to incorrect startup order
+  * fix adjust size calculation for symbolic links in file statistics
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Feb 2025 17:22:59 +0800
+
 dde-file-manager (6.5.10.3) unstable; urgency=medium
 
   * fix bugs
