@@ -34,12 +34,15 @@ public:
 
 private:
     void initConnect();
+    QModelIndex getStartIndexFromHover(bool isUp = false);
+    int getStartRowFromHover();
 
 private Q_SLOTS:
     void clicked(const QModelIndex &index);
     void selectUp();
     void selectDown();
     void returnPressed();
+    void handleKeyInput(const QString &pressedText);
 };
 
 }   // namespace dfmplugin_titlebar
