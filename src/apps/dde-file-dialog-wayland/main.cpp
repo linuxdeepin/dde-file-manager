@@ -39,11 +39,15 @@ static constexpr char kDialogCoreLibName[] { "libfiledialog-core-plugin.so" };
 static constexpr char kDFMCorePluginName[] { "dfmplugin-core" };
 static constexpr char kDFMCoreLibName[] { "libdfm-core-plugin.so" };
 
-static void initLog()
+static void initLogFilter()
 {
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+}
+
+static void initLogSetting()
+{
     dpfLogManager->applySuggestedLogSettings();
 }
 
@@ -174,9 +178,13 @@ static void handleSIGTERM(int sig)
 int main(int argc, char *argv[])
 {
     initEnv();
-    initLog();
+    initLogFilter();
 
     DApplication a(argc, argv);
+
+    // BUG-278055
+    initLogSetting();
+
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setQuitOnLastWindowClosed(false);
     a.setProperty("GTK", true);
