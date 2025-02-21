@@ -225,13 +225,16 @@ void DoCutFilesWorker::onUpdateProgress()
 void DoCutFilesWorker::endWork()
 {
     // delete all cut source files
-    for (const auto &info : cutAndDeleteFiles) {
-        bool ret = localFileHandler->deleteFile(info->uri());
-        if (!ret) {
-            fmWarning() << "delete file error, so do not delete other files!!!!";
-            continue;
+    if(localFileHandler) {
+        for (const auto &info : cutAndDeleteFiles) {
+            bool ret = localFileHandler->deleteFile(info->uri());
+            if (!ret) {
+                fmWarning() << "delete file error, so do not delete other files!!!!";
+                continue;
+            }
         }
     }
+    
     return FileOperateBaseWorker::endWork();
 }
 
