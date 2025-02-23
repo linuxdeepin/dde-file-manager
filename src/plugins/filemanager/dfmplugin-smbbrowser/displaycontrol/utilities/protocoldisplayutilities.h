@@ -40,6 +40,12 @@ bool sidebarUrlEquals(const QUrl &item, const QUrl &target);
 
 }   // namespace computer_sidebar_event_calls
 
+namespace secret_utils {
+
+void forgetPasswordInSession(const QString &host);
+
+}   //namespace secret_utils
+
 namespace ui_ventry_calls {
 void addAggregatedItemForSeperatedOnlineItem(const QUrl &entryUrl);
 void addAggregatedItems();

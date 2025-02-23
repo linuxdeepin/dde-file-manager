@@ -48,8 +48,10 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
         fmCritical() << "File Dialog: Create window failed";
         abort();
     }
-    auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
-    d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
+    auto defaultUrl = d_func()->dialog->lastVisitedUrl();
+    if (!defaultUrl.isValid())
+        defaultUrl = QUrl::fromLocalFile(DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath));
+    d_func()->dialog->cd(defaultUrl);
 
     //! no need to hide, if the dialog is showed in creating, it must be bug.
     //! see bug#22564

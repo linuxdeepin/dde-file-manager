@@ -29,6 +29,7 @@ class FileDialogPrivate : public QObject
 
 public:
     explicit FileDialogPrivate(FileDialog *qq);
+    ~FileDialogPrivate();
 
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
@@ -54,6 +55,7 @@ private:
     bool allowMixedSelection { false };
     QFileDialog::Options options;
     QUrl currentUrl;
+    QUrl lastVisitedDir;
 };
 
 }

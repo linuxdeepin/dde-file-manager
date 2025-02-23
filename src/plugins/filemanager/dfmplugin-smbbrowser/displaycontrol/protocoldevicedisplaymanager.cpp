@@ -135,9 +135,6 @@ void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
         const QUrl &vEntryUrl = makeVEntryUrl(stdSmbPath);
         callItemAdd(vEntryUrl);
     } else {
-        if (isShowOfflineItem())
-            return;
-
         // only remove aggregated entry when there has no mounted share of the host.
         const QString &stdRemovedSmb = getStandardSmbPath(id);
         QString host = QUrl(stdRemovedSmb).host();
@@ -146,7 +143,13 @@ void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
         const auto &allMountedStdSmb = getStandardSmbPaths(getMountedSmb());
         bool hasMountedOfHost = std::any_of(allMountedStdSmb.cbegin(), allMountedStdSmb.cend(),
                                             [=](const QString &smb) { return smb.startsWith(removedHost); });
-        if (hasMountedOfHost)
+        if (hasMountedOfHost) {
+            return;
+        } else {
+            secret_utils::forgetPasswordInSession(host);
+        }
+
+        if (isShowOfflineItem())
             return;
         QUrl entryUrl = makeVEntryUrl(removedHost);
         callItemRemove(entryUrl);

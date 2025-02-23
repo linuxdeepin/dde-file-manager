@@ -9,6 +9,7 @@
 
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
@@ -20,6 +21,7 @@
 #include <QVBoxLayout>
 #include <QTextEdit>
 #include <QLabel>
+#include <QScreen>
 
 DFMBASE_USE_NAMESPACE
 
@@ -223,6 +225,8 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -277,6 +281,8 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -320,7 +326,8 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
     iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
-    d.moveToCenter();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -354,7 +361,8 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
     iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
-    d.moveToCenter();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
