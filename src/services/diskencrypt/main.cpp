@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dbus/diskencryptsetup.h"
+#include "helpers/cryptsetupcompabilityhelper.h"
 #include "diskencryptadaptor.h"
 
 #include <DConfig>
@@ -25,6 +26,8 @@ int main(int argc, char *argv[])
         qWarning() << "org.deepin.dde.file-manager.diskencrypt is dsiable, process exit";
         return 0;
     }
+
+    daemonplugin_file_encrypt::CryptSetupCompabilityHelper::instance();
 
     DiskEncryptSetup encryptServer;
     new DiskEncryptAdaptor(&encryptServer);

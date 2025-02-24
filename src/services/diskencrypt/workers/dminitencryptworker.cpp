@@ -8,6 +8,7 @@
 #include "helpers/blockdevhelper.h"
 #include "helpers/inhibithelper.h"
 #include "helpers/crypttabhelper.h"
+#include "helpers/cryptsetupcompabilityhelper.h"
 
 #include <sys/mount.h>
 
@@ -37,6 +38,12 @@ DMInitEncryptWorker::DMInitEncryptWorker(const QVariantMap &args, QObject *paren
 
 void DMInitEncryptWorker::run()
 {
+    if (!CryptSetupCompabilityHelper::instance()->initWithPreProcess()) {
+        qWarning() << "key function does not provided by cryptsetup!"
+                   << "cannot encrypt with overlay method!";
+        return;
+    }
+
     qInfo() << "about to encrypt overlay device...";
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
 
