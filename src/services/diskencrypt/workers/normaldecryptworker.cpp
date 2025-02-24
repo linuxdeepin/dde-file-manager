@@ -17,10 +17,10 @@ void NormalDecryptWorker::run()
 {
     qInfo() << "about to decrypt normal device...";
 
-    auto fd = inhibit_helper::inhibit(tr("Decrypting..."));
-
     using namespace disk_encrypt::encrypt_param_keys;
     auto devPath = m_args.value(kKeyDevice, "").toString();
+    auto fd = inhibit_helper::inhibit(tr("Decrypting ") + devPath);
+
     auto devPass = disk_encrypt::fromBase64(m_args.value(kKeyPassphrase, "").toString());
     auto devName = m_args.value(kKeyDeviceName, "").toString();
 

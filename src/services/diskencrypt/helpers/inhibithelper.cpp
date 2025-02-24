@@ -5,6 +5,7 @@
 #include "inhibithelper.h"
 
 #include <QDBusInterface>
+#include <QDebug>
 
 FILE_ENCRYPT_USE_NS
 
@@ -15,9 +16,12 @@ QDBusReply<QDBusUnixFileDescriptor> inhibit_helper::inhibit(const QString &messa
                          "org.freedesktop.login1.Manager",
                          QDBusConnection::systemBus());
     QVariantList args;
-    args << QString("shutdown:sleep:")
+    args << QString("shutdown:sleep")
          << QString("file-manager-daemon")
          << QString(message)
          << QString("block");
-    return iface.callWithArgumentList(QDBus::Block, "Inhibit", args);
+
+    QDBusReply<QDBusUnixFileDescriptor> ret = iface.callWithArgumentList(QDBus::Block, "Inhibit", args);
+    qInfo() << message << "inhibited:" << ret.value().fileDescriptor();
+    return ret;
 }

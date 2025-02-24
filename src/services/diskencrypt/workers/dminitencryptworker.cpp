@@ -45,9 +45,9 @@ void DMInitEncryptWorker::run()
     }
 
     qInfo() << "about to encrypt overlay device...";
-    auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
-
     const QString &devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();   // /dev/dm-0
+    auto fd = inhibit_helper::inhibit(tr("Initialize encryption ") + devPath);
+
     auto topName = blockdev_helper::getUSecName(devPath);   // usec-overlay-xxxx
     auto midName = QString(topName).replace("overlay", "overlay-mid");
     auto unlockName = QString(topName).replace("overlay", "overlay-unlock");

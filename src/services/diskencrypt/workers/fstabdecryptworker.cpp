@@ -21,10 +21,10 @@ void FstabDecryptWorker::run()
 {
     qInfo() << "about to decrypt fstab device...";
 
-    auto fd = inhibit_helper::inhibit(tr("Decrypting..."));
-
     using namespace disk_encrypt::encrypt_param_keys;
     auto devPath = m_args.value(kKeyDevice, "").toString();
+
+    auto fd = inhibit_helper::inhibit(tr("Decrypting ") + devPath);
 
     auto status = crypt_setup_helper::encryptStatus(devPath);
     if (status & disk_encrypt::kStatusOnline && status & disk_encrypt::kStatusEncrypt) {
