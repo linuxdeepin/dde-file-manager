@@ -680,6 +680,9 @@ bool DeviceUtils::isBuiltInDisk(const QVariantHash &devInfo)
     if (devInfo.value(kOpticalDrive).toBool())
         return false;
 
+    if (!devInfo.contains(kHintSystem))
+        return false;
+
     // 检查是否为系统相关磁盘
     QString mpt = devInfo.value(kMountPoint).toString();
     QString idLabel = devInfo.value(kIdLabel).toString();
