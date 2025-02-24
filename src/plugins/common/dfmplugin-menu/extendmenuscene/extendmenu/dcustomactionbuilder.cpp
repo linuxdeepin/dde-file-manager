@@ -314,6 +314,9 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
                 rets << args;
                 args.clear();
             } else {
+                // NOTE:https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+                if (arg.contains("%%"))
+                    arg = arg.replace("%%", "%");
                 rets << arg;
             }
         }
@@ -332,6 +335,9 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
                 rets << args;
                 args.clear();
             } else {
+                // NOTE:https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+                if (arg.contains("%%"))
+                    arg = arg.replace("%%", "%");
                 rets << arg;
             }
         }
