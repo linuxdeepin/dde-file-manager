@@ -88,7 +88,6 @@ void DeviceList::initUI()
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     verticalScrollBar()->setSingleStep(7);
-    viewport()->setAutoFillBackground(false);
     content->setAutoFillBackground(false);
     setWidgetResizable(true);
     setMaximumHeight(420);

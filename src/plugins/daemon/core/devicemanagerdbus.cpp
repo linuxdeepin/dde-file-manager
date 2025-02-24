@@ -65,6 +65,9 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::blockDevPoweroffAysncFailed, this, [this](auto deviceId) {
         emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kPowerOff);
     });
+    connect(DevMngIns, &DeviceManager::protocolDevUnmountAsyncFailed, this, [this](auto deviceId) {
+        emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kUnmount);
+    });
 
     connect(DevMngIns, &DeviceManager::devSizeChanged, this, &DeviceManagerDBus::SizeUsedChanged);
     connect(DevMngIns, &DeviceManager::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
