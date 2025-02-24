@@ -129,7 +129,7 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
 {
-    static const QString kHomePath { QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last() };
+    static const QString kHomePath { QStandardPaths::standardLocations(QStandardPaths::HomeLocation).constLast() };
 
     QList<CrumbData> list;
     const QString &path = url.toLocalFile();
@@ -174,7 +174,6 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
     QList<QUrl>::const_reverse_iterator iter = urls.crbegin();
     while (iter != urls.crend()) {
         const QUrl &oneUrl = *iter;
-        QString localFile = oneUrl.toLocalFile();
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
             // Check for possible display text.
@@ -250,8 +249,6 @@ void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
     if (dfmbase::FileUtils::isLocalFile(currentUrl))
         QDir::setCurrent(currentUrl.toLocalFile());
 
-    QString inputStr = text;
-
     if (currentUrl.isValid()) {
         bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
         if (isDisableSearch) {
@@ -291,7 +288,7 @@ void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(dialog, &DDialog::buttonClicked, dialog, &ConnectToServerDialog::onButtonClicked);
     window->setProperty("ConnectToServerDialogShown", true);
-    QObject::connect(dialog, &ConnectToServerDialog::closed, [window] {
+    QObject::connect(dialog, &ConnectToServerDialog::closed, window, [window] {
         window->setProperty("ConnectToServerDialogShown", false);
     });
 }
@@ -311,7 +308,7 @@ void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
         dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Share_SetPassword", password);
     });
     window->setProperty("UserSharePwdSettingDialogShown", true);
-    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, window, [window] {
         window->setProperty("UserSharePwdSettingDialogShown", false);
     });
 }
@@ -327,7 +324,7 @@ void TitleBarHelper::showDiskPasswordChangingDialog(quint64 windowId)
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     window->setProperty("DiskPwdChangingDialogShown", true);
-    QObject::connect(dialog, &DiskPasswordChangingDialog::closed, [=] {
+    QObject::connect(dialog, &DiskPasswordChangingDialog::closed, window, [window] {
         window->setProperty("DiskPwdChangingDialogShown", false);
     });
 }
