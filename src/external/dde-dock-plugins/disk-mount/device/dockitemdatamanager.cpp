@@ -156,9 +156,11 @@ void DockItemDataManager::playSoundOnDevPlugInOut(bool in)
 void DockItemDataManager::sendNotification(const QString &id, const QString &operation)
 {
     qCInfo(logAppDock) << "eject failed: " << id << operation;
-    if (!blocks.contains(id))
+    if (!blocks.contains(id) && !protocols.contains(id))
         return;
-    QString devName = blocks.value(id).displayName;
+    QString devName = blocks.contains(id)
+            ? blocks.value(id).displayName
+            : protocols.value(id).displayName;
     qCInfo(logAppDock) << "device" << devName << operation << "failed";
 
     QMap<QString, QString> texts {

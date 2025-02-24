@@ -860,9 +860,11 @@ void DeviceManager::detachAllProtoDevs()
 
 void DeviceManager::detachProtoDev(const QString &id)
 {
-    unmountProtocolDevAsync(id, {}, [id](bool ok, const OperationErrorInfo &err) {
-        if (!ok)
+    unmountProtocolDevAsync(id, {}, [this, id](bool ok, const OperationErrorInfo &err) {
+        if (!ok) {
             qCWarning(logDFMBase) << "unmount protocol device failed: " << id << err.message << err.code;
+            emit protocolDevUnmountAsyncFailed(id, err.code);
+        }
     });
 }
 
