@@ -8,6 +8,7 @@
 #include "helpers/filesystemhelper.h"
 #include "helpers/commonhelper.h"
 #include "helpers/notificationhelper.h"
+#include "helpers/cryptsetupcompabilityhelper.h"
 
 #include <dfm-base/utils/finallyutil.h>
 
@@ -180,18 +181,31 @@ int crypt_setup_helper::initFileHeader(const QString &dev,
     auto func = processor ? processor->proc : nullptr;
     auto argc = processor ? processor->argc : 0;
     auto argv = processor ? processor->argv : nullptr;
-    r = crypt_reencrypt_init_by_passphrase_with_data_device_preprocess(cdev,
-                                                                       nullptr,
-                                                                       "",
-                                                                       0,
-                                                                       CRYPT_ANY_SLOT,
-                                                                       0,
-                                                                       cipher.c_str(),
-                                                                       mode,
-                                                                       &encArgs,
-                                                                       func,
-                                                                       argc,
-                                                                       argv);
+    auto init_by_passphrase = CryptSetupCompabilityHelper::instance()->initWithPreProcess();
+    if (init_by_passphrase) {
+        r = init_by_passphrase(cdev,
+                               nullptr,
+                               "",
+                               0,
+                               CRYPT_ANY_SLOT,
+                               0,
+                               cipher.c_str(),
+                               mode,
+                               &encArgs,
+                               func,
+                               argc,
+                               argv);
+    } else {
+        r = crypt_reencrypt_init_by_passphrase(cdev,
+                                               nullptr,
+                                               "",
+                                               0,
+                                               CRYPT_ANY_SLOT,
+                                               0,
+                                               cipher.c_str(),
+                                               mode,
+                                               &encArgs);
+    }
     if (r < 0) {
         qWarning() << "cannot init reencrypt!" << dev << r;
         return -disk_encrypt::kErrorInitReencrypt;
