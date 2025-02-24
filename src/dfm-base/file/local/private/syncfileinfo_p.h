@@ -31,7 +31,7 @@ class SyncFileInfoPrivate
 public:
     SyncFileInfo *const q;
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };   // 缓存文件的FileType
-    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
     DMimeDatabase mimeDb;
     QMimeDatabase::MatchMode mimeTypeMode;
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息

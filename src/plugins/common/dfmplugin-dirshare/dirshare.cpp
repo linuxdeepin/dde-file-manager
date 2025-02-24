@@ -65,26 +65,9 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
         return nullptr;
     }
 
-    // Validate file existence and get canonical path
-    QFileInfo fileInfo(url.toLocalFile());
-    if (!fileInfo.exists()) {
-        fmWarning() << "File does not exist:" << url.toLocalFile();
-        return nullptr;
-    }
-
-    QString canonicalPath = fileInfo.canonicalFilePath();
-    if (canonicalPath.isEmpty()) {
-        fmWarning() << "Failed to get canonical path for:" << url.toLocalFile();
-        return nullptr;
-    }
-
-    // Create file info for share permission check
-    QUrl canonicalUrl = QUrl::fromLocalFile(canonicalPath);
-    fmDebug() << "Canonical URL:" << canonicalUrl.toString();
-
-    auto info = InfoFactory::create<FileInfo>(canonicalUrl);
+    auto info = InfoFactory::create<FileInfo>(url);
     if (!info) {
-        fmWarning() << "Failed to create FileInfo for:" << canonicalUrl.toString();
+        fmWarning() << "Failed to create FileInfo for:" << url.toString();
         return nullptr;
     }
 

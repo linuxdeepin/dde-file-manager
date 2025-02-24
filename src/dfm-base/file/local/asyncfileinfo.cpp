@@ -134,8 +134,6 @@ QString AsyncFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kFilePath:
         [[fallthrough]];
     case FilePathInfoType::kAbsoluteFilePath:
-        [[fallthrough]];
-    case FilePathInfoType::kCanonicalPath:
         if (d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).isValid())
             return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString();
         break;

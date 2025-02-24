@@ -312,10 +312,10 @@ bool UserShareHelper::canShare(FileInfoPointer info)
     if (!info || !info->isAttributes(OptInfoType::kIsDir) || !info->isAttributes(OptInfoType::kIsReadable))
         return false;
 
-    if (DevProxyMng->isFileOfProtocolMounts(info->pathOf(PathInfoType::kFilePath)))
+    if (DevProxyMng->isFileOfProtocolMounts(info->pathOf(PathInfoType::kCanonicalPath)))
         return false;
 
-    if (info->urlOf(UrlInfoType::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathOf(PathInfoType::kFilePath)))
+    if (info->urlOf(UrlInfoType::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathOf(PathInfoType::kCanonicalPath)))
         return false;
 
     return true;
