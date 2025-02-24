@@ -167,8 +167,6 @@ QString SyncFileInfo::pathOf(const PathInfoType type) const
     case FilePathInfoType::kFilePath:
         [[fallthrough]];
     case FilePathInfoType::kAbsoluteFilePath:
-        [[fallthrough]];
-    case FilePathInfoType::kCanonicalPath:
         return d->filePath();
     case FilePathInfoType::kPath:
         [[fallthrough]];

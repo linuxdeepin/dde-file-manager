@@ -28,7 +28,8 @@ public:
     QString fileName() const;
     QString baseName() const;
     QString suffix() const;
-    bool canDrop();
+    bool canDrop() const;
+    QString canonicalPath() const;
 };
 
 }
