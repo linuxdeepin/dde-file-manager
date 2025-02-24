@@ -241,7 +241,7 @@ QHBoxLayout *ShareControlWidget::setupNetworkPath()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, setBtnIcon);
     setBtnIcon();
-    QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
+    QObject::connect(copyNetAddr, &QPushButton::clicked, this, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(netScheme->text() + networkAddrLabel->text());
     });
@@ -274,7 +274,7 @@ QHBoxLayout *ShareControlWidget::setupUserName()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, setBtnIcon);
     setBtnIcon();
-    QObject::connect(copyUserNameBt, &QPushButton::clicked, [=]() {
+    QObject::connect(copyUserNameBt, &QPushButton::clicked, this, [this]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(userNamelineLabel->text());
     });
@@ -302,7 +302,7 @@ QHBoxLayout *ShareControlWidget::setupSharePassword()
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
     setPasswordBt->setContentsMargins(0, 0, 0, 0);
     setPasswordBt->setToolTip(setPasswordBt->text());
-    QObject::connect(setPasswordBt, &QPushButton::clicked, [this]() {
+    QObject::connect(setPasswordBt, &QPushButton::clicked, this, [this]() {
         showSharePasswordSettingsDialog();
     });
 
@@ -632,7 +632,7 @@ void ShareControlWidget::showSharePasswordSettingsDialog()
         QString userName = UserShareHelperInstance->currentUserName();
         UserShareHelperInstance->setSambaPasswd(userName, password);
     });
-    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, this, [this] {
         this->setProperty("UserSharePwdSettingDialogShown", false);
     });
 }
