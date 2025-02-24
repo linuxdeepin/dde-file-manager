@@ -20,8 +20,8 @@ void FstabInitEncryptWorker::run()
 {
     qInfo() << "about to encrypt fstab device...";
 
-    auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    auto fd = inhibit_helper::inhibit(tr("Initialize encryption ") + devPath);
 
     auto ptr = blockdev_helper::createDevPtr(devPath);
     if (!ptr) {

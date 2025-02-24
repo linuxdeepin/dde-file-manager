@@ -19,9 +19,9 @@ void NormalInitEncryptWorker::run()
 {
     qInfo() << "about to encrypt normal device...";
 
-    auto fd = inhibit_helper::inhibit(tr("Initialize encryption..."));
-
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    auto fd = inhibit_helper::inhibit(tr("Initialize encryption ") + devPath);
+
     auto blkPtr = blockdev_helper::createDevPtr(devPath);
     if (blkPtr && !blkPtr->mountPoints().isEmpty()) {
         setExitCode(-disk_encrypt::kErrorDeviceMounted);

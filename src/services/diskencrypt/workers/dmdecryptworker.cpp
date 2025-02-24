@@ -36,9 +36,9 @@ void DMDecryptWorker::run()
 {
     qInfo() << "about to decrypt overlay device...";
 
-    auto fd = inhibit_helper::inhibit("Decrypting...");
-
     auto dev = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    auto fd = inhibit_helper::inhibit("Decrypting " + dev);
+
     auto passphrase = disk_encrypt::fromBase64(m_args.value(disk_encrypt::encrypt_param_keys::kKeyPassphrase).toString());
     auto displayName = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString();
     QString phyDev, clearDev;
