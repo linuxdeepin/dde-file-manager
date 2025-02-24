@@ -66,9 +66,9 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
 
     QProcess p;
     // 取得所有连击的pid
-    QString cmd = QString("smbcontrol smbd close-share %1").arg(name);
-    fmDebug() << "execute: " << cmd;
-    p.start(cmd);
+    QString program = "smbcontrol";
+    QStringList arguments = { "smbd", "close-share", name };
+    p.start(program, arguments);
     bool ret = p.waitForFinished();
 
     fmDebug() << "close smb share" << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
@@ -105,11 +105,11 @@ bool ShareControlDBus::EnableSmbServices()
     }
 
     QProcess sh;
-    sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+    sh.start("ln", { "-sf", "/lib/systemd/system/smbd.service", "/etc/systemd/system/multi-user.target.wants/smbd.service" });
     auto ret = sh.waitForFinished();
     fmInfo() << "enable smbd: " << ret;
 
-    sh.start("ln -sf /lib/systemd/system/nmbd.service /etc/systemd/system/multi-user.target.wants/nmbd.service");
+    sh.start("ln", { "-sf", "/lib/systemd/system/nmbd.service", "/etc/systemd/system/multi-user.target.wants/nmbd.service" });
     ret &= sh.waitForFinished();
     fmInfo() << "enable nmbd: " << ret;
     return ret;
@@ -118,7 +118,7 @@ bool ShareControlDBus::EnableSmbServices()
 bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
 {
     QProcess p;
-    p.start("pdbedit -L");
+    p.start("pdbedit", { "-L" });
     auto ret = p.waitForFinished();
     QStringList resultLines = QString::fromUtf8(p.readAllStandardOutput()).split('\n');
     bool isPasswordSet = false;
