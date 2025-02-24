@@ -144,10 +144,11 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 {
     QString encPass = FileUtils::encryptString(passwd);
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, encPass);
-    bool result = reply.isValid() && reply.error().message().isEmpty();
-    fmInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
+    bool success = reply.isValid() && reply.value();
+    fmInfo() << "Samba password set result:" << success
+             << ", error msg:" << (reply.isValid() ? "none" : reply.error().message());
 
-    Q_EMIT sambaPasswordSet(result);
+    Q_EMIT sambaPasswordSet(success);
 }
 
 bool UserShareHelper::removeShareByPath(const QString &path)

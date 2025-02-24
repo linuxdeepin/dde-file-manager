@@ -573,6 +573,9 @@ void ShareControlWidget::updateFile(const QUrl &oldOne, const QUrl &newOne)
 void ShareControlWidget::onSambaPasswordSet(bool result)
 {
     isSharePasswordSet = result;
+    // BUG: 304479
+    if (shareSwitcher && isSharePasswordSet && !shareSwitcher->isChecked())
+        shareSwitcher->click();
 
     QFont font = sharePassword->font();
     int defaultFontSize = font.pointSize();
@@ -599,9 +602,10 @@ void ShareControlWidget::userShareOperation(bool checked)
 {
     bool success { false };
     if (checked) {
-        if (!isSharePasswordSet)
+        if (isSharePasswordSet)
+            success = shareFolder();
+        else
             showSharePasswordSettingsDialog();
-        success = shareFolder();
     } else {
         success = unshareFolder();
     }
