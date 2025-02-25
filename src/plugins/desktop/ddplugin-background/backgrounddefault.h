@@ -18,6 +18,7 @@ class BackgroundDefault : public QWidget
 public:
     explicit BackgroundDefault(const QString &screenName, QWidget *parent = nullptr);
     void setPixmap(const QPixmap &pix);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -27,11 +28,10 @@ private:
     int painted = 3;
     QString screen;
     QPixmap pixmap;
-    QPixmap noScalePixmap;
 };
 
 DDP_BACKGROUND_END_NAMESPACE
 
 typedef QSharedPointer<ddplugin_background::BackgroundDefault> BackgroundWidgetPointer;
 
-#endif // BACKGROUNDDEFAULT_H
+#endif   // BACKGROUNDDEFAULT_H

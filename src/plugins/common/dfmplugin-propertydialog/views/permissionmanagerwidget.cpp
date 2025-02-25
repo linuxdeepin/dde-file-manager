@@ -266,10 +266,11 @@ void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
     if (info.isNull())
         return;
 
+    auto winID = qApp->activeWindow() ? qApp->activeWindow()->winId() : 0;
     if (isChecked) {
-        PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        PropertyEventCall::sendSetPermissionManager(winID, selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        PropertyEventCall::sendSetPermissionManager(winID, selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -340,7 +341,8 @@ void PermissionManagerWidget::onComboBoxChanged()
     ownerFlags |= (permissions & QFile::ExeOwner);
     groupFlags |= (permissions & QFile::ExeGroup);
     otherFlags |= (permissions & QFile::ExeOther);
-    PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, QFileDevice::Permissions(ownerFlags) | QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
+    auto winID = qApp->activeWindow() ? qApp->activeWindow()->winId() : 0;
+    PropertyEventCall::sendSetPermissionManager(winID, selectUrl, QFileDevice::Permissions(ownerFlags) | QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
 
     infoBytes = info->pathOf(PathInfoType::kAbsoluteFilePath).toUtf8();
     stat(infoBytes.data(), &fileStat);

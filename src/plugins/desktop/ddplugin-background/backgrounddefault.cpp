@@ -33,8 +33,6 @@ BackgroundDefault::BackgroundDefault(const QString &screenName, QWidget *parent)
 void BackgroundDefault::setPixmap(const QPixmap &pix)
 {
     pixmap = pix;
-    noScalePixmap = pix;
-    noScalePixmap.setDevicePixelRatio(1);
 
     update();
 }
@@ -48,20 +46,22 @@ void BackgroundDefault::paintEvent(QPaintEvent *event)
         return;
 
     qreal scale = devicePixelRatioF();
-    if (scale > 1.0 && event->rect() == rect()) {
-        if (backingStore()->handle()->paintDevice()->devType() != QInternal::Image)
-            return;
-        QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
-        QPainter pa(image);
-        pa.drawPixmap(0, 0, noScalePixmap);
-        sendPaintReport();
-        return;
-    }
+    bool isIntegerScale = qFuzzyCompare(std::round(scale), scale);
 
     QPainter pa(this);
-    pa.drawPixmap(event->rect().topLeft(), pixmap, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
+    pa.setRenderHint(QPainter::SmoothPixmapTransform, !isIntegerScale);
+
+    // 整数对齐源坐标
+    QPointF srcTopLeft = QPointF(event->rect().topLeft()) * scale;
+    srcTopLeft = { std::round(srcTopLeft.x()), std::round(srcTopLeft.y()) };
+    QSizeF srcSize = QSizeF(event->rect().size()) * scale;
+
+    pa.drawPixmap(
+            event->rect().topLeft(),
+            pixmap,
+            QRectF(srcTopLeft, srcSize));
+
     sendPaintReport();
-    return;
 }
 
 void BackgroundDefault::sendPaintReport()
