@@ -8,6 +8,7 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/desktopfile.h>
@@ -1203,6 +1204,12 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
         // 如果获取规范路径失败,说明链接可能已失效
         if (canonicalPath.isEmpty()) {
+            FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
+            QString targetLink = fileInfo->pathOf(PathInfoType::kSymLinkTarget);
+            canonicalPath = SystemPathUtil::instance()->getRealpathSafely(targetLink);
+        }
+
+        if (canonicalPath.isEmpty()) {
             DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
             return std::nullopt;
         }
@@ -1221,7 +1228,7 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
         // 检查链接目标是否存在
         fileInfo.setFile(canonicalPath);
-        if (!fileInfo.exists()) {
+        if (!fileInfo.exists() && !ProtocolUtils::isSMBFile(QUrl::fromLocalFile(canonicalPath))) {
             // 链接已失效
             lastEvent = DialogManagerInstance->showBreakSymlinkDialog(
                     QFileInfo(currentPath).fileName(),
