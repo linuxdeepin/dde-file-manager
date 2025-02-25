@@ -363,8 +363,6 @@ void BasicWidget::basicFill(const QUrl &url)
                 audioExtenInfo(url, mediaAttributes);
         }
     }
-
-    
 }
 
 void BasicWidget::initFileMap()
@@ -421,8 +419,8 @@ void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int di
 void BasicWidget::slotFileHide(int state)
 {
     Q_UNUSED(state)
-    quint64 winIDs = QApplication::activeWindow()->winId();
-    PropertyEventCall::sendFileHide(winIDs, { currentUrl });
+    auto winID = qApp->activeWindow() ? qApp->activeWindow()->winId() : 0;
+    PropertyEventCall::sendFileHide(winID, { currentUrl });
 }
 
 void BasicWidget::closeEvent(QCloseEvent *event)
@@ -488,13 +486,13 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
         fileMediaDuration->setVisible(true);
     } else {
         QString localFile = url.toLocalFile();
-        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady, 
-            this, [this](const QString &duration){
-                if (!duration.isEmpty()) {
-                    fileMediaDuration->setRightValue(duration);
-                    fileMediaDuration->setVisible(true);
-                }
-            });
+        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
+                this, [this](const QString &duration) {
+                    if (!duration.isEmpty()) {
+                        fileMediaDuration->setRightValue(duration);
+                        fileMediaDuration->setVisible(true);
+                    }
+                });
 
         QMetaObject::invokeMethod(infoFetchWorker, "getDuration",
                                   Qt::QueuedConnection, Q_ARG(QString, localFile));
@@ -522,13 +520,13 @@ void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
         fileMediaDuration->setVisible(true);
     } else {
         QString localFile = url.toLocalFile();
-        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady, 
-            this, [this](const QString &duration){
-                if (!duration.isEmpty()) {
-                    fileMediaDuration->setRightValue(duration);
-                    fileMediaDuration->setVisible(true);
-                }
-            });
+        connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
+                this, [this](const QString &duration) {
+                    if (!duration.isEmpty()) {
+                        fileMediaDuration->setRightValue(duration);
+                        fileMediaDuration->setVisible(true);
+                    }
+                });
 
         QMetaObject::invokeMethod(infoFetchWorker, "getDuration",
                                   Qt::QueuedConnection, Q_ARG(QString, localFile));

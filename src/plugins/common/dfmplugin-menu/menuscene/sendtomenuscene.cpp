@@ -228,7 +228,7 @@ bool SendToMenuScene::triggered(QAction *action)
         } else {
             if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
                 fmDebug() << "send files to: " << action->data().toUrl() << ", " << d->selectFiles;
-                dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), d->selectFiles, action->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, d->selectFiles, action->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
                 return true;
             }
         }
