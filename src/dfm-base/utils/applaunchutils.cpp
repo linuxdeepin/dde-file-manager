@@ -181,7 +181,9 @@ bool AppLaunchUtils::launchApp(const QString &desktopFile, const QStringList &ur
     localPaths.reserve(urlStrs.size());
     std::transform(urlStrs.begin(), urlStrs.end(), std::back_inserter(localPaths),
                    [](const QString &urlStr) -> QString {
-                       return QUrl(urlStr).toLocalFile();
+                       auto url = QUrl(urlStr);
+                       auto localPath = url.isLocalFile() ? QUrl(urlStr).toLocalFile() : urlStr;
+                       return localPath;
                    });
 
     for (const auto &strategy : d->strategies) {
