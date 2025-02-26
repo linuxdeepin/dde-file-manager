@@ -22,7 +22,6 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
-#include <QWheelEvent>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -156,17 +155,14 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
-    ownerComboBox->installEventFilter(this);
 
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
-    groupComboBox->installEventFilter(this);
 
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
-    otherComboBox->installEventFilter(this);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
@@ -310,17 +306,6 @@ void PermissionManagerWidget::paintEvent(QPaintEvent *evt)
 {
     setExecText();
     DArrowLineDrawer::paintEvent(evt);
-}
-
-bool PermissionManagerWidget::eventFilter(QObject *object, QEvent *event)
-{
-    if (object->inherits("QComboBox") && event->type() == QEvent::Wheel) {
-        QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
-        QCoreApplication::sendEvent(this, wheelEvent);
-        return true;
-    }
-
-    return DArrowLineDrawer::eventFilter(object, event);
 }
 
 void PermissionManagerWidget::onComboBoxChanged()

@@ -54,6 +54,7 @@ FilePropertyDialog::FilePropertyDialog(QWidget *parent)
 #ifdef DTKGUI_VERSION_STR
     platformWindowHandle->setWindowEffect(DPlatformWindowHandle::EffectScene::EffectNoStart);
 #endif
+    qApp->installEventFilter(this);
 }
 
 FilePropertyDialog::~FilePropertyDialog()
@@ -187,6 +188,23 @@ void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
         }
         fileIcon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
     }
+}
+
+bool FilePropertyDialog::eventFilter(QObject *object, QEvent *event)
+{
+    // 检查是否是ComboBox上的滚轮事件
+    if (object->inherits("QComboBox") && event->type() == QEvent::Wheel) {
+        // 确保ComboBox是我们对话框的后代
+        QWidget *widget = qobject_cast<QWidget *>(object);
+        if (widget && isAncestorOf(widget)) {
+            // 将事件重定向到滚动区域
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
+            QCoreApplication::sendEvent(this, wheelEvent);
+            return true;
+        }
+    }
+
+    return DDialog::eventFilter(object, event);
 }
 
 void FilePropertyDialog::selectFileUrl(const QUrl &url)
@@ -326,7 +344,7 @@ void FilePropertyDialog::showEvent(QShowEvent *event)
         }
         vlayout->addStretch();
     }
-    
+
     QTimer::singleShot(0, this, [this]() {
         processHeight(contentHeight());
     });
