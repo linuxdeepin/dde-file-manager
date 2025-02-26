@@ -18,8 +18,6 @@ class BookMark : public DPF_NAMESPACE::Plugin
 
     DPF_EVENT_NAMESPACE(DPBOOKMARK_NAMESPACE)
 
-    DPF_EVENT_REG_SLOT(slot_Scheme_Disable)
-
 public:
     virtual void initialize() override;
     virtual bool start() override;

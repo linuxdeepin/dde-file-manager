@@ -51,7 +51,7 @@ void VaultVisibleManager::infoRegister()
     if (!infoRegisterState) {
         UrlRoute::regScheme(VaultHelper::instance()->scheme(), "/", VaultHelper::instance()->icon(), true, tr("My Vault"));
 
-        //注册Scheme为"vault"的扩展的文件信息
+        // 注册Scheme为"vault"的扩展的文件信息
         InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
         WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme(), WatcherFactory::kNoCache);
         DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
@@ -132,8 +132,6 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
         updateSideBarVaultItem();
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
-
-    VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
 void VaultVisibleManager::removeSideBarVaultItem()

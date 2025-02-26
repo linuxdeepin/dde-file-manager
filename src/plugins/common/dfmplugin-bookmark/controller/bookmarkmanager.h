@@ -49,12 +49,10 @@ public:
 
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
-    void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
     void initData();
     bool isItemDuplicated(const BookmarkData &data);
     bool bookMarkRename(const QUrl &url, const QString &newName);
-    QSet<QString> getBookmarkDisabledSchemes();
     int showRemoveBookMarkDialog(quint64 winId);
 
 private:
@@ -78,7 +76,6 @@ private slots:
 
 private:
     QMap<QUrl, BookmarkData> quickAccessDataMap = {};
-    QSet<QString> bookmarkDisabledSchemes;
     QList<QUrl> sortedUrls;
 };
 

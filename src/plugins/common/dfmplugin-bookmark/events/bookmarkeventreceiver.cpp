@@ -30,11 +30,6 @@ void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QMap<QUrl, 
     }
 }
 
-void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &scheme)
-{
-    BookMarkManager::instance()->addSchemeOfBookMarkDisabled(scheme);
-}
-
 void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
 {
     if (group != "Group_Common")
@@ -45,4 +40,4 @@ void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QStri
 }
 
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent) { }
