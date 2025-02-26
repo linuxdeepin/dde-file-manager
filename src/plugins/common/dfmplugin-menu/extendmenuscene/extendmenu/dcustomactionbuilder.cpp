@@ -307,12 +307,10 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         QStringList rets;
         while (!args.isEmpty()) {
             QString arg = args.takeFirst();
-            //找到在参数中第一个有效的before匹配值，并替换为after。之后的不在处理
+            // 遍历所有参数，替换所有匹配的before为after
             int index = arg.indexOf(before);
             if (index >= 0) {
                 rets << arg.replace(index, before.size(), after);
-                rets << args;
-                args.clear();
             } else {
                 // NOTE:https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
                 if (arg.contains("%%"))
@@ -327,13 +325,11 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         QStringList rets;
         while (!args.isEmpty()) {
             QString arg = args.takeFirst();
-            //仅支持独立参数，有其它组合的不处理
+            // 如果参数完全匹配before，则替换为after列表
+            // 对于玲珑应用来说存在下面情况 参数中存在%f, %%f,
+            // 如果匹配了第一个%f, 导致后面的%%f被跳过
             if (arg == before) {
-                //放入文件路径
                 rets << after;
-                //放入原参数
-                rets << args;
-                args.clear();
             } else {
                 // NOTE:https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
                 if (arg.contains("%%"))
