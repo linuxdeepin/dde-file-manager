@@ -219,7 +219,7 @@ int crypt_setup_helper::initFileHeader(const QString &dev,
                                  0,
                                  key.data(),
                                  &keySize,
-                                 nullptr,   // use null so that volume key can be get dirrectly from cdev rather than calculate by passphrase
+                                 nullptr,   // use null so that volume key can be get directly from cdev rather than calculate by passphrase
                                  kDefaultPassphraseLen);
         if (r < 0) {
             qWarning() << "cannot get volume key!" << dev << r;

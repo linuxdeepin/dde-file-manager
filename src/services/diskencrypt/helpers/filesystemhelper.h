@@ -13,6 +13,8 @@ bool shrinkFileSystem_ext(const QString &device);
 bool expandFileSystem_ext(const QString &device);
 
 bool moveFsForward(const QString &dev);
+
+void remountBoot();
 }   // namespace filesystem_helper
 
 FILE_ENCRYPT_END_NS

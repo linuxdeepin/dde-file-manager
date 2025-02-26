@@ -11,6 +11,7 @@
 #include "helpers/notificationhelper.h"
 #include "helpers/crypttabhelper.h"
 #include "helpers/commonhelper.h"
+#include "helpers/filesystemhelper.h"
 
 #include <dfm-mount/dmount.h>
 
@@ -183,6 +184,7 @@ DiskEncryptSetupPrivate::DiskEncryptSetupPrivate(DiskEncryptSetup *parent)
 void DiskEncryptSetupPrivate::initialize()
 {
     QtConcurrent::run([] {
+        filesystem_helper::remountBoot();
         common_helper::createDFMDesktopEntry();
         crypttab_helper::updateCryptTab();
     });

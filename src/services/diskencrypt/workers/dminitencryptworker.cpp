@@ -12,14 +12,15 @@
 
 #include <sys/mount.h>
 
-#define RetOnFail(ret, msg)    \
-    {                          \
-        int r = ret;           \
-        if (r < 0) {           \
-            setExitCode(r);    \
+
+#define RetOnFail(ret, msg) \
+    {                       \
+        int r = ret;        \
+        if (r < 0) {        \
+            setExitCode(r); \
             qWarning() << msg; \
-            return;            \
-        }                      \
+            return;         \
+        }                   \
     }
 
 #define ESuspend QString("error when SUSPEND dm device ")
@@ -60,21 +61,30 @@ void DMInitEncryptWorker::run()
     crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs" } });
 
     // now we can do encrypt on phyDevPath
+    auto jobArgs = initJobArgs(phyPath, unlockName);
+    job_file_helper::createEncryptJobFile(jobArgs);
+
     auto _dev = phyPath.toStdString();
     auto _topName = topName.toStdString();
     auto _midName = midName.toStdString();
     const char *argv[] = { _dev.c_str(), _topName.c_str(), _midName.c_str() };
     crypt_setup::CryptPreProcessor proc { .argc = 3, .argv = argv, .proc = detachPhyDevice };
-    RetOnFail(crypt_setup::csInitEncrypt(phyPath, &proc), EInitEnc + phyPath);
-    job_file_helper::createEncryptJobFile(initJobArgs(phyPath));
-    qInfo() << "overlay encrypt initialized." << phyPath;
 
-    int r = crypt_setup::csActivateDeviceByVolume(phyPath, unlockName, proc.volumeKey);
+    int r = crypt_setup::csInitEncrypt(phyPath, &proc);
     if (r < 0) {
-        qWarning() << "cannot activate device by volume key, try using passphrase." << phyPath;
+        qWarning() << EInitEnc + phyPath << r;
+        job_file_helper::removeJobFile(jobArgs.jobFile);
+        setExitCode(r);
+        return;
+    }
+    qInfo() << "overlay encrypt initialized." + phyPath;
+
+    r = crypt_setup::csActivateDeviceByVolume(phyPath, unlockName, proc.volumeKey);
+    if (r < 0) {
+        qWarning() << "cannot activate device by volume key, try using passphrase." + phyPath;
         RetOnFail(crypt_setup::csActivateDevice(phyPath, unlockName), EActive + phyPath);
     }
-    qInfo() << "overlay device activated." << phyPath << unlockName;
+    qInfo() << "overlay device activated." + phyPath + unlockName;
 
     // reload midDev to unlocked dev. and resume topDev.
     auto unlockPath = "/dev/mapper/" + unlockName;
@@ -87,7 +97,7 @@ void DMInitEncryptWorker::run()
     qInfo() << "overlay device encryption inited." << phyPath;
 }
 
-job_file_helper::JobDescArgs DMInitEncryptWorker::initJobArgs(const QString &phyDev)
+job_file_helper::JobDescArgs DMInitEncryptWorker::initJobArgs(const QString &phyDev, const QString &unlockName)
 {
     job_file_helper::JobDescArgs args;
     auto ptr = blockdev_helper::createDevPtr(phyDev);
@@ -97,7 +107,7 @@ job_file_helper::JobDescArgs DMInitEncryptWorker::initJobArgs(const QString &phy
     }
 
     args.device = "PARTUUID=" + ptr->getProperty(dfmmount::Property::kPartitionUUID).toString();
-    args.volume = "usec-overlay-unlock-" + phyDev.mid(5);
+    args.volume = unlockName;
     args.devName = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString();
     args.devPath = phyDev;
     args.devType = disk_encrypt::job_type::TypeOverlay;
@@ -154,6 +164,7 @@ int DMInitEncryptWorker::detachPhyDevice(int argc, const char *argv[])
         return disk_encrypt::kSuccess;
     } while (0);
 
+    dm_setup::dmRemoveDevice(midName);
     dm_setup::dmReloadDevice(topName, initTab);
     dm_setup::dmResumeDevice(topName);
     qWarning() << "dmsetup failed! reload to initial status." << topName;

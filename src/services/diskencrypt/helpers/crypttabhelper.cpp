@@ -107,6 +107,9 @@ QList<crypttab_helper::CryptItem> crypttab_helper::cryptItems()
     QList<CryptItem> ret;
 
     for (auto item : items) {
+        if (item.isEmpty())
+            continue;
+
         auto fields = QString(item).split(QRegularExpression(R"( |\t)"), Qt::SkipEmptyParts);
         if (fields.count() < 4) {
             qInfo() << "found invalid crypt line" << item;
@@ -155,10 +158,8 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
 
 void crypttab_helper::updateInitramfs()
 {
-    QtConcurrent::run([] {
-        auto fd = inhibit_helper::inhibit("Updating initramfs...");
-        qInfo() << "start update initramfs...";
-        system("update-initramfs -u");
-        qInfo() << "initramfs updated.";
-    });
+    auto fd = inhibit_helper::inhibit("Updating initramfs...");
+    qInfo() << "start update initramfs...";
+    system("update-initramfs -u");
+    qInfo() << "initramfs updated.";
 }

@@ -34,7 +34,8 @@ void NormalInitEncryptWorker::run()
         return;
     }
 
-    job_file_helper::createEncryptJobFile(initJobArgs(blkPtr));
+    auto jobArgs = initJobArgs(blkPtr);
+    job_file_helper::createEncryptJobFile(jobArgs);
     setExitCode(disk_encrypt::kSuccess);
     qInfo() << "normal device encryption inited." << devPath;
 }

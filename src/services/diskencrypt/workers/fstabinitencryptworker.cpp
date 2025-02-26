@@ -40,7 +40,8 @@ void FstabInitEncryptWorker::run()
 
     fstab_helper::setFstabTimeout(devPath, devUUID);
     common_helper::createRebootFlagFile(devPath);
-    job_file_helper::createEncryptJobFile(initJobArgs(devPath));
+    auto jobArgs = initJobArgs(devPath);
+    job_file_helper::createEncryptJobFile(jobArgs);
     setExitCode(-disk_encrypt::kRebootRequired);
 
     qInfo() << "fstab device encrypt job created, request for reboot.";
