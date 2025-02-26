@@ -1292,7 +1292,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     if (alltotrash)
         return info->canAttributes(CanableInfoType::kCanTrash);
 
-    return info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool();
+    return ProtocolUtils::isLocalFile(url);
 }
 
 QUrl FileUtils::bindUrlTransform(const QUrl &url)
