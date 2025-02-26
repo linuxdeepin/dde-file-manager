@@ -1054,8 +1054,7 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
     }
 
     if (result)
-        dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Add",
-                                     newTargetInfo->uri());
+        emit fileAdded(newTargetInfo->uri());
 
     if (targetInfo == toInfo) {
         completeSourceFiles.append(fromInfo->uri());

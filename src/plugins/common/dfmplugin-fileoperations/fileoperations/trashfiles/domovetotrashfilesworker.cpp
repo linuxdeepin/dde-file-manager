@@ -131,8 +131,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 completeSourceFiles.append(urlSource);
                 auto targetTash = trashTargetUrl(trashUrl);
                 if (targetTash.isValid())
-                    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename",
-                                                 urlSource, targetTash);
+                    emit fileRenamed(urlSource, targetTash);
                 continue;
             } else {
                 // pause and emit error msg

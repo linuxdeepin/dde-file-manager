@@ -177,8 +177,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
             orignalUrl.setPath(orignalUrl.path().replace(tmpFileName, orignalName));
         }
         if (toInfo)
-            dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename",
-                                         orignalUrl, toInfo->uri());
+            emit fileRenamed(orignalUrl, toInfo->uri());
         return true;
     }
 
@@ -210,8 +209,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         auto orignalName = QUrl::toPercentEncoding(tmpFileName);
         orignalUrl.setPath(orignalUrl.path().replace(tmpFileName, orignalName));
     }
-    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename",
-                                 orignalUrl, toInfo->uri());
+    emit fileRenamed(orignalUrl, toInfo->uri());
     return true;
 }
 

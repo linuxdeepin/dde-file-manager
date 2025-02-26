@@ -99,7 +99,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         if (action != AbstractJobHandler::SupportAction::kNoAction)
             return false;
 
-        dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete", url);
+        emit fileDeleted(url);
     }
     return true;
 }
@@ -134,6 +134,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             return false;
         completeTargetFiles.append(url);
         completeSourceFiles.append(url);
+        emit fileDeleted(url);
     }
     return true;
 }
