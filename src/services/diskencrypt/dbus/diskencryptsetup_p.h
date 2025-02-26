@@ -36,6 +36,9 @@ public Q_SLOTS:
     void onResumeEncryptFinished();
     void onDecryptFinished();
     void onPassphraseChanged();
+
+    void onLongTimeJobStarted();
+    void onLongTimeJobStopped();
 };
 
 #endif   // DISKENCRYPTSETUP_P_H
