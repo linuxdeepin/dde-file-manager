@@ -15,7 +15,7 @@ inline constexpr char kUSecOtherConfig[] { "/etc/usec-crypt/encrypt_%1.json" };
 
 FILE_ENCRYPT_USE_NS
 
-int job_file_helper::createEncryptJobFile(const JobDescArgs &args)
+int job_file_helper::createEncryptJobFile(JobDescArgs &args)
 {
     createUSecRoot();
 
@@ -47,13 +47,15 @@ int job_file_helper::createEncryptJobFile(const JobDescArgs &args)
         return -disk_encrypt::kErrorOpenFileFailed;
     }
 
+    args.jobFile = fileName;
+
     f.write(doc.toJson());
     f.flush();
     f.close();
     return 0;
 }
 
-int job_file_helper::createDecryptJobFile(const JobDescArgs &args)
+int job_file_helper::createDecryptJobFile(JobDescArgs &args)
 {
     createUSecRoot();
 

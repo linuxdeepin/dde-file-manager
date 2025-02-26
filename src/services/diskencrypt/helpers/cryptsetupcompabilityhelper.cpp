@@ -24,7 +24,7 @@ CryptSetupCompabilityHelper *CryptSetupCompabilityHelper::instance()
 CryptSetupCompabilityHelper::CryptSetupCompabilityHelper(QObject *parent)
     : QObject { parent }
 {
-    m_libCryptsetup = new QLibrary("cryptsetup", this);
+    m_libCryptsetup = new QLibrary("libcryptsetup.so.12", this);
     if (!m_libCryptsetup->load()) {
         qWarning() << "cannot load cryptsetup!";
         return;

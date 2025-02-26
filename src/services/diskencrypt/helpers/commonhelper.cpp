@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QLibrary>
 #include <QRandomGenerator>
+#include <QDir>
 
 #include <DConfig>
 
@@ -17,6 +18,13 @@ FILE_ENCRYPT_USE_NS
 
 void common_helper::createDFMDesktopEntry()
 {
+    const QString &kLocalShareApps  = "/usr/local/share/applications";
+    QDir d(kLocalShareApps);
+    if (!d.exists()) {
+        auto ok = d.mkpath(kLocalShareApps);
+        qInfo() << kLocalShareApps << "dir created?" << ok;
+    }
+
     QFile f(disk_encrypt::kReencryptDesktopFile);
     if (f.exists())
         return;

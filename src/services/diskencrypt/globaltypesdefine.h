@@ -24,7 +24,7 @@ static QString toBase64(const QString rawstr)
 }
 
 inline constexpr char kUSecConfigDir[] { "/etc/usec-crypt" };
-inline constexpr char kReencryptDesktopFile[] { "/usr/share/applications/dfm-reencrypt.desktop" };
+inline constexpr char kReencryptDesktopFile[] { "/usr/local/share/applications/dfm-reencrypt.desktop" };
 inline constexpr char kRebootFlagFilePrefix[] { "/tmp/dfm_encrypt_reboot_flag_" };
 
 namespace job_type {

@@ -10,7 +10,9 @@
 #include <QFile>
 
 #include <sys/stat.h>
+#include <fstab.h>
 #include <unistd.h>
+#include <sys/mount.h>
 
 FILE_ENCRYPT_USE_NS
 
@@ -145,4 +147,34 @@ bool filesystem_helper::moveFsForward(const QString &dev)
     ::remove(logFile.fileName().toStdString().c_str());
     ::system("udevadm trigger");
     return true;
+}
+
+void filesystem_helper::remountBoot()
+{
+    // find boot partition first.
+    QString bootDev, bootPath, fsType;
+    struct fstab *fs;
+    setfsent();
+    while ((fs = getfsent()) != nullptr) {
+        if (QString(fs->fs_file) == "/boot") {
+            bootDev = fs->fs_spec;
+            bootPath = fs->fs_file;
+            fsType = fs->fs_vfstype;
+            break;
+        }
+    }
+    endfsent();
+
+    if (bootDev.isEmpty()) {
+        qWarning() << "cannot find BOOT device!";
+        return;
+    }
+    qInfo() << "boot device found:" << bootDev;
+
+    int r = mount(bootDev.toStdString().c_str(),
+                  bootPath.toStdString().c_str(),
+                  fsType.toStdString().c_str(),
+                  MS_REMOUNT,
+                  nullptr);
+    qInfo() << "/boot remounted:" << r;
 }

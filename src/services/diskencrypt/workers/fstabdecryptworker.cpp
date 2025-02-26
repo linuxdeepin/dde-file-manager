@@ -39,9 +39,10 @@ void FstabDecryptWorker::run()
         setExitCode(-disk_encrypt::kErrorUnknown);
         return;
     }
-    job_file_helper::createDecryptJobFile({ .device = "PARTUUID=" + partUUID,
-                                            .devPath = devPath,
-                                            .devType = disk_encrypt::job_type::TypeFstab });
+    job_file_helper::JobDescArgs jobArgs {.device = "PARTUUID=" + partUUID,
+                                           .devPath = devPath,
+                                           .devType = disk_encrypt::job_type::TypeFstab };
+    job_file_helper::createDecryptJobFile(jobArgs);
     auto clearUUID = clearDeviceUUID(devPath);
     if (!clearUUID.isEmpty())
         fstab_helper::setFstabPassno("UUID=" + clearUUID, 0);

@@ -40,8 +40,8 @@ struct JobDescArgs
 };
 
 int createUSecRoot();
-int createEncryptJobFile(const JobDescArgs &args);
-int createDecryptJobFile(const JobDescArgs &args);
+int createEncryptJobFile(JobDescArgs &args);
+int createDecryptJobFile(JobDescArgs &args);
 int loadEncryptJobFile(JobDescArgs *args, const QString &dev = QString());
 int loadDecryptJobFile(JobDescArgs *args = nullptr);
 int removeJobFile(const QString &jobFile);

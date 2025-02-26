@@ -19,7 +19,7 @@ public:
 protected:
     void run() override;
 
-    job_file_helper::JobDescArgs initJobArgs(const QString &phyDev);
+    job_file_helper::JobDescArgs initJobArgs(const QString &phyDev, const QString &unlockName);
     static int detachPhyDevice(int argc, const char *argv[]);
 };
 FILE_ENCRYPT_END_NS
