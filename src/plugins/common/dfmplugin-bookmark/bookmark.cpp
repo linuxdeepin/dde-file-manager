@@ -86,8 +86,6 @@ void BookMark::bindEvents()
                                    &BookMarkEventReceiver::handleRenameFile);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted",
                                    BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
-    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_Scheme_Disable",
-                            BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
 }
 
 void BookMark::bindWindows()

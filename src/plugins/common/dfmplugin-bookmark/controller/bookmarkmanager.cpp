@@ -401,11 +401,6 @@ void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString
     mountPoint = devStr;
 }
 
-QSet<QString> BookMarkManager::getBookmarkDisabledSchemes()
-{
-    return bookmarkDisabledSchemes;
-}
-
 void BookMarkManager::saveSortedItemsToConfigFile(const QList<QUrl> &order)
 {
     QVariantList sorted;
@@ -618,9 +613,4 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             break;
         }
     }
-}
-
-void BookMarkManager::addSchemeOfBookMarkDisabled(const QString &scheme)
-{
-    bookmarkDisabledSchemes.insert(scheme);
 }

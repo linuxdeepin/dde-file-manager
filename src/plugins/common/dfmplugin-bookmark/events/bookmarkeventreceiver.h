@@ -21,7 +21,6 @@ public:
 
 public Q_SLOTS:
     void handleRenameFile(quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool result, const QString &errorMsg);
-    void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
     void handleSidebarOrderChanged(quint64 winId, const QString &group);
 
 private:
