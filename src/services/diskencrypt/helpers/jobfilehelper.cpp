@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "jobfilehelper.h"
+#include "core/cryptsetup.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -180,4 +181,26 @@ QStringList job_file_helper::validJobTypes()
         disk_encrypt::job_type::TypeNormal,
         disk_encrypt::job_type::TypeOverlay
     };
+}
+
+void job_file_helper::checkJobs()
+{
+    JobDescArgs job;
+    loadEncryptJobFile(&job);
+    if (job.jobFile.isEmpty())
+        return;
+
+    if (!QFile(job.devPath).exists()) {
+        qInfo() << "job device does not exist!" << job.devPath
+                << "about to remove job file" << job.jobFile;
+        removeJobFile(job.jobFile);
+        return;
+    }
+
+    if (crypt_setup_helper::encryptStatus(job.devPath) == disk_encrypt::kStatusNotEncrypted) {
+        qInfo() << job.devPath << "is not encrypted"
+                << "about to remove job file" << job.jobFile;
+        removeJobFile(job.jobFile);
+        return;
+    }
 }

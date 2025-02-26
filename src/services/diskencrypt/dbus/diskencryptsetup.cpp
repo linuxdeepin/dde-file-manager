@@ -186,6 +186,7 @@ void DiskEncryptSetupPrivate::initialize()
         common_helper::createDFMDesktopEntry();
         crypttab_helper::updateCryptTab();
     });
+    job_file_helper::checkJobs();
     resumeEncryption();
 }
 

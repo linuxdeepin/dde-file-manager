@@ -45,6 +45,7 @@ int createDecryptJobFile(const JobDescArgs &args);
 int loadEncryptJobFile(JobDescArgs *args, const QString &dev = QString());
 int loadDecryptJobFile(JobDescArgs *args = nullptr);
 int removeJobFile(const QString &jobFile);
+void checkJobs();
 
 bool hasJobFile();
 QStringList validJobTypes();
