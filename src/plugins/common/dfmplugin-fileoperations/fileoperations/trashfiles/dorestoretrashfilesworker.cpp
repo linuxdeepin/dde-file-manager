@@ -199,7 +199,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             }
             if (!completeTargetFiles.contains(restoreInfo->uri()))
                 completeTargetFiles.append(restoreInfo->uri());
-            dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename", fileUrl, newTargetInfo->uri());
+            emit fileRenamed(fileUrl, newTargetInfo->uri());
         } else {
             auto errorCode = fileHandler.errorCode();
             switch (errorCode) {

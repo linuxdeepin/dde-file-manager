@@ -98,6 +98,10 @@ signals:   // update proccess timer use
     void retryErrSuccess(const quint64 id);
     void requestTaskDailog();
 
+    void fileRenamed(const QUrl &old, const QUrl &cur);
+    void fileDeleted(const QUrl &url);
+    void fileAdded(const QUrl &url);
+
 public:
     void doOperateWork(AbstractJobHandler::SupportActions actions, AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError, const quint64 id = 0);
 

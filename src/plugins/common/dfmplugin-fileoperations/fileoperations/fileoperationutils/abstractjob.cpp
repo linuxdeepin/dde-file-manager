@@ -51,6 +51,9 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         connect(doWorker, &AbstractWorker::workerFinish, this, &AbstractJob::deleteLater);
         connect(doWorker, &AbstractWorker::requestShowTipsDialog, this, &AbstractJob::requestShowTipsDialog);
         connect(doWorker, &AbstractWorker::retryErrSuccess, this, &AbstractJob::handleRetryErrorSuccess, Qt::QueuedConnection);
+        connect(doWorker, &AbstractWorker::fileAdded, this, &AbstractJob::handleFileAdded, Qt::QueuedConnection);
+        connect(doWorker, &AbstractWorker::fileDeleted, this, &AbstractJob::handleFileDeleted, Qt::QueuedConnection);
+        connect(doWorker, &AbstractWorker::fileRenamed, this, &AbstractJob::handleFileRenamed, Qt::QueuedConnection);
         connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
             thread.quit();
             // When manipulating a file,
@@ -95,7 +98,7 @@ void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
             } else if (!actions.testFlag(AbstractJobHandler::SupportAction::kStopAction)
                        && !actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction)
                        && !actions.testFlag(AbstractJobHandler::SupportAction::kResumAction)) {
-                //no error thread resume
+                // no error thread resume
                 QList<quint64> errorIds;
                 for (const auto &info : errorQueue) {
                     errorIds.append(info->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>());
@@ -146,6 +149,21 @@ void AbstractJob::handleRetryErrorSuccess(const quint64 Id)
     } else {
         doWorker->resumeAllThread();
     }
+}
+
+void AbstractJob::handleFileRenamed(const QUrl &old, const QUrl &cur)
+{
+    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename", old, cur);
+}
+
+void AbstractJob::handleFileDeleted(const QUrl &url)
+{
+    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete", url);
+}
+
+void AbstractJob::handleFileAdded(const QUrl &url)
+{
+    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Add", url);
 }
 
 AbstractJob::~AbstractJob()

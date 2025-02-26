@@ -50,6 +50,10 @@ protected slots:
     void handleError(const JobInfoPointer jobInfo);
     void handleRetryErrorSuccess(const quint64 Id);
 
+    void handleFileRenamed(const QUrl &old, const QUrl &cur);
+    void handleFileDeleted(const QUrl &url);
+    void handleFileAdded(const QUrl &url);
+
 protected:
     void start();
     explicit AbstractJob(AbstractWorker *doWorker, QObject *parent = nullptr);
