@@ -283,8 +283,8 @@ BaseEncryptWorker *DiskEncryptSetupPrivate::createDecryptWorker(const QString &t
 
 void DiskEncryptSetupPrivate::initThreadConnection(const QThread *thread)
 {
-    connect(thread, &QThread::started, this, [this] { jobRunning = true; });
-    connect(thread, &QThread::finished, this, [this] { jobRunning = false; });
+    connect(thread, &QThread::started, this, &DiskEncryptSetupPrivate::onLongTimeJobStarted);
+    connect(thread, &QThread::finished, this, &DiskEncryptSetupPrivate::onLongTimeJobStopped);
 }
 
 void DiskEncryptSetupPrivate::onInitEncryptFinished()
@@ -362,4 +362,18 @@ void DiskEncryptSetupPrivate::onPassphraseChanged()
                                 { kKeyDeviceName, args.value(kKeyDeviceName).toString() },
                                 { kKeyOperationResult, code } };
     Q_EMIT qptr->ChangePassResult(result);
+}
+
+void DiskEncryptSetupPrivate::onLongTimeJobStarted()
+{
+    jobRunning = true;
+    qptr->lockTimer(true);
+    qInfo() << "auto quit timer is locked.";
+}
+
+void DiskEncryptSetupPrivate::onLongTimeJobStopped()
+{
+    jobRunning = false;
+    qptr->lockTimer(false);
+    qInfo() << "auto quite timer is unlocked";
 }
