@@ -239,9 +239,7 @@ void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void RightValueWidget::showEvent(QShowEvent *event)
 {
-    if (!document()->toPlainText().isEmpty())
-        this->setFixedHeight(static_cast<int>(document()->size().height()) + 2);
-
+    setFixedHeight(static_cast<int>(document()->size().height()) + 2);
     QTextEdit::showEvent(event);
 }
 

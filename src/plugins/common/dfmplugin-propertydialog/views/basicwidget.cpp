@@ -349,18 +349,22 @@ void BasicWidget::basicFill(const QUrl &url)
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
             if (!mediaAttributes.isEmpty())
                 videoExtenInfo(url, mediaAttributes);
+            fileMediaResolution->setVisible(true);
+            fileMediaDuration->setVisible(true);
         } else if (type == FileInfo::FileType::kImages) {
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &BasicWidget::imageExtenInfo);
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
             if (!mediaAttributes.isEmpty())
                 imageExtenInfo(url, mediaAttributes);
+            fileMediaResolution->setVisible(true);
         } else if (type == FileInfo::FileType::kAudios) {
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &BasicWidget::audioExtenInfo);
             const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
             if (!mediaAttributes.isEmpty())
                 audioExtenInfo(url, mediaAttributes);
+            fileMediaDuration->setVisible(true);
         }
     }
 }
@@ -431,6 +435,7 @@ void BasicWidget::closeEvent(QCloseEvent *event)
 void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
 {
     if (url != currentUrl || properties.isEmpty()) {
+        fileMediaResolution->setVisible(false);
         return;
     }
 
@@ -450,21 +455,20 @@ void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     }
 
     if (width == 0 || height == 0) {
+        fileMediaResolution->setVisible(false);
         return;
     }
 
     const QString &imgSizeStr = QString::number(width) + "x" + QString::number(height);
-
     fileMediaResolution->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaResolution->setVisible(true);
+    fileMediaResolution->adjustHeight();
 }
 
 void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (url != currentUrl) {
-        return;
-    }
-    if (properties.isEmpty()) {
+    if (url != currentUrl || properties.isEmpty()) {
+        fileMediaResolution->setVisible(false);
+        fileMediaDuration->setVisible(false);
         return;
     }
 
@@ -472,25 +476,24 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
     const QString &videoResolutionStr = QString::number(width) + "x" + QString::number(height);
     fileMediaResolution->setRightValue(videoResolutionStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaResolution->setVisible(true);
+    fileMediaResolution->adjustHeight();
 
     int duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration].toInt();
-
     if (duration != 0) {
         QTime t(0, 0, 0);
         t = t.addMSecs(duration);
-
         const QString &durationStr = t.toString("hh:mm:ss");
-
         fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-        fileMediaDuration->setVisible(true);
+        fileMediaDuration->adjustHeight();
     } else {
         QString localFile = url.toLocalFile();
         connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
                 this, [this](const QString &duration) {
                     if (!duration.isEmpty()) {
                         fileMediaDuration->setRightValue(duration);
-                        fileMediaDuration->setVisible(true);
+                        fileMediaDuration->adjustHeight();
+                    } else {
+                        fileMediaDuration->setVisible(false);
                     }
                 });
 
@@ -501,30 +504,28 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
 
 void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (url != currentUrl) {
-        return;
-    }
-    if (properties.isEmpty()) {
+    if (url != currentUrl || properties.isEmpty()) {
+        fileMediaResolution->setVisible(false);
+        fileMediaDuration->setVisible(false);
         return;
     }
 
     int duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration].toInt();
-
     if (duration != 0) {
         QTime t(0, 0, 0);
         t = t.addMSecs(duration);
-
         const QString &durationStr = t.toString("hh:mm:ss");
-
         fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-        fileMediaDuration->setVisible(true);
+        fileMediaDuration->adjustHeight();
     } else {
         QString localFile = url.toLocalFile();
         connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
                 this, [this](const QString &duration) {
                     if (!duration.isEmpty()) {
                         fileMediaDuration->setRightValue(duration);
-                        fileMediaDuration->setVisible(true);
+                        fileMediaDuration->adjustHeight();
+                    } else {
+                        fileMediaDuration->setVisible(false);
                     }
                 });
 
