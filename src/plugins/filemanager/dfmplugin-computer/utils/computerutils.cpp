@@ -338,18 +338,17 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
     else
         converted = QUrl();
 
-    // in immutable env, the root's mpt is not '/'
+    // in immutable env, some dir can't find mpt by path(eg: '/')
     // so find device url of the root dir by checking all blocks
-    if (converted.scheme() == Global::Scheme::kFile && converted.path() == "/") {
+    if (converted.scheme() == Global::Scheme::kFile) {
         auto devIds = DevProxyMng->getAllBlockIds();
         for ( auto id : devIds) {
             QUrl devUrl(makeBlockDevUrl(id));
             auto entryInfo = new EntryFileInfo(devUrl);
-            if (!UniversalUtils::urlEquals(converted, entryInfo->targetUrl()))
-                continue;
-
-            fmDebug() << "convert url from" << url << "to" << devUrl;
-            return devUrl;
+            if (UniversalUtils::urlEquals(converted, entryInfo->targetUrl())) {
+                fmDebug() << "convert url from" << url << "to" << devUrl;
+                return devUrl;
+            }
         };
     }
 
