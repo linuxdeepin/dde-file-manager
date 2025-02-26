@@ -142,7 +142,22 @@ bool MyMenuPlugin::buildEmptyAreaMenu(DFMExtMenu *main, const std::string &curre
         }
     });
 
-    main->addAction(action);
+    // TODO: add interface id()
+    auto actions = main->actions();
+    auto it = std::find_if(actions.cbegin(), actions.cend(), [](const DFMExtAction *action) {
+        const std::string &text = action->text();
+        return (text.find("刷新") == 0) || (text.find("Refresh") == 0);
+    });
+
+    if (it != actions.cend()) {
+        auto separator = m_proxy->createAction();
+        separator->setSeparator(true);
+        main->insertAction(*it, separator);
+        main->insertAction(*it, action);
+    } else {
+        main->addAction(action);
+    }
+
     return true;
 }
 
