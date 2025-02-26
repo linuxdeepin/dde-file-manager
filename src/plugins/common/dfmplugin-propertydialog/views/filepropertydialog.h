@@ -61,6 +61,7 @@ private:
     void setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo);
 
 protected:
+    bool eventFilter(QObject *object, QEvent *event) override;
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void showEvent(QShowEvent *event) override;
