@@ -192,20 +192,6 @@ void SideBarWidget::updateItemVisiable(const QVariantMap &states)
     sidebarView->updateSeparatorVisibleState();
 }
 
-QList<QUrl> SideBarWidget::findItemUrlsByGroupName(const QString &group) const
-{
-    Q_ASSERT(kSidebarModelIns);
-    QList<QUrl> ret;
-    QList<SideBarItem *> items { kSidebarModelIns->subItems(group) };
-    std::for_each(items.begin(), items.end(), [&ret](SideBarItem *item) {
-        if (!item)
-            return;
-        ret.append(item->url());
-    });
-
-    return ret;
-}
-
 QList<QUrl> SideBarWidget::findItemUrlsByVisibleControlKey(const QString &key) const
 {
     QList<QUrl> ret;

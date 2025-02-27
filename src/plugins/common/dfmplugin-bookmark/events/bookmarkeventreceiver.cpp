@@ -30,13 +30,12 @@ void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QMap<QUrl, 
     }
 }
 
-void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
+void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group, const QList<QUrl> &urls)
 {
     if (group != "Group_Common")
         return;
 
-    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
-    BookMarkManager::instance()->saveSortedItemsToConfigFile(items.value<QList<QUrl>>());
+    BookMarkManager::instance()->saveSortedItemsToConfigFile(urls);
 }
 
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)

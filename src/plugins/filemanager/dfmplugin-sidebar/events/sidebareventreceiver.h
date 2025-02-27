@@ -21,7 +21,6 @@ public:
 
 public slots:
     void handleSetContextMenuEnable(bool enable);
-    QList<QUrl> handleGetGroupItems(quint64 winId, const QString &group);
 
     bool handleItemAdd(const QUrl &url, const QVariantMap &properties);
     bool handleItemRemove(const QUrl &url);

@@ -128,12 +128,10 @@ QStringList TagEventReceiver::handleGetTags(const QUrl &url)
     return rec;
 }
 
-void TagEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
+void TagEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group, QList<QUrl> urls)
 {
-    if (group != "Tag")
+    if (group != "Group_Tag")
         return;
-    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
-    auto urls = items.value<QList<QUrl>>();
 
     QVariantList lst;
     for (auto &url : urls) {
