@@ -30,7 +30,6 @@ static constexpr char kKeyIndex[] { "index" };
 static constexpr char kKeydefaultItem[] { "defaultItem" };
 static constexpr char kKeyCreated[] { "created" };
 static constexpr char kKeyLastModi[] { "lastModified" };
-static constexpr char kKeyLocateUrl[] { "locateUrl" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 
 static QString kConfigurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager.json";
@@ -41,7 +40,6 @@ QVariantMap BookmarkData::serialize()
     QVariantMap v;
     v.insert(kKeyCreated, created.toString(Qt::ISODate));
     v.insert(kKeyLastModi, lastModified.toString(Qt::ISODate));
-    v.insert(kKeyLocateUrl, locateUrl);
     v.insert(kKeyMountPoint, deviceUrl);
     v.insert(kKeyName, name);
     v.insert(kKeyUrl, url);

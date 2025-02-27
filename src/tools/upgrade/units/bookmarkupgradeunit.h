@@ -18,7 +18,6 @@ struct BookmarkData
 {
     QDateTime created;
     QDateTime lastModified;
-    QString locateUrl;
     QString deviceUrl;
     QString name;
     QString transName;
