@@ -403,6 +403,8 @@ void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString
 
 void BookMarkManager::saveSortedItemsToConfigFile(const QList<QUrl> &order)
 {
+    Q_ASSERT(!order.isEmpty());
+
     QVariantList sorted;
     int index = 0;
     for (auto url : order) {
@@ -415,7 +417,8 @@ void BookMarkManager::saveSortedItemsToConfigFile(const QList<QUrl> &order)
         index++;
     }
 
-    Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, sorted);
+    if (!sorted.isEmpty())
+        Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, sorted);
 }
 
 void BookMarkManager::saveQuickAccessToSortedItems(const QVariantList &list)

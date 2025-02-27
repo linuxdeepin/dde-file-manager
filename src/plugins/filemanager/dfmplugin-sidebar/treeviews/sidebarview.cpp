@@ -77,9 +77,17 @@ void SideBarViewPrivate::notifyOrderChanged()
     if (draggedGroup.isEmpty())
         return;
 
-    QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
+    QTimer::singleShot(0, this, [this] {   // this must be invoked after items are sorted finished
+        QList<QUrl> ret;
+        QList<SideBarItem *> items { q->model()->subItems(draggedGroup) };
+        std::for_each(items.begin(), items.end(), [&ret](SideBarItem *item) {
+            if (!item)
+                return;
+            ret.append(item->url());
+        });
+
         quint64 winId = FMWindowsIns.findWindowId(q);
-        dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Sidebar_Sorted", winId, draggedGroup);
+        dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Sidebar_Sorted", winId, draggedGroup, ret);
         draggedGroup = "";
     });
 }

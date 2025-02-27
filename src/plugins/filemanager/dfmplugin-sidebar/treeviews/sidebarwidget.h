@@ -42,7 +42,6 @@ public:
     void editItem(const QUrl &url);
     void setItemVisiable(const QUrl &url, bool visible);
     void updateItemVisiable(const QVariantMap &states);
-    QList<QUrl> findItemUrlsByGroupName(const QString &group) const;
     QList<QUrl> findItemUrlsByVisibleControlKey(const QString &key) const;
     void updateSelection();
     void saveStateWhenClose();

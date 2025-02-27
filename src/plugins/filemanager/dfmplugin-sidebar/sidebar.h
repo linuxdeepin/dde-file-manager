@@ -21,7 +21,6 @@ class SideBar : public dpf::Plugin
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_ContextMenu_SetEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
-    DPF_EVENT_REG_SLOT(slot_Group_UrlList)
     DPF_EVENT_REG_SLOT(slot_Item_Add)
     DPF_EVENT_REG_SLOT(slot_Item_Remove)
     DPF_EVENT_REG_SLOT(slot_Item_Update)

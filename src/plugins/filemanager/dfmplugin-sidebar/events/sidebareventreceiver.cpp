@@ -29,7 +29,6 @@ void SideBarEventReceiver::bindEvents()
     static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPSIDEBAR_NAMESPACE) };
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_ContextMenu_SetEnable", this, &SideBarEventReceiver::handleSetContextMenuEnable);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Group_UrlList", this, &SideBarEventReceiver::handleGetGroupItems);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Add", this, &SideBarEventReceiver::handleItemAdd);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Remove", this, &SideBarEventReceiver::handleItemRemove);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Update", this, &SideBarEventReceiver::handleItemUpdate);
@@ -69,26 +68,6 @@ void SideBarEventReceiver::handleSidebarUpdateSelection(quint64 winId)
 void SideBarEventReceiver::handleSetContextMenuEnable(bool enable)
 {
     SideBarHelper::contextMenuEnabled = enable;
-}
-
-QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QString &group)
-{
-    if (group.isEmpty())
-        return {};
-
-    SideBarWidget *wid { nullptr };
-    for (auto sb : SideBarHelper::allSideBar()) {
-        if (FMWindowsIns.findWindowId(sb) == winId) {
-            wid = sb;
-            break;
-        }
-    }
-
-    if (wid)
-        return wid->findItemUrlsByGroupName(group);
-
-    fmDebug() << "cannot find sidebarwidget for winid: " << winId << group;
-    return {};
 }
 
 bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &properties)
