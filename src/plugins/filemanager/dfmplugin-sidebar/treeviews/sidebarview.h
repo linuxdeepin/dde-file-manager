@@ -35,8 +35,8 @@ public:
     QVariantMap groupExpandState() const;
     QModelIndex previousIndex() const;
     void setPreviousIndex(const QModelIndex &index);
-    bool isDropTarget(const QModelIndex &index);
-    bool isSideBarItemDragged();
+    bool isDropTarget(const QModelIndex &index) const;
+    bool isSideBarItemDragged() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -49,7 +49,7 @@ protected:
 
     bool onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const;
     Qt::DropAction canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
-    bool isAccepteDragEvent(QDropEvent *event);
+    bool isAccepteDragEvent(QDropEvent *event) const;
 
 private:
     inline QString dragEventUrls() const;

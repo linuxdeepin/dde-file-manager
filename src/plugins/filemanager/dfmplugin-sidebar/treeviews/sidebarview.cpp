@@ -370,7 +370,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     fmDebug() << "source: " << event->mimeData()->urls();
     fmDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
     fmDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
-
+    fmDebug() << "item flags:" << item->flags();
     // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
     // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
     // 但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
@@ -440,7 +440,7 @@ void SideBarView::dropEvent(QDropEvent *event)
             parentPtr = parentPtr->parentWidget();
         }
         if (curWindow)
-            qApp->setActiveWindow(curWindow);
+            curWindow->activateWindow();
 
         event->accept();
     } else {
@@ -612,12 +612,12 @@ void SideBarView::setPreviousIndex(const QModelIndex &index)
     d->previous = index;
 }
 
-bool SideBarView::isDropTarget(const QModelIndex &index)
+bool SideBarView::isDropTarget(const QModelIndex &index) const
 {
     return index == d->currentHoverIndex;
 }
 
-bool SideBarView::isSideBarItemDragged()
+bool SideBarView::isSideBarItemDragged() const
 {
     return d->isItemDragged;
 }
@@ -699,7 +699,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     return action;
 }
 
-bool SideBarView::isAccepteDragEvent(QDropEvent *event)
+bool SideBarView::isAccepteDragEvent(QDropEvent *event) const
 {
     SideBarItem *item = itemAt(event->position().toPoint());
     if (!item) {
