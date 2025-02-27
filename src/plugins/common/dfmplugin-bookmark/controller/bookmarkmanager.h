@@ -57,8 +57,6 @@ public:
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
-    void update(const QVariant &value);
-    void removeAllBookMarkSidebarItems();
 
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
     void saveSortedItemsToConfigFile(const QList<QUrl> &order);
@@ -70,9 +68,6 @@ private:
     void addBookmarkToDConfig(const QVariantMap &data);
     void renameBookmarkToDConfig(const QString &oldName, const QString &newName);
     void updateBookmarkUrlToDconfig(const QUrl &oldUrl, const QUrl &newUrl);
-
-private slots:
-    void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
     QMap<QUrl, BookmarkData> quickAccessDataMap = {};

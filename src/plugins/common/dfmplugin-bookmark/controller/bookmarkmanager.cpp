@@ -282,8 +282,6 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
 BookMarkManager::BookMarkManager(QObject *parent)
     : QObject(parent)
 {
-    connect(Application::genericSetting(), &Settings::valueEdited, this,
-            &BookMarkManager::onFileEdited);
 }
 
 void BookMarkManager::initData()
@@ -307,29 +305,6 @@ void BookMarkManager::initData()
             sortedUrls.append(data.url);
         else
             sortedUrls.insert(data.index, data.url);
-    }
-}
-
-void BookMarkManager::update(const QVariant &value)
-{
-    removeAllBookMarkSidebarItems();
-    quickAccessDataMap.clear();
-    sortedUrls.clear();
-
-    initData();
-    addQuickAccessDataFromConfig(value.toList());
-    // Add items to sidebar according to `sortedUrls`
-    for (const QUrl &url : sortedUrls) {
-        const BookmarkData &data = quickAccessDataMap[url];
-        addBookMarkItem(data.url, data.name, data.isDefaultItem);
-    }
-}
-
-void BookMarkManager::removeAllBookMarkSidebarItems()
-{
-    QList<QUrl> bookmarkUrllist = quickAccessDataMap.keys();
-    for (const QUrl &url : bookmarkUrllist) {
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
     }
 }
 
@@ -566,14 +541,6 @@ bool BookMarkManager::isItemDuplicated(const BookmarkData &data)
     return false;
 }
 
-void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
-{
-    if (group != kConfigGroupQuickAccess || key != kConfigKeyName)   // Only care about quick access group !!!
-        return;
-
-    update(value);
-}
-
 /**
  * @brief BookMarkManager::fileRenamed
  * if the actual dir is renamed, would call this function.
@@ -590,15 +557,6 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
         if (map.value(kKeyName).toString() == quickAccessDataMap.value(oldUrl).name) {
-            QString locatePath = newUrl.path();
-            int indexOfFirstDir = 0;
-            if (locatePath.startsWith("/media"))
-                indexOfFirstDir = locatePath.lastIndexOf("/", locatePath.length() - 1);
-            else
-                indexOfFirstDir = locatePath.indexOf("/", 1);
-            locatePath = locatePath.mid(indexOfFirstDir);
-            const QByteArray &ba = locatePath.toLocal8Bit();
-            map[kKeyLocateUrl] = QString(ba.toBase64());
             map[kKeyUrl] = newUrl;
             list[i] = map;
 
@@ -606,12 +564,14 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             newData.resetData(map);
 
             quickAccessDataMap.remove(oldUrl);
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", oldUrl);
-
             quickAccessDataMap.insert(newUrl, newData);
-            Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
-            update(list);
 
+            QVariantMap map {
+                { "Property_Key_Url", newUrl },
+            };
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", oldUrl, map);
+
+            Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
             updateBookmarkUrlToDconfig(oldUrl, newUrl);
             break;
         }
