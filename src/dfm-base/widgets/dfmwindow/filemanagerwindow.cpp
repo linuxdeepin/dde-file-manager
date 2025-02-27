@@ -164,8 +164,9 @@ void FileManagerWindowPrivate::resetTitleBarSize()
         iconLabel->setIconSize(size);
     }
     if (expandButton) {
-        QSize size(DSizeModeHelper::element(32, 48), DSizeModeHelper::element(32, 48));
+        QSize size(16, 16);
         expandButton->setIconSize(size);
+        expandButton->setFixedSize(30, 30);
     }
     if (iconArea) {
         QSize size(DSizeModeHelper::element(66, 95), DSizeModeHelper::element(40, 50));
@@ -435,9 +436,8 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     d->iconLabel->setFlat(true);
 
     // expand button
-    d->expandButton = new DIconButton(this);
+    d->expandButton = new CustomDIconButton(this);
     d->expandButton->setProperty("expand", true);
-    d->expandButton->setFlat(true);
 
     // connections
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [hideTitlebar, this]() {
@@ -652,7 +652,8 @@ void FileManagerWindow::initializeUi()
                 leftAreaLayout->addWidget(d->iconLabel, 0, Qt::AlignLeading | Qt::AlignVCenter);
             }
             if (d->expandButton) {
-                d->expandButton->setIcon(DDciIcon::fromTheme("window_sidebar"));
+                leftAreaLayout->addSpacing(10);
+                d->expandButton->setIcon(DDciIcon::fromTheme("sidebar-switch-symbolic"));
                 leftAreaLayout->addWidget(d->expandButton, 0, Qt::AlignLeading | Qt::AlignVCenter);
             }
             d->resetTitleBarSize();

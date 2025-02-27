@@ -8,11 +8,11 @@
 #include "utils/optionbuttonmanager.h"
 #include "views/sortbybutton.h"
 #include "views/viewoptionsbutton.h"
-#include "views/custombutton.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/widgets/dfmcustombuttons/customdtoolbutton.h>
 
 #include <dfm-framework/event/event.h>
 

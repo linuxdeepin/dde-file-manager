@@ -4,7 +4,6 @@
 
 #include "tabbar.h"
 #include "tab.h"
-#include "custombutton.h"
 #include "titlebarwidget.h"
 #include "dfmplugin_titlebar_global.h"
 #include "utils/titlebarhelper.h"
@@ -19,6 +18,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <dfm-framework/event/event.h>
 
