@@ -5,9 +5,9 @@
 #include "views/private/navwidget_p.h"
 #include "views/navwidget.h"
 #include "events/titlebareventcaller.h"
-#include "views/custombutton.h"
 
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -21,6 +21,7 @@
 #include <QProxyStyle>
 
 using namespace dfmplugin_titlebar;
+DFMBASE_USE_NAMESPACE
 
 NavWidgetPrivate::NavWidgetPrivate(NavWidget *qq)
     : QObject(qq), q(qq)

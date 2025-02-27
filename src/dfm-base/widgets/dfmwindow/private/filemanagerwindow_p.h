@@ -9,6 +9,7 @@
 #include <dfm-base/widgets/dfmsplitter/splitter.h>
 #include <dfm-base/interfaces/abstractbaseview.h>
 #include <dfm-base/interfaces/abstractframe.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <DTitlebar>
 #include <DButtonBox>
@@ -77,7 +78,7 @@ protected:
     AbstractFrame *detailSpace { nullptr };
 
     DIconButton *iconLabel { nullptr };
-    DIconButton *expandButton { nullptr };
+    CustomDIconButton *expandButton { nullptr };
     DVerticalLine *sidebarSep { nullptr };
     QWidget *iconArea { nullptr };
 

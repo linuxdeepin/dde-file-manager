@@ -8,7 +8,6 @@
 #include "events/titlebareventcaller.h"
 #include "views/completerview.h"
 #include "views/completerviewdelegate.h"
-#include "views/custombutton.h"
 #include "models/completerviewmodel.h"
 
 #include <dfm-base/utils/fileutils.h>
@@ -16,6 +15,8 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
+#include <dfm-base/widgets/dfmcustombuttons/customdtoolbutton.h>
 
 #include <DToolButton>
 #include <DIconButton>

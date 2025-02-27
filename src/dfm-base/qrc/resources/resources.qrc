@@ -106,5 +106,6 @@
         <file>built-in-icons/user-home-symbolic.dci</file>
         <file>built-in-icons/user-trash-symbolic.dci</file>
         <file>built-in-icons/media-eject-symbolic.dci</file>
+        <file>built-in-icons/sidebar-switch-symbolic.dci</file>
     </qresource>
 </RCC>
