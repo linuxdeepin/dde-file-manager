@@ -52,7 +52,6 @@ static constexpr char kConfigKeyName[] { "Items" };
 
 static constexpr char kKeyCreated[] { "created" };
 static constexpr char kKeyLastModi[] { "lastModified" };
-static constexpr char kKeyLocateUrl[] { "locateUrl" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 static constexpr char kKeyName[] { "name" };
 static constexpr char kKeyUrl[] { "url" };
@@ -66,13 +65,6 @@ void BookmarkData::resetData(const QVariantMap &map)
 {
     created = QDateTime::fromString(map.value(kKeyCreated).toString(), Qt::ISODate);
     lastModified = QDateTime::fromString(map.value(kKeyLastModi).toString(), Qt::ISODate);
-    QByteArray ba;
-    if (map.value(kKeyLocateUrl).toString().startsWith("/")) {
-        ba = map.value(kKeyLocateUrl).toString().toLocal8Bit().toBase64();
-    } else {
-        ba = map.value(kKeyLocateUrl).toString().toLocal8Bit();
-    }
-    locateUrl = QString(ba);
     deviceUrl = map.value(kKeyMountPoint).toString();
     name = map.value(kKeyName).toString();
     url = QUrl::fromUserInput(map.value(kKeyUrl).toString());
@@ -85,7 +77,6 @@ QVariantMap BookmarkData::serialize()
     QVariantMap v;
     v.insert(kKeyCreated, created.toString(Qt::ISODate));
     v.insert(kKeyLastModi, lastModified.toString(Qt::ISODate));
-    v.insert(kKeyLocateUrl, locateUrl);
     v.insert(kKeyMountPoint, deviceUrl);
     v.insert(kKeyName, name);
     v.insert(kKeyUrl, url);
@@ -155,7 +146,7 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             BookmarkData bookmarkData;
             bookmarkData.created = QDateTime::currentDateTime();
             bookmarkData.lastModified = bookmarkData.created;
-            getMountInfo(url, bookmarkData.deviceUrl, bookmarkData.locateUrl);
+            getMountInfo(url, bookmarkData.deviceUrl);
             bookmarkData.name = info.fileName();
             bookmarkData.url = url;
             QString temPath = url.path();
@@ -190,7 +181,6 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             newData.remove(kKeydefaultItem);   // bookmark data in dconfig dont have keys : `defaultItem` and `index`
             newData.remove(kKeyIndex);
             newData.insert(kKeyUrl, url.toEncoded());   // here must be encoded and keep compatibility
-            newData.insert(kKeyLocateUrl, url.path().toUtf8().toBase64());
             addBookmarkToDConfig(newData);
         }
     }
@@ -357,10 +347,8 @@ int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
     return dialog.exec();
 }
 
-void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl)
+void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint)
 {
-    Q_UNUSED(localUrl);
-
     QStorageInfo info(url.path());
     QString devStr(info.device());
     if (devStr.startsWith("/dev/")) {
@@ -519,7 +507,6 @@ void BookMarkManager::updateBookmarkUrlToDconfig(const QUrl &oldUrl, const QUrl 
         if (map.value(kKeyUrl).toString() == oldUrl.toEncoded()) {
             map[kKeyUrl] = newUrl.toEncoded();   // update url, here must be encoded
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
-            map[kKeyLocateUrl] = newUrl.path().toUtf8().toBase64();
             list.replace(i, map);
             DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
             break;

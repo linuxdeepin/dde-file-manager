@@ -21,7 +21,6 @@ struct BookmarkData
 {
     QDateTime created;
     QDateTime lastModified;
-    QString locateUrl;
     QString deviceUrl;
     QString name;
     QUrl url;
@@ -58,7 +57,7 @@ public:
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
 
-    void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
+    void getMountInfo(const QUrl &url, QString &mountPoint);
     void saveSortedItemsToConfigFile(const QList<QUrl> &order);
     void saveQuickAccessToSortedItems(const QVariantList &list);
 
