@@ -157,15 +157,15 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
             }
         }
 
-        if (newNameFilterExtension.isEmpty())
-            fmInfo() << "Cannot find extension name";
-
         QRegExp re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
         if (re.exactMatch(fileNameExtension)) {   //原扩展名与新扩展名不匹配？
             fmInfo() << "Set new filter rules:" << newNameFilters;
             // TODO(liuyangming):
             // getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
         }
+
+        if (!newNameFilterExtension.isEmpty())
+            break;
     }
     return newNameFilterExtension;
 }
