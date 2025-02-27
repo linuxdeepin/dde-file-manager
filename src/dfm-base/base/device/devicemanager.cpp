@@ -176,7 +176,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
     const QStringList winFS { "ntfs", "vfat", "exfat" };
     if (winFS.contains(dev->fileSystem())) {
         auto optStr = options.value("options").toString();
-        optStr.prepend("dmask=000,fmask=111,");
+        optStr.prepend("dmask=000,fmask=000,");
         if (optStr.endsWith(",")) optStr.chop(1);
         options.insert("options", optStr);
     }
@@ -1080,7 +1080,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     QApplication::restoreOverrideCursor();
 
     // 将对话框手动关闭，以及用户取消输入都作为取消操作
-    if(dlg.exec() != QDialog::Accepted) {
+    if (dlg.exec() != QDialog::Accepted) {
         info.cancelled = true;
         QApplication::setOverrideCursor(Qt::WaitCursor);
         return info;
@@ -1113,7 +1113,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
 
 QString DeviceManagerPrivate::encryptPasswd(const QString &passwd)
 {
-    //todo use encrypt-plugin
+    // todo use encrypt-plugin
     QByteArray byteArray = passwd.toUtf8();
     QByteArray encodedByteArray = byteArray.toBase64();
     return QString::fromUtf8(encodedByteArray);
