@@ -97,7 +97,9 @@ bool UserShareHelper::share(const ShareInfo &info)
 
     if (isValidShare(info)) {
         const auto &&name = info.value(ShareInfoKeys::kName).toString();
-        if (name.startsWith("-") || name.endsWith(" ")) {
+        // 是否包含了非法字符：%<>*?|/\\+=;:,\"，且不能以 "-" 和空格开头，或者空格结尾
+        QRegularExpression regex(R"(^(?![ -])[^%<>*?|/\\+=;:,"]*$(?<! ))");
+        if (!regex.match(name).hasMatch()) {
             DialogManagerInstance->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
             return false;
         }

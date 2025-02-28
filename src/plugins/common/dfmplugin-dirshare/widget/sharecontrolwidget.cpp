@@ -47,7 +47,6 @@ DFMBASE_USE_NAMESPACE
 namespace ConstDef {
 static constexpr int kKeyWidth { 80 };
 static constexpr int kWidgetFixedWidth { 195 };
-static constexpr char kShareNameRegx[] { "^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$" };
 static constexpr char kShareFileDir[] { "/var/lib/samba/usershares" };
 }
 
@@ -180,8 +179,9 @@ void ShareControlWidget::setupShareSwitcher()
 void ShareControlWidget::setupShareNameEditor()
 {
     shareNameEditor = new QLineEdit(this);
+    static constexpr char kShareNameRegx[] { R"(^(?![ -])[^%<>*?|/\\+=;:,"]*+ ?$)" };
 
-    QValidator *validator = new QRegularExpressionValidator(QRegularExpression(ConstDef::kShareNameRegx), this);
+    QValidator *validator = new QRegularExpressionValidator(QRegularExpression(kShareNameRegx), this);
     shareNameEditor->setValidator(validator);
 
     connect(shareNameEditor, &QLineEdit::textChanged, this, [=](const QString &text) {
