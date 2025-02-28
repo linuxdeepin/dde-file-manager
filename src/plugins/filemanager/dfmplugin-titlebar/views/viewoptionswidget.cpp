@@ -357,8 +357,12 @@ void ViewOptionsWidget::hideEvent(QHideEvent *event)
 template<typename Func>
 void ViewOptionsWidgetPrivate::connectSliderTip(Dtk::Widget::DSlider *slider, Func getValueList)
 {
-    connect(slider, &DTK_WIDGET_NAMESPACE::DSlider::sliderMoved, this, [this, slider, getValueList](int pos){
-        auto valList = (viewDefines.*getValueList)();
+    auto valList = (viewDefines.*getValueList)();
+    connect(slider, &DSlider::sliderMoved, this, [this, slider, valList](int pos){
         showSliderTips(slider, pos, valList);
+    });
+    connect(slider, &DSlider::sliderPressed, this, [ this, slider, valList ]{
+        int position = slider->slider()->sliderPosition();
+        showSliderTips(slider, position, valList);
     });
 }
