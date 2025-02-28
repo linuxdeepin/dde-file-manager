@@ -18,6 +18,7 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QScreen>
+#include <QToolTip>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -230,6 +231,10 @@ void ViewOptionsWidgetPrivate::initConnect()
                 listHeightSlider->slider()->setValue(newValue);
         }
     });
+
+    connectSliderTip(iconSizeSlider, &ViewDefines::getIconSizeList);
+    connectSliderTip(gridDensitySlider, &ViewDefines::getIconGridDensityList);
+    connectSliderTip(listHeightSlider, &ViewDefines::getListHeightList);
 }
 
 void ViewOptionsWidgetPrivate::setUrl(const QUrl &url)
@@ -271,6 +276,15 @@ void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)
         widgetHeight += singleHeight;
     }
     q->setFixedHeight(widgetHeight);
+}
+
+void ViewOptionsWidgetPrivate::showSliderTips(Dtk::Widget::DSlider *slider, int pos, const QVariantList &valList)
+{
+    if (pos >= valList.count() || valList.count() <= 1)
+        return;
+    int offset = (pos * (slider->slider()->width() - 28)) / (valList.count() - 1);
+    QPoint showPoint = slider->slider()->mapToGlobal(QPoint(offset, -52));
+    QToolTip::showText(showPoint, valList.at(pos).toString(), slider);
 }
 
 QList<QString> ViewOptionsWidgetPrivate::getStringListByIntList(const QList<int> &intList)
@@ -338,4 +352,13 @@ void ViewOptionsWidget::hideEvent(QHideEvent *event)
 {
     emit hidden();
     DBlurEffectWidget::hideEvent(event);
+}
+
+template<typename Func>
+void ViewOptionsWidgetPrivate::connectSliderTip(Dtk::Widget::DSlider *slider, Func getValueList)
+{
+    connect(slider, &DTK_WIDGET_NAMESPACE::DSlider::sliderMoved, this, [this, slider, getValueList](int pos){
+        auto valList = (viewDefines.*getValueList)();
+        showSliderTips(slider, pos, valList);
+    });
 }
