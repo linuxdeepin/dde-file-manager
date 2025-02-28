@@ -55,11 +55,15 @@ public:
     explicit ViewOptionsWidgetPrivate(ViewOptionsWidget *qq);
     virtual ~ViewOptionsWidgetPrivate();
 
+    template<typename Func>
+    void connectSliderTip(DTK_WIDGET_NAMESPACE::DSlider *slider, Func getValueList);
+
 private:
     void initializeUi();
     void initConnect();
     void setUrl(const QUrl &url);
     void switchMode(ViewMode mode);
+    void showSliderTips(DTK_WIDGET_NAMESPACE::DSlider *slider, int pos, const QVariantList &valList);
 
     QList<QString> getStringListByIntList(const QList<int> &intList);
 };
