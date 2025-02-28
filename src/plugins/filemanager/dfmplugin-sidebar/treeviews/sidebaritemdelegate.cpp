@@ -267,7 +267,7 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     SideBarItem *tgItem = sidebarModel->itemFromIndex(index);
     if (!tgItem)
         return nullptr;
-    auto sourceInfo = InfoFactory::create<FileInfo>(tgItem->url());
+    auto sourceInfo = InfoFactory::create<FileInfo>(tgItem->url(), Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!sourceInfo)
         return nullptr;
     if (!sourceInfo->exists())

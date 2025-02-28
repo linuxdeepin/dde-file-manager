@@ -77,14 +77,8 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
             return "";
 
         QString &&itemName = item->info->displayName();
-        if (itemName != item->itemName) {
-            QVariantMap map {
-                { "Property_Key_DisplayName", itemName },
-                { "Property_Key_Editable", item->info->renamable() }
-            };
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->urlOf(UrlInfoType::kUrl), map);
+        if (itemName != item->itemName)
             item->itemName = itemName;
-        }
         return itemName;
     }
 

@@ -458,7 +458,7 @@ void SideBarView::startDrag(Qt::DropActions supportedActions)
 
 QModelIndex SideBarView::indexAt(const QPoint &p) const
 {
-    return QTreeView::indexAt(p);
+    return DTreeView::indexAt(p);
 }
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const

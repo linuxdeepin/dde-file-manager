@@ -35,6 +35,7 @@ public:
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
 public Q_SLOTS:
     void onEditorTextChanged(const QString &text, const FileInfoPointer &info) const;
 

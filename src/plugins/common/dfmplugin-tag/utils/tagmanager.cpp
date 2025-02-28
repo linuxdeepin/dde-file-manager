@@ -571,7 +571,7 @@ void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
 
     // tag action
     menu->addAction(QObject::tr("Rename"), [url, windowId]() {
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", windowId, url);
+        QTimer::singleShot(200, [url, windowId] { dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", windowId, url); });
     });
 
     menu->addAction(QObject::tr("Remove"), [url]() {
