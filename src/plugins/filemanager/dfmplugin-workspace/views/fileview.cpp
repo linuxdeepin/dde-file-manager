@@ -1524,14 +1524,15 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
 
     d->selectHelper->release();
 
+    if (!QScroller::hasScroller(this))
+        return DListView::mouseReleaseEvent(event);
+
     if (WindowUtils::keyCtrlIsPressed()
         && d->lastMousePressedIndex.isValid()
         && d->lastMousePressedIndex == indexAt(event->pos())) {
         selectionModel()->select(d->lastMousePressedIndex, QItemSelectionModel::Deselect);
     }
 
-    if (!QScroller::hasScroller(this))
-        return DListView::mouseReleaseEvent(event);
 }
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)
