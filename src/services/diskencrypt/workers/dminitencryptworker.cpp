@@ -58,7 +58,7 @@ void DMInitEncryptWorker::run()
     auto source = phyPtr
             ? "PARTUUID=" + phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
             : phyPath;
-    crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs" } });
+    crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs", "keyscript=/lib/usec-crypt-kit/usec-askpass" } });
 
     // now we can do encrypt on phyDevPath
     auto jobArgs = initJobArgs(phyPath, unlockName);
