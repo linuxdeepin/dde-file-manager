@@ -125,6 +125,7 @@ void ConnectToServerDialog::onCurrentTextChanged(const QString &string)
         serverComboBox->completer()->setModel(new QStringListModel());
 
         SearchHistroyManager::instance()->clearHistory(supportedSchemes);
+        SearchHistroyManager::instance()->clearIPHistory();
     }
 }
 
@@ -161,6 +162,7 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &server)
         serverComboBox->clearEditText();
         serverComboBox->completer()->setModel(new QStringListModel());
         SearchHistroyManager::instance()->clearHistory(supportedSchemes);
+        SearchHistroyManager::instance()->clearIPHistory();
         Application::appObtuselySetting()->sync();
     }
 
@@ -294,6 +296,7 @@ void ConnectToServerDialog::initServerDatas()
 
     if (!hosts.isEmpty()) {
         onCurrentInputChanged(hosts.last());
+        serverComboBox->setCurrentText(hosts.last());
     }
 }
 
