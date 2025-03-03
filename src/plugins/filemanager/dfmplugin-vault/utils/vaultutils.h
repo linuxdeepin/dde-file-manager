@@ -7,7 +7,7 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
+#include <polkit-qt6-1/PolkitQt1/Authority>
 
 namespace dfmplugin_vault {
 
@@ -17,9 +17,9 @@ class VaultUtils : public QObject
     Q_DISABLE_COPY(VaultUtils)
 
 public:
-    static VaultUtils& instance();
+    static VaultUtils &instance();
 
-    void showAuthorityDialog(const QString& actionId);
+    void showAuthorityDialog(const QString &actionId);
 
 Q_SIGNALS:
     void resultOfAuthority(bool ok);

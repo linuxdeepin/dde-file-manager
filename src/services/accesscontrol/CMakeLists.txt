@@ -6,7 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(AccessControl_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.AccessControl.xml)
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Qt6 COMPONENTS DBus REQUIRED)
 
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -17,13 +17,13 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.policy"
     )
 
-# qt5_generate_dbus_interface(
+# qt6_generate_dbus_interface(
 #    accesscontroldbus.h
 #    ${AccessControl_XML}
 #    OPTIONS -M -S
 # )
 
-qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${AccessControl_XML}
+qt6_add_dbus_adaptor(FILEOPERATIONS_FILES ${AccessControl_XML}
     accesscontroldbus.h AccessControlDBus)
 
 add_library(${PROJECT_NAME}
@@ -33,17 +33,6 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-
-pkg_search_module(dfm-io
-    REQUIRED
-    dfm-io
-    IMPORTED_TARGET
-)
-pkg_search_module(dfm-mount
-    REQUIRED
-    dfm-mount
-    IMPORTED_TARGET
-)
 
 pkg_search_module(crypt
     REQUIRED
@@ -55,21 +44,18 @@ pkg_check_modules(PolkitAgent
     polkit-agent-1
     IMPORTED_TARGET
 )
-pkg_check_modules(PolkitQt5
+pkg_check_modules(PolkitQt6
     REQUIRED
-    polkit-qt5-1
+    polkit-qt6-1
     IMPORTED_TARGET
 )
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    PkgConfig::dfm-io
-    PkgConfig::dfm-mount
+    DFM6::base
     PkgConfig::crypt
     PkgConfig::PolkitAgent
-    PkgConfig::PolkitQt5
-    Qt5::DBus
-    ${DtkWidget_LIBRARIES}
+    PkgConfig::PolkitQt6
+    Qt6::DBus
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-service-manager/)

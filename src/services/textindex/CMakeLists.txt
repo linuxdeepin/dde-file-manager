@@ -17,15 +17,15 @@ FILE(GLOB_RECURSE SRC_FILES
     )
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS Core DBus REQUIRED)
+find_package(Qt6 COMPONENTS Core DBus REQUIRED)
 
-qt5_generate_dbus_interface(
+qt6_generate_dbus_interface(
    textindexdbus.h
    ${TextIndex_XML}
    OPTIONS -M -S
 )
 
-qt5_add_dbus_adaptor(SRC_FILES ${TextIndex_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${TextIndex_XML}
     textindexdbus.h TextIndexDBus)
 
 #full-text search dependences
@@ -51,8 +51,8 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Core
-    Qt5::DBus
+    Qt6::Core
+    Qt6::DBus
     ${GLIB_LIBRARIES}
     ${PCRE_LIBRARIES}
     PkgConfig::Lucene

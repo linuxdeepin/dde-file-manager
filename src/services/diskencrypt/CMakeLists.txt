@@ -6,13 +6,13 @@ project(${BIN_NAME})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(DiskEncrypt_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.DiskEncrypt.xml)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Concurrent DBus)
+find_package(Qt6 REQUIRED COMPONENTS Core Concurrent DBus)
 find_package(deepin-qdbus-service REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(CryptSetup REQUIRED libcryptsetup)
 pkg_check_modules(DevMapper REQUIRED devmapper)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1 IMPORTED_TARGET)
-pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1 IMPORTED_TARGET)
+pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1 IMPORTED_TARGET)
 
 add_definitions(-DSERVICE_CONFIG_DIR="${CMAKE_INSTALL_PREFIX}/share/deepin-service-manager/")
 
@@ -23,12 +23,12 @@ file(GLOB_RECURSE SRCS
 
 # generate dbus xml and adaptor
 # DBus: DiskEncryptDBus
-qt5_generate_dbus_interface(
+qt6_generate_dbus_interface(
    dbus/diskencryptsetup.h
    ${DiskEncrypt_XML}
    OPTIONS -M -S
 )
-qt5_add_dbus_adaptor(SRCS
+qt6_add_dbus_adaptor(SRCS
                      ${DiskEncrypt_XML}
                      dbus/diskencryptsetup.h
                      DiskEncryptSetup)
@@ -39,22 +39,21 @@ add_executable(${BIN_NAME}
 )
 
 target_link_libraries(${BIN_NAME} PRIVATE
-    Qt5::Core
-    Qt5::Concurrent
-    Qt5::DBus
-    DFM::base
+    Qt6::Core
+    Qt6::Concurrent
+    Qt6::DBus
+    DFM6::base
     PkgConfig::PolkitAgent
-    PkgConfig::PolkitQt5
+    PkgConfig::PolkitQt6
+    deepin-qdbus-service
     ${CryptSetup_LIBRARIES}
     ${DevMapper_LIBRARIES}
-    ${deepin-qdbus-service_LIBRARIES}
 )
 
 target_include_directories(${BIN_NAME}
     PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${CryptSetup_INCLUDE_DIRS}
-    ${deepin-qdbus-service_INCLUDE_DIR}
 )
 
 install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})

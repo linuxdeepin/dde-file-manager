@@ -11,7 +11,6 @@ FILE(GLOB_RECURSE MUSICPREVIEW_FILES CONFIGURE_DEPENDS
     "${GlobalFiles}"
     )
 
-# Qt5
 set(BIN_NAME ${PROJECT_NAME})
 find_package(Qt6 COMPONENTS Widgets Multimedia REQUIRED)
 find_package(ICU COMPONENTS i18n io uc REQUIRED)

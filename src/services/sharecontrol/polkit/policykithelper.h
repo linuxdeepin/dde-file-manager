@@ -8,7 +8,7 @@
 #include "service_sharecontrol_global.h"
 
 #include <QObject>
-#include <polkit-qt5-1/PolkitQt1/Authority>
+#include <polkit-qt6-1/PolkitQt1/Authority>
 
 SERVICESHARECONTROL_BEGIN_NAMESPACE
 

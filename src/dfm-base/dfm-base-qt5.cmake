@@ -1,9 +1,9 @@
 set(BIN_NAME dfm-base)
 
-set(QT_VERSION_MAJOR 5)
-set(DTK_VERSION_MAJOR "")
+#set(QT_VERSION_MAJOR 5)
+#set(DTK_VERSION_MAJOR "")
 
-include(dfm-base.cmake)
+#include(dfm-base.cmake)
 
 # install header files
 install(DIRECTORY
