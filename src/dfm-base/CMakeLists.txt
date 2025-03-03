@@ -40,11 +40,7 @@ set(QRC_FILES
 )
 
 include(dfm-base-qt5.cmake)
-
-# Qt6
-if (DFM_BUILD_WITH_QT6)
 include(dfm-base-qt6.cmake)
-endif()
 
 # install resources files
 set(AssetsPath ${PROJECT_SOURCE_DIR}/assets)

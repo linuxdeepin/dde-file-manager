@@ -24,8 +24,6 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 # TODO: control it by CI. (Automation Testing)
 add_definitions(-DENABLE_TESTING)
 
-# Qt6
-set(DFM_BUILD_WITH_QT6 TRUE)
 set(COMPILE_ON_V2X TRUE)
 add_definitions(-DCOMPILE_ON_V2X)    # TODO: remove it
 message("COMPILE ON v2X")

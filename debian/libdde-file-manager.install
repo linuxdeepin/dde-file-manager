@@ -1,5 +1,4 @@
 usr/lib/*/libdde-file-manager.so*
-usr/lib/*/libdfm-base.so*
 usr/lib/*/libdfm6-base.so*
 usr/lib/*/libdfm6-framework.so*
 usr/lib/*/dde-file-manager/plugins/common-core/*.so
