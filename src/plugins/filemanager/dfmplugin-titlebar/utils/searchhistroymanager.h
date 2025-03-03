@@ -25,6 +25,7 @@ public:
     void writeIntoIPHistory(const QString &ipAddr);
     bool removeSearchHistory(QString keyword);
     void clearHistory(const QStringList &schemeFilters = QStringList());
+    void clearIPHistory();
 
 private:
     explicit SearchHistroyManager(QObject *parent = nullptr);
