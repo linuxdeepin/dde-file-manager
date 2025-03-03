@@ -17,7 +17,7 @@
 
 #include <DConfig>
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
+#include <polkit-qt6-1/PolkitQt1/Authority>
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <sys/types.h>

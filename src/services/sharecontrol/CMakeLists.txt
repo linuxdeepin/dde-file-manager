@@ -16,17 +16,17 @@ FILE(GLOB FILEOPERATIONS_FILES
     )
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Qt6 COMPONENTS DBus REQUIRED)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
-pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1)
+pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1)
 
-# qt5_generate_dbus_interface(
+# qt6_generate_dbus_interface(
 #    sharecontroldbus.h
 #    ${ShareControl_XML}
 #    OPTIONS -M -S
 # )
 
-qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${ShareControl_XML}
+qt6_add_dbus_adaptor(FILEOPERATIONS_FILES ${ShareControl_XML}
     sharecontroldbus.h ShareControlDBus)
 
 add_library(${PROJECT_NAME}
@@ -37,10 +37,10 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    Qt5::DBus
+    DFM6::base
+    Qt6::DBus
     ${PolkitAgent_LIBRARIES}
-    ${PolkitQt5_LIBRARIES}
+    ${PolkitQt6_LIBRARIES}
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-service-manager/)

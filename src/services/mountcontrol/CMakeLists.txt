@@ -16,18 +16,18 @@ FILE(GLOB FILEOPERATIONS_FILES
     )
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 COMPONENTS Core DBus REQUIRED)
+find_package(Qt6 COMPONENTS Core DBus REQUIRED)
 pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
-pkg_check_modules(PolkitQt5 REQUIRED polkit-qt5-1)
+pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
 
-# qt5_generate_dbus_interface(
+# qt6_generate_dbus_interface(
 #    mountcontroldbus.h
 #    ${MountControl_XML}
 #    OPTIONS -M -S
 # )
 
-qt5_add_dbus_adaptor(FILEOPERATIONS_FILES ${MountControl_XML}
+qt6_add_dbus_adaptor(FILEOPERATIONS_FILES ${MountControl_XML}
     mountcontroldbus.h MountControlDBus)
 
 add_library(${PROJECT_NAME}
@@ -38,11 +38,11 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Core
-    Qt5::DBus
-    DFM::base
+    Qt6::Core
+    Qt6::DBus
+    DFM6::base
     ${PolkitAgent_LIBRARIES}
-    ${PolkitQt5_LIBRARIES}
+    ${PolkitQt6_LIBRARIES}
     PkgConfig::mount
 )
 

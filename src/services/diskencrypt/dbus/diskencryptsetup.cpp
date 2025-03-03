@@ -18,7 +18,7 @@
 #include <QDBusMessage>
 #include <QtConcurrent>
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
+#include <polkit-qt6-1/PolkitQt1/Authority>
 
 static constexpr char kActionEncrypt[] { "org.deepin.Filemanager.DiskEncrypt.Encrypt" };
 static constexpr char kActionDecrypt[] { "org.deepin.Filemanager.DiskEncrypt.Decrypt" };
