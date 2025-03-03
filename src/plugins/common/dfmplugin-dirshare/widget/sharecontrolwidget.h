@@ -12,6 +12,7 @@
 
 #include <DLabel>
 #include <DTipLabel>
+#include <DLineEdit>
 #include <DCommandLinkButton>
 #include <DArrowLineDrawer>
 #include <QUrl>
@@ -61,6 +62,7 @@ protected Q_SLOTS:
     void updateWidgetStatus(const QString &filePath);
     void updateFile(const QUrl &oldOne, const QUrl &newOne);
     void onSambaPasswordSet(bool result);
+    void onShareNameChanged(const QString &name);
 
 private:
     void showMoreInfo(bool showMore);
@@ -71,7 +73,7 @@ private:
     QVBoxLayout *mainLayout { Q_NULLPTR };
     QFrame *moreInfoFrame { Q_NULLPTR };
     QCheckBox *shareSwitcher { Q_NULLPTR };
-    QLineEdit *shareNameEditor { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLineEdit *shareNameEditor { Q_NULLPTR };
     QComboBox *sharePermissionSelector { Q_NULLPTR };
     QComboBox *shareAnonymousSelector { Q_NULLPTR };
 

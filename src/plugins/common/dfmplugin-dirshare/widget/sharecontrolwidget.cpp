@@ -178,21 +178,13 @@ void ShareControlWidget::setupShareSwitcher()
 
 void ShareControlWidget::setupShareNameEditor()
 {
-    shareNameEditor = new QLineEdit(this);
+    shareNameEditor = new DLineEdit(this);
+
     static constexpr char kShareNameRegx[] { R"(^(?![ -])[^%<>*?|/\\+=;:,"]*+ ?$)" };
-
     QValidator *validator = new QRegularExpressionValidator(QRegularExpression(kShareNameRegx), this);
-    shareNameEditor->setValidator(validator);
+    shareNameEditor->lineEdit()->setValidator(validator);
 
-    connect(shareNameEditor, &QLineEdit::textChanged, this, [=](const QString &text) {
-        QString newText(text);
-        // daemon create the mountpoint of share: <name> on <host>, which occupied 255 bytes at most.
-        // and only 255 - 20 bytes for share name.
-        // the max length of folder name limited to 255 bytes in nativa file system.
-        while (newText.toLocal8Bit().length() > (NAME_MAX - 20))
-            newText.chop(1);
-        shareNameEditor->setText(newText);
-    });
+    connect(shareNameEditor, &DLineEdit::textChanged, this, &ShareControlWidget::onShareNameChanged);
 }
 
 void ShareControlWidget::setupSharePermissionSelector()
@@ -383,7 +375,7 @@ void ShareControlWidget::initConnection()
 
     connect(shareAnonymousSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
     connect(sharePermissionSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
-    connect(shareNameEditor, &QLineEdit::editingFinished, this, &ShareControlWidget::updateShare);
+    connect(shareNameEditor, &DLineEdit::editingFinished, this, &ShareControlWidget::updateShare);
     connect(UserShareHelper::instance(), &UserShareHelper::sambaPasswordSet, this, &ShareControlWidget::onSambaPasswordSet);
 
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &ShareControlWidget::updateWidgetStatus);
@@ -586,6 +578,22 @@ void ShareControlWidget::onSambaPasswordSet(bool result)
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
 }
 
+void ShareControlWidget::onShareNameChanged(const QString &name)
+{
+    static const int kShareNameMaxLen { 150 };
+    QString newText(name.trimmed());
+    bool showAlert = false;
+    while (newText.toLocal8Bit().length() > kShareNameMaxLen) {
+        newText.chop(1);
+        showAlert = true;
+    }
+    shareNameEditor->setText(newText);
+    QTimer::singleShot(0, shareNameEditor, [this, showAlert] {
+        if (showAlert)
+            shareNameEditor->showAlertMessage(tr("The shared name is too long and will be truncated."));
+    });
+}
+
 void ShareControlWidget::showMoreInfo(bool showMore)
 {
     moreInfoFrame->setHidden(!showMore);
@@ -600,6 +608,9 @@ void ShareControlWidget::showMoreInfo(bool showMore)
 
 void ShareControlWidget::userShareOperation(bool checked)
 {
+    if (shareNameEditor->text().trimmed().isEmpty())
+        shareNameEditor->setText(info->displayOf(DisPlayInfoType::kFileDisplayName));
+
     bool success { false };
     if (checked) {
         if (isSharePasswordSet)
