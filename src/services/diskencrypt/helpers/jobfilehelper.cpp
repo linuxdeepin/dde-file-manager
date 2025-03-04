@@ -84,10 +84,11 @@ int job_file_helper::createDecryptJobFile(JobDescArgs &args)
     return 0;
 }
 
-int job_file_helper::loadDecryptJobFile(JobDescArgs *args)
-{
-    return 0;
-}
+// int job_file_helper::loadDecryptJobFile(JobDescArgs *args)
+// {
+//     // TODO: this function is not needed for now.
+//     return 0;
+// }
 
 int job_file_helper::removeJobFile(const QString &jobFile)
 {

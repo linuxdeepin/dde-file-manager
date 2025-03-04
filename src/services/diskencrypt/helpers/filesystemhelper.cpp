@@ -145,7 +145,7 @@ bool filesystem_helper::moveFsForward(const QString &dev)
     }
 
     ::remove(logFile.fileName().toStdString().c_str());
-    ::system("udevadm trigger");
+    // ::system("udevadm trigger");
     return true;
 }
 
