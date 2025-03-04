@@ -765,7 +765,7 @@ int crypt_setup::csActivateDevice(const QString &dev, const QString &activateNam
                                          CRYPT_ANY_SLOT,
                                          passphrase.toStdString().c_str(),
                                          passphrase.length(),
-                                         CRYPT_ACTIVATE_NO_JOURNAL);
+                                         CRYPT_ACTIVATE_SHARED);
         if (r < 0) {
             qWarning() << "cannot activate device!" << dev << r;
             return -disk_encrypt::kErrorActive;
@@ -865,7 +865,7 @@ int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &act
                                          activateName.toStdString().c_str(),
                                          volume.data(),
                                          volume.length(),
-                                         0);
+                                         CRYPT_ACTIVATE_SHARED);
         if (r < 0) {
             qWarning() << "cannot activate device!" << dev << r;
             return -disk_encrypt::kErrorActive;
