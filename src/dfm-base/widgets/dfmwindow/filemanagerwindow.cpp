@@ -50,6 +50,8 @@ FileManagerWindowPrivate::FileManagerWindowPrivate(const QUrl &url, FileManagerW
       currentUrl(url)
 {
     q->setWindowTitle(currentUrl.fileName());
+    q->setAttribute(Qt::WA_TranslucentBackground);
+    q->setAutoFillBackground(false);
 }
 
 bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
@@ -635,6 +637,7 @@ void FileManagerWindow::initializeUi()
             d->sidebarSep = new DVerticalLine(this);
             d->sidebarSep->setContentsMargins(0, 0, 0, 0);
             d->sidebarSep->setVisible(true);
+            d->sidebarSep->setAutoFillBackground(true);
             d->sideBar->layout()->addWidget(d->sidebarSep);
         }
 
@@ -663,6 +666,7 @@ void FileManagerWindow::initializeUi()
         // right area
         {
             d->rightArea = new QFrame(this);
+            d->rightArea->setAutoFillBackground(true);
             d->rightArea->setMinimumWidth(d->kMinimumRightWidth);
             // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
             //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处

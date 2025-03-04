@@ -56,7 +56,6 @@ static constexpr int kEmptyItemSize = 10;
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 static constexpr int kCompactExpandIconSize = 10;
-static constexpr int kCompactItemMargin = 6;
 static constexpr int kCompactModeIcon = 16;
 #endif
 
@@ -94,8 +93,10 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    DPalette palette(DPaletteHelper::instance()->palette(option.widget));
+    if (!option.widget)
+        return;
 
+    DPalette palette(DPaletteHelper::instance()->palette(option.widget));
     auto widgetColor = option.widget->palette().base().color();
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
@@ -475,10 +476,8 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
 {
     painter->save();
     int iconSize = kExpandIconSize;
-    int itemMargin = kItemMargin;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     iconSize = DSizeModeHelper::element(kCompactExpandIconSize, kExpandIconSize);
-    itemMargin = DSizeModeHelper::element(kCompactItemMargin, kItemMargin);
 #endif
 
     int x = r.right() - 10 - iconSize;
