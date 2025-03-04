@@ -26,6 +26,8 @@ class DiskEncryptSetupPrivate : public QObject
     bool validateDecryptArgs(const QVariantMap &args);
     bool validateChgPwdArgs(const QVariantMap &args);
 
+    QString resolveDeviceByDetachHeaderName(const QString &fileName);
+
     FILE_ENCRYPT_NS::BaseEncryptWorker *createInitWorker(const QString &type, const QVariantMap &args);
     FILE_ENCRYPT_NS::BaseEncryptWorker *createDecryptWorker(const QString &type, const QVariantMap &args);
 

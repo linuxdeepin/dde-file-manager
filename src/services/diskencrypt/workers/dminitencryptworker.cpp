@@ -12,15 +12,14 @@
 
 #include <sys/mount.h>
 
-
-#define RetOnFail(ret, msg) \
-    {                       \
-        int r = ret;        \
-        if (r < 0) {        \
-            setExitCode(r); \
+#define RetOnFail(ret, msg)    \
+    {                          \
+        int r = ret;           \
+        if (r < 0) {           \
+            setExitCode(r);    \
             qWarning() << msg; \
-            return;         \
-        }                   \
+            return;            \
+        }                      \
     }
 
 #define ESuspend QString("error when SUSPEND dm device ")

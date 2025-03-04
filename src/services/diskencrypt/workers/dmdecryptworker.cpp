@@ -66,7 +66,7 @@ void DMDecryptWorker::run()
         return;
     }
 
-    system("udevadm trigger");
+    // system("udevadm trigger");
 
     RetOnFail(dm_setup::dmSuspendDevice(usecName), ESuspend);
     qInfo() << usecName << "suspended.";
@@ -86,7 +86,7 @@ void DMDecryptWorker::run()
     RetOnFail(dm_setup::dmResumeDevice(usecName), EResume);
     qInfo() << usecName << "resumed.";
 
-    system("udevadm trigger");
+    // system("udevadm trigger");
 
     auto midName = usecName.replace("overlay", "overlay-mid");
     if (!QFile("/dev/mapper/" + midName).exists()) {
