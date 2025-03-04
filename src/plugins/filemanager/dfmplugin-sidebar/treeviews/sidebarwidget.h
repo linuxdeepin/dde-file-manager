@@ -9,6 +9,8 @@
 
 #include <dfm-base/interfaces/abstractframe.h>
 
+#include <DBlurEffectWidget>
+
 #include <QUrl>
 
 class QAbstractItemView;
@@ -57,8 +59,10 @@ private:
     void initConnect();
     void clearSettingPanel();
     void initSettingPannel();
+    void updateBackgroundColor();
 
 private:
+    DTK_WIDGET_NAMESPACE::DBlurEffectWidget *sidebarViewContainer { nullptr };
     SideBarView *sidebarView { nullptr };
     static QSharedPointer<SideBarModel> kSidebarModelIns;
     QStringList currentGroups;

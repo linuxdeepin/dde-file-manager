@@ -214,9 +214,17 @@ SideBarView::SideBarView(QWidget *parent)
     setIconSize(QSize(16, 16));
     setHeaderHidden(true);
     setMouseTracking(true);   // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
-
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
+    setFrameShape(QFrame::Shape::NoFrame);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
+    viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    viewport()->setAutoFillBackground(false);
+    QPalette treePal = palette();
+    treePal.setColor(QPalette::Base, Qt::transparent);
+    treePal.setColor(QPalette::Window, Qt::transparent);
+    setPalette(treePal);
 
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
     connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);

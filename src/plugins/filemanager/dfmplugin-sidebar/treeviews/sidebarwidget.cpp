@@ -39,8 +39,9 @@ QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
 
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
-      sidebarView(new SideBarView(this))
+      sidebarViewContainer(new DBlurEffectWidget(this))
 {
+    sidebarView = new SideBarView(sidebarViewContainer);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(sidebarView), AcName::kAcDmSideBarView);
@@ -308,16 +309,21 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 
 void SideBarWidget::initializeUi()
 {
-    QHBoxLayout *hlayout = new QHBoxLayout(this);
-    hlayout->setContentsMargins(0, 0, 0, 0);
-    hlayout->setSpacing(0);
-    QWidget *leftSpacer = new QWidget(this);
-    leftSpacer->setAutoFillBackground(true);
+    sidebarViewContainer->setMode(DBlurEffectWidget::GaussianBlur);
+    sidebarViewContainer->setBlendMode(DBlurEffectWidget::BehindWindowBlend);
+    sidebarViewContainer->setBlurRectXRadius(-1);
+    sidebarViewContainer->setMaskAlpha(204);
+    updateBackgroundColor();
+
+    QHBoxLayout *frameLayout = new QHBoxLayout();
+    frameLayout->setContentsMargins(0, 0, 0, 0);
+    frameLayout->setSpacing(0);
+
+    QWidget *leftSpacer = new QWidget();
     leftSpacer->setFixedWidth(2);
     leftSpacer->setBackgroundRole(QPalette::Base);
 
-    QWidget *topSpacer = new QWidget(this);
-    topSpacer->setAutoFillBackground(true);
+    QWidget *topSpacer = new QWidget();
     topSpacer->setFixedHeight(50);
     topSpacer->setBackgroundRole(QPalette::Base);
 
@@ -327,15 +333,19 @@ void SideBarWidget::initializeUi()
     vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setSpacing(0);
 
-    hlayout->addWidget(leftSpacer);
-    hlayout->addLayout(vlayout);
+    QHBoxLayout *leftLayout = new QHBoxLayout();
+    leftLayout->setContentsMargins(0, 0, 0, 0);
+    leftLayout->setSpacing(0);
+    leftLayout->addWidget(leftSpacer);
+    leftLayout->addLayout(vlayout);
+    sidebarViewContainer->setLayout(leftLayout);
+
+    frameLayout->addWidget(sidebarViewContainer);
+    setLayout(frameLayout);
 
     sidebarView->setModel(kSidebarModelIns.data());
     kSidebarModelIns->addEmptyItem();
     sidebarView->setItemDelegate(new SideBarItemDelegate(sidebarView));
-    sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
-    sidebarView->setFrameShape(QFrame::Shape::NoFrame);
-    sidebarView->setAutoFillBackground(true);
 
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
     int splitState = state.value("sidebar", 200).toInt();
@@ -374,6 +384,12 @@ void SideBarWidget::initDefaultModel()
 
 void SideBarWidget::initConnect()
 {
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, [this](DGuiApplicationHelper::ColorType themeType) {
+                Q_UNUSED(themeType);
+                updateBackgroundColor();
+            });
+
     // do `cd` work
     connect(sidebarView, &SideBarView::activated,
             this, &SideBarWidget::onItemActived);
@@ -443,4 +459,13 @@ void SideBarWidget::initSettingPannel()
             SideBarHelper::addItemToSettingPannel(group, key, name, &levelMap);
         }
     });
+}
+
+void SideBarWidget::updateBackgroundColor()
+{
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        sidebarViewContainer->setMaskColor(QColor(16, 16, 16));
+    } else {
+        sidebarViewContainer->setMaskColor(QColor(255, 255, 255));
+    }
 }
