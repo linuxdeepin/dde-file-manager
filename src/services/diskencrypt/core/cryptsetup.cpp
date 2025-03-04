@@ -23,7 +23,6 @@
 #include <sys/mman.h>
 #include <libcryptsetup.h>
 
-static constexpr char kUSecBackupHeaderPrefix[] { "/etc/usec-crypt/dm-decrypt-backup-" };
 static constexpr char kDefaultPassphrase[] { "" };
 static const int kDefaultPassphraseLen { 0 };
 
@@ -35,7 +34,7 @@ int crypt_setup::csInitEncrypt(const QString &dev, CryptPreProcessor *processor)
     if (r < 0) return r;
 
     QString fileHeader;
-    r = crypt_setup_helper::initFileHeader(dev, processor, &fileHeader);
+    r = crypt_setup_helper::initEncryptHeaderFile(dev, processor, &fileHeader);
     if (r < 0) return r;
 
     r = crypt_setup_helper::initDeviceHeader(dev, fileHeader);
@@ -79,9 +78,9 @@ int crypt_setup_helper::initiable(const QString &dev)
     return disk_encrypt::kSuccess;
 }
 
-int crypt_setup_helper::initFileHeader(const QString &dev,
-                                       crypt_setup::CryptPreProcessor *processor,
-                                       QString *fileHeader)
+int crypt_setup_helper::initEncryptHeaderFile(const QString &dev,
+                                              crypt_setup::CryptPreProcessor *processor,
+                                              QString *fileHeader)
 {
     int r = 0;
     QString headerPath;
@@ -378,17 +377,20 @@ int crypt_setup_helper::onDecrypting(uint64_t size, uint64_t offset, void *usrpt
     return 0;
 }
 
-int crypt_setup_helper::backupHeaderFile(const QString &dev, QString *fileHeader)
+int crypt_setup_helper::backupDetachHeader(const QString &dev, QString *fileHeader)
 {
-    auto path = kUSecBackupHeaderPrefix + dev.mid(5) + ".bin";
+    QString headerPath;
+    if (genDetachHeaderPath(dev, &headerPath) != disk_encrypt::kSuccess)
+        return -disk_encrypt::kErrorUnknown;
+
     struct crypt_device *cdev = nullptr;
     dfmbase::FinallyUtil atFinish([&] {
         if (cdev) crypt_free(cdev);
     });
 
-    if (QFile(path).exists()) {
+    if (QFile(headerPath).exists()) {
         qInfo() << "backup header already exists.";
-        if (fileHeader) *fileHeader = path;
+        if (fileHeader) *fileHeader = headerPath;
         return disk_encrypt::kSuccess;
     }
 
@@ -401,13 +403,13 @@ int crypt_setup_helper::backupHeaderFile(const QString &dev, QString *fileHeader
 
     r = crypt_header_backup(cdev,
                             nullptr,
-                            path.toStdString().c_str());
+                            headerPath.toStdString().c_str());
     if (r < 0) {
         qWarning() << "cannot backup device header!" << dev << r;
         return -disk_encrypt::kErrorBackupHeader;
     }
 
-    if (fileHeader) *fileHeader = path;
+    if (fileHeader) *fileHeader = headerPath;
     return disk_encrypt::kSuccess;
 }
 
@@ -476,7 +478,7 @@ int crypt_setup_helper::headerStatus(const QString &fileHeader)
 int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const QString &displayName, const QString &activeName)
 {
     QString backupHeader;
-    int r = crypt_setup_helper::backupHeaderFile(dev, &backupHeader);
+    int r = crypt_setup_helper::backupDetachHeader(dev, &backupHeader);
     if (r < 0)
         return r;
 
@@ -588,8 +590,8 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
     }
 
     remove(backupHeader.toStdString().c_str());
-    system("udevadm trigger");
-    system("udevadm settle");
+    // system("udevadm trigger");
+    // system("udevadm settle");
     return disk_encrypt::kSuccess;
 }
 
@@ -783,7 +785,11 @@ int crypt_setup_helper::encryptStatus(const QString &dev)
     dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
 
     int r = 0;
-    auto backupPath = kUSecBackupHeaderPrefix + dev.mid(5);
+    QString backupPath;
+    r = genDetachHeaderPath(dev, &backupPath);
+    if (r < 0)
+        return r;
+
     if (QFile(backupPath).exists()) {
         r = crypt_init_data_device(&cdev,
                                    backupPath.toStdString().c_str(),
@@ -891,5 +897,23 @@ int crypt_setup::csSetLabel(const QString &dev, const QString &label)
         qWarning() << "cannot set lable on device!" << label << dev << r;
         return -disk_encrypt::kErrorSetLabel;
     }
+    return disk_encrypt::kSuccess;
+}
+
+int crypt_setup_helper::genDetachHeaderPath(const QString &dev, QString *name)
+{
+    auto ptr = blockdev_helper::createDevPtr(dev);
+    if (!ptr) {
+        qWarning() << "cannot create device object!" << dev;
+        return -disk_encrypt::kErrorUnknown;
+    }
+
+    auto puuid = ptr->getProperty(dfmmount::Property::kPartitionUUID).toString();
+    if (puuid.isEmpty())
+        puuid = dev.mid(5);
+    if (name)
+        *name = kUSecDetachHeaderPrefix + puuid + ".bin";
+    name->prepend(QString(kUSecBootRoot) + "/");
+
     return disk_encrypt::kSuccess;
 }
