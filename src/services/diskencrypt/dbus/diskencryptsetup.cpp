@@ -326,6 +326,7 @@ void DiskEncryptSetupPrivate::onInitEncryptFinished()
 
     auto args = worker->args();
     auto code = worker->exitCode();
+    qInfo() << "device encryption initialized." << code << args;
     if (code == disk_encrypt::kSuccess) {
         // system("udevadm trigger");
         resumeEncryption();
