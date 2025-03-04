@@ -299,6 +299,7 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     };
 
     switch (fileSortRole) {
+    case kItemFileCreatedRole:
     case kItemFileLastModifiedRole:
     case kItemFileMimeTypeRole:
     case kItemFileDisplayNameRole: {
