@@ -101,6 +101,7 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
+            QApplication::restoreOverrideCursor();
             onMountFailed(err);
         }
     });
