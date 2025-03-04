@@ -107,12 +107,26 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
         return -err;
     }
 
+    uint32_t cookie = 0;
+    uint16_t udevFlags = DM_UDEV_DISABLE_LIBRARY_FALLBACK;
+    if (dm_udev_get_sync_support()){
+        r = dm_task_set_cookie(h.task(), &cookie, udevFlags);
+        if (r == 0) {
+            auto err = dm_task_get_errno(h.task());
+            qWarning() << "cannot set cookie for resuming!" << err << r << dmDev;
+            return -r;
+        }
+    }
+
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
         qWarning() << "cannot run resume task!" << err << dmDev;
         return -err;
     }
+
+    if (cookie && dm_udev_get_sync_support())
+        dm_udev_wait(cookie);
 
     dm_task_update_nodes();
     return 0;
