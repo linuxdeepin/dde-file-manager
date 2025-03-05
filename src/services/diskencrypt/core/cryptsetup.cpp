@@ -28,13 +28,13 @@ static const int kDefaultPassphraseLen { 0 };
 
 FILE_ENCRYPT_USE_NS
 
-int crypt_setup::csInitEncrypt(const QString &dev, CryptPreProcessor *processor)
+int crypt_setup::csInitEncrypt(const QString &dev, const QString &displayName, CryptPreProcessor *processor)
 {
     int r = crypt_setup_helper::initiable(dev);
     if (r < 0) return r;
 
     QString fileHeader;
-    r = crypt_setup_helper::initEncryptHeaderFile(dev, processor, &fileHeader);
+    r = crypt_setup_helper::initEncryptHeaderFile(dev, displayName, processor, &fileHeader);
     if (r < 0) return r;
 
     r = crypt_setup_helper::initDeviceHeader(dev, fileHeader);
@@ -78,7 +78,7 @@ int crypt_setup_helper::initiable(const QString &dev)
     return disk_encrypt::kSuccess;
 }
 
-int crypt_setup_helper::initEncryptHeaderFile(const QString &dev,
+int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString &displayName,
                                               crypt_setup::CryptPreProcessor *processor,
                                               QString *fileHeader)
 {
@@ -158,6 +158,12 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev,
     if (r < 0) {
         qWarning() << "cannot add empty keyslot!" << dev << r;
         return -disk_encrypt::kErrorAddKeyslot;
+    }
+
+    if (!displayName.isEmpty()) {
+        r = crypt_set_label(cdev, displayName.toStdString().c_str(), nullptr);
+        if (r < 0)
+            qWarning() << "cannot set label on" << dev << displayName << r;
     }
 
     struct crypt_params_luks2 luksArgs

@@ -46,6 +46,8 @@ protected:
     void updateCryptTab();
     void saveRecoveryKey();
 
+    void loadJobFromDevice();
+
 private:
     bool m_ignoreFlag { false };
     AuthInfo m_authArgs;

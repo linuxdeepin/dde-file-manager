@@ -77,7 +77,7 @@ void DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
         qWarning() << "the resume args is not valid!";
         return;
     }
-    m_dptr->resumeEncryption();
+    m_dptr->resumeEncryption(args);
 }
 
 void DiskEncryptSetup::Decryption(const QVariantMap &args)
@@ -203,9 +203,9 @@ void DiskEncryptSetupPrivate::initialize()
     resumeEncryption();
 }
 
-void DiskEncryptSetupPrivate::resumeEncryption()
+void DiskEncryptSetupPrivate::resumeEncryption(const QVariantMap &args)
 {
-    auto worker = new ResumeEncryptWorker({});
+    auto worker = new ResumeEncryptWorker(args);
     initThreadConnection(worker);
     connect(worker, &ResumeEncryptWorker::requestAuthInfo,
             qptr, &DiskEncryptSetup::WaitAuthInput);

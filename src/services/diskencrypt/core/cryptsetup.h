@@ -22,7 +22,7 @@ struct CryptPreProcessor
     QByteArray volumeKey;
 };
 
-int csInitEncrypt(const QString &dev, CryptPreProcessor *processor = nullptr);
+int csInitEncrypt(const QString &dev, const QString &displayName, CryptPreProcessor *processor = nullptr);
 int csResumeEncrypt(const QString &dev, const QString &activeName, const QString &displayName);
 int csDecrypt(const QString &dev, const QString &passphrase,
               const QString &displayName, const QString &activeName = QString());
@@ -36,7 +36,7 @@ int csSetLabel(const QString &dev, const QString &label);
 namespace crypt_setup_helper {
 int initiable(const QString &dev);
 int createHeaderFile(const QString &dev, QString *headerPath);
-int initEncryptHeaderFile(const QString &dev, crypt_setup::CryptPreProcessor *processor, QString *fileHeader = nullptr);
+int initEncryptHeaderFile(const QString &dev, const QString &displayName, crypt_setup::CryptPreProcessor *processor, QString *fileHeader = nullptr);
 int initDeviceHeader(const QString &dev, const QString &fileHeader);
 int genDetachHeaderPath(const QString &dev, QString *name = nullptr);
 int backupDetachHeader(const QString &dev, QString *fileHeader = nullptr);
