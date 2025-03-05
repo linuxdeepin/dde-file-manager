@@ -25,7 +25,7 @@ public:
 
 public Q_SLOTS:
     void handleBlockMountData(const QString &id, bool result);
-    void handleMountNetworkResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+    void handleMountNetworkResult(const QString &address, bool ret, DFMMOUNT::DeviceError err, const QString &msg);
     void handleDesktopStartupData(const QString &key, const QVariant &data);
 
 private:
