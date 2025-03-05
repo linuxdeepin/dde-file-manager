@@ -346,8 +346,8 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
     ComputerUtils::setCursorState(true);
     DevMngIns->mountBlockDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         if (!ok) {
+            ComputerUtils::setCursorState();
             if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
-                ComputerUtils::setCursorState();
                 return;
             }
             fmInfo() << "mount device failed: " << id << err.message << err.code;
