@@ -135,19 +135,13 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
     param.devID = selectedItemInfo.value("Id").toString();
     param.devDesc = device;
     param.mountPoint = devMpt;
-    param.uuid = selectedItemInfo.value("IdUUID", "").toString();
     param.deviceDisplayName = info->displayOf(dfmbase::FileInfo::kFileDisplayName);
     param.secType = SecKeyType::kPwd;
-    param.backingDevUUID = param.uuid;
-
-    QVariantHash clearInfo = selectedItemInfo.value("ClearBlockDeviceInfo").toHash();
-    if (!clearInfo.isEmpty()) {
-        param.clearDevUUID = clearInfo.value("IdUUID", "").toString();
-        param.devUnlockName = clearInfo.value("PreferredDevice").toString().mid(12);   // /dev/mapper/xxxx ==> xxxx
-    }
 
     if (param.states & EncryptState::kStatusFinished)
         param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
+
+    param.devPhy = EventsHandler::instance()->holderDevice(device);
 
     return true;
 }
@@ -593,7 +587,8 @@ void DiskEncryptMenuScene::updateActions()
 
     // update operatable
     bool taskWorking = EventsHandler::instance()->isTaskWorking();
-    bool currDevOperating = EventsHandler::instance()->isUnderOperating(param.devDesc);
+    bool currDevOperating = EventsHandler::instance()->isUnderOperating(param.devDesc)
+            || EventsHandler::instance()->isUnderOperating(param.devPhy);
     bool hasPendingJob = EventsHandler::instance()->hasPendingTask();
     actions[kActIDEncrypt]->setEnabled(!taskWorking && !hasPendingJob);
     actions[kActIDDecrypt]->setEnabled(!taskWorking && !hasPendingJob && !currDevOperating);
@@ -626,7 +621,8 @@ void DiskEncryptMenuScene::updateActions()
         } else {
             qWarning() << "unmet status!" << param.devDesc << param.states;
         }
-    } else if (EventsHandler::instance()->unfinishedDecryptJob() == param.devDesc) {
+    } else if (EventsHandler::instance()->unfinishedDecryptJob() == param.devDesc
+               || EventsHandler::instance()->unfinishedDecryptJob() == param.devPhy) {
         actions[kActIDResumeDecrypt]->setVisible(true);
     } else {
         actions[kActIDEncrypt]->setVisible(true);
