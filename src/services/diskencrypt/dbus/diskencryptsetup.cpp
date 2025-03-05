@@ -160,6 +160,11 @@ int DiskEncryptSetup::DeviceStatus(const QString &dev)
     // return disk_encrypt::kStatusNotEncrypted;
 }
 
+QString DiskEncryptSetup::HolderDevice(const QString &dev)
+{
+    return dm_setup_helper::findHolderDev(dev);
+}
+
 bool DiskEncryptSetup::IsTaskEmpty()
 {
     return !job_file_helper::hasJobFile();

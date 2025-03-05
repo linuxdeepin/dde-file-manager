@@ -61,6 +61,10 @@
       <arg type="i" direction="out"/>
       <arg name="dev" type="s" direction="in"/>
     </method>
+    <method name="HolderDevice">
+      <arg type="s" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
     <method name="IsTaskEmpty">
       <arg type="b" direction="out"/>
     </method>

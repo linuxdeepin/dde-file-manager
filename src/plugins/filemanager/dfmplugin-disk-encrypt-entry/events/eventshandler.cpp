@@ -140,6 +140,18 @@ void EventsHandler::resumeEncrypt(const QString &device)
     iface.asyncCall("ResumeEncryption", QVariantMap());
 }
 
+QString EventsHandler::holderDevice(const QString &device)
+{
+    QDBusInterface iface(kDaemonBusName,
+                         kDaemonBusPath,
+                         kDaemonBusIface,
+                         QDBusConnection::systemBus());
+    QDBusReply<QString> reply = iface.call("HolderDevice", device);
+    if (reply.isValid())
+        return reply.value();
+    return device;
+}
+
 void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
 {
     QApplication::restoreOverrideCursor();
