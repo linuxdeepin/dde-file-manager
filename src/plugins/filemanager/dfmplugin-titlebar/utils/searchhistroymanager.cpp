@@ -7,6 +7,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/devicemanager.h>
 
 #include <QDateTime>
 #include <QDebug>
@@ -21,6 +22,8 @@ inline constexpr char kConfigIPHistroy[] { "IPHistroy" };
 inline constexpr char kKeyIP[] { "ip" };
 inline constexpr char kKeyLastAccessed[] { "lastAccessed" };
 
+inline constexpr char kprotocolIPRegExp[] { R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/*$)" };
+
 SearchHistroyManager *SearchHistroyManager::instance()
 {
     static SearchHistroyManager instance;
@@ -30,6 +33,33 @@ SearchHistroyManager *SearchHistroyManager::instance()
 SearchHistroyManager::SearchHistroyManager(QObject *parent)
     : QObject(parent)
 {
+    protocolIPRegExp.setPattern(kprotocolIPRegExp);
+    protocolIPRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
+    connect(DeviceManager::instance(), &DeviceManager::mountNetworkDeviceResult,
+            this, &SearchHistroyManager::handleMountNetworkResult);
+}
+
+void SearchHistroyManager::handleMountNetworkResult(const QString &address, bool ret, dfmmount::DeviceError err, const QString &)
+{
+    if (!isValidMount(address, ret, err)) {
+        // Remove the address only if it was in the cache, as before.
+        ipAddressCache.removeOne(address);
+        return;
+    }
+    ipAddressCache.removeOne(address);
+    writeIntoIPHistory(address);
+}
+
+bool SearchHistroyManager::isValidMount(const QString &address, bool ret, dfmmount::DeviceError err)
+{
+    if (!ipAddressCache.contains(address))
+        return false;
+    if (!ret && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
+        return false;
+    if (!protocolIPRegExp.match(address).hasMatch())
+        return false;
+    return true;
 }
 
 QStringList SearchHistroyManager::getSearchHistroy()
@@ -76,6 +106,14 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     list << keyword;
 
     Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
+}
+
+void SearchHistroyManager::addIPHistoryCache(const QString &address)
+{
+    if (ipAddressCache.contains(address))
+        return;
+
+    ipAddressCache << address;
 }
 
 void SearchHistroyManager::writeIntoIPHistory(const QString &ipAddr)

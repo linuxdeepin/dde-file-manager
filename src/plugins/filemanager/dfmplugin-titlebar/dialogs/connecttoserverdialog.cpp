@@ -53,7 +53,6 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr char kConnectServer[] { "ConnectServer" };
 static constexpr char kUrl[] { "URL" };
-static constexpr char kprotocolIPRegExp[] { R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)" };
 static const int kMaxHistoryItems = 10;
 static constexpr char kGBKCharset[] { "gbk" };
 static constexpr char kUTF8CharSet[] { "utf8" };
@@ -71,9 +70,6 @@ ConnectToServerDialog::ConnectToServerDialog(const QUrl &url, QWidget *parent)
     setWindowTitle(tr("Connect to Server"));
     initializeUi();
     initConnect();
-
-    protocolIPRegExp.setPattern(kprotocolIPRegExp);
-    protocolIPRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 }
 
 void ConnectToServerDialog::collectionOperate()
@@ -102,13 +98,11 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
             QDir::setCurrent(currentUrl.toLocalFile());
         QDir::setCurrent(currentDir);
 
+        // add search history list
+        SearchHistroyManager::instance()->addIPHistoryCache(url);
+
         QWidget *fileWindow = qobject_cast<QWidget *>(parent());
         TitleBarHelper::handleJumpToPressed(fileWindow, url);
-
-        // add search history list
-        SearchHistroyManager::instance()->writeIntoSearchHistory(url);
-        if (protocolIPRegExp.match(url).hasMatch())
-            SearchHistroyManager::instance()->writeIntoIPHistory(url);
     }
     close();
 }
@@ -294,10 +288,8 @@ void ConnectToServerDialog::initServerDatas()
 
     completer->setModel(new QStringListModel(hosts));
 
-    if (!hosts.isEmpty()) {
+    if (!hosts.isEmpty())
         onCurrentInputChanged(hosts.last());
-        serverComboBox->setCurrentText(hosts.last());
-    }
 }
 
 QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, bool insertWhenNoExist)

@@ -7,7 +7,10 @@
 
 #include "dfmplugin_titlebar_global.h"
 
+#include <dfm-mount/base/dmount_global.h>
+
 #include <QObject>
+#include <QRegularExpression>
 
 namespace dfmplugin_titlebar {
 
@@ -22,13 +25,19 @@ public:
     QStringList getSearchHistroy();
     QList<IPHistroyData> getIPHistory();
     void writeIntoSearchHistory(QString keyword);
-    void writeIntoIPHistory(const QString &ipAddr);
+    void addIPHistoryCache(const QString &address);
     bool removeSearchHistory(QString keyword);
     void clearHistory(const QStringList &schemeFilters = QStringList());
     void clearIPHistory();
 
 private:
     explicit SearchHistroyManager(QObject *parent = nullptr);
+    void handleMountNetworkResult(const QString &address, bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+    bool isValidMount(const QString &address, bool ret, dfmmount::DeviceError err);
+    void writeIntoIPHistory(const QString &ipAddr);
+
+    QRegularExpression protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
+    QStringList ipAddressCache;
 };
 
 }
