@@ -23,6 +23,7 @@ public:
     bool isUnderOperating(const QString &device);
     int deviceEncryptStatus(const QString &device);
     void resumeEncrypt(const QString &device);
+    QString holderDevice(const QString &device);
     bool onAcquireDevicePwd(const QString &dev, QString *pwd, bool *giveup);
     void autoStartDFM();
 

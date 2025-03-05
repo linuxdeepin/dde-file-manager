@@ -137,7 +137,19 @@ void EventsHandler::resumeEncrypt(const QString &device)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    iface.asyncCall("ResumeEncryption", QVariantMap());
+    iface.asyncCall("ResumeEncryption", QVariantMap{{encrypt_param_keys::kKeyDevice, device}});
+}
+
+QString EventsHandler::holderDevice(const QString &device)
+{
+    QDBusInterface iface(kDaemonBusName,
+                         kDaemonBusPath,
+                         kDaemonBusIface,
+                         QDBusConnection::systemBus());
+    QDBusReply<QString> reply = iface.call("HolderDevice", device);
+    if (reply.isValid())
+        return reply.value();
+    return device;
 }
 
 void EventsHandler::onInitEncryptFinished(const QVariantMap &result)

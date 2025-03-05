@@ -8,6 +8,7 @@
 #include <dfm-base/utils/finallyutil.h>
 
 #include <QFile>
+#include <QDir>
 
 #include <sys/stat.h>
 #include <fstab.h>
@@ -145,7 +146,7 @@ bool filesystem_helper::moveFsForward(const QString &dev)
     }
 
     ::remove(logFile.fileName().toStdString().c_str());
-    ::system("udevadm trigger");
+    // ::system("udevadm trigger");
     return true;
 }
 
@@ -177,4 +178,9 @@ void filesystem_helper::remountBoot()
                   MS_REMOUNT,
                   nullptr);
     qInfo() << "/boot remounted:" << r;
+
+    const QString path = "/boot/usec-crypt";
+    auto ok = QDir().mkpath(path);
+    qInfo() << path << "created:" << ok
+            << "dir exists:" << QFile(path).exists();
 }

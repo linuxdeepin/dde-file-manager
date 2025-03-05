@@ -43,7 +43,7 @@ int createUSecRoot();
 int createEncryptJobFile(JobDescArgs &args);
 int createDecryptJobFile(JobDescArgs &args);
 int loadEncryptJobFile(JobDescArgs *args, const QString &dev = QString());
-int loadDecryptJobFile(JobDescArgs *args = nullptr);
+// int loadDecryptJobFile(JobDescArgs *args = nullptr);
 int removeJobFile(const QString &jobFile);
 void checkJobs();
 

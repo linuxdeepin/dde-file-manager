@@ -29,6 +29,7 @@ public Q_SLOTS:
 
     QString TpmToken(const QString &dev);
     int DeviceStatus(const QString &dev);
+    QString HolderDevice(const QString &dev);
 
     bool IsTaskEmpty();
     bool IsTaskRunning();

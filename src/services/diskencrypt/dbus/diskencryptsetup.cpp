@@ -77,7 +77,7 @@ void DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
         qWarning() << "the resume args is not valid!";
         return;
     }
-    m_dptr->resumeEncryption();
+    m_dptr->resumeEncryption(args);
 }
 
 void DiskEncryptSetup::Decryption(const QVariantMap &args)
@@ -160,6 +160,11 @@ int DiskEncryptSetup::DeviceStatus(const QString &dev)
     // return disk_encrypt::kStatusNotEncrypted;
 }
 
+QString DiskEncryptSetup::HolderDevice(const QString &dev)
+{
+    return dm_setup_helper::findHolderDev(dev);
+}
+
 bool DiskEncryptSetup::IsTaskEmpty()
 {
     return !job_file_helper::hasJobFile();
@@ -172,9 +177,15 @@ bool DiskEncryptSetup::IsTaskRunning()
 
 QString DiskEncryptSetup::PendingDecryptionDevice()
 {
-    job_file_helper::JobDescArgs args;
-    job_file_helper::loadDecryptJobFile(&args);
-    return args.devPath;
+    QDir d(kUSecBootRoot);
+    auto files = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+    for (auto f : files) {
+        auto name = m_dptr->resolveDeviceByDetachHeaderName(f);
+        if (!name.isEmpty())
+            return name;
+    }
+    qInfo() << "no unfinished decrypt header exists.";
+    return "";
 }
 
 DiskEncryptSetupPrivate::DiskEncryptSetupPrivate(DiskEncryptSetup *parent)
@@ -192,9 +203,9 @@ void DiskEncryptSetupPrivate::initialize()
     resumeEncryption();
 }
 
-void DiskEncryptSetupPrivate::resumeEncryption()
+void DiskEncryptSetupPrivate::resumeEncryption(const QVariantMap &args)
 {
-    auto worker = new ResumeEncryptWorker({});
+    auto worker = new ResumeEncryptWorker(args);
     initThreadConnection(worker);
     connect(worker, &ResumeEncryptWorker::requestAuthInfo,
             qptr, &DiskEncryptSetup::WaitAuthInput);
@@ -261,6 +272,29 @@ bool DiskEncryptSetupPrivate::validateChgPwdArgs(const QVariantMap &args)
     return true;
 }
 
+QString DiskEncryptSetupPrivate::resolveDeviceByDetachHeaderName(const QString &fileName)
+{
+    if (!fileName.startsWith(kUSecDetachHeaderPrefix))
+        return "";
+
+    auto puuid = QString(fileName).remove(kUSecDetachHeaderPrefix).remove(".bin");
+    auto objPath = blockdev_helper::resolveDevObjPath("PARTUUID=" + puuid);
+    if (objPath.isEmpty())
+        objPath = blockdev_helper::resolveDevObjPath("/dev/" + puuid);
+    if (objPath.isEmpty()) {
+        qWarning() << "cannot find device object path!" << fileName;
+        return "";
+    }
+
+    auto dev = blockdev_helper::createDevPtr2(objPath);
+    if (!dev) {
+        qWarning() << "cannot create device object!" << objPath;
+        return "";
+    }
+
+    return dev->device();
+}
+
 BaseEncryptWorker *DiskEncryptSetupPrivate::createInitWorker(const QString &type, const QVariantMap &args)
 {
     if (type == disk_encrypt::job_type::TypeFstab)
@@ -297,8 +331,9 @@ void DiskEncryptSetupPrivate::onInitEncryptFinished()
 
     auto args = worker->args();
     auto code = worker->exitCode();
+    qInfo() << "device encryption initialized." << code << args;
     if (code == disk_encrypt::kSuccess) {
-        system("udevadm trigger");
+        // system("udevadm trigger");
         resumeEncryption();
     }
 

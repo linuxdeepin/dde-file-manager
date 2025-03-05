@@ -9,6 +9,9 @@
 
 FILE_ENCRYPT_BEGIN_NS
 
+static constexpr char kUSecBootRoot[] { "/boot/usec-crypt" };
+static constexpr char kUSecDetachHeaderPrefix[] { "dm-decrypt-backup-" };
+
 namespace crypt_setup {
 struct CryptPreProcessor
 {
@@ -19,7 +22,7 @@ struct CryptPreProcessor
     QByteArray volumeKey;
 };
 
-int csInitEncrypt(const QString &dev, CryptPreProcessor *processor = nullptr);
+int csInitEncrypt(const QString &dev, const QString &displayName, CryptPreProcessor *processor = nullptr);
 int csResumeEncrypt(const QString &dev, const QString &activeName, const QString &displayName);
 int csDecrypt(const QString &dev, const QString &passphrase,
               const QString &displayName, const QString &activeName = QString());
@@ -32,16 +35,17 @@ int csSetLabel(const QString &dev, const QString &label);
 
 namespace crypt_setup_helper {
 int initiable(const QString &dev);
-int initFileHeader(const QString &dev, crypt_setup::CryptPreProcessor *processor, QString *fileHeader = nullptr);
+int createHeaderFile(const QString &dev, QString *headerPath);
+int initEncryptHeaderFile(const QString &dev, const QString &displayName, crypt_setup::CryptPreProcessor *processor, QString *fileHeader = nullptr);
 int initDeviceHeader(const QString &dev, const QString &fileHeader);
-int backupHeaderFile(const QString &dev, QString *fileHeader = nullptr);
+int genDetachHeaderPath(const QString &dev, QString *name = nullptr);
+int backupDetachHeader(const QString &dev, QString *fileHeader = nullptr);
 int headerStatus(const QString &fileHeader);
+int encryptStatus(const QString &dev);
 int setToken(const QString &dev, const QString &token);
 int getToken(const QString &dev, QString *token);
 int onEncrypting(uint64_t size, uint64_t offset, void *usrptr);
 int onDecrypting(uint64_t size, uint64_t offset, void *usrptr);
-int createHeaderFile(const QString &dev, QString *headerPath);
-int encryptStatus(const QString &dev);
 
 enum HeaderStatus {
     kInvalidHeader = -1,

@@ -19,12 +19,14 @@ class DiskEncryptSetupPrivate : public QObject
 
     explicit DiskEncryptSetupPrivate(DiskEncryptSetup *parent);
     void initialize();
-    void resumeEncryption();
+    void resumeEncryption(const QVariantMap &args = QVariantMap());
     bool checkAuth(const QString &action);
     bool validateInitArgs(const QVariantMap &args);
     bool validateResumeArgs(const QVariantMap &args);
     bool validateDecryptArgs(const QVariantMap &args);
     bool validateChgPwdArgs(const QVariantMap &args);
+
+    QString resolveDeviceByDetachHeaderName(const QString &fileName);
 
     FILE_ENCRYPT_NS::BaseEncryptWorker *createInitWorker(const QString &type, const QVariantMap &args);
     FILE_ENCRYPT_NS::BaseEncryptWorker *createDecryptWorker(const QString &type, const QVariantMap &args);

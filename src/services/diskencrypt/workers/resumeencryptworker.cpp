@@ -4,12 +4,14 @@
 
 #include "resumeencryptworker.h"
 #include "core/cryptsetup.h"
+#include "core/dmsetup.h"
 #include "helpers/inhibithelper.h"
 #include "helpers/jobfilehelper.h"
 #include "helpers/abrecoveryhelper.h"
 #include "helpers/commonhelper.h"
 #include "helpers/crypttabhelper.h"
 #include "helpers/notificationhelper.h"
+#include "helpers/blockdevhelper.h"
 
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -53,7 +55,9 @@ void ResumeEncryptWorker::run()
     job_file_helper::loadEncryptJobFile(&m_jobArgs);
     if (m_jobArgs.jobFile.isEmpty()) {
         qInfo() << "no unfinished reencrypt job.";
-        return;
+        loadJobFromDevice();
+        if (m_jobArgs.devPath.isEmpty())
+            return;
     }
 
     qInfo() << "about to resume encryption...";
@@ -85,7 +89,7 @@ void ResumeEncryptWorker::run()
         return;
     }
 
-    setPhyDevLabel();
+    // setPhyDevLabel();
     setPassphrase();
     setRecoveryKey();
     updateCryptTab();
@@ -203,4 +207,26 @@ void ResumeEncryptWorker::saveRecoveryKey()
     f.close();
     qInfo() << "recovery key saved." << m_jobArgs.devPath;
     setExitCode(disk_encrypt::kSuccess);
+}
+
+void ResumeEncryptWorker::loadJobFromDevice()
+{
+    auto dev = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    if (dev.startsWith("/dev/dm-"))
+        dev = dm_setup_helper::findHolderDev(dev);
+    auto ptr = blockdev_helper::createDevPtr(dev);
+    if (!ptr) {
+        qWarning() << "cannot create device object!" << dev;
+        return;
+    }
+    auto name = ptr->idLabel();
+
+    auto status = crypt_setup_helper::encryptStatus(dev);
+    if (status & disk_encrypt::kStatusEncrypt
+        && status & disk_encrypt::kStatusOnline) {
+        m_jobArgs.devPath = dev;
+        m_jobArgs.devName = name;
+
+        qInfo() << "found job from device header." << dev << name;
+    }
 }

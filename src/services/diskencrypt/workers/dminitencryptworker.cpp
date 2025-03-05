@@ -12,15 +12,14 @@
 
 #include <sys/mount.h>
 
-
-#define RetOnFail(ret, msg) \
-    {                       \
-        int r = ret;        \
-        if (r < 0) {        \
-            setExitCode(r); \
+#define RetOnFail(ret, msg)    \
+    {                          \
+        int r = ret;           \
+        if (r < 0) {           \
+            setExitCode(r);    \
             qWarning() << msg; \
-            return;         \
-        }                   \
+            return;            \
+        }                      \
     }
 
 #define ESuspend QString("error when SUSPEND dm device ")
@@ -58,7 +57,7 @@ void DMInitEncryptWorker::run()
     auto source = phyPtr
             ? "PARTUUID=" + phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
             : phyPath;
-    crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs" } });
+    crypttab_helper::insertCryptItem({ unlockName, source, "none", { "luks", "initramfs", "keyscript=/lib/usec-crypt-kit/usec-askpass" } });
 
     // now we can do encrypt on phyDevPath
     auto jobArgs = initJobArgs(phyPath, unlockName);
@@ -70,7 +69,7 @@ void DMInitEncryptWorker::run()
     const char *argv[] = { _dev.c_str(), _topName.c_str(), _midName.c_str() };
     crypt_setup::CryptPreProcessor proc { .argc = 3, .argv = argv, .proc = detachPhyDevice };
 
-    int r = crypt_setup::csInitEncrypt(phyPath, &proc);
+    int r = crypt_setup::csInitEncrypt(phyPath, jobArgs.devName, &proc);
     if (r < 0) {
         qWarning() << EInitEnc + phyPath << r;
         job_file_helper::removeJobFile(jobArgs.jobFile);
@@ -89,8 +88,8 @@ void DMInitEncryptWorker::run()
     // reload midDev to unlocked dev. and resume topDev.
     auto unlockPath = "/dev/mapper/" + unlockName;
     dm_setup::DMTable reloadTab { "linear", unlockPath + " 0", 0, blockdev_helper::devBlockSize(unlockPath) };
-    RetOnFail(dm_setup::dmReloadDevice(midName, reloadTab), EReload + midName);
-    RetOnFail(dm_setup::dmResumeDevice(midName), EResume + midName);
+    RetOnFail(dm_setup::dmReloadDevice(topName, reloadTab), EReload + topName);
+    // RetOnFail(dm_setup::dmResumeDevice(midName), EResume + midName);
     // top dev is suspend in `detachPhyDevice`
     RetOnFail(dm_setup::dmResumeDevice(topName), EResume + topName);
 
@@ -135,36 +134,12 @@ int DMInitEncryptWorker::detachPhyDevice(int argc, const char *argv[])
         // create midDev
         r = dm_setup::dmSuspendDevice(topName);
         if (r != 0) break;
-        r = dm_setup::dmCreateDevice(midName, initTab);
-        if (r != 0) break;
-        r = dm_setup::dmResumeDevice(topName);
-        if (r != 0) break;
-
-        // reload top to mid
-        r = dm_setup::dmSuspendDevice(topName);
-        if (r != 0) break;
-        r = dm_setup::dmReloadDevice(topName, reloadTab);
-        if (r != 0) break;
-        r = dm_setup::dmResumeDevice(topName);
-        if (r != 0) break;
-
-        // should be resumed after physical device unlocked.
-        r = dm_setup::dmSuspendDevice(topName);
-        if (r != 0) break;
-
-        // reload mid to zero
-        r = dm_setup::dmSuspendDevice(midName);
-        if (r != 0) break;
-        r = dm_setup::dmReloadDevice(midName, zeroTab);
-        if (r != 0) break;
-        r = dm_setup::dmResumeDevice(midName);
-        if (r != 0) break;
 
         // physical device already detached.
         return disk_encrypt::kSuccess;
     } while (0);
 
-    dm_setup::dmRemoveDevice(midName);
+    // dm_setup::dmRemoveDevice(midName);
     dm_setup::dmReloadDevice(topName, initTab);
     dm_setup::dmResumeDevice(topName);
     qWarning() << "dmsetup failed! reload to initial status." << topName;

@@ -123,21 +123,16 @@ struct DeviceEncryptParam
 {
     QString devID;
     QString devDesc;
+    QString devPhy;
     QString jobType;
     QString devPreferPath;
-    QString devUnlockName;
     QString key;
+    QString newKey;
     QString exportPath;
     EncryptStates states;
     SecKeyType secType;
-
-    QString uuid;
-    QString newKey;
     QString deviceDisplayName;
     QString mountPoint;
-    QString backingDevUUID;
-    QString clearDevUUID;
-    QString prefferDevName;
     bool validateByRecKey;
 };
 
