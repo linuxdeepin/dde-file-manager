@@ -185,8 +185,9 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kOpenError:
         return tr("Failed to open the file %1, cause: %2").arg(url.path(), errorMsg);
     case AbstractJobHandler::JobErrorType::kReadError:
-    case AbstractJobHandler::JobErrorType::kCreateParentDirError:
         return tr("Failed to read the file %1, cause: %2").arg(url.path(), errorMsg);
+    case AbstractJobHandler::JobErrorType::kCreateParentDirError:
+        return tr("Restore failed, original path could not be found");
     case AbstractJobHandler::JobErrorType::kWriteError:
         return tr("Failed to write the file %1, cause: %2").arg(url.path(), errorMsg);
     case AbstractJobHandler::JobErrorType::kMkdirError:
