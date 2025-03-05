@@ -13,14 +13,30 @@
 #include <QDebug>
 
 static int kEmitInterval = 50;   // 推送时间间隔（ms）
-static qint32 kMaxCount = 100;   // 最大搜索结果数量
-static qint64 kMaxTime = 500;   // 最大搜索时间（ms）
 
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
+static QString extract(const QString &pathWithMetadata)
+{
+    const qsizetype pos = pathWithMetadata.indexOf("<\\>");
+    return (pos != -1) ? pathWithMetadata.left(pos) : pathWithMetadata;
+}
+
+static QStringList batchExtract(const QStringList &paths)
+{
+    QStringList result;
+    result.reserve(paths.size());
+
+    std::transform(paths.cbegin(), paths.cend(),
+                   std::back_inserter(result),
+                   [](const QString &path) { return extract(path); });
+
+    return result;
+}
+
 AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool isBindPath, QObject *parent)
-    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(keyword), parent),
+    : AbstractSearcher(url, keyword, parent),
       isBindPath(isBindPath)
 {
     anythingInterface = new QDBusInterface("com.deepin.anything",
@@ -36,11 +52,10 @@ AnythingSearcher::~AnythingSearcher()
 
 bool AnythingSearcher::search()
 {
-    //准备状态切运行中，否则直接返回
+    // 准备状态切运行中，否则直接返回
     if (!status.testAndSetRelease(kReady, kRuning))
         return false;
 
-    QStringList searchDirList;
     auto searchPath = UrlRoute::urlToPath(searchUrl);
     if (isBindPath) {
         originalPath = searchPath;
@@ -53,62 +68,41 @@ bool AnythingSearcher::search()
     }
 
     notifyTimer.start();
-    // 如果挂载在此路径下的其它目录也支持索引数据, 则一并搜索
-    QDBusPendingReply<QStringList> dirs = anythingInterface->asyncCallWithArgumentList("hasLFTSubdirectories", { searchPath });
-    searchDirList << dirs.value();
-    if (searchDirList.isEmpty() || searchDirList.first() != searchPath)
-        searchDirList.prepend(searchPath);
 
-    uint32_t startOffset = 0;
-    uint32_t endOffset = 0;
+    // 直接调用新的search接口
+    const QDBusPendingReply<QStringList> reply = anythingInterface->asyncCallWithArgumentList("search", { searchPath, keyword });
+    auto results = reply.value();
+
+    if (reply.error().type() != QDBusError::NoError) {
+        fmWarning() << "deepin-anything search failed:"
+                    << QDBusError::errorString(reply.error().type())
+                    << reply.error().message();
+        status.storeRelease(kCompleted);
+        return false;
+    }
+
     QHash<QString, QSet<QString>> hiddenFileHash;
-    while (!searchDirList.isEmpty()) {
-        //中断
+    results = batchExtract(results);
+    for (auto &item : results) {
+        // 中断
         if (status.loadAcquire() != kRuning)
             return false;
 
-        QList<QVariant> argumentList { kMaxCount, kMaxTime, startOffset, endOffset, searchDirList.first(), keyword, true };
-        const QDBusPendingReply<QStringList, uint, uint> &reply = anythingInterface->asyncCallWithArgumentList("search", argumentList);
-        auto results = reply.argumentAt<0>();
-        if (reply.error().type() != QDBusError::NoError) {
-            fmWarning() << "deepin-anything search failed:"
-                       << QDBusError::errorString(reply.error().type())
-                       << reply.error().message();
-            startOffset = endOffset = 0;
-            searchDirList.removeAt(0);
-            continue;
+        if (!SearchHelper::instance()->isHiddenFile(item, hiddenFileHash, searchPath)) {
+            // 搜索路径还原
+            if (isBindPath && item.startsWith(searchPath))
+                item = item.replace(searchPath, originalPath);
+            QMutexLocker lk(&mutex);
+            allResults << QUrl::fromLocalFile(item);
         }
 
-        startOffset = reply.argumentAt<1>();
-        endOffset = reply.argumentAt<2>();
-
-        for (auto &item : results) {
-            // 中断
-            if (status.loadAcquire() != kRuning)
-                return false;
-
-            if (!SearchHelper::instance()->isHiddenFile(item, hiddenFileHash, searchDirList.first())) {
-                // 搜索路径还原
-                if (isBindPath && item.startsWith(searchPath))
-                    item = item.replace(searchPath, originalPath);
-                QMutexLocker lk(&mutex);
-                allResults << QUrl::fromLocalFile(item);
-            }
-
-            // 推送
-            tryNotify();
-        }
-
-        // 当前目录已经搜索到了结尾
-        if (startOffset >= endOffset) {
-            startOffset = endOffset = 0;
-            searchDirList.removeAt(0);
-        }
+        // 推送
+        tryNotify();
     }
 
-    //检查是否还有数据
+    // 检查是否还有数据
     if (status.testAndSetRelease(kRuning, kCompleted)) {
-        //发送数据
+        // 发送数据
         if (hasItem())
             emit unearthed(this);
     }
@@ -155,19 +149,5 @@ bool AnythingSearcher::isSupported(const QUrl &url, bool &isBindPath)
     if (!anything.isValid())
         return false;
 
-    auto path = UrlRoute::urlToPath(url);
-    QDBusPendingReply<bool> reply = anything.asyncCallWithArgumentList("hasLFT", { path });
-    if (reply.value())
-        return true;
-
-    const auto &bindPath = FileUtils::bindPathTransform(path, true);
-    if (bindPath != path) {
-        reply = anything.asyncCallWithArgumentList("hasLFT", { bindPath });
-        if (reply.value()) {
-            isBindPath = true;
-            return true;
-        }
-    }
-
-    return false;
+    return true;
 }

@@ -269,8 +269,8 @@ void AddressBarPrivate::doComplete()
     if (urlCompleter->completionCount() == 1
         && lastPressedKey != Qt::Key_Backspace
         && lastPressedKey != Qt::Key_Delete
-        && isKeyPressed   //判断是否按键按下，时间设定的时100ms
-        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   //键盘剪切事件
+        && isKeyPressed   // 判断是否按键按下，时间设定的时100ms
+        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   // 键盘剪切事件
         && q->cursorPosition() == q->text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
@@ -519,6 +519,7 @@ void AddressBarPrivate::onTextEdited(const QString &text)
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
     updateCompletionState(text);
+    TitleBarHelper::handlePressed(q, text);
 }
 
 void AddressBarPrivate::onReturnPressed()
@@ -775,7 +776,7 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
 void AddressBar::keyPressEvent(QKeyEvent *e)
 {
     d->isKeyPressed = true;
-    QTimer::singleShot(100, this, [=]() {   //设定100ms，若有问题可视情况改变
+    QTimer::singleShot(100, this, [=]() {   // 设定100ms，若有问题可视情况改变
         d->isKeyPressed = false;
     });
     d->lastPreviousKey = d->lastPressedKey;
@@ -827,7 +828,7 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
             }
             e->accept();
             return;
-        //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+        // 解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
         case Qt::Key_Up:
         case Qt::Key_Down:
             d->completerView->keyPressEvent(e);
@@ -866,7 +867,7 @@ void AddressBar::paintEvent(QPaintEvent *e)
     // addressbar animation
     QPainter painter(this);
 
-    //设置提示text
+    // 设置提示text
     if (text().isEmpty()) {
         QPen oldpen = painter.pen();
         QColor phColor = palette().text().color();
@@ -888,7 +889,7 @@ void AddressBar::paintEvent(QPaintEvent *e)
 
         painter.setPen(oldpen);
     }
-    //绘制波纹效果
+    // 绘制波纹效果
     if (d->animation.state() != QAbstractAnimation::Stopped) {
 
         QIcon icon = QIcon::fromTheme("dfm_addressbar_glowing");
