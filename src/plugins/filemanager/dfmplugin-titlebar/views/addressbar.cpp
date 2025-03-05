@@ -106,7 +106,7 @@ void AddressBarPrivate::initConnect()
 void AddressBarPrivate::initData()
 {
     ipRegExp.setPattern(R"(^((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)");
-    protocolIPRegExp.setPattern(R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$)");
+    protocolIPRegExp.setPattern(R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/*$)");
     protocolIPRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
     // 设置补全组件
@@ -360,15 +360,10 @@ void AddressBarPrivate::onReturnPressed()
     // add search history list
     if (!dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
         if (protocolIPRegExp.match(text).hasMatch()) {
-            IPHistroyData data(text, QDateTime::currentDateTime());
-            if (ipHistroyList.contains(data)) {
-                // update
-                int index = ipHistroyList.indexOf(data);
-                ipHistroyList.replace(index, data);
-            } else {
-                ipHistroyList << data;
+            while (text.endsWith("/")) {
+                text.chop(1);
             }
-            SearchHistroyManager::instance()->writeIntoIPHistory(text);
+            SearchHistroyManager::instance()->addIPHistoryCache(text);
         }
     }
 

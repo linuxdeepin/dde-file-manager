@@ -127,7 +127,7 @@ Q_SIGNALS:
 
     void opticalDiscWorkStateChanged(const QString &id, const QString &dev, bool working);
 
-    void mountNetworkDeviceResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+    void mountNetworkDeviceResult(const QString &address, bool ret, DFMMOUNT::DeviceError err, const QString &msg);
 
     void blockDevMountedManually(const QString &id, const QString &mpt);
 
