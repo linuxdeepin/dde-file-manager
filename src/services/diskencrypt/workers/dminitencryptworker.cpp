@@ -69,7 +69,7 @@ void DMInitEncryptWorker::run()
     const char *argv[] = { _dev.c_str(), _topName.c_str(), _midName.c_str() };
     crypt_setup::CryptPreProcessor proc { .argc = 3, .argv = argv, .proc = detachPhyDevice };
 
-    int r = crypt_setup::csInitEncrypt(phyPath, &proc);
+    int r = crypt_setup::csInitEncrypt(phyPath, jobArgs.devName, &proc);
     if (r < 0) {
         qWarning() << EInitEnc + phyPath << r;
         job_file_helper::removeJobFile(jobArgs.jobFile);

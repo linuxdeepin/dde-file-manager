@@ -28,7 +28,8 @@ void NormalInitEncryptWorker::run()
         return;
     }
 
-    int r = crypt_setup::csInitEncrypt(devPath);
+    int r = crypt_setup::csInitEncrypt(devPath,
+                                       m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString());
     if (r < 0) {
         setExitCode(r);
         return;
