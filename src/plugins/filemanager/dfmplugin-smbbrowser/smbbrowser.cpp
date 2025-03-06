@@ -151,7 +151,7 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Show_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Copy_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_Allow_Repeat_Url", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookAllowRepeatUrl);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Allow_Repeat_Url", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookAllowRepeatUrl);
 }
 
 void SmbBrowser::updateNeighborToSidebar()
