@@ -1279,14 +1279,11 @@ bool FileUtils::fileCanTrash(const QUrl &url)
 {
     // gio does not support root user to move ordinary user files to trash
     auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (SysInfoUtils::isRootUser()) {
-        int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
-        if (ownerId != 0)
-            return false;
-    }
-
     if (!info)
         return false;
+
+    if (SysInfoUtils::isRootUser())
+        return info->canAttributes(CanableInfoType::kCanTrash);
 
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (alltotrash)
