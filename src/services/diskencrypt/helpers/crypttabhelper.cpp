@@ -165,3 +165,20 @@ void crypttab_helper::updateInitramfs()
         qInfo() << "initramfs updated.";
     });
 }
+
+bool crypttab_helper::removeCryptItem(const QString &activeName)
+{
+    bool removed = false;
+    auto items = cryptItems();
+    for (int i = items.count() - 1; i >= 0; --i) {
+        if (items[i].target == activeName) {
+            items.removeAt(i);
+            removed = true;
+            break;
+        }
+    }
+
+    if (removed)
+        saveCryptItems(items);
+    return true;
+}

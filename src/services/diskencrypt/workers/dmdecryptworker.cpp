@@ -8,6 +8,7 @@
 #include "core/cryptsetup.h"
 #include "helpers/blockdevhelper.h"
 #include "helpers/inhibithelper.h"
+#include "helpers/crypttabhelper.h"
 
 #include <QFile>
 
@@ -59,6 +60,14 @@ void DMDecryptWorker::run()
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDevice, phyDev);
     qInfo() << "about to decrypt device" << phyDev;
     auto actName = clearDev.mid(sizeof("/dev/mapper/") - 1);
+
+    QString detachHeader;
+    crypt_setup_helper::genDetachHeaderPath(phyDev, &detachHeader);
+    if (!detachHeader.isEmpty()) {
+        crypttab_helper::addCryptOption(actName, "header="+detachHeader);
+        qInfo() << "crypttab updated, detach header setted.";
+    }
+
     auto r = crypt_setup::csDecrypt(phyDev, passphrase, displayName, actName);
     if (r < 0) {
         qWarning() << "decrypt failed!" << dev << r;
@@ -100,6 +109,7 @@ void DMDecryptWorker::run()
     }
 
     qInfo() << "overlay device decrypted." << phyDev;
+    crypttab_helper::removeCryptItem(actName);
 }
 
 void DMDecryptWorker::getDevPath(QString *phyDev, QString *clearDev)
