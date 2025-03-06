@@ -17,15 +17,19 @@ bool EventDispatcher::dispatch()
 
 bool EventDispatcher::dispatch(const QVariantList &params)
 {
-    if (std::any_of(filterList.begin(), filterList.end(), [params](const EventHandler<Listener> &h) {
-            return h.handler(params).toBool();
+    auto filtersCopy = filterList;
+    auto handlersCopy = handlerList;
+
+    if (std::any_of(filtersCopy.begin(), filtersCopy.end(), [params](const EventHandler<Listener> &h) {
+            return h.handler && h.handler(params).toBool();
         })) {
         return false;
     }
 
-    std::for_each(handlerList.begin(), handlerList.end(), [params](const EventHandler<Listener> &h) {
-        h.handler(params);
-    });
+    for (const auto &h : handlersCopy) {
+        if (h.handler)
+            h.handler(params);
+    }
 
     return true;
 }
