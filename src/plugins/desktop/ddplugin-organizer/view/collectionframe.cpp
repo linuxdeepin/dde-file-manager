@@ -569,6 +569,7 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
                 d->frameState = CollectionFramePrivate::NormalShowState;
                 setGeometry(result);
                 d->updateStretchRect();
+                if (d->collView) d->collView->setProperty(kCollectionPropertyEditing, false);
                 Q_EMIT geometryChanged();
                 Q_EMIT editingStatusChanged(false);
             };
