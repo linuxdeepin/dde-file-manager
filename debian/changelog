@@ -1,3 +1,9 @@
+dde-file-manager (6.5.35) unstable; urgency=medium
+
+  * This update addresses multiple issues including encryption/decryption processes, device mounting, UI improvements, error handling, and permission checks, introduces features like crypttab header support and blur effects, and migrates from Qt5 to Qt6. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 06 Mar 2025 20:41:48 +0800
+
 dde-file-manager (6.5.34) unstable; urgency=medium
 
   * fix bugs
