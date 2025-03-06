@@ -1085,6 +1085,7 @@ void FileDialog::initializeUi()
 
     // init status bar
     d->statusBar = new FileDialogStatusBar(this);
+    d->statusBar->setAutoFillBackground(true);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(d->statusBar), AcName::kAcFDStautsBar);
