@@ -15,6 +15,7 @@
 #include <DGuiApplicationHelper>
 #include <DIconButton>
 #include <DDesktopServices>
+#include <DFontSizeManager>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
@@ -44,6 +45,14 @@ void DeviceItem::mouseReleaseEvent(QMouseEvent *event)
         return;
     openDevice();
 }
+
+void DeviceItem::resizeEvent(QResizeEvent *e)
+{
+    QFrame::resizeEvent(e);
+    const auto &name = nameLabel->fontMetrics().elidedText(data.displayName, Qt::ElideMiddle, nameLabel->width());
+    nameLabel->setText(name);
+}
+
 void DeviceItem::updateUsage(quint64 usedSize)
 {
     if (usedSize > data.totalSize)
@@ -59,16 +68,16 @@ void DeviceItem::updateUsage(quint64 usedSize)
 
 void DeviceItem::initUI()
 {
-    setFixedSize(kDockPluginWidth, kDeviceItemHeight);
+    setFixedWidth(kDockPluginWidth);
 
-    QLabel *labName = new QLabel(data.displayName, this);
-    labName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    labName->setTextFormat(Qt::PlainText);
-    setTextFont(labName, 14, QFont::Medium);
-    setTextColor(labName, DGuiApplicationHelper::instance()->themeType(), 0.8);
+    nameLabel = new QLabel(data.displayName, this);
+    nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    nameLabel->setTextFormat(Qt::PlainText);
+    DFontSizeManager::instance()->bind(nameLabel, DFontSizeManager::T5, QFont::Medium);
+    setTextColor(nameLabel, DGuiApplicationHelper::instance()->themeType(), 0.8);
 
     sizeLabel = new QLabel(this);
-    setTextFont(sizeLabel, 12, QFont::Normal);
+    DFontSizeManager::instance()->bind(sizeLabel, DFontSizeManager::T7, QFont::Normal);
     setTextColor(sizeLabel, DGuiApplicationHelper::instance()->themeType(), 0.6);
 
     sizeProgress = new QProgressBar(this);
@@ -97,7 +106,7 @@ void DeviceItem::initUI()
     QVBoxLayout *devInfoLay = new QVBoxLayout();
     devInfoLay->setSpacing(2);
     devInfoLay->setContentsMargins(10, 11, 0, 15);
-    devInfoLay->addWidget(labName);
+    devInfoLay->addWidget(nameLabel);
     devInfoLay->addWidget(sizeLabel);
     QWidget *space = new QWidget(this);
     space->setFixedHeight(2);
@@ -130,7 +139,7 @@ void DeviceItem::initUI()
             this, [this] { Q_EMIT requestEject(data.backingID); });
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, [=](auto type) {
-                setTextColor(labName, type, 0.8);
+                setTextColor(nameLabel, type, 0.8);
                 setTextColor(sizeLabel, type, 0.6);
             });
 
@@ -153,13 +162,4 @@ void DeviceItem::setTextColor(QWidget *obj, int themeType, double alpha)
     int colorVal = (themeType == DGuiApplicationHelper::DarkType);
     pal.setColor(QPalette::WindowText, QColor::fromRgbF(colorVal, colorVal, colorVal, alpha));
     obj->setPalette(pal);
-}
-
-void DeviceItem::setTextFont(QWidget *widget, int pixelSize, int weight)
-{
-    Q_ASSERT(widget);
-    QFont f = widget->font();
-    f.setPixelSize(pixelSize);
-    f.setWeight(static_cast<QFont::Weight>(weight));
-    widget->setFont(f);
 }
