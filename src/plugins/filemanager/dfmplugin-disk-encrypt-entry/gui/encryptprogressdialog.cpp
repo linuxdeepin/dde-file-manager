@@ -38,7 +38,8 @@ void EncryptProgressDialog::updateProgress(double progress)
     if (val < 0) val = 0;
     this->progress->setValue(val);
     clearButtons();
-    setCloseButtonVisible(false);
+    if (closeButtonVisible())
+        setCloseButtonVisible(false);
 }
 
 void EncryptProgressDialog::showResultPage(bool success, const QString &title, const QString &message)

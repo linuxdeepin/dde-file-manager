@@ -310,7 +310,8 @@ void EventsHandler::onEncryptProgress(const QString &dev, const QString &devName
     }
     auto dlg = encryptDialogs.value(dev);
     dlg->updateProgress(progress);
-    dlg->show();
+    if (!dlg->isVisible())
+        dlg->show();
 
     // when start encrypt, delete the inputs widget.
     if (encryptInputs.contains(dev))
@@ -331,7 +332,8 @@ void EventsHandler::onDecryptProgress(const QString &dev, const QString &devName
 
     auto dlg = decryptDialogs.value(dev);
     dlg->updateProgress(progress);
-    dlg->show();
+    if (!dlg->isVisible())
+        dlg->show();
 }
 
 bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *cancelled)
