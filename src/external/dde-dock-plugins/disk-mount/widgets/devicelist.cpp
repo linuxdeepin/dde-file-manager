@@ -6,16 +6,18 @@
 #include "deviceitem.h"
 #include "device/dockitemdatamanager.h"
 
+#include <DGuiApplicationHelper>
+#include <DFontSizeManager>
+
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollBar>
-#include <algorithm>  
-
-#include <DGuiApplicationHelper>
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
-using namespace Dtk::Gui;
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 DeviceList::DeviceList(QWidget *parent)
     : QScrollArea(parent)
@@ -23,6 +25,12 @@ DeviceList::DeviceList(QWidget *parent)
     this->setObjectName("DiskControlWidget-QScrollArea");
     initUI();
     initConnect();
+}
+
+void DeviceList::showEvent(QShowEvent *e)
+{
+    updateHeight();
+    QScrollArea::showEvent(e);
 }
 
 void DeviceList::addDevice(const DockItemData &item)
@@ -38,9 +46,9 @@ void DeviceList::addDevice(const DockItemData &item)
 
     QStringList order = sortKeys.values();
     std::sort(order.begin(), order.end());
-    
+
     deviceLay->insertWidget(order.indexOf(item.sortKey), devItem);
-    
+
     qCInfo(logAppDock) << "added item:" << item.id << devItem;
     updateHeight();
 }
@@ -111,7 +119,9 @@ void DeviceList::initConnect()
 
 void DeviceList::updateHeight()
 {
-    int contentHeight = 50 + kDeviceItemHeight * deviceItems.count();
+    const int itemHeight = deviceItems.isEmpty() ? 0 : deviceItems.first()->sizeHint().height();
+    const int headerHeight = headerWidget->sizeHint().height();
+    int contentHeight = headerHeight + itemHeight * deviceItems.count();
     if (contentHeight > 420)
         contentHeight = 420;
     resize(width(), contentHeight);
@@ -119,8 +129,8 @@ void DeviceList::updateHeight()
 
 QWidget *DeviceList::createHeader()
 {
-    QWidget *header = new QWidget(this);
-    header->setFixedWidth(kDockPluginWidth);
+    headerWidget = new QWidget(this);
+    headerWidget->setFixedWidth(kDockPluginWidth);
     QVBoxLayout *lay = new QVBoxLayout();
     lay->setSpacing(0);
     lay->setContentsMargins(20, 9, 0, 8);
@@ -128,20 +138,16 @@ QWidget *DeviceList::createHeader()
     QVBoxLayout *headerLay = new QVBoxLayout();
     headerLay->setContentsMargins(0, 0, 0, 0);
     headerLay->setSpacing(0);
-    header->setLayout(headerLay);
+    headerWidget->setLayout(headerLay);
 
     QLabel *title = new QLabel(tr("Disks"), this);
+    DFontSizeManager::instance()->bind(title, DFontSizeManager::T3, QFont::Medium);
     lay->addWidget(title);
 
     auto line = DeviceItem::createSeparateLine(1);
     line->setParent(this);
     headerLay->addLayout(lay);
     headerLay->addWidget(line);
-
-    QFont f = title->font();
-    f.setPixelSize(20);
-    f.setWeight(QFont::Medium);
-    title->setFont(f);
 
     auto setTextColor = [title](DGuiApplicationHelper::ColorType) {
         QPalette pal = title->palette();
@@ -155,5 +161,5 @@ QWidget *DeviceList::createHeader()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             title, [=](auto type) { setTextColor(type); });
     setTextColor(DGuiApplicationHelper::instance()->themeType());
-    return header;
+    return headerWidget;
 }
