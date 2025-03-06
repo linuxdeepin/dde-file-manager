@@ -22,6 +22,7 @@ QList<CryptItem> cryptItems();
 void saveCryptItems(const QList<CryptItem> &items);
 
 bool addCryptOption(const QString &activeName, const QString &opt);
+bool removeCryptItem(const QString &activeName);
 bool insertCryptItem(const CryptItem &item);
 bool updateCryptTab();
 
