@@ -24,6 +24,17 @@ inline constexpr char kKeyLastAccessed[] { "lastAccessed" };
 
 inline constexpr char kprotocolIPRegExp[] { R"(^((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/*$)" };
 
+namespace {
+QString trimTrailingSlashes(const QString &input)
+{
+    QString trimmed = input;
+    while (trimmed.endsWith("/")) {
+        trimmed.chop(1);
+    }
+    return trimmed;
+}
+}
+
 SearchHistroyManager *SearchHistroyManager::instance()
 {
     static SearchHistroyManager instance;
@@ -42,13 +53,14 @@ SearchHistroyManager::SearchHistroyManager(QObject *parent)
 
 void SearchHistroyManager::handleMountNetworkResult(const QString &address, bool ret, dfmmount::DeviceError err, const QString &)
 {
-    if (!isValidMount(address, ret, err)) {
+    auto addr = trimTrailingSlashes(address);
+    if (!isValidMount(addr, ret, err)) {
         // Remove the address only if it was in the cache, as before.
-        ipAddressCache.removeOne(address);
+        ipAddressCache.removeOne(addr);
         return;
     }
-    ipAddressCache.removeOne(address);
-    writeIntoIPHistory(address);
+    ipAddressCache.removeOne(addr);
+    writeIntoIPHistory(addr);
 }
 
 bool SearchHistroyManager::isValidMount(const QString &address, bool ret, dfmmount::DeviceError err)
@@ -110,10 +122,11 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
 
 void SearchHistroyManager::addIPHistoryCache(const QString &address)
 {
-    if (ipAddressCache.contains(address))
+    auto addr = trimTrailingSlashes(address);
+    if (ipAddressCache.contains(addr))
         return;
 
-    ipAddressCache << address;
+    ipAddressCache << addr;
 }
 
 void SearchHistroyManager::writeIntoIPHistory(const QString &ipAddr)
