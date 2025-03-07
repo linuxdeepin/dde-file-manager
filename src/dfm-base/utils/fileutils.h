@@ -95,6 +95,8 @@ public:
     static QString normalPathToTrash(const QString &normal);
     static bool supportLongName(const QUrl &url);
 
+    static bool isFullWidthChar(const QChar ch, QChar &normalized);
+
 private:
     static QMutex cacheCopyingMutex;
     static QSet<QUrl> copyingUrl;

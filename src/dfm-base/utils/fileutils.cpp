@@ -1023,6 +1023,10 @@ public:
 
 bool FileUtils::isNumOrChar(const QChar ch)
 {
+    QChar normalized;
+    if (isFullWidthChar(ch, normalized))
+        return isNumOrChar(normalized);
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     return (ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
 #else
@@ -1033,6 +1037,10 @@ bool FileUtils::isNumOrChar(const QChar ch)
 
 bool FileUtils::isNumber(const QChar ch)
 {
+    QChar number;
+    if (isFullWidthChar(ch, number))
+        return isNumber(number);
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     return (ch >= 48 && ch <= 57);
 #else
@@ -1041,8 +1049,84 @@ bool FileUtils::isNumber(const QChar ch)
 #endif
 }
 
+bool FileUtils::isFullWidthChar(const QChar ch, QChar &normalized)
+{
+    // 全角字符的 Unicode 范围
+    ushort unicode = ch.unicode();
+    
+    // 处理全角数字 (0xFF10-0xFF19)
+    if (unicode >= 0xFF10 && unicode <= 0xFF19) {
+        normalized = QChar(unicode - 0xFF10 + '0');
+        return true;
+    }
+    
+    // 处理全角大写字母 (0xFF21-0xFF3A)
+    if (unicode >= 0xFF21 && unicode <= 0xFF3A) {
+        normalized = QChar(unicode - 0xFF21 + 'A');
+        return true;
+    }
+    
+    // 处理全角小写字母 (0xFF41-0xFF5A)
+    if (unicode >= 0xFF41 && unicode <= 0xFF5A) {
+        normalized = QChar(unicode - 0xFF41 + 'a');
+        return true;
+    }
+    
+    // 处理全角标点符号
+    static const QHash<ushort, QChar> punctuationMap {
+        { 0xFF01, '!' },   // ！
+        { 0xFF08, '(' },   // （
+        { 0xFF09, ')' },   // ）
+        { 0xFF0C, ',' },   // ，
+        { 0xFF1A, ':' },   // ：
+        { 0xFF1B, ';' },   // ；
+        { 0xFF1F, '?' },   // ？
+        { 0xFF3B, '[' },   // ［
+        { 0xFF3D, ']' },   // ］
+        { 0xFF5B, '{' },   // ｛
+        { 0xFF5D, '}' },   // ｝
+        { 0xFF0E, '.' },   // ．
+        { 0xFF0F, '/' },   // ／
+        { 0xFF3F, '_' },   // ＿
+        { 0xFF0D, '-' },   // －
+        { 0xFF1D, '=' },   // ＝
+        { 0xFF06, '&' },   // ＆
+        { 0xFF5C, '|' },   // ｜
+        { 0xFF1C, '<' },   // ＜
+        { 0xFF1E, '>' },   // ＞
+        { 0xFF02, '"' },   // ＂
+        { 0xFF07, '\'' },  // ＇
+        { 0xFF0B, '+' },   // ＋
+        { 0xFF03, '#' },   // ＃
+        { 0xFF04, '$' },   // ＄
+        { 0xFF05, '%' },   // ％
+        { 0xFF20, '@' },   // ＠
+        { 0xFF0A, '*' },   // ＊
+        { 0xFF3C, '\\' },  // ＼
+        { 0xFF5E, '~' }    // ～
+    };
+
+    auto it = punctuationMap.find(unicode);
+    if (it != punctuationMap.end()) {
+        normalized = it.value();
+        return true;
+    }
+
+    return false;
+}
+
 bool FileUtils::isSymbol(const QChar ch)
 {
+    // 如果是高代理项，不应该单独判断
+    if (ch.isHighSurrogate() || ch.isLowSurrogate())
+        return false;
+        
+    QChar normalized;
+    if (isFullWidthChar(ch, normalized)) {
+        return isSymbol(normalized);
+    }
+    
+    // 对于普通字符进行原有判断
     return ch.script() != QChar::Script_Han && !isNumOrChar(ch);
 }
 
@@ -1059,7 +1143,13 @@ QString FileUtils::numberStr(const QString &str, int pos)
         pos++;
 
     while (pos < total && isNumber(str.at(pos))) {
-        tmp += str.at(pos);
+        const QChar &ch = str.at(pos);
+        QChar number;
+        if (isFullWidthChar(ch, number)) {
+            tmp += number;  // 将全角数字转换为半角数字
+        } else {
+            tmp += ch;
+        }
         pos++;
     }
 
@@ -1074,67 +1164,125 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
     QString suf2 = str2.right(str2.length() - str2.lastIndexOf(".") - 1);
     QString name1 = str1.left(str1.lastIndexOf("."));
     QString name2 = str2.left(str2.lastIndexOf("."));
-    int length1 = name1.length();
-    int length2 = name2.length();
-    auto total = length1 > length2 ? length2 : length1;
 
     bool preIsNum = false;
-    bool isSybol1 = false, isSybol2 = false, isHanzi1 = false,
+    bool isSymbol1 = false, isSymbol2 = false, isHanzi1 = false,
          isHanzi2 = false, isNumb1 = false, isNumb2 = false;
-    for (int i = 0; i < total; ++i) {
-        // 判断相等和大小写相等，跳过
-        if (str1.at(i) == str2.at(i) || str1.at(i).toLower() == str2.at(i).toLower()) {
-            preIsNum = isNumber(str1.at(i));
+    
+    // 使用迭代器来正确处理代理对字符
+    QString::const_iterator it1 = name1.constBegin();
+    QString::const_iterator it2 = name2.constBegin();
+    
+    while (it1 != name1.constEnd() && it2 != name2.constEnd()) {
+        // 获取当前完整字符(可能是代理对)
+        uint unicode1 = it1->isHighSurrogate() && (it1 + 1) != name1.constEnd()
+            ? QChar::surrogateToUcs4(*it1, *(it1 + 1))
+            : it1->unicode();
+        uint unicode2 = it2->isHighSurrogate() && (it2 + 1) != name2.constEnd()
+            ? QChar::surrogateToUcs4(*it2, *(it2 + 1))
+            : it2->unicode();
+
+        // 如果字符相同，继续比较下一个
+        if (unicode1 == unicode2) {
+            preIsNum = isNumber(*it1);
+            if (it1->isHighSurrogate()) {
+                ++it1;
+                ++it2;
+            }
+            ++it1;
+            ++it2;
             continue;
         }
-        isNumb1 = isNumber(str1.at(i));
-        isNumb2 = isNumber(str2.at(i));
+
+        // 处理数字
+        QChar number1, number2;
+        isNumb1 = !it1->isHighSurrogate() && isNumber(*it1);
+        isNumb2 = !it2->isHighSurrogate() && isNumber(*it2);
+        
         if ((preIsNum && (isNumb1 ^ isNumb2)) || (isNumb1 && isNumb2)) {
-            // 取后面几位的数字作比较后面的数字,先比较位数
-            // 位数大的大
-            auto str1n = numberStr(str1, preIsNum ? i - 1 : i).toUInt();
-            auto str2n = numberStr(str2, preIsNum ? i - 1 : i).toUInt();
-            if (str1n == str2n)
-                return str1.at(i) < str2.at(i);
+            auto str1n = numberStr(name1, it1 - name1.constBegin()).toUInt();
+            auto str2n = numberStr(name2, it2 - name2.constBegin()).toUInt();
+            if (str1n == str2n) {
+                // 如果数值相同，全角数字排在半角数字后面
+                bool isFullWidth1 = isFullWidthChar(*it1, number1);
+                bool isFullWidth2 = isFullWidthChar(*it2, number2);
+                if (isFullWidth1 != isFullWidth2)
+                    return !isFullWidth1;
+                return unicode1 < unicode2;
+            }
             return str1n < str2n;
         }
 
-        // 判断特殊字符就排到最后
-        isSybol1 = isSymbol(str1.at(i));
-        isSybol2 = isSymbol(str2.at(i));
-        if (isSybol1 ^ isSybol2)
-            return !isSybol1;
+        // 处理特殊字符
+        QChar normalized1, normalized2;
+        bool isFullWidth1 = isFullWidthChar(*it1, normalized1);
+        bool isFullWidth2 = isFullWidthChar(*it2, normalized2);
+        
+        isSymbol1 = !it1->isHighSurrogate() && isSymbol(*it1);
+        isSymbol2 = !it2->isHighSurrogate() && isSymbol(*it2);
+        
+        // 如果都是符号，先比较归一化后的字符
+        if (isSymbol1 && isSymbol2) {
+            QChar ch1 = isFullWidth1 ? normalized1 : *it1;
+            QChar ch2 = isFullWidth2 ? normalized2 : *it2;
+            if (ch1 != ch2)
+                return ch1 < ch2;
+            // 如果归一化后相同，全角排在半角后面
+            if (isFullWidth1 != isFullWidth2)
+                return !isFullWidth1;
+            // 如果全半角属性也相同，继续比较下一个字符
+            if (it1->isHighSurrogate()) {
+                ++it1;
+                ++it2;
+            }
+            ++it1;
+            ++it2;
+            continue;
+        }
+        
+        // 如果一个是符号一个不是，符号排在后面
+        if (isSymbol1 ^ isSymbol2)
+            return isSymbol2;
 
-        if (isSybol1)
-            return str1.at(i) < str2.at(i);
-
-        // 判断汉字
-        isHanzi1 = str1.at(i).script() == QChar::Script_Han;
-        isHanzi2 = str2.at(i).script() == QChar::Script_Han;
+        // 处理汉字(包括扩展汉字)
+        QChar::Script script1 = it1->isHighSurrogate() ? QChar::script(unicode1) : it1->script();
+        QChar::Script script2 = it2->isHighSurrogate() ? QChar::script(unicode2) : it2->script();
+        isHanzi1 = script1 == QChar::Script_Han;
+        isHanzi2 = script2 == QChar::Script_Han;
+        
         if (isHanzi2 ^ isHanzi1)
             return !isHanzi1;
+        if (isHanzi1) {
+            // 直接使用 QString 构造包含单个 Unicode 码点的字符串
+            QString str1(QChar::highSurrogate(unicode1), QChar::lowSurrogate(unicode1));
+            QString str2(QChar::highSurrogate(unicode2), QChar::lowSurrogate(unicode2));
+            return sortCollator.compare(str1, str2) < 0;
+        }
 
-        if (isHanzi1)
-            return sortCollator.compare(str1.at(i), str2.at(i)) < 0;
-
-        // 判断数字或者字符
-        if (!isNumb1 && !isNumb2)
-            return str1.at(i).toLower() < str2.at(i).toLower();
+        // 处理普通字符
+        if (!isNumb1 && !isNumb2) {
+            QChar ch1 = it1->isHighSurrogate() ? QChar(unicode1) : *it1;
+            QChar ch2 = it2->isHighSurrogate() ? QChar(unicode2) : *it2;
+            return ch1.toLower() < ch2.toLower();
+        }
 
         return isNumb1;
     }
 
-    if (length1 == length2) {
-        if (suf1.isEmpty() ^ suf2.isEmpty())
-            return suf1.isEmpty();
+    // 如果前面的字符都相同，较短的字符串排在前面
+    if (it1 == name1.constEnd())
+        return true;
+    if (it2 == name2.constEnd())
+        return false;
 
-        if (suf2.startsWith(suf1) ^ suf1.startsWith(suf2))
-            return suf2.startsWith(suf1);
+    // 处理后缀
+    if (suf1.isEmpty() ^ suf2.isEmpty())
+        return suf1.isEmpty();
 
-        return suf1 < suf2;
-    }
+    if (suf2.startsWith(suf1) ^ suf1.startsWith(suf2))
+        return suf2.startsWith(suf1);
 
-    return length1 < length2;
+    return suf1 < suf2;
 }
 
 bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::SortOrder order)
