@@ -4900,27 +4900,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="180"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"/>
+        <translation>Şifreleme yapıldı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
         <source>Device %1 has been encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şifrelendi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>Şifreleme başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazının şifreleme işlemi başarısız oldu, daha fazla bilgi için lütfen günlüğe bakın. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
         <source>%1 is under encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>%1 şifreleniyor...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
@@ -5032,33 +5032,33 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="499"/>
         <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="506"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"/>
+        <translation>%1 değişikliği yapıldı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
         <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"/>
+        <translation>%1&apos;in %2&apos;si değiştirildi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"/>
+        <translation>%1 değişikliği başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="513"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz %1&apos;den %2&apos;ye değişiklik işlemi başarısız oldu, daha fazla bilgi için lütfen günlüğe bakın. (%3)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
