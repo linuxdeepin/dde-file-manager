@@ -1454,8 +1454,14 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     case kItemFileMimeTypeRole:
         return FileUtils::compareByStringEx(leftData.toString(), rightData.toString());
     case kItemFileSizeRole: {
-        qint64 sizel = leftInfo->size();
-        qint64 sizer = rightInfo->size();
+        // 文件夹不参与按文件大小的排序
+        qint64 sizel = isDirLeft ? -1 : leftInfo->size();
+        qint64 sizer = isDirRight ? -1 : rightInfo->size();
+        if (sizel == sizer) {
+            QString leftName = leftInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+            QString rightName = rightInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+            return FileUtils::compareByStringEx(leftName, rightName);
+        }
         return sizel < sizer;
     }
     default:
