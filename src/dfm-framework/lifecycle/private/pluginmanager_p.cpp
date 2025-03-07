@@ -89,13 +89,13 @@ bool PluginManagerPrivate::readPlugins()
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
         readJsonToMeta(obj);
         const QString &pluginName { obj->name() };
-        if (lazyLoadPluginsNames.contains(pluginName)) {
+        if (lazyLoadPluginNames.contains(pluginName)) {
             qCDebug(logDPF) << "Skip load(lazy load): " << pluginName;
             return;
         }
 
         if (lazyPluginFilter && lazyPluginFilter(pluginName)) {
-            lazyLoadPluginsNames.append(pluginName);
+            lazyLoadPluginNames.append(pluginName);
             qCDebug(logDPF) << "Skip load(lazy load by filter): " << pluginName;
             return;
         }
@@ -413,6 +413,56 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool PluginManagerPrivate::checkPluginQtVersion(PluginMetaObjectPointer pointer)
+{
+    Q_ASSERT(pointer && pointer->d->loader);
+
+    auto name { pointer->d->name };
+    if (qtVersionInsensitivePluginNames.contains(name)) {
+        qCDebug(logDPF) << "Skip t version check" << name;
+
+        return true;
+    }
+
+    // Create QLibrary instance using the plugin's file path
+    QLibrary lib(pointer->d->loader->fileName());
+    if (!lib.load()) {
+        pointer->d->error = QString("Failed to load library for version check: %1").arg(lib.errorString());
+        return false;
+    }
+
+    // Use QLibrary to resolve qVersion symbol
+    using QVersionFunction = const char *(*)();
+    auto qVersionFunc = reinterpret_cast<QVersionFunction>(lib.resolve("qVersion"));
+
+    if (!qVersionFunc) {
+        pointer->d->error = QString("Plugin '%1' does not link against Qt").arg(pointer->d->name);
+        lib.unload();
+        return false;
+    }
+
+    const QString pluginQtVersion = QString::fromLatin1(qVersionFunc());
+    lib.unload();
+
+    if (!pluginQtVersion.startsWith('6')) {
+        pointer->d->error = QString("Qt version compatibility check failed:\n"
+                                    "- Plugin name: %1\n"
+                                    "- Plugin path: %2\n"
+                                    "- Plugin Qt version: %3\n"
+                                    "- Application Qt version: %4\n"
+                                    "Error: Qt6 application cannot load Qt%3 plugins.")
+                                    .arg(pointer->d->name)
+                                    .arg(pointer->fileName())
+                                    .arg(pluginQtVersion)
+                                    .arg(QString::fromLatin1(qVersion()));
+        return false;
+    }
+
+    return true;
+}
+#endif
+
 bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
 {
     Q_ASSERT(pointer);
@@ -449,6 +499,15 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
         qCCritical(logDPF) << pointer->errorString() << pointer->d->name << pointer->d->loader->fileName();
         return false;
     }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Check Qt version compatibility after plugin is loaded
+    if (!checkPluginQtVersion(pointer)) {
+        qCCritical(logDPF) << pointer->d->error;
+        pointer->d->loader->unload();
+        return false;
+    }
+#endif
 
     // resolve loader instance
     bool isNullPluginInstance { false };

@@ -22,6 +22,7 @@ void initialize(const QStringList &IIDs, const QStringList &paths);
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames,
                 const QStringList &lazyNames);
+void registerQtVersionInsensitivePlugins(const QStringList &names);
 
 bool isAllPluginsInitialized();
 bool isAllPluginsStarted();

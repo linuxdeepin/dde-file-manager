@@ -109,7 +109,7 @@ static bool pluginsLoad()
 #endif
     DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
     DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
-
+    DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::desktopAllPlugins());
     qCInfo(logAppDesktop) << "Depend library paths:" << DApplication::libraryPaths();
     qCInfo(logAppDesktop) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 

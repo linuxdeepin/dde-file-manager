@@ -28,8 +28,13 @@ void PluginManager::addBlackPluginName(const QString &name)
 
 void PluginManager::addLazyLoadPluginName(const QString &name)
 {
-    if (!d->lazyLoadPluginsNames.contains(name))
-        d->lazyLoadPluginsNames.push_back(name);
+    if (!d->lazyLoadPluginNames.contains(name))
+        d->lazyLoadPluginNames.push_back(name);
+}
+
+void PluginManager::setQtVersionInsensitivePluginNames(const QStringList &names)
+{
+    d->qtVersionInsensitivePluginNames = names;
 }
 
 void PluginManager::setPluginPaths(const QStringList &pluginPaths)
@@ -125,7 +130,7 @@ QStringList PluginManager::blackList() const
 
 QStringList PluginManager::lazyLoadList() const
 {
-    return d->lazyLoadPluginsNames;
+    return d->lazyLoadPluginNames;
 }
 
 QQueue<PluginMetaObjectPointer> PluginManager::readQueue() const

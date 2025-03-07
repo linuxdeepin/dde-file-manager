@@ -40,6 +40,11 @@ void initialize(const QStringList &IIDs, const QStringList &paths, const QString
     initialize(IIDs, paths, blackNames);
 }
 
+void registerQtVersionInsensitivePlugins(const QStringList &names)
+{
+    pluginManager->setQtVersionInsensitivePluginNames(names);
+}
+
 /*!
  * \brief LifeCycle::pluginIIDs Get plugin identity
  * \return all id list
