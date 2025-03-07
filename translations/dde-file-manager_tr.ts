@@ -4589,17 +4589,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>anahtar parolası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"/>
+        <translation>Şifreleme değiştiriliyor %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölüm şifrelemeye devam et</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
@@ -4609,45 +4609,45 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölüm şifrelemesini etkinleştir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Hata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM&apos;den parola çözümlenemiyor</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
-        <translation type="unfinished"/>
+        <translation>PIN hatası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"/>
+        <translation>Değişiklik parolası başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="524"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"/>
+        <translation>Cihazın kilidini açma başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış parola</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="543"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"/>
+        <translation>Aygıtı bağlama başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
@@ -4657,27 +4657,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
         <source>lock</source>
-        <translation type="unfinished"/>
+        <translation>Kilitle</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>Şifreleme başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"/>
+        <translation>%2 cihaz %1 olamaz</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="672"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Şifrelemeye devam etmek için yeniden başlatın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"/>
+        <translation>Şifre çözmeyi bitirmek için yeniden başlatın</translation>
     </message>
 </context>
 <context>
@@ -4690,7 +4690,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="130"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Parola ile kilidi açıldı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="131"/>
@@ -4710,7 +4710,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="172"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen anahtar dosya dışa aktarma yolu olarak şifrelenmemiş bir bölüm seçin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
