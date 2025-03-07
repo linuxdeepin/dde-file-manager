@@ -137,6 +137,7 @@ static bool pluginsLoad()
                                          pluginsDirs);
     DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
     DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
+    DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::filemanagerAllPlugins());
 
     qCInfo(logAppDialogX11) << "Depend library paths:" << DApplication::libraryPaths();
     qCInfo(logAppDialogX11) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
