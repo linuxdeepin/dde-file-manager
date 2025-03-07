@@ -26,9 +26,10 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/dragmonitor.h
     )
 
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt6 COMPONENTS Network REQUIRED)
 find_package(Dtk6 COMPONENTS Widget REQUIRED)
+
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
@@ -63,6 +64,12 @@ install(PROGRAMS pkexec/dde-file-manager-pkexec DESTINATION bin)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets/manual/dde-file-manager
     DESTINATION share/deepin-manual/manual-assets/application)
 
-# translation
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")
+# translations
+set(TS_DIR "${CMAKE_SOURCE_DIR}/translations")
+file(GLOB TS_FILES "${TS_DIR}/*.ts")
+set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}")
+qt6_add_translation(QM_FILES ${TS_FILES})
+add_custom_target(${PROJECT_NAME}_translations ALL DEPENDS ${QM_FILES})
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_translations)
 
+install(FILES ${QM_FILES} DESTINATION share/dde-file-manager/translations)
