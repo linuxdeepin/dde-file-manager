@@ -1,3 +1,9 @@
+dde-file-manager (6.5.36) unstable; urgency=medium
+
+  * Enhance translation support in dde-file-manager and introduce Qt6 plugin version compatibility checks.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 07 Mar 2025 14:31:42 +0800
+
 dde-file-manager (6.5.35) unstable; urgency=medium
 
   * This update addresses multiple issues including encryption/decryption processes, device mounting, UI improvements, error handling, and permission checks, introduces features like crypttab header support and blur effects, and migrates from Qt5 to Qt6. 

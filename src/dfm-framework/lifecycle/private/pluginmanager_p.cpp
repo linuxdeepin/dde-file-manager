@@ -420,8 +420,7 @@ bool PluginManagerPrivate::checkPluginQtVersion(PluginMetaObjectPointer pointer)
 
     auto name { pointer->d->name };
     if (qtVersionInsensitivePluginNames.contains(name)) {
-        qCDebug(logDPF) << "Skip t version check" << name;
-
+        qCDebug(logDPF) << "Skip Qt version check" << name;
         return true;
     }
 
