@@ -56,6 +56,14 @@ static int editorMarginTop(const QString &family)
     return margin;
 }
 
+static QPixmap getScaledPixmap(const QIcon &icon, int size, QPainter *painter)
+{
+    const qreal pixelRatio = painter->device()->devicePixelRatio();
+    QPixmap pm = icon.pixmap(size * pixelRatio);
+    pm.setDevicePixelRatio(pixelRatio);
+    return pm;
+}
+
 DWIDGET_USE_NAMESPACE
 
 ComputerItemDelegate::ComputerItemDelegate(QObject *parent)
@@ -231,12 +239,14 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     const int LeftMargin = 22;
 
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
-    auto tl = option.rect.topLeft() + QPoint(LeftMargin, TopMargin);
+    QRect iconRect = option.rect;
+    iconRect.setSize(view->iconSize());
+    iconRect.moveTopLeft(iconRect.topLeft() + QPoint(LeftMargin, TopMargin));
 
-    const auto &&pm = icon.pixmap(IconSize);
+    auto pm = getScaledPixmap(icon, IconSize, painter);
     //    const int ShadowBlurRadisu = 4;
     //    painter->drawPixmap(tl + QPoint(-ShadowBlurRadisu, -ShadowBlurRadisu + 2), renderBlurShadow(pm, ShadowBlurRadisu));
-    painter->drawPixmap(tl, pm);
+    painter->drawPixmap(iconRect, pm);
 
     QFont fnt(view->font());
     fnt.setPixelSize(QFontInfo(fnt).pixelSize());
@@ -302,7 +312,8 @@ void ComputerItemDelegate::drawDeviceIcon(QPainter *painter, const QStyleOptionV
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
     const int IconSize = view->iconSize().width();
     int y = option.rect.y() + (sizeHint(option, index).height() - IconSize) / 2;
-    painter->drawPixmap(option.rect.x() + kIconLeftMargin, y, icon.pixmap(IconSize));
+    auto pm = getScaledPixmap(icon, IconSize, painter);
+    painter->drawPixmap(option.rect.x() + kIconLeftMargin, y, pm);
 }
 
 void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
