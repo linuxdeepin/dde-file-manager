@@ -29,8 +29,6 @@ void DiskEncryptEntry::initialize()
 
 bool DiskEncryptEntry::start()
 {
-    if (!config_utils::enableEncrypt())
-        return true;
     dpfSlotChannel->push(kMenuPluginName, "slot_MenuScene_RegisterScene",
                          DiskEncryptMenuCreator::name(), new DiskEncryptMenuCreator);
 
@@ -45,6 +43,10 @@ bool DiskEncryptEntry::start()
     EventsHandler::instance()->bindDaemonSignals();
     EventsHandler::instance()->hookEvents();
 
+    // events must be binded so the feature can be hot-switch without relaunch dde-file-manager
+    // bug reproduced when dde-file-manager launched with config was setted to false.
+    if (!config_utils::enableEncrypt())
+        return true;
     QString decJob = EventsHandler::instance()->unfinishedDecryptJob();
     if (!decJob.isEmpty() && !EventsHandler::instance()->isTaskWorking()) {
         QTimer::singleShot(1000, this, [=] {
