@@ -54,10 +54,8 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
-    # generate qm
-    execute_process(COMMAND bash "translate_generation.sh"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
 endif()
+
 message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 # sub directories
