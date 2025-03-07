@@ -4716,12 +4716,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Anahtar Parolası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="194"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"/>
+        <translation>%1 boş olamaz</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
@@ -4732,7 +4732,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="225"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"/>
+        <translation>%1 uyumsuzluk</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
@@ -4747,27 +4747,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="248"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen şifrelenmemiş bir bölüm veya USB flash sürücü gibi harici bir cihaza aktarın.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="253"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>Bu bölüm salt okunurdur, lütfen yazılabilir bir bölüme aktarın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="265"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Bölüm şifrelenmiştir, lütfen şifrelenmemiş bir bölüme veya USB flash sürücü gibi harici bir cihaza aktarın.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen %1 bölümünü şifrelemeye devam edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Sonraki</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
@@ -4778,22 +4778,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="320"/>
         <source>Export Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Kurtarma Anahtarını Dışa Aktar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="321"/>
         <source>Previous</source>
-        <translation type="unfinished"/>
+        <translation>Önceki</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="329"/>
         <source>Set %1</source>
-        <translation type="unfinished"/>
+        <translation>%1&apos;i ayarlayın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"/>
+        <translation>%1&apos;i tekrarlayın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="332"/>
@@ -4804,12 +4804,12 @@
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>anahtar parolası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="340"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation type="unfinished"/>
+        <translation>Bölüme erişimin kilidi bir parola kullanılarak açılacaktır.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
@@ -4821,7 +4821,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation type="unfinished"/>
+        <translation>Bölüme erişimin kilidi TPM güvenlik yongası ve PIN kullanılarak açılacaktır.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="350"/>
@@ -4831,7 +4831,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="421"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation type="unfinished"/>
+        <translation>TPM kilitlidir ve bölüm şifrelemesi için kullanılamaz. Lütfen TPM şifresini iptal edin veya başka bir kilit açma yöntemi seçin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
@@ -4842,7 +4842,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM status error!</source>
-        <translation type="unfinished"/>
+        <translation>TPM durum hatası!</translation>
     </message>
 </context>
 <context>
