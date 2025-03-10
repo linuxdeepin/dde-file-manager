@@ -17,8 +17,6 @@
 
 #include <QVBoxLayout>
 
-static constexpr int kTagWidgetHeight { 114 };
-
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
 
@@ -80,8 +78,6 @@ void TagWidgetPrivate::initializeUI()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &TagWidgetPrivate::initUiForSizeMode);
 #else
     mainLayout->setContentsMargins(10, 10, 10, 10);
-    crumbEdit->setMaximumHeight(100);
-    q->setFixedHeight(kTagWidgetHeight);
 #endif
 }
 
@@ -89,8 +85,6 @@ void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 6, 10, 10);
-    crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 50));
     colorListWidget->setFixedWidth(214);
-    q->setFixedHeight(DSizeModeHelper::element(kTagWidgetHeight, kTagWidgetHeight));
 #endif
 }
