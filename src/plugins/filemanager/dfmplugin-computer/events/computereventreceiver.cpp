@@ -93,7 +93,8 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             break;
         }
         // only handle mounts by udisks
-        if (!path.startsWith("/media/")) {
+        QRegularExpression udisksPrefixRegx(R"(^(/run/media/|/media/))");
+        if (!path.contains(udisksPrefixRegx)) {
             //            fmInfo() << "not udisks mount path, ignore prehandle" << url;
             break;
         }
