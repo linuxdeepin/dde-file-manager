@@ -102,6 +102,7 @@ protected:
     void dropEvent(QDropEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
 private:
     CanvasViewPrivate *d;

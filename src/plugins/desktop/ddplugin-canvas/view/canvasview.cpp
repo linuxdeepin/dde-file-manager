@@ -477,6 +477,19 @@ void CanvasView::focusOutEvent(QFocusEvent *event)
     QAbstractItemView::focusOutEvent(event);
 }
 
+void CanvasView::changeEvent(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::FontChange:
+        updateGrid();
+        break;
+    default:
+        break;
+    }
+
+    QAbstractItemView::changeEvent(event);
+}
+
 void CanvasView::setScreenNum(const int screenNum)
 {
     d->screenNum = screenNum;

@@ -2255,6 +2255,19 @@ void CollectionView::focusInEvent(QFocusEvent *event)
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
+void CollectionView::changeEvent(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::FontChange:
+        updateRegionView();
+        break;
+    default:
+        break;
+    }
+
+    QAbstractItemView::changeEvent(event);
+}
+
 void CollectionView::scrollContentsBy(int dx, int dy)
 {
     // scroll the viewport to let the editor scrolled with item.
