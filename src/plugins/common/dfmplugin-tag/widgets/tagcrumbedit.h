@@ -23,7 +23,10 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
+    void updateHeight();
+
     bool isEditByDoubleClick { false };
+    QTextEdit *edit { nullptr };
 };
 
 }
