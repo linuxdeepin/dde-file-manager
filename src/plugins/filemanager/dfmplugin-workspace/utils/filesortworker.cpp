@@ -1528,13 +1528,18 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     auto item = childData(sortInfo->fileUrl());
     if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
+        bool hasMatched { false };
         for (int i = 0; i < nameFilters.size(); ++i) {
             QString pattern = QRegularExpression::wildcardToRegularExpression(nameFilters.at(i));
             re.setPattern(pattern);
             if (re.match(item->data(kItemNameRole).toString()).hasMatch()) {
                 item->setAvailableState(true);
+                hasMatched = true;
+                break;
             }
         }
+        if (!hasMatched)
+            item->setAvailableState(false);
     }
 
     // 处理继承
