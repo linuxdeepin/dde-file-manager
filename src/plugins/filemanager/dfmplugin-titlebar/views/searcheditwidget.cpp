@@ -292,7 +292,7 @@ void SearchEditWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
 
-    int rightMargin = 60;
+    int rightMargin = 70;
 
     int spinnerX = event->size().width() - spinner->size().width() - rightMargin;
     int spinnerY = (event->size().height() - spinner->size().height()) / 2;
