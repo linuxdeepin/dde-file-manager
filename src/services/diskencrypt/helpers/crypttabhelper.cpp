@@ -158,12 +158,12 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
 
 void crypttab_helper::updateInitramfs()
 {
-    QtConcurrent::run([]{
-        auto fd = inhibit_helper::inhibit("Updating initramfs...");
-        qInfo() << "start update initramfs...";
-        system("update-initramfs -u");
-        qInfo() << "initramfs updated.";
-    });
+    // QtConcurrent::run([]{
+    auto fd = inhibit_helper::inhibit("Updating initramfs...");
+    qInfo() << "start update initramfs...";
+    system("update-initramfs -u");
+    qInfo() << "initramfs updated.";
+    // });
 }
 
 bool crypttab_helper::removeCryptItem(const QString &activeName)
