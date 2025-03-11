@@ -65,10 +65,6 @@ void DoCutFilesWorker::stop()
 
 bool DoCutFilesWorker::initArgs()
 {
-    if (!speedtimer) {
-        speedtimer = new QElapsedTimer();
-        speedtimer->start();
-    }
 
     AbstractWorker::initArgs();
 
@@ -223,7 +219,7 @@ void DoCutFilesWorker::onUpdateProgress()
 void DoCutFilesWorker::endWork()
 {
     // delete all cut source files
-    if(localFileHandler) {
+    if (localFileHandler) {
         for (const auto &info : cutAndDeleteFiles) {
             bool ret = localFileHandler->deleteFile(info->uri());
             if (!ret) {
@@ -232,7 +228,7 @@ void DoCutFilesWorker::endWork()
             }
         }
     }
-    
+
     return FileOperateBaseWorker::endWork();
 }
 

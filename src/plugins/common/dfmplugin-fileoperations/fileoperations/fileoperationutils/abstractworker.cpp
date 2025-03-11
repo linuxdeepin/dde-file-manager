@@ -121,8 +121,6 @@ void AbstractWorker::pause()
         return;
     if (speedtimer) {
         elapsed += speedtimer->elapsed();
-        speedtimerList.append(speedtimer);
-        speedtimer = nullptr;
         JobInfoPointer info(new QMap<quint8, QVariant>);
         info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
         info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
@@ -141,10 +139,8 @@ void AbstractWorker::pause()
 void AbstractWorker::resume()
 {
     setStat(AbstractJobHandler::JobState::kRunningState);
-    if (!speedtimer) {
-        speedtimer = new QElapsedTimer;
-        speedtimer->start();
-    }
+    if (speedtimer)
+        speedtimer->restart();
 
     waitCondition.wakeAll();
 }
@@ -645,8 +641,8 @@ void AbstractWorker::saveOperations()
         emit requestSaveRedoOperation(QString::number(quintptr(handle.data()), 16), deleteFirstFileSize.load());
     }
     if (jobType == AbstractJobHandler::JobType::kCopyType
-            || jobType == AbstractJobHandler::JobType::kCutType
-            || FileOperationsUtils::canBroadcastPaste()) {
+        || jobType == AbstractJobHandler::JobType::kCutType
+        || FileOperationsUtils::canBroadcastPaste()) {
         QUrl sourceUrl = sourceUrls.isEmpty() ? QUrl() : sourceUrls.first();
         if (!sourceUrl.isValid() || !targetUrl.isValid()) {
             fmWarning(logDFMBase()) << "broadcast paste error, cast invalid source or target url!!!"
@@ -668,8 +664,6 @@ AbstractWorker::~AbstractWorker()
         delete speedtimer;
         speedtimer = nullptr;
     }
-
-    qDeleteAll(speedtimerList);
 }
 
 /*!
