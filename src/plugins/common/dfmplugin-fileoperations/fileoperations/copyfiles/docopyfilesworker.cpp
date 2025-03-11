@@ -85,11 +85,6 @@ void DoCopyFilesWorker::stop()
 
 bool DoCopyFilesWorker::initArgs()
 {
-    if (!speedtimer) {
-        speedtimer = new QElapsedTimer();
-        speedtimer->start();
-    }
-
     AbstractWorker::initArgs();
 
     if (sourceUrls.count() <= 0) {

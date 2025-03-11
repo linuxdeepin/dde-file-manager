@@ -196,9 +196,8 @@ public:
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
     QElapsedTimer *speedtimer { nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
-    std::atomic_int64_t deleteFirstFileSize{ false };
-    bool isCutMerge{false};
-    QList<QElapsedTimer *> speedtimerList;
+    std::atomic_int64_t deleteFirstFileSize { false };
+    bool isCutMerge { false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
