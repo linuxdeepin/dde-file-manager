@@ -54,6 +54,7 @@ BasicWidget::BasicWidget(QWidget *parent)
 {
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
 
     infoFetchWorker->moveToThread(fetchThread);
     fetchThread->start();

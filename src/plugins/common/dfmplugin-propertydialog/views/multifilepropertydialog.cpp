@@ -24,6 +24,7 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
     initHeadUi();
     setFixedSize(300, 360);
     fileCalculationUtils = new FileStatisticsJob;
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
     QList<QUrl> targets;
     UniversalUtils::urlsTransformToLocal(urlList, &targets);
