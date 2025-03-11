@@ -1,3 +1,9 @@
+dde-file-manager (6.5.38) unstable; urgency=medium
+
+  * fix bug
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 11 Mar 2025 18:54:03 +0800
+
 dde-file-manager (6.5.37) unstable; urgency=medium
 
   * Optimize file dialog and fix issues including extension search, directory size display, font handling, tag widget behavior, partition access, icon rendering, and sorting enhancements with full-width character and directory support.
