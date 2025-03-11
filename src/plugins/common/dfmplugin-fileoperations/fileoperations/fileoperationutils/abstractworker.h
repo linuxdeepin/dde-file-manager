@@ -194,6 +194,7 @@ public:
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
     QAtomicInteger<qint64> bigFileSize { 0 };   // bigger than this is big file
+    QMutex speedTimerMutex;
     QElapsedTimer *speedtimer { nullptr };   // time eslape
     std::atomic_int64_t elapsed { 0 };
     std::atomic_int64_t deleteFirstFileSize{ false };

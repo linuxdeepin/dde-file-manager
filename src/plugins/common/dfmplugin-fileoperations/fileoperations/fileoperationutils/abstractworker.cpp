@@ -119,10 +119,19 @@ void AbstractWorker::pause()
 {
     if (currentState == AbstractJobHandler::JobState::kPauseState)
         return;
-    if (speedtimer) {
-        elapsed += speedtimer->elapsed();
-        speedtimerList.append(speedtimer);
-        speedtimer = nullptr;
+
+    bool needUpdateInfo { false };
+    {
+        QMutexLocker locker(&speedTimerMutex);
+        if (speedtimer) {
+            needUpdateInfo = true;
+            elapsed += speedtimer->elapsed();
+            speedtimerList.append(speedtimer);
+            speedtimer = nullptr;
+        }
+    }
+
+    if (needUpdateInfo) {
         JobInfoPointer info(new QMap<quint8, QVariant>);
         info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
         info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
@@ -664,9 +673,13 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
     }
-    if (speedtimer) {
-        delete speedtimer;
-        speedtimer = nullptr;
+
+    {
+        QMutexLocker locker(&speedTimerMutex);
+        if (speedtimer) {
+            delete speedtimer;
+            speedtimer = nullptr;
+        }
     }
 
     qDeleteAll(speedtimerList);
