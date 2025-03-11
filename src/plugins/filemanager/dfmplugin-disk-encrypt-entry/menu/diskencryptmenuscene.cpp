@@ -561,6 +561,9 @@ void DiskEncryptMenuScene::sortActions(QMenu *parent)
 {
     Q_ASSERT(parent);
     QList<QAction *> acts = parent->actions();
+    if (acts.isEmpty())
+        return;
+
     QAction *before { acts.last() };
     for (int i = 0; i < acts.count(); ++i) {
         auto act = acts.at(i);
