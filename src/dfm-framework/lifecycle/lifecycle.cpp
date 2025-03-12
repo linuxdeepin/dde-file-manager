@@ -141,13 +141,12 @@ bool readPlugins()
  */
 bool loadPlugins()
 {
-    if (!pluginManager->loadPlugins())
-        return false;
+    bool result { pluginManager->loadPlugins() };
 
     pluginManager->initPlugins();
     pluginManager->startPlugins();
 
-    return true;
+    return result;
 }
 
 /*!

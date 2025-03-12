@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 
     if (!pluginsLoad()) {
         qCCritical(logAppDialogX11) << "Load pugin failed!";
-        abort();
+        Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
     }
 
     int ret { a.exec() };

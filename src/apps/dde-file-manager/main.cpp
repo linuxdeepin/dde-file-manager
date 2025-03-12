@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
 
         if (!pluginsLoad()) {
             qCCritical(logAppFileManager) << "Load pugin failed!";
-            abort();
+            Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
         }
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
