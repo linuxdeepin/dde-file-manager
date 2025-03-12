@@ -222,7 +222,7 @@ QString ErrorMessageAndAction::errorToStringByCause(const QUrl &url, const Abstr
     case AbstractJobHandler::JobErrorType::kRetryReadOrWriteFailed:
         return tr("Copy or Cut File failed, cause: %1. Retry copy this file again!").arg(errorMsg);
     case AbstractJobHandler::JobErrorType::kCanNotAccessFile:
-        return tr("Copy or Cut File failed, cause: %1.").arg(errorMsg);
+        return tr("Copy or Cut File failed, cause: Can't access file!");
     default:
         break;
     }
