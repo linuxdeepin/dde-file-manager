@@ -72,6 +72,18 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
     q->onChangeExpandState(index, !q->isExpanded(index));
 }
 
+void SideBarViewPrivate::setTransparentPalette()
+{
+    QPalette treePal = q->palette();
+    treePal.setColor(QPalette::Base, Qt::transparent);
+    q->setPalette(treePal);
+}
+
+void SideBarViewPrivate::restorePalette()
+{
+    q->setPalette(originPalette);
+}
+
 void SideBarViewPrivate::notifyOrderChanged()
 {
     if (draggedGroup.isEmpty())
@@ -221,14 +233,11 @@ SideBarView::SideBarView(QWidget *parent)
 
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
-    QPalette treePal = palette();
-    treePal.setColor(QPalette::Base, Qt::transparent);
-    treePal.setColor(QPalette::Window, Qt::transparent);
-    setPalette(treePal);
 
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
     connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);
 
+    d->originPalette = palette();
     d->lastOpTime = 0;
 
     setStyle(new SidebarViewStyle(style()));
@@ -811,9 +820,12 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
     if (!item)
         return;
 
-    this->setExpanded(index, expand);
-
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
+
+    d->setTransparentPalette();
+    setExpanded(index, expand);
+    d->restorePalette();
+
     if (groupItem) {
         groupItem->setExpanded(expand);
         const QVariantMap &gMap = SideBarHelper::groupExpandRules();
