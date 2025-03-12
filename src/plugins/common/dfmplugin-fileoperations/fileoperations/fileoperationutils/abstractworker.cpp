@@ -563,6 +563,10 @@ AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType>();
+    if (!speedtimer) {
+        speedtimer = new QElapsedTimer();
+        speedtimer->start();
+    }
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
