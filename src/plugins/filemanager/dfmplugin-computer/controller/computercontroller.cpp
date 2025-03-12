@@ -375,13 +375,13 @@ void ComputerController::actEject(const QUrl &url)
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
         DevMngIns->detachBlockDev(id, [](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            if (!ok)
+            if (!ok && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
         });
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            if (!ok) {
+            if (!ok  && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
                 fmInfo() << "unmount protocol device failed: " << id << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
