@@ -96,6 +96,7 @@ public:
     static bool supportLongName(const QUrl &url);
 
     static bool isFullWidthChar(const QChar ch, QChar &normalized);
+    static QString makeQString(const QString::const_iterator &it, uint unicode);
 
 private:
     static QMutex cacheCopyingMutex;

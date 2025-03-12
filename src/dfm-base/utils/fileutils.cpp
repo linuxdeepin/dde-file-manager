@@ -1115,6 +1115,16 @@ bool FileUtils::isFullWidthChar(const QChar ch, QChar &normalized)
     return false;
 }
 
+QString FileUtils::makeQString(const QString::const_iterator &it, uint unicode)
+{
+    if (it->isHighSurrogate()) {
+        QString str(QChar::highSurrogate(unicode));
+        str.append(QChar::lowSurrogate(unicode));
+        return str;
+    } 
+    return *it;
+}
+
 bool FileUtils::isSymbol(const QChar ch)
 {
     // 如果是高代理项，不应该单独判断
@@ -1254,16 +1264,16 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
             return !isHanzi1;
         if (isHanzi1) {
             // 直接使用 QString 构造包含单个 Unicode 码点的字符串
-            QString str1(QChar::highSurrogate(unicode1), QChar::lowSurrogate(unicode1));
-            QString str2(QChar::highSurrogate(unicode2), QChar::lowSurrogate(unicode2));
+            QString str1 = makeQString(it1, unicode1);
+            QString str2 = makeQString(it2, unicode2);
             return sortCollator.compare(str1, str2) < 0;
         }
 
         // 处理普通字符
         if (!isNumb1 && !isNumb2) {
-            QChar ch1 = it1->isHighSurrogate() ? QChar(unicode1) : *it1;
-            QChar ch2 = it2->isHighSurrogate() ? QChar(unicode2) : *it2;
-            return ch1.toLower() < ch2.toLower();
+            QString str1 = makeQString(it1, unicode1);
+            QString str2 = makeQString(it2, unicode2);
+            return str1.toLower() < str2.toLower();
         }
 
         return isNumb1;
