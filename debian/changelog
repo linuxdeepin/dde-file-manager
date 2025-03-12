@@ -1,3 +1,9 @@
+dde-file-manager (6.5.39) unstable; urgency=medium
+
+  * Prevent UI flickering during sidebar expansion, improve Unicode sorting in file comparison, simplify file info creation and speedtimer management, ensure proper initialization, and replace abort() with Q_ASSERT_X for plugin loading failures. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 12 Mar 2025 20:26:26 +0800
+
 dde-file-manager (6.5.38) unstable; urgency=medium
 
   * fix bug
