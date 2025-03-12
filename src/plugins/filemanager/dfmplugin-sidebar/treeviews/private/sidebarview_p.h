@@ -14,6 +14,7 @@
 #include <QModelIndex>
 #include <QUrl>
 #include <QDropEvent>
+#include <QPalette>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -31,15 +32,16 @@ class SideBarViewPrivate : public QObject
     QModelIndex currentHoverIndex;
     bool isItemDragged = false;
     QList<QUrl> urlsForDragEvent;
-    qint64 lastOpTime;   //上次操作的时间（ms）
+    qint64 lastOpTime;   // 上次操作的时间（ms）
     QUrl draggedUrl;
     QString draggedGroup;
     QVariantMap groupExpandState;
     QUrl sidebarUrl;
     DFMBASE_NAMESPACE::DFMMimeData dfmMimeData;
+    QPalette originPalette;
 
     explicit SideBarViewPrivate(SideBarView *qq);
-    bool checkOpTime();   //检查当前操作与上次操作的时间间隔
+    bool checkOpTime();   // 检查当前操作与上次操作的时间间隔
     void notifyOrderChanged();
     void updateDFMMimeData(const QDropEvent *event);
     bool checkTargetEnable(const QUrl &targetUrl);
@@ -49,6 +51,10 @@ class SideBarViewPrivate : public QObject
 private Q_SLOTS:
     void currentChanged(const QModelIndex &curIndex);
     void onItemDoubleClicked(const QModelIndex &index);
+
+private:
+    void setTransparentPalette();
+    void restorePalette();
 };
 
 DPSIDEBAR_END_NAMESPACE
