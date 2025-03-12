@@ -493,12 +493,6 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
         return true;
     }
 
-    if (!pointer->d->loader->load()) {
-        pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
-        qCCritical(logDPF) << pointer->errorString() << pointer->d->name << pointer->d->loader->fileName();
-        return false;
-    }
-
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // Check Qt version compatibility after plugin is loaded
     if (!checkPluginQtVersion(pointer)) {
@@ -507,6 +501,12 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
         return false;
     }
 #endif
+
+    if (!pointer->d->loader->load()) {
+        pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
+        qCCritical(logDPF) << pointer->errorString() << pointer->d->name << pointer->d->loader->fileName();
+        return false;
+    }
 
     // resolve loader instance
     bool isNullPluginInstance { false };
