@@ -31,7 +31,7 @@ void NormalDecryptWorker::run()
         return;
     }
 
-    int r = crypt_setup::csDecrypt(devPath, devPass, devName);
+    int r = crypt_setup::csDecryptMoveHead(devPath, devPass, devName);
     if (r < 0) {
         qWarning() << "device decrypt failed!" << devPath;
         setExitCode(r);

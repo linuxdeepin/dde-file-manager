@@ -923,3 +923,129 @@ int crypt_setup_helper::genDetachHeaderPath(const QString &dev, QString *name)
 
     return disk_encrypt::kSuccess;
 }
+
+int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase, const QString &displayName)
+{
+    QString backupHeader;
+    int r = crypt_setup_helper::backupDetachHeader(dev, &backupHeader);
+    if (r < 0)
+        return r;
+
+    int status = crypt_setup_helper::headerStatus(backupHeader);
+    if (status == crypt_setup_helper::kDecryptFully) {
+        // device already decrypted, remove the backup header.
+        ::remove(backupHeader.toStdString().c_str());
+        return disk_encrypt::kSuccess;
+    }
+
+    struct crypt_device *cdev = nullptr;
+    dfmbase::FinallyUtil atFinish([&] {
+        if (cdev) crypt_free(cdev);
+    });
+
+    r = crypt_init_data_device(&cdev,
+                               backupHeader.toStdString().c_str(),
+                               dev.toStdString().c_str());
+    if (r < 0) {
+        qWarning() << "cannot init crypt device!" << dev << r;
+        return -disk_encrypt::kErrorInitCrypt;
+    }
+
+    r = crypt_load(cdev,
+                   CRYPT_LUKS,
+                   nullptr);
+    if (r < 0) {
+        qWarning() << "cannot load crypt device!" << dev << r;
+        return -disk_encrypt::kErrorLoadCrypt;
+    }
+
+    uint32_t flags;
+    r = crypt_persistent_flags_get(cdev,
+                                   CRYPT_FLAGS_REQUIREMENTS,
+                                   &flags);
+    if (r < 0) {
+        qWarning() << "cannot get persistent flag!" << dev << r;
+        return -disk_encrypt::kErrorGetReencryptFlag;
+    }
+    crypt_params_reencrypt args;
+    r = crypt_reencrypt_status(cdev,
+                               &args);
+    if (r < 0) {
+        qWarning() << "get reencrypt status failed!" << dev << r;
+        return -disk_encrypt::kErrorCheckReencryptStatus;
+    }
+
+    bool encrypting = (flags & CRYPT_REQUIREMENT_OFFLINE_REENCRYPT)
+            || (flags & CRYPT_REQUIREMENT_ONLINE_REENCRYPT);
+    encrypting &= (args.mode == CRYPT_REENCRYPT_ENCRYPT);
+    if (encrypting) {
+        qWarning() << "device is under encrypting, cannot decrypt!" << dev << flags;
+        return -disk_encrypt::kErrorWrongFlags;
+    }
+    if (r == CRYPT_REENCRYPT_CRASH) {
+        // open and close to repair the decrypt process.
+        auto name = "dm-" + dev.mid(5);
+        r = crypt_activate_by_passphrase(cdev,
+                                         name.toStdString().c_str(),
+                                         CRYPT_ANY_SLOT,
+                                         passphrase.toStdString().c_str(),
+                                         passphrase.length(),
+                                         CRYPT_ACTIVATE_RECOVERY);
+        if (r < 0) {
+            qWarning() << "cannot activate device by name!" << dev << r << name;
+            return -disk_encrypt::kErrorActive;
+        }
+        crypt_deactivate(cdev,
+                         name.toStdString().c_str());
+    }
+
+
+    struct crypt_params_reencrypt encArgs
+    {
+        .mode = CRYPT_REENCRYPT_DECRYPT,
+                .direction = CRYPT_REENCRYPT_BACKWARD,
+                .resilience = "checksum",
+                .hash = "sha256",
+                .data_shift = 0,
+                .max_hotzone_size = 0,
+                .device_size = 0
+
+    };
+
+
+    r = crypt_reencrypt_init_by_passphrase(cdev,
+                                           nullptr,
+                                           passphrase.toStdString().c_str(),
+                                           passphrase.length(),
+                                           CRYPT_ANY_SLOT,
+                                           CRYPT_ANY_SLOT,
+                                           nullptr,
+                                           nullptr,
+                                           &encArgs);
+    if (r < 0) {
+        qWarning() << "cannot init reencrypt process!" << dev << r;
+        return -disk_encrypt::kErrorWrongPassphrase;   // might not pass wrong.
+    }
+
+    QPair<QString, QString> devInfo { dev, displayName };
+    r = crypt_reencrypt_run(cdev,
+                            crypt_setup_helper::onDecrypting,
+                            (void *)&devInfo);
+    if (r < 0) {
+        qWarning() << "decrypt device failed!" << dev << r;
+        return -disk_encrypt::kErrorReencryptFailed;
+    }
+
+    qInfo() << "start move device superblock area.";
+    Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 0.99);
+    if (!filesystem_helper::moveFsForward(dev)) {
+        qWarning() << "recovery filesystem failed!" << dev;
+        return -disk_encrypt::kErrorResizeFs;
+    }
+    Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 1);
+    qInfo() << "device superblock has been moved.";
+
+    ::remove(backupHeader.toStdString().c_str());
+
+    return disk_encrypt::kSuccess;
+}
