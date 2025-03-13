@@ -16,7 +16,9 @@
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
 
+#include <QToolTip>
 #include <QPainter>
+#include <QHelpEvent>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsBlurEffect>
@@ -37,6 +39,16 @@ const int kSmallItemHeight { 138 };
 const int kLargeItemWidth { 284 };
 const int kLargeItemHeight { 84 };
 }   // namespace
+
+struct DeviceItemInfo
+{
+    QString deviceName;
+    QString fileSystem;
+    int fsLabelWidth;
+    int textMaxWidth;
+    QRect labelRect;
+    bool showFsTag;
+};
 
 //!
 //! \brief 一些特殊的字体和 CESI_*_GB* 的字体在计算机页面重命名时，显示位置偏上
@@ -197,6 +209,25 @@ void ComputerItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
     editor->setGeometry(textRect);
 }
 
+bool ComputerItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        const auto &displayName = index.data(Qt::DisplayRole).toString();
+        ComputerItemData::ShapeType type = ComputerItemData::ShapeType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
+        switch (type) {
+        case ComputerItemData::kSmallItem:
+            showSmallItemToolTip(event, view, option, index);
+            return true;
+        case ComputerItemData::kLargeItem:
+            showLargeItemToolTip(event, view, option, index);
+            return true;
+        default:
+            break;
+        }
+    }
+    return QStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
 void ComputerItemDelegate::closeEditor(ComputerView *view)
 {
     if (!view || !editingIndex.isValid())
@@ -325,27 +356,12 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     painter->setFont(fnt);
     QFontMetrics fm(fnt);
 
-    QString devName = index.data(Qt::DisplayRole).toString();
-    auto fs = index.data(ComputerModel::DataRoles::kFileSystemRole).toString();
-    int fsLabelWidth = fm.horizontalAdvance(fs.toUpper());
-
-    const int IconSize = view->iconSize().width();
-    const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
-    // if show-fs is enabled in setting, then add a 2pix spacing, else treat it as 0.
-    DFMBASE_USE_NAMESPACE
-    bool showFsTag = Application::instance()->genericAttribute(Application::GenericAttribute::kShowFileSystemTagOnDiskIcon).toBool();
-    showFsTag &= !fs.isEmpty();
-    if (showFsTag)
-        fsLabelWidth += 2;
-    else
-        fsLabelWidth = 0;
-    devName = fm.elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
+    auto info = calculateDeviceLabelInfo(option, index, fnt);
+    QString devName = fm.elidedText(info.deviceName, Qt::ElideMiddle, info.textMaxWidth - info.fsLabelWidth - 5);
 
     // draw label
     QRect realPaintedRectForDevName;
-    QRect preRectForDevName = option.rect;
-    preRectForDevName.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
-    preRectForDevName.setTop(option.rect.top() + 10);
+    QRect preRectForDevName = info.labelRect;
     preRectForDevName.setHeight(fm.height());
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
 
@@ -354,26 +370,26 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     painter->drawText(preRectForDevName, Qt::AlignVCenter, devName, &realPaintedRectForDevName);
 
     // draw filesystem tag behind label
-    if (showFsTag) {
+    if (info.showFsTag) {
         fnt.setWeight(QFont::ExtraLight);
         painter->setFont(fnt);
         QFontMetrics fm(fnt);
 
         // sets the paint rect
         auto fsTagRect = realPaintedRectForDevName;
-        fsTagRect.setWidth(fsLabelWidth - 2);   // 2 pixel spacing is added above, so remove it.
+        fsTagRect.setWidth(info.fsLabelWidth - 2);   // 2 pixel spacing is added above, so remove it.
         fsTagRect.setHeight(fm.height() - 4);
         fsTagRect.moveLeft(realPaintedRectForDevName.right() + 12);   // 12 pixel spacing behind real painted rect for device name
         fsTagRect.moveBottom(realPaintedRectForDevName.bottom() - (realPaintedRectForDevName.height() - fsTagRect.height()) / 2);   // keep vertical center with label
         fsTagRect.adjust(-5, 0, 5, 0);
 
         QColor brushColor, penColor, borderColor;
-        fs = fs.toUpper();
-        if (fs == "EXT2" || fs == "EXT3" || fs == "EXT4" || fs == "VFAT") {
+        info.fileSystem = info.fileSystem.toUpper();
+        if (info.fileSystem == "EXT2" || info.fileSystem == "EXT3" || info.fileSystem == "EXT4" || info.fileSystem == "VFAT") {
             brushColor = QColor(0xA1E4FF);
             penColor = QColor(0x0081B2);
             borderColor = QColor(0x73C7EE);
-        } else if (fs == "NTFS" || fs == "FAT16" || fs == "FAT32" || fs == "EXFAT") {
+        } else if (info.fileSystem == "NTFS" || info.fileSystem == "FAT16" || info.fileSystem == "FAT32" || info.fileSystem == "EXFAT") {
             brushColor = QColor(0xFFDDA1);
             penColor = QColor(0x502504);
             borderColor = QColor(0xEEB273);
@@ -389,7 +405,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
         const qreal FsTagRectRadius = 7.5;
         painter->drawRoundedRect(fsTagRect, FsTagRectRadius, FsTagRectRadius);
         painter->setPen(penColor);
-        painter->drawText(fsTagRect, Qt::AlignCenter, fs);
+        painter->drawText(fsTagRect, Qt::AlignCenter, info.fileSystem);
     }
 }
 
@@ -530,6 +546,88 @@ QColor ComputerItemDelegate::getProgressTotalColor() const
         return QColor(255, 255, 255, 25);
     }
     return QColor(0, 0, 0, 25);
+}
+
+DeviceItemInfo ComputerItemDelegate::calculateDeviceLabelInfo(const QStyleOptionViewItem &option, const QModelIndex &index, const QFont &font) const
+{
+    DeviceItemInfo info;
+    QFontMetrics fm(font);
+
+    info.deviceName = index.data(Qt::DisplayRole).toString();
+    info.fileSystem = index.data(ComputerModel::DataRoles::kFileSystemRole).toString();
+    info.fsLabelWidth = fm.horizontalAdvance(info.fileSystem.toUpper());
+
+    const int IconSize = view->iconSize().width();
+    info.textMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
+
+    // if show-fs is enabled in setting, then add a 2pix spacing, else treat it as 0.
+    DFMBASE_USE_NAMESPACE
+    info.showFsTag = Application::instance()->genericAttribute(Application::GenericAttribute::kShowFileSystemTagOnDiskIcon).toBool();
+    info.showFsTag &= !info.fileSystem.isEmpty();
+
+    if (info.showFsTag)
+        info.fsLabelWidth += 2;
+    else
+        info.fsLabelWidth = 0;
+
+    info.labelRect = option.rect;
+    info.labelRect.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
+    info.labelRect.setTop(option.rect.top() + 10);
+
+    return info;
+}
+
+void ComputerItemDelegate::showLargeItemToolTip(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    auto fnt = view->font();
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize() + 2);
+    fnt.setWeight(QFont::Medium);
+    QFontMetrics fm(fnt);
+
+    auto info = calculateDeviceLabelInfo(option, index, fnt);
+    int devLabelWidth = info.textMaxWidth - info.fsLabelWidth - 5;
+    if (fm.horizontalAdvance(info.deviceName) < devLabelWidth) {
+        QToolTip::hideText();
+        return;
+    }
+
+    auto elidedDevName = fm.elidedText(info.deviceName, Qt::ElideMiddle, info.textMaxWidth - info.fsLabelWidth - 5);
+    QRect preRectForDevName = info.labelRect;
+    preRectForDevName.setSize({ fm.horizontalAdvance(elidedDevName), fm.height() });
+    int realHeight = fm.boundingRect(info.deviceName).height();
+    preRectForDevName.adjust(0, fm.height() - realHeight, 0, 0);
+
+    if (preRectForDevName.contains(event->pos()))
+        QToolTip::showText(QCursor::pos(), info.deviceName, view);
+    else
+        QToolTip::hideText();
+}
+
+void ComputerItemDelegate::showSmallItemToolTip(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    QFont fnt(view->font());
+    fnt.setPixelSize(QFontInfo(fnt).pixelSize());
+    fnt.setWeight(QFont::Medium);
+    QFontMetrics fm(fnt);
+
+    const int IconSize = view->iconSize().width();
+    const int TopMargin = 16;
+
+    const int kTextMaxWidth = option.rect.width();
+    const auto &itemName = index.data(Qt::DisplayRole).toString();
+    const auto &kElidedText = fm.elidedText(itemName, Qt::ElideMiddle, kTextMaxWidth);
+    if (kElidedText == itemName) {
+        QToolTip::hideText();
+        return;
+    }
+
+    const int kLabelWidth = fm.horizontalAdvance(kElidedText);
+    const int kLabelTopMargin = 10;
+    auto labelRect = QRect(option.rect.x() + (option.rect.width() - kLabelWidth) / 2, option.rect.y() + TopMargin + IconSize + kLabelTopMargin, kLabelWidth, 40);
+    if (labelRect.contains(event->pos()))
+        QToolTip::showText(QCursor::pos(), itemName, view);
+    else
+        QToolTip::hideText();
 }
 
 }

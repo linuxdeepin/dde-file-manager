@@ -12,6 +12,7 @@
 
 namespace dfmplugin_computer {
 
+struct DeviceItemInfo;
 class ComputerView;
 class ComputerItemDelegate : public QStyledItemDelegate
 {
@@ -28,6 +29,7 @@ public:
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    virtual bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     void closeEditor(ComputerView *view);
 
@@ -45,6 +47,10 @@ private:
     QPixmap renderBlurShadow(const QSize &sz, const QColor &color, int blurRadius) const;
     QPixmap renderBlurShadow(const QPixmap &pm, int blurRadius) const;
     QColor getProgressTotalColor() const;
+
+    DeviceItemInfo calculateDeviceLabelInfo(const QStyleOptionViewItem &option, const QModelIndex &index, const QFont &font) const;
+    void showLargeItemToolTip(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index);
+    void showSmallItemToolTip(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index);
 
 private:
     ComputerView *view { nullptr };
