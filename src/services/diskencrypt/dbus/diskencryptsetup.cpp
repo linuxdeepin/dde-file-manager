@@ -42,82 +42,86 @@ DiskEncryptSetup::DiskEncryptSetup(QObject *parent)
             this, &DiskEncryptSetup::DecryptProgress);
 }
 
-void DiskEncryptSetup::InitEncryption(const QVariantMap &args)
+bool DiskEncryptSetup::InitEncryption(const QVariantMap &args)
 {
     if (m_dptr->jobRunning) {
         qInfo() << "has processing job. cannot create a new job yet.";
-        return;
+        return false;
     }
 
     if (!m_dptr->checkAuth(kActionEncrypt))
-        return;
+        return false;
 
     if (!m_dptr->validateInitArgs(args)) {
         qWarning() << "the initialize args is not valid!";
-        return;
+        return false;
     }
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
     auto worker = m_dptr->createInitWorker(type, args);
-    if (!worker) return;
+    if (!worker) return false;
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onInitEncryptFinished);
     worker->start();
+    return true;
 }
 
-void DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
+bool DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
 {
     if (m_dptr->jobRunning) {
         qInfo() << "has processing job. cannot create a new job yet.";
-        return;
+        return false;
     }
 
     if (!m_dptr->validateResumeArgs(args)) {
         qWarning() << "the resume args is not valid!";
-        return;
+        return false;
     }
     m_dptr->resumeEncryption(args);
+    return true;
 }
 
-void DiskEncryptSetup::Decryption(const QVariantMap &args)
+bool DiskEncryptSetup::Decryption(const QVariantMap &args)
 {
     if (m_dptr->jobRunning) {
         qInfo() << "has processing job. cannot create a new job yet.";
-        return;
+        return false;
     }
 
     if (!m_dptr->checkAuth(kActionDecrypt))
-        return;
+        return false;
 
     if (!m_dptr->validateDecryptArgs(args)) {
         qWarning() << "the decrytion args is not valid!";
-        return;
+        return false;
     }
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
     auto worker = m_dptr->createDecryptWorker(type, args);
-    if (!worker) return;
+    if (!worker) return false;
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onDecryptFinished);
     worker->start();
+    return true;
 }
 
-void DiskEncryptSetup::ChangePassphrase(const QVariantMap &args)
+bool DiskEncryptSetup::ChangePassphrase(const QVariantMap &args)
 {
     if (!m_dptr->checkAuth(kActionChgPwd))
-        return;
+        return false;
 
     if (!m_dptr->validateChgPwdArgs(args)) {
         qWarning() << "the change password args is not valid!";
-        return;
+        return false;
     }
 
     auto worker = new PassphraseChangeWorker(args);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onPassphraseChanged);
     worker->start();
+    return true;
 }
 
 void DiskEncryptSetup::SetupAuthArgs(const QVariantMap &args)

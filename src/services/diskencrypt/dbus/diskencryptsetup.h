@@ -20,10 +20,10 @@ public:
     explicit DiskEncryptSetup(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void InitEncryption(const QVariantMap &args);
-    void ResumeEncryption(const QVariantMap &args);
-    void Decryption(const QVariantMap &args);
-    void ChangePassphrase(const QVariantMap &args);
+    bool InitEncryption(const QVariantMap &args);
+    bool ResumeEncryption(const QVariantMap &args);
+    bool Decryption(const QVariantMap &args);
+    bool ChangePassphrase(const QVariantMap &args);
     void SetupAuthArgs(const QVariantMap &args);
     void IgnoreAuthSetup();
 

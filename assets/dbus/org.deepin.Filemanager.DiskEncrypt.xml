@@ -32,18 +32,22 @@
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </signal>
     <method name="InitEncryption">
+      <arg type="b" direction="out"/>
       <arg name="args" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="ResumeEncryption">
+      <arg type="b" direction="out"/>
       <arg name="args" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="Decryption">
+      <arg type="b" direction="out"/>
       <arg name="args" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="ChangePassphrase">
+      <arg type="b" direction="out"/>
       <arg name="args" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
