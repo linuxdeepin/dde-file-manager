@@ -28,6 +28,7 @@ public:
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    virtual bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     void closeEditor(ComputerView *view);
 
