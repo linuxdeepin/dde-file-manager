@@ -295,7 +295,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     if (!pathList.empty()) {
         result = d->doOpenFiles(pathList);
     } else {
-        result = true;
+        result = d->invalidPath.isEmpty();
     }
 
     return result;
