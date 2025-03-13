@@ -279,11 +279,19 @@ void FileManagerWindowPrivate::connectAnimationSignals()
         sideBar->setVisible(expanded);
         sidebarSep->setVisible(expanded);
 
+        // 动画完成后更新位置
+        updateSideBarSeparatorPosition();
+
         delete curSplitterAnimation;
         curSplitterAnimation = nullptr;
     });
 
-    connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, &FileManagerWindow::windowSplitterWidthChanged);
+    connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
+        Q_UNUSED(value);
+        emit q->windowSplitterWidthChanged(value.toInt());
+        // 动画过程中实时更新分割线位置
+        updateSideBarSeparatorPosition();
+    });
 }
 
 void FileManagerWindowPrivate::loadWindowState()
@@ -342,6 +350,39 @@ void FileManagerWindowPrivate::saveSidebarState()
     }
 }
 
+void FileManagerWindowPrivate::updateSideBarSeparatorStyle()
+{
+    if (!sidebarSep)
+        return;
+
+    // 设置颜色 - 仅在主题变化或初始化时需要
+    QColor sepColor(0, 0, 0);
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        sepColor.setAlphaF(0.05);   // 浅色主题 5% 透明度
+    } else {
+        sepColor.setAlphaF(0.5);   // 深色主题 50% 透明度
+    }
+
+    QPalette palette = sidebarSep->palette();
+    palette.setColor(QPalette::Window, sepColor);
+    sidebarSep->setPalette(palette);
+}
+
+void FileManagerWindowPrivate::updateSideBarSeparatorPosition()
+{
+    if (!sidebarSep || !sideBar || !splitter)
+        return;
+
+    // 确保分割线显示在侧边栏右侧边缘
+    sidebarSep->setParent(q);
+    sidebarSep->move(sideBar->x() + sideBar->width() - 1, sideBar->y());
+    sidebarSep->setFixedHeight(sideBar->height());
+    sidebarSep->raise();
+
+    // 根据侧边栏实际可见性设置分割线可见性
+    sidebarSep->setVisible(sideBar->isVisible() && sideBar->width() > 0 && sideBar->height() > 0);
+}
+
 void FileManagerWindowPrivate::updateSideBarState()
 {
     int totalWidth = q->width();
@@ -370,6 +411,12 @@ void FileManagerWindowPrivate::updateSideBarVisibility()
     }
 }
 
+void FileManagerWindowPrivate::updateSidebarSeparator()
+{
+    updateSideBarSeparatorStyle();
+    updateSideBarSeparatorPosition();
+}
+
 void FileManagerWindowPrivate::showSideBar()
 {
     if (sideBar && sideBar->isVisible())
@@ -380,6 +427,8 @@ void FileManagerWindowPrivate::showSideBar()
     expandButton->setProperty("expand", true);
     sideBarAutoVisible = true;
     emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
+
+    updateSidebarSeparator();
 }
 
 void FileManagerWindowPrivate::hideSideBar()
@@ -392,6 +441,23 @@ void FileManagerWindowPrivate::hideSideBar()
     expandButton->setProperty("expand", false);
     sideBarAutoVisible = false;
     emit q->windowSplitterWidthChanged(0);
+}
+
+void FileManagerWindowPrivate::setupSidebarSepTracking()
+{
+    if (!splitter || !sidebarSep || !sideBar)
+        return;
+
+    // 安装事件过滤器
+    sideBar->installEventFilter(q);
+
+    // 连接分割器的splitterMoved信号到更新分割线位置的槽
+    QObject::connect(splitter, &QSplitter::splitterMoved,
+                     q, [this](int pos, int index) {
+                         Q_UNUSED(pos);
+                         Q_UNUSED(index);
+                         updateSideBarSeparatorPosition();
+                     });
 }
 
 /*!
@@ -450,6 +516,11 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::iconThemeNameChanged, this, [this]() {
         d->iconLabel->update();
     });
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, [this]() {
+                d->updateSidebarSeparator();
+            });
 
     connect(d->expandButton, &DIconButton::clicked, this, [this]() {
         bool isExpand = d->expandButton->property("expand").toBool();
@@ -618,13 +689,24 @@ void FileManagerWindow::keyPressEvent(QKeyEvent *event)
 
 bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if (!d->workspace || watched != d->workspace)
-        return false;
+    // 处理工作区的键盘事件
+    if (d->workspace && watched == d->workspace && event->type() == QEvent::KeyPress) {
+        return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
+    }
 
-    if (event->type() != QEvent::KeyPress)
-        return false;
+    // 处理侧边栏事件
+    if (d->sideBar && watched == d->sideBar) {
+        switch (event->type()) {
+        case QEvent::Show:
+        case QEvent::Resize:
+            d->updateSideBarSeparatorPosition();
+            break;
+        default:
+            break;
+        }
+    }
 
-    return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
+    return false;
 }
 
 void FileManagerWindow::initializeUi()
@@ -638,7 +720,7 @@ void FileManagerWindow::initializeUi()
             d->sidebarSep->setContentsMargins(0, 0, 0, 0);
             d->sidebarSep->setVisible(true);
             d->sidebarSep->setAutoFillBackground(true);
-            d->sideBar->layout()->addWidget(d->sidebarSep);
+            d->sidebarSep->setFixedWidth(1);
         }
 
         // icon area
@@ -705,6 +787,10 @@ void FileManagerWindow::initializeUi()
 
         // cd
         cd(d->currentUrl);
+
+        // 在splitter初始化后设置分割线跟踪
+        d->updateSidebarSeparator();
+        d->setupSidebarSepTracking();
     }
 }
 

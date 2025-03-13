@@ -46,8 +46,16 @@ public:
     void loadWindowState();
     void saveWindowState();
 
+    void showSideBar();
+    void hideSideBar();
+    void setupSidebarSepTracking();
     int loadSidebarState() const;
     void saveSidebarState();
+    void updateSideBarState();
+    void updateSideBarVisibility();
+    void updateSidebarSeparator();
+    void updateSideBarSeparatorStyle();
+    void updateSideBarSeparatorPosition();
 
     void handleSplitterMoved(int pos, int index);
 
@@ -92,10 +100,6 @@ protected:
     bool sideBarShrinking { false };
 
 private:
-    void updateSideBarState();
-    void updateSideBarVisibility();
-    void showSideBar();
-    void hideSideBar();
     bool setupAnimation(bool expanded);
     void handleWindowResize(bool expanded);
     void configureAnimation(int start, int end);
