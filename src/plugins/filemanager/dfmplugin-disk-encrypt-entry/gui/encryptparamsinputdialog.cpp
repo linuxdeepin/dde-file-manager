@@ -4,6 +4,7 @@
 
 #include "encryptparamsinputdialog.h"
 #include "utils/encryptutils.h"
+#include "events/eventshandler.h"
 
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-mount/dmount.h>
@@ -247,7 +248,18 @@ bool EncryptParamsInputDialog::validateExportPath(const QString &path, QString *
 
     QStorageInfo storage(path);
     QString dev = storage.device();
-    if (dev == args.value(encrypt_param_keys::kKeyDevice).toString()) {
+    QStringList associatedDevs { dev };
+    if (dev.startsWith("/dev/mapper/")) {
+        QFileInfo f(dev);
+        if (f.isSymbolicLink()) {
+            auto linkDev = f.symLinkTarget(); // /dev/dm-*
+            if (!linkDev.isEmpty()) {
+                associatedDevs.append(EventsHandler::instance()->holderDevice(linkDev));
+            }
+        }
+    }
+
+    if (associatedDevs.contains(args.value(encrypt_param_keys::kKeyDevice).toString())) {
         setMsg(tr("Please export to an external device such as a non-encrypted partition or USB flash drive."));
         return false;
     }
