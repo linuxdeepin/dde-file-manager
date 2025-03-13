@@ -326,8 +326,9 @@ void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
             { encrypt_param_keys::kKeyJobType, param.jobType }
         };
 
-        iface.call("InitEncryption", params);
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QDBusReply<bool> ret = iface.call("InitEncryption", params);
+        if (ret.value())
+            QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 }
 
@@ -350,9 +351,11 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
         };
         if (!tpmToken.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMToken, tpmToken);
 
-        iface.call("SetupAuthArgs", params);
         qDebug() << "start reencrypt device";
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QDBusReply<bool> ret = iface.call("SetupAuthArgs", params);
+        if (ret.value())
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+
     }
 }
 
@@ -369,8 +372,9 @@ void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
             { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) }
         };
-        iface.call("Decryption", params);
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QDBusReply<bool> ret = iface.call("Decryption", params);
+        if (ret.value())
+            QApplication::setOverrideCursor(Qt::WaitCursor);
 
         EventsHandler::instance()->autoStartDFM();
     }
@@ -415,8 +419,9 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
             { encrypt_param_keys::kKeyTPMToken, token },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName }
         };
-        iface.call("ChangePassphrase", params);
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QDBusReply<bool> ret = iface.call("ChangePassphrase", params);
+        if (ret.value())
+            QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 }
 
