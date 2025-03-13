@@ -534,8 +534,9 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    // the QIcon::pixmap does size * pixelRatio.
-    auto px = icon.pixmap(size, mode, state);
+    // 根据设备像素比获取合适大小的pixmap
+    QSize deviceSize = size * pixelRatio;
+    auto px = icon.pixmap(deviceSize, mode, state);
     px.setDevicePixelRatio(pixelRatio);
 
     return px;
@@ -742,10 +743,21 @@ QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
     const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
-    qreal x = opts.rect.x();
-    qreal y = opts.rect.y();
+
+    // 保持图标原始比例
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
+
+    // 如果图标大于目标区域，等比例缩放
+    if (w > opts.rect.width() || h > opts.rect.height()) {
+        qreal scale = qMin(opts.rect.width() / w, opts.rect.height() / h);
+        w *= scale;
+        h *= scale;
+    }
+
+    qreal x = opts.rect.x();
+    qreal y = opts.rect.y();
+
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
         y += (opts.rect.size().height() - h) / 2.0;
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
@@ -780,9 +792,12 @@ QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const
 
         return backgroundRect;
     }
-    icon.paint(painter, opts.rect.toRect());
-    // return rect before scale
-    return QRectF(x, y, w, h);
+
+    // 使用QRectF和drawPixmap的重载版本来正确处理缩放
+    QRectF targetRect(x, y, w, h);
+    painter->drawPixmap(targetRect, px, px.rect());
+
+    return targetRect;
 }
 
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)
