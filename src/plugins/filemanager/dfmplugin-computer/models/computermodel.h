@@ -43,6 +43,7 @@ public:
         kActionListRole,   // return the action list that item should have
         kItemIsEditingRole,   // bool: if an item is renaming
         kDeviceDescriptionRole,
+        kDisplayNameIsElidedRole // bool
     };
     Q_ENUM(DataRoles)
 

@@ -16,6 +16,8 @@
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
 
+#include <QHelpEvent>
+#include <QToolTip>
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
@@ -197,6 +199,19 @@ void ComputerItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
     editor->setGeometry(textRect);
 }
 
+bool ComputerItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        if (index.data(ComputerModel::DataRoles::kDisplayNameIsElidedRole).toBool())
+            QToolTip::showText(event->globalPos(), index.data(Qt::DisplayRole).toString(), view, option.rect);
+        else
+            QToolTip::hideText();
+        return true;
+    }
+
+    return QStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
 void ComputerItemDelegate::closeEditor(ComputerView *view)
 {
     if (!view || !editingIndex.isValid())
@@ -256,7 +271,10 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     QFontMetrics fm(fnt);
 
     const int kTextMaxWidth = option.rect.width();
-    const QString &kElidedText = fm.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, kTextMaxWidth);
+    const QString &itemName = index.data(Qt::DisplayRole).toString();
+    const QString &kElidedText = fm.elidedText(itemName, Qt::ElideMiddle, kTextMaxWidth);
+    view->model()->setData(index, kElidedText != itemName, ComputerModel::DataRoles::kDisplayNameIsElidedRole);
+
     const int kLabelWidth = fm.horizontalAdvance(kElidedText);
     const int kLabelTopMargin = 10;
     auto labelRect = QRect(option.rect.x() + (option.rect.width() - kLabelWidth) / 2, option.rect.y() + TopMargin + IconSize + kLabelTopMargin, kLabelWidth, 40);
@@ -339,7 +357,8 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
         fsLabelWidth += 2;
     else
         fsLabelWidth = 0;
-    devName = fm.elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
+    const auto &elideDevName = fm.elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
+    view->model()->setData(index, elideDevName != devName, ComputerModel::DataRoles::kDisplayNameIsElidedRole);
 
     // draw label
     QRect realPaintedRectForDevName;
@@ -349,9 +368,9 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     preRectForDevName.setHeight(fm.height());
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
 
-    int realHeight = fm.boundingRect(devName).height();
+    int realHeight = fm.boundingRect(elideDevName).height();
     preRectForDevName.adjust(0, fm.height() - realHeight, 0, 0);   // make sure the text will not be clipped.
-    painter->drawText(preRectForDevName, Qt::AlignVCenter, devName, &realPaintedRectForDevName);
+    painter->drawText(preRectForDevName, Qt::AlignVCenter, elideDevName, &realPaintedRectForDevName);
 
     // draw filesystem tag behind label
     if (showFsTag) {

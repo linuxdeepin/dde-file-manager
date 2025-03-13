@@ -36,6 +36,7 @@ struct ComputerItemData
     int groupId;
     QWidget *widget { nullptr };
     bool isEditing = false;
+    bool isElided = false;
     DFMEntryFileInfoPointer info { nullptr };
 };
 

@@ -167,6 +167,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kDeviceDescriptionRole:
         return item->info ? item->info->description() : "";
 
+    case kDisplayNameIsElidedRole:
+        return item->isElided;
+
     default:
         return {};
     }
@@ -186,6 +189,9 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
         return true;
     } else if (role == DataRoles::kItemIsEditingRole) {
         item.isEditing = value.toBool();
+        return true;
+    } else if (role == DataRoles::kDisplayNameIsElidedRole) {
+        item.isElided = value.toBool();
         return true;
     }
     return false;
