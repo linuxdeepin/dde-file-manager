@@ -14,6 +14,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/windowutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -54,10 +55,18 @@ using namespace dde_desktop;
 #define BUILD_VERSION ((QString(VERSION) == "") ? "6.0.0.0" : QString(VERSION))
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
-static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
-static const char *const kPluginCore = "ddplugin-core";
-static const char *const kLibCore = "libddplugin-core.so";
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
+    static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
+    static const char *const kPluginCore = "ddplugin-core";
+    static const char *const kLibCore = "libddplugin-core.so";
+#else
+    static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop.qt6";
+    static const char *const kCommonPluginInterface = "org.deepin.plugin.common.qt6";
+    static const char *const kPluginCore = "ddplugin-core";
+    static const char *const kLibCore = "libdd-core-plugin.so";
+#endif
+
 
 static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
 static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
@@ -96,7 +105,7 @@ static bool pluginsLoad()
 
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
 #ifdef COMPILE_ON_V23
-    if (qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == "TreeLand") {
+    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         qCInfo(logAppDesktop) << "disable background by TreeLand";
         if (!blackNames.contains("ddplugin-background")) {
             blackNames.append("ddplugin-background");
