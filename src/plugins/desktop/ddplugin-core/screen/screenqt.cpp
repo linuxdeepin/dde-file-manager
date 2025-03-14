@@ -15,7 +15,7 @@ static QRect dealRectRatio(QRect orgRect)
     //处理缩放，先不考虑高分屏的特殊处理
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     if (ratio != 1.0)
-        orgRect = QRect(orgRect.x(), orgRect.y(), static_cast<int>(orgRect.width() / ratio), static_cast<int>(orgRect.height() / ratio));
+        orgRect = QRect(orgRect.x() / ratio, orgRect.y() / ratio, static_cast<int>(orgRect.width() / ratio), static_cast<int>(orgRect.height() / ratio));
     return orgRect;
 }
 }   // namespace GlobalPrivate
@@ -65,8 +65,11 @@ QRect ScreenQt::availableGeometry() const
     const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     const QRect hRect = handleGeometry();
 
-    if (!hRect.contains(dockrectI)) {   //使用原始大小判断的dock区所在的屏幕
-        fmDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
+    if (!hRect.contains(dockrectI) && !ret.contains(dockrect)) {
+        QRect orgDockRect(dockrectI);
+        fmDebug() << "screen:" << name() << " handleGeometry:" << hRect
+                  << " dockrectI:" << orgDockRect << " dockrect: " << dockrect
+                  << " ratio" << ratio;
         return ret;
     }
 
@@ -81,7 +84,7 @@ QRect ScreenQt::availableGeometry() const
     {
         int w = dockrect.left() - ret.left();
         if (w >= 0)
-            ret.setWidth(static_cast<int>(w / ratio));   //原始大小计算的宽，需缩放处理
+            ret.setWidth(w);
         else {
             fmCritical() << "dockrect.left() - ret.left() is invaild" << w;
         }
@@ -91,7 +94,7 @@ QRect ScreenQt::availableGeometry() const
     {
         int h = dockrect.top() - ret.top();
         if (h >= 0)
-            ret.setHeight(static_cast<int>(h / ratio));   //原始大小计算的高，需缩放处理
+            ret.setHeight(h);
         else {
             fmCritical() << "dockrect.top() - ret.top() is invaild" << h;
         }
