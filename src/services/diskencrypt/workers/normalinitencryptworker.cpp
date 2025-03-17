@@ -39,6 +39,9 @@ void NormalInitEncryptWorker::run()
     job_file_helper::createEncryptJobFile(jobArgs);
     setExitCode(disk_encrypt::kSuccess);
     qInfo() << "normal device encryption inited." << devPath;
+
+    sleep(1);
+    system("udevadm trigger");
 }
 
 job_file_helper::JobDescArgs NormalInitEncryptWorker::initJobArgs(DevPtr ptr)
