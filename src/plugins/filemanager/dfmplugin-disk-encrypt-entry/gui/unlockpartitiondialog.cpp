@@ -90,7 +90,7 @@ void UnlockPartitionDialog::updateUserHint()
                 ? tr("Unlock by passphrase")
                 : tr("Unlock by PIN");
         chgUnlockType->setText(text);
-        passwordLineEdit->setPlaceholderText(tr("Please input recovery key to unlock device"));
+        passwordLineEdit->setPlaceholderText(tr("Please enter the 24-digit recovery key"));
         passwordLineEdit->setEchoMode(QLineEdit::Normal);
         passwordLineEdit->setEchoButtonIsVisible(false);
         break;
