@@ -21,6 +21,9 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
 
+private Q_SLOTS:
+    void initEncryptEvents();
+
 private:
     void onComputerMenuSceneAdded(const QString &scene);
     void processUnfinshedDecrypt(const QString &device);

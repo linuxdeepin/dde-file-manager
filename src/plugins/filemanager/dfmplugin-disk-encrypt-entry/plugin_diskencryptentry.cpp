@@ -8,12 +8,15 @@
 #include "utils/encryptutils.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QTranslator>
 #include <QTimer>
 #include <QMenu>
 
 using namespace dfmplugin_diskenc;
+
+static constexpr char kEncryptDConfig[] { "org.deepin.dde.file-manager.diskencrypt" };
 
 bool hasComputerMenuRegisted()
 {
@@ -25,12 +28,31 @@ void DiskEncryptEntry::initialize()
     auto i18n = new QTranslator(this);
     i18n->load(QLocale(), "disk-encrypt", "_", "/usr/share/dde-file-manager/translations");
     QCoreApplication::installTranslator(i18n);
+
+    auto mng = dfmbase::DConfigManager::instance();
+    mng->addConfig(kEncryptDConfig);
+    connect(mng, &dfmbase::DConfigManager::valueChanged,
+            this, [this](const QString &config, const QString &key) {
+                if (config == kEncryptDConfig && key == "enableEncrypt")
+                    initEncryptEvents();
+            });
 }
 
 bool DiskEncryptEntry::start()
 {
+    initEncryptEvents();
+    return true;
+}
+
+void DiskEncryptEntry::initEncryptEvents()
+{
     if (!config_utils::enableEncrypt())
-        return true;
+        return;
+
+    static bool inited = false;
+    if (inited)
+        return;
+
     dpfSlotChannel->push(kMenuPluginName, "slot_MenuScene_RegisterScene",
                          DiskEncryptMenuCreator::name(), new DiskEncryptMenuCreator);
 
@@ -52,7 +74,7 @@ bool DiskEncryptEntry::start()
         });
     }
 
-    return true;
+    inited = true;
 }
 
 void DiskEncryptEntry::onComputerMenuSceneAdded(const QString &scene)
