@@ -329,9 +329,14 @@ void ComputerItemDelegate::drawDeviceIcon(QPainter *painter, const QStyleOptionV
 {
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
     const int IconSize = view->iconSize().width();
-    int y = option.rect.y() + (sizeHint(option, index).height() - IconSize) / 2;
+    const int topMargin = (sizeHint(option, index).height() - IconSize) / 2;
+
+    QRect iconRect = option.rect;
+    iconRect.setSize(view->iconSize());
+    iconRect.moveTopLeft(iconRect.topLeft() + QPoint(kIconLeftMargin, topMargin));
+
     auto pm = getScaledPixmap(icon, IconSize, painter);
-    painter->drawPixmap(option.rect.x() + kIconLeftMargin, y, pm);
+    painter->drawPixmap(iconRect, pm);
 }
 
 void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
