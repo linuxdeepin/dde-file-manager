@@ -15,28 +15,28 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="293"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="300"/>
         <source>File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་བྱེད་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="297"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="304"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>ཡིག་ཆ་དོ་དམ་བྱེད་ཆས་ནི་རྩོལ་ནུས་སྟོབས་ཆེན་ཡོད་པའི་དོ་དམ་ཡོ་བྱད་ཅིག་ཡིན། དེར་བཤེར་འཚོལ་དང་། པར་སློག སྙིགས་སྣོད། སྡུད་སྒྲིལ། བསྡུས་འགྲོལ། ཡིག་ཆའི་ངོ་བོ་སོགས་ཚུད་པའི་དོ་དམ་རྩོལ་ནུས་ལྡན་ཡོད།</translation>
     </message>
 </context>
 <context>
-    <name>DecryptWorker</name>
+    <name>DMInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
-        <source>Decrypting...</source>
+        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
+        <source>Initialize encryption </source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DeviceList</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="134"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="143"/>
         <source>Disks</source>
         <translation>སྡུད་སྡེར།</translation>
     </message>
@@ -67,28 +67,28 @@
         <translation>སྒྲིག་ཆས་བདེ་འཇགས་ངང་སྤོ་འབུད་བྱས་སོང་།</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="165"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
         <source>eject</source>
         <translation>ཕྱིར་འདོན།</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="166"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="168"/>
         <source>unmount</source>
         <translation>བཤིག་འདོན།</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="174"/>
         <source>remove</source>
         <translation>སུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="171"/>
         <source>Operation failed</source>
         <translation>བཀོལ་སྤྱོད་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="170"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>སྒྲིག་（%1）སྤྱོད་བཞིན་པས། %2བྱེད་ཐབས་མེད།</translation>
     </message>
@@ -110,11 +110,43 @@
     </message>
 </context>
 <context>
+    <name>FstabDecryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
+        <source>Decrypting </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>FstabInitEncryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
+        <source>Initialize encryption </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="785"/>
         <source>Unknown</source>
         <translation>མི་ཤེས་པ།</translation>
+    </message>
+</context>
+<context>
+    <name>NormalDecryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
+        <source>Decrypting </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>NormalInitEncryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
+        <source>Initialize encryption </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -128,37 +160,29 @@
     </message>
 </context>
 <context>
-    <name>PrencryptWorker</name>
-    <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="54"/>
-        <source>Preparing encrypt...</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1067"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1069"/>
         <source>need authorization to access</source>
         <translation>དབང་ཚད་སྤྲད་ནས་ལྟ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1137"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1140"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>%1ཡི་ཐོབ་ཐང་ངོས་འཛིན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1138"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1141"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>ཁྱོད་རང་ཐེངས་དང་པོར་ཐོ་འཇུག་བྱེད་སྐབས་དྲན་སྐུལ་འདི་མཐོང་སྲིད། </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1139"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1142"/>
         <source>The identity sent by the remote computer is</source>
         <translation>རྒྱང་སྟོན་གློག་ཀླད་ཀྱིས་བསྐུར་བའི་ཐོབ་ཐང་གི་ཆ་འཕྲིན་ནི།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1141"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1144"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>མུ་མཐུད་བཀོལ་སྤྱོད་བྱས་ཚེ་བདེ་འཇགས་ཡིན་མིན་གཏན་འཁེལ་བྱེད་དགོས་ན། རྒྱུད་ཁོངས་ཀྱི་དོ་དམ་པར་འབྲེལ་བ་བྱོས། </translation>
     </message>
@@ -176,51 +200,52 @@
         <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="426"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
         <source>Blank %1 Disc</source>
         <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="426"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="423"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="429"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="424"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="430"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>མི་ཤེས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="436"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="443"/>
         <source>%1 Drive</source>
         <translation>སྐུལ་ཆས་%1 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="455"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="392"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
         <source>%1 Encrypted</source>
         <translation>གསང་སྡོམ་%1 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="463"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="470"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="84"/>
         <source>%1 Volume</source>
         <translation>བམ་པོ་%1 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="284"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
         <source>Scanning the device, stop it?</source>
         <translation>མིག་སྔའི་སྒྲིག་ཆས་བཤར་འབེབས་བཞིན་ཡོད་པས། བཤེར་འབེབས་མཚམས་འཇོག་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Unmount failed</source>
         <translation>བཤིག་འདོན་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Cannot stop scanning device</source>
         <translation>བཤར་འབེབས་སྒྲིག་ཆས་མཚམས་འཇོག་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="421"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="422"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="93"/>
         <source>%1 on %2</source>
         <translation>%2 ཡི་ %1</translation>
@@ -306,7 +331,7 @@
         <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="214"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -314,7 +339,7 @@
         <translation>རང་འཇུག</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="240"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -337,37 +362,37 @@
         <translation>ཚན་པ་%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1206"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1213"/>
         <source>Unable to find the original file</source>
         <translation>དམིགས་འབེན་ཡིག་ཆའི་འབྲེལ་མཐུད་རྙེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="435"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="481"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
         <source>File has been moved or deleted</source>
         <translation>ཡིག་ཆ་སྤོས་ཟིན་པའམ་བསུབས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="483"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
         <source>You do not have permission to access this folder</source>
         <translation>ཁྱོད་ལ་ཡིག་ཁུག་འདི་ཀློག་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>ཁྱོད་ལ་ཡན་ལག་ཡིག་ཆར་ལྟ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>ཡིག་ཁུག་སྟོང་པ་རེད་འདུག</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="445"/>
         <source>Loading...</source>
         <translation>སྣོན་འཇུག་བྱེད་བཞིན་པ།</translation>
     </message>
@@ -858,11 +883,11 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="451"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="452"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -875,23 +900,23 @@
         <translation>མཚམས་འཇོགས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="704"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="700"/>
         <source>Shortcut</source>
         <translation>མྱུར་ལམ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1174"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1328"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>མིག་སྔའི་རྒྱུད་ཁོངས་ཀྱི་རྩིག་ཤོག་སྒོ་ལྕགས་བརྒྱབ་འདུག་པས། དོ་དམ་པ་དང་འབྲེལ་བ་བྱོས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1232"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1386"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（འདྲ་དཔེ།）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1233"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1387"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（འདྲ་དཔེ། %1）</translation>
@@ -921,7 +946,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="452"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
@@ -1174,23 +1199,23 @@
         <translation>ཡིག་ཆ་ཁ་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="115"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="125"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="116"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="126"/>
         <source>Size: %1</source>
         <translation>ཆེ་ཆུང་།%1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="116"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="117"/>
         <source>Type: %1</source>
         <translation>རིགས་གྲས། %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="119"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="120"/>
         <source>Size: 0</source>
         <translation>ཆེ་ཆུང་།0</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="126"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="127"/>
         <source>Items: %1</source>
         <translation>ཡིག་ཆའི་ཁ་གྲངས།%1</translation>
     </message>
@@ -1241,7 +1266,7 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
@@ -1380,32 +1405,32 @@
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="85"/>
         <source>New window</source>
         <translation>སྒེའུ་ཁུང་གསར་འཛུགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="89"/>
         <source>New tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="95"/>
         <source>Connect to Server</source>
         <translation>ཞབས་ཞུ་འཕྲུལ་ཆས་དང་སྦྲེལ་མཐུད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
         <source>Set share password</source>
         <translation>མཉམ་སྤྱོད་གསང་ཨང་བཟོ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Change disk password</source>
         <translation>སྡུད་སྡེར་གྱི་གསང་ཨང་བཟོ་བཅོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
         <source>Settings</source>
         <translation>སྒྲིག་འགོད།</translation>
     </message>
@@ -1737,12 +1762,12 @@
         <translation>ཡང་ན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="177"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="250"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="494"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="595"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="251"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="596"/>
         <source>Clear search history</source>
         <translation type="unfinished"/>
     </message>
@@ -1752,17 +1777,17 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="368"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="369"/>
         <source>advanced search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="449"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="450"/>
         <source>Are you sure clear search histories?</source>
         <translation type="unfinished"/>
     </message>
@@ -1830,16 +1855,16 @@
         <translation>གསང་སྡོམ་དོར་བར་དུས་ཡུན་ཅུང་རིང་ཙམ་དགོས་པས། ལེགས་གྲུབ་མ་བྱུང་བར་གློག་ཁུངས་གཏུགས་ནས་གློག་ཡོད་པ་བྱེད་དགོས།</translation>
     </message>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
+        <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
         <source>Updating grub...</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>ReencryptWorkerV2</name>
+    <name>ResumeEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
-        <source>Encrypting...</source>
+        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
+        <source>Encrypting </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2103,32 +2128,33 @@
 <context>
     <name>ddplugin_organizer::CollectionTitleBarPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="125"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
         <translation>ཚོགས་སྤྱིའི་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="137"/>
         <source>Large area</source>
         <translation>ཆེ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="133"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
         <source>Small area</source>
         <translation>ཆུང་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
         <source>Rename</source>
         <translation>མིང་ཡང་བསྐྱར་འདོགས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="169"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="171"/>
         <source>Delete</source>
         <translation>སུབ་པ།</translation>
     </message>
@@ -2241,17 +2267,17 @@
 <context>
     <name>ddplugin_organizer::OptionsWindow</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop options</source>
         <translation>ཅོག་ངོས་གདམ་ཚན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="104"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
         <source>Auto arrange icons</source>
         <translation>རི་མོ་སྟར་རང་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="124"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
         <translation type="unfinished"/>
     </message>
@@ -2282,7 +2308,7 @@
 <context>
     <name>ddplugin_organizer::RenameDialog</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="275"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="276"/>
         <source>Rename %1 Files</source>
         <translation>ཡིག་ཆ་%1མིང་བསྐྱར་དུ་འདོགས་པ།</translation>
     </message>
@@ -3072,7 +3098,7 @@
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="281"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
         <source>Copy complete info</source>
         <translation>ཆ་འཕྲིན་ཡོངས་རྫོགས་བཤུས་པ།</translation>
     </message>
@@ -3198,27 +3224,27 @@
         <translation>མཐོང་རིས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
         <source>Default icon grid density:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
         <source>Default list height:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="363"/>
         <source>Tree</source>
         <translation>སྡོང་དབྱིབས་མཐོང་རིས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="367"/>
         <source>Default view:</source>
         <translation>སོར་བཞག་མཐོང་རིས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>Icon</source>
         <translation>རྟགས་རིས་མཐོང་རིས།</translation>
     </message>
@@ -3233,102 +3259,102 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>List</source>
         <translation>གསལ་ཐོའི་མཐོང་རིས།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="370"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="373"/>
         <source>Restore default view mode for all directories</source>
         <translation>དཀར་ཆག་ཡོད་ཚད་ཀྱི་མཐོང་རིས་སོར་བཞག </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
         <source>Restore default view mode</source>
         <translation>སོར་བཞག་མཐོང་རིས་སླར་དུ་གསོ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="375"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Thumbnail preview</source>
         <translation>བསྡུས་རིས་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
         <source>Compressed file preview</source>
         <translation>སྡུད་སྒྲིལ་ཡིག་ཆར་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="384"/>
         <source>Text preview</source>
         <translation>ཡིག་ཆ་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Document preview</source>
         <translation>ཡིག་ཆ་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="385"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="388"/>
         <source>Image preview</source>
         <translation>པར་རིས་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="387"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="390"/>
         <source>Video preview</source>
         <translation>བརྙན་འཕྲིན་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="392"/>
         <source>Music preview</source>
         <translation>གླུ་དབྱངས་སྔོན་ལྟ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="392"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>རྒྱང་སྦྲེལ་ཁོར་ཡུག་ནས་བསྡུས་རིས་ལ་སྔོན་ལྟ་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="396"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>བསྡུས་རིས་སྔོན་ལྟ་ཞེས་པ་ཁ་ཕྱེ་ཚེ་རྒྱང་སྦྲེལ་དཀར་ཆག་སྣོན་འཇུག་བྱེད་དལ་དུ་འགྲོ་བ་དང་ཡང་ན་འགག་འགྲོ་སྲིད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="402"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="405"/>
         <source>Advanced</source>
         <translation>མཐོ་རིམ་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="404"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Mount</source>
         <translation>འཇུག་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
         <source>Auto mount</source>
         <translation>རང་འཇུག</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
         <source>Open after auto mount</source>
         <translation>རང་འཇུག་བྱས་རྗེས་ཁ་ཕྱེ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>ཟླ་བསྒྲིལ་ནས་Sambaམཉམ་སྤྱོད་དཀར་ཆག་གི་འཛུལ་སྒོ་མངོན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="419"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="422"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>འཛུལ་སྒོའི་འཆར་སྟོན་དཔེ་རྣམ་བརྗེས་ཚེ་འགེལ་འཇུག་གི་རྣམ་པ་ཕམ་སྲིད།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="424"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱི་ཡིག་ཆ་བེད་སྤྱོད་བྱས་ཏེ་གླེང་སྒྲོམ་འདེམས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="426"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="429"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>སྤྱིར་བཏང་གི་བསུབ་རྒྱུའི་དྲན་སྐུལ་ཁ་ཕྱེ་བ།</translation>
     </message>
@@ -3748,18 +3774,18 @@
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="374"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
         <translation>དགོངས་དག་ཞུ། ཁྱོད་ཀྱི་དཀར་ཆག་རྙེད་ཐུབ་མ་སོང་བས། སྤོ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="377"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="342"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>སྤོ་བ།</translation>
@@ -4103,22 +4129,22 @@
         <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1ནི་ཀློག་རུང་དབང་ཚད་ཡིན་པས། འབྲི་ཀློག་དབང་ཚད་ཁ་ཕྱེ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>ཁ་ཕྱེ་རྗེས་ནམ་ཡང་འབྲི་ཀློག་དབང་ཆ་ཡོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
         <source>Cancel</source>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>Enable Now</source>
         <translation>ཁ་འབྱེད་རྒྱུ་གཏན་ཁེལ།</translation>
     </message>
@@ -4182,7 +4208,7 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="197"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
         <source>%1 on %2</source>
         <translation>%1 ཐོག་གི་%2</translation>
@@ -4242,127 +4268,132 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="111"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="110"/>
         <source>Sharing</source>
         <translation>མཉམ་སྤྱོད་དོ་དམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="169"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="168"/>
         <source>Share this folder</source>
         <translation>ཡིག་ཁུག་འདི་མཉམ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="132"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
         <source>Share name</source>
         <translation>མཉམ་སྤྱོད་མིང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="134"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
         <source>Permission</source>
         <translation>དབང་ཚད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
         <source>Anonymous</source>
         <translation>སྐུང་མིང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read and write</source>
         <translation>འབྲི་ཀློག་རུང་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read only</source>
         <translation>ཀློག་ཙམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
         <source>Not allow</source>
         <translation>མི་ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
         <source>Allow</source>
         <translation>ཆོག་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Network path</source>
         <translation>དྲ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="234"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="267"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="259"/>
         <source>Copy</source>
         <translation>པར་སློག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
         <source>Username</source>
         <translation>སྤྱོད་མཁན་མིང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="299"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="588"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="291"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="577"/>
         <source>None</source>
         <translation>མེད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="301"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>Set password</source>
         <translation>གསང་ཨང་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>Change password</source>
         <translation>གསང་ཨང་བཟོ་བཅོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="150"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
         <source>Share password</source>
         <translation>མཉམ་སྤྱོད་གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="320"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="312"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>གསང་ཨང་འདི་ཉིད་མཉམ་སྤྱོད་ཡིག་ཆ་ཚང་མར་སྤྱོད་རྒྱུ་ཡིན་པས། མཉམ་སྤྱོད་གསང་ཨང་མེད་པའི་སྤྱོད་མཁན་གྱིས་“མིང་སྐུང་ནས་ལྟ་སྤྱོད་”ཀྱི་མཉམ་སྤྱོད་ཡིག་ཁུག་ལ་ལྟ་སྤྱོད་བྱ་ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="423"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="415"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>དང་བཀག་འགོག་ནི་མཉམ་སྤྱོད་མིང་ལ་བྱས་ཏེ་སྤྱོད་པ། </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="441"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="433"/>
         <source>The share name is used by another user.</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་སྤྱོད་མཁན་གཞན་གྱིས་བེད་སྤྱོད་བྱས་འདུག </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="436"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་འདུག་པས། དང་ཐོག་གི་མཉམ་སྤྱོད་ཡིག་ཁུལ་ལ་བརྗེ་དགོས་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>བརྗེ་བ།</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="593"/>
+        <source>The shared name is too long and will be truncated.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4378,35 +4409,35 @@
         <translation>ཁྱོད་ཀྱིས་སྔོན་ལ་sambaསྒྲིག་འཇུག་བྱེད་དགོས་པ་དང་། དེ་རྗེས་མཉམ་སྤྱོད་དང་འབྲེལ་བའི་བཀོལ་སྤྱོད་བྱེད་དགོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="101"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="516"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="522"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>མཉམ་སྤྱོད་མིང་ནང་%1ཡོད་མི་ཆོག་པ་དང་། འགོ་རྩོམ་སྐབས་-དང་ཡང་ན་སྟོང་པ་ཡིན་མི་རུང་། ཡང་ན་མཇུག་མ་དེའང་སྟོང་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="504"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="510"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>མཉམ་སྤྱོད་ཡིག་ཁུག་གི་མིང་མིག་སྔའི་སྤྱོད་མཁན་མིང་དང་གཅིག་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="516"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>ཡིག་ཆའི་བདེ་འཇགས་ཆེད་ཡིག་ཁུག་འདི་མཉམ་སྤྱོད་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="536"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="538"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="542"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="544"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="554"/>
         <source>Sharing failed</source>
         <translation>མཉམ་སྤྱོད་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="539"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="554"/>
         <source>The computer name is too long</source>
         <translation>རྩིས་འཁོར་མིང་རིང་དྲགས་པ།</translation>
     </message>
@@ -4577,105 +4608,105 @@
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
         <source>Unlock encrypted partition</source>
         <translation>གསང་སྡོམ་ཁུལ་ཚན་སྒོ་ལྕགས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Cancel partition encryption</source>
         <translation>ཁུལ་ཚན་གྱི་གསང་སྡོམ་མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>passphrase</source>
         <translation>གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
         <source>Changing the encryption %1</source>
         <translation>བཟོ་བཅོས་གསང་ལྡེ་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
         <source>Continue partition encryption</source>
         <translation>མུ་མཐུད་དུ་ཁུལ་ཚན་གསང་སྡོམ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
         <source>Continue partition decryption</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
         <source>Enable partition encryption</source>
         <translation>ཁུལ་ཚན་གསང་སྡོམ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>Error</source>
         <translation>ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
         <source>Cannot resolve passphrase from TPM</source>
         <translation>TPM ཁྲོད་ནས་གསང་ཨང་རག་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>PIN error</source>
         <translation>PINནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
         <source>Change passphrase failed</source>
         <translation>གསང་ཨང་བཅོས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="524"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="497"/>
         <source>Unlock device failed</source>
         <translation>སྒྲིག་ཆས་སྒོ་ལྕགས་ཕྱེ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="498"/>
         <source>Wrong passphrase</source>
         <translation>གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="543"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="516"/>
         <source>Mount device failed</source>
         <translation>སྒྲིག་ཆས་འགེལ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>unmount</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>lock</source>
         <translation>སྒོ་ལྕགས་བརྒྱབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="560"/>
         <source>Encrypt failed</source>
         <translation>གསང་སྡོམ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="561"/>
         <source>Cannot %1 device %2</source>
         <translation>%1སྒྲིག་ཆས་%2མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="672"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
         <source>Reboot to continue encrypt</source>
         <translation>བསྐྱར་དུ་འགོ་བསླངས་ནས་མུ་མཐུད་གསང་སྡོམ་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="644"/>
         <source>Reboot to finish decrypt</source>
         <translation>བསྐྱར་དུ་འགོ་བསླངས་ནས་གསང་སྡོམ་ལེགས་སྒྲུབ་བྱེད་པ།</translation>
     </message>
@@ -4683,164 +4714,164 @@
 <context>
     <name>dfmplugin_diskenc::EncryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
         <source>Unlock type</source>
         <translation>སྒོ་ལྕགས་འབྱེད་སྟངས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
         <source>Unlocked by passphrase</source>
         <translation>གསང་ཨང་སྤྱད་དེ་སྒོ་ལྕགས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
         <translation>རྩིས་འཁོར་འདིའི་ཐོག་TPM+PINསྤྱད་དེ་སྒོ་ལྕགས་འབྱེད་པ།（འོས་སྦྱོར།） </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
         <source>Automatic unlocking on this computer by TPM</source>
         <translation>རྩིས་འཁོར་འདིའི་ཐོག་TPMསྤྱད་དེ་སྒོ་ལྕགས་རང་བཞིན་གྱིས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
         <translation>དམིགས་བསལ་གྱི་གནས་ཚུལ་དཔེར་ན་གསང་ཨང་བརྗེད་པ་དང་ཡང་ན་གསང་སྡོམ་སྲ་ཆས་འཕྲོ་བརླག་ཤོར་སྐབས། ཁྱེད་ཀྱིས་སོར་ཆུད་གསང་ལྡེ་བརྒྱུད་དེ་གསང་སྡོམ་ཁུལ་ཚན་སྒོ་ལྕགས་ཕྱེ་ཆོག སོར་ཆུད་གསང་ལྡེ་གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་དུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="172"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
         <translation>གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་ཞིག་བདམས་ནས་གསང་ལྡེའི་ཡིག་ཆ་འདྲེན་ལམ་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="356"/>
         <source>Passphrase</source>
         <translation>གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
         <source>%1 cannot be empty</source>
         <translation>%1སྟོང་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="348"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>ཉུང་མཐར་ཡང་གྲངས་8དགོས་པ་དང་། A-Z, a-z, 0-9དང་མཚོན་རྟགས་ལས་3ཚུད་དགོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
         <source>%1 inconsistency</source>
         <translation>%1གཅིག་པ་མིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་འདྲེན་ལམ་སྟོང་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
         <source>Recovery key export path is not exists!</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་འདྲེན་ལམ་མི་འདུག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
         <translation>གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་དང་ཡང་ན་Uསྡེར་སོགས་ཕྱི་མཐུད་སྒྲིག་ཆས་སུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>ཁུལ་ཚན་དེ་ནི་ཀློག་ཙམ་གྱི་དབང་ཚད་ཡིན་པས། འབྲི་རུང་ཁུལ་ཚན་དུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>ཁུལ་ཚན་དེར་གསང་སྡོམ་བྱས་པས། གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་དང་ཡང་ན་Uསྡེར་སོགས་ཕྱི་མཐུད་སྒྲིག་ཆས་སུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>Please continue to encrypt partition %1</source>
         <translation>གསང་སྡོམ་གཏན་ཁེལ་ན་མུ་མཐུད་ཁུལ་ཚན་%1ལ་གསང་སྡོམ་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Next</source>
         <translation>གོམ་སྟབས་རྗེས་མ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Confirm encrypt</source>
         <translation>གསང་སྡོམ་གཏན་ཁེལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>Export Recovery Key</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་འདྲེན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="321"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
         <source>Previous</source>
         <translation>གོམ་སྟབས་སྔ་མ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>Set %1</source>
         <translation>སྒྲིག་འགོད་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Repeat %1</source>
         <translation>བསྐྱར་སྒྲིག་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="349"/>
         <source>Please enter the %1 again</source>
         <translation>ཡང་བསྐྱར་འཇུག་རོགས་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="354"/>
         <source>passphrase</source>
         <translation>གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="340"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="357"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
         <translation>ཁུལ་ཚན་དུ་འཛུལ་སྐབས་གསང་ཨང་སྤྱད་དེ་སྒོ་ལྕགས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="360"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="363"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="364"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
         <translation>ཁུལ་ཚན་དུ་འཛུལ་སྐབས་TPMབདེ་འཇགས་ཉིང་ལྷེབ་སྤྱོད་པའམ་PINསྤྱད་དེ་སྒོ་ལྕགས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
         <translation>ཁུལ་ཚན་དུ་འཛུལ་སྐབས་TPMབདེ་འཇགས་ཉིང་ལྷེབ་སྤྱད་དེ་སྒོ་ལྕགས་རང་བཞིན་འབྱེད་པ་ལས་གསང་ཨང་ར་སྤྲོད་བྱེད་མི་དགོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="421"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="435"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>TPMསྒོ་ལྕགས་བརྒྱབ་པས། ཁུལ་ཚན་གསང་སྡོམ་ལ་སྤྱོད་ཐབས་བྲལ།TPMགསང་ཨང་མེད་པར་བཟོ་བ་དང་ཡང་ན་སྒོ་ལྕགས་འབྱེད་སྟངས་གཞན་འདེམས་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="437"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="440"/>
         <source>TPM error</source>
         <translation>TPMནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="440"/>
         <source>TPM status error!</source>
         <translation>TPMརྣམ་པ་རྒྱུན་འགལ།</translation>
     </message>
@@ -4848,49 +4879,49 @@
 <context>
     <name>dfmplugin_diskenc::EncryptProgressDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
         <source>Confirm</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>ཡང་བསྐྱར་སོར་ཆུད་གསང་ལྡེ་འདྲེན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>སོར་ཆུད་གསང་ལྡེའི་ཡིག་ཆ་ཉར་མ་ཐུབ། སོར་ཆུད་གསང་ལྡེ་གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་དུ་ཡང་བསྐྱར་ཉར་བ་མ་ཟད་བདག་གཅེས་ཡག་པོ་བྱོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Error</source>
         <translation>ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་འདྲེན་ལམ་སྟོང་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
         <source>Recovery key export path is not exists!</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་འདྲེན་ལམ་མི་འདུག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>ཁུལ་ཚན་དེ་ནི་ཀློག་ཙམ་གྱི་དབང་ཚད་ཡིན་པས། འབྲི་རུང་ཁུལ་ཚན་དུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="168"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>ཁུལ་ཚན་དེར་གསང་སྡོམ་བྱས་པས། གསང་སྡོམ་མིན་པའི་ཁུལ་ཚན་དང་ཡང་ན་Uསྡེར་སོགས་ཕྱི་མཐུད་སྒྲིག་ཆས་སུ་འདྲེན་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Cannot create recovery key file!</source>
         <translation>སོར་ཆུད་གསང་ལྡེའི་ཡིག་ཆ་བཟོ་མ་ཐུབ།</translation>
     </message>
@@ -4898,180 +4929,180 @@
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="197"/>
         <source>Encrypt done</source>
         <translation>གསང་སྡོམ་བྱས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="198"/>
         <source>Device %1 has been encrypted</source>
         <translation>སྒྲིག་ཆས་%1གསང་སྡོམ་བྱས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="202"/>
         <source>Encrypt failed</source>
         <translation>གསང་སྡོམ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="203"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>སྒྲིག་ཆས་%1གསང་སྡོམ་བྱེད་མ་ཐུབ། ཉིན་ཐོར་བལྟས་ནས་ཆ་འཕྲིན་དེ་བས་མང་པ་ཐོབ་ཐབས་བྱེད་པ།（%2）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="307"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 གསང་སྡོམ་བྱེད་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="308"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>གསང་སྡོམ་བྱེད་པའི་བརྒྱུད་རིམ་ཁྲོད་རྒྱུད་ཁོངས་འགག་སྲིད་པས། རྒྱུད་ཁོངས་གང་ཐུབ་ཀྱིས་བཀོལ་སྤྱོད་ཉུང་ཙམ་བྱོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 གསང་སྡོམ་མེད་པར་བཟོ་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>དོར་བའི་བརྒྱུད་རིམ་ཁྲོད་རྒྱུད་ཁོངས་འགག་སྲིད་པས། རྒྱུད་ཁོངས་གང་ཐུབ་ཀྱིས་བཀོལ་སྤྱོད་ཉུང་ཙམ་བྱོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>Error</source>
         <translation>ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>TPMརྣམ་པ་རྒྱུན་འགལ་ཡིན་པས། སོར་ཆུད་གསང་ལྡེ་སྤྱད་དེ་སྒོ་ལྕགས་ཕྱེ་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>Wrong PIN</source>
         <translation>%1ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
         <source>Wrong passphrase</source>
         <translation>གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM error</source>
         <translation>TPMནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="363"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="387"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>སོར་ཆུད་གསང་ལྡེ་སྤྱད་དེ་སྒྲིག་ཆས་ཀྱི་སྒོ་ལྕགས་ཕྱེ་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="424"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="448"/>
         <source>Preencrypt done</source>
         <translation>སྔོན་འགྲོའི་གསང་སྡོམ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="449"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>སྒྲིག་ཆས་%1ལ་སྔོན་འགྲོའི་གསང་སྡོམ་བྱས་ཟིན། འགོ་བསྐྱར་དུ་བསླངས་ནས་གསང་སྡོམ་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱོས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="431"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="455"/>
         <source>Preencrypt failed</source>
         <translation>སྔོན་འགྲོའི་གསང་སྡོམ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="432"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="456"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>སྒྲིག་ཆས་%1ལ་སྔོན་འགྲོའི་གསང་སྡོམ་བྱེད་མ་ཐུབ། ཉིན་ཐོར་བལྟས་ནས་ཆ་འཕྲིན་དེ་བས་མང་པ་ཐོབ་ཐབས་བྱེད་པ།（%2）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="452"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="476"/>
         <source>Decrypt done</source>
         <translation>གསང་སྡོམ་དོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="453"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="477"/>
         <source>Device %1 has been decrypted</source>
         <translation>སྒྲིག་ཆས་%1གསང་སྡོམ་དོར་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Decrypt disk</source>
         <translation>སྡུད་སྡེར་གསང་སྡོམ་དོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="460"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Wrong passpharse or PIN</source>
         <translation>གསང་ཨང་ངམ་PINནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Decrypt failed</source>
         <translation>གསང་སྡོམ་མེད་པར་བཟོ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>སྒྲིག་ཆས་%1གསང་སྡོམ་བྱེད་བཞིན་ཡོད། གསང་སྡོམ་ལེགས་གྲུབ་བྱུང་རྗེས་སྒོ་ལྕགས་ཕྱེ་རོགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="469"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>སྒྲིག་ཆས་%1གསང་སྡོམ་མེད་པར་བཟོ་མ་ཐུབ། ཉིན་ཐོར་བལྟས་ནས་ཆ་འཕྲིན་དེ་བས་མང་པ་ཐོབ་ཐབས་བྱེད་པ།（%2）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>passphrase</source>
         <translation>གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="499"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="506"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
         <source>Change %1 done</source>
         <translation>བཟོ་བཅོས་%1བྱས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%1ཡི་%2བཅོས་ཟིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
         <source>Change %1 failed</source>
         <translation>%1བཅོས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
         <source>Wrong %1</source>
         <translation>%1ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="542"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>%1སྒྲིག་ཆས་%2བཅོས་མ་ཐུབ། ཉིན་ཐོར་བལྟས་ནས་ཆ་འཕྲིན་དེ་བས་མང་པ་ཐོབ་ཐབས་བྱེད་པ།（%3）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="571"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Unlocking device failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="579"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
         <translation type="unfinished"/>
     </message>
@@ -5111,8 +5142,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
-        <source>Please input recovery key to unlock device</source>
-        <translation>སོར་ཆུད་གསང་ལྡེ་སྤྱད་དེ་སྒྲིག་ཆས་ཀྱི་སྒོ་ལྕགས་ཕྱེ་རོགས།</translation>
+        <source>Please enter the 24-digit recovery key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
@@ -5226,19 +5257,19 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Original file %1 does not exist</source>
         <translation>ཁུངས་ཡིག་ཆ་%1མེད་པ།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>བཀོལ་སྤྱོད་བྱེད་མ་ཐུབ། ཡིག་ཆ་%1གི་ཆེ་ཆུང་ཚད་4GBལས་བརྒལ་འདུག</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
         <translation>དམིགས་འབིན་སྡུད་སྡེར་གྱི་ཤོང་ཚད་མི་འདང་བ།</translation>
     </message>
@@ -5249,30 +5280,31 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
         <translation>དམིགས་འབེན་སྒྲིག་ཆས་ནི་ཀློག་ཙམ་རེད་འདུག</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
         <translation>དམིགས་འབེན་ཡིག་ཁུག་ནི་ཁུངས་ཡིག་ཁུག་ནང་ཡོད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
         <translation>བཀོལ་སྤྱོད་འདིར་རྒྱབ་སྐྱོར་མེད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>ཁྱོད་ལ་དཀར་ཆག་%1གི་ཡན་ལག་ཡིག་ཆར་ལྟ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
         <translation>སོར་ཆུད་མ་ཐུབ། ཐོག་མའི་འགྲོ་ལམ་རྙེད་ཐབས་བྲལ།</translation>
     </message>
@@ -5307,83 +5339,83 @@
         <translation>ཡིག་ཆ་%1ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>ཡིག་ཆ%1གི་ནང་དོན་ཀློག་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>ཡིག་ཆ་%1གི་ནང་དོན་འབྲི་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>དཀར་ཆག་%1བཟོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="197"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>ཡིག་ཆ་%1བསུབས་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>ཡིག་ཆ་%1 སྙིགས་སྣོད་དུ་སྤོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>ཡིག་ཆ་%1སྤོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>ཡིག་ཆ་%1གི་ཆ་ཚང་རང་བཞིན་ལ་ཞིབ་བཤེར་བྱེད་མ་ཐུབ། རྒྱུ་མཚན་ནི་%2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>སྦྲེལ་མཐུད་བཟོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="221"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>ཡིག་ཆ་མཁོ་ཕབ་བམ་དྲས་སྦྱར་བྱེད་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
         <source>%1 already exists in target folder</source>
         <translation>དམིགས་འབེན་ཡིག་ཁུག་ནང་མིང་%1བྱས་པའི་ཡིག་ཆ་འདུག</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
-        <source>Original path %1</source>
-        <translation>ཐོག་མའི་འགྲོ་ལམ།%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
+        <source>Original path %1</source>
+        <translation>ཐོག་མའི་འགྲོ་ལམ།%1</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="251"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
         <source>Target path %1</source>
         <translation>དམིགས་འབེན་འགྲོ་ལམ།%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="262"/>
         <source>Original path %1 Target path %2</source>
         <translation>ཐོག་མའི་འགྲོ་ལམ་%1དང་། དམིགས་འབེན་འགྲོ་ལམ་%2</translation>
     </message>
@@ -5665,68 +5697,68 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="82"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Basic info</source>
         <translation>གཞི་རྩའི་ཆ་འཕྲིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Size</source>
         <translation>ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Contains</source>
         <translation>ཡིག་ཆའི་ཁ་གྲངས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="92"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
         <source>Type</source>
         <translation>རིགས་གྲས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="105"/>
         <source>Location</source>
         <translation>གནས་ས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
         <source>Created</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Accessed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="96"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Modified</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="100"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
         <source>Hide this file</source>
         <translation>ཡིག་ཆ་འདི་ཡིབ་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
         <source>Resolution</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Duration</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="312"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="406"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="324"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="420"/>
         <source>%1 item</source>
         <translation>ཚན་པ་%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="406"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="420"/>
         <source>%1 items</source>
         <translation>ཚན་པ་%1</translation>
     </message>
@@ -5734,12 +5766,12 @@
 <context>
     <name>dfmplugin_propertydialog::CloseAllDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="47"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="50"/>
         <source>Close all</source>
         <translation>ཚང་མ་ཁ་རྒྱོབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="80"/>
         <source>Total size: %1, %2 files</source>
         <translation>སྤྱིའི་ཤོང་ཚད་%1དང་། ཡིག་ཆ་སྤྱིའི་ཁ་གྲངས་%2</translation>
     </message>
@@ -5823,37 +5855,37 @@
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
         <source>Multiple Files</source>
         <translation>ཡིག་ཆ་མང་པོ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
         <source>Basic info</source>
         <translation>གཞི་རྩའི་ཆ་འཕྲིན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
         <source>Total size</source>
         <translation>སྤྱིའི་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
         <source>Number of files</source>
         <translation>ཡིག་ཆའི་ཁ་གྲངས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
         <source>Time accessed</source>
         <translation>ལྟ་སྤྱོད་དུས་ཚོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
         <source>Time modified</source>
         <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="147"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>ཡིག་ཆ་%1དང་། ཡིག་ཁུག་%2</translation>
     </message>
@@ -5871,7 +5903,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="294"/>
         <source>Allow to execute as program</source>
         <translation>བྱ་རིམ་གྱིས་ལག་བསྟར་བྱེད་ཆོག</translation>
     </message>
@@ -6152,32 +6184,32 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="368"/>
         <source>Quick access</source>
         <translation>མགྱོགས་མྱུར་ལྟ་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="369"/>
         <source>Partitions</source>
         <translation>ཁུལ་ཚན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="370"/>
         <source>Network</source>
         <translation>དྲ་རྒྱ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="371"/>
         <source>Tag</source>
         <translation>མཚོན་རྟགས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
         <source>Other</source>
         <translation>གཞན།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
         <source>Unknown Group</source>
         <translation>རྒྱུས་མེད་པའི་ཚོ་པ།</translation>
     </message>
@@ -6278,7 +6310,7 @@
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="41"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="39"/>
         <source>Tag</source>
         <translation>མཚོན་རྟགས།</translation>
     </message>
@@ -6294,66 +6326,66 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="70"/>
         <source>Connect to Server</source>
         <translation>ཞབས་ཞུ་འཕྲུལ་ཆས་དང་སྦྲེལ་མཐུད་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="123"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="382"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="391"/>
         <source>Clear History</source>
         <translation>ཉེ་ཆར་བེད་སྤྱོད་བྱས་པའི་ཞབས་ཞུ་འཕྲུལ་ཆས་སུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
         <source>Unfavorite</source>
         <translation>བསྡུ་ཉར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="307"/>
         <source>Error</source>
         <translation>ཆ་འཕྲིན་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>ཁྲིམས་འགལ་urlཉར་ཚགས་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="356"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>སྦྲེལ་མཐུད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
         <source>Charset Encoding</source>
         <translation>ཡིག་རྟགས་ཚོགས་སྤྱིའི་ཨང་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Default</source>
         <translation>སོར་བཞག</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="477"/>
         <source>My Favorites</source>
         <translation>ངས་བསྡུ་ཉར་བྱས་པའི་ཞབས་ཞུ་འཕྲུལ་ཆས།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="464"/>
         <source>No favorites yet</source>
         <translation>བསྡུ་ཉར་བྱས་པ་མེད།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
         <source>Favorite</source>
         <translation>བསྡུ་ཉར།</translation>
     </message>
@@ -6475,12 +6507,12 @@
 <context>
     <name>dfmplugin_titlebar::NavWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
         <source>back</source>
         <translation>ཕྱིར་བཤོལ།</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
         <source>forward</source>
         <translation>མདུན་སྐྱོད།</translation>
     </message>
@@ -6547,27 +6579,27 @@
 <context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
         <source>View Options</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="134"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
         <translation type="unfinished"/>
     </message>
@@ -7526,12 +7558,12 @@
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2125"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2128"/>
         <source>Mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2129"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation type="unfinished"/>
     </message>
@@ -7652,7 +7684,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="952"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="954"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>ཉར་ཚགས།</translation>
