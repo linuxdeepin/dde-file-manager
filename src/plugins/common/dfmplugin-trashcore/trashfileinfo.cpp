@@ -86,7 +86,7 @@ QString TrashFileInfoPrivate::copyName() const
         return QString();
 
     if (targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(targetUrl)) {
+        if (FileUtils::isDesktopFileSuffix(targetUrl)) {
             DesktopFileInfo dfi(targetUrl);
             return dfi.nameOf(NameInfoType::kFileCopyName);
         }
@@ -218,7 +218,7 @@ QString TrashFileInfo::nameOf(const NameInfoType type) const
         return d->fileName();
     case NameInfoType::kFileCopyName: {
         if (d->targetUrl.isValid()) {
-            if (FileUtils::isDesktopFile(d->targetUrl)) {
+            if (FileUtils::isDesktopFileSuffix(d->targetUrl)) {
                 return d->copyName();
             }
         }

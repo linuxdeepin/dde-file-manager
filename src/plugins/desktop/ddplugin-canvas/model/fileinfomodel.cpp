@@ -110,7 +110,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
     // the first time if the cached icon is empty, even if the icon icon resource is installed next.
     //
     // detail see: https://bugreports.qt.io/browse/QTBUG-112257
-    if (FileUtils::isDesktopFileInfo(itemInfo)) {
+    if (FileUtils::isDesktopFileSuffix(itemInfo->fileUrl())) {
         checkAndRefreshDesktopIcon(itemInfo);
     }
 }
@@ -595,7 +595,7 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
         return true;
-    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
+    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFileSuffix(targetFileUrl)) {
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }
