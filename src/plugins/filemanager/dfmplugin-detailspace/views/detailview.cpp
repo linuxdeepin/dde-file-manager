@@ -68,6 +68,7 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
 
     if (widget) {
         widget->setParent(this);
+        widget->setMaximumWidth(scrollArea->width() - vLayout->contentsMargins().right());
         QFrame *frame = new QFrame(this);
         DPushButton *btn = new DPushButton(frame);
         btn->setEnabled(false);
