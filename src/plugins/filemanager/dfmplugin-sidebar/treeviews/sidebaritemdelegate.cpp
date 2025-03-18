@@ -461,11 +461,11 @@ void SideBarItemDelegate::drawDciIcon(const QStyleOptionViewItem &option, QPaint
 
 void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const
 {
-    auto mouseHoverColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ObviousBackground);
+    QColor mouseHoverColor;
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        mouseHoverColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
+        mouseHoverColor = QColor(255, 255, 255, 25);  // 白色，10%透明度
     else
-        mouseHoverColor = mouseHoverColor.lighter();
+        mouseHoverColor = QColor(0, 0, 0, 25);  // 黑色，10%透明度
 
     painter->setBrush(mouseHoverColor);
     painter->setPen(Qt::NoPen);
