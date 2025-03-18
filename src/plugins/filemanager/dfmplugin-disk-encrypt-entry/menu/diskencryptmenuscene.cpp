@@ -440,7 +440,7 @@ QString DiskEncryptMenuScene::generateTPMConfig()
                   { "session-hash-alg", sessionHashAlgo },
                   { "primary-key-alg", primaryKeyAlgo },
                   { "primary-hash-alg", primaryHashAlgo },
-                  { "pcr", "7" },
+                  { "pcr", "0,7" },
                   { "pcr-bank", primaryHashAlgo } };
     return QJsonDocument(tpmParams).toJson();
 }
