@@ -173,14 +173,50 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 
 void RootInfo::reset()
 {
+    disconnect();
+
     {
         QWriteLocker lk(&childrenLock);
         childrenUrlList.clear();
         sourceDataList.clear();
     }
 
+    if (watcher) {
+        watcher->disconnect(this);
+        watcher->stopWatcher();
+    }
+
     traversaling = false;
     traversalFinish = false;
+
+    cancelWatcherEvent = true;
+    for (const auto &thread : traversalThreads) {
+        thread->traversalThread->stop();
+    }
+    // wait old dir iterator thread
+    for (const auto &thread : discardedThread) {
+        thread->disconnect();
+        thread->stop();
+        thread->quit();
+    }
+}
+
+bool RootInfo::canDelete() const
+{
+    for (auto &future : watcherEventFutures) {
+        if (!future.isFinished())
+            return false;
+    }
+    for (const auto &thread : traversalThreads) {
+        if (!thread->traversalThread->isFinished())
+            return false;
+    }
+    // wait old dir iterator thread
+    for (const auto &thread : discardedThread) {
+        if (!thread->isFinished())
+            return false;
+    }
+    return true;
 }
 
 void RootInfo::doFileDeleted(const QUrl &url)

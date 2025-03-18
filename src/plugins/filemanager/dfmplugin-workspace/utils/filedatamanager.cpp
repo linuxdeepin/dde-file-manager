@@ -34,6 +34,15 @@ RootInfo *FileDataManager::fetchRoot(const QUrl &url)
 
 bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order)
 {
+    for (auto it = deleteLaterList.begin(); it != deleteLaterList.end();) {
+        if ((*it)->canDelete()) {
+            (*it)->deleteLater();
+            it = deleteLaterList.erase(it);
+        } else {
+            it++;
+        }
+    }
+
     RootInfo *root = rootInfoMap.value(rootUrl);
     if (!root)
         return false;
@@ -59,8 +68,9 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
                 continue;
             if (!checkNeedCache(rootInfo) || refresh) {
                 auto root = rootInfoMap.take(rootInfo);
-                if (root)
-                    root->deleteLater();
+                if (!root)
+                    return;
+                handleDeletion(root);
             }
         }
     }
@@ -77,8 +87,9 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
         if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
             rootInfoMap.value(rootInfo)->disconnect();
             auto root = rootInfoMap.take(rootInfo);
-            if (root)
-                root->deleteLater();
+            if (!root)
+                return;
+            handleDeletion(root);
         }
     }
 }
@@ -122,8 +133,8 @@ FileDataManager::FileDataManager(QObject *parent)
 FileDataManager::~FileDataManager()
 {
     // clean rootInfoMap
-    qDeleteAll(rootInfoMap.values());
     rootInfoMap.clear();
+    deleteLaterList.clear();
 }
 
 RootInfo *FileDataManager::createRoot(const QUrl &url)
@@ -150,4 +161,15 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
         return true;
 
     return false;
+}
+
+void FileDataManager::handleDeletion(RootInfo *root)
+{
+    Q_ASSERT(root);
+    if (root->canDelete()) {
+        root->deleteLater();
+    } else {
+        root->reset();
+        deleteLaterList.append(root);
+    }
 }

@@ -46,8 +46,8 @@ private:
     ~FileDataManager();
 
     RootInfo *createRoot(const QUrl &url);
-
     bool checkNeedCache(const QUrl &url);
+    void handleDeletion(RootInfo *root);
 
     QMap<QUrl, RootInfo *> rootInfoMap {};
     QMap<QUrl, TraversalThreadPointer> traversalPointerMap {};
@@ -57,6 +57,7 @@ private:
     // scheme in cacheDataSchemes will have cache
     QList<QString> cacheDataSchemes {};
     QMap<QUrl, int> dataRefMap {};
+    QList<RootInfo *> deleteLaterList {};
 };
 
 }
