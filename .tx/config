@@ -3,34 +3,34 @@ host = https://www.transifex.com
 minimum_perc = 80
 mode = developer
 
-[o:linuxdeepin:p:deepin-file-manager:r:dde-file-manager]
+[o:linuxdeepin:p:deepin-file-manager:r:0a6fa53d131bb4b638857fe8ae0c00fc]
 file_filter = translations/dde-file-manager_<lang>.ts
 source_file = translations/dde-file-manager.ts
 source_lang = en
 type = QT
 
-[o:linuxdeepin:p:deepin-file-manager:r:dde-computer-desktop]
+[o:linuxdeepin:p:deepin-file-manager:r:8cc45db32d00e6704e4125f9402e5345]
 file_filter = translations/dde-computer-desktop/desktop_<lang>.ts
 preTranslate_file = src/apps/dde-desktop/data/applications/dde-computer.desktop
 source_file = translations/dde-computer-desktop/desktop.ts
 source_lang = en
 type = QT
 
-[o:linuxdeepin:p:deepin-file-manager:r:dde-home-desktop]
+[o:linuxdeepin:p:deepin-file-manager:r:f6d8d4909591ee337b1327cb967dcd75]
 file_filter = translations/dde-home-desktop/desktop_<lang>.ts
 preTranslate_file = src/apps/dde-desktop/data/applications/dde-home.desktop
 source_file = translations/dde-home-desktop/desktop.ts
 source_lang = en
 type = QT
 
-[o:linuxdeepin:p:deepin-file-manager:r:dde-trash-desktop]
+[o:linuxdeepin:p:deepin-file-manager:r:a3893caf009b82e01dc02f9eadf14859]
 file_filter = translations/dde-trash-desktop/desktop_<lang>.ts
 preTranslate_file = src/apps/dde-desktop/data/applications/dde-trash.desktop
 source_file = translations/dde-trash-desktop/desktop.ts
 source_lang = en
 type = QT
 
-[o:linuxdeepin:p:deepin-file-manager:r:dde-file-manager-desktop]
+[o:linuxdeepin:p:deepin-file-manager:r:6949a27081263c15b2ac671fdb7009d2]
 file_filter = translations/dde-file-manager-desktop/desktop_<lang>.ts
 preTranslate_file = src/apps/dde-file-manager/dde-file-manager.desktop
 source_file = translations/dde-file-manager-desktop/desktop.ts
