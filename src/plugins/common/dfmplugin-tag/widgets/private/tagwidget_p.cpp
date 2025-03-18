@@ -16,6 +16,7 @@
 #endif
 
 #include <QVBoxLayout>
+#include <QSizePolicy>
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
@@ -48,6 +49,8 @@ void TagWidgetPrivate::initializeUI()
     colorListWidget->setMaximumHeight(30);
     colorListWidget->setObjectName("tagActionWidget");
     colorListWidget->setToolTipVisible(false);
+
+    colorListWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     crumbEdit = new TagCrumbEdit(q);
     crumbEdit->setObjectName("tagCrumbEdit");
@@ -85,6 +88,6 @@ void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 6, 10, 10);
-    colorListWidget->setFixedWidth(214);
+    colorListWidget->setMaximumWidth(214);
 #endif
 }
