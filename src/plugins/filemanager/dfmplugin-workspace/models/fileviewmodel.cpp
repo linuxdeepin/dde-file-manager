@@ -506,7 +506,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (FileUtils::isTrashDesktopFile(targetUrl)) {
         FileOperatorHelperIns->moveToTrash(view, treeSelectUrl.isEmpty() ? dropUrls : treeSelectUrl);
         return true;
-    } else if (FileUtils::isDesktopFile(targetUrl)) {
+    } else if (FileUtils::isDesktopFileSuffix(targetUrl)) {
         FileOperatorHelperIns->openFilesByApp(view, dropUrls, QStringList { targetUrl.toLocalFile() });
         return true;
     }

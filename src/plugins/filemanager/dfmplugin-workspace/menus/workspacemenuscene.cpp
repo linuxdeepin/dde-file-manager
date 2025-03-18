@@ -176,7 +176,7 @@ void WorkspaceMenuScene::updateState(DMenu *parent)
     }
 
     bool renameEnabled = true;
-    if (d->focusFileInfo && FileUtils::isDesktopFileInfo(d->focusFileInfo)
+    if (d->focusFileInfo && FileUtils::isDesktopFileSuffix(d->focusFileInfo->fileUrl())
         && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)) {
         renameEnabled = false;
     }

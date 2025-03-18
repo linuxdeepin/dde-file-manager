@@ -84,7 +84,7 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
         disableActions = &normalDisableActions;
 
     bool renameEnabled = true;
-    if (focusFileInfo && FileUtils::isDesktopFileInfo(focusFileInfo)
+    if (focusFileInfo && FileUtils::isDesktopFileSuffix(focusFileInfo->fileUrl())
         && !focusFileInfo->canAttributes(CanableInfoType::kCanRename))
         renameEnabled = false;
 

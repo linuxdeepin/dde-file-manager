@@ -255,9 +255,7 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
 {
     Q_ASSERT(info);
     const QString &suffix = info->nameOf(NameInfoType::kSuffix);
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
-        || info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
-        || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         QMimeType type = info->fileMimeType();
         if (!type.isValid())
@@ -1053,25 +1051,25 @@ bool FileUtils::isFullWidthChar(const QChar ch, QChar &normalized)
 {
     // 全角字符的 Unicode 范围
     ushort unicode = ch.unicode();
-    
+
     // 处理全角数字 (0xFF10-0xFF19)
     if (unicode >= 0xFF10 && unicode <= 0xFF19) {
         normalized = QChar(unicode - 0xFF10 + '0');
         return true;
     }
-    
+
     // 处理全角大写字母 (0xFF21-0xFF3A)
     if (unicode >= 0xFF21 && unicode <= 0xFF3A) {
         normalized = QChar(unicode - 0xFF21 + 'A');
         return true;
     }
-    
+
     // 处理全角小写字母 (0xFF41-0xFF5A)
     if (unicode >= 0xFF41 && unicode <= 0xFF5A) {
         normalized = QChar(unicode - 0xFF41 + 'a');
         return true;
     }
-    
+
     // 处理全角标点符号
     static const QHash<ushort, QChar> punctuationMap {
         { 0xFF01, '!' },   // ！
@@ -1095,15 +1093,15 @@ bool FileUtils::isFullWidthChar(const QChar ch, QChar &normalized)
         { 0xFF1C, '<' },   // ＜
         { 0xFF1E, '>' },   // ＞
         { 0xFF02, '"' },   // ＂
-        { 0xFF07, '\'' },  // ＇
+        { 0xFF07, '\'' },   // ＇
         { 0xFF0B, '+' },   // ＋
         { 0xFF03, '#' },   // ＃
         { 0xFF04, '$' },   // ＄
         { 0xFF05, '%' },   // ％
         { 0xFF20, '@' },   // ＠
         { 0xFF0A, '*' },   // ＊
-        { 0xFF3C, '\\' },  // ＼
-        { 0xFF5E, '~' }    // ～
+        { 0xFF3C, '\\' },   // ＼
+        { 0xFF5E, '~' }   // ～
     };
 
     auto it = punctuationMap.find(unicode);
@@ -1121,7 +1119,7 @@ QString FileUtils::makeQString(const QString::const_iterator &it, uint unicode)
         QString str(QChar::highSurrogate(unicode));
         str.append(QChar::lowSurrogate(unicode));
         return str;
-    } 
+    }
     return *it;
 }
 
@@ -1130,12 +1128,12 @@ bool FileUtils::isSymbol(const QChar ch)
     // 如果是高代理项，不应该单独判断
     if (ch.isHighSurrogate() || ch.isLowSurrogate())
         return false;
-        
+
     QChar normalized;
     if (isFullWidthChar(ch, normalized)) {
         return isSymbol(normalized);
     }
-    
+
     // 对于普通字符进行原有判断
     return ch.script() != QChar::Script_Han && !isNumOrChar(ch);
 }
@@ -1156,7 +1154,7 @@ QString FileUtils::numberStr(const QString &str, int pos)
         const QChar &ch = str.at(pos);
         QChar number;
         if (isFullWidthChar(ch, number)) {
-            tmp += number;  // 将全角数字转换为半角数字
+            tmp += number;   // 将全角数字转换为半角数字
         } else {
             tmp += ch;
         }
@@ -1178,19 +1176,19 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
     bool preIsNum = false;
     bool isSymbol1 = false, isSymbol2 = false, isHanzi1 = false,
          isHanzi2 = false, isNumb1 = false, isNumb2 = false;
-    
+
     // 使用迭代器来正确处理代理对字符
     QString::const_iterator it1 = name1.constBegin();
     QString::const_iterator it2 = name2.constBegin();
-    
+
     while (it1 != name1.constEnd() && it2 != name2.constEnd()) {
         // 获取当前完整字符(可能是代理对)
         uint unicode1 = it1->isHighSurrogate() && (it1 + 1) != name1.constEnd()
-            ? QChar::surrogateToUcs4(*it1, *(it1 + 1))
-            : it1->unicode();
+                ? QChar::surrogateToUcs4(*it1, *(it1 + 1))
+                : it1->unicode();
         uint unicode2 = it2->isHighSurrogate() && (it2 + 1) != name2.constEnd()
-            ? QChar::surrogateToUcs4(*it2, *(it2 + 1))
-            : it2->unicode();
+                ? QChar::surrogateToUcs4(*it2, *(it2 + 1))
+                : it2->unicode();
 
         // 如果字符相同，继续比较下一个
         if (unicode1 == unicode2) {
@@ -1208,7 +1206,7 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
         QChar number1, number2;
         isNumb1 = !it1->isHighSurrogate() && isNumber(*it1);
         isNumb2 = !it2->isHighSurrogate() && isNumber(*it2);
-        
+
         if ((preIsNum && (isNumb1 ^ isNumb2)) || (isNumb1 && isNumb2)) {
             auto str1n = numberStr(name1, it1 - name1.constBegin()).toUInt();
             auto str2n = numberStr(name2, it2 - name2.constBegin()).toUInt();
@@ -1227,10 +1225,10 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
         QChar normalized1, normalized2;
         bool isFullWidth1 = isFullWidthChar(*it1, normalized1);
         bool isFullWidth2 = isFullWidthChar(*it2, normalized2);
-        
+
         isSymbol1 = !it1->isHighSurrogate() && isSymbol(*it1);
         isSymbol2 = !it2->isHighSurrogate() && isSymbol(*it2);
-        
+
         // 如果都是符号，先比较归一化后的字符
         if (isSymbol1 && isSymbol2) {
             QChar ch1 = isFullWidth1 ? normalized1 : *it1;
@@ -1249,7 +1247,7 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
             ++it2;
             continue;
         }
-        
+
         // 如果一个是符号一个不是，符号排在后面
         if (isSymbol1 ^ isSymbol2)
             return isSymbol2;
@@ -1259,7 +1257,7 @@ bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
         QChar::Script script2 = it2->isHighSurrogate() ? QChar::script(unicode2) : it2->script();
         isHanzi1 = script1 == QChar::Script_Han;
         isHanzi2 = script2 == QChar::Script_Han;
-        
+
         if (isHanzi2 ^ isHanzi1)
             return !isHanzi1;
         if (isHanzi1) {
