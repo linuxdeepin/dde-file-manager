@@ -348,6 +348,9 @@ void UserShareHelper::readShareInfos(bool sendSignal)
     QDir d(ShareConfig::kShareConfigPath);
     QFileInfoList shareList = d.entryInfoList(QDir::Files | QDir::Hidden);
     for (const auto &fileInfo : shareList) {
+        if (fileInfo.groupId() != SysInfoUtils::getUserId())
+            continue;
+
         QString filePath = fileInfo.absoluteFilePath();
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
