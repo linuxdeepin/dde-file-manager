@@ -15,28 +15,28 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="293"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="300"/>
         <source>File Manager</source>
         <translation>Gestor de fitxers</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="297"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="304"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>El Gestor de fitxers és una eina de gestió de fitxers potent i fàcil d&apos;usar que permet cercar, copiar, eliminar, comprimir i descomprimir fitxers, canviar-ne les propietats i altres funcions útils.</translation>
     </message>
 </context>
 <context>
-    <name>DecryptWorker</name>
+    <name>DMInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="243"/>
-        <source>Decrypting...</source>
-        <translation>Es desencripta...</translation>
+        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
+        <source>Initialize encryption </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DeviceList</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="134"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="143"/>
         <source>Disks</source>
         <translation>Discs</translation>
     </message>
@@ -67,28 +67,28 @@
         <translation>El dispositiu s&apos;ha extret amb seguretat.</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="165"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
         <source>eject</source>
         <translation>expulsar</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="166"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="168"/>
         <source>unmount</source>
         <translation>Desmunta</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="174"/>
         <source>remove</source>
         <translation>eliminar</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="171"/>
         <source>Operation failed</source>
         <translation>Ha fallat l&apos;operació.</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="170"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>El dispositiu (%1) està ocupat, ara no es pot %2.</translation>
     </message>
@@ -110,11 +110,43 @@
     </message>
 </context>
 <context>
+    <name>FstabDecryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
+        <source>Decrypting </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>FstabInitEncryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
+        <source>Initialize encryption </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="785"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
+    </message>
+</context>
+<context>
+    <name>NormalDecryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
+        <source>Decrypting </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>NormalInitEncryptWorker</name>
+    <message>
+        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
+        <source>Initialize encryption </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -128,37 +160,29 @@
     </message>
 </context>
 <context>
-    <name>PrencryptWorker</name>
-    <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="54"/>
-        <source>Preparing encrypt...</source>
-        <translation>Es prepara l&apos;encriptació...</translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1067"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1069"/>
         <source>need authorization to access</source>
         <translation>cal autorització per accedir-hi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1137"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1140"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>No es pot verificar la identitat de %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1138"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1141"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Això passa quan obriu la sessió per primer cop.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1139"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1142"/>
         <source>The identity sent by the remote computer is</source>
         <translation>La identitat enviada per l&apos;ordinador remot és </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1141"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1144"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Si voleu estar absolutament segur que és segur continuar, poseu-vos en contacte amb l&apos;administrador del sistema.</translation>
     </message>
@@ -176,51 +200,52 @@
         <translation>Disc de dades</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="426"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
         <source>Blank %1 Disc</source>
         <translation>Disc en blanc %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="426"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="423"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="429"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="424"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="430"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="436"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="443"/>
         <source>%1 Drive</source>
         <translation>Dispositiu: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="455"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="392"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="462"/>
         <source>%1 Encrypted</source>
         <translation>Encriptat: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="463"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="470"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="84"/>
         <source>%1 Volume</source>
         <translation>Volum: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="284"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
         <source>Scanning the device, stop it?</source>
         <translation>S&apos;escaneja el dispositiu. Voleu interrompre-ho?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Unmount failed</source>
         <translation>Ha fallat el desmuntatge.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="291"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Cannot stop scanning device</source>
         <translation>No es pot aturar l&apos;escaneig del dispositiu.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="421"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="422"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="93"/>
         <source>%1 on %2</source>
         <translation>%1 a %2</translation>
@@ -306,7 +331,7 @@
         <translation>Recent</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="214"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -314,7 +339,7 @@
         <translation>Muntatge automàtic</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="240"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -337,37 +362,37 @@
         <translation>%1 elements</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1206"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1213"/>
         <source>Unable to find the original file</source>
         <translation>No es pot trobar el fitxer original.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="435"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="481"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
         <source>File has been moved or deleted</source>
         <translation>El fitxer s&apos;ha desplaçat o eliminat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="483"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
         <source>You do not have permission to access this folder</source>
         <translation>No teniu permís per accedir a aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>No teniu permís per passar-hi fitxers.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>La carpeta és buida</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="445"/>
         <source>Loading...</source>
         <translation>Carregant...</translation>
     </message>
@@ -858,11 +883,11 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="329"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="451"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="452"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -875,23 +900,23 @@
         <translation>Interromp</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="704"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="700"/>
         <source>Shortcut</source>
         <translation>Drecera</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1174"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1328"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Aquest fons de pantalla del sistema està blocat. Poseu-vos en contacte amb l&apos;administrador.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1232"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1386"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (còpia)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1233"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1387"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (copia %1)</translation>
@@ -921,7 +946,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="452"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="453"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
@@ -1174,23 +1199,23 @@
         <translation>Obre</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="115"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="125"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="116"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="126"/>
         <source>Size: %1</source>
         <translation>Mida: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="116"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="117"/>
         <source>Type: %1</source>
         <translation>Tipus: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="119"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="120"/>
         <source>Size: 0</source>
         <translation>Mida: 0</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="126"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="127"/>
         <source>Items: %1</source>
         <translation>Elements: %1</translation>
     </message>
@@ -1241,7 +1266,7 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
@@ -1380,32 +1405,32 @@
         <translation>Camí font</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="85"/>
         <source>New window</source>
         <translation>Finestra nova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="89"/>
         <source>New tab</source>
         <translation>Pestanya nova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="95"/>
         <source>Connect to Server</source>
         <translation>Connecta amb el servidor</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
         <source>Set share password</source>
         <translation>Estableix la contrasenya de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Change disk password</source>
         <translation>Canvia la contrasenya del disc</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
         <source>Settings</source>
         <translation>Configuració</translation>
     </message>
@@ -1737,12 +1762,12 @@
         <translation>o</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="388"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="177"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="250"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="494"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="595"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="251"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="596"/>
         <source>Clear search history</source>
         <translation>Neteja l&apos;historial de cerca</translation>
     </message>
@@ -1752,17 +1777,17 @@
         <translation>Deconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>search</source>
         <translation>cerca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="368"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="369"/>
         <source>advanced search</source>
         <translation>cerca avançada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="449"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="450"/>
         <source>Are you sure clear search histories?</source>
         <translation>Segur que voleu netejar els historials de cerca?</translation>
     </message>
@@ -1830,17 +1855,17 @@
         <translation>La desencriptació pot trigar molt de temps, així que assegureu-vos que l&apos;alimentació d&apos;energia estigui connectada fins que s&apos;hagi completat.</translation>
     </message>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="671"/>
+        <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
         <source>Updating grub...</source>
         <translation>S&apos;actualitza el grub...</translation>
     </message>
 </context>
 <context>
-    <name>ReencryptWorkerV2</name>
+    <name>ResumeEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/encrypt/encryptworker.cpp" line="396"/>
-        <source>Encrypting...</source>
-        <translation>S&apos;encripta...</translation>
+        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
+        <source>Encrypting </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2103,32 +2128,33 @@
 <context>
     <name>ddplugin_organizer::CollectionTitleBarPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="125"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
         <translation>Mida de la col·lecció</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="137"/>
         <source>Large area</source>
         <translation>Àrea gran</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="133"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
         <source>Small area</source>
         <translation>Àrea petita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="134"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
         <translation>Àrea mitjana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="160"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
         <source>Rename</source>
         <translation>Canvia&apos;n el nom</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="169"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="171"/>
         <source>Delete</source>
         <translation>Elimina</translation>
     </message>
@@ -2241,17 +2267,17 @@
 <context>
     <name>ddplugin_organizer::OptionsWindow</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop options</source>
         <translation>Opcions de l&apos;escriptori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="104"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
         <source>Auto arrange icons</source>
         <translation>Arranjament automàtic de les icones</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="124"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
         <translation>Habilita l&apos;organitzador de l&apos;escriptori.</translation>
     </message>
@@ -2282,7 +2308,7 @@
 <context>
     <name>ddplugin_organizer::RenameDialog</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="275"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="276"/>
         <source>Rename %1 Files</source>
         <translation>Canvia el nom de %1 fitxers</translation>
     </message>
@@ -3072,7 +3098,7 @@
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="281"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
         <source>Copy complete info</source>
         <translation>Copia la informació completa</translation>
     </message>
@@ -3198,27 +3224,27 @@
         <translation>Visualització</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
         <source>Default icon grid density:</source>
         <translation>Densitat de graella d&apos;icones per defecte:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="351"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
         <source>Default list height:</source>
         <translation>Alçada de llista per defecte:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="363"/>
         <source>Tree</source>
         <translation>Arbre</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="367"/>
         <source>Default view:</source>
         <translation>Visualització per defecte:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>Icon</source>
         <translation>Icona</translation>
     </message>
@@ -3233,102 +3259,102 @@
         <translation>Mida de la icona per defecte:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>List</source>
         <translation>Llista</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="370"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="373"/>
         <source>Restore default view mode for all directories</source>
         <translation>Restaura el mode de visualització predeterminat per a tots els directoris.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
         <source>Restore default view mode</source>
         <translation>Restaura el mode de visualització predeterminat.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="375"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Thumbnail preview</source>
         <translation>Visualització prèvia en miniatures</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
         <source>Compressed file preview</source>
         <translation>Visualització prèvia del fitxer comprimit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="381"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="384"/>
         <source>Text preview</source>
         <translation>Visualització prèvia del text</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Document preview</source>
         <translation>Visualització prèvia del document</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="385"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="388"/>
         <source>Image preview</source>
         <translation>Visualització prèvia de la imatge</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="387"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="390"/>
         <source>Video preview</source>
         <translation>Visualització prèvia del vídeo</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="392"/>
         <source>Music preview</source>
         <translation>Visualització prèvia de la música</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="392"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>L&apos;entorn remot mostra visualitzacions prèvies de miniatures.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="396"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>Si s&apos;activa la vista prèvia de les miniatures, pot ser que el directori remot es carregui lentament o que l&apos;operació es bloqui.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="402"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="405"/>
         <source>Advanced</source>
         <translation>Avançat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="404"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Mount</source>
         <translation>Munta</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
         <source>Auto mount</source>
         <translation>Muntatge automàtic</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
         <source>Open after auto mount</source>
         <translation>Obre després de muntar-ho automàticament.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>Combina les entrades de les carpetes compartides de Samba.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="419"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="422"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>Canviar la pantalla d&apos;entrada pot provocar un error de muntatge.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="424"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>Usa el diàleg de tria de fitxers del Gestor de fitxers.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="426"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="429"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Demana&apos;m la confirmació quan s&apos;eliminin fitxers.</translation>
     </message>
@@ -3748,18 +3774,18 @@
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="374"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
         <translation>Perdoneu, no es pot trobar el directori d&apos;accés ràpid. Voleu eliminar-lo?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="377"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="342"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Elimina</translation>
@@ -4103,22 +4129,22 @@
         <translation>Ordinador</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1 és només de lectura. Voleu habilitar-hi els permisos de lectura i escriptura?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>Un cop habilitat, el permís de lectura i escriptura es concedirà permanentment.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>Enable Now</source>
         <translation>Habilita&apos;l ara</translation>
     </message>
@@ -4182,7 +4208,7 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="197"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
         <source>%1 on %2</source>
         <translation>%1 a %2</translation>
@@ -4242,127 +4268,132 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="111"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="110"/>
         <source>Sharing</source>
         <translation>Compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="169"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="168"/>
         <source>Share this folder</source>
         <translation>Comparteix aquesta carpeta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="132"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
         <source>Share name</source>
         <translation>Nom de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="134"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
         <source>Permission</source>
         <translation>Permís</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
         <source>Anonymous</source>
         <translation>Anònim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read and write</source>
         <translation>De lectura i d&apos;escriptura</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read only</source>
         <translation>Només de lectura</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
         <source>Not allow</source>
         <translation>No ho permetis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
         <source>Allow</source>
         <translation>Permet-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Network path</source>
         <translation>Camí de xarxa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="234"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="267"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="259"/>
         <source>Copy</source>
         <translation>Copia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
         <source>Username</source>
         <translation>Nom d&apos;usuari</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="299"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="588"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="291"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="577"/>
         <source>None</source>
         <translation>Cap</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="301"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>Set password</source>
         <translation>Estableix la contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>Change password</source>
         <translation>Canvia la contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="150"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
         <source>Share password</source>
         <translation>Contrasenya de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="320"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="312"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Aquesta contrasenya s&apos;aplicarà a totes les carpetes compartides i els usuaris sense contrasenya només podran accedir a les carpetes compartides que permetin l&apos;accés anònim.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="423"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="415"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>El nom de la compartició no ha de tenir dos punts (..) ni un punt (.).</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="441"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="433"/>
         <source>The share name is used by another user.</source>
         <translation>El nom de compartició l&apos;usa un altre usuari.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="444"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="436"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>El nom de compartició ja existeix. Voleu reemplaçar la carpeta compartida?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplaça</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="593"/>
+        <source>The shared name is too long and will be truncated.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4378,35 +4409,35 @@
         <translation>Primer, instal·leu samba per continuar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="101"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="516"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="522"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>El nom de compartició no ha de contenir %1 i no pot començar amb un guió (-) o espai en blanc, ni acabar amb un espai en blanc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="504"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="510"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>La carpeta de compartició no pot tenir el nom de l&apos;usuari actual.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="516"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Per protegir els fitxers, no podeu compartir aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="536"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="538"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="542"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="544"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="554"/>
         <source>Sharing failed</source>
         <translation>Ha fallat la compartició.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="539"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation>El port SMB està prohibit, comproveu l&apos;estratègia del tallafoc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="554"/>
         <source>The computer name is too long</source>
         <translation>El nom de l&apos;ordinador és massa llarg.</translation>
     </message>
@@ -4577,105 +4608,105 @@
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
         <source>Unlock encrypted partition</source>
         <translation>Desbloca la partició encriptada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Cancel partition encryption</source>
         <translation>Cancel·la l&apos;encriptació de la partició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
         <source>Changing the encryption %1</source>
         <translation>Es canvia l&apos;encriptació: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
         <source>Continue partition encryption</source>
         <translation>Continua l&apos;encriptació de la partició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
         <source>Continue partition decryption</source>
         <translation>Continua la desencriptació de la partició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
         <source>Enable partition encryption</source>
         <translation>Habilita l&apos;encriptació de particions</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
         <source>Cannot resolve passphrase from TPM</source>
         <translation>No es pot resoldre la contrasenya del TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>PIN error</source>
         <translation>Error de PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
         <source>Change passphrase failed</source>
         <translation>No s&apos;ha pogut canviar la contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="524"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="497"/>
         <source>Unlock device failed</source>
         <translation>No s&apos;ha pogut desblocar el dispositiu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="498"/>
         <source>Wrong passphrase</source>
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="543"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="516"/>
         <source>Mount device failed</source>
         <translation>Ha fallat el muntatge del dispositiu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>unmount</source>
         <translation>Desmunta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>lock</source>
         <translation>bloca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="560"/>
         <source>Encrypt failed</source>
         <translation>Ha fallat l&apos;encriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="561"/>
         <source>Cannot %1 device %2</source>
         <translation>No es pot %1 el dispositiu %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="672"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
         <source>Reboot to continue encrypt</source>
         <translation>Reinicia per continuar l&apos;encriptació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="644"/>
         <source>Reboot to finish decrypt</source>
         <translation>Reinicia per acabar l&apos;encriptació</translation>
     </message>
@@ -4683,164 +4714,164 @@
 <context>
     <name>dfmplugin_diskenc::EncryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
         <source>Unlock type</source>
         <translation>Tipus de desblocatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
         <source>Unlocked by passphrase</source>
         <translation>Desblocat per contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
         <translation>Useu TPM+PIN per desblocar aquest ordinador (recomanat).</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
         <source>Automatic unlocking on this computer by TPM</source>
         <translation>Desblocatge automàtic en aquest ordinador amb TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
         <translation>En casos especials, com ara si oblideu la contrasenya o es danya el maquinari d&apos;encriptació, podeu desencriptar la partició amb la clau de recuperació. Exporteu-la a una partició no encriptada i guardeu-la en un lloc segur!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="172"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
         <translation>Seleccioneu una partició no encriptada com a camí d&apos;exportació del fitxer de clau.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="356"/>
         <source>Passphrase</source>
         <translation>Contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
         <source>%1 cannot be empty</source>
         <translation>%1 no pot estar buida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="348"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Com a mínim 8 bits, conté 3 tipus de A-Z, a-z, 0-9 i símbols</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
         <source>%1 inconsistency</source>
         <translation>%1 inconsistència</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no pot estar buit!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
         <source>Recovery key export path is not exists!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no existeix!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
         <translation>Exporteu-la a un dispositiu extern, com ara una partició no encriptada o una unitat USB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>Aquesta partició és només de lectura. Exporteu-ho a una partició en què es pugui escriure.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>La partició està encriptada. Exporteu-la a una partició no encriptada o a un dispositiu extern, com ara una unitat USB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>Please continue to encrypt partition %1</source>
         <translation>Continueu l&apos;encriptació de la partició %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Next</source>
         <translation>Següent</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Confirm encrypt</source>
         <translation>Confirmeu l&apos;encriptació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>Export Recovery Key</source>
         <translation>Exporta la clau de recuperació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="321"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
         <source>Previous</source>
         <translation>Anterior</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>Set %1</source>
         <translation>Estableix %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Repeat %1</source>
         <translation>Repetiu %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="349"/>
         <source>Please enter the %1 again</source>
         <translation>Torneu a introduir %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="354"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="340"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="357"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
         <translation>L&apos;accés a la partició es desblocarà mitjançant una contrasenya.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="360"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="363"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="364"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
         <translation>L&apos;accés a la partició es desblocarà mitjançant el xip de seguretat i el PIN TPM.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
         <translation>L&apos;accés a la partició es desblocarà automàticament mitjançant el xip de seguretat TPM. No cal comprovar la contrasenya.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="421"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="435"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>El TPM està blocat i no es pot usar per a l&apos;encriptació de particions. Cancel·leu la contrasenya del TPM o trieu un altre mètode de desblocatge.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="437"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="440"/>
         <source>TPM error</source>
         <translation>Error de TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="440"/>
         <source>TPM status error!</source>
         <translation>Error de l&apos;estat de TPM!</translation>
     </message>
@@ -4848,49 +4879,49 @@
 <context>
     <name>dfmplugin_diskenc::EncryptProgressDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
         <source>Confirm</source>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>Torna a exportar la clau de recuperació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>*No s&apos;ha pogut desar la clau de recuperació. Torneu a desar-la en una partició no encriptada i guardeu-la en un lloc segur.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no pot estar buit!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
         <source>Recovery key export path is not exists!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no existeix!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>Aquesta partició és només de lectura. Exporteu-ho a una partició en què es pugui escriure.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="168"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>La partició està encriptada. Exporteu-la a una partició no encriptada o a un dispositiu extern, com ara una unitat USB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Cannot create recovery key file!</source>
         <translation>No es pot crear un fitxer de clau de recuperació!</translation>
     </message>
@@ -4898,180 +4929,180 @@
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="197"/>
         <source>Encrypt done</source>
         <translation>Encriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="198"/>
         <source>Device %1 has been encrypted</source>
         <translation>El dispositiu %1 s&apos;ha encriptat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="202"/>
         <source>Encrypt failed</source>
         <translation>Ha fallat l&apos;encriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="203"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat encriptar el dispositiu %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="307"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 s&apos;encripta...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="308"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>El procés d&apos;encriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 es desencripta...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>El procés de desencriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>L&apos;estat del TPM és anormal, utilitzeu la clau de recuperació per desblocar-lo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>Wrong PIN</source>
         <translation>PIN incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
         <source>Wrong passphrase</source>
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM error</source>
         <translation>Error de TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="363"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="387"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Utilitzeu la clau de recuperació per desblocar el dispositiu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="424"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="448"/>
         <source>Preencrypt done</source>
         <translation>Preencriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="449"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>El dispositiu %1 s&apos;ha preencriptat, reinicieu per acabar-la.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="431"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="455"/>
         <source>Preencrypt failed</source>
         <translation>La preencriptació ha fallat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="432"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="456"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat la preencriptació del dispositiu %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="452"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="476"/>
         <source>Decrypt done</source>
         <translation>Desencriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="453"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="477"/>
         <source>Device %1 has been decrypted</source>
         <translation>El dispositiu %1 s&apos;ha desencriptat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Decrypt disk</source>
         <translation>Desencripta el disc</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="460"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Contrasenya o PIN incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Decrypt failed</source>
         <translation>Ha fallat la desencriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>El dispositiu %1 s&apos;està encriptant. Si us plau, feu la desencriptació un cop hagi acabat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="469"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat desencriptar el dispositiu %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="499"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="506"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
         <source>Change %1 done</source>
         <translation>Canvi %1 fet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>El %2 de %1 s&apos;ha canviat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
         <source>Change %1 failed</source>
         <translation>El canvi %1 ha fallat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
         <source>Wrong %1</source>
         <translation>%1 incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="542"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Ha fallat el canvi % 2 del dispositiu %1, consulteu el registre per obtenir més informació. (% 3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="571"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
         <translation>El dispositiu no està completament desencriptat; si us plau, acabeu la desencriptació abans d&apos;accedir-hi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Unlocking device failed</source>
         <translation>Ha fallat desblocar el dispositiu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="579"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
         <translation>Cliqueu al menú dret del disc a l&apos;opció Continua l&apos;encriptació de la partició, per completar-ne l&apos;encriptació.</translation>
     </message>
@@ -5111,8 +5142,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
-        <source>Please input recovery key to unlock device</source>
-        <translation>Introduïu la clau de recuperació per desblocar el dispositiu.</translation>
+        <source>Please enter the 24-digit recovery key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
@@ -5226,19 +5257,19 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="202"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Original file %1 does not exist</source>
         <translation>El fitxer original %1 no existeix.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="204"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>Ha fallat: la mida del fitxer %1 ha de ser inferior a 4 GB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="206"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
         <translation>No hi ha prou espai al disc de destinació.</translation>
     </message>
@@ -5249,30 +5280,31 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="210"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
         <translation>El dispositiu de destinació és de només lectura.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
         <translation>La carpeta de destinació és dins de la carpeta d&apos;origen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
         <translation>L&apos;acció no s&apos;admet.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="216"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>No teniu permís per passar fitxers a %1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
         <translation>La restauració ha fallat, no s&apos;ha pogut trobar el camí original.</translation>
     </message>
@@ -5307,83 +5339,83 @@
         <translation>Ha fallat obrir el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>Ha fallat llegir el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>Ha fallat escriure al fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>Ha fallat crear el directori %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="197"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>Ha fallat eliminar el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>No s&apos;ha pogut moure el fitxer %1 a la paperera, causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="200"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>Ha fallat moure el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="208"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>La integritat del fitxer %1 s&apos;ha danyat. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="218"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>Ha fallat crear l&apos;enllaç simbòlic. Causa: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="221"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1. Torneu a provar de copiar-lo!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1.</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="241"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 ja existeix a la carpeta de destinació.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="245"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="255"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
-        <source>Original path %1</source>
-        <translation>Camí original: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
+        <source>Original path %1</source>
+        <translation>Camí original: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="251"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
         <source>Target path %1</source>
         <translation>Camí de destinació: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="262"/>
         <source>Original path %1 Target path %2</source>
         <translation>Camí original: %1. Camí de destinació: %2</translation>
     </message>
@@ -5665,68 +5697,68 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="82"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Basic info</source>
         <translation>Informació bàsica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Size</source>
         <translation>Mida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Contains</source>
         <translation>Contingut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="92"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
         <source>Type</source>
         <translation>Tipus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="105"/>
         <source>Location</source>
         <translation>Ubicació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
         <source>Created</source>
         <translation>Creat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Accessed</source>
         <translation>Accedit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="96"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Modified</source>
         <translation>Modificat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="100"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
         <source>Hide this file</source>
         <translation>Amaga aquest fitxer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
         <source>Resolution</source>
         <translation>Resolució</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Duration</source>
         <translation>Durada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="312"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="406"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="324"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="420"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="406"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="420"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
     </message>
@@ -5734,12 +5766,12 @@
 <context>
     <name>dfmplugin_propertydialog::CloseAllDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="47"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="50"/>
         <source>Close all</source>
         <translation>Tanca-ho tot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="80"/>
         <source>Total size: %1, %2 files</source>
         <translation>Mida total: %1, %2 fitxers</translation>
     </message>
@@ -5823,37 +5855,37 @@
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
         <source>Multiple Files</source>
         <translation>Fitxers múltiples</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
         <source>Basic info</source>
         <translation>Informació bàsica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
         <source>Total size</source>
         <translation>Mida total</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
         <source>Number of files</source>
         <translation>Nombre de fitxers</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
         <source>Time accessed</source>
         <translation>Hora d&apos;accés</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
         <source>Time modified</source>
         <translation>Hora de modificació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="147"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 fitxer/s, %2 carpeta/es</translation>
     </message>
@@ -5871,7 +5903,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="294"/>
         <source>Allow to execute as program</source>
         <translation>Permet executar-lo com a programa.</translation>
     </message>
@@ -6152,32 +6184,32 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="368"/>
         <source>Quick access</source>
         <translation>Accés ràpid</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="369"/>
         <source>Partitions</source>
         <translation>Particions</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="374"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="370"/>
         <source>Network</source>
         <translation>Xarxa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="371"/>
         <source>Tag</source>
         <translation>Etiqueta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="376"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="372"/>
         <source>Other</source>
         <translation>Altres</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="373"/>
         <source>Unknown Group</source>
         <translation>Grup desconegut</translation>
     </message>
@@ -6278,7 +6310,7 @@
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="41"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="39"/>
         <source>Tag</source>
         <translation>Etiqueta</translation>
     </message>
@@ -6294,66 +6326,66 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="70"/>
         <source>Connect to Server</source>
         <translation>Connecta amb el servidor</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="123"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="382"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="391"/>
         <source>Clear History</source>
         <translation>Neteja l&apos;historial</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
         <source>Unfavorite</source>
         <translation>No favorit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="307"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>No es pot fer preferit un URL il·legítim!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="356"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Connecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
         <source>Charset Encoding</source>
         <translation>Codificació del joc de caràcters</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Default</source>
         <translation>Per defecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="477"/>
         <source>My Favorites</source>
         <translation>Favorits:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="455"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="464"/>
         <source>No favorites yet</source>
         <translation>Encara no hi ha cap favorit.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
         <source>Favorite</source>
         <translation>Favorit</translation>
     </message>
@@ -6475,12 +6507,12 @@
 <context>
     <name>dfmplugin_titlebar::NavWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
         <source>back</source>
         <translation>enrere</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
         <source>forward</source>
         <translation>endavant</translation>
     </message>
@@ -6547,27 +6579,27 @@
 <context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
         <source>View Options</source>
         <translation>Mostra&apos;n les opcions</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
         <translation>Mida de la icona</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
         <translation>Densitat de la graella</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="134"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
         <translation>Alçada de la llista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
         <translation>Visualització prèvia</translation>
     </message>
@@ -7527,12 +7559,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2125"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2128"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2129"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Les credencials d&apos;inici de sessió del servidor no són vàlides. Desinstal·leu&lt;-lo i torneu-lo a muntar.</translation>
     </message>
@@ -7653,7 +7685,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="952"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="954"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Desa</translation>
