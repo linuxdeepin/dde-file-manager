@@ -50,12 +50,15 @@ public:
 
     void reset();
 
-    void addConnectToken(const QString &token) {
+    void addConnectToken(const QString &token)
+    {
         if (connectedTokens.contains(token))
             return;
         connectedTokens << token;
     }
     QStringList connectTokens() const { return connectedTokens; }
+
+    bool canDelete() const;
 
 Q_SIGNALS:
 
