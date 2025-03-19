@@ -905,10 +905,11 @@ bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, con
 bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     waitThreadPoolOver();
+    initSignalCopyWorker();
     const QString &targetUrl = toInfo->uri().toString();
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
-    DoCopyFileWorker::NextDo nextDo = threadCopyWorker[0]->doCopyFileByRange(fromInfo, toInfo, skip);
+    DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
     return nextDo == DoCopyFileWorker::NextDo::kDoCopyNext;
 }
@@ -918,8 +919,13 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     initSignalCopyWorker();
     const QString &targetUrl = toInfo->uri().toString();
 
-    FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok { false };
+    if (workData->copyFileRange) {
+        ok = doCopyLocalByRange(fromInfo, toInfo, skip);
+        return ok;
+    }
+
+    FileUtils::cacheCopyingFileUrl(targetUrl);
     const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
     if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
@@ -1240,6 +1246,12 @@ void FileOperateBaseWorker::determineCountProcessType()
             }
         }
         fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
+    } else {
+        // 使用file_copy_range只能是cifs挂载，使用gvfs挂载、vfatU盘使用都很慢，
+        // 使用g_file_copy拷贝到外设和协议设备都很慢，并且打断退出很长时间
+        workData->copyFileRange = jobType == AbstractJobHandler::JobType::kCopyType
+                && FileUtils::isSameDevice(sourceUrls.first(), targetOrgUrl)
+                && DFMUtils::fsTypeFromUrl(targetOrgUrl) == "cifs";
     }
 }
 
