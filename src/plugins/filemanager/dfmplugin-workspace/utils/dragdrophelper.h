@@ -46,6 +46,9 @@ private:
     bool checkTargetEnable(const QUrl &targetUrl) const;
     Qt::DropAction checkAction(Qt::DropAction srcAction, bool sameUser);
 
+    bool checkDragEnable(const QUrl &dragUrl, const QUrl &targetUrl) const;
+    bool checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) const;
+
     FileView *view { nullptr };
     QList<QUrl> currentDragUrls;
     QList<QUrl> currentDragSourceUrls;

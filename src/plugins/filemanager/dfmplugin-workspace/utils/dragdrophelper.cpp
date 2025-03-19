@@ -55,25 +55,25 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
     currentDragSourceUrls = dfmmimeData.isValid() ? dfmmimeData.urls() : currentDragUrls;
 
-    if (!checkTargetEnable(view->rootUrl()))
+    auto targetUrl = view->rootUrl();
+    if (!checkTargetEnable(targetUrl))
         return true;
 
     // Filter the event that cannot be dragged
     if (checkProhibitPaths(event, currentDragUrls))
         return true;
 
-    if (handleDFileDrag(data, view->rootUrl())) {
+    if (handleDFileDrag(data, targetUrl)) {
         event->acceptProposedAction();
         return true;
     }
 
     for (const QUrl &url : currentDragUrls) {
-        auto info = InfoFactory::create<FileInfo>(url);
-        if (!info
-            || (!info->canAttributes(CanableInfoType::kCanMoveOrCopy) && !info->canAttributes(CanableInfoType::kCanRename))) {
-            event->ignore();
-            return true;
-        }
+        if (checkDragEnable(url, targetUrl))
+            continue;
+
+        event->ignore();
+        return true;
     }
 
     bool fall = true;
@@ -127,15 +127,17 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     }
 
     for (const QUrl &url : fromUrls) {
-        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(CanableInfoType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
-            view->setViewSelectState(false);
-            event->ignore();
-            return true;
+        if (event->dropAction() == Qt::DropAction::MoveAction) {
+            if (!checkMoveEnable(url, toUrl)) {
+                view->setViewSelectState(false);
+                event->ignore();
+                return true;
+            }
         }
 
         // copy action must origin file can copy
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (event->dropAction() == Qt::DropAction::CopyAction && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
             view->setViewSelectState(false);
             event->ignore();
@@ -433,4 +435,38 @@ Qt::DropAction DragDropHelper::checkAction(Qt::DropAction srcAction, bool sameUs
         return Qt::IgnoreAction;
 
     return srcAction;
+}
+
+bool DragDropHelper::checkDragEnable(const QUrl &dragUrl, const QUrl &targetUrl) const
+{
+    auto info = InfoFactory::create<FileInfo>(dragUrl);
+    if (!info)
+        return false;
+
+    // Check for standard move/copy/rename capabilities.
+    if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) ||
+        info->canAttributes(CanableInfoType::kCanRename))
+        return true;
+
+    // Some desktop files may allow trash even if not movable/renamable.
+    bool dragToDelete = (FileUtils::isTrashFile(targetUrl) ||
+                         FileUtils::isTrashDesktopFile(targetUrl)) &&
+                        info->canAttributes(CanableInfoType::kCanTrash);
+
+    return dragToDelete;
+}
+
+bool DragDropHelper::checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) const
+{
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", dragUrl))
+        return true;
+
+    // some desktopfile can not rename (depend AM), and some can not move or copy (computer etc..)
+    // but they all allow to be deleted to trash
+    FileInfoPointer info = InfoFactory::create<FileInfo>(dragUrl);
+    if (FileUtils::isDesktopFile(info->urlOf(UrlInfoType::kUrl))) {
+        return info->canAttributes(CanableInfoType::kCanMoveOrCopy) ||
+                (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
+    }
+    return info->canAttributes(CanableInfoType::kCanRename);
 }
