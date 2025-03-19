@@ -1091,6 +1091,9 @@ void FileView::onShowFileSuffixChanged(bool isShow)
 void FileView::updateHorizontalOffset()
 {
     d->updateHorizontalOffset();
+
+    // Update editor positions after horizontal offset changes
+    updateEditorGeometries();
 }
 
 void FileView::updateView()
