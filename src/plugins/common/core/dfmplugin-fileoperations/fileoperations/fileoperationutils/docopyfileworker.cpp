@@ -336,11 +336,11 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         return NextDo::kDoCopyNext;
     }
     // 循环读取和写入文件，拷贝
-    auto toIsSmb = DeviceUtils::isSamba(toInfo->uri());
     size_t blockSize = static_cast<size_t>(fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize);
     off_t offset_in = 0;
     off_t offset_out = 0;
     ssize_t result = -1;
+    size_t left = static_cast<size_t>(fromSize);
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
         if (Q_UNLIKELY(!stateCheck()))
@@ -348,6 +348,8 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         do {
             if (Q_UNLIKELY(!stateCheck()))
                 return NextDo::kDoCopyErrorAddCancel;
+
+            blockSize = left < blockSize ? left : blockSize;
             result = copy_file_range(sourcFd, &offset_in, targetFd, &offset_out, blockSize, 0);
             if (result < 0) {
                 auto lastError = strerror(errno);
@@ -360,18 +362,15 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
                 offset_out = offset_in;
             } else {
                 workData->currentWriteSize += result;
+                left -= static_cast<size_t>(result);
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
         checkRetry();
         if (!actionOperating(action, fromSize - offset_out, skip))
             return  NextDo::kDoCopyErrorAddCancel;
-        // 执行同步策略
-        if (workData->exBlockSyncEveryWrite || toIsSmb)
-            syncfs(targetFd);
+
     } while (offset_out != fromSize);
-    // 执行同步策略
-    if (workData->exBlockSyncEveryWrite  || toIsSmb)
-        syncfs(targetFd);
+
     // 对文件加权
     setTargetPermissions(fromInfo->uri(), toInfo->uri());
     if (!stateCheck())
