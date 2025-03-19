@@ -25,11 +25,14 @@ public:
     bool isShowFromUrl(QWidget *w, const QUrl &url);
     void setKeepShow(bool keep);
     bool isKeepShow() const;
+    void setKeepTop(bool keep);
+    bool isKeepTop() const;
     void registeCreateTopWidgetCallback(const CreateTopWidgetCallback &func);
     void registeCreateTopWidgetCallback(const ShowTopWidgetCallback &func);
 
 private:
     bool keepShow { false };
+    bool keepTop { false };
     CreateTopWidgetCallback createTopWidgetFunc;
     ShowTopWidgetCallback showTopWidgetFunc;
 };

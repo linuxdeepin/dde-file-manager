@@ -85,6 +85,7 @@ inline constexpr int kSelectBoxLineWidth { 2 };
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };
 inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };
+inline constexpr char kKeepTop[] { "Property_Key_KeepTop" };
 inline constexpr char kCreateTopWidgetCallback[] { "Property_Key_CreateTopWidgetCallback" };
 inline constexpr char kShowTopWidgetCallback[] { "Property_Key_ShowTopWidgetCallback" };
 }
@@ -98,6 +99,7 @@ struct CustomTopWidgetInfo
 {
     QString scheme;
     bool keepShow { false };   // always show
+    bool keepTop { false };    // top of all topWidget
     CreateTopWidgetCallback createTopWidgetCb { nullptr };
     ShowTopWidgetCallback showTopWidgetCb { nullptr };
 
@@ -105,6 +107,7 @@ struct CustomTopWidgetInfo
     inline CustomTopWidgetInfo(const QVariantMap &map)
         : scheme { map[PropertyKey::kScheme].toString() },
           keepShow { map[PropertyKey::kKeepShow].toBool() },
+          keepTop { map[PropertyKey::kKeepTop].toBool() },
           createTopWidgetCb { DPF_NAMESPACE::paramGenerator<CreateTopWidgetCallback>(map[PropertyKey::kCreateTopWidgetCallback]) },
           showTopWidgetCb { DPF_NAMESPACE::paramGenerator<ShowTopWidgetCallback>(map[PropertyKey::kShowTopWidgetCallback]) }
     {

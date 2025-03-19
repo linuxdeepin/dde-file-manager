@@ -79,6 +79,7 @@ bool Workspace::start()
             return new RenameBar();
         });
         interface->setKeepShow(false);
+        interface->setKeepTop(false);
         return interface;
     });
 

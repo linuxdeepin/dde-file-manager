@@ -105,6 +105,7 @@ void Search::regSearchToWorkspace()
     QVariantMap map {
         { "Property_Key_Scheme", SearchHelper::scheme() },
         { "Property_Key_KeepShow", false },
+        { "Property_Key_KeepTop", true },
         { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
         { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
     };

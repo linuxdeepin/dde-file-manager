@@ -37,6 +37,16 @@ bool CustomTopWidgetInterface::isKeepShow() const
     return keepShow;
 }
 
+void CustomTopWidgetInterface::setKeepTop(bool keep)
+{
+    keepTop = keep;
+}
+
+bool CustomTopWidgetInterface::isKeepTop() const
+{
+    return keepTop;
+}
+
 void CustomTopWidgetInterface::registeCreateTopWidgetCallback(const ShowTopWidgetCallback &func)
 {
     showTopWidgetFunc = func;
