@@ -53,6 +53,10 @@ private:
     void setCurrentView(const QUrl &url);
     void playDisappearAnimation(ViewPtr view);
 
+    QWidget *topContainer { nullptr };     // 顶部容器
+    QVBoxLayout *topLayout { nullptr };    // 顶部布局
+    QWidget *viewContainer { nullptr };    // 视图容器
+
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
 
@@ -65,6 +69,7 @@ private:
 
     QMap<QString, ViewPtr> views {};
     QMap<QString, TopWidgetPtr> topWidgets {};
+    int highPriorityTopWidgetsCount { 0 };
 };
 
 } // namespace dfmplugin_workspace

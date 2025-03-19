@@ -142,6 +142,7 @@ void Optical::addCustomTopWidget()
     QVariantMap map {
         { "Property_Key_Scheme", Global::Scheme::kBurn },
         { "Property_Key_KeepShow", false },
+        { "Property_Key_KeepTop", false },
         { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
         { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
     };

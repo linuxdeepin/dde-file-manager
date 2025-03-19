@@ -342,6 +342,7 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
             new CustomTopWidgetInterface
         };
         interface->setKeepShow(info.keepShow);
+        interface->setKeepTop(info.keepTop);
         interface->registeCreateTopWidgetCallback(info.createTopWidgetCb);
         interface->registeCreateTopWidgetCallback(info.showTopWidgetCb);
         return interface;

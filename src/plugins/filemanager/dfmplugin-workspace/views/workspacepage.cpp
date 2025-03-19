@@ -142,7 +142,14 @@ void WorkspacePage::setCustomTopWidgetVisible(const QString &scheme, bool visibl
         if (interface) {
             TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create(this));
             if (topWidgetPtr) {
-                widgetLayout->insertWidget(0, topWidgetPtr.get());
+                bool keepTop = interface->isKeepTop();
+                int insertIndex = 0;
+                if (keepTop) {
+                    ++highPriorityTopWidgetsCount;
+                } else {
+                    insertIndex = highPriorityTopWidgetsCount;
+                }
+                topLayout->insertWidget(insertIndex, topWidgetPtr.get());
                 topWidgets.insert(scheme, topWidgetPtr);
                 topWidgetPtr->setVisible(visible);
             }
@@ -196,14 +203,28 @@ void WorkspacePage::onAnimDelayTimeout()
 
 void WorkspacePage::initUI()
 {
-    viewStackLayout = new QStackedLayout;
+    // 创建顶部容器和布局
+    topContainer = new QWidget(this);
+    topContainer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    topLayout = new QVBoxLayout(topContainer);
+    topLayout->setSpacing(0);
+    topLayout->setContentsMargins(0, 0, 0, 0);
+
+    // 创建底部容器和视图布局
+    viewContainer = new QWidget(this);
+    viewContainer->setMinimumHeight(10);
+    viewStackLayout = new QStackedLayout(viewContainer);
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
 
+    // 创建主垂直布局
     widgetLayout = new QVBoxLayout;
-    widgetLayout->addLayout(viewStackLayout, 1);
     widgetLayout->setSpacing(0);
     widgetLayout->setContentsMargins(0, 0, 0, 0);
+    
+    // 添加顶部和底部容器到主布局
+    widgetLayout->addWidget(topContainer, 0);    // 顶部容器不拉伸
+    widgetLayout->addWidget(viewContainer, 1);   // 底部容器占用剩余空间
 
     setLayout(widgetLayout);
 }
@@ -212,6 +233,7 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
 {
     QString scheme { url.scheme() };
 
+    // 隐藏其他scheme的topWidget
     for (auto widget : topWidgets.values()) {
         if (topWidgets.value(scheme) != widget)
             widget->hide();
@@ -232,7 +254,15 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
     } else {
         TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
         if (topWidgetPtr) {
-            widgetLayout->insertWidget(0, topWidgetPtr.get());
+            // 将topWidget添加到顶部布局中
+            bool keepTop = interface->isKeepTop();
+            int insertIndex = 0;
+            if (keepTop) {
+                ++highPriorityTopWidgetsCount;
+            } else {
+                insertIndex = highPriorityTopWidgetsCount;
+            }
+            topLayout->insertWidget(insertIndex, topWidgetPtr.get());
             topWidgets.insert(scheme, topWidgetPtr);
             topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
         }

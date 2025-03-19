@@ -143,6 +143,7 @@ void Trash::addCustomTopWidget()
     QVariantMap map {
         { "Property_Key_Scheme", TrashHelper::scheme() },
         { "Property_Key_KeepShow", false },
+        { "Property_Key_KeepTop", false },
         { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
         { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
     };
