@@ -469,7 +469,8 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     }
 
     QFontMetrics fm(d.font());
-    d.setIcon(QIcon::fromTheme("user-trash-full-opened"));
+    const auto &icon = FileUtils::trashIsEmpty() ? QIcon::fromTheme("user-trash") : QIcon::fromTheme("user-trash-full");
+    d.setIcon(icon);
 
     QString deleteFileName = tr("Do you want to delete %1?");
     QString deleteFileItems = tr("Do you want to delete the selected %1 items?");
