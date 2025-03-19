@@ -35,6 +35,7 @@ public:
     bool isDBusRuning();
     void initConnection();
     void initMounts();
+    QString canonicalMountPoint(const QString &mpt) const;
 
     void connectToDBus();
     void connectToAPI();

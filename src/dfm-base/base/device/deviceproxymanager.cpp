@@ -243,7 +243,7 @@ void DeviceProxyManagerPrivate::initMounts()
                 if (!mpt.isEmpty()) {
                     if (DeviceUtils::isMountPointOfDlnfs(mpt) && !info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix))
                         continue;
-                    mpt = mpt.endsWith("/") ? mpt : mpt + "/";
+                    mpt = canonicalMountPoint(mpt);
                     // FIXME(xust): fix later, the kRemovable is not always correct.
                     QWriteLocker lk(&lock);
                     if (pass || (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isBuiltInDisk(info)))
@@ -259,6 +259,20 @@ void DeviceProxyManagerPrivate::initMounts()
         // All protocol devices should be added to externalMounts
         func(protos, &DeviceProxyManager::queryProtocolInfo, true);
     });
+}
+
+QString DeviceProxyManagerPrivate::canonicalMountPoint(const QString &mpt) const
+{
+    if (mpt.isEmpty())
+        return {};
+
+    QString mountPoint = mpt;
+    QFileInfo fileInfo(mountPoint);
+    if (fileInfo.exists())
+        mountPoint = fileInfo.canonicalFilePath();
+
+    mountPoint = mountPoint.endsWith("/") ? mountPoint : mountPoint + "/";
+    return mountPoint;
 }
 
 void DeviceProxyManagerPrivate::connectToDBus()
@@ -360,7 +374,7 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
 
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
-    QString p = mpt.endsWith("/") ? mpt : mpt + "/";
+    QString p = canonicalMountPoint(mpt);
     if (!id.startsWith(kBlockDeviceIdPrefix) && DeviceUtils::isMountPointOfDlnfs(p))
         return;
 
