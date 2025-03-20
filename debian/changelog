@@ -1,3 +1,9 @@
+dde-file-manager (6.5.40) unstable; urgency=medium
+
+  * Enhance URL determination, fix UI errors, improve file operations, update translations, and implement features like mount point normalization, drag-and-drop enhancements, and file copy synchronization with range support, alongside various UI and localization improvements. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Mar 2025 19:10:05 +0800
+
 dde-file-manager (6.5.39) unstable; urgency=medium
 
   * Prevent UI flickering during sidebar expansion, improve Unicode sorting in file comparison, simplify file info creation and speedtimer management, ensure proper initialization, and replace abort() with Q_ASSERT_X for plugin loading failures. 
