@@ -725,12 +725,24 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         AbstractEntryFileEntity::kOrderMTP
     };
 
+    // 光驱的url对应挂载点和虚拟url两个值，传虚拟url到侧边栏便于创建对应文件信息做实际业务逻辑判断
+    QUrl finalUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
+    if (routeMapper.contains(info->fileUrl())) {
+        const QList<QUrl> &urls { routeMapper.values(info->fileUrl()) };
+        for (auto url : urls) {
+            if (!UniversalUtils::urlEquals(finalUrl, url)) {
+                finalUrl = url;
+                break;
+            }
+        }
+    }
+
     return {
         { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
-        { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
+        { "Property_Key_FinalUrl", finalUrl },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) || netShareSchemes.contains(netShareUrl.scheme()) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
