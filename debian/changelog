@@ -1,3 +1,9 @@
+dde-file-manager (6.5.41) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Mar 2025 21:20:03 +0800
+
 dde-file-manager (6.5.40) unstable; urgency=medium
 
   * Enhance URL determination, fix UI errors, improve file operations, update translations, and implement features like mount point normalization, drag-and-drop enhancements, and file copy synchronization with range support, alongside various UI and localization improvements. 
