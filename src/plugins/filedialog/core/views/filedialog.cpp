@@ -55,15 +55,12 @@ FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
 
     QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
     lastVisitedDir = qtSets.value("FileDialog/lastVisited").toUrl();
-
-    delaySaveTimer = new QTimer(this);
-    delaySaveTimer->setInterval(3000);
-    connect(delaySaveTimer, &QTimer::timeout, this, &FileDialogPrivate::saveLastVisited);
 }
 
 FileDialogPrivate::~FileDialogPrivate()
 {
-    saveLastVisited();
+    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
+    qtSets.setValue("FileDialog/lastVisited", lastVisitedDir.toString());
 }
 
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
@@ -212,18 +209,6 @@ bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix
     }
 
     return false;
-}
-
-void FileDialogPrivate::setLastVisited(const QUrl &dir)
-{
-    lastVisitedDir = dir;
-    delaySaveTimer->start();
-}
-
-void FileDialogPrivate::saveLastVisited()
-{
-    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
-    qtSets.setValue("FileDialog/lastVisited", lastVisitedDir.toString());
 }
 
 /*!
