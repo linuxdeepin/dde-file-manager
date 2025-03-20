@@ -25,7 +25,7 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
 
 static constexpr int kMsgLabelWidth { 390 };
-static constexpr int kMsgLabelHoverWidth { 452 };
+static constexpr int kMsgLabelHoverWidth { 460 };
 static constexpr int kSpeedLabelWidth { 100 };
 static constexpr uint8_t kVirtualValue { 30 };
 static constexpr char kBtnPropertyActionName[] { "btnType" };
@@ -456,14 +456,12 @@ void TaskWidget::initUI()
     hLayout1->addWidget(lbSrcPath, Qt::AlignLeft);
     hLayout1->addSpacing(10);
     hLayout1->addWidget(lbSpeed, Qt::AlignRight);
-    hLayout1->addStretch();
 
     QHBoxLayout *hLayout2 = new QHBoxLayout;
     hLayout2->addSpacing(15);
     hLayout2->addWidget(lbDstPath, Qt::AlignLeft);
     hLayout2->addSpacing(10);
     hLayout2->addWidget(lbRmTime, Qt::AlignRight);
-    hLayout2->addStretch();
 
     lbErrorMsg = new ElidedLable;
     lbErrorMsg->setStyleSheet("color:red;");
@@ -471,7 +469,6 @@ void TaskWidget::initUI()
     QHBoxLayout *hLayout3 = new QHBoxLayout;
     hLayout3->addSpacing(15);
     hLayout3->addWidget(lbErrorMsg, Qt::AlignLeft);
-    hLayout3->addStretch();
 
     rVLayout->addLayout(hLayout1);
     rVLayout->addLayout(hLayout2);
@@ -500,7 +497,6 @@ void TaskWidget::initUI()
     btnPause->setFixedSize(24, 24);
     btnPause->setFlat(true);
 
-    normalLayout->addStretch();
     normalLayout->addWidget(btnPause, Qt::AlignRight);
     normalLayout->addSpacing(10);
     normalLayout->addWidget(btnStop, Qt::AlignRight);
