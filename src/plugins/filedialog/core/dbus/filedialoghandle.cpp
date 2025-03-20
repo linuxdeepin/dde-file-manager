@@ -30,7 +30,7 @@ public:
     explicit FileDialogHandlePrivate(FileDialogHandle *qq)
         : q_ptr(qq) { }
 
-    QPointer<FileDialog> dialog;
+    QScopedPointer<FileDialog> dialog;
     QStringList lastFilterGroup;
     QString lastFilter;
 
@@ -43,7 +43,7 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     : QObject(parent),
       d_ptr(new FileDialogHandlePrivate(this))
 {
-    d_func()->dialog = qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true));
+    d_func()->dialog.reset(qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true)));
     if (!d_func()->dialog) {
         fmCritical() << "File Dialog: Create window failed";
         abort();
@@ -57,14 +57,14 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     //! see bug#22564
     // d_func()->dialog->hide();
 
-    connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
-    connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);
-    connect(d_func()->dialog, &FileDialog::finished, this, &FileDialogHandle::finished);
-    connect(d_func()->dialog, &FileDialog::selectionFilesChanged,
+    connect(d_func()->dialog.data(), &FileDialog::accepted, this, &FileDialogHandle::accepted);
+    connect(d_func()->dialog.data(), &FileDialog::rejected, this, &FileDialogHandle::rejected);
+    connect(d_func()->dialog.data(), &FileDialog::finished, this, &FileDialogHandle::finished);
+    connect(d_func()->dialog.data(), &FileDialog::selectionFilesChanged,
             this, &FileDialogHandle::selectionFilesChanged);
-    connect(d_func()->dialog, &FileDialog::currentUrlChanged,
+    connect(d_func()->dialog.data(), &FileDialog::currentUrlChanged,
             this, &FileDialogHandle::currentUrlChanged);
-    connect(d_func()->dialog, &FileDialog::selectedNameFilterChanged,
+    connect(d_func()->dialog.data(), &FileDialog::selectedNameFilterChanged,
             this, &FileDialogHandle::selectedNameFilterChanged);
 
     auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d_func()->dialog->internalWinId()));
@@ -95,7 +95,7 @@ QWidget *FileDialogHandle::widget() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog;
+    return d->dialog.data();
 }
 
 void FileDialogHandle::setDirectory(const QString &directory)
@@ -304,9 +304,9 @@ void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
     D_D(FileDialogHandle);
 
     if (mode == QFileDialog::Detail)
-        CoreEventsCaller::sendViewMode(d->dialog, DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
+        CoreEventsCaller::sendViewMode(d->dialog.data(), DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
     else
-        CoreEventsCaller::sendViewMode(d->dialog, DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
+        CoreEventsCaller::sendViewMode(d->dialog.data(), DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
 }
 
 QFileDialog::ViewMode FileDialogHandle::viewMode() const
@@ -487,12 +487,12 @@ void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
     if (d->dialog) {
-        addDefaultSettingForWindow(d->dialog);
+        addDefaultSettingForWindow(d->dialog.data());
         d->dialog->updateAsDefaultSize();
         d->dialog->moveCenter();
         setWindowStayOnTop();
         fmDebug() << QString("Select Dialog Info: befor show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
-        FMWindowsIns.showWindow(d->dialog);
+        FMWindowsIns.showWindow(d->dialog.data());
         fmDebug() << QString("Select Dialog Info: after show size is (%1, %2)").arg(d->dialog->width()).arg(d->dialog->height());
     }
 }
