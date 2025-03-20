@@ -665,7 +665,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doReadFile(const DFileInfoPointer &fr
                             toInfo->uri(),
                             AbstractJobHandler::JobErrorType::kCanNotAccessFile,
                             true,
-                            "Can't access file!");
+                            tr("Can't access file!"));
                 } while (actionForCheck == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
                 if (actionForCheck != AbstractJobHandler::SupportAction::kNoAction) {
                     if (skip)
@@ -779,7 +779,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFileErrorRetry(const DFileInfo
                 toInfo->uri(),
                 AbstractJobHandler::JobErrorType::kCanNotAccessFile,
                 true,
-                "Can't access file!");
+                tr("Can't access file!"));
     } while (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
     if (actionForWrite != AbstractJobHandler::SupportAction::kNoAction) {
         actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() - (currentPos + readSize - surplusSize), skip);
