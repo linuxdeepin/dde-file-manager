@@ -528,6 +528,27 @@ QString ComputerItemWatcher::reportName(const QUrl &url)
     return "unknow disk";
 }
 
+QUrl ComputerItemWatcher::findFinalUrl(DFMEntryFileInfoPointer info) const
+{
+    if (!info)
+        return QUrl();
+
+    QUrl finalUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
+
+    // 光驱的url对应挂载点和虚拟url两个值，传虚拟url到侧边栏便于创建对应文件信息做实际业务逻辑判断
+    if (routeMapper.contains(info->fileUrl())) {
+        const QList<QUrl> &urls { routeMapper.values(info->fileUrl()) };
+        for (const auto &url : urls) {
+            if (!UniversalUtils::urlEquals(finalUrl, url)) {
+                finalUrl = url;
+                break;
+            }
+        }
+    }
+
+    return finalUrl;
+}
+
 QHash<QUrl, QVariantMap> ComputerItemWatcher::getComputerInfos() const
 {
     return computerInfos;
@@ -590,6 +611,8 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
     // 期望挂载点和光驱虚拟目录都能被侧边栏匹配选中
     if (devId.contains(QRegularExpression("sr[0-9]*$")))
         routeMapper.insert(devUrl, ComputerUtils::makeBurnUrl(devId));
+
+    onUpdateBlockItem(devId);
 }
 
 void ComputerItemWatcher::clearAsyncThread()
@@ -601,9 +624,11 @@ void ComputerItemWatcher::clearAsyncThread()
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
+    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     QVariantMap map {
         { "Property_Key_DisplayName", newName },
-        { "Property_Key_Editable", editable }
+        { "Property_Key_Editable", editable },
+        { "Property_Key_FinalUrl", findFinalUrl(info) }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
@@ -725,24 +750,12 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         AbstractEntryFileEntity::kOrderMTP
     };
 
-    // 光驱的url对应挂载点和虚拟url两个值，传虚拟url到侧边栏便于创建对应文件信息做实际业务逻辑判断
-    QUrl finalUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
-    if (routeMapper.contains(info->fileUrl())) {
-        const QList<QUrl> &urls { routeMapper.values(info->fileUrl()) };
-        for (auto url : urls) {
-            if (!UniversalUtils::urlEquals(finalUrl, url)) {
-                finalUrl = url;
-                break;
-            }
-        }
-    }
-
     return {
         { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
-        { "Property_Key_FinalUrl", finalUrl },
+        { "Property_Key_FinalUrl", findFinalUrl(info) },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) || netShareSchemes.contains(netShareUrl.scheme()) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },

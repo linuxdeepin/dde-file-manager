@@ -119,6 +119,8 @@ private:
 
     QString reportName(const QUrl &url);
 
+    QUrl findFinalUrl(DFMEntryFileInfoPointer info) const;
+
 private:
     bool isItemQueryFinished { false };
     ComputerDataList initedDatas;
