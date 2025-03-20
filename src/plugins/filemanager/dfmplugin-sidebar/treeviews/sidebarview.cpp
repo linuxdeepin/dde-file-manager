@@ -661,7 +661,10 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     if (!itemInfo || !itemInfo->canAttributes(CanableInfoType::kCanDrop)) {
         return Qt::IgnoreAction;
     }
-    if (itemInfo->fileType() == FileInfo::FileType::kDirectory) {
+
+    // do not check the permissions when the dir is not a real dir
+    if (itemInfo->fileType() == FileInfo::FileType::kDirectory
+        && UniversalUtils::urlEquals(targetItemUrl, itemInfo->urlOf(UrlInfoType::kOriginalUrl))) {
         // when the dir not have writeable and executable permissions, then can not drop
         if (!itemInfo->isAttributes(OptInfoType::kIsExecutable) || !itemInfo->isAttributes(OptInfoType::kIsWritable))
             return Qt::IgnoreAction;
