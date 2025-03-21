@@ -17,6 +17,7 @@ DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &DeviceBasicWidget::slotFileDirSizeChange);
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
 }
 
 DeviceBasicWidget::~DeviceBasicWidget()
