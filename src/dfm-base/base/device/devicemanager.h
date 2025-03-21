@@ -97,6 +97,8 @@ public:
 
     void retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout);
 
+    void updateDeviceUsage(const QString &id);
+
 Q_SIGNALS:
     // device watch
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
