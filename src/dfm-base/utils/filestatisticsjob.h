@@ -44,6 +44,7 @@ public:
         kDontSkipBlockDeviceFile = 0x0080,
         kDontSkipFIFOFile = 0x0100,
         kDontSkipSocketFile = 0x0200,
+        kDontSizeInfoPointer= 0x0400,
     };
 
     Q_ENUM(FileHint)
@@ -83,6 +84,7 @@ private:
 private:
     void setSizeInfo();
     void statistcsOtherFileSystem();
+    void statisticsRealPathSingle();
 };
 
 }

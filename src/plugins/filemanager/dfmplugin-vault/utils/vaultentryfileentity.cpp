@@ -17,6 +17,7 @@ VaultEntryFileEntity::VaultEntryFileEntity(QObject *parent)
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &VaultEntryFileEntity::slotFileDirSizeChange);
     connect(fileCalculationUtils, &FileStatisticsJob::finished, this, &VaultEntryFileEntity::slotFinishedThread);
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
 }
 
 VaultEntryFileEntity::~VaultEntryFileEntity()
