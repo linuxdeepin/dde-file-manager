@@ -107,6 +107,17 @@ static bool lazyLoadFilter(const QString &name)
     return false;
 }
 
+static bool lazyLoadFilterForHeadless(const QString &name)
+{
+    static const auto &kAllNames {
+        DFMBASE_NAMESPACE::Plugins::Utils::filemanagerAllPlugins()
+    };
+
+    if (!kAllNames.contains(name))
+        return true;
+    return false;
+}
+
 static QStringList buildBlackNames()
 {
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
@@ -155,11 +166,13 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::filemanagerAllPlugins());
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
-    if (enableHeadless && CommandParser::instance().isSet("d"))
+    if (enableHeadless && CommandParser::instance().isSet("d")) {
         qCDebug(logAppFileManager) << "hot launch";
-    else
+        // Non-built-in plugins do not guarantee correctness (e.g. udrive)
+        DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilterForHeadless);
+    } else {
         DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
-
+    }
     qCInfo(logAppFileManager) << "Depend library paths:" << DApplication::libraryPaths();
     qCInfo(logAppFileManager) << "Load plugin paths: " << DPF_NAMESPACE::LifeCycle::pluginPaths();
 

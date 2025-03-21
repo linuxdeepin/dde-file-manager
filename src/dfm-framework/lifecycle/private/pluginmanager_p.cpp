@@ -139,8 +139,10 @@ void PluginManagerPrivate::scanfAllPlugin()
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&iid = metaJson.value("IID").toString();
-            if (!pluginLoadIIDs.contains(iid))
+            if (!pluginLoadIIDs.contains(iid)) {
+                qCWarning(logDPF) << "Invalid iid:" << fileName << iid;
                 continue;
+            }
 
             bool isVirtual = dataJson.contains(kVirtualPluginMeta) && dataJson.contains(kVirtualPluginList);
             if (isVirtual)
@@ -315,10 +317,15 @@ bool PluginManagerPrivate::loadPlugins()
     dependsSort(&loadQueue, &pluginsToLoad);
 
     bool ret = true;
-    std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
-        if (!PluginManagerPrivate::doLoadPlugin(pointer))
+    for (auto iter = loadQueue.begin(); iter != loadQueue.end();) {
+        if (!PluginManagerPrivate::doLoadPlugin(*iter)) {
+            qCWarning(logDPF) << "Failed to load plugin:" << (*iter)->name() << ", removing from queue";
+            iter = loadQueue.erase(iter);   // 移除失败的插件并获取下一个迭代器
             ret = false;
-    });
+        } else {
+            ++iter;   // 加载成功,继续下一个
+        }
+    }
     qCInfo(logDPF) << "End loading all plugins.";
 
     return ret;
