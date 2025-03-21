@@ -144,6 +144,7 @@ void OpticalMediaWidget::initializeUi()
     lbAvailable->setAlignment(Qt::AlignCenter);
 
     statisticWorker = new FileStatisticsJob(this);
+    statisticWorker->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
 }
 
 void OpticalMediaWidget::initConnect()
