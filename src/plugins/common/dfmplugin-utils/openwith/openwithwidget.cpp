@@ -20,6 +20,7 @@ using namespace dfmplugin_utils;
 OpenWithWidget::OpenWithWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
+    MimesAppsManager::instance()->initMimeTypeApps();
     initUI();
 }
 

@@ -58,7 +58,6 @@ public:
     bool addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &files);
     bool removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl> &files);
     void deleteTags(const QStringList &tags);
-    void deleteFiles(const QList<QUrl> &urls);
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
     bool changeTagName(const QString &tagName, const QString &newName);
 

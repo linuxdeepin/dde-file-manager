@@ -24,6 +24,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QRectF>
 #include <QDBusConnection>
@@ -121,23 +122,28 @@ void Tag::onAllPluginsStarted()
 QWidget *Tag::createTagWidgetForPropertyDialog(const QUrl &url)
 {
     fmDebug() << "Creating tag widget for property dialog, URL:" << url.toString();
+    QUrl realUrl;
+    UniversalUtils::urlTransformToLocal(url, &realUrl);
 
-    if (!TagManager::instance()->canTagFile(url)) {
+    if (!TagManager::instance()->canTagFile(realUrl)) {
         fmDebug() << "Cannot tag file:" << url.toString();
         return nullptr;
     }
 
-    auto tagWidget = new TagWidget(url);
+    auto tagWidget = new TagWidget(realUrl);
     tagWidget->initialize();
     return tagWidget;
 }
 
 QWidget *Tag::createTagWidgetForDetailView(const QUrl &url)
 {
-    if (!TagManager::instance()->canTagFile(url))
+    QUrl realUrl;
+    UniversalUtils::urlTransformToLocal(url, &realUrl);
+
+    if (!TagManager::instance()->canTagFile(realUrl))
         return nullptr;
 
-    TagWidget *tagWidget = new TagWidget(url);
+    TagWidget *tagWidget = new TagWidget(realUrl);
     tagWidget->setLayoutHorizontally(true);
     tagWidget->initialize();
     tagWidget->setFrameShape(QFrame::NoFrame);
