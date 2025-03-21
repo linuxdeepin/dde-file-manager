@@ -1123,6 +1123,15 @@ QString FileUtils::makeQString(const QString::const_iterator &it, uint unicode)
     return *it;
 }
 
+QString FileUtils::symlinkTarget(const QUrl &url)
+{
+    char buffer[4096]{0};
+    auto size = readlink(url.path().toStdString().c_str(), buffer, sizeof(buffer));
+    if (size > 0)
+        return QString::fromUtf8(buffer, static_cast<int>(size));
+    return QString();
+}
+
 bool FileUtils::isSymbol(const QChar ch)
 {
     // 如果是高代理项，不应该单独判断

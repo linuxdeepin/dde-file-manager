@@ -25,6 +25,7 @@ BasicWidget::BasicWidget(QWidget *parent)
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
 }
 
 BasicWidget::~BasicWidget()
