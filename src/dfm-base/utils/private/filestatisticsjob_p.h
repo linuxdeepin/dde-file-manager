@@ -26,10 +26,13 @@ public:
 
     void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
     void processFile(const FileInfoPointer &info, const bool followLink, QQueue<QUrl> &directoryQueue);
+    void processFile(const QUrl &url, struct stat64* statBuffer, const bool followLink, QQueue<QUrl> &directoryQueue);
     void emitSizeChanged();
     int countFileCount(const char *name);
     bool checkFileType(const FileInfo::FileType &fileType);
     bool checkInode(const FileInfoPointer info);
+    bool checkInode(const __ino64_t innode, const QString &path, const bool isDir);
+    FileInfo::FileType fileType(const __mode_t fileMode);
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
@@ -50,6 +53,7 @@ public:
     QSet<QUrl> allFiles;
     QSet<QString> skipPath;
     QSet<quint64> inodelist;
+    QSet<QString> inodeAndPath;
     AbstractDirIteratorPointer iterator { nullptr };
     std::atomic_bool iteratorCanStop { false };
 };
