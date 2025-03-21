@@ -145,9 +145,13 @@ void FileDialogHandle::selectFile(const QString &filename)
 {
     D_D(FileDialogHandle);
 
+    if (!d->dialog)
+        return;
+
     CoreHelper::delayInvokeProxy(
-            [d, filename] {
-                d->dialog->selectFile(filename);
+            [dialog = d->dialog, filename] {
+                if (dialog)
+                    dialog->selectFile(filename);
             },
             d->dialog->internalWinId(), this);
 }
@@ -165,9 +169,13 @@ void FileDialogHandle::selectUrl(const QUrl &url)
 {
     D_D(FileDialogHandle);
 
+    if (!d->dialog)
+        return;
+
     CoreHelper::delayInvokeProxy(
-            [d, url] {
-                d->dialog->selectUrl(url);
+            [dialog = d->dialog, url] {
+                if (dialog)
+                    dialog->selectUrl(url);
             },
             d->dialog->internalWinId(), this);
 }
@@ -185,9 +193,13 @@ void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
 {
     D_D(FileDialogHandle);
 
+    if (!d->dialog)
+        return;
+
     CoreHelper::delayInvokeProxy(
-            [d, scheme] {
-                d->dialog->urlSchemeEnable(scheme, false);
+            [dialog = d->dialog, scheme] {
+                if (dialog)
+                    dialog->urlSchemeEnable(scheme, false);
             },
             d->dialog->internalWinId(), this);
 }
@@ -292,9 +304,13 @@ void FileDialogHandle::setFilter(QDir::Filters filters)
 {
     D_D(FileDialogHandle);
 
+    if (!d->dialog)
+        return;
+
     CoreHelper::delayInvokeProxy(
-            [d, filters]() {
-                d->dialog->setFilter(filters);
+            [dialog = d->dialog, filters]() {
+                if (dialog)
+                    dialog->setFilter(filters);
             },
             d->dialog->internalWinId(), this);
 }
@@ -323,9 +339,13 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 {
     D_D(FileDialogHandle);
 
+    if (!d->dialog)
+        return;
+
     CoreHelper::delayInvokeProxy(
-            [d, mode]() {
-                d->dialog->setFileMode(mode);
+            [dialog = d->dialog, mode]() {
+                if (dialog)
+                    dialog->setFileMode(mode);
             },
             d->dialog->internalWinId(), this);
 }
@@ -333,10 +353,15 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
+    
+    if (!d->dialog)
+        return;
+    
     isSetAcceptMode = true;
     CoreHelper::delayInvokeProxy(
-            [d, mode]() {
-                d->dialog->setAcceptMode(mode);
+            [dialog = d->dialog, mode]() {
+                if (dialog)
+                    dialog->setAcceptMode(mode);
             },
             d->dialog->internalWinId(), this);
 }
