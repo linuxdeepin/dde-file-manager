@@ -303,13 +303,15 @@ QStringList TagManager::getFilesByTag(const QString &tag)
 
 bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &files)
 {
-
     // if tags is empty means delete all files's tags
     if (files.isEmpty())
         return false;
 
+    QList<QUrl> realUrls;
+    UniversalUtils::urlsTransformToLocal(files, &realUrls);
+
     // set tags for mult files
-    QStringList mutualTagNames = TagManager::instance()->getTagsByUrls(files);
+    QStringList mutualTagNames = TagManager::instance()->getTagsByUrls(realUrls);
     // for deleting.
     QStringList dirtyTagNames;
     for (const QString &tag : mutualTagNames)
@@ -318,9 +320,9 @@ bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &fil
 
     bool result = false;
     if (!dirtyTagNames.isEmpty())
-        result = TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files) || result;
+        result = TagManager::instance()->removeTagsOfFiles(dirtyTagNames, realUrls) || result;
 
-    for (const QUrl &url : TagHelper::commonUrls(files)) {
+    for (const QUrl &url : TagHelper::commonUrls(realUrls)) {
         QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
         QStringList newTags;
 
