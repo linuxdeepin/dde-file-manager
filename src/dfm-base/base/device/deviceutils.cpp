@@ -633,6 +633,16 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
     return DFMIO::DFMUtils::deviceBytesFree(url);
 }
 
+void DeviceUtils::updateDeviceUsage(const QUrl &url)
+{
+    auto devicePath = bindPathTransform(url.path(), true);
+    auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, false);
+    if (!map.contains(kId))
+        return;
+
+    DevProxyMng->updateDeviceUsage(map.value(kId).toString());
+}
+
 bool DeviceUtils::isUnmountSamba(const QUrl &url)
 {
     if (!ProtocolUtils::isSMBFile(url))

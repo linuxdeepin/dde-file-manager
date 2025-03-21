@@ -88,6 +88,19 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
         DevMngIns->getBlockDevInfo(id, true);
 }
 
+void DeviceProxyManager::updateDeviceUsage(const QString &id)
+{
+    if (d->isDBusRuning() && d->devMngDBus) {
+        auto &&reply = d->devMngDBus->UpdateDeviceUsage(id);
+        reply.waitForFinished();
+        if (reply.isError()) {
+             qWarning() << "update device usage failed. err: " << reply.error().message();
+        }
+    } else {
+        DevMngIns->updateDeviceUsage(id);
+    }
+}
+
 bool DeviceProxyManager::initService()
 {
     d->initConnection();

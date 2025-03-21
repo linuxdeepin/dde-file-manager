@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dodeletefilesworker.h"
+#include "fileoperations/fileoperationutils/fileoperationsutils.h"
+#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QUrl>
@@ -26,6 +28,14 @@ bool DoDeleteFilesWorker::doWork()
         return false;
 
     deleteAllFiles();
+
+    if (!isSourceFileLocal) {
+        auto syncDir = FileOperationsUtils::parentUrl(sourceUrls.first());
+        qDebug() << "sync mnt device data after delete files, dir = " << syncDir;
+        QProcess::startDetached("sync", {"-f", syncDir.path()});
+
+        DeviceUtils::updateDeviceUsage(syncDir);
+    }
 
     // 完成
     endWork();

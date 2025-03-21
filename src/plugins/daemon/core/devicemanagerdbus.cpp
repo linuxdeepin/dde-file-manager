@@ -170,3 +170,8 @@ QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool reload)
 {
     return DevMngIns->getProtocolDevInfo(id, reload);
 }
+
+void DeviceManagerDBus::UpdateDeviceUsage(QString id)
+{
+    DevMngIns->updateDeviceUsage(id);
+}

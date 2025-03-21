@@ -259,6 +259,23 @@ void DeviceWatcher::saveOpticalDevUsage(const QString &id, const QVariantMap &da
     DevProxyMng->reloadOpticalInfo(id);
 }
 
+void DeviceWatcher::updateDevUsage(const QString &id)
+{
+    if (d->allBlockInfos.contains(id)) {
+        auto item = d->allBlockInfos[id];
+        d->queryUsageOfItem(item, dfmmount::DeviceType::kBlockDevice);
+        return;
+    }
+
+    if (d->allProtocolInfos.contains(id)) {
+        auto item = d->allProtocolInfos[id];
+        d->queryUsageOfItem(item, dfmmount::DeviceType::kProtocolDevice);
+        return;
+    }
+
+    qCWarning(logDFMBase) << "cannot find device info, id = " << id;
+}
+
 void DeviceWatcher::startWatch()
 {
     if (d->isWatching) {

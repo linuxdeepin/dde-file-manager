@@ -92,5 +92,8 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="reload" type="b" direction="in"/>
     </method>
+    <method name="UpdateDeviceUsage">
+      <arg name="id" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

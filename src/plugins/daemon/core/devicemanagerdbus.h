@@ -51,6 +51,8 @@ public slots:
     QStringList GetProtocolDevicesIdList();
     QVariantMap QueryProtocolDeviceInfo(QString id, bool reload);
 
+    void UpdateDeviceUsage(QString id);
+
 private:
     void initialize();
     void initConnection();
