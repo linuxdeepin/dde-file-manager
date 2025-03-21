@@ -89,6 +89,8 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "stage-file-to-burning",
         "set-as-wallpaper",
         "mount-image",
+        "tag-color-list",
+        "tag-add"
         ""   // for oem
     };
     static const QStringList whiteEmptyActIdList {
@@ -104,7 +106,8 @@ void OpticalMenuScene::updateState(QMenu *parent)
     };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
                                               "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu", "PropertyMenu",
-                                              "BookmarkMenu", "SendToMenu", "SendToDiscMenu", "OemMenu", "WorkspaceMenu" };
+                                              "BookmarkMenu", "SendToMenu", "SendToDiscMenu", "OemMenu", "WorkspaceMenu",
+                                              "TagMenu" };
 
     auto actions = parent->actions();
     std::for_each(actions.begin(), actions.end(), [this](QAction *act) {
