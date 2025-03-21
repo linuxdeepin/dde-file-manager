@@ -9,7 +9,7 @@
 #include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/private/filestatissticsjob_p.h>
+#include <dfm-base/utils/private/filestatisticsjob_p.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -20,6 +20,7 @@
 #include <QStorageInfo>
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QApplication>
 
 #include <fts.h>
 #include <sys/stat.h>
@@ -216,6 +217,79 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
     }
 }
 
+void FileStatisticsJobPrivate::processFile(const QUrl &url, struct stat64 *statBuffer, const bool followLink, QQueue<QUrl> &directoryQueue)
+{
+    if (!statBuffer)
+        return;
+
+    bool isDir = S_ISDIR(statBuffer->st_mode);
+    if (!checkInode(statBuffer->st_ino, url.path(), isDir))
+        return;
+
+    if (isDir) {
+        // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+        totalProgressSize += FileUtils::getMemoryPageSize();
+        QString target = resolveSymlink(url);
+        if (!target.isEmpty() && !followLink) {
+            ++directoryCount;
+            return;
+        }
+
+        directoryCount++;
+
+        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage))) {
+            if (!fileHints.testFlag(FileStatisticsJob::kDontSkipPROCStorage)
+                && target.startsWith("/proc")) {
+                return;
+            }
+
+            if (!fileHints.testFlag(FileStatisticsJob::kDontSkipAVFSDStorage)
+                && target.startsWith("/avfsd")) {
+                return;
+            }
+
+            if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth) && isDir)
+                directoryQueue << url;
+
+        } else if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth) && isDir) {
+            directoryQueue << url;
+        }
+    } else {
+        QString target = resolveSymlink(url);
+        auto isSyslink = !target.isEmpty();
+        do {
+            if (isSyslink && !followLink) {
+                ++filesCount;
+                return;
+            }
+
+            // ###(zccrs): skip the file,os file
+            if (UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/proc/kcore"))
+                || UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/dev/core"))
+                    || target == "/proc/kcore"
+                    || target == "/dev/core") {
+                break;
+            }
+
+            const FileInfo::FileType &type = fileType(statBuffer->st_mode);
+
+            if (!checkFileType(type))
+                break;
+
+            auto size = statBuffer->st_size;
+            if (size > 0) {
+                totalSize += isSyslink ? 0 : size;
+                emitSizeChanged();
+            }
+            // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+            // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
+            // 判断文件是否是链接文件
+            totalProgressSize += (size <= 0 || isSyslink) ? FileUtils::getMemoryPageSize() : size;
+        } while (false);
+        ++filesCount;
+    }
+}
+
 void FileStatisticsJobPrivate::emitSizeChanged()
 {
     if (elapsedTimer.elapsed() > kSizeChangeinterval) {
@@ -291,6 +365,56 @@ bool FileStatisticsJobPrivate::checkInode(const FileInfoPointer info)
     return true;
 }
 
+bool FileStatisticsJobPrivate::checkInode(const __ino64_t innode, const QString &path, const bool isDir)
+{
+    QString key = QString::number(innode) + path;
+    if (inodeAndPath.contains(key))
+        return false;
+    if (!isDir) {
+        filesCount++;
+    } else {
+        directoryCount++;
+    }
+    inodeAndPath.insert(key);
+    return true;
+}
+
+FileInfo::FileType FileStatisticsJobPrivate::fileType(const __mode_t fileMode)
+{
+    FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
+    if (S_ISDIR(fileMode))
+        fileType = FileInfo::FileType::kDirectory;
+    else if (S_ISCHR(fileMode))
+        fileType = FileInfo::FileType::kCharDevice;
+    else if (S_ISBLK(fileMode))
+        fileType = FileInfo::FileType::kBlockDevice;
+    else if (S_ISFIFO(fileMode))
+        fileType = FileInfo::FileType::kFIFOFile;
+    else if (S_ISSOCK(fileMode))
+        fileType = FileInfo::FileType::kSocketFile;
+    else if (S_ISREG(fileMode))
+        fileType = FileInfo::FileType::kRegularFile;
+
+    return fileType;
+}
+
+QString FileStatisticsJobPrivate::resolveSymlink(const QUrl &url)
+{
+    QSet<QString> visited;
+    QString target = FileUtils::symlinkTarget(url);
+    while (!target.isEmpty()) {
+        if (visited.contains(target))
+            return QString(); // Cycle detected: return empty
+        visited.insert(target);
+        QUrl newUrl = QUrl::fromLocalFile(target);
+        QString nextTarget = FileUtils::symlinkTarget(newUrl);
+        if (nextTarget.isEmpty())
+            break;
+        target = nextTarget;
+    }
+    return target;
+}
+
 FileStatisticsJob::FileStatisticsJob(QObject *parent)
     : QThread(parent), d(new FileStatisticsJobPrivate(this))
 {
@@ -300,6 +424,11 @@ FileStatisticsJob::FileStatisticsJob(QObject *parent)
         Q_EMIT dataNotify(d->totalSize, d->filesCount, d->directoryCount);
     },
             Qt::DirectConnection);
+    connect(qApp, &QApplication::aboutToQuit, this, [this]{
+        stop();
+        quit();
+        wait(3000);
+    });
 }
 
 FileStatisticsJob::~FileStatisticsJob()
@@ -363,6 +492,9 @@ void FileStatisticsJob::start(const QList<QUrl> &sourceUrls)
         return;
     }
 
+    if (d->fileHints.testFlag(kDontSizeInfoPointer))
+        d->sizeInfo.reset(nullptr);
+
     QThread::start();
 }
 
@@ -408,14 +540,19 @@ void FileStatisticsJob::run()
     d->filesCount = 0;
     d->directoryCount = 0;
     d->inodelist.clear();
-    d->sizeInfo.reset(new FileUtils::FilesSizeInfo());
     if (d->sourceUrlList.isEmpty())
         return;
+
+    if (d->sourceUrlList.first().scheme() == Global::Scheme::kFile)
+        return statisticsRealPathSingle();
+
     statistcsOtherFileSystem();
 }
 
 void FileStatisticsJob::setSizeInfo()
 {
+    if (d->sizeInfo.isNull())
+        return;
     d->sizeInfo->fileCount = static_cast<quint32>(d->filesCount);
     d->sizeInfo->totalSize = d->totalProgressSize;
     d->sizeInfo->dirSize = FileUtils::getMemoryPageSize();
@@ -440,7 +577,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             if (d->allFiles.contains(url))
                 continue;
 
-            d->sizeInfo->allFiles << url;
+            if (!d->sizeInfo.isNull())
+                d->sizeInfo->allFiles << url;
             d->allFiles.insert(url);
             FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
@@ -487,7 +625,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             FileHints save_file_hints = d->fileHints;
             d->fileHints = d->fileHints | kDontSkipAVFSDStorage | kDontSkipPROCStorage;
             d->processFile(url, followLink, directory_queue);
-            d->sizeInfo->allFiles << url;
+            if (!d->sizeInfo.isNull())
+                d->sizeInfo->allFiles << url;
             d->allFiles.insert(url);
             d->fileHints = save_file_hints;
 
@@ -525,7 +664,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 continue;
 
             d->processFile(url, followLink, directory_queue);
-            d->sizeInfo->allFiles << url;
+            if (!d->sizeInfo.isNull())
+                d->sizeInfo->allFiles << url;
             d->allFiles.insert(url);
 
             if (!d->stateCheck()) {
@@ -535,6 +675,130 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             }
         }
         d->iteratorCanStop = false;
+    }
+    setSizeInfo();
+    d->setState(kStoppedState);
+}
+
+void FileStatisticsJob::statisticsRealPathSingle()
+{
+    Q_EMIT dataNotify(0, 0, 0);
+
+    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
+
+    QQueue<QUrl> directory_queue;
+    int fileCount = 0;
+    if (d->fileHints.testFlag(kExcludeSourceFile)) {
+        for (const QUrl &url : d->sourceUrlList) {
+            if (!d->stateCheck()) {
+                d->setState(kStoppedState);
+                return;
+            }
+
+            struct stat64 statBuffer;
+            if (::stat64(url.path().toStdString().data(), &statBuffer) != 0)
+                continue;
+
+            bool isDir = S_ISDIR(statBuffer.st_mode);
+            if (!d->checkInode(statBuffer.st_ino, url.path(), isDir))
+                continue;
+
+            if (isDir && d->fileHints.testFlag(kSingleDepth)) {
+                fileCount += d->countFileCount(url.path().toStdString().data());
+            } else {
+                fileCount++;
+            }
+
+            if (S_ISLNK(statBuffer.st_mode)) {
+                if (!followLink) {
+                    continue;
+                }
+
+                const auto &symLinkTarget= FileUtils::symlinkTarget(url);
+                if (::stat64(symLinkTarget.toStdString().data(), &statBuffer) != 0)
+                    continue;
+
+                isDir = S_ISDIR(statBuffer.st_mode);
+                if (S_ISLNK(statBuffer.st_mode)) {
+                    continue;
+                }
+            }
+
+            if (isDir)
+                directory_queue << url;
+        }
+    } else {
+        for (const QUrl &url : d->sourceUrlList) {
+            // 选择的列表中包含avfsd/proc挂载路径时禁用过滤
+            FileHints save_file_hints = d->fileHints;
+            d->fileHints = d->fileHints | kDontSkipAVFSDStorage | kDontSkipPROCStorage;
+            struct stat64 statBuffer;
+            if (::stat64(url.path().toStdString().data(), &statBuffer) != 0)
+                continue;
+
+            d->processFile(url, &statBuffer, followLink, directory_queue);
+
+            if (!d->sizeInfo.isNull())
+                d->sizeInfo->allFiles << url;
+
+            d->fileHints = save_file_hints;
+
+            if (!d->stateCheck()) {
+                d->setState(kStoppedState);
+                setSizeInfo();
+                return;
+            }
+        }
+    }
+
+    if (d->fileHints.testFlag(kSingleDepth)) {
+        d->filesCount = fileCount;
+        directory_queue.clear();
+        setSizeInfo();
+        return;
+    }
+
+    while (!directory_queue.isEmpty()) {
+
+        if (!d->stateCheck()) {
+            d->setState(kStoppedState);
+            setSizeInfo();
+            return;
+        }
+
+        const QUrl &directory_url = directory_queue.dequeue();
+
+
+        DIR *dir { nullptr };
+        struct dirent *entry { nullptr };
+
+        if (!(dir = opendir(directory_url.path().toStdString().data())))
+            continue;
+
+        while ((entry = readdir(dir))) {
+            if (!d->stateCheck()) {
+                d->setState(kStoppedState);
+                setSizeInfo();
+                closedir(dir);
+                return;
+            }
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+                continue;
+
+            struct stat64 statBuffer;
+            QString currentPath = directory_url.path() + QDir::separator() + entry->d_name;
+            if (::stat64(currentPath.toStdString().data(), &statBuffer) != 0)
+                continue;
+
+            QUrl currentFile = QUrl::fromLocalFile(currentPath);
+
+            d->processFile(currentFile, &statBuffer, followLink, directory_queue);
+
+            if (!d->sizeInfo.isNull())
+                d->sizeInfo->allFiles << currentFile;
+
+        }
+        closedir(dir);
     }
     setSizeInfo();
     d->setState(kStoppedState);
