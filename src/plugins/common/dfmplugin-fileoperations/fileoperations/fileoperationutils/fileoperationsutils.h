@@ -65,6 +65,7 @@ class FileOperationsUtils
     friend class DoMoveToTrashFilesWorker;
     friend class DoCleanTrashFilesWorker;
     friend class DoRestoreTrashFilesWorker;
+    friend class DoDeleteFilesWorker;
     friend class FileOperateBaseWorker;
     friend class ErrorMessageAndAction;
 

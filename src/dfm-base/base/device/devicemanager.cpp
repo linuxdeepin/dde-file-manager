@@ -974,6 +974,11 @@ void DeviceManager::retryMount(const QString &id, DFMMOUNT::DeviceType type, int
     QTimer::singleShot(5000, this, [id, type, timeout] { DeviceManager::instance()->doAutoMount(id, type, timeout); });
 }
 
+void DeviceManager::updateDeviceUsage(const QString &id)
+{
+    d->watcher->updateDevUsage(id);
+}
+
 DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)
     : watcher(new DeviceWatcher(qq)), discScanner(new DiscDeviceScanner(qq)), q(qq)
 {

@@ -73,6 +73,7 @@ public:
 
     static QString fileSystemType(const QUrl &url);
     static qint64 deviceBytesFree(const QUrl &url);
+    static void updateDeviceUsage(const QUrl &url);
     static bool isUnmountSamba(const QUrl &url);
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name

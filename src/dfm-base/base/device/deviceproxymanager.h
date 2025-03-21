@@ -41,6 +41,7 @@ public:
 
     // device operation
     void reloadOpticalInfo(const QString &id);
+    void updateDeviceUsage(const QString &id);
 
     bool initService();
     bool isDBusRuning();
