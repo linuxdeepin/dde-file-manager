@@ -71,18 +71,19 @@ BasicWidget::~BasicWidget()
 
 int BasicWidget::expansionPreditHeight()
 {
-    int itemCount = fieldMap.size() + (hideCheckBox ? 0 : 1);
-    int allSpaceHeight = (itemCount - 1) * kSpacingHeight;
-
+    int itemCount = hideCheckBox ? 0 : 1;
     int allItemHeight { 0 };
     QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *>::const_iterator itr = fieldMap.begin();
     for (; itr != fieldMap.end(); ++itr) {
-        if (itr.value())
+        if (itr.value() && itr.value()->isVisible()) {
             allItemHeight += itr.value()->height();
+            ++itemCount;
+        }
     }
     if (hideFile)
         allItemHeight += (hideCheckBox ? 0 : hideFile->height());
 
+    int allSpaceHeight = (itemCount - 1) * kSpacingHeight;
     return allSpaceHeight + allItemHeight;
 }
 
