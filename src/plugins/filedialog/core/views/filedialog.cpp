@@ -721,15 +721,17 @@ void FileDialog::done(int r)
         d->eventLoop->exit(r);
     }
 
-    if (r != QDialog::Accepted || d->hideOnAccept)
-        hide();
-
     emit finished(r);
     if (r == QDialog::Accepted) {
         emit accepted();
     } else if (r == QDialog::Rejected) {
         emit rejected();
     }
+
+    if (d->hideOnAccept && r == QDialog::Accepted)
+        hide();
+    else
+        close();
 }
 
 int FileDialog::exec()
