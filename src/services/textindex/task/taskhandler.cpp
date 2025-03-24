@@ -18,6 +18,8 @@
 #include <FuzzyQuery.h>
 #include <QueryWrapperFilter.h>
 
+#include <DTextEncoding>
+
 #include <QDir>
 #include <QDirIterator>
 #include <QDateTime>
@@ -31,6 +33,8 @@
 #include <unistd.h>
 
 SERVICETEXTINDEX_USE_NAMESPACE
+DCORE_USE_NAMESPACE
+
 using namespace Lucene;
 
 namespace {
@@ -70,10 +74,12 @@ private:
 using FileHandler = std::function<void(const QString &path)>;
 
 // 常量定义
-static constexpr char kSupportFiles[] { "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
-                                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)|"
-                                        "(sh)|(html)|(htm)|(xml)|(xhtml)|(dhtml)|(shtm)|(shtml)|"
-                                        "(json)|(css)|(yaml)|(ini)|(bat)|(js)|(sql)|(uof)|(ofd)" };
+static constexpr char kSupportFiles[] = "^(rtf|odt|ods|odp|odg|docx"
+                                        "|xlsx|pptx|ppsx|md|xls|xlsb"
+                                        "|doc|dot|wps|ppt|pps|txt|pdf"
+                                        "|dps|sh|html|htm|xml|xhtml|dhtml"
+                                        "|shtm|shtml|json|css|yaml|ini"
+                                        "|bat|js|sql|uof|ofd)$";
 
 // 文档处理相关函数
 DocumentPtr createFileDocument(const QString &file)
@@ -92,7 +98,20 @@ DocumentPtr createFileDocument(const QString &file)
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file contents
-    QString contents = DocParser::convertFile(file.toStdString()).c_str();
+    auto fromEncoding = DTextEncoding::detectFileEncoding(file);
+    std::string stdContents = DocParser::convertFile(file.toStdString());
+    QString contents;
+
+    if (fromEncoding.toLower() == "utf-8") {
+        contents = QString::fromUtf8(stdContents.c_str(), stdContents.length());
+    } else {
+        fmWarning() << "File " << file << "encoding" << fromEncoding << "is not UTF-8";
+        QByteArray in(stdContents.c_str(), stdContents.length());
+        QByteArray out;
+        DTextEncoding::convertTextEncodingEx(in, out, "utf-8", fromEncoding);
+        contents = QString::fromUtf8(out);
+    }
+
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 
@@ -377,7 +396,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             // 其他异常不需要重建
             fmWarning() << "Update index failed with exception:" << e.what();
         }
-        
+
         return false;
     };
 }

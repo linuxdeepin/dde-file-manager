@@ -9,7 +9,7 @@ static TextIndexDBus *textIndexDBus = nullptr;
 // DEBUG:
 // 1. budild a debug so file and copy to isntall path
 // 2. systemctl --user restart deepin-service-group@app.service
-// 3. use gdb then attach to to process (/usr/bin/deepin-service-manager -g app)
+// 3. launch app: /usr/bin/deepin-service-manager -n org.deepin.Filemanager.TextIndex
 
 extern "C" int DSMRegister(const char *name, void *data)
 {
