@@ -69,6 +69,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
+    bool isShown { false };
     QScrollArea *scrollArea { nullptr };
     BasicWidget *basicWidget { nullptr };
     PermissionManagerWidget *permissionManagerWidget { nullptr };

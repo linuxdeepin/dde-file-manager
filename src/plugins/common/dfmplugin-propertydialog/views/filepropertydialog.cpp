@@ -255,6 +255,8 @@ int FilePropertyDialog::initalHeightOfView()
 void FilePropertyDialog::processHeight(int height)
 {
     Q_UNUSED(height)
+    if (!isShown)
+        return;
 
     QRect rect = geometry();
     int screenHeight = WindowUtils::cursorScreen()->availableSize().height();
@@ -333,6 +335,7 @@ void FilePropertyDialog::showEvent(QShowEvent *event)
 {
     DDialog::showEvent(event);
 
+    isShown = true;
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     if (vlayout) {
         if (vlayout->count() > 0) {
