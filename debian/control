@@ -59,8 +59,7 @@ Depends:
  libdde-file-manager (=${binary:Version}),
  libqt6sql6-sqlite,
  qt6-translations-l10n,
- libimageeditor6 | hello,
- qtxdg-dev-tools
+ libimageeditor6 | hello
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
 Recommends: deepin-screensaver
