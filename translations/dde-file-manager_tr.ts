@@ -868,7 +868,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"/>
+        <translation>Küçük resim önizlemesini açmak uzak dizinin yavaş yüklenmesine veya işlemin donmasına neden olabilir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
@@ -3266,7 +3266,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="373"/>
         <source>Restore default view mode for all directories</source>
-        <translation type="unfinished"/>
+        <translation>Tüm dizinler için varsayılan görünüm modunu geri yükleyin</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
@@ -3454,12 +3454,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>Geri al</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation type="unfinished"/>
+        <translation>İleri al</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -3534,7 +3534,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
-        <translation type="unfinished"/>
+        <translation>Ağaç görünümüne geç</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3637,7 +3637,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="111"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>En son</translation>
     </message>
 </context>
 <context>
@@ -3645,7 +3645,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>kaynak dosyası %1 oluşturuldu. Bilgi, çakışma bilgisini gösterme işlevinde başarısız oldu!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
@@ -3984,7 +3984,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Dosya adı veya yolu çok uzun. Lütfen dosya adını veya yolu kısaltın ve tekrar deneyin.</translation>
     </message>
 </context>
 <context>
@@ -4088,7 +4088,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
@@ -5104,7 +5104,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="579"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Bölüm şifrelemesini tamamlamak için lütfen sağ disk menüsünden &quot;Bölüm şifrelemesine devam et&quot; seçeneğine tıklayın.</translation>
     </message>
 </context>
 <context>
@@ -5271,7 +5271,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation>Hedef diskte yeterli boş alan yok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
