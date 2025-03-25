@@ -363,9 +363,17 @@ void FileManagerWindowPrivate::updateSideBarSeparatorStyle()
         sepColor.setAlphaF(0.5);   // 深色主题 50% 透明度
     }
 
-    QPalette palette = sidebarSep->palette();
-    palette.setColor(QPalette::Window, sepColor);
+    // 使用setBrush而不是setColor以确保透明度正确应用
+    QPalette palette;
+    palette.setBrush(QPalette::Window, QBrush(sepColor));
     sidebarSep->setPalette(palette);
+
+    // 确保分隔线能够正确显示透明效果
+    sidebarSep->setAutoFillBackground(true);
+
+    // 确保没有边框影响显示
+    if (qobject_cast<QFrame*>(sidebarSep))
+        qobject_cast<QFrame*>(sidebarSep)->setFrameShape(QFrame::NoFrame);
 }
 
 void FileManagerWindowPrivate::updateSideBarSeparatorPosition()
