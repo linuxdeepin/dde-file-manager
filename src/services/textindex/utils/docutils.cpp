@@ -8,6 +8,7 @@
 
 #include <docparser.h>
 
+#include <QSet>
 #include <QFile>
 #include <QTextDocument>
 #include <QFileInfo>

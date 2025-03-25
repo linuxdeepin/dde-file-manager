@@ -94,15 +94,15 @@ DocumentPtr createFileDocument(const QString &file)
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file contents
-    auto contentOpt = DocUtils::extractFileContent(file);
-    
+    const auto &contentOpt = DocUtils::extractFileContent(file);
+
     if (!contentOpt) {
         fmWarning() << "Failed to extract content from file:" << file;
-        return doc; // Return document without content
+        return doc;   // Return document without content
     }
-    
-    QString contents = contentOpt.value();
-    
+
+    const QString &contents = contentOpt.value();
+
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 

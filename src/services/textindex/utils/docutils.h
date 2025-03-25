@@ -8,8 +8,7 @@
 #include "service_textindex_global.h"
 
 #include <QString>
-#include <QSet>
-#include <QFileInfo>
+
 #include <optional>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
