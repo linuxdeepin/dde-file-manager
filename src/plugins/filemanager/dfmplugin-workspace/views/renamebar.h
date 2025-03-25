@@ -11,6 +11,7 @@
 
 namespace dfmplugin_workspace {
 
+class WorkspacePage;
 class RenameBarPrivate;
 class RenameBar : public QFrame
 {
@@ -55,6 +56,7 @@ protected:
 private:
     void initConnect();
     QList<QUrl> getSelectFiles();
+    WorkspacePage *findPage();
 
 private:
     QSharedPointer<RenameBarPrivate> d { nullptr };
