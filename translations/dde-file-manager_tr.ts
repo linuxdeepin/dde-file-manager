@@ -2919,7 +2919,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
         <source>This operation cannot be reversed.</source>
-        <translation type="unfinished"/>
+        <translation>Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="565"/>
@@ -3139,124 +3139,124 @@
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="290"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Bilgisayar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Ev</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Masaüstü</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="293"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Videolar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Müzik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Resimler</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Belgeler</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>İndirmeler</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished"/>
+        <translation>Yeni sekmede aç:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="289"/>
         <source>Current Directory</source>
-        <translation type="unfinished"/>
+        <translation>Geçerli Dizin</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="310"/>
         <source>Files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Dosyalar ve klasörler</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="312"/>
         <source>Show hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Gizli dosyaları göster</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Dosya uzantılarını göster</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Dosya ve klasörleri karışık sırala</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="325"/>
         <source>Workspace</source>
-        <translation type="unfinished"/>
+        <translation>Çalışma alanı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan simge ızgara yoğunluğu:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan liste yüksekliği:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="363"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>Ağaç</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="367"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan görünüm:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation>Simge</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="242"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>Klasörü yeniden açarken mevcut pencereyi etkinleştir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="333"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan simge boyutu:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="360"/>
