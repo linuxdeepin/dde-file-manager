@@ -5265,7 +5265,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
-        <translation type="unfinished"/>
+        <translation>Başarısız oldu, %1 dosya boyutu 4 GB&apos;tan küçük olmalıdır</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
@@ -5276,62 +5276,62 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
         <source>File %1 integrity was damaged</source>
-        <translation type="unfinished"/>
+        <translation>%1 dosyasının bütünlüğü bozuldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>Hedef cihaz salt okunur</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>Hedef klasör kaynak klasörün içindedir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Eylem desteklenmiyor</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
-        <translation type="unfinished"/>
+        <translation>%1&apos;deki dosyaları gezme izniniz yok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>Geri yükleme başarısız oldu, orijinal yol bulunamadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen hata</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>Çöp kutusunun URL&apos;si ayrıştırılamadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
-        <translation type="unfinished"/>
+        <translation>Geri yükleme başarısız oldu: orijinal dosya mevcut değil</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"/>
+        <translation>Dosyayı Kopyalama veya Kesme başarısız oldu! Bu dosyayı tekrar kopyalamayı deneyin!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <translation>Dosyaya erişilemiyor!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -5425,7 +5425,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="333"/>
         <source>Rename file error</source>
-        <translation type="unfinished"/>
+        <translation>Dosya adını değiştirme hatası</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="624"/>
