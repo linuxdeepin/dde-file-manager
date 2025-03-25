@@ -1666,6 +1666,7 @@ bool Match::match(const QString &path, const QString &name)
 
 QString FileUtils::findIconFromXdg(const QString &iconName)
 {
+    // NOTE: qtxdg-dev-tools only Qt5 supported now!
     if (!QStandardPaths::findExecutable("qtxdg-iconfinder").isEmpty()) {
         QProcess process;
         process.start("qtxdg-iconfinder", QStringList() << iconName);
