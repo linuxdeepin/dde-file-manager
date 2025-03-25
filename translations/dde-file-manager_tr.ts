@@ -7298,7 +7298,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="73"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation type="unfinished"/>
+        <translation>Şifre doğrulanmadan erişildiğinde dosyası otomatik olarak açılacaktır. İçindeki dosyalara diğer kullanıcı hesapları altında erişilemeyecektir.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="82"/>
@@ -7353,12 +7353,12 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="179"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="179"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>Cryfs kurulu olmadığı için kasa kullanılamıyor!</translation>
     </message>
 </context>
 <context>
@@ -7367,17 +7367,17 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>Cryfs kurulu olmadığı için kasa kullanılamıyor!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation type="unfinished"/>
+        <translation>Bir görev devam ediyor, bu nedenle işleminizi gerçekleştiremiyor</translation>
     </message>
 </context>
 <context>
@@ -7398,17 +7398,17 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa Dosyasını Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa dosyasının silinmesi başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
@@ -7426,7 +7426,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>Silindiğinde içindeki dosyalar kalıcı olarak silinecektir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
@@ -7436,7 +7436,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
         <source>Key delete</source>
-        <translation type="unfinished"/>
+        <translation>Anahtar silme</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
@@ -7451,27 +7451,27 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="87"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa Dosyasını Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa dosyası silinemedi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Tamam</translation>
     </message>
 </context>
 <context>
@@ -7489,27 +7489,27 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="97"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa Dosyasını Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="112"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış kurtarma anahtarı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="176"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa dosyası silme başarısız oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="180"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Tamam</translation>
     </message>
 </context>
 <context>
@@ -7517,7 +7517,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="39"/>
         <source>Removing...</source>
-        <translation type="unfinished"/>
+        <translation>Kaldırılıyor...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="71"/>
@@ -7527,12 +7527,12 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasa Dosyasını Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"/>
+        <translation>Başarıyla silindi</translation>
     </message>
 </context>
 <context>
@@ -7553,7 +7553,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="102"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>%1 açılamadı, taşınabilir veya yeniden adlandırılabilir</translation>
     </message>
 </context>
 <context>
