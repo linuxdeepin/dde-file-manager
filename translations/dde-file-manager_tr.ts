@@ -1668,72 +1668,72 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"/>
+        <translation>Geçersiz argüman</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>İzin reddedildi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
         <source>Operation (or one of its parameters) not supported</source>
-        <translation type="unfinished"/>
+        <translation>İşlem (veya parametrelerinden biri) desteklenmiyor</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
         <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"/>
+        <translation>Dosya bağlanamadı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"/>
+        <translation>Dosya zaten bağlanmış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
         <source>File was closed</source>
-        <translation type="unfinished"/>
+        <translation>Dosya kapatıldı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>Operation was cancelled</source>
-        <translation type="unfinished"/>
+        <translation>Operasyon iptal edildi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operations are still pending</source>
-        <translation type="unfinished"/>
+        <translation>Operasyonlar hala beklemede</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
         <source>File is read-only</source>
-        <translation type="unfinished"/>
+        <translation>Dosya salt okunurdur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="32"/>
         <source>Failed to open the file</source>
-        <translation type="unfinished"/>
+        <translation>Dosya açılamadı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
         <source>Target Trash File Not exist</source>
-        <translation type="unfinished"/>
+        <translation>Hedef Çöp Kutusu Dosyası Yok</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
-        <translation type="unfinished"/>
+        <translation>İşlem zaman aşımına uğradı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
         <source>File is busy</source>
-        <translation type="unfinished"/>
+        <translation>Dosya meşgul</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz bağlantısı kesildi</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
@@ -1743,23 +1743,23 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Başarı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
-        <translation type="unfinished"/>
+        <translation>Başarısız</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Sidebar</source>
-        <translation type="unfinished"/>
+        <translation>Kenar çubuğu</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
-        <translation type="unfinished"/>
+        <translation>veya</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="383"/>
@@ -1769,22 +1769,22 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="495"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="596"/>
         <source>Clear search history</source>
-        <translation type="unfinished"/>
+        <translation>Arama geçmişini temizle</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>arama</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="369"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>gelişmiş arama</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="450"/>
