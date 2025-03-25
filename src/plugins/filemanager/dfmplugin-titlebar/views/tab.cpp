@@ -309,7 +309,6 @@ void Tab::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    emit clicked();
     d->pressed = false;
     setZValue(1);
     d->isDragging = false;
@@ -393,6 +392,8 @@ void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit closeRequested();
             return;
         }
+
+        emit clicked();
 
         d->pressed = true;
         d->originPos = pos();
