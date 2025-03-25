@@ -2663,17 +2663,17 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihazın bağlantısı şimdi kaldırılıyor...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz şimdi bağlanıyor...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz şimdi siliniyor...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
@@ -2683,7 +2683,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz şimdi kilitleniyor...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
@@ -2703,7 +2703,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="144"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifre</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="148"/>
@@ -2723,12 +2723,12 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>Error occured while mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz bağlanırken hata oluştu</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz engellendi ve ona erişim izniniz yok. Lütfen Güvenlik Merkezi&apos;nde bağlantı politikasını yapılandırın veya yöneticinizle iletişime geçin.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
@@ -2909,7 +2909,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="521"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation type="unfinished"/>
+        <translation>İptal işleminden sonra %1 tamamen silinecek, tamamen silmek istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
@@ -3311,52 +3311,52 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>Uzak ortam küçük resim önizlemelerini gösterir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="396"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"/>
+        <translation>Küçük resim önizlemesini açmak uzak dizinin yavaş yüklenmesine veya işlemin donmasına neden olabilir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="405"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>Gelişmiş</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Mount</source>
-        <translation type="unfinished"/>
+        <translation>Bağla</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
         <source>Auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik Bağla</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik bağlandıktan sonra aç</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"/>
+        <translation>Samba paylaşımlı klasörlerinin girişlerini birleştir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="422"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation>Giriş ekranının değiştirilmesi başarısız bağlamaya yol açabilir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Dosya Yöneticisi&apos;nin dosya seçici iletişim kutusunu kullan</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="429"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation type="unfinished"/>
+        <translation>Dosyaları silerken onayımı iste</translation>
     </message>
 </context>
 <context>
@@ -3449,7 +3449,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Open in terminal</source>
-        <translation type="unfinished"/>
+        <translation>Terminalde aç</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -3650,7 +3650,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>Hedef dosya %1 oluşturuldu. Bilgi, çakışma bilgisini gösterme işlevinde başarısız oldu!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
