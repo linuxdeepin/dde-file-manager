@@ -17,7 +17,7 @@ FILE(GLOB_RECURSE SRC_FILES
     )
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt6 COMPONENTS Core DBus REQUIRED)
+find_package(Qt6 COMPONENTS Core DBus Gui REQUIRED)
 find_package(Dtk6 COMPONENTS Core)
 
 qt6_generate_dbus_interface(
@@ -54,6 +54,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::DBus
+    Qt6::Gui
     Dtk6::Core
     ${GLIB_LIBRARIES}
     ${PCRE_LIBRARIES}

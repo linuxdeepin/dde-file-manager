@@ -7,8 +7,7 @@
 #include "progressnotifier.h"
 #include "utils/indextraverseutils.h"
 #include "utils/scopeguard.h"
-
-#include <docparser.h>
+#include "utils/docutils.h"
 
 #include <fulltext/chineseanalyzer.h>
 
@@ -17,8 +16,6 @@
 #include <FilterIndexReader.h>
 #include <FuzzyQuery.h>
 #include <QueryWrapperFilter.h>
-
-#include <DTextEncoding>
 
 #include <QDir>
 #include <QDirIterator>
@@ -33,7 +30,6 @@
 #include <unistd.h>
 
 SERVICETEXTINDEX_USE_NAMESPACE
-DCORE_USE_NAMESPACE
 
 using namespace Lucene;
 
@@ -98,20 +94,15 @@ DocumentPtr createFileDocument(const QString &file)
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
     // file contents
-    auto fromEncoding = DTextEncoding::detectFileEncoding(file);
-    std::string stdContents = DocParser::convertFile(file.toStdString());
-    QString contents;
-
-    if (fromEncoding.toLower() == "utf-8") {
-        contents = QString::fromUtf8(stdContents.c_str(), stdContents.length());
-    } else {
-        fmWarning() << "File " << file << "encoding" << fromEncoding << "is not UTF-8";
-        QByteArray in(stdContents.c_str(), stdContents.length());
-        QByteArray out;
-        DTextEncoding::convertTextEncodingEx(in, out, "utf-8", fromEncoding);
-        contents = QString::fromUtf8(out);
+    auto contentOpt = DocUtils::extractFileContent(file);
+    
+    if (!contentOpt) {
+        fmWarning() << "Failed to extract content from file:" << file;
+        return doc; // Return document without content
     }
-
+    
+    QString contents = contentOpt.value();
+    
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 
