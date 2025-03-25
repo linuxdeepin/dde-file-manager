@@ -344,7 +344,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
         <source>Open after auto mount</source>
-        <translation>Otomatik bağlanım sonrası aç</translation>
+        <translation>Otomatik bağlama sonrası aç</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="151"/>
@@ -560,7 +560,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation>Takılı MTP cihazlarının yolundaki öğe sayılarını ve boyutlarını göster</translation>
+        <translation>Bağlanmış MTP cihazlarının yolundaki öğe sayılarını ve boyutlarını göster</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
@@ -873,7 +873,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation>Giriş ekranının değiştirilmesi başarısız bağlamaya yol açabilir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
@@ -1142,7 +1142,7 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="64"/>
         <source>Burn image</source>
         <comment>button</comment>
-        <translation>Kalıbı yazdır</translation>
+        <translation>İmajı yazdır</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="65"/>
@@ -3840,7 +3840,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disk meşgul olduğundan şu anda ayrılamıyor</translation>
+        <translation>Disk meşgul olduğundan şu anda bağlantı kesilemiyor</translation>
     </message>
 </context>
 <context>
@@ -3853,7 +3853,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
         <source>Mount error: unsupported image format</source>
-        <translation>Bağlama hatası: desteklenmeyen kalıp biçimi</translation>
+        <translation>Bağlama hatası: desteklenmeyen imaj biçimi</translation>
     </message>
 </context>
 <context>
@@ -3992,7 +3992,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
-        <translation>ISO görüntüsü oluşturma</translation>
+        <translation>ISO imajı oluşturma</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
@@ -4006,7 +4006,7 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="57"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation>ISO Görüntüsü Oluştur</translation>
+        <translation>ISO İmajı Oluştur</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="70"/>
@@ -4021,7 +4021,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
         <source>Save the ISO image here:</source>
-        <translation>ISO görüntüsünü buraya kaydedin:</translation>
+        <translation>ISO imajını buraya kaydedin:</translation>
     </message>
 </context>
 <context>
@@ -4683,7 +4683,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>unmount</source>
-        <translation>Ayır</translation>
+        <translation>Bağlantıyı kes</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
@@ -6244,7 +6244,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="153"/>
         <source>Unmount</source>
-        <translation>Bağı ayır</translation>
+        <translation>Bağlantıyı kes</translation>
     </message>
 </context>
 <context>
@@ -7560,12 +7560,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2128"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>Bağlama hatası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2129"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"/>
+        <translation>Sunucu oturum açma kimlik bilgileri geçersiz. Lütfen kaldırın ve yeniden bağlayın</translation>
     </message>
 </context>
 <context>
