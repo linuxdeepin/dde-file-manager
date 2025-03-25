@@ -330,7 +330,7 @@ void RenameBar::initConnect()
 
 QList<QUrl> RenameBar::getSelectFiles()
 {
-    WorkspacePage* page = qobject_cast<WorkspacePage *>(parentWidget());
+    WorkspacePage* page = findPage();
     if (!page)
         return {};
 
@@ -340,6 +340,19 @@ QList<QUrl> RenameBar::getSelectFiles()
 
     return view->selectedUrlList();
 
+}
+
+WorkspacePage *RenameBar::findPage()
+{
+    auto parent = parentWidget();
+    while (parent) {
+        if (auto page = qobject_cast<WorkspacePage *>(parent))
+            return page;
+
+        parent = parent->parentWidget();
+    }
+
+    return nullptr;
 }
 
 
