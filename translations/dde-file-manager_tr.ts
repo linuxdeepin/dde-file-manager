@@ -6591,17 +6591,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Izgara yoğunluğu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Liste yüksekliği</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Görüntü önizlemesi</translation>
     </message>
 </context>
 <context>
@@ -7413,12 +7413,12 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Tamam</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>Silindiğinde içindeki dosyalar kalıcı olarak silinecektir</translation>
     </message>
 </context>
 <context>
@@ -7584,7 +7584,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Oluşturulma zamanı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="647"/>
@@ -7646,7 +7646,7 @@ Lütfen bu dizindeki dosyaları temizleyin ve güvenle kilidi açmayı deneyin.<
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Oluşturulma zamanı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
