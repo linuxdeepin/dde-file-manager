@@ -42,5 +42,6 @@ void CustomDToolButton::paintEvent(QPaintEvent *event)
     QStylePainter p(this);
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
+    opt.rect.adjust(-1, -1, 1, 1);
     p.drawComplexControl(QStyle::CC_ToolButton, opt);
 }

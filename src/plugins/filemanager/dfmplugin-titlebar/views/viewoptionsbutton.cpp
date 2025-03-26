@@ -98,6 +98,7 @@ void ViewOptionsButton::paintEvent(QPaintEvent *event)
         option.state &= ~QStyle::State_MouseOver;
     }
 
+    option.rect.adjust(-1, -1, 1, 1);
     painter.drawComplexControl(QStyle::CC_ToolButton, option);
 }
 
