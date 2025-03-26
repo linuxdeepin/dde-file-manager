@@ -372,8 +372,8 @@ void FileManagerWindowPrivate::updateSideBarSeparatorStyle()
     sidebarSep->setAutoFillBackground(true);
 
     // 确保没有边框影响显示
-    if (qobject_cast<QFrame*>(sidebarSep))
-        qobject_cast<QFrame*>(sidebarSep)->setFrameShape(QFrame::NoFrame);
+    if (auto sidebarFrame = qobject_cast<QFrame *>(sidebarSep))
+        sidebarFrame->setFrameShape(QFrame::NoFrame);
 }
 
 void FileManagerWindowPrivate::updateSideBarSeparatorPosition()
