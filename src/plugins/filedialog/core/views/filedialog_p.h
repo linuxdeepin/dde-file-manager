@@ -47,7 +47,7 @@ private:
 
     bool isFileView { false };
     bool lastIsFileView { false };
-    bool hideOnAccept { false };
+    bool hideOnAccept { true };
     FileDialogStatusBar *statusBar { nullptr };
     QEventLoop *eventLoop { nullptr };
     QFileDialog::FileMode fileMode { QFileDialog::AnyFile };
