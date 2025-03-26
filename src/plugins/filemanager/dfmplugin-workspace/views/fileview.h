@@ -149,6 +149,7 @@ public slots:
     void onWidgetUpdate();
 
     void onRenameProcessStarted();
+    void onAboutToSwitchListView(const QList<QUrl> &allShowList);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -237,6 +238,8 @@ private:
     bool cdUp();
     QModelIndex iconIndexAt(const QPoint &pos, const QSize &itemSize) const;
     bool expandOrCollapseItem(const QModelIndex &index, const QPoint &pos);
+
+    void recordSelectedUrls();
 };
 
 }

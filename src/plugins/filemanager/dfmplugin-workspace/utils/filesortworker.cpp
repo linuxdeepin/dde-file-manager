@@ -1067,6 +1067,9 @@ void FileSortWorker::switchListView()
 {
     // 移除depthMap和visibleTreeChildren
     auto allShowList = visibleTreeChildren.value(current);
+    // 保持选中
+    Q_EMIT aboutToSwitchToListView(allShowList);
+
     visibleTreeChildren.clear();
     depthMap.clear();
     depthMap.insertMulti(-1, current);

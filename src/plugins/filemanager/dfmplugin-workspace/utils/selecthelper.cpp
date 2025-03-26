@@ -160,6 +160,32 @@ void SelectHelper::resortSelectFiles()
     selectedFiles.clear();
 }
 
+void SelectHelper::filterSelectedFiles(const QList<QUrl> &urlList)
+{
+    if (selectedFiles.isEmpty() || urlList.isEmpty())
+        return;
+
+    QList<QUrl> filteredUrls;
+
+    // 遍历当前已选中的文件
+    for (const QUrl &url : selectedFiles) {
+        // 如果当前 URL 在传入的列表中存在，则保留
+        if (urlList.contains(url)) {
+            filteredUrls.append(url);
+        }
+    }
+
+    // 更新 selectedFiles
+    selectedFiles = filteredUrls;
+
+    // 如果当前选中的文件不在过滤后的列表中，则更新 currentSelectedFile
+    if (!selectedFiles.isEmpty() && !selectedFiles.contains(currentSelectedFile)) {
+        currentSelectedFile = selectedFiles.first();
+    } else if (selectedFiles.isEmpty()) {
+        currentSelectedFile = QUrl();
+    }
+}
+
 void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selection)
 {
     if (view->isIconViewMode()) {

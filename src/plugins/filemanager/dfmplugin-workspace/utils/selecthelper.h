@@ -32,6 +32,7 @@ public:
 
     void saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls);
     void resortSelectFiles();
+    void filterSelectedFiles(const QList<QUrl> &urlList);
 
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
