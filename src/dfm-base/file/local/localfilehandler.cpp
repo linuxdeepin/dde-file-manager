@@ -282,7 +282,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     // Process each file
     for (const QUrl &fileUrl : fileUrls) {
         // Skip invalid URLs
-        if (!fileUrl.isValid()) {
+        if (!fileUrl.isValid() || !fileUrl.isLocalFile()) {
             qCWarning(logDFMBase) << "Invalid URL provided:" << fileUrl;
             continue;
         }
