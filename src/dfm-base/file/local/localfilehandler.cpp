@@ -70,18 +70,21 @@ LocalFileHandler::~LocalFileHandler()
  */
 QUrl LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
 {
+    if (!url.isValid()) {
+        qCWarning(logDFMBase) << "Invalid URL provided to touchFile:" << url;
+        return QUrl();
+    }
+
     QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
-        qCWarning(logDFMBase) << "create operator failed, url: " << url;
+        qCWarning(logDFMBase) << "Create operator failed, url: " << url;
         return QUrl();
     }
 
     bool success = oper->touchFile();
     if (!success) {
-        qCWarning(logDFMBase) << "touch file failed, url: " << url;
-
+        qCWarning(logDFMBase) << "Touch file failed, url: " << url;
         d->setError(oper->lastError());
-
         return QUrl();
     } else {   // fix bug 189699 When the iPhone creates a file, the gio is created successfully, but there is no file
         auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -92,7 +95,7 @@ QUrl LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
     }
 
     auto templateUrl = d->loadTemplateInfo(url, tempUrl);
-    qCInfo(logDFMBase, "touchFile source file : %s, Template file %s, successed by dfmio function touchFile!",
+    qCInfo(logDFMBase, "touchFile source file: %s, Template file %s, succeeded by dfmio function touchFile!",
            url.path().toStdString().c_str(), tempUrl.path().toStdString().c_str());
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
@@ -276,22 +279,28 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     bool result = false;
     d->invalidPath.clear();
 
-    // 处理每个文件
+    // Process each file
     for (const QUrl &fileUrl : fileUrls) {
-        // 1. 处理符号链接
+        // Skip invalid URLs
+        if (!fileUrl.isValid()) {
+            qCWarning(logDFMBase) << "Invalid URL provided:" << fileUrl;
+            continue;
+        }
+
+        // 1. Handle symlinks
         auto resolvedUrl = d->resolveSymlink(fileUrl);
-        if (!resolvedUrl)   // 如果解析失败则继续下一个
+        if (!resolvedUrl)   // If resolution fails, continue to next file
             continue;
 
-        // 2. 处理可执行文件
+        // 2. Handle executable files
         if (d->handleExecutableFile(*resolvedUrl, &result))
             continue;
 
-        // 3. 收集要打开的文件路径
+        // 3. Collect file paths to open
         d->collectFilePath(*resolvedUrl, &pathList);
     }
 
-    // 4. 打开收集的文件
+    // 4. Open collected files
     if (!pathList.empty()) {
         result = d->doOpenFiles(pathList);
     } else {
@@ -546,14 +555,22 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
 bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
 {
     qCInfo(logDFMBase) << "Recursive delete " << url;
+
+    if (!url.isValid()) {
+        qCWarning(logDFMBase) << "Invalid URL provided to deleteFileRecursive:" << url;
+        return false;
+    }
+
     if (SystemPathUtil::instance()->isSystemPath(url.toLocalFile())) {
         qCWarning(logDFMBase) << "Cannot delete system path!!!!!!!!!!!!!!!!!";
         abort();
     }
 
     FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
-    if (!info)
+    if (!info) {
+        qCWarning(logDFMBase) << "Failed to create FileInfo for:" << url;
         return false;
+    }
 
     if (!info->isAttributes(OptInfoType::kIsDir))
         return deleteFile(url);
@@ -568,6 +585,11 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
     while (enumerator->hasNext()) {
         const QUrl &urlNext = enumerator->next();
         info = InfoFactory::create<FileInfo>(urlNext);
+        if (!info) {
+            qCWarning(logDFMBase) << "Failed to create FileInfo for:" << urlNext;
+            continue;
+        }
+
         if (info->isAttributes(OptInfoType::kIsDir))
             succ = deleteFileRecursive(urlNext);
         else
@@ -931,9 +953,21 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     QList<QUrl> transUrls = urls;
     for (const QUrl &url : urls) {
-        FileInfoPointer info { InfoFactory::create<FileInfo>(url) };
+        if (!url.isValid()) {
+            qCWarning(logDFMBase) << "Invalid URL skipped:" << url;
+            transUrls.removeOne(url);
+            continue;
+        }
+
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        if (!info) {
+            qCWarning(logDFMBase) << "Failed to create FileInfo for:" << url;
+            transUrls.removeOne(url);
+            continue;
+        }
+
         if (info->nameOf(NameInfoType::kSuffix) == Global::Scheme::kDesktop) {
-            ret = launchApp(url.path()) || ret;   // 有一个成功就成功
+            ret = launchApp(url.path()) || ret;   // Success if at least one succeeds
             transUrls.removeOne(url);
             continue;
         }
@@ -941,7 +975,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     if (transUrls.isEmpty())
         return ret;
 
-    // 找出所有可以打开的文件的信息，这里比较耗时，需要优化
+    // Find information for all openable files, this is time-consuming and needs optimization
     QMultiMap<QString, QString> openInfos, mountOpenInfos, cmdOpenInfos;
     QMap<QString, QString> openMineTypes, mountMineTypes, cmdMineTypes;
     for (auto url : transUrls) {
@@ -949,6 +983,10 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         const QString &filePath = fileUrl.path();
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
+        if (!fileInfo) {
+            qCWarning(logDFMBase) << "Failed to create FileInfo for:" << fileUrl;
+            continue;
+        }
 
         QString mimeType;
         if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
@@ -977,7 +1015,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                     mountMineTypes.insert(DeviceUtils::getSambaFileUriFromNative(fileUrl).toString(),
                                           QString("inode/directory"));
                 } else {
-                    qCWarning(logDFMBase) << "no default application for" << fileUrl;
+                    qCWarning(logDFMBase) << "No default application for" << fileUrl;
                 }
                 continue;
             }
@@ -990,7 +1028,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
                     cmdOpenInfos.insert(defaultDesktopFile, url.toString());
                     cmdMineTypes.insert(url.toString(), mimeType);
                 } else {
-                    qCWarning(logDFMBase) << "no default application for" << transUrls;
+                    qCWarning(logDFMBase) << "No default application for" << transUrls;
                     continue;
                 }
             }
@@ -1000,20 +1038,18 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         }
     }
 
-    // 打开所有的文件
+    // Open all files
     if (openInfos.isEmpty() && mountOpenInfos.isEmpty() && cmdOpenInfos.isEmpty())
         return false;
 
     bool openResult = doOpenFiles(openInfos, openMineTypes);
-
     bool openMount = doOpenFiles(mountOpenInfos, mountMineTypes);
-
     bool openCmd = doOpenFiles(cmdOpenInfos, cmdMineTypes);
 
     if (openResult || openMount || openCmd)
         return true;
 
-    if (ProtocolUtils::isSMBFile(transUrls[0]))
+    if (!transUrls.isEmpty() && ProtocolUtils::isSMBFile(transUrls[0]))
         return false;
 
     QStringList paths;
@@ -1021,7 +1057,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         paths << url.path();
     }
 
-    if (MimesAppsManager::getDefaultAppByFileName(transUrls.first().path()) == "org.gnome.font-viewer.desktop") {
+    if (!transUrls.isEmpty() && MimesAppsManager::getDefaultAppByFileName(transUrls.first().path()) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << paths);
         QTimer::singleShot(200, [=] {
             QProcess::startDetached("gio", QStringList() << "open" << paths);
@@ -1192,19 +1228,29 @@ LocalFileHandlerPrivate::LocalFileHandlerPrivate(LocalFileHandler *handler)
 // 处理符号链接解析
 std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 {
-    // 记录已访问的路径,用于检测循环链接
+    if (!url.isValid()) {
+        qCWarning(logDFMBase) << "Invalid URL provided to resolveSymlink:" << url;
+        return std::nullopt;
+    }
+
+    // Track visited paths to detect circular links
     QStringList visitedPaths;
     QString currentPath = url.toLocalFile();
     visitedPaths << currentPath;
 
     QFileInfo fileInfo(currentPath);
     while (fileInfo.isSymLink()) {
-        // 获取链接目标的绝对路径(会自动处理相对路径)
+        // Get absolute path of link target (automatically handles relative paths)
         QString canonicalPath = fileInfo.canonicalFilePath();
 
-        // 如果获取规范路径失败,说明链接可能已失效
+        // If canonical path retrieval fails, link may be broken
         if (canonicalPath.isEmpty()) {
             FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
+            if (!fileInfo) {
+                qCWarning(logDFMBase) << "Failed to create FileInfo for:" << url;
+                return std::nullopt;
+            }
+
             QString targetLink = fileInfo->pathOf(PathInfoType::kSymLinkTarget);
             canonicalPath = SystemPathUtil::instance()->getRealpathSafely(targetLink);
         }
@@ -1214,22 +1260,22 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
             return std::nullopt;
         }
 
-        // 检查循环链接
+        // Check for circular links
         if (visitedPaths.contains(canonicalPath))
-            break;   // 发现循环,使用最后一个有效路径
+            break;   // Circular link detected, use last valid path
 
         visitedPaths << canonicalPath;
 
-        // 网络文件检查
+        // Network file check
         if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(canonicalPath))) {
             DialogManager::instance()->showUnableToVistDir(canonicalPath);
             return std::nullopt;
         }
 
-        // 检查链接目标是否存在
+        // Check if link target exists
         fileInfo.setFile(canonicalPath);
         if (!fileInfo.exists() && !ProtocolUtils::isSMBFile(QUrl::fromLocalFile(canonicalPath))) {
-            // 链接已失效
+            // Link is broken
             lastEvent = DialogManagerInstance->showBreakSymlinkDialog(
                     QFileInfo(currentPath).fileName(),
                     url);
@@ -1240,28 +1286,33 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
         currentPath = canonicalPath;
     }
 
-    // 返回最终解析后的URL(如果有循环链接,则返回最后一个有效路径)
+    // Return final resolved URL (if circular link, returns last valid path)
     return QUrl::fromLocalFile(currentPath);
 }
 
 // 处理可执行文件
 bool LocalFileHandlerPrivate::handleExecutableFile(const QUrl &fileUrl, bool *result)
 {
-    // 处理可执行脚本
+    if (!fileUrl.isValid() || !result) {
+        qCWarning(logDFMBase) << "Invalid parameters to handleExecutableFile";
+        return false;
+    }
+
+    // Handle executable scripts
     if (isExecutableScript(fileUrl.path())) {
         int code = DialogManagerInstance->showRunExcutableScriptDialog(fileUrl);
         *result = openExcutableScriptFile(fileUrl.path(), code) || *result;
         return true;
     }
 
-    // 处理可运行文件
+    // Handle runnable files
     if (isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
         int code = DialogManagerInstance->showRunExcutableFileDialog(fileUrl);
         *result = openExcutableFile(fileUrl.path(), code) || *result;
         return true;
     }
 
-    // 处理需要添加可执行权限的文件
+    // Handle files that need executable permission
     if (shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
         int code = DialogManagerInstance->showAskIfAddExcutableFlagAndRunDialog();
         *result = addExecutableFlagAndExecuse(fileUrl.path(), code) || *result;
@@ -1271,13 +1322,20 @@ bool LocalFileHandlerPrivate::handleExecutableFile(const QUrl &fileUrl, bool *re
     return false;
 }
 
-// 收集要打开的文件路径
+// Collect file paths to open
 void LocalFileHandlerPrivate::collectFilePath(const QUrl &fileUrl, QList<QUrl> *pathList)
 {
+    if (!fileUrl.isValid() || !pathList) {
+        qCWarning(logDFMBase) << "Invalid parameters to collectFilePath";
+        return;
+    }
+
     QString urlPath = fileUrl.path();
     if (isFileWindowsUrlShortcut(urlPath)) {
         urlPath = getInternetShortcutUrl(urlPath);
-        pathList->append(QUrl::fromLocalFile(urlPath));
+        if (!urlPath.isEmpty()) {
+            pathList->append(QUrl::fromLocalFile(urlPath));
+        }
     } else {
         pathList->append(fileUrl);
     }
