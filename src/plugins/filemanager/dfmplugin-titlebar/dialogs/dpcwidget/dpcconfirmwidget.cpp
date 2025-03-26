@@ -73,7 +73,7 @@ void DPCConfirmWidget::initUI()
     DFontSizeManager *fontManager = DFontSizeManager::instance();
     fontManager->bind(titleLabel, DFontSizeManager::T5, QFont::Medium);
 
-    QRegularExpression regx("[^\\x4e00-\\x9fa5]+");
+    QRegularExpression regx("^[^\u4e00-\u9fa5]+");
     // 创建验证器
     QValidator *validator = new QRegularExpressionValidator(regx, this);
 
