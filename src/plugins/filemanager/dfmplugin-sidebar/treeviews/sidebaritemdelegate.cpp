@@ -364,7 +364,7 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInf
     const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
     if (fs.isEmpty()) {
         const auto &url = info->urlOf(FileInfo::FileUrlInfoType::kUrl);
-        if (FileUtils::isLocalFile(url)) {
+        if (url.isLocalFile()) {
             maxLen = NAME_MAX;
             const auto &path = url.path();
             useCharCount = path.isEmpty() ? false : FileUtils::supportLongName(url);
@@ -463,9 +463,9 @@ void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPal
 {
     QColor mouseHoverColor;
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        mouseHoverColor = QColor(255, 255, 255, 25);  // 白色，10%透明度
+        mouseHoverColor = QColor(255, 255, 255, 25);   // 白色，10%透明度
     else
-        mouseHoverColor = QColor(0, 0, 0, 25);  // 黑色，10%透明度
+        mouseHoverColor = QColor(0, 0, 0, 25);   // 黑色，10%透明度
 
     painter->setBrush(mouseHoverColor);
     painter->setPen(Qt::NoPen);

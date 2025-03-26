@@ -44,7 +44,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
     QString path = fileInfo->pathOf(PathInfoType::kPath);
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
-        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        // fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
         if (fileInfo->nameOf(NameInfoType::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo->nameOf(NameInfoType::kFileName).endsWith(".lock") || fileInfo->nameOf(NameInfoType::kFileName).endsWith("lockfile")) {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -119,7 +119,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
 
-    //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+    // fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     if (!isMatchExtension) {
         if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
@@ -178,7 +178,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 
 QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url) const
 {
-    if (dfmbase::FileUtils::isLocalFile(url))
+    if (url.isLocalFile())
         return mimeTypeForFile(url);
 
     return QMimeDatabase::mimeTypeForUrl(url);

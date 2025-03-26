@@ -157,7 +157,7 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
 
     // mounted dir should cache files in FileDataManager
     // The purpose is only to judge nonlocal disk files, some schme should not use it to judge, so it is limited to file.
-    if (url.scheme() == Global::Scheme::kFile && (!ProtocolUtils::isLocalFile(url)))
+    if (url.scheme() == Global::Scheme::kFile && (!ProtocolUtils::isInternalFile(url)))
         return true;
 
     return false;

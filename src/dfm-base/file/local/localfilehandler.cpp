@@ -168,7 +168,7 @@ bool LocalFileHandler::rmdir(const QUrl &url)
  */
 bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck)
 {
-    if (!dfmbase::FileUtils::isLocalFile(url) || !dfmbase::FileUtils::isLocalFile(newUrl))
+    if (!url.isLocalFile() || !newUrl.isLocalFile())
         return false;
 
     if (url.scheme() != newUrl.scheme())

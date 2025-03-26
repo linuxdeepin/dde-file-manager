@@ -45,8 +45,8 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     for (const QUrl &url : selecturls) {
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
 
-        if (info && (dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl)) || info->exists())) {
-            //判断链接文件的源文件是否存在
+        if (info && (url.isLocalFile() || info->exists())) {
+            // 判断链接文件的源文件是否存在
             if (info->isAttributes(OptInfoType::kIsSymLink)) {
                 QUrl targetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
                 if (!targetUrl.isValid()) {
@@ -69,7 +69,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         }
     }
 
-    //链接文件源文件不存在或找不到的情况，弹错误提示窗
+    // 链接文件源文件不存在或找不到的情况，弹错误提示窗
     if (hasInvalidSymlink) {
         DialogManager::instance()->showErrorDialog(tr("Unable to find the original file"), QString());
         return;

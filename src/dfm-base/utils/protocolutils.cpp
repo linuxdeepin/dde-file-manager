@@ -73,7 +73,7 @@ bool isSMBFile(const QUrl &url)
     return hasMatch(url.path(), smbMatch);
 }
 
-bool isLocalFile(const QUrl &url)
+bool isInternalFile(const QUrl &url)
 {
     if (!url.isLocalFile())
         return false;

@@ -102,7 +102,7 @@ void CrumbBarPrivate::setClickableAreaEnabled(bool enabled)
 void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
 {
     QString copyPath;
-    if (dfmbase::FileUtils::isLocalFile(url) || !UrlRoute::hasScheme(url.scheme())) {
+    if (url.isLocalFile() || !UrlRoute::hasScheme(url.scheme())) {
         copyPath = url.toString(QUrl::RemoveQuery);
     } else {
         // why? The format of the custom scheme URL was incorrect when it was converted to a string

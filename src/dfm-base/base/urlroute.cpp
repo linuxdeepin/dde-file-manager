@@ -84,7 +84,7 @@ QString UrlRoute::toString(const QUrl &url, QUrl::FormattingOptions options)
     if (!url.isValid())
         return "";
 
-    if (dfmbase::FileUtils::isLocalFile(url) || !hasScheme(url.scheme()))
+    if (url.isLocalFile() || !hasScheme(url.scheme()))
         return url.toString(options);
 
     QUrl tmpUrl { url };
@@ -307,7 +307,7 @@ QUrl UrlRoute::pathToReal(const QString &path)
     temp.replace(QRegularExpression("/{1,}"), "/");
     int treeLevel = temp.count("/");
     while (treeLevel >= 0) {
-        //同层级所有的scheme
+        // 同层级所有的scheme
         auto &&schemeList = kSchemeRealTree.values(treeLevel);
         for (auto val : schemeList) {
             if (val == dfmbase::Global::Scheme::kAsyncFile)
@@ -363,7 +363,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, const QString &scheme)
         return QUrl();
 
     QString tempPath = path;
-    tempPath = tempPath.replace(0, rootPath.size(), "/");   //制空映射前缀
+    tempPath = tempPath.replace(0, rootPath.size(), "/");   // 制空映射前缀
     QUrl result;
     result.setScheme(scheme);
     result.setPath(tempPath);

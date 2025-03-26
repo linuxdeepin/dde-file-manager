@@ -774,7 +774,7 @@ bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = q->indexAt(event->pos());
         auto fileInfo = q->model()->fileInfo(index.isValid() ? index : q->rootIndex());
 
-        if (fileInfo && dfmbase::FileUtils::isLocalFile(fileInfo->urlOf(UrlInfoType::kUrl))) {
+        if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).isLocalFile()) {
             if (fileInfo->isAttributes(OptInfoType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kUrl));
             else

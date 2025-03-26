@@ -29,7 +29,7 @@ public:
     explicit SettingsPrivate(Settings *qq);
 
     bool autoSync = false;   // automatically synchronize
-    bool watchChanges = false;   //monitor for configuration changes
+    bool watchChanges = false;   // monitor for configuration changes
     bool settingFileIsDirty = false;   // set whether the file has cached data (dirty data)
     QSet<QString> autoSyncGroupExclude;   // when auto sync, exclude some group
     QTimer *syncTimer = nullptr;   // synchronization Timer
@@ -145,7 +145,7 @@ public:
      */
     QString urlToKey(const QUrl &url) const
     {
-        if (dfmbase::FileUtils::isLocalFile(url)) {
+        if (url.isLocalFile()) {
             const QUrl &new_url = StandardPaths::toStandardUrl(url.toLocalFile());
 
             if (new_url.isValid()) {

@@ -25,7 +25,7 @@ IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &key, QObject 
 
 bool IteratorSearcher::search()
 {
-    //准备状态切运行中，否则直接返回
+    // 准备状态切运行中，否则直接返回
     if (!status.testAndSetRelease(kReady, kRuning))
         return false;
 
@@ -33,9 +33,9 @@ bool IteratorSearcher::search()
     // 遍历搜索
     doSearch();
 
-    //检查是否还有数据
+    // 检查是否还有数据
     if (status.testAndSetRelease(kRuning, kCompleted)) {
-        //发送数据
+        // 发送数据
         if (hasItem())
             emit unearthed(this);
     }
@@ -81,11 +81,11 @@ void IteratorSearcher::doSearch()
         if (!iterator)
             continue;
 
-        iterator->setProperty("QueryAttributes","standard::name,standard::type,standard::size,\
+        iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,\
                                      standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
 
         // 仅在过滤目录下进行搜索时，过滤目录下的内容才能被检索
-        if (dfmbase::FileUtils::isLocalFile(url)) {
+        if (url.isLocalFile()) {
             QRegularExpression reg(kFilterFolders);
             const auto &searchRootPath = searchUrl.toLocalFile();
             const auto &filePath = url.toLocalFile();
@@ -94,7 +94,7 @@ void IteratorSearcher::doSearch()
         }
 
         while (iterator->hasNext()) {
-            //中断
+            // 中断
             if (status.loadAcquire() != kRuning)
                 return;
 
@@ -116,10 +116,10 @@ void IteratorSearcher::doSearch()
                 {
                     info->updateAttributes();
                     QMutexLocker lk(&mutex);
-                    allResults << fileUrl;                   
+                    allResults << fileUrl;
                 }
 
-                //推送
+                // 推送
                 tryNotify();
             }
         }

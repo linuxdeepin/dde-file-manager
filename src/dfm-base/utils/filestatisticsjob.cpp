@@ -153,7 +153,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
 
         ++directoryCount;
 
-        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl))) {
+        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && url.isLocalFile()) {
             do {
                 QStorageInfo si(info->urlOf(UrlInfoType::kUrl).toLocalFile());
 
@@ -192,7 +192,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
                 || UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
                 break;
             }
-            //skip os file Shortcut
+            // skip os file Shortcut
             if (info->isAttributes(OptInfoType::kIsSymLink)
                 && (skipPath.contains(info->pathOf(PathInfoType::kSymLinkTarget)))) {
                 break;
@@ -342,7 +342,7 @@ QString FileStatisticsJobPrivate::resolveSymlink(const QUrl &url)
     QString target = FileUtils::symlinkTarget(url);
     while (!target.isEmpty()) {
         if (visited.contains(target))
-            return QString(); // Cycle detected: return empty
+            return QString();   // Cycle detected: return empty
         visited.insert(target);
         QUrl newUrl = QUrl::fromLocalFile(target);
         QString nextTarget = FileUtils::symlinkTarget(newUrl);
@@ -382,9 +382,7 @@ void FileStatisticsJobPrivate::processRegularFile(const QUrl &url, struct stat64
         return;
     }
     // Skip specific system files early
-    if (UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/proc/kcore")) ||
-        UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/dev/core")) ||
-        target == "/proc/kcore" || target == "/dev/core") {
+    if (UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/proc/kcore")) || UniversalUtils::urlEquals(url, QUrl::fromLocalFile("/dev/core")) || target == "/proc/kcore" || target == "/dev/core") {
         return;
     }
     const FileInfo::FileType type = fileType(statBuffer->st_mode);
@@ -405,18 +403,19 @@ FileStatisticsJob::FileStatisticsJob(QObject *parent)
 {
     d->notifyDataTimer = new QTimer(this);
 
-    connect(d->notifyDataTimer, &QTimer::timeout, this, [this] {
-        Q_EMIT dataNotify(d->totalSize, d->filesCount, d->directoryCount);
-    },
+    connect(
+            d->notifyDataTimer, &QTimer::timeout, this, [this] {
+                Q_EMIT dataNotify(d->totalSize, d->filesCount, d->directoryCount);
+            },
             Qt::DirectConnection);
-    connect(qApp, &QApplication::aboutToQuit, this, [this]{
-        stop(); // Signal the thread to stop
+    connect(qApp, &QApplication::aboutToQuit, this, [this] {
+        stop();   // Signal the thread to stop
 
-        if (!wait(3000)) { // Wait for 3 seconds
+        if (!wait(3000)) {   // Wait for 3 seconds
             qWarning() << "FileStatisticsJob thread did not exit within 3 seconds. Terminating forcefully.";
-            quit(); // Ensure the event loop is stopped
-            terminate(); // Forcefully terminate the thread (use with caution!)
-            wait(); // Wait for the thread to terminate (no timeout this time)
+            quit();   // Ensure the event loop is stopped
+            terminate();   // Forcefully terminate the thread (use with caution!)
+            wait();   // Wait for the thread to terminate (no timeout this time)
         }
     });
 }
@@ -434,7 +433,6 @@ FileStatisticsJob::State FileStatisticsJob::state() const
 #else
     return static_cast<FileStatisticsJob::State>(d->state.load());
 #endif
-
 }
 
 FileStatisticsJob::FileHints FileStatisticsJob::fileHints() const
@@ -645,7 +643,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             qCWarning(logDFMBase) << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        d->iterator->setProperty("QueryAttributes","standard::name,standard::type,standard::size,\
+        d->iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,\
                                         standard::size,standard::is-symlink,standard::symlink-target,access::*,unix::inode");
         d->iteratorCanStop = true;
         while (d->iterator->hasNext()) {
@@ -705,7 +703,7 @@ void FileStatisticsJob::statisticsRealPathSingle()
                     continue;
                 }
 
-                const auto &symLinkTarget= FileUtils::symlinkTarget(url);
+                const auto &symLinkTarget = FileUtils::symlinkTarget(url);
                 if (::stat64(symLinkTarget.toStdString().data(), &statBuffer) != 0)
                     continue;
 
@@ -760,7 +758,6 @@ void FileStatisticsJob::statisticsRealPathSingle()
 
         const QUrl &directory_url = directory_queue.dequeue();
 
-
         DIR *dir { nullptr };
         struct dirent *entry { nullptr };
 
@@ -788,7 +785,6 @@ void FileStatisticsJob::statisticsRealPathSingle()
 
             if (!d->sizeInfo.isNull())
                 d->sizeInfo->allFiles << currentFile;
-
         }
         closedir(dir);
     }

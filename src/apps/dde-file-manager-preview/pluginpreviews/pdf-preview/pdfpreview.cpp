@@ -30,7 +30,7 @@ bool PDFPreview::setFileUrl(const QUrl &url)
     if (selectFileUrl == url)
         return true;
 
-    if (!dfmbase::FileUtils::isLocalFile(url))
+    if (!url.isLocalFile())
         return false;
 
     if (pdfWidget == nullptr)

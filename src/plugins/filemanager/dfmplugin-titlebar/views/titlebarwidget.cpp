@@ -476,7 +476,7 @@ void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
-    if (dfmbase::FileUtils::isLocalFile(titlebarUrl))
+    if (titlebarUrl.isLocalFile())
         QDir::setCurrent(titlebarUrl.toLocalFile());
     QDir::setCurrent(currentDir);
 }

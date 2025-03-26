@@ -35,7 +35,7 @@ public:
     std::atomic_bool queringAttribute { false };
     std::atomic_bool cacheingAttributes { false };
     std::atomic_bool needUpdateMediaInfo;
-    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral};
+    DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
     char memrySeat[7];
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QVariantHash extraProperties;   // 扩展属性列表
@@ -51,7 +51,7 @@ public:
     QMap<FileInfo::FileInfoAttributeID, QVariant> cacheAsyncAttributes;
     QReadWriteLock notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
-    quint64 tokenKey{0};
+    quint64 tokenKey { 0 };
     AsyncFileInfo *const q;
     QReadWriteLock changesLock;
     QList<FileInfo::FileInfoAttributeID> changesAttributes;
@@ -127,7 +127,7 @@ AsyncFileInfoPrivate::~AsyncFileInfoPrivate()
 QMimeType AsyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
     QUrl url = q->urlOf(UrlInfoType::kUrl);
-    if (dfmbase::FileUtils::isLocalFile(url))
+    if (url.isLocalFile())
         return mimeDb.mimeTypeForUrl(url);
     else
         return mimeDb.mimeTypeForFile(UrlRoute::urlToPath(url),
