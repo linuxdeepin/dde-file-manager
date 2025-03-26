@@ -721,6 +721,7 @@ void FileDialog::done(int r)
         d->eventLoop->exit(r);
     }
 
+    // DO NOT CLOSE the dialog here, may cause QFileDialog::getExsitingDirectory returns an empty path if CLOSE
     if (r != QDialog::Accepted || d->hideOnAccept)
         hide();
 
