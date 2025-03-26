@@ -92,6 +92,7 @@ signals:
 signals:
     void requestUpdateTimerStart();
     void requestSortByMimeType();
+    void aboutToSwitchToListView(const QList<QUrl> &allShowList);
 
 public slots:
     // Receive all local files of iteration of iterator thread, perform filtering and sorting

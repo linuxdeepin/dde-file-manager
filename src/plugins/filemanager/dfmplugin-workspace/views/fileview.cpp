@@ -138,6 +138,9 @@ void FileView::setViewMode(Global::ViewMode mode)
         delegateModeIndex = static_cast<int>(Global::ViewMode::kIconMode);
     }
 
+    // 切换视图模式前记录当前选中文件，以便切换视图模式后文件数量变化了也能保持存在文件的选中状态。
+    recordSelectedUrls();
+
     setItemDelegate(d->delegates[delegateModeIndex]);
     switch (d->currentViewMode) {
     case Global::ViewMode::kIconMode:
@@ -458,14 +461,7 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    auto selectedUrls = selectedUrlList();
-
-    if (!selectedUrls.isEmpty()) {
-        const QUrl curFile = model()->data(currentIndex(), ItemRoles::kItemUrlRole).toUrl();
-        d->selectHelper->saveSelectedFilesList(curFile, selectedUrlList());
-    }
-
-    clearSelection();
+    recordSelectedUrls();
 
     model()->sort(logicalIndex, order);
 
@@ -1290,6 +1286,15 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
     return true;
 }
 
+void FileView::recordSelectedUrls()
+{
+    auto selectedUrls = selectedUrlList();
+    if (!selectedUrls.isEmpty()) {
+        const QUrl curFile = model()->data(currentIndex(), ItemRoles::kItemUrlRole).toUrl();
+        d->selectHelper->saveSelectedFilesList(curFile, selectedUrls);
+    }
+}
+
 DirOpenMode FileView::currentDirOpenMode() const
 {
     DirOpenMode mode;
@@ -1318,11 +1323,18 @@ void FileView::onRenameProcessStarted()
     }
 }
 
+void FileView::onAboutToSwitchListView(const QList<QUrl> &allShowList)
+{
+    d->selectHelper->filterSelectedFiles(allShowList);
+}
+
 void FileView::onRowCountChanged()
 {
     // clean selected indexes
     // the selectList will be reseted while call the selectedIndexes() at next time
     static_cast<FileSelectionModel *>(selectionModel())->clearSelectList();
+
+    d->selectHelper->resortSelectFiles();
 
     delayUpdateStatusBar();
     updateContentLabel();
@@ -2085,6 +2097,7 @@ void FileView::initializeConnect()
     connect(model(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
     connect(model(), &FileViewModel::renameFileProcessStarted, this, &FileView::onRenameProcessStarted);
+    connect(model(), &FileViewModel::aboutToSwitchToListView, this, &FileView::onAboutToSwitchListView);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
