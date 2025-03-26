@@ -369,11 +369,11 @@ void TitleBarWidget::initConnect()
 void TitleBarWidget::updateUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    crumbBar->setFixedHeight(DSizeModeHelper::element(24, 36));
-    addressBar->setFixedHeight(DSizeModeHelper::element(24, 36));
+    crumbBar->setFixedHeight(DSizeModeHelper::element(24, 30));
+    addressBar->setFixedHeight(DSizeModeHelper::element(24, 30));
 #else
-    crumbBar->setFixedHeight(36);
-    addressBar->setFixedHeight(36);
+    crumbBar->setFixedHeight(30);
+    addressBar->setFixedHeight(30);
 #endif
     topBar->setFixedHeight(40);
 

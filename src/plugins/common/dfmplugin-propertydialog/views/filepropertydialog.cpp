@@ -246,7 +246,7 @@ int FilePropertyDialog::initalHeightOfView()
         } else {
             QWidget *widget = extendedControl.at(i);
             if (widget)
-                expandsHeight += widget->height() + kArrowExpandSpacing;
+                expandsHeight += widget->sizeHint().height() + kArrowExpandSpacing;
         }
     }
     return expandsHeight;

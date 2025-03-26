@@ -173,7 +173,7 @@ void SortByButton::paintEvent(QPaintEvent *event)
 
         option.palette.setBrush(QPalette::Button, hoverColor);
 
-        option.rect.adjust(1, 1, -1, -1);
+        option.rect.adjust(1, -1, -1, 1);
         painter.drawComplexControl(QStyle::CC_ToolButton, option);
     }
 

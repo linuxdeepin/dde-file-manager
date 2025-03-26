@@ -135,7 +135,7 @@ void CrumbBarPrivate::initUI()
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addStretch(1);
-    crumbBarLayout->setContentsMargins(kItemMargin / 2, kItemMargin / 2, kItemMargin / 2, kItemMargin / 2);
+    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin / 2, 3);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
