@@ -212,7 +212,7 @@ void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
     if (curTitleBar)
         currentUrl = curTitleBar->currentUrl();
 
-    if (dfmbase::FileUtils::isLocalFile(currentUrl))
+    if (currentUrl.isLocalFile())
         QDir::setCurrent(currentUrl.toLocalFile());
 
     QString inputStr = text;
@@ -246,7 +246,7 @@ void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
     if (curTitleBar)
         currentUrl = curTitleBar->currentUrl();
 
-    if (dfmbase::FileUtils::isLocalFile(currentUrl))
+    if (currentUrl.isLocalFile())
         QDir::setCurrent(currentUrl.toLocalFile());
 
     if (currentUrl.isValid()) {

@@ -63,7 +63,7 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
     }
 
     auto targetPath = dfmInfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
-    if (ProtocolUtils::isLocalFile(url) && (targetPath.isEmpty() || ProtocolUtils::isLocalFile(QUrl::fromLocalFile(targetPath)))) {
+    if (ProtocolUtils::isInternalFile(url) && (targetPath.isEmpty() || ProtocolUtils::isInternalFile(QUrl::fromLocalFile(targetPath)))) {
         info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url));
     } else {
         info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmInfo));
@@ -213,7 +213,7 @@ void LocalDirIterator::cacheBlockIOAttribute()
     const QUrl &rootUrl = this->url();
     const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
     d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
-    d->isLocalDevice = ProtocolUtils::isLocalFile(rootUrl);
+    d->isLocalDevice = ProtocolUtils::isInternalFile(rootUrl);
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
 
@@ -267,7 +267,7 @@ bool LocalDirIterator::oneByOne()
     if (info)
         return !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() || !d->dfmioDirIterator;
 
-    return !ProtocolUtils::isLocalFile(url()) || !d->dfmioDirIterator;
+    return !ProtocolUtils::isInternalFile(url()) || !d->dfmioDirIterator;
 }
 
 bool LocalDirIterator::initIterator()

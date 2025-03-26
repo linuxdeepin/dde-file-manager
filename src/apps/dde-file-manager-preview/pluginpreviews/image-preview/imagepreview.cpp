@@ -90,7 +90,7 @@ bool ImagePreview::setFileUrl(const QUrl &url)
         tmpUrl = info->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
-    if (!dfmbase::FileUtils::isLocalFile(tmpUrl))
+    if (!tmpUrl.isLocalFile())
         return false;
 
     QByteArray format;

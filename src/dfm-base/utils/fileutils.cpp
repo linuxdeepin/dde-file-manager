@@ -308,7 +308,7 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     if (url1.scheme() != url2.scheme())
         return false;
 
-    if (isLocalFile(url1)) {
+    if (url1.isLocalFile()) {
         return DFMIO::DFMUtils::devicePathFromUrl(url1) == DFMIO::DFMUtils::devicePathFromUrl(url2);
     }
 
@@ -404,22 +404,6 @@ bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
             return true;
         url = DFMIO::DFMUtils::directParentUrl(url);
     }
-    return false;
-}
-
-bool FileUtils::isLocalFile(const QUrl &url)
-{
-    if (url.isLocalFile())
-        return true;
-
-    // see if the original path is from local.
-    // since only ext* filesystems are supported to mounted with dlnfs,
-    // check the url by udisks.
-    // the dlnfs mount is captured by gvfs and is regarded as protocol device.
-    // so if it's NOT external block mounts file, it's local file.
-    if (DeviceUtils::isSubpathOfDlnfs(url.path()))
-        return !(DevProxyMng->isFileOfExternalBlockMounts(url.path()));
-
     return false;
 }
 
@@ -1125,7 +1109,7 @@ QString FileUtils::makeQString(const QString::const_iterator &it, uint unicode)
 
 QString FileUtils::symlinkTarget(const QUrl &url)
 {
-    char buffer[4096]{0};
+    char buffer[4096] { 0 };
     auto size = readlink(url.path().toStdString().c_str(), buffer, sizeof(buffer));
     if (size > 0)
         return QString::fromUtf8(buffer, static_cast<int>(size));
@@ -1454,7 +1438,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     if (alltotrash)
         return info->canAttributes(CanableInfoType::kCanTrash);
 
-    return ProtocolUtils::isLocalFile(url);
+    return ProtocolUtils::isInternalFile(url);
 }
 
 QUrl FileUtils::bindUrlTransform(const QUrl &url)

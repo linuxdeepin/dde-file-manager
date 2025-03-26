@@ -58,7 +58,7 @@ bool MusicPreview::setFileUrl(const QUrl &url)
     if (currentUrl == url)
         return true;
 
-    if (!dfmbase::FileUtils::isLocalFile(url))
+    if (!url.isLocalFile())
         return false;
 
     if (musicView || statusBarFrame)

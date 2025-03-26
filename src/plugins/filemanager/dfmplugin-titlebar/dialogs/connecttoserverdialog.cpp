@@ -94,7 +94,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         updateCollections(url, false);
 
         const QString &currentDir = QDir::currentPath();
-        if (dfmbase::FileUtils::isLocalFile(currentUrl))
+        if (currentUrl.isLocalFile())
             QDir::setCurrent(currentUrl.toLocalFile());
         QDir::setCurrent(currentDir);
 

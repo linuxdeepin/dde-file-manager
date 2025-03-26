@@ -1070,7 +1070,7 @@ SyncFileInfoPrivate::~SyncFileInfoPrivate()
 QMimeType SyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
     QUrl url = q->urlOf(UrlInfoType::kUrl);
-    if (dfmbase::FileUtils::isLocalFile(url))
+    if (url.isLocalFile())
         return mimeDb.mimeTypeForUrl(url);
     else
         return mimeDb.mimeTypeForFile(UrlRoute::urlToPath(url),

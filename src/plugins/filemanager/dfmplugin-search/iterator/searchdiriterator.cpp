@@ -45,7 +45,7 @@ void SearchDirIteratorPrivate::initConnect()
 void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
-    if (dfmbase::FileUtils::isLocalFile(targetUrl)) {
+    if (targetUrl.isLocalFile()) {
         DFMBASE_USE_NAMESPACE
         searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
         searchRootWatcher->startWatcher();

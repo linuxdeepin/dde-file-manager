@@ -36,16 +36,16 @@ static QMutex clipboardFileUrlsMutex;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 static std::atomic_bool canReadClipboard { true };
-static std::atomic_bool hasUosRemote{ false };
-static ClipboardMonitor * clipMonitor{ nullptr };
-static std::atomic_bool isX11{ false };
+static std::atomic_bool hasUosRemote { false };
+static ClipboardMonitor *clipMonitor { nullptr };
+static std::atomic_bool isX11 { false };
 
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
 static constexpr char kGnomeCopyKey[] = "x-special/gnome-copied-files";
 static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
-void onClipboardDataChanged(const QStringList & formats)
+void onClipboardDataChanged(const QStringList &formats)
 {
     if (!canReadClipboard)
         return;
@@ -110,10 +110,10 @@ void ClipBoard::init()
     });
 
     connect(&FileManagerWindowsManager::instance(),
-            &FileManagerWindowsManager::windowCreated, this, []{
-        GlobalData::canReadClipboard = true;
-    });
-    connect(&FileManagerWindowsManager::instance(), &FileManagerWindowsManager::lastWindowClosed, this, []{
+            &FileManagerWindowsManager::windowCreated, this, [] {
+                GlobalData::canReadClipboard = true;
+            });
+    connect(&FileManagerWindowsManager::instance(), &FileManagerWindowsManager::lastWindowClosed, this, [] {
         GlobalData::canReadClipboard = false;
     });
 
@@ -121,10 +121,10 @@ void ClipBoard::init()
         return;
 
     library.unload();
-    qCWarning(logDFMBase()) << "connect x11 clipboard changed single!!!!" ;
+    qCWarning(logDFMBase()) << "connect x11 clipboard changed single!!!!";
     GlobalData::isX11 = true;
     GlobalData::clipMonitor = new ClipboardMonitor;
-    connect(GlobalData::clipMonitor, &ClipboardMonitor::clipboardChanged, this, [](const QStringList & formats) {
+    connect(GlobalData::clipMonitor, &ClipboardMonitor::clipboardChanged, this, [](const QStringList &formats) {
         qInfo() << " * Clipboard formats changed: " << formats;
         GlobalData::hasUosRemote = formats.contains(GlobalData::kRemoteCopyKey);
     });
@@ -197,7 +197,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
                 QIcon thumb(DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->thumbnailFilePath(QFileInfo(info->pathOf(PathInfoType::kAbsoluteFilePath)),
                                                                                                  DTK_GUI_NAMESPACE::DThumbnailProvider::Large));
                 if (thumb.isNull()) {
-                    //qCWarning(logDFMBase) << "thumbnail file faild " << fileInfo->absoluteFilePath();
+                    // qCWarning(logDFMBase) << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
                     icon = thumb;
                 }
@@ -229,7 +229,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     if (curUrl.isEmpty())
         return;
     QByteArray localPath;
-    if (dfmbase::FileUtils::isLocalFile(curUrl)) {
+    if (curUrl.isLocalFile()) {
         localPath = curUrl.toString().toLocal8Bit();
     } else {
         qCInfo(logDFMBase) << "Remote Assistance copy: current url not local file";
@@ -341,7 +341,7 @@ void ClipBoard::replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl)
 void ClipBoard::readFirstClipboard()
 {
     QStringList mime;
-    if(GlobalData::isX11) {
+    if (GlobalData::isX11) {
         static bool first = false;
         if (first)
             return;
@@ -370,7 +370,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
         qCWarning(logDFMBase) << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
         return QList<QUrl>();
     }
-    //使用x11创建一个窗口去阻塞获取URl
+    // 使用x11创建一个窗口去阻塞获取URl
     Display *display = XOpenDisplay(nullptr);
     unsigned long color = BlackPixel(display, DefaultScreen(display));
     Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 1, 1, 0, color, color);
@@ -468,7 +468,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
 
     QList<QUrl> clipboardFileUrls;
     for (QUrl url : urls) {
-        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        // 链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         if (!url.toString().startsWith(Global::Scheme::kFile))
             continue;
 
@@ -492,7 +492,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
 
 QStringList ClipBoard::getFirstMimeTypesByX11()
 {
-    //使用x11创建一个窗口去阻塞获取URl
+    // 使用x11创建一个窗口去阻塞获取URl
     Display *display = XOpenDisplay(nullptr);
     unsigned long color = BlackPixel(display, DefaultScreen(display));
     Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 1, 1, 0, color, color);
@@ -519,7 +519,7 @@ QStringList ClipBoard::getFirstMimeTypesByX11()
                        &fmtid, &resbits, &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
     QStringList formats;
     if (resbits == 32 && ressize > 0) {
-        Atom *atoms = reinterpret_cast<Atom*>(result);
+        Atom *atoms = reinterpret_cast<Atom *>(result);
         for (int i = 0; i < static_cast<int>(ressize); i++) {
             formats.append(XGetAtomName(display, atoms[i]));
         }

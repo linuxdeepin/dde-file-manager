@@ -1117,7 +1117,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
     auto symlink = symLinkTarget();
     if (attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()
         && !symlink.isEmpty()
-        && !ProtocolUtils::isLocalFile(QUrl::fromLocalFile(symlink))) {
+        && !ProtocolUtils::isInternalFile(QUrl::fromLocalFile(symlink))) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
         if (asyncInfo) {

@@ -222,7 +222,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         event->setDropAction(Qt::CopyAction);
 
         FileInfoPointer info = fileInfoAtPos(event->pos());
-        if (info && dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl))) {
+        if (info && info->urlOf(UrlInfoType::kUrl).isLocalFile()) {
             if (info->isAttributes(OptInfoType::kIsDir)) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", info->urlOf(UrlInfoType::kUrl));
             } else {
@@ -444,14 +444,11 @@ bool DragDropHelper::checkDragEnable(const QUrl &dragUrl, const QUrl &targetUrl)
         return false;
 
     // Check for standard move/copy/rename capabilities.
-    if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) ||
-        info->canAttributes(CanableInfoType::kCanRename))
+    if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) || info->canAttributes(CanableInfoType::kCanRename))
         return true;
 
     // Some desktop files may allow trash even if not movable/renamable.
-    bool dragToDelete = (FileUtils::isTrashFile(targetUrl) ||
-                         FileUtils::isTrashDesktopFile(targetUrl)) &&
-                        info->canAttributes(CanableInfoType::kCanTrash);
+    bool dragToDelete = (FileUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl)) && info->canAttributes(CanableInfoType::kCanTrash);
 
     return dragToDelete;
 }
@@ -465,8 +462,7 @@ bool DragDropHelper::checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) con
     // but they all allow to be deleted to trash
     FileInfoPointer info = InfoFactory::create<FileInfo>(dragUrl);
     if (FileUtils::isDesktopFile(info->urlOf(UrlInfoType::kUrl))) {
-        return info->canAttributes(CanableInfoType::kCanMoveOrCopy) ||
-                (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
+        return info->canAttributes(CanableInfoType::kCanMoveOrCopy) || (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
     }
     return info->canAttributes(CanableInfoType::kCanRename);
 }

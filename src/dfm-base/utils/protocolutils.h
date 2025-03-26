@@ -8,7 +8,7 @@
 DFMBASE_BEGIN_NAMESPACE
 
 namespace ProtocolUtils {
-bool isLocalFile(const QUrl &url);
+bool isInternalFile(const QUrl &url);
 bool isRemoteFile(const QUrl &url);
 bool isMTPFile(const QUrl &url);
 bool isGphotoFile(const QUrl &url);

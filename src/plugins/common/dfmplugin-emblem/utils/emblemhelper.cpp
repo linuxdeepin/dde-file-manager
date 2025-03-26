@@ -276,7 +276,7 @@ bool EmblemHelper::isExtEmblemProhibited(const FileInfoPointer &info, const QUrl
     // In the block device, all file extension emblem icons are displayed by default,
     // When configuring emblem icons display, all file extension corners are displayed in the block device
     // When emblem icons hiding is configured, all file extension corners are hidden in the block device
-    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !ProtocolUtils::isLocalFile(url))) {
+    if ((info ? !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() : !ProtocolUtils::isInternalFile(url))) {
         bool enable { DConfigManager::instance()->value("org.deepin.dde.file-manager.emblem", "blockExtEnable", true).toBool() };
         if (enable)
             return false;

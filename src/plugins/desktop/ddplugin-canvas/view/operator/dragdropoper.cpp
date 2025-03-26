@@ -258,7 +258,7 @@ bool DragDropOper::checkProhibitPaths(QDragEnterEvent *event) const
 
 void DragDropOper::selectItems(const QList<QUrl> &fileUrl) const
 {
-    //fileUrl is file:///xxxx
+    // fileUrl is file:///xxxx
     QItemSelection selection;
     QMap<int, QPersistentModelIndex> viewCurrentIndex;
     for (const QUrl &url : fileUrl) {
@@ -304,7 +304,7 @@ void DragDropOper::selectItems(const QList<QUrl> &fileUrl) const
 
 bool DragDropOper::dropFilter(QDropEvent *event)
 {
-    //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
+    // Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
     {
         QModelIndex index = view->baseIndexAt(event->pos());
         if (index.isValid()) {
@@ -339,7 +339,7 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
         QList<QUrl> urlList = data->urls();
         if (!urlList.isEmpty()) {
             // todo 排查哪些情况会进这里
-            //Q_ASSERT(false);
+            // Q_ASSERT(false);
             DFileDragClient *client = new DFileDragClient(data, const_cast<DragDropOper *>(this));
             fmDebug() << "dragClientDownload" << client << data << urlList;
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
@@ -456,7 +456,7 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = view->baseIndexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
-        if (fileInfo && dfmbase::FileUtils::isLocalFile(fileInfo->urlOf(UrlInfoType::kUrl))) {
+        if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).isLocalFile()) {
             if (fileInfo->isAttributes(OptInfoType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kUrl));
             else
@@ -527,7 +527,7 @@ void DragDropOper::tryDodge(QDragMoveEvent *event)
 
 void DragDropOper::updateDragHover(const QPoint &pos)
 {
-    //update the old one
+    // update the old one
     view->update(dragHoverIndex);
 
     dragHoverIndex = view->baseIndexAt(pos);

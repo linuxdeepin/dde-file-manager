@@ -75,7 +75,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
         return;
     }
 
-    if (!dfmbase::FileUtils::isLocalFile(q->directoryUrl()))
+    if (!q->directoryUrl().isLocalFile())
         return;
 
     if (!q->directory().exists())
@@ -398,7 +398,7 @@ QList<QUrl> FileDialog::selectedUrls() const
 #else
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory)) {
 #endif
-        if (dfmbase::FileUtils::isLocalFile(directoryUrl()))
+        if (directoryUrl().isLocalFile())
             list << QUrl(directoryUrl());
     }
     return list;

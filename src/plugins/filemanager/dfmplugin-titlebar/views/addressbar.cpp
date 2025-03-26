@@ -175,7 +175,7 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
 
         const auto &currentDir = QDir::currentPath();
         QUrl curUrl = q->currentUrl();
-        if (dfmbase::FileUtils::isLocalFile(curUrl))
+        if (curUrl.isLocalFile())
             QDir::setCurrent(curUrl.toLocalFile());
 
         const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
@@ -204,8 +204,8 @@ void AddressBarPrivate::doComplete()
     if (urlCompleter->completionCount() == 1
         && lastPressedKey != Qt::Key_Backspace
         && lastPressedKey != Qt::Key_Delete
-        && isKeyPressed   //判断是否按键按下，时间设定的时100ms
-        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   //键盘剪切事件
+        && isKeyPressed   // 判断是否按键按下，时间设定的时100ms
+        && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control)   // 键盘剪切事件
         && q->cursorPosition() == q->text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
@@ -358,7 +358,7 @@ void AddressBarPrivate::onReturnPressed()
         return;
 
     // add search history list
-    if (!dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
+    if (!UrlRoute::fromUserInput(text).isLocalFile()) {
         if (protocolIPRegExp.match(text).hasMatch()) {
             while (text.endsWith("/")) {
                 text.chop(1);
@@ -471,7 +471,7 @@ void AddressBar::setCurrentUrl(const QUrl &url)
     if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Show_Addr", &u)) {
         this->setText(u.toString());
     } else {
-        QString text = dfmbase::FileUtils::isLocalFile(url) ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
+        QString text = url.isLocalFile() ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
         this->setText(text);
     }
 }
@@ -535,7 +535,7 @@ void AddressBar::focusOutEvent(QFocusEvent *e)
 void AddressBar::keyPressEvent(QKeyEvent *e)
 {
     d->isKeyPressed = true;
-    QTimer::singleShot(100, this, [=]() {   //设定100ms，若有问题可视情况改变
+    QTimer::singleShot(100, this, [=]() {   // 设定100ms，若有问题可视情况改变
         d->isKeyPressed = false;
     });
     d->lastPreviousKey = d->lastPressedKey;
@@ -570,14 +570,14 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
                     QString completeResult = d->urlCompleter->completionModel()->index(0, 0).data().toString();
                     d->insertCompletion(completeResult);
                 }
-                if (dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text()))) {
+                if (UrlRoute::fromUserInput(text()).isLocalFile()) {
                     setText(text() + '/');
                     emit textEdited(text());
                 }
             }
             e->accept();
             return;
-        //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+        // 解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
         case Qt::Key_Up:
         case Qt::Key_Down:
             d->completerView->keyPressEvent(e);
@@ -616,7 +616,7 @@ void AddressBar::paintEvent(QPaintEvent *e)
     // addressbar animation
     QPainter painter(this);
 
-    //设置提示text
+    // 设置提示text
     if (text().isEmpty()) {
         QPen oldpen = painter.pen();
         QColor phColor = palette().text().color();
@@ -638,7 +638,7 @@ void AddressBar::paintEvent(QPaintEvent *e)
 
         painter.setPen(oldpen);
     }
-    //绘制波纹效果
+    // 绘制波纹效果
     if (d->animation.state() != QAbstractAnimation::Stopped) {
 
         QIcon icon = QIcon::fromTheme("dfm_addressbar_glowing");
