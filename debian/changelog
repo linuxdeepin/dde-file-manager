@@ -1,3 +1,14 @@
+dde-file-manager (6.5.43) unstable; urgency=medium
+
+  * Feature additions (view mode switching, FileStatisticsJob)
+  * UI fixes (dialog buttons, password input, element dimensions)
+  * Performance improvements (memory management, text indexing)
+  * Code refactoring (URL validation, file checks)
+  * Localization updates (multiple translations)
+  * Core improvements (MIME initialization, URL handling) 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 27 Mar 2025 14:13:23 +0800
+
 dde-file-manager (6.5.42) unstable; urgency=medium
 
   * fix bugs 
