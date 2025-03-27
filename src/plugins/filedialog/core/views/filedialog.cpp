@@ -45,6 +45,8 @@ Q_DECLARE_METATYPE(QDir::Filters);
 DFMBASE_USE_NAMESPACE
 using namespace filedialog_core;
 
+inline constexpr int kFileDialogDirectoryOnly { 4 };
+
 FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),
       q(qq)
@@ -393,11 +395,7 @@ QList<QUrl> FileDialog::selectedUrls() const
         return QList<QUrl>() << fileUrl;
     }
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly)) {
-#else
-    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory)) {
-#endif
+    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || static_cast<int>(d->fileMode) == kFileDialogDirectoryOnly)) {
         if (directoryUrl().isLocalFile())
             list << QUrl(directoryUrl());
     }
@@ -428,12 +426,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     if (!d->isFileView)
         return;
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    if (d->fileMode == QFileDialog::DirectoryOnly
-        || d->fileMode == QFileDialog::Directory) {
-#else
-    if (d->fileMode == QFileDialog::Directory) {
-#endif
+    if (d->fileMode == QFileDialog::Directory || static_cast<int>(d->fileMode) == kFileDialogDirectoryOnly) {
         // 清理只显示目录时对文件名添加的过滤条件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList());
         curNameFilters.clear();
@@ -446,9 +439,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::ExistingFiles:
         CoreEventsCaller::setEnabledSelectionModes(this, { QAbstractItemView::ExtendedSelection });
         break;
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    case QFileDialog::DirectoryOnly:
-#endif
+    case kFileDialogDirectoryOnly:
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList("/"));
@@ -863,11 +854,7 @@ void FileDialog::selectNameFilterByIndex(int index)
 
     // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
     // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    if ((d->fileMode == QFileDialog::DirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
-#else
-    if ((d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
-#endif
+    if ((static_cast<int>(d->fileMode) == kFileDialogDirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
         newNameFilters = QStringList("/");
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), newNameFilters);
@@ -904,11 +891,7 @@ void FileDialog::updateAcceptButtonState()
     if (fileInfo == nullptr)
         return;
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
-#else
-    bool isDirMode = d->fileMode == QFileDialog::Directory;
-#endif
+    bool isDirMode = d->fileMode == QFileDialog::Directory || static_cast<int>(d->fileMode) == kFileDialogDirectoryOnly;
     bool dialogShowMode = d->acceptMode;
     bool isVirtual = UrlRoute::isVirtual(fileInfo->urlOf(UrlInfoType::kUrl).scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
