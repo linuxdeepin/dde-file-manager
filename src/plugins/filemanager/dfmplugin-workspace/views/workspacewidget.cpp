@@ -273,5 +273,10 @@ void WorkspaceWidget::onCreateNewWindow()
             urlList << url;
     }
 
+    if (urlList.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
+        qWarning() << "Too much windows to open is not supported!";
+        return;
+    }
+
     WorkspaceEventCaller::sendOpenWindow(urlList);
 }
