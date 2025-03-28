@@ -6,6 +6,7 @@
 #include "action_defines.h"
 #include "private/openwithmenuscene_p.h"
 #include "menuutils.h"
+#include "utils/menuhelper.h"
 
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
@@ -100,6 +101,9 @@ AbstractMenuScene *OpenWithMenuScene::scene(QAction *action) const
 bool OpenWithMenuScene::create(QMenu *parent)
 {
     if (d->selectFiles.isEmpty() || !d->focusFile.isValid())
+        return false;
+
+    if (!Helper::showOpenAction(d->selectFiles))
         return false;
 
     if (d->isFocusOnDDEDesktopFile || d->isSystemPathIncluded)

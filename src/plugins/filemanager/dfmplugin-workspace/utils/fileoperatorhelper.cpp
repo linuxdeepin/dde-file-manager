@@ -87,6 +87,10 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
+    auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                   kOpenFolderWindowsInASeparateProcess, true)
+                         .toBool();
+    QList<QUrl> dirListOpenInNewWindow {};
     for (const QUrl &url : urls) {
         const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
         if (fileInfoPtr) {
@@ -108,11 +112,8 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
                     dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
 
-                auto flag = !DConfigManager::instance()->value(kViewDConfName,
-                                                               kOpenFolderWindowsInASeparateProcess, true)
-                                     .toBool();
                 if (mode == DirOpenMode::kOpenNewWindow || (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
-                    WorkspaceEventCaller::sendOpenWindow({ dirUrl }, !flag);
+                    dirListOpenInNewWindow.append(dirUrl);
                 } else {
                     WorkspaceEventCaller::sendChangeCurrentUrl(windowId, dirUrl);
                 }
@@ -125,6 +126,16 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                                      windowId,
                                      openUrls);
     }
+
+    if (dirListOpenInNewWindow.isEmpty())
+        return;
+
+    if (dirListOpenInNewWindow.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
+        qWarning() << "Too much dir to open is not supported!";
+        return;
+    }
+
+    WorkspaceEventCaller::sendOpenWindow(dirListOpenInNewWindow, !flag);
 }
 
 void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps)

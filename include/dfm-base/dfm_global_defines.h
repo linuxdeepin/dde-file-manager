@@ -17,6 +17,8 @@
 
 namespace dfmbase {
 namespace Global {
+inline constexpr int kOpenNewWindowMaxCount = 50;
+
 enum class ViewMode {
     kNoneMode = 0x00,
     kIconMode = 0x01,
