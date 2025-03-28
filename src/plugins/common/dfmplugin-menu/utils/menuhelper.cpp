@@ -9,6 +9,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -82,6 +83,23 @@ bool isHiddenDesktopMenu()
 #endif
 
     return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
+}
+
+bool showOpenAction(const QList<QUrl> &urlList)
+{
+    if (urlList.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
+        int dirCount { 0 };
+        for (auto url : urlList) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
+            if (info && info->isAttributes(OptInfoType::kIsDir))
+                ++dirCount;
+
+            if (dirCount > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount)
+                return false;
+        }
+    }
+
+    return true;
 }
 
 }   //  namespace Helper
