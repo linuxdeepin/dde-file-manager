@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "utils/menuhelper.h"
 #include "private/fileoperatormenuscene_p.h"
 #include "action_defines.h"
 #include "menuutils.h"
@@ -108,9 +109,12 @@ bool FileOperatorMenuScene::create(QMenu *parent)
     if (d->isEmptyArea)
         return true;
 
-    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpen));
-    d->predicateAction[ActionID::kOpen] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOpen));
+    QAction *tempAction { nullptr };
+    if (Helper::showOpenAction(d->selectFiles)) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kOpen));
+        d->predicateAction[ActionID::kOpen] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOpen));
+    }
 
     if (d->selectFiles.count() == 1) {
         auto focusFileInfo = d->focusFileInfo;
