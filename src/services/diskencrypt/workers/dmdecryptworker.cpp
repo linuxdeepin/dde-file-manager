@@ -131,7 +131,23 @@ void DMDecryptWorker::getDevPath(QString *phyDev, QString *clearDev)
 
     *clearDev = ptr->getProperty(dfmmount::Property::kEncryptedCleartextDevice).toString();
     if (clearDev->isEmpty()) {
-        qWarning() << "device not unlock or not encrypt." << dev << phyDev;
+        qWarning() << "device not unlock or not encrypt." << dev << *phyDev;
+
+        auto items = crypttab_helper::cryptItems();
+        for (auto item: items) {
+            bool matchPartUUID = item.source.startsWith("PARTUUID=")
+                    && item.source.contains(ptr->getProperty(dfmmount::Property::kPartitionUUID).toString());
+            bool matchUUID = item.source.startsWith("UUID=")
+                    && item.source.contains(ptr->getProperty(dfmmount::Property::kBlockIDUUID).toString());
+            bool matchDesc = item.source.startsWith("/dev/")
+                    && item.source == *phyDev;
+            if (matchPartUUID || matchUUID || matchDesc) {
+                *clearDev = "/dev/mapper/" + item.target;
+                qInfo() << "found clear device in crypttab:" << *phyDev << *clearDev;
+                return;
+            }
+        }
+
         return;
     }
 
