@@ -556,17 +556,18 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                          name.toStdString().c_str());
     }
 
+    bool resumeOnly = flags & CRYPT_REQUIREMENT_ONLINE_REENCRYPT;
     auto shift = crypt_get_data_offset(cdev);
     struct crypt_params_reencrypt encArgs
     {
         .mode = CRYPT_REENCRYPT_DECRYPT,
         .direction = CRYPT_REENCRYPT_FORWARD,
-        .resilience = "datashift-checksum",
+        .resilience = resumeOnly ? nullptr : "datashift-checksum",
         .hash = "sha256",
         .data_shift = shift,
         .max_hotzone_size = 0,
         .device_size = 0,
-        .flags = CRYPT_REENCRYPT_MOVE_FIRST_SEGMENT
+        .flags = resumeOnly ? CRYPT_REENCRYPT_RESUME_ONLY : CRYPT_REENCRYPT_MOVE_FIRST_SEGMENT
     };
 
     auto name = activeName.toStdString();
