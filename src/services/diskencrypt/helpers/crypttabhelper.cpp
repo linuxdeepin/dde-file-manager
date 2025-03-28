@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "core/cryptsetup.h"
 #include "crypttabhelper.h"
 #include "blockdevhelper.h"
 #include "inhibithelper.h"
@@ -34,7 +35,7 @@ bool crypttab_helper::addCryptOption(const QString &activeName, const QString &o
     }
 
     if (!needUpdate) {
-        qInfo() << "target device not found." << activeName << opt;
+        qInfo() << "target device not found or item no need to be updated." << activeName << opt;
         return false;
     }
     qInfo() << "about to update crypttab." << activeName << opt;
@@ -60,7 +61,13 @@ bool crypttab_helper::updateCryptTab()
             newItems.append(item);
             continue;
         }
-        if (devptr->isEncrypted()) {
+
+        QString detachHeaderName;
+        crypt_setup_helper::genDetachHeaderPath(devptr->device(), &detachHeaderName);
+
+        // has header or detached header, treat as encrypted device.
+        if (devptr->isEncrypted() ||
+            (!detachHeaderName.isEmpty() && QFile(detachHeaderName).exists())) {
             newItems.append(item);
             continue;
         }
