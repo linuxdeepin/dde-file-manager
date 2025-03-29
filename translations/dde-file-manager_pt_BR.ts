@@ -4393,7 +4393,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="593"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation type="unfinished"/>
+        <translation>O nome compartilhado é muito longo e ficará truncado.</translation>
     </message>
 </context>
 <context>
