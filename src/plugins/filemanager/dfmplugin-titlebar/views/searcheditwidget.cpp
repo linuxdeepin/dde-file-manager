@@ -727,7 +727,7 @@ void SearchEditWidget::handleLeaveEvent(QEvent *e)
 
 void SearchEditWidget::updateSearchWidgetLayout()
 {
-    if (currentMode == SearchMode::kCollapsed) {
+    if (currentMode == SearchMode::kCollapsed && searchEdit->text().isEmpty()) {
         setFixedWidth(searchButton->width());
         searchEdit->setVisible(false);
         searchButton->setVisible(true);
