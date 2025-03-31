@@ -281,19 +281,20 @@ void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
 // 公开的任务处理函数实现
 TaskHandler TaskHandlers::CreateIndexHandler()
 {
-    return [](const QString &path, TaskState &running) -> bool {
+    return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Creating index for path:" << path;
 
+        HandlerResult result { false, false };
         QDir dir;
         if (!dir.exists(path)) {
             fmWarning() << "Source directory doesn't exist:" << path;
-            return false;
+            return result;
         }
 
         if (!dir.exists(indexStorePath())) {
             if (!dir.mkpath(indexStorePath())) {
                 fmWarning() << "Unable to create index directory:" << indexStorePath();
-                return false;
+                return result;
             }
         }
 
@@ -319,12 +320,14 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             traverseDirectory(path, writer, running);
 
             if (!running.isRunning()) {
-                fmInfo() << "Create index task was interrupted";
-                return false;
+                fmWarning() << "Create index task was interrupted";
+                result.interrupted = true;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+
+            return result;
         } catch (const LuceneException &e) {
             fmWarning() << "Create index failed with Lucene exception:"
                         << QString::fromStdWString(e.getError());
@@ -332,14 +335,15 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             fmWarning() << "Create index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }
 
 TaskHandler TaskHandlers::UpdateIndexHandler()
 {
-    return [](const QString &path, TaskState &running) -> bool {
+    return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Updating index for path:" << path;
+        HandlerResult result { false, false };
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -372,12 +376,14 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             traverseForUpdate(path, reader, writer, running);
 
             if (!running.isRunning()) {
-                fmInfo() << "Update index task was interrupted";
-                return false;
+                fmWarning() << "Update index task was interrupted";
+                result.interrupted = true;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+
+            return result;
         } catch (const LuceneException &e) {
             // Lucene异常表示索引损坏
             fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
@@ -388,14 +394,15 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             fmWarning() << "Update index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }
 
 TaskHandler TaskHandlers::RemoveIndexHandler()
 {
-    return [](const QString &pathList, TaskState &running) -> bool {
+    return [](const QString &pathList, TaskState &running) -> HandlerResult {
         fmInfo() << "Removing index for paths:" << pathList;
+        HandlerResult result { false, false };
 
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
@@ -433,12 +440,13 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
             }
 
             if (!running.isRunning()) {
-                fmInfo() << "Remove index task was interrupted";
-                return false;
+                fmWarning() << "Remove index task was interrupted";
+                result.interrupted = true;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+            return result;
         } catch (const LuceneException &e) {
             fmWarning() << "Remove index failed with Lucene exception:"
                         << QString::fromStdWString(e.getError());
@@ -446,6 +454,6 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
             fmWarning() << "Remove index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }

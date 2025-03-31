@@ -11,10 +11,19 @@
 
 #include <QString>
 #include <functional>
+#include <QMetaType>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
-using TaskHandler = std::function<bool(const QString &path, TaskState &state)>;
+struct HandlerResult
+{
+    bool success { false };
+    bool interrupted { false };
+};
+
+// Register HandlerResult with Qt's meta-object system
+
+using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &state)>;
 
 // 工厂函数，返回具体的任务处理器
 namespace TaskHandlers {
@@ -24,4 +33,7 @@ TaskHandler RemoveIndexHandler();
 }
 
 SERVICETEXTINDEX_END_NAMESPACE
+
+Q_DECLARE_METATYPE(SERVICETEXTINDEX_NAMESPACE::HandlerResult)
+
 #endif   // TASKHANDLER_H

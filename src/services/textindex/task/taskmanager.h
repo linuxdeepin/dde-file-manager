@@ -32,7 +32,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onTaskProgress(IndexTask::Type type, qint64 count);
-    void onTaskFinished(IndexTask::Type type, bool success);
+    void onTaskFinished(IndexTask::Type type, HandlerResult result);
 
 private:
     void cleanupTask();
