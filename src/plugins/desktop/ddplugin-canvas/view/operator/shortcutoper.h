@@ -24,7 +24,7 @@ protected slots:
     void tabToFirst();
     void showMenu();
     void clearClipBoard();
-    void swichHidden();
+    void switchHidden();
     void previewFiles();
 
 protected:
