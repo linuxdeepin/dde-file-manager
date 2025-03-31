@@ -49,7 +49,7 @@ public:
 
 Q_SIGNALS:
     void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count);
-    void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, bool success);
+    void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, HandlerResult result);
 
 private:
     void doTask();

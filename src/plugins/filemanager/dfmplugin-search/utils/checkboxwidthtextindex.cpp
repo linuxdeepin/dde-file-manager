@@ -11,6 +11,7 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QStandardPaths>
+#include <QDir>
 
 DGUI_USE_NAMESPACE
 namespace dfmplugin_search {
@@ -212,7 +213,8 @@ void CheckBoxWidthTextIndex::initStatusBar()
 
 bool CheckBoxWidthTextIndex::shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const
 {
-    return checkBox->isChecked() && path == "/" && type != TextIndexClient::TaskType::Remove;
+    // TODO(search): dfm-search
+    return checkBox->isChecked() && path == QDir::homePath() && type != TextIndexClient::TaskType::Remove;
 }
 
 }   // namespace dfmplugin_search

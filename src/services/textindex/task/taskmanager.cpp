@@ -46,13 +46,13 @@ void saveIndexStatus(const QDateTime &lastUpdateTime)
 {
     QJsonObject status;
     status["lastUpdateTime"] = lastUpdateTime.toString(Qt::ISODate);
-    
+
     QJsonDocument doc(status);
     QFile file(getConfigPath());
-    
+
     // 确保目录存在
     QDir().mkpath(QFileInfo(file).absolutePath());
-    
+
     if (file.open(QIODevice::WriteOnly)) {
         file.write(doc.toJson());
         file.close();
@@ -93,9 +93,9 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 
     fmInfo() << "Starting new task for path:" << path;
 
-    // 如果是根目录的任务，清除状态文件
-    if (path == "/") {
-        fmInfo() << "Root path task detected, clearing existing index status"
+    // TODO (search): dfm-search
+    if (path == QDir::homePath() && type == IndexTask::Type::Create) {
+        fmInfo() << "Home path task detected, clearing existing index status"
                  << "[Initializing new root indexing task]";
         clearIndexStatus();
     }
@@ -152,24 +152,24 @@ void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count)
     emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count);
 }
 
-void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
+void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 {
     if (!currentTask) return;
 
     QString taskPath = currentTask->taskPath();
-    
-    if (!success && type == IndexTask::Type::Update) {
+
+    if (!result.success && type == IndexTask::Type::Update) {
         // 检查是否是由于索引损坏导致的失败
         if (currentTask->isIndexCorrupted()) {
             fmWarning() << "Update task failed due to index corruption for path:" << taskPath << ", trying to rebuild index";
-            
+
             // 清理损坏的索引
             clearIndexDirectory();
-            
+
             // 启动新的创建任务
-            cleanupTask();  // 清理当前失败的任务
+            cleanupTask();   // 清理当前失败的任务
             if (startTask(IndexTask::Type::Create, taskPath)) {
-                return;  // 新任务已启动，等待其完成
+                return;   // 新任务已启动，等待其完成
             }
         } else {
             fmInfo() << "Update task failed but index is not corrupted, skipping rebuild for path:" << taskPath;
@@ -177,22 +177,23 @@ void TaskManager::onTaskFinished(IndexTask::Type type, bool success)
     }
 
     fmInfo() << "Task" << typeToString(type) << "for path" << taskPath
-             << (success ? "completed successfully" : "failed");
+             << (result.success ? "completed successfully" : "failed");
 
     // 如果是根目录的任务，更新状态文件
-    if (taskPath == "/") {
-        if (success) {
+    // TODO(search): dfm-search
+    if (taskPath == QDir::homePath()) {
+        if (!result.success) {
+            fmWarning() << "Root indexing failed, clearing status"
+                        << "[Root index task failed]";
+            clearIndexStatus();
+        } else if (result.success && !result.interrupted) {
             fmInfo() << "Root indexing completed successfully, updating status"
                      << "[Root index task succeeded]";
             saveIndexStatus(QDateTime::currentDateTime());
-        } else {
-            fmInfo() << "Root indexing failed, clearing status"
-                     << "[Root index task failed]";
-            clearIndexStatus();
         }
     }
 
-    emit taskFinished(typeToString(type), taskPath, success);
+    emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
 }
 
@@ -243,7 +244,7 @@ void TaskManager::clearIndexDirectory()
 {
     QString indexDir = indexStorePath();
     QDir dir(indexDir);
-    
+
     if (dir.exists()) {
         // 删除所有索引文件
         QStringList files = dir.entryList(QDir::Files);
@@ -255,7 +256,7 @@ void TaskManager::clearIndexDirectory()
             }
         }
     }
-    
+
     // 确保目录存在
     if (!dir.exists()) {
         dir.mkpath(".");
