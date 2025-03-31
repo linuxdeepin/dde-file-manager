@@ -97,28 +97,28 @@ void IndexTask::doTask()
 {
     fmInfo() << "Processing task for path:" << m_path;
 
-    bool success = false;
+    HandlerResult result { false, false };
     if (m_handler) {
         try {
             setIndexCorrupted(false);
-            success = m_handler(m_path, m_state);
+            result = m_handler(m_path, m_state);
         } catch (const LuceneException &) {
             // 捕获到 Lucene 异常，说明索引损坏
             setIndexCorrupted(true);
-            success = false;
+            result.success = false;
         }
     } else {
         fmWarning() << "No task handler provided";
     }
 
     m_state.stop();
-    m_status = success ? Status::Finished : Status::Failed;
+    m_status = result.success ? Status::Finished : Status::Failed;
 
-    if (success) {
+    if (result.success) {
         fmInfo() << "Task completed successfully for path:" << m_path;
     } else {
         fmWarning() << "Task failed for path:" << m_path;
     }
 
-    emit finished(m_type, success);
+    emit finished(m_type, result);
 }
