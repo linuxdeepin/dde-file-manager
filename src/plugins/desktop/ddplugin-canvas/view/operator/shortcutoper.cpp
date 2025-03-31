@@ -122,7 +122,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             CanvasIns->onChangeIconLevel(true);
             return true;
         case Qt::Key_H:
-            swichHidden();
+            switchHidden();
             return true;
         case Qt::Key_I:
             FileOperatorProxyIns->showFilesProperty(view);
@@ -243,7 +243,7 @@ void ShortcutOper::clearClipBoard()
     }
 }
 
-void ShortcutOper::swichHidden()
+void ShortcutOper::switchHidden()
 {
     bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, !isShowedHiddenFiles);

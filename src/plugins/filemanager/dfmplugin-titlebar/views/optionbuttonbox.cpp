@@ -201,6 +201,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
     if (parent() && qobject_cast<QWidget *>(parent())) {
         if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
             && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
+            setFixedWidth(0);
             return;
         }
         if (qobject_cast<QWidget *>(parent())->width() <= kCompactModeThreshold) {
