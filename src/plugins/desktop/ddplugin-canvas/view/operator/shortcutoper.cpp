@@ -245,12 +245,8 @@ void ShortcutOper::clearClipBoard()
 
 void ShortcutOper::swichHidden()
 {
-    auto model = view->model();
-    Q_ASSERT(model);
-
-    bool show = model->showHiddenFiles();
-    model->setShowHiddenFiles(!show);
-    model->refresh(model->rootIndex());
+    bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, !isShowedHiddenFiles);
 }
 
 void ShortcutOper::previewFiles()
