@@ -32,6 +32,7 @@ private:
     void imageExtenInfoReceiver(const QStringList &properties);
     void videoExtenInfoReceiver(const QStringList &properties);
     void audioExtenInfoReceiver(const QStringList &properties);
+    QString getDateTimeFormatStr(const QDateTime &time) const;
 
 signals:
     void sigImageExtenInfo(const QStringList &properties);
