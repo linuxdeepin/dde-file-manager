@@ -319,9 +319,13 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             writer->deleteAll();
             traverseDirectory(path, writer, running);
 
+            // Only the creation of an index that is interrupted is also considered a failure
+            // Created indexes must be guaranteed to be complete
             if (!running.isRunning()) {
                 fmWarning() << "Create index task was interrupted";
                 result.interrupted = true;
+                result.success = false;
+                return result;
             }
 
             writer->optimize();
