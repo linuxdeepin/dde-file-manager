@@ -152,7 +152,11 @@ void ViewAnimationHelper::paintItems() const
         if (expandItemIndex.isValid() && index == expandItemIndex) {
             expandItemRect = rect;
             expandItemRect.setTopLeft(rect.topLeft() + expandItemOffset);
-            expandItemRect.setSize(expandItemPixmap.size());
+            // 在高DPI环境下，扩展项截图时Qt自动考虑了设备像素比(1.25)生成了更大的物理像素图(98x129)，
+            // 但绘制时代码使用了这个物理尺寸而非逻辑尺寸(78x103)作为绘制区域，导致图像被双重缩放而模糊失真
+            // 因此，设置绘制区域时将物理尺寸除以设备像素比还原为逻辑尺寸，避免多重缩放
+            const QSize& scaleSize = expandItemPixmap.size() / expandItemPixmap.devicePixelRatioF();
+            expandItemRect.setSize(scaleSize);
         }
     };
     if (isWaitingToPlaying()) {
