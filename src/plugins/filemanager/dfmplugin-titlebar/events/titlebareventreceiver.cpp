@@ -63,18 +63,10 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 
 void TitleBarEventReceiver::handleStartSpinner(quint64 windowId)
 {
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->startSpinner();
 }
 
 void TitleBarEventReceiver::handleStopSpinner(quint64 windowId)
 {
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->stopSpinner();
 }
 
 void TitleBarEventReceiver::handleShowFilterButton(quint64 windowId, bool visible)
