@@ -110,7 +110,6 @@ private:
     QString validationResults;
 
     QGridLayout *funLayout { nullptr };
-    DTK_WIDGET_NAMESPACE::DFileDialog *fileDialog { nullptr };
 };
 }
 #endif   // VAULTRETRIEVEPASSWORD_H
