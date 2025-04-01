@@ -195,12 +195,12 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
     if (fileInterviewTime && fileInterviewTime->RightValue().isEmpty()) {
         auto lastRead = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
-        lastRead.isValid() ? fileInterviewTime->setRightValue(lastRead.toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
+        lastRead.isValid() ? fileInterviewTime->setRightValue(getDateTimeFormatStr(lastRead), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
                            : fileInterviewTime->setVisible(false);
     }
     if (fileChangeTime && fileChangeTime->RightValue().isEmpty()) {
         auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
-        lastModified.isValid() ? fileChangeTime->setRightValue(lastModified.toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
+        lastModified.isValid() ? fileChangeTime->setRightValue(getDateTimeFormatStr(lastModified), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
                                : fileChangeTime->setVisible(false);
     }
 
@@ -293,6 +293,14 @@ void FileBaseInfoView::audioExtenInfoReceiver(const QStringList &properties)
 {
     const QStringList pr = properties;
     emit sigAudioExtenInfo(pr);
+}
+
+QString FileBaseInfoView::getDateTimeFormatStr(const QDateTime &time) const
+{
+    if (time.toMSecsSinceEpoch() == 0)
+        return "-";
+
+    return time.toString(FileUtils::dateTimeFormat());
 }
 
 void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
