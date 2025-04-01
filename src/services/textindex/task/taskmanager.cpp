@@ -86,11 +86,10 @@ TaskManager::~TaskManager()
 
 bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 {
-    if (hasRunningTask()) {
+    if (hasRunningTask() || currentTask) {
         fmWarning() << "Cannot start new task, another task is running";
         return false;
     }
-
     fmInfo() << "Starting new task for path:" << path;
 
     // TODO (search): dfm-search
@@ -117,6 +116,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
         return false;
     }
 
+    Q_ASSERT(!currentTask);
     currentTask = new IndexTask(type, path, handler);
     currentTask->moveToThread(&workerThread);
 
@@ -213,7 +213,7 @@ void TaskManager::stopCurrentTask()
 void TaskManager::cleanupTask()
 {
     if (currentTask) {
-        fmDebug() << "Cleaning up task resources";
+        fmInfo() << "Cleaning up task resources";
         disconnect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start);
         currentTask->deleteLater();
         currentTask = nullptr;
