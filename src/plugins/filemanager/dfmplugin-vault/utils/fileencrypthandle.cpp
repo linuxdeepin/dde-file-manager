@@ -378,19 +378,23 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
  */
 int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir, bool isForced)
 {
-    CryfsVersionInfo version = versionString();
+    /*
+     * NOTE: When unmount the vault using the cryfs-unmount command,
+     * the valut will be unmounted normally even if it is busy (file copy)
+     */
+    // CryfsVersionInfo version = versionString();
+    // if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
+    //     fusermountBinary = QStandardPaths::findExecutable("cryfs-unmount");
+    //     arguments << unlockFileDir;
+    // } else {
+
     QString fusermountBinary;
     QStringList arguments;
-    if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
-        fusermountBinary = QStandardPaths::findExecutable("cryfs-unmount");
-        arguments << unlockFileDir;
+    fusermountBinary = QStandardPaths::findExecutable("fusermount");
+    if (isForced) {
+        arguments << "-zu" << unlockFileDir;
     } else {
-        fusermountBinary = QStandardPaths::findExecutable("fusermount");
-        if (isForced) {
-            arguments << "-zu" << unlockFileDir;
-        } else {
-            arguments << "-u" << unlockFileDir;
-        }
+        arguments << "-u" << unlockFileDir;
     }
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
 
