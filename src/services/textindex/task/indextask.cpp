@@ -65,7 +65,7 @@ void IndexTask::stop()
 
 bool IndexTask::isRunning() const
 {
-    return m_state.isRunning();
+    return m_status == Status::Running;
 }
 
 QString IndexTask::taskPath() const
