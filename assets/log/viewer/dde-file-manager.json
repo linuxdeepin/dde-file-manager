@@ -4,14 +4,7 @@
 	"submodules": [{
 			"name": "dde-file-manager",
 			"filter": "",
-			"exec": "/usr/bin/dde-file-manager",
-			"logType": "journal",
-			"logPath": ""
-		},
-		{
-			"name": "dde-desktop",
-			"filter": "",
-			"exec": "/usr/bin/dde-desktop",
+			"exec": "/usr/libexec/dde-file-manager",
 			"logType": "journal",
 			"logPath": ""
 		},
@@ -37,9 +30,9 @@
 			"logPath": ""
 		},
 		{
-			"name": "dde-file-manager-server",
+			"name": "dde-file-manager-daemon",
 			"filter": "",
-			"exec": "/usr/bin/dde-file-manager-server",
+			"exec": "/usr/bin/dde-file-manager-daemon",
 			"logType": "journal",
 			"logPath": ""
 		}
