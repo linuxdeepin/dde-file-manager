@@ -43,11 +43,9 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
 
     filePathEdit = new DFileChooserEdit(this);
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    fileDialog = new DFileDialog(this, QDir::homePath());
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
     filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
-    filePathEdit->setFileDialog(fileDialog);
     filePathEdit->lineEdit()->setReadOnly(true);
     filePathEdit->hide();
 
@@ -187,7 +185,6 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         funLayout->addWidget(filePathEdit, 1, 0, 1, 2);
         defaultFilePathEdit->hide();
         filePathEdit->show();
-        fileDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         if (QFile::exists(filePathEdit->text()))
             emit sigBtnEnabled(1, true);
         else if (!filePathEdit->text().isEmpty() && filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))) {
