@@ -118,27 +118,37 @@ static bool lazyLoadFilterForHeadless(const QString &name)
     return false;
 }
 
-static QStringList buildBlackNames()
+static bool blackListFilter(const QString &name)
 {
-    QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
-    const QStringList &disableNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.disablelist").toStringList() };
+    static QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.blackList").toStringList() };
+    static bool isAdmin = SysInfoUtils::isOpenAsAdmin();
+    static std::once_flag flag;
+    std::call_once(flag, [] {
 #ifndef ENABLE_SMB_IN_ADMIN
-    /*
-     * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
-     * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
-     * to save/get the password of samba by sync).
-     * and the Admin mode is designed for operate files those normal user cannot write
-     * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
-     * */
-    if (SysInfoUtils::isOpenAsAdmin() && !blackNames.contains("dfmplugin-smbbrowser"))
-        blackNames << "dfmplugin-smbbrowser";
+        /*
+         * NOTE(xust): the secret manager cannot be launched in WAYLAND ADMIN mode,
+         * which cause file-manager freeze when mount samba (dfm-mount using secret-manager
+         * to save/get the password of samba by sync).
+         * and the Admin mode is designed for operate files those normal user cannot write
+         * and should be the smallest dfm, so remove the smb-browser plugin in Admin mode
+         * */
+        if (isAdmin && !blackNames.contains("dfmplugin-smbbrowser"))
+            blackNames << "dfmplugin-smbbrowser";
 #endif
-
-    std::copy_if(disableNames.begin(), disableNames.end(), std::back_inserter(blackNames), [blackNames](const QString &name) {
-        return !blackNames.contains(name);
+        static QStringList disableNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.disablelist").toStringList() };
+        std::copy_if(disableNames.begin(), disableNames.end(), std::back_inserter(blackNames),
+                     [](const QString &name) {
+                         return !blackNames.contains(name);
+                     });
+        qCDebug(logAppFileManager) << "build all blacknames:" << blackNames;
     });
-    qCDebug(logAppFileManager) << "build all blacknames:" << blackNames;
-    return blackNames;
+
+    if (blackNames.contains(name))
+        return true;
+
+    // Disable all third-party plugins when running the file manager as administrator
+    static const QStringList &kAllNames { DFMBASE_NAMESPACE::Plugins::Utils::filemanagerAllPlugins() };
+    return isAdmin && !kAllNames.contains(name);
 }
 
 static bool pluginsLoad()
@@ -162,7 +172,8 @@ static bool pluginsLoad()
 #endif
 
     qCInfo(logAppFileManager) << "Using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, buildBlackNames());
+    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
     DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::filemanagerAllPlugins());
     // disbale lazy load if enbale headless
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
