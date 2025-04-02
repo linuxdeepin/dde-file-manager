@@ -1,3 +1,9 @@
+dde-file-manager (6.5.44) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Wed, 02 Apr 2025 15:53:07 +0800
+
 dde-file-manager (6.5.43) unstable; urgency=medium
 
   * Feature additions (view mode switching, FileStatisticsJob)
