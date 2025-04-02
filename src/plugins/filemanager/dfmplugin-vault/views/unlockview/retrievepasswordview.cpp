@@ -46,7 +46,6 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
     filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
-    filePathEdit->lineEdit()->setReadOnly(true);
     filePathEdit->hide();
 
     defaultFilePathEdit = new QLineEdit(this);
