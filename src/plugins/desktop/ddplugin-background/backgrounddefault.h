@@ -27,7 +27,6 @@ private:
     int painted = 3;
     QString screen;
     QPixmap pixmap;
-    QPixmap noScalePixmap;
 };
 
 DDP_BACKGROUND_END_NAMESPACE
