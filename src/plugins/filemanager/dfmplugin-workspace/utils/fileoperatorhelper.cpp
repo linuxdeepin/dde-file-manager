@@ -106,7 +106,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
             if (fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
                 QUrl dirUrl = url;
                 if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
-                    dirUrl = QUrl::fromLocalFile(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget));
+                    dirUrl = QUrl::fromLocalFile(QDir(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget)).absolutePath());
 
                 auto flag = !DConfigManager::instance()->value(kViewDConfName,
                                                                kOpenFolderWindowsInASeparateProcess, true)
