@@ -1438,7 +1438,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     if (alltotrash)
         return info->canAttributes(CanableInfoType::kCanTrash);
 
-    return ProtocolUtils::isLocalFile(url);
+    return ProtocolUtils::isLocalFile(url) && info->canAttributes(CanableInfoType::kCanTrash);
 }
 
 QUrl FileUtils::bindUrlTransform(const QUrl &url)
