@@ -247,6 +247,8 @@ QVariant FileItemData::data(int role) const
                 const_cast<FileItemData *>(this)->transFileInfo();
         }
         return QVariant();
+    case kItemFileContentPreviewRole:
+        return QString("文件内容1414文件内容abc文件内容ABC文件内容");
     default:
         return QVariant();
     }

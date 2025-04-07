@@ -638,6 +638,9 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     int lineHeight = UniversalUtils::getTextLineHeight(displayName, parent()->parent()->fontMetrics());
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter, painter));
+    layout->setHighlightEnabled(!isSelected);
+    layout->setHighlightKeywords({"abc", "ad", "14"});
+    layout->setHighlightColor(opt.palette.color(QPalette::Active, QPalette::Highlight));
 
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
