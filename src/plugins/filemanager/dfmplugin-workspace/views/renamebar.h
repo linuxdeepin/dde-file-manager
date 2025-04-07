@@ -8,12 +8,13 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <QFrame>
+#include <QScrollArea>
 
 namespace dfmplugin_workspace {
 
 class WorkspacePage;
 class RenameBarPrivate;
-class RenameBar : public QFrame
+class RenameBar : public QScrollArea
 {
     Q_OBJECT
     Q_DISABLE_COPY(RenameBar)
