@@ -33,7 +33,10 @@ RenameBarPrivate::RenameBarPrivate(RenameBar *const qPtr)
 
 void RenameBarPrivate::initUI()
 {
-    mainLayout = new QHBoxLayout(q_ptr);
+    QWidget *widget = new QWidget(q_ptr);
+    q_ptr->setWidget(widget);
+
+    mainLayout = new QHBoxLayout(widget);
     comboBox = new QComboBox;
     stackWidget = new QStackedWidget;
 
@@ -187,8 +190,8 @@ void RenameBarPrivate::layoutItems() noexcept
     mainLayout->addWidget(frame);
     stackWidget->setCurrentIndex(0);
 
-    q_ptr->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
-    q_ptr->setLayout(mainLayout);
+    // q_ptr->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed));
+    // q_ptr->setLayout(mainLayout);
 }
 
 void RenameBarPrivate::setRenameBtnStatus(const bool &value) noexcept
