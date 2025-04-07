@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>Shifadəyini yoxlaşdırın</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>ShifreLVəndir</translation>
     </message>
 </context>
 <context>
@@ -122,7 +122,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>Shifadəyini yoxlaşdırın</translation>
     </message>
 </context>
 <context>
@@ -138,7 +138,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>ShifreLVəndir</translation>
     </message>
 </context>
 <context>
@@ -146,7 +146,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>Shifadəyini yoxlaşdırın</translation>
     </message>
 </context>
 <context>
@@ -643,7 +643,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Varsa iconun ölçüsü:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -1774,57 +1774,57 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation type="unfinished"/>
+        <translation>Xeyir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="354"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>Axtar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="369"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>Xüsusi axtarış</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="450"/>
         <source>Are you sure clear search histories?</source>
-        <translation type="unfinished"/>
+        <translation>Axtarış tarihi silinsə mənə müraciət edirsinizmi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM-dən rastlantısal reqem yaradıla bilmir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"/>
+        <translation>Müraciət olunan şifreleme alqoritmi yoxdur.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"/>
+        <translation>TPM şifreLVəndirilməsi başa çatdı.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"/>
+        <translation>TPM qaplanmışdır.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"/>
+        <translation>%1-in şifreLVəndirilməsini təsdiqləyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Günümüz partiyası şifreLVəndiriləcək və şifreLVəndirilmə prosesində qaytarma olunmaz, lütfen şifreLVəndirilməni təsdiqləyin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"/>
+        <translation>* Partiyayı şifreLVəndirib sonra sistemin daha aşağıqı sürətlərə qaytarılması mümkün deyil, lütfen şifreLVəndirilməni təsdiqləyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
@@ -1836,7 +1836,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Təsdiqləyin və yenidən başlatın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
@@ -1847,17 +1847,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="444"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"/>
+        <translation>%1-i şifreLVəndir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"/>
+        <translation>ŞifreLVəndirilmə uzun zaman ala biler, dolayısıyla şifreLVəndirilmə tamamlaşana qədər birliqdədirsiniz ki, səs biriktirilir.</translation>
     </message>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>Grub yenilənir...</translation>
     </message>
 </context>
 <context>
@@ -1865,7 +1865,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
         <source>Encrypting </source>
-        <translation type="unfinished"/>
+        <translation>ŞifreLVəndir</translation>
     </message>
 </context>
 <context>
@@ -1924,7 +1924,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Yaradılış zamanı</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -2713,7 +2713,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="150"/>
         <source>Authentication failed</source>
-        <translation type="unfinished"/>
+        <translation>Təsdiq edilmə başa çatdı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="152"/>
@@ -3226,7 +3226,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="343"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Varsa iconun ədədli sətirin ölçüsü:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="353"/>
@@ -4562,47 +4562,48 @@
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>parol</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>Please input %1 to decrypt device</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen cihazı dekripsiya etmək üçün %1 daxil edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Geri qayıt anahtarı ilə doğrulamaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>Passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Parol</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
         <source>Recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Geri qayıt anahtarı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
         <source>%1 cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>%1 boş ola bilməz!
+</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"/>
+        <translation>Geri qayıt anahtarı无效翻译，请检查格式</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
         <source>Decrypt device</source>
-        <translation type="unfinished"/>
+        <translation>Cihazı dekripsiya etmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Təsdiq etmək</translation>
     </message>
 </context>
 <context>
@@ -4610,105 +4611,105 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələnmiş bölününi açmaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölünün şifrələnməsini qaydalaşdırmaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>parol</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 şifrələnməsini dəyişmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölünün şifrələnməsini davam etmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölünün dekripsiya etməsini davam etmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>Bölünün şifrələnməsini etkinləşdirmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Xəta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM-dan parol tapılmadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>PIN error</source>
-        <translation type="unfinished"/>
+        <translation>PIN xətası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"/>
+        <translation>Parolu dəyişmək istənilmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="497"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"/>
+        <translation>Cihazı açmaq istənilmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="498"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış parol</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="516"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"/>
+        <translation>Cihazı qoşmaq istənilmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>qısaqçaq qoş</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="559"/>
         <source>lock</source>
-        <translation type="unfinished"/>
+        <translation>kəsmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="560"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələmə başa çatdı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="561"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı %2 əhatə etmək mümkün deyil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələməni davam etmək üçün yenidən başlatın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="644"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni keçirəmək üçün yenidən başlatın</translation>
     </message>
 </context>
 <context>
@@ -4716,110 +4717,110 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
         <source>Unlock type</source>
-        <translation type="unfinished"/>
+        <translation>Açıqlayıcı növü</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəli söz ilə açıldı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation type="unfinished"/>
+        <translation>Bu məcburunun üzərində TPM+PIN ilə açın (təklif olunur), </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation type="unfinished"/>
+        <translation>Bu məcburunun üzərində TPM ilə avtomatik açılış</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəli cihazı unutmaq və ya şifrələmə cihazı hasarlı olduğunda, şifrələnmiş partiyanı qayıt şifrəli partiyanı və ya məşğul etmək üçün güvenli bir yere saxlayın! </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, şifrələnmemiş partiyanı anahtar faylın cıxış yolu kimi seçin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="356"/>
         <source>Passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəli söz</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"/>
+        <translation>&apos;%1 boş ola bilməz&apos;, </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="348"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Nəzərə alın ki, 8 bitdən çox olmalıdır, 3 növ A-Z, a-z, 0-9 və simvol barədədir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"/>
+        <translation>&apos;%1 sərfiyyəsi&apos;, </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>Qayıt şifrəli cihazı cıxış yolu boş ola bilməz! </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>Qayıt şifrəli cihazı cıxış yolu mövcud deyil! </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, bir dəfə şifrələnmemiş partiyanı və ya USB flash drive kimi bir dəfə qayıt şifrəli cihazı cıxış etməyin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>Bu partiya sadece oxumaq üçün təqdim edilmişdir, lütfən, yaddaş etmək üçün əldə edə bilən bir partiya cıxış etməyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Bu partiya şifrələnmişdir, lütfən, şifrələnmemiş partiyanı və ya bir dəfə USB flash drive kimi bir dəfə qayıt şifrəli cihazı cıxış etməyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, partiyanı %1 şifrələyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>İrəli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Confirm encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələməni təsdiqləyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>Export Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Qayıt şifrəli cihazı cıxış et</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
         <source>Previous</source>
-        <translation type="unfinished"/>
+        <translation>Əvvəlki</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>Set %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 qurun</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
@@ -4961,150 +4962,150 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>%1 şifrələnməsi baş verir...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələnmə prosesi sistem zamanını təmin edə bilər, sistem məshqini azaltmaq istənilərsiz</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Xəta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"/>
+        <translation>TPM status normal deyil, qurunuzla şifrələndiyini açmaq üçün təmizləmə karnını istifadə edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış PIN kodu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifrə sözü</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM error</source>
-        <translation type="unfinished"/>
+        <translation>TPM xətası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="387"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"/>
+        <translation>Qurunuzla cihazı açmaq üçün istifadə edin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="448"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"/>
+        <translation>Şəkər-cələnirliq tamamlandı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="449"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şəkər-cələnirlikdən keçirilib, şifrələməni bitirmək üçün yenidən başlatmaq istənilərsiz.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="455"/>
         <source>Preencrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>Şəkər-cələnirliq başaramadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="456"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şəkər-cələnirliq başaramadı, daha çox məlumat üçün tələblərini izləyin. (%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="476"/>
         <source>Decrypt done</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələndiyini açmaq tamamlandı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="477"/>
         <source>Device %1 has been decrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şifrələndiyini açıq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Decrypt disk</source>
-        <translation type="unfinished"/>
+        <translation>Diski şifrələndiyini açmaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifrə sözü və ya PIN kodu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Decrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələndiyini açmaq başaramadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şifrələnir, şifrələməni bitirdikdən sonra şifrələndiyini açmaq istənilərsiz.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 cihazı şifrələndiyini açmaq başaramadı, daha çox məlumat üçün tələblərini izləyin. (%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>şifrə sözü</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>PIN kodu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"/>
+        <translation>%1 dəyişdirilməsi tamamlandı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
         <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"/>
+        <translation>&apos;%1&apos; üçün %2 dəyişdirildi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"/>
+        <translation>%1 dəyişdirilməsi başaramadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="542"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz %1 dəyişikliyi %2 başa çatdı, daha çox məlumat üçün izləyiciyı izləyin.(%3)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="571"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz tamamlaşdırılmayıb, izləməq vənərənqənə vurunqdan qənaət etmək üçün şifrələndirin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>Cihazın açılması başaramadı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="579"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Parçalama şifrələndirilməsini tamamlayacaq üçün sağ diski menüsündə &quot;Parçalama şifrələndirin&quot; əməliyyatını seçin.</translation>
     </message>
 </context>
 <context>
@@ -5112,53 +5113,53 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="51"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>İptal</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
         <source>Unlock</source>
-        <translation type="unfinished"/>
+        <translation>Aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
         <source>Unlock encryption partition</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələndiyi parçalamanı aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Geri axtarış anahtarı ilə aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"/>
+        <translation>Parol ilə aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"/>
+        <translation>PIN ilə aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, 24-rəqəmlik geri axtarış anahtarı daxil edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
         <source>Please input passphrase to unlock device</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, cihazın açılması üçün parolu daxil edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please input PIN to unlock device</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, cihazın açılması üçün PIN daxil edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"/>
+        <translation>Geri axtarış anahtarı etibarlı deyil!</translation>
     </message>
 </context>
 <context>
@@ -5724,17 +5725,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>Yaradıldı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>İzledilən</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Dəyişdirildi</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
@@ -5744,12 +5745,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Çözünmə</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Müddət</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="324"/>
@@ -5934,17 +5935,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Yoldaş</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Son izləmə</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Son</translation>
     </message>
 </context>
 <context>
@@ -6114,27 +6115,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="137"/>
         <source>Index external storage device after connected to computer</source>
-        <translation type="unfinished"/>
+        <translation>Komputerə bağlanıqdan sonra dış məlumat saxma cihazını indeksləyin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="153"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"/>
+        <translation>Tüm metni axtar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="157"/>
         <source>Display search history</source>
-        <translation type="unfinished"/>
+        <translation>Axtarış tarixini göstər</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="186"/>
         <source>Clear dde-file-manager Search Records</source>
-        <translation type="unfinished"/>
+        <translation>dde-file-manager Axtarış Rekordlarını Temizlə</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="187"/>
         <source>Clean up</source>
-        <translation type="unfinished"/>
+        <translation>Yuxarıq</translation>
     </message>
 </context>
 <context>
@@ -6168,17 +6169,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="76"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Index yeniləndi, son yeniləmə vaxtı: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="82"/>
         <source>Index update failed, please turn on the &quot;Full-Text search&quot; switch again</source>
-        <translation type="unfinished"/>
+        <translation>Index yenilənməsi başa çatdı, lütfen &quot;Hamisi axtarış&quot; keçiddən yenidən aktiv edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="96"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Index yaradılır, %1 fayl indexləndirilir</translation>
     </message>
 </context>
 <context>
@@ -6219,7 +6220,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="148"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="149"/>
@@ -6234,7 +6235,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="151"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>M&amp;övzü</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="152"/>
@@ -6320,7 +6321,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="51"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Mövzü daxil edin</translation>
     </message>
 </context>
 <context>
@@ -6345,12 +6346,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="307"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Xəta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation type="unfinished"/>
+        <translation>Əqvaz etmək olmaz, səhv URL</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
@@ -6509,12 +6510,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
         <source>back</source>
-        <translation type="unfinished"/>
+        <translation>Geri</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
         <source>forward</source>
-        <translation type="unfinished"/>
+        <translation>Qeyd et</translation>
     </message>
 </context>
 <context>
@@ -6523,29 +6524,29 @@
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="228"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="305"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>İkon görünüş</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="235"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="309"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Siyahı görünüş</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="245"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="313"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Çoxlu görünüş</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="265"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Sıralayın</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="271"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Görünüş məlumatları</translation>
     </message>
 </context>
 <context>
@@ -6553,27 +6554,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Ad</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Deyişdirilən vaxt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Yaradılış vaxtı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Uzunluq</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tip</translation>
     </message>
 </context>
 <context>
@@ -6581,27 +6582,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Görünüş məlumatları</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>İkon ölçüsü</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Koşul məzgansı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Siyahının boyu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Ön izleme göstər</translation>
     </message>
 </context>
 <context>
@@ -6774,7 +6775,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="55"/>
         <source>Transferring folders is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Kateqoriyaların təqdim olunması qeyri-qiymətləndirilir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
@@ -6859,12 +6860,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="433"/>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Fayl aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="435"/>
         <source>Applications (*.desktop);;All files (*)</source>
-        <translation type="unfinished"/>
+        <translation>Uygulamalar (*.desktop);;Hər bir fayl (*)</translation>
     </message>
 </context>
 <context>
@@ -7102,7 +7103,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
         <source>Key unlock</source>
-        <translation type="unfinished"/>
+        <translation>Şifrə aç</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
@@ -7117,7 +7118,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="118"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
-        <translation type="unfinished"/>
+        <translation>Şəbəkə altında kovluğun açıla bilmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="127"/>
@@ -7155,7 +7156,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
         <source>Failed to unlock file vault, error code is %1</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğu açılamadı, xəta kodu %1</translation>
     </message>
 </context>
 <context>
@@ -7393,32 +7394,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>İptal</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğunu sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğu silinmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>Silinəncək, onlar hədəfli silinəcək</translation>
     </message>
 </context>
 <context>
@@ -7426,7 +7427,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
@@ -7436,7 +7437,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
         <source>Key delete</source>
-        <translation type="unfinished"/>
+        <translation>Silinəncək, onlar hədəfli silinəcək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
@@ -7446,32 +7447,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>İptal</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="87"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğunu sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifrə</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğu silinmədi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -7484,32 +7485,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>İptal</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="97"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kovluğunu sil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="112"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Yeniləmə şifrəsi yanlış</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="176"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kov仓庫已满，请清理或删除部分文件后再试</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="180"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Təmsil</translation>
     </message>
 </context>
 <context>
@@ -7517,22 +7518,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="39"/>
         <source>Removing...</source>
-        <translation type="unfinished"/>
+        <translation>Silinir...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="71"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Təmsil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Fayl kov仓庫</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"/>
+        <translation>Mövcud fayl kov仓庫已成功删除</translation>
     </message>
 </context>
 <context>
@@ -7561,12 +7562,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2128"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>Bağlama xəatası</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2129"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"/>
+        <translation>Server giriş səcrəkləri səhvdir. Lütfən, istehsal etmək və yenidən bağlamaq</translation>
     </message>
 </context>
 <context>
@@ -7584,7 +7585,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="645"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Yaradılış vaxtı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="647"/>
@@ -7646,7 +7647,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Yaradılış vaxtı</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
@@ -7671,7 +7672,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>Dəqiqə</translation>
     </message>
 </context>
 <context>
