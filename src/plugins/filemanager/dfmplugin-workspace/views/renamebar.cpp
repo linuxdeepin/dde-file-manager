@@ -21,10 +21,14 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 RenameBar::RenameBar(QWidget *parent)
-    : QFrame(parent), d(new RenameBarPrivate(this))
+    : QScrollArea(parent), d(new RenameBarPrivate(this))
 {
-    setMinimumHeight(44);
-    setMinimumWidth(900);
+    setWidgetResizable(true);
+    setFrameShape(QFrame::NoFrame);
+    setAutoFillBackground(true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setFixedHeight(52);
     initConnect();
 }
 
