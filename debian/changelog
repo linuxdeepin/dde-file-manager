@@ -1,3 +1,9 @@
+dde-file-manager (6.5.10.5) unstable; urgency=medium
+
+  * Fix the problem of directory creation failure when samba mount.
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Mon, 07 Apr 2025 17:40:57 +0800
+
 dde-file-manager (6.5.10.4) unstable; urgency=medium
 
   * fix log initialization bug due to incorrect startup order
