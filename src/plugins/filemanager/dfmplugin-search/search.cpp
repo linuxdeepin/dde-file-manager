@@ -124,7 +124,7 @@ void Search::regSearchSettingConfig()
     if (SearchHelper::anythingInterface().isValid()) {
         SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexInternal,
                                                             tr("Auto index internal disk"),
-                                                            false);
+                                                            true);
         SettingBackend::instance()->addSettingAccessor(
                 SearchSettings::kIndexInternal,
                 []() {
