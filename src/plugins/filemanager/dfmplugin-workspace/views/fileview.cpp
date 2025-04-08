@@ -213,7 +213,7 @@ bool FileView::setRootUrl(const QUrl &url)
     d->statusBar->itemCounted(0);
 
     // Todo(yanghao&lzj):!url.isSearchFile()
-    // setFocus();
+    setFocus();
 
     const QUrl &fileUrl = parseSelectedUrl(url);
     const QModelIndex &index = model()->setRootUrl(fileUrl);

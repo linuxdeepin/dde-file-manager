@@ -741,6 +741,15 @@ void FileViewModel::setTreeView(const bool isTree)
     Q_EMIT requestTreeView(isTree);
 }
 
+QStringList FileViewModel::getKeyWords()
+{
+    auto rootInfo = FileDataManager::instance()->fetchRoot(dirRootUrl);
+    if (rootInfo)
+        return rootInfo->getKeyWords();
+
+    return {};
+}
+
 void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
 {
     auto updateIndex = getIndexByUrl(url);

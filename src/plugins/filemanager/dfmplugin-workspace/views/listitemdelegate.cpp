@@ -545,7 +545,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         nameLayout->setHighlightEnabled(!isSelected);
-        nameLayout->setHighlightKeywords({"abc", "ad", "14"});
+        nameLayout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
         nameLayout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
         nameLayout->layout(textRect, Qt::ElideRight, painter);
 
@@ -571,7 +571,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         contentLayout->setHighlightEnabled(!isSelected);
-        contentLayout->setHighlightKeywords({"abc", "ad", "14"});
+        contentLayout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
         contentLayout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
         contentLayout->layout(contentRect, Qt::ElideRight, painter);
         painter->restore();
@@ -588,7 +588,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         layout->setHighlightEnabled(!isSelected);
-        layout->setHighlightKeywords({"abc", "ad", "14"});
+        layout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
         layout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
         layout->layout(textRect, Qt::ElideRight, painter);
     }

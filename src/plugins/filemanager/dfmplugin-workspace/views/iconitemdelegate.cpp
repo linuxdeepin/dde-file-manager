@@ -639,7 +639,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter, painter));
     layout->setHighlightEnabled(!isSelected);
-    layout->setHighlightKeywords({"abc", "ad", "14"});
+    layout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
     layout->setHighlightColor(opt.palette.color(QPalette::Active, QPalette::Highlight));
 
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);

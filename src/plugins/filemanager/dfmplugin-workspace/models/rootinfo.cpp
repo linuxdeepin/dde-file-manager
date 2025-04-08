@@ -25,6 +25,10 @@ using namespace dfmplugin_workspace;
 RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
     : QObject(parent), url(u), canCache(canCache)
 {
+    QUrlQuery query(url.query());
+    if (query.hasQueryItem("keyword"))
+        keyWords = query.queryItemValue("keyword").split(" ");
+
     hiddenFileUrl.setScheme(url.scheme());
     hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
 }
@@ -217,6 +221,11 @@ bool RootInfo::canDelete() const
             return false;
     }
     return true;
+}
+
+QStringList RootInfo::getKeyWords() const
+{
+    return keyWords;
 }
 
 void RootInfo::doFileDeleted(const QUrl &url)

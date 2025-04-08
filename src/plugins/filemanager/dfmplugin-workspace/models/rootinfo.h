@@ -59,6 +59,7 @@ public:
     QStringList connectTokens() const { return connectedTokens; }
 
     bool canDelete() const;
+    QStringList getKeyWords() const;
 
 Q_SIGNALS:
 
@@ -160,6 +161,8 @@ private:
     std::atomic_bool needStartWatcher { true };
     std::atomic_bool isRefresh { false };
     QStringList connectedTokens;
+
+    QStringList keyWords {};
 };
 }
 
