@@ -175,7 +175,7 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
                                 QDBusConnection::systemBus());
 
     QList<QVariant> arg;
-    arg << QString("shutdown:sleep:")   // what
+    arg << QString("shutdown:sleep")   // what
         << qApp->applicationDisplayName()   // who
         << QObject::tr("Files are being processed")   // why
         << QString("block");   // mode
