@@ -28,6 +28,7 @@ namespace dfmplugin_smbbrowser {
 DFM_LOG_REISGER_CATEGORY(DPSMBBROWSER_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 void registScheme(const QString &scheme)
 {
@@ -61,10 +62,13 @@ bool SmbBrowser::start()
     registScheme(Global::Scheme::kDavs);
     registScheme(Global::Scheme::kNfs);
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kSmb), SmbBrowserMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", Global::Scheme::kSmb, SmbBrowserMenuCreator::name());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", Global::Scheme::kNetwork, SmbBrowserMenuCreator::name());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", Global::Scheme::kNetwork);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", QString(Global::Scheme::kSmb));
+
+    QVariantMap property;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", Global::Scheme::kNetwork, property);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", Global::Scheme::kSmb, property);
 
     ProtocolDeviceDisplayManager::instance();
     registerNetworkAccessPrehandler();
@@ -192,7 +196,7 @@ void SmbBrowser::registerNetworkToSearch()
 void SmbBrowser::registerNetworkToTitleBar()
 {
     QVariantMap property;
-    property["Property_Key_HideTreeViewBtn"] = true;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }

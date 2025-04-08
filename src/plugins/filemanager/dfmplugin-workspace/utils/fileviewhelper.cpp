@@ -304,6 +304,24 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
     return rowIndex * columnCount + columnIndex;
 }
 
+bool FileViewHelper::canChangeListItemHeight()
+{
+    auto customViewProperty = WorkspaceHelper::instance()->findCustomViewProperty(parent()->rootUrl().scheme());
+    return customViewProperty.allowChangeListHeight;
+}
+
+int FileViewHelper::customDefaultListItemHeightLevel()
+{
+    auto customViewProperty = WorkspaceHelper::instance()->findCustomViewProperty(parent()->rootUrl().scheme());
+    return customViewProperty.defaultListHeight;
+}
+
+ViewMode FileViewHelper::customDefaultViewMode()
+{
+    auto customProperty = WorkspaceHelper::instance()->findCustomViewProperty(parent()->rootUrl().scheme());
+    return customProperty.defaultViewMode;
+}
+
 void FileViewHelper::handleCommitData(QWidget *editor) const
 {
     if (!editor) {

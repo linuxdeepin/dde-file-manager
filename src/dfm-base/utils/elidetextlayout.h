@@ -67,10 +67,10 @@ protected:
     void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, const QRectF &rect);
     virtual void initLayoutOption(QTextLayout *lay);
 protected:
-    QTextDocument *document = nullptr;
-    QMap<Attribute, QVariant> attributes;
+    QTextDocument *document { nullptr };
+    QMap<Attribute, QVariant> attributes {};
 
-    QStringList highlightKeywords { };  // 需要高亮的关键字
+    QStringList highlightKeywords {};  // 需要高亮的关键字
     QColor highlightColor { QColor() };     // 高亮颜色
     bool enableHighlight { false };      // 是否启用高亮
 };

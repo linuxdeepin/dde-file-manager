@@ -93,7 +93,6 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
                 }
             }
 
-            // qWarning() << "----------------" << lineText << highlightColor << highlightKeyword << enableHighlight;
             if (!paintLineWithHighlight || !containsAnyKeyword) {
                 // draw text line
                 line.draw(painter, QPoint(0, 0));
@@ -223,8 +222,8 @@ void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &
 {
     // 用于记录所有关键词匹配位置
     struct KeywordMatch {
-        int position;    // 关键词起始位置
-        qsizetype length;      // 关键词长度
+        int position;       // 关键词起始位置
+        qsizetype length;   // 关键词长度
     };
     QList<KeywordMatch> matches;
 

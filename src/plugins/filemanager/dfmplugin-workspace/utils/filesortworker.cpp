@@ -42,7 +42,7 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileSortWorker::handleFileInfoUpdated, Qt::QueuedConnection);
-    currentSupportTreeView = WorkspaceHelper::instance()->supportTreeView(current.scheme());
+    currentSupportTreeView = WorkspaceHelper::instance()->isViewModeSupported(current.scheme(), ViewMode::kTreeMode);
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
 }

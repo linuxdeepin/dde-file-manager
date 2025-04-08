@@ -921,7 +921,7 @@ void FileViewModel::initFilterSortWork()
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
     filterSortWorker->setTreeView(DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
-                                  && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()));
+                                  && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
 
     // connect signals

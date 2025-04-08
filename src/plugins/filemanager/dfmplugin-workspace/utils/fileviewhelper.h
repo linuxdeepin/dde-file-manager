@@ -46,6 +46,10 @@ public:
     static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
     static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
 
+    DFMGLOBAL_NAMESPACE::ViewMode customDefaultViewMode();
+    bool canChangeListItemHeight();
+    int customDefaultListItemHeightLevel();
+
 public slots:
     void handleCommitData(QWidget *editor) const;
     void selectFiles(const QList<QUrl> &files);

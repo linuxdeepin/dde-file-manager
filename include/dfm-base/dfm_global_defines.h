@@ -28,6 +28,15 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
+namespace ViewCustomKeys {
+inline constexpr char kSupportIconMode[] { "Custom_Key_SupportIconMode" };
+inline constexpr char kSupportListMode[] { "Custom_Key_SupportListMode" };
+inline constexpr char kSupportTreeMode[] { "Custom_Key_SupportTreeMode" };
+inline constexpr char kDefaultViewMode[] { "Custom_Key_DefaultViewMode" };
+inline constexpr char kDefaultListHeight[] { "Custom_Key_DefaultListHeight" };
+inline constexpr char kAllowChangeListHeight[] { "Custom_Key_AllowChangeListHeight" };
+} // namespace ViewCustomKeys
+
 enum class TransparentStatus : uint8_t {
     kDefault,
     kTransparent,

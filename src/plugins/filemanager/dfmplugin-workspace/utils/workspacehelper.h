@@ -52,6 +52,9 @@ public:
     void setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes);
     void setViewDragEnabled(const quint64 windowID, const bool enable);
     void setViewDragDropMode(const quint64 windowID, const QAbstractItemView::DragDropMode mode);
+    void registerCustomViewProperty(const QString &scheme, const QVariantMap &propertise);
+    CustomViewProperty findCustomViewProperty(const QString &scheme) const;
+    bool isViewModeSupported(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode) const;
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
@@ -91,9 +94,6 @@ public:
     void registerFileView(const QString &scheme);
     bool registeredFileView(const QString &scheme) const;
 
-    void setNotSupportTreeView(const QString &scheme);
-    bool supportTreeView(const QString &scheme) const;
-
     void setUndoFiles(const QList<QUrl> &files);
     QList<QUrl> filterUndoFiles(const QList<QUrl> &urlList) const;
 
@@ -123,10 +123,9 @@ private:
 private:
     TopWidgetCreatorMap topWidgetCreators;
     MenuSceneMap menuSceneMap;
-    DefaultViewMode defaultViewMode;
 
     QList<QString> registeredFileViewScheme {};
-    QList<QString> notSupportTreeView{};
+    QMap<QString, CustomViewProperty> customViewPropertyMap {};
 
     QList<QUrl> undoFiles {};
 

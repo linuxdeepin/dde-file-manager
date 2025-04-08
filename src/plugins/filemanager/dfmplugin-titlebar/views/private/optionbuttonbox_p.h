@@ -55,6 +55,12 @@ private:
 
     ViewMode currentMode { ViewMode::kIconMode };
     QUrl currentUrl;
+
+    bool iconViewEnabled { true };
+    bool listViewEnabled { true };
+    bool treeViewEnabled { true };
+    bool sortByEnabled { true };
+    bool viewOptionsEnabled { true };
 };
 }   // namespace dfmplugin_titlebar
 
