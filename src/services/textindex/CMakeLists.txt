@@ -19,6 +19,7 @@ FILE(GLOB_RECURSE SRC_FILES
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 COMPONENTS Core DBus Gui REQUIRED)
 find_package(Dtk6 COMPONENTS Core)
+find_package(dfm6-search REQUIRED)
 
 qt6_generate_dbus_interface(
    textindexdbus.h
@@ -56,6 +57,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::DBus
     Qt6::Gui
     Dtk6::Core
+    dfm6-search
     ${GLIB_LIBRARIES}
     ${PCRE_LIBRARIES}
     PkgConfig::Lucene

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskmanager.h"
+#include "utils/indexutility.h"
 
 #include <QMetaType>
 #include <QJsonDocument>
@@ -27,43 +28,6 @@ void registerMetaTypes()
     }
 }
 
-QString getConfigPath()
-{
-    return indexStorePath() + "/index_status.json";
-}
-
-void clearIndexStatus()
-{
-    QFile file(getConfigPath());
-    if (file.exists()) {
-        fmInfo() << "Clearing index status file:" << file.fileName()
-                 << "[Clearing index status configuration]";
-        file.remove();
-    }
-}
-
-void saveIndexStatus(const QDateTime &lastUpdateTime)
-{
-    QJsonObject status;
-    status["lastUpdateTime"] = lastUpdateTime.toString(Qt::ISODate);
-
-    QJsonDocument doc(status);
-    QFile file(getConfigPath());
-
-    // 确保目录存在
-    QDir().mkpath(QFileInfo(file).absolutePath());
-
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(doc.toJson());
-        file.close();
-        fmInfo() << "Index status saved successfully:" << file.fileName()
-                 << "lastUpdateTime:" << lastUpdateTime.toString(Qt::ISODate)
-                 << "[Updated index status configuration]";
-    } else {
-        fmWarning() << "Failed to save index status to:" << file.fileName()
-                    << "[Failed to write index status configuration]";
-    }
-}
 }   // namespace
 
 TaskManager::TaskManager(QObject *parent)
@@ -92,11 +56,11 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
     fmInfo() << "Starting new task for path:" << path;
 
-    // TODO (search): dfm-search
-    if (path == QDir::homePath() && type == IndexTask::Type::Create) {
+    // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
+    if (IndexUtility::isDefaultIndexedDirectory(path) && type == IndexTask::Type::Create) {
         fmInfo() << "Home path task detected, clearing existing index status"
                  << "[Initializing new root indexing task]";
-        clearIndexStatus();
+        IndexUtility::removeIndexStatusFile();
     }
 
     // 获取对应的任务处理器
@@ -164,7 +128,7 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
             fmWarning() << "Update task failed due to index corruption for path:" << taskPath << ", trying to rebuild index";
 
             // 清理损坏的索引
-            clearIndexDirectory();
+            IndexUtility::clearIndexDirectory();
 
             // 启动新的创建任务
             cleanupTask();   // 清理当前失败的任务
@@ -180,16 +144,15 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
              << (result.success ? "completed successfully" : "failed");
 
     // 如果是根目录的任务，更新状态文件
-    // TODO(search): dfm-search
-    if (taskPath == QDir::homePath()) {
+    if (IndexUtility::isDefaultIndexedDirectory(taskPath)) {
         if (!result.success) {
             fmWarning() << "Root indexing failed, clearing status"
                         << "[Root index task failed]";
-            clearIndexStatus();
+            IndexUtility::removeIndexStatusFile();
         } else if (result.success && !result.interrupted) {
             fmInfo() << "Root indexing completed successfully, updating status"
                      << "[Root index task succeeded]";
-            saveIndexStatus(QDateTime::currentDateTime());
+            IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
         }
     }
 
@@ -222,7 +185,7 @@ void TaskManager::cleanupTask()
 
 QString TaskManager::getLastUpdateTime() const
 {
-    QFile file(getConfigPath());
+    QFile file(IndexUtility::statusFilePath());
     if (!file.open(QIODevice::ReadOnly)) {
         return QString();
     }
@@ -232,33 +195,10 @@ QString TaskManager::getLastUpdateTime() const
 
     if (doc.isObject()) {
         QJsonObject obj = doc.object();
-        if (obj.contains("lastUpdateTime")) {
-            QDateTime time = QDateTime::fromString(obj["lastUpdateTime"].toString(), Qt::ISODate);
+        if (obj.contains(Defines::kLastUpdateTime)) {
+            QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTime].toString(), Qt::ISODate);
             return time.toString("yyyy-MM-dd hh:mm:ss");
         }
     }
     return QString();
-}
-
-void TaskManager::clearIndexDirectory()
-{
-    QString indexDir = indexStorePath();
-    QDir dir(indexDir);
-
-    if (dir.exists()) {
-        // 删除所有索引文件
-        QStringList files = dir.entryList(QDir::Files);
-        for (const QString &file : files) {
-            if (dir.remove(file)) {
-                fmWarning() << "Removed corrupted index file:" << file;
-            } else {
-                fmWarning() << "Failed to remove index file:" << file;
-            }
-        }
-    }
-
-    // 确保目录存在
-    if (!dir.exists()) {
-        dir.mkpath(".");
-    }
 }

@@ -18,13 +18,13 @@ void TextIndexDBusPrivate::initConnect()
 {
     QObject::connect(taskManager, &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
-        emit q->TaskFinished(type, path, success);
-    });
+                         emit q->TaskFinished(type, path, success);
+                     });
 
     QObject::connect(taskManager, &TaskManager::taskProgressChanged,
                      q, [this](const QString &type, const QString &path, qint64 count) {
-        emit q->TaskProgressChanged(type, path, count);
-    });
+                         emit q->TaskProgressChanged(type, path, count);
+                     });
 }
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
@@ -70,7 +70,7 @@ bool TextIndexDBus::HasRunningTask()
 
 bool TextIndexDBus::IndexDatabaseExists()
 {
-    return IndexReader::indexExists(FSDirectory::open(indexStorePath().toStdWString()));
+    return DFMSEARCH::Global::isContentIndexAvailable();
 }
 
 QString TextIndexDBus::GetLastUpdateTime()
