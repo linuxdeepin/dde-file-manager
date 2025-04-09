@@ -23,6 +23,7 @@ void registerMetaTypes()
         qRegisterMetaType<IndexTask::Type>("IndexTask::Type");
         qRegisterMetaType<SERVICETEXTINDEX_NAMESPACE::IndexTask::Type>();
         qRegisterMetaType<SERVICETEXTINDEX_NAMESPACE::IndexTask::Type>("SERVICETEXTINDEX_NAMESPACE::IndexTask::Type");
+        qRegisterMetaType<HandlerResult>();
         registered = true;
         fmDebug() << "Meta types registered successfully";
     }
