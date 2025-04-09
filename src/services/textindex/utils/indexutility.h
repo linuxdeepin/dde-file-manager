@@ -10,6 +10,7 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
 
+bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
 QString statusFilePath();
 void removeIndexStatusFile();

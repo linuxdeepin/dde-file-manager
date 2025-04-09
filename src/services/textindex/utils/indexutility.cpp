@@ -12,6 +12,14 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
 
+bool isIndexWithAnything(const QString &path)
+{
+    if (!DFMSEARCH::Global::isFileNameIndexDirectoryAvailable())
+        return false;
+
+    return isDefaultIndexedDirectory(path);
+}
+
 bool isDefaultIndexedDirectory(const QString &path)
 {
     return DFMSEARCH::Global::defaultIndexedDirectory().contains(path);

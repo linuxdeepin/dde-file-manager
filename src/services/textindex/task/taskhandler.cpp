@@ -3,11 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskhandler.h"
-
+#include "fileprovider.h"
 #include "progressnotifier.h"
-#include "utils/indextraverseutils.h"
 #include "utils/scopeguard.h"
 #include "utils/docutils.h"
+#include "utils/indexutility.h"
+
+#include <dfm-search/searchfactory.h>
+#include <dfm-search/filenamesearchapi.h>
 
 #include <fulltext/chineseanalyzer.h>
 
@@ -18,20 +21,12 @@
 #include <QueryWrapperFilter.h>
 
 #include <QDir>
-#include <QDirIterator>
 #include <QDateTime>
-#include <QRegularExpression>
-#include <QStandardPaths>
-#include <QQueue>
-
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
 using namespace Lucene;
+DFM_SEARCH_USE_NS
 
 namespace {
 
@@ -187,87 +182,31 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
-void traverseDirectoryCommon(const QString &rootPath, TaskState &state,
-                             const FileHandler &fileHandler)
-{
-    QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
-    QSet<QString> visitedDirs;
-    QQueue<QString> dirQueue;
-    dirQueue.enqueue(rootPath);
-
-    while (!dirQueue.isEmpty()) {
-        if (!state.isRunning())
-            break;
-
-        QString currentPath = dirQueue.dequeue();
-
-        // 检查是否是系统目录或绑定目录
-        if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath))
-            continue;
-
-        // 检查路径长度和深度限制
-        if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20)
-            continue;
-
-        // 检查目录是否已访问
-        if (!IndexTraverseUtils::isValidDirectory(currentPath, visitedDirs))
-            continue;
-
-        DIR *dir = opendir(currentPath.toStdString().c_str());
-        if (!dir) {
-            fmWarning() << "Cannot open directory:" << currentPath;
-            continue;
-        }
-
-        ScopeGuard dirCloser([dir]() { closedir(dir); });
-
-        struct dirent *entry;
-        while ((entry = readdir(dir))) {
-            if (!state.isRunning())
-                break;
-
-            if (IndexTraverseUtils::isHiddenFile(entry->d_name) || IndexTraverseUtils::isSpecialDir(entry->d_name))
-                continue;
-
-            QString fullPath = QDir::cleanPath(currentPath + QDir::separator() + QString::fromUtf8(entry->d_name));
-
-            struct stat st;
-            if (lstat(fullPath.toStdString().c_str(), &st) == -1)
-                continue;
-
-            // 对于普通文件，只检查路径有效性
-            if (S_ISREG(st.st_mode)) {
-                if (IndexTraverseUtils::isValidFile(fullPath)) {
-                    fileHandler(fullPath);
-                }
-            }
-            // 对于目录，加入队列（后续会检查是否访问过）
-            else if (S_ISDIR(st.st_mode)) {
-                dirQueue.enqueue(fullPath);
-            }
-        }
-    }
-}
-
-void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
-                       TaskState &running)
-{
-    ProgressReporter reporter;
-    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
-        processFile(path, writer, &reporter);
-    });
-}
-
-void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
-                       const IndexWriterPtr &writer, TaskState &running)
-{
-    ProgressReporter reporter;
-    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
-        updateFile(path, reader, writer, &reporter);
-    });
-}
-
 }   // namespace
+
+// 创建文件提供者
+std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
+{
+    if (IndexUtility::isIndexWithAnything(path)) {
+        QObject holder;
+        SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
+        SearchOptions options;
+        options.setSearchPath(QDir::rootPath());
+        options.setSearchMethod(SearchMethod::Indexed);
+        FileNameOptionsAPI fileNameOptions(options);
+        fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
+        engine->setSearchOptions(options);
+        SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
+        const SearchResultExpected &result = engine->searchSync(query);
+        if (result.hasValue() && !result->isEmpty()) {
+            fmInfo() << "File listings are provided by ANYTHING."
+                     << "count: " << result.value().count();
+            return std::make_unique<DirectFileListProvider>(result.value());
+        }
+        fmWarning() << "Failed to get file list via ANYTHING!";
+    }
+    return std::make_unique<FileSystemProvider>(path);
+}
 
 // 公开的任务处理函数实现
 TaskHandler TaskHandlers::CreateIndexHandler()
@@ -308,7 +247,18 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             fmInfo() << "Indexing to directory:" << DFMSEARCH::Global::contentIndexDirectory();
 
             writer->deleteAll();
-            traverseDirectory(path, writer, running);
+
+            // 使用文件提供者遍历文件
+            auto provider = createFileProvider(path);
+            if (!provider) {
+                fmWarning() << "Failed to create file provider for path:" << path;
+                return result;
+            }
+
+            ProgressReporter reporter;
+            provider->traverse(running, [&](const QString &file) {
+                processFile(file, writer, &reporter);
+            });
 
             // Only the creation of an index that is interrupted is also considered a failure
             // Created indexes must be guaranteed to be complete
@@ -368,7 +318,17 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 }
             });
 
-            traverseForUpdate(path, reader, writer, running);
+            // 使用文件提供者遍历文件
+            auto provider = createFileProvider(path);
+            if (!provider) {
+                fmWarning() << "Failed to create file provider for path:" << path;
+                return result;
+            }
+
+            ProgressReporter reporter;
+            provider->traverse(running, [&](const QString &file) {
+                updateFile(file, reader, writer, &reporter);
+            });
 
             if (!running.isRunning()) {
                 fmWarning() << "Update index task was interrupted";
