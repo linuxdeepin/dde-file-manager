@@ -70,6 +70,9 @@ private:
     void updateSearchWidgetLayout();
     void quitSearch();
 
+    int determineSearchDelay(const QString &inputText);
+    bool shouldDelaySearch(const QString &inputText);
+
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
     DTK_WIDGET_NAMESPACE::DSearchEdit *searchEdit { nullptr };
@@ -81,7 +84,8 @@ private:
     int currentCursorPos { 0 };
 
     SearchMode currentMode { SearchMode::kUnknown };
-    QTimer *searchTimer { nullptr };
+    QTimer *delayTimer { nullptr };
+    qint64 lastSearchTime { 0 };
 };
 
 } // namespace dfmplugin_titlebar
