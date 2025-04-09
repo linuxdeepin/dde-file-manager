@@ -6,7 +6,7 @@
 #define SERVICE_TEXTINDEX_GLOBAL_H
 
 #include <dfm-base/dfm_log_defines.h>
-#include <QStandardPaths>
+#include <dfm-search/dsearch_global.h>
 
 #define SERVICETEXTINDEX_NAMESPACE service_textindex
 #define SERVICETEXTINDEX_BEGIN_NAMESPACE namespace SERVICETEXTINDEX_NAMESPACE {
@@ -15,15 +15,12 @@
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
-DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)
+namespace Defines {
+inline constexpr char kLastUpdateTime[] { "lastUpdateTime" };
+}   // namespace Defines
 
-inline QString indexStorePath()
-{
-    static const QString kPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
-            + "/deepin/dde-file-manager/index";
-    return kPath;
-}
+DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)
 
 SERVICETEXTINDEX_END_NAMESPACE
 
-#endif   // SERVICE_TEXTINDEX_GLOBAL_H 
+#endif   // SERVICE_TEXTINDEX_GLOBAL_H

@@ -69,14 +69,6 @@ private:
 // 目录遍历相关函数
 using FileHandler = std::function<void(const QString &path)>;
 
-// 常量定义
-static constexpr char kSupportFiles[] = "^(rtf|odt|ods|odp|odg|docx"
-                                        "|xlsx|pptx|ppsx|md|xls|xlsb"
-                                        "|doc|dot|wps|ppt|pps|txt|pdf"
-                                        "|dps|sh|html|htm|xml|xhtml|dhtml"
-                                        "|shtm|shtml|json|css|yaml|ini"
-                                        "|bat|js|sql|uof|ofd)$";
-
 // 文档处理相关函数
 DocumentPtr createFileDocument(const QString &file)
 {
@@ -145,9 +137,8 @@ bool isSupportedFile(const QString &path)
     if (!fileInfo.exists() || !fileInfo.isFile())
         return false;
 
-    QString suffix = fileInfo.suffix().toLower();
-    static const QRegularExpression suffixRegex(kSupportFiles);
-    return suffixRegex.match(suffix).hasMatch();
+    const QString &suffix = fileInfo.suffix().toLower();
+    return DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
 }
 
 void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
@@ -291,16 +282,16 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             return result;
         }
 
-        if (!dir.exists(indexStorePath())) {
-            if (!dir.mkpath(indexStorePath())) {
-                fmWarning() << "Unable to create index directory:" << indexStorePath();
+        if (!dir.exists(DFMSEARCH::Global::contentIndexDirectory())) {
+            if (!dir.mkpath(DFMSEARCH::Global::contentIndexDirectory())) {
+                fmWarning() << "Unable to create index directory:" << DFMSEARCH::Global::contentIndexDirectory();
                 return result;
             }
         }
 
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     true,
                     IndexWriter::MaxFieldLengthLIMITED);
@@ -314,7 +305,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                 }
             });
 
-            fmInfo() << "Indexing to directory:" << indexStorePath();
+            fmInfo() << "Indexing to directory:" << DFMSEARCH::Global::contentIndexDirectory();
 
             writer->deleteAll();
             traverseDirectory(path, writer, running);
@@ -324,7 +315,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             if (!running.isRunning()) {
                 fmWarning() << "Create index task was interrupted";
                 result.interrupted = true;
-                result.success = false;
+                result.success = false;   // 创建被打断若不失败索引是不完整的
                 return result;
             }
 
@@ -351,7 +342,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
 
         try {
             IndexReaderPtr reader = IndexReader::open(
-                    FSDirectory::open(indexStorePath().toStdWString()), true);
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()), true);
 
             // 添加 reader 的 ScopeGuard
             ScopeGuard readerCloser([&reader]() {
@@ -363,7 +354,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             });
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
                     IndexWriter::MaxFieldLengthLIMITED);
@@ -410,7 +401,7 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
 
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
                     IndexWriter::MaxFieldLengthLIMITED);

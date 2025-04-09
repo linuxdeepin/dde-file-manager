@@ -43,6 +43,7 @@ Build-Depends:
  libdfm6-io-dev,
  libdfm6-mount-dev,
  libdfm6-burn-dev,
+ libdfm6-search-dev,
  libpolkit-qt6-1-dev,
  libxcb-xfixes0-dev (>= 1.10~),
  libopenjp2-7-dev,
