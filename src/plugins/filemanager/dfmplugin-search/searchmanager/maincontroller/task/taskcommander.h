@@ -8,10 +8,13 @@
 #include "dfmplugin_search_global.h"
 
 #include <QObject>
+#include <QReadWriteLock>
+#include <QUrl>
 
 DPSEARCH_BEGIN_NAMESPACE
 
 class TaskCommanderPrivate;
+class AbstractSearcher;
 class TaskCommander : public QObject
 {
     Q_OBJECT
@@ -22,7 +25,6 @@ private:
     QString taskID() const;
     QList<QUrl> getResults() const;
     bool start();
-    void stop();
     void deleteSelf();
     void createSearcher(const QUrl &url, const QString &keyword);
 

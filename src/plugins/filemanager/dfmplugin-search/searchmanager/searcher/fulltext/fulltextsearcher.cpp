@@ -339,13 +339,13 @@ void FullTextSearcher::onIndexTaskFailed(TextIndexClient::TaskType type, const Q
     d->taskCondition.wakeAll();
 }
 
-void FullTextSearcher::stop()
-{
-    d->status.storeRelease(kTerminated);
-    QMutexLocker locker(&d->taskMutex);
-    d->taskStatus.storeRelease(-1);
-    d->taskCondition.wakeAll();
-}
+// void FullTextSearcher::stop()
+// {
+//     d->status.storeRelease(kTerminated);
+//     QMutexLocker locker(&d->taskMutex);
+//     d->taskStatus.storeRelease(-1);
+//     d->taskCondition.wakeAll();
+// }
 
 bool FullTextSearcher::hasItem() const
 {

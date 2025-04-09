@@ -24,7 +24,7 @@ public:
 
     static bool isSupport(const QUrl &url);
     bool search() override;
-    void stop() override;
+    // void stop() override;
     bool hasItem() const override;
     QList<QUrl> takeAll() override;
     void tryNotify();

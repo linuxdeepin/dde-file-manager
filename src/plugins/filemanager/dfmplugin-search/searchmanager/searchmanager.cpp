@@ -43,8 +43,8 @@ QList<QUrl> SearchManager::matchedResults(const QString &taskId)
 
 void SearchManager::stop(const QString &taskId)
 {
-    if (mainController)
-        mainController->stop(taskId);
+    // if (mainController)
+    //     mainController->stop(taskId);
 
     emit searchStoped(taskId);
 }

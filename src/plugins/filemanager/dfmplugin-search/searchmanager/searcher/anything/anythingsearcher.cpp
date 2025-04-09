@@ -116,10 +116,10 @@ bool AnythingSearcher::search()
     return true;
 }
 
-void AnythingSearcher::stop()
-{
-    status.storeRelease(kTerminated);
-}
+// void AnythingSearcher::stop()
+// {
+//     status.storeRelease(kTerminated);
+// }
 
 bool AnythingSearcher::hasItem() const
 {

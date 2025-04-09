@@ -69,11 +69,11 @@ bool FSearcher::search()
     return true;
 }
 
-void FSearcher::stop()
-{
-    searchHandler->stop();
-    status.storeRelease(kTerminated);
-}
+// void FSearcher::stop()
+// {
+//     searchHandler->stop();
+//     status.storeRelease(kTerminated);
+// }
 
 bool FSearcher::hasItem() const
 {

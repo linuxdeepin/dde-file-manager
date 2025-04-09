@@ -43,10 +43,10 @@ bool IteratorSearcher::search()
     return true;
 }
 
-void IteratorSearcher::stop()
-{
-    status.storeRelease(kTerminated);
-}
+// void IteratorSearcher::stop()
+// {
+//     status.storeRelease(kTerminated);
+// }
 
 bool IteratorSearcher::hasItem() const
 {

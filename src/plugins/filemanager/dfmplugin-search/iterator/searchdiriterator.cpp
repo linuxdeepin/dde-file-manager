@@ -77,6 +77,7 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
         const auto &results = SearchManager::instance()->matchedResults(taskId);
         QMutexLocker lk(&mutex);
         childrens.append(std::move(results));
+        qWarning() << "================ append " << results;
     }
 }
 
@@ -116,6 +117,7 @@ QUrl SearchDirIterator::next()
     if (!d->childrens.isEmpty()) {
         QMutexLocker lk(&d->mutex);
         d->currentFileUrl = d->childrens.takeFirst();
+        qWarning() << "================ next " << d->currentFileUrl;
         return d->currentFileUrl;
     }
 

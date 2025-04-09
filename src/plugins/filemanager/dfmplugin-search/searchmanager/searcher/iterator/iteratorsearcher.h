@@ -23,7 +23,7 @@ private:
     explicit IteratorSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
 
     bool search() override;
-    void stop() override;
+    // void stop() override;
     bool hasItem() const override;
     QList<QUrl> takeAll() override;
     void tryNotify();

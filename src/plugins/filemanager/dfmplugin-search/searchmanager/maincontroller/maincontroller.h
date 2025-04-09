@@ -20,7 +20,6 @@ private:
     explicit MainController(QObject *parent = nullptr);
     ~MainController();
 
-    void stop(QString taskId);
     bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);
     QList<QUrl> getResults(QString taskId);
 

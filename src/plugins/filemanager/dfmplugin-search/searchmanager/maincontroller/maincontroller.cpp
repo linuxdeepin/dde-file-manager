@@ -25,28 +25,16 @@ MainController::MainController(QObject *parent)
 MainController::~MainController()
 {
     for (auto &task : taskManager) {
-        task->stop();
         task->deleteSelf();
         task = nullptr;
     }
     taskManager.clear();
 }
 
-void MainController::stop(QString taskId)
-{
-    if (taskManager.contains(taskId)) {
-        disconnect(taskManager[taskId]);
-        taskManager[taskId]->stop();
-        taskManager[taskId]->deleteSelf();
-        taskManager[taskId] = nullptr;
-        taskManager.remove(taskId);
-    }
-}
-
 bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString &keyword)
 {
     if (taskManager.contains(taskId))
-        stop(taskId);
+        taskManager[taskId]->deleteSelf();
 
     auto task = new TaskCommander(taskId, url, keyword);
     Q_ASSERT(task);
@@ -76,8 +64,10 @@ QList<QUrl> MainController::getResults(QString taskId)
 
 void MainController::onFinished(QString taskId)
 {
-    if (taskManager.contains(taskId))
-        stop(taskId);
+    // if (taskManager.contains(taskId)) {
+    //     taskManager[taskId]->deleteSelf();
+    //     taskManager.remove(taskId);
+    // }
 
     emit searchCompleted(taskId);
 }

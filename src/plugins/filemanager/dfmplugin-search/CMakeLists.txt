@@ -6,6 +6,7 @@ set(BIN_NAME dfm-search-plugin)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt6 REQUIRED COMPONENTS DBus)
+find_package(dfm6-search REQUIRED)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -47,6 +48,7 @@ target_include_directories(${BIN_NAME}
         ${CMAKE_SOURCE_DIR}/3rdparty
         ${GLIB_INCLUDE_DIRS}
         ${PCRE_INCLUDE_DIRS}
+        ${dfm6-search_INCLUDE_DIR}
 )
 
 target_link_libraries(${BIN_NAME}
@@ -56,6 +58,7 @@ target_link_libraries(${BIN_NAME}
     ${PCRE_LIBRARIES}
     PkgConfig::Lucene
     PkgConfig::Docparser
+    dfm6-search
 )
 
 #install library file
