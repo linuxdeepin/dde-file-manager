@@ -16,6 +16,10 @@
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace Defines {
+
+inline constexpr char kAnythingDocType[] { "doc" };
+
+// json
 inline constexpr char kLastUpdateTime[] { "lastUpdateTime" };
 }   // namespace Defines
 
