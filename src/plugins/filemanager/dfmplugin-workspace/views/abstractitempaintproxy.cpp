@@ -55,6 +55,11 @@ int AbstractItemPaintProxy::iconRectIndex()
     return 0;
 }
 
+bool AbstractItemPaintProxy::supportContentPreview() const
+{
+    return false;
+}
+
 void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
 {
     this->style = style;

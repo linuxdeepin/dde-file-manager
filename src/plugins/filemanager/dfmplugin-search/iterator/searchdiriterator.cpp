@@ -16,6 +16,9 @@
 
 #include <QUuid>
 
+DFMBASE_USE_NAMESPACE
+DPSEARCH_USE_NAMESPACE
+
 namespace dfmplugin_search {
 
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
@@ -46,7 +49,6 @@ void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
     if (targetUrl.isLocalFile()) {
-        DFMBASE_USE_NAMESPACE
         searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
         searchRootWatcher->startWatcher();
         connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
@@ -74,9 +76,13 @@ void SearchDirIteratorPrivate::doSearch()
 void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
+        // 从SearchManager获取结果，这些结果已经经过合并处理
         const auto &results = SearchManager::instance()->matchedResults(taskId);
+        if (results.isEmpty())
+            return;
+            
         QMutexLocker lk(&mutex);
-        childrens.append(std::move(results));
+        childrens = results;
     }
 }
 
@@ -115,7 +121,11 @@ QUrl SearchDirIterator::next()
 {
     if (!d->childrens.isEmpty()) {
         QMutexLocker lk(&d->mutex);
-        d->currentFileUrl = d->childrens.takeFirst();
+        // 从结果映射中取第一个结果的URL
+        auto it = d->childrens.begin();
+        d->currentFileUrl = it.key();
+        d->currentFileContent = it->highlightedContent();
+        d->childrens.erase(it);
         return d->currentFileUrl;
     }
 
@@ -156,7 +166,15 @@ const FileInfoPointer SearchDirIterator::fileInfo() const
     if (!d->currentFileUrl.isValid())
         return nullptr;
 
-    return InfoFactory::create<FileInfo>(d->currentFileUrl);
+    auto info = InfoFactory::create<FileInfo>(d->currentFileUrl);
+
+    if (!d->currentFileContent.isEmpty()) {
+        // 设置高亮内容到扩展属性
+        info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, d->currentFileContent);
+        d->currentFileContent.clear();
+    }
+
+    return info;
 }
 
 QUrl SearchDirIterator::url() const

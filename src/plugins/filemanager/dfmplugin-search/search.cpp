@@ -25,6 +25,7 @@
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/viewdefines.h>
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
@@ -35,6 +36,8 @@ Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
+
 namespace dfmplugin_search {
 DFM_LOG_REISGER_CATEGORY(DPSEARCH_NAMESPACE)
 
@@ -83,6 +86,8 @@ void Search::regSearchCrumbToTitleBar()
 {
     QVariantMap property;
     property["Property_Key_KeepAddressBar"] = true;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
+    property[ViewCustomKeys::kAllowChangeListHeight] = false;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SearchHelper::scheme(), property);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_RedirectUrl",
                             SearchHelper::instance(), &SearchHelper::crumbRedirectUrl);
@@ -96,8 +101,14 @@ void Search::regSearchToWorkspace()
 {
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SearchHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDefaultViewMode", SearchHelper::scheme(), Global::ViewMode::kListMode);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", SearchHelper::scheme());
+
+    QVariantMap propertise {
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode, false },
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultViewMode, static_cast<int>(Global::ViewMode::kListMode) },
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kAllowChangeListHeight, false },
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultListHeight,  ViewDefines().listHeightCount() - 1}
+    };
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", SearchHelper::scheme(), propertise);
 
     CreateTopWidgetCallback createCallback { []() { return new AdvanceSearchBar(); } };
     ShowTopWidgetCallback showCallback { SearchHelper::showTopWidget };

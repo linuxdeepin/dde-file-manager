@@ -8,9 +8,15 @@
 #include "taskcommander.h"
 #include "searchmanager/searcher/abstractsearcher.h"
 
-#include <QFutureWatcher>
-#include <QUrl>
+#include <dfm-search/dsearch_global.h>
+#include <dfm-search/contentsearchapi.h>
+
+#include <QObject>
+#include <QList>
 #include <QReadWriteLock>
+#include <QAtomicInt>
+#include <QMap>
+#include <QSet>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -25,26 +31,23 @@ public:
 
 private:
     static void working(AbstractSearcher *searcher);
-    AbstractSearcher *createFileNameSearcher(const QUrl &url, const QString &keyword);
+    AbstractSearcher *createSearcher(const QUrl &url, const QString &keyword, DFMSEARCH::SearchType type);
 
 private slots:
     void onUnearthed(AbstractSearcher *searcher);
     void onFinished();
+    void checkAllFinished();
+    void processContentResult(const DFMSEARCH::SearchResult &result);
 
 private:
-    TaskCommander *q = nullptr;
-    volatile bool isWorking = false;
-    QString taskId;
-
-    //当前所有的搜索结果和新数据缓冲区
+    TaskCommander *q { nullptr };
+    QString taskId { "" };
+    QList<AbstractSearcher *> allSearchers {};
+    DFMSearchResultMap resultMap {};             // 使用统一的结果集
+    QSet<QUrl> processedUrls;                 // 记录已处理的 URL
     QReadWriteLock rwLock;
-    QList<QUrl> resultList;
-
-    bool deleted = false;
-    bool finished = false;   //保证结束信号只发一次
-
-    QFutureWatcher<void> futureWatcher;
-    QList<AbstractSearcher *> allSearchers;
+    QAtomicInt finishedCount { 0 };
+    bool deleted { false };
 };
 
 DPSEARCH_END_NAMESPACE

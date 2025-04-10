@@ -34,7 +34,6 @@ public slots:
     void handleSelectAll(quint64 windowId);
     void handleReverseSelect(quint64 windowId);
     void handleSetSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
-    void handleNotSupportTreeView(const QString &scheme);
 
     void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
     void handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes);
@@ -58,7 +57,7 @@ public slots:
 
     QRectF handleGetVisualGeometry(const quint64 windowID);
     QRectF handleGetViewItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
-    void handleSetDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    void handleSetCustomViewProperty(const QString &scheme, const QVariantMap &properties);
     DFMBASE_NAMESPACE::Global::ViewMode handleGetDefaultViewMode(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode handleGetCurrentViewMode(const quint64 windowID);
 

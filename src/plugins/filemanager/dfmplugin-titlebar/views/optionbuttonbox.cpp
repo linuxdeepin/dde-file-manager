@@ -54,6 +54,8 @@ void OptionButtonBoxPrivate::updateCompactButton()
     case ViewMode::kTreeMode:
         compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
         break;
+    default:
+        break;
     }
 }
 
@@ -174,13 +176,21 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
     d->loadViewMode(url);
     if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
         auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
-        d->listViewButton->setHidden(state & OptionButtonManager::kHideListViewBtn);
-        d->iconViewButton->setHidden(state & OptionButtonManager::kHideIconViewBtn);
-        if (d->treeViewButton)
-            d->treeViewButton->setHidden(state & OptionButtonManager::kHideTreeViewBtn);
+        
+        // Store the state-based visibility
+        d->listViewEnabled = !(state & OptionButtonManager::kHideListViewBtn);
+        d->iconViewEnabled = !(state & OptionButtonManager::kHideIconViewBtn);
+        d->treeViewEnabled = d->treeViewButton && !(state & OptionButtonManager::kHideTreeViewBtn);
+        d->sortByEnabled = !(state & OptionButtonManager::kHideDetailSpaceBtn);
+        d->viewOptionsEnabled = !(state & OptionButtonManager::kHideDetailSpaceBtn);
 
-        d->sortByButton->setHidden(state & OptionButtonManager::kHideDetailSpaceBtn);
-        d->viewOptionsButton->setVisible(!(state & OptionButtonManager::kHideDetailSpaceBtn));
+        // Apply the state visibility
+        d->listViewButton->setHidden(!d->listViewEnabled);
+        d->iconViewButton->setHidden(!d->iconViewEnabled);
+        if (d->treeViewButton)
+            d->treeViewButton->setHidden(!d->treeViewEnabled);
+        d->sortByButton->setHidden(!d->sortByEnabled);
+        d->viewOptionsButton->setVisible(d->viewOptionsEnabled);
 
         if (state == OptionButtonManager::kHideAllBtn) {
             setContentsMargins(0, 0, 0, 0);
@@ -189,6 +199,13 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
             setContentsMargins(5, 0, 15, 0);
         }
     } else {
+        // Reset all state-based visibility to true
+        d->listViewEnabled = true;
+        d->iconViewEnabled = true;
+        d->treeViewEnabled = true;
+        d->sortByEnabled = true;
+        d->viewOptionsEnabled = true;
+
         if (d->treeViewButton)
             d->treeViewButton->setHidden(false);
         d->listViewButton->setHidden(false);
@@ -197,6 +214,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->viewOptionsButton->setHidden(false);
         setContentsMargins(5, 0, 15, 0);
     }
+
     // Update button box size according to the parent widget width
     if (parent() && qobject_cast<QWidget *>(parent())) {
         if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
@@ -450,14 +468,16 @@ void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
 
 void OptionButtonBox::switchToCompactMode()
 {
-    // Hide normal buttons
-    d->iconViewButton->hide();
-    d->listViewButton->hide();
-    if (d->treeViewButton)
+    // Hide normal buttons if they are enabled by state
+    if (d->iconViewEnabled)
+        d->iconViewButton->hide();
+    if (d->listViewEnabled)
+        d->listViewButton->hide();
+    if (d->treeViewButton && d->treeViewEnabled)
         d->treeViewButton->hide();
 
-    // Show compact button
-    if (d->compactButton) {
+    // Show compact button if any view mode is enabled
+    if (d->compactButton && (d->iconViewEnabled || d->listViewEnabled || (d->treeViewButton && d->treeViewEnabled))) {
         d->compactButton->show();
         d->updateCompactButton();
     }
@@ -470,10 +490,12 @@ void OptionButtonBox::switchToNormalMode()
     if (d->compactButton)
         d->compactButton->hide();
 
-    // Show normal buttons
-    d->iconViewButton->show();
-    d->listViewButton->show();
-    if (d->treeViewButton)
+    // Show normal buttons if they are enabled by state
+    if (d->iconViewEnabled)
+        d->iconViewButton->show();
+    if (d->listViewEnabled)
+        d->listViewButton->show();
+    if (d->treeViewButton && d->treeViewEnabled)
         d->treeViewButton->show();
 
     d->isCompactMode = false;

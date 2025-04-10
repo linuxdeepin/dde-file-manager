@@ -95,6 +95,7 @@ public:
     void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
     void setTreeView(const bool isTree);
 
+    QStringList getKeyWords();
 Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();

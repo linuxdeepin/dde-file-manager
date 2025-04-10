@@ -19,6 +19,7 @@
 #include <QMenu>
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
@@ -220,7 +221,7 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
     predicateAction[ActionID::kDisplayList] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
 
-    if (WorkspaceHelper::instance()->supportTreeView(view->rootUrl().scheme())
+    if (WorkspaceHelper::instance()->isViewModeSupported(view->rootUrl().scheme(), ViewMode::kTreeMode)
         && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplayTree));
         tempAction->setCheckable(true);
