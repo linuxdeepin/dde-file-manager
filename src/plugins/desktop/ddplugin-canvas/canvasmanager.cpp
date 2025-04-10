@@ -56,6 +56,11 @@ CanvasManager::~CanvasManager()
     CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
+
+    if (d->recentFileProxy) {
+        dpfSignalDispatcher->unsubscribe(GlobalEventType::kMoveToTrashResult, d->recentFileProxy, &CanvasRecentProxy::handleReloadRecentFiles);
+        dpfSignalDispatcher->unsubscribe(GlobalEventType::kDeleteFilesResult, d->recentFileProxy, &CanvasRecentProxy::handleReloadRecentFiles);
+    }
 }
 
 CanvasManager *CanvasManager::instance()
