@@ -260,43 +260,30 @@ void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &
         }
     }
 
-    // 绘制文本和高亮
+    // 修改绘制逻辑：先绘制整行文本
     int lineStartPos = line.textStart();
-    int currentPos = 0;
-
-    for (const KeywordMatch &match : matches) {
-        // 绘制关键词前的普通文本
-        if (match.position > currentPos) {
-            qreal xPos = line.cursorToX(lineStartPos + currentPos) - line.cursorToX(lineStartPos);
-            qreal width = line.cursorToX(lineStartPos + match.position) - line.cursorToX(lineStartPos + currentPos);
-
-            painter->drawText(QRectF(rect.x() + xPos, rect.y(), width, rect.height()),
-                                lineText.mid(currentPos, match.position - currentPos),
-                                QTextOption(document->defaultTextOption().alignment()));
-        }
-
-        // 绘制高亮关键词
+    
+    // 1. 先绘制整行普通文本
+    painter->drawText(rect, lineText, QTextOption(document->defaultTextOption().alignment()));
+    
+    // 2. 仅在匹配区域上绘制高亮文本
+    if (!matches.isEmpty()) {
         painter->save();
         painter->setPen(highlightColor);
-
-        qreal keywordXPos = line.cursorToX(lineStartPos + match.position) - line.cursorToX(lineStartPos);
-        qreal keywordWidth = line.cursorToX(lineStartPos + match.position + match.length)
-                - line.cursorToX(lineStartPos + match.position);
-
-        painter->drawText(QRectF(rect.x() + keywordXPos, rect.y(), keywordWidth, rect.height()),
-                            lineText.mid(match.position, match.length),
-                            QTextOption(document->defaultTextOption().alignment()));
-
+        
+        for (const KeywordMatch &match : matches) {
+            qreal keywordXPos = line.cursorToX(lineStartPos + match.position) - line.cursorToX(lineStartPos);
+            qreal keywordWidth = line.cursorToX(lineStartPos + match.position + match.length) 
+                               - line.cursorToX(lineStartPos + match.position);
+            
+            // 只绘制高亮关键词
+            QRectF highlightRect(rect.x() + keywordXPos, rect.y(), keywordWidth, rect.height());
+            painter->drawText(highlightRect,
+                             lineText.mid(match.position, match.length),
+                             QTextOption(document->defaultTextOption().alignment()));
+        }
+        
         painter->restore();
-        currentPos = match.position + match.length;
-    }
-
-    // 绘制最后一个关键词后的文本
-    if (currentPos < lineText.length()) {
-        qreal xPos = line.cursorToX(lineStartPos + currentPos) - line.cursorToX(lineStartPos);
-        painter->drawText(QRectF(rect.x() + xPos, rect.y(), rect.width() - xPos, rect.height()),
-                            lineText.mid(currentPos),
-                            QTextOption(document->defaultTextOption().alignment()));
     }
 }
 
