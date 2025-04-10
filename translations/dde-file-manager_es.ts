@@ -1857,7 +1857,7 @@
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
         <source>Updating grub...</source>
-        <translation>Actualizando grub...</translation>
+        <translation>Actualizando GRUB...</translation>
     </message>
 </context>
 <context>
