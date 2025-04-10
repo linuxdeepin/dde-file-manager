@@ -137,7 +137,8 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         QString searchKey { query.queryItemValue("keyword", QUrl::FullyDecoded) };
         if (!searchKey.isEmpty()) {
             activateEdit(false);
-            searchEdit->setText(searchKey);
+            if (searchKey != lastExecutedSearchText && searchKey != searchEdit->text())
+                searchEdit->setText(searchKey);
         }
         return;
     }
@@ -184,9 +185,20 @@ void SearchEditWidget::performSearch()
     if (pendingSearchText.isEmpty())
         return;
 
+    // Trim whitespace from the search string
+    QString trimmedSearchText = pendingSearchText.trimmed();
+    if (trimmedSearchText.isEmpty())
+        return;
+        
+    // Check if this is the same as the last executed search
+    if (trimmedSearchText == lastExecutedSearchText)
+        return;
+        
+    lastExecutedSearchText = trimmedSearchText;
     lastSearchTime = QDateTime::currentMSecsSinceEpoch();
+    
     // 执行搜索
-    TitleBarHelper::handleSearch(this, pendingSearchText);
+    TitleBarHelper::handleSearch(this, trimmedSearchText);
 }
 
 bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
@@ -223,7 +235,7 @@ void SearchEditWidget::initUI()
     // search edit
     searchEdit = new DSearchEdit(this);
     searchEdit->setVisible(true);
-    searchEdit->setFocusPolicy(Qt::StrongFocus);
+    // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
     // advanced search button

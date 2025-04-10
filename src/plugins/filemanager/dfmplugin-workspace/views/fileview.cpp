@@ -212,9 +212,6 @@ bool FileView::setRootUrl(const QUrl &url)
     selectionModel()->clear();
     d->statusBar->itemCounted(0);
 
-    // Todo(yanghao&lzj):!url.isSearchFile()
-    setFocus();
-
     const QUrl &fileUrl = parseSelectedUrl(url);
     const QModelIndex &index = model()->setRootUrl(fileUrl);
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
@@ -555,7 +552,6 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
         setViewMode(mode);
     }
 
-    setFocus();
     saveViewModeState();
 }
 
@@ -1744,12 +1740,6 @@ QModelIndexList FileView::selectedIndexes() const
     }
 
     return QModelIndexList();
-}
-
-void FileView::showEvent(QShowEvent *event)
-{
-    DListView::showEvent(event);
-    setFocus();
 }
 
 void FileView::keyboardSearch(const QString &search)

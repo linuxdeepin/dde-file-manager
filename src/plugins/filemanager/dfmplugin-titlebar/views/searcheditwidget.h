@@ -81,6 +81,7 @@ private:
     int selectLength { 0 };
     QString lastEditedString {};
     QString pendingSearchText {};
+    QString lastExecutedSearchText {};
     int currentCursorPos { 0 };
 
     SearchMode currentMode { SearchMode::kUnknown };
