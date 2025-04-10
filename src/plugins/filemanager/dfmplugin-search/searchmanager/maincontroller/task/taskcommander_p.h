@@ -16,6 +16,7 @@
 #include <QReadWriteLock>
 #include <QAtomicInt>
 #include <QMap>
+#include <QSet>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -42,9 +43,8 @@ private:
     TaskCommander *q { nullptr };
     QString taskId { "" };
     QList<AbstractSearcher *> allSearchers {};
-    QList<QUrl> resultList {};
-    QMap<QUrl, ContentSearchResult> contentResults {};
-    QSet<QUrl> processedUrls;  // 记录已处理的 URL
+    DFMSearchResultMap resultMap {};             // 使用统一的结果集
+    QSet<QUrl> processedUrls;                 // 记录已处理的 URL
     QReadWriteLock rwLock;
     QAtomicInt finishedCount { 0 };
     bool deleted { false };

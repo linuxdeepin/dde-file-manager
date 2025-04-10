@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -90,16 +90,15 @@ bool DFMSearcher::hasItem() const
     return !allResults.isEmpty();
 }
 
-QList<QUrl> DFMSearcher::takeAll()
-{
-    QMutexLocker lk(&mutex);
-    return allResults.keys();
-}
-
-QMap<QUrl, ContentSearchResult> DFMSearcher::takeContentResults()
+DFMSearchResultMap DFMSearcher::takeAll()
 {
     QMutexLocker lk(&mutex);
     return std::move(allResults);
+}
+
+SearchType DFMSearcher::getSearchType() const
+{
+    return engine ? engine->searchType() : SearchType::FileName;
 }
 
 void DFMSearcher::onSearchStarted()
@@ -111,18 +110,23 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
 {
     QUrl url = QUrl::fromLocalFile(result.path());
     
-    ContentSearchResult searchResult;
-    searchResult.url = url;
+    // 创建统一的搜索结果数据结构
+    DFMSearchResult searchResult(url);
     
     // 如果是内容搜索，解析高亮内容
     if (engine->searchType() == SearchType::Content) {
         ContentResultAPI contentResult(const_cast<SearchResult &>(result));
-        searchResult.highlightedContent = contentResult.highlightedContent();
+        searchResult.setHighlightedContent(contentResult.highlightedContent());
+        searchResult.setIsContentMatch(true);
+        searchResult.setMatchScore(0.5); // 内容匹配优先级较低
     } else {
-        // 文件名搜索时，高亮内容为空
-        searchResult.highlightedContent = QString();
+        // 文件名搜索不包含高亮内容
+        searchResult.setIsContentMatch(false);
+        searchResult.setMatchScore(1.0); // 文件名匹配优先级更高
     }
     
+    // 简化：直接添加/覆盖结果，不需要检查重复项
+    // DFMSearcher获取的结果在本实例内可以视作唯一
     QMutexLocker lk(&mutex);
     allResults.insert(url, searchResult);
 }

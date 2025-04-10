@@ -5,6 +5,7 @@
 #include "searchmanager.h"
 #include "maincontroller/maincontroller.h"
 #include "utils/searchhelper.h"
+#include "cache/searchcachemanager.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -25,6 +26,24 @@ SearchManager *SearchManager::instance()
 
 bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword)
 {
+    // 先保存任务信息，用于后续缓存结果
+    taskInfoMap[taskId] = qMakePair(url, keyword);
+    
+    // 检查是否有可用缓存
+    auto cacheManager = SearchCacheManager::instance();
+    if (cacheManager->hasCache(url, keyword)) {
+        DFMSearchResultMap cachedResults = cacheManager->getResultsFromCache(url, keyword);
+        if (!cachedResults.isEmpty()) {
+            fmInfo() << "使用缓存的搜索结果" << keyword << "in" << url.toString();
+            taskIdMap[winId] = taskId;
+            // 使用缓存结果，直接触发匹配和完成信号
+            QMetaObject::invokeMethod(this, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
+            QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection, Q_ARG(QString, taskId));
+            return true;
+        }
+    }
+    
+    // 没有缓存或缓存为空，执行实际搜索
     if (mainController) {
         taskIdMap[winId] = taskId;
         return mainController->doSearchTask(taskId, url, keyword);
@@ -33,19 +52,50 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
     return false;
 }
 
-QList<QUrl> SearchManager::matchedResults(const QString &taskId)
+DFMSearchResultMap SearchManager::matchedResults(const QString &taskId)
 {
+    // 如果有缓存且缓存有效，从缓存获取结果
+    if (taskInfoMap.contains(taskId)) {
+        const auto &info = taskInfoMap[taskId];
+        const QUrl &url = info.first;
+        const QString &keyword = info.second;
+        
+        auto cacheManager = SearchCacheManager::instance();
+        if (cacheManager->hasCache(url, keyword)) {
+            return cacheManager->getResultsFromCache(url, keyword);
+        }
+    }
+    
+    // 没有缓存，从控制器获取实时结果
     if (mainController)
         return mainController->getResults(taskId);
 
     return {};
 }
 
+QList<QUrl> SearchManager::matchedResultUrls(const QString &taskId)
+{
+    // 如果有缓存且缓存有效，从缓存获取结果URLs
+    if (taskInfoMap.contains(taskId)) {
+        const auto &info = taskInfoMap[taskId];
+        const QUrl &url = info.first;
+        const QString &keyword = info.second;
+        
+        auto cacheManager = SearchCacheManager::instance();
+        if (cacheManager->hasCache(url, keyword)) {
+            return cacheManager->getResultsFromCache(url, keyword).keys();
+        }
+    }
+    
+    // 没有缓存，从控制器获取实时结果URLs
+    if (mainController)
+        return mainController->getResultUrls(taskId);
+
+    return {};
+}
+
 void SearchManager::stop(const QString &taskId)
 {
-    // if (mainController)
-    //     mainController->stop(taskId);
-
     emit searchStoped(taskId);
 }
 
@@ -87,5 +137,20 @@ void SearchManager::init()
     mainController = new MainController(this);
     //直连，防止被事件循环打乱时序
     connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::DirectConnection);
-    connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::DirectConnection);
+    connect(mainController, &MainController::searchCompleted, this, [this](const QString &taskId) {
+        // 搜索完成时更新缓存
+        if (taskInfoMap.contains(taskId)) {
+            const auto &info = taskInfoMap[taskId];
+            DFMSearchResultMap results = mainController->getResults(taskId);
+            
+            // 使用缓存管理器更新缓存
+            if (!results.isEmpty()) {
+                fmInfo() << "将搜索结果更新到缓存中" << info.second << "in" << info.first.toString() 
+                         << "结果数量:" << results.size();
+                SearchCacheManager::instance()->updateCache(taskId, info.first, info.second, results);
+            }
+        }
+        
+        emit searchCompleted(taskId);
+    }, Qt::DirectConnection);
 }

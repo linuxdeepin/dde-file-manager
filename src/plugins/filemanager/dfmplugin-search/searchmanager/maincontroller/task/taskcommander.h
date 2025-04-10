@@ -6,6 +6,7 @@
 #define TASKCOMMANDER_H
 
 #include "dfmplugin_search_global.h"
+#include "searchmanager/searcher/searchresult_define.h"
 
 #include <QObject>
 #include <QReadWriteLock>
@@ -23,7 +24,13 @@ class TaskCommander : public QObject
 private:
     explicit TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
     QString taskID() const;
-    QList<QUrl> getResults() const;
+    
+    // 获取统一的搜索结果
+    DFMSearchResultMap getResults() const;
+    
+    // 为了兼容性保留的接口，实际使用 DFMSearchResultMap
+    QList<QUrl> getResultsUrls() const;
+    
     bool start();
     void deleteSelf();
     void createSearcher(const QUrl &url, const QString &keyword);

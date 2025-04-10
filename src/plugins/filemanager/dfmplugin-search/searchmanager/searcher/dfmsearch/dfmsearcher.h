@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -28,12 +28,12 @@ public:
 
     bool search() override;
     bool hasItem() const override;
-    QList<QUrl> takeAll() override;
-    QMap<QUrl, ContentSearchResult> takeContentResults() override;
+    DFMSearchResultMap takeAll() override;
 
 private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
+    DFMSEARCH::SearchType getSearchType() const;
 
 private slots:
     void onSearchStarted();
@@ -44,7 +44,7 @@ private slots:
 
 private:
     DFMSEARCH::SearchEngine *engine { nullptr };
-    QMap<QUrl, ContentSearchResult> allResults;
+    DFMSearchResultMap allResults;
     mutable QMutex mutex;
     QElapsedTimer notifyTimer;
     int lastEmit { 0 };
