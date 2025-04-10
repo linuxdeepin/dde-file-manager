@@ -327,6 +327,8 @@ void FileManagerWindowPrivate::saveWindowState()
     QVariantMap state;
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏属性都满足，才判断是全屏
     if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
+        if (!splitter || splitter->sizes().isEmpty())
+            return;
         int sideBarWidth = splitter->sizes().at(0);
         int minWidth = std::max(sideBarWidth, kMinimumLeftWidth) + kMinimumRightWidth + splitter->handleWidth();
         state["width"] = std::max(q->size().width(), minWidth);
