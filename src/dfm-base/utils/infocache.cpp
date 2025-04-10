@@ -148,27 +148,27 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
 
     //获取监视器，监听当前的file的改变 当没有缓存加入监视器后，这里的watcher就会析构，如果启动了就要停止监控，这个是代理
     // 代理就将启动的缓存了监视关闭了。本来没有缓存的监视器监视就没有意义
-    if (!WatcherCache::instance().cacheDisable(url.scheme())) {
-        auto parentUrl = UrlRoute::urlParent(url);
-        auto parentPath = parentUrl.path();
-        if (parentPath != QDir::separator() && !parentPath.endsWith(QDir::separator()))
-            parentUrl.setPath(parentPath + QDir::separator());
+    // if (!WatcherCache::instance().cacheDisable(url.scheme())) {
+    //     auto parentUrl = UrlRoute::urlParent(url);
+    //     auto parentPath = parentUrl.path();
+    //     if (parentPath != QDir::separator() && !parentPath.endsWith(QDir::separator()))
+    //         parentUrl.setPath(parentPath + QDir::separator());
 
-        auto watcher = WatcherFactory::create<AbstractFileWatcher>(parentUrl);
-        if (watcher) {
-            if (watcher->getCacheInfoConnectSize() == 0) {
-                connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::removeCache);
-                connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,
-                        &InfoCache::refreshFileInfo);
-                connect(watcher.data(), &AbstractFileWatcher::fileRename, this,
-                        &InfoCache::removeCache);
-                connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
-                        &InfoCache::refreshFileInfo);
-                watcher->startWatcher();
-            }
-            watcher->addCacheInfoConnectSize();
-        }
-    }
+    //     auto watcher = WatcherFactory::create<AbstractFileWatcher>(parentUrl);
+    //     if (watcher) {
+    //         if (watcher->getCacheInfoConnectSize() == 0) {
+    //             connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::removeCache);
+    //             connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,
+    //                     &InfoCache::refreshFileInfo);
+    //             connect(watcher.data(), &AbstractFileWatcher::fileRename, this,
+    //                     &InfoCache::removeCache);
+    //             connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
+    //                     &InfoCache::refreshFileInfo);
+    //             watcher->startWatcher();
+    //         }
+    //         watcher->addCacheInfoConnectSize();
+    //     }
+    // }
 
     // 插入到主和副的所有缓存中
     d->status = kCacheCopy;
