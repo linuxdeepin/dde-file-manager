@@ -83,8 +83,6 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
             
         QMutexLocker lk(&mutex);
         childrens = results;
-        
-        fmInfo() << "================ 收到 " << results.size() << " 个搜索结果";
     }
 }
 
@@ -168,7 +166,22 @@ const FileInfoPointer SearchDirIterator::fileInfo() const
     if (!d->currentFileUrl.isValid())
         return nullptr;
 
-    return InfoFactory::create<FileInfo>(d->currentFileUrl);
+    auto info = InfoFactory::create<FileInfo>(d->currentFileUrl);
+    
+    // 获取搜索结果中的高亮内容
+    QString highlightContent;
+    QMutexLocker lk(&d->mutex);
+    
+    // 从SearchManager直接获取最新结果
+    const auto &results = SearchManager::instance()->matchedResults(d->taskId);
+    auto it = results.find(d->currentFileUrl);
+    if (it != results.end()) {
+        highlightContent = it.value().highlightedContent();
+    }
+    
+    // 设置高亮内容到扩展属性
+    info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, highlightContent);
+    return info;
 }
 
 QUrl SearchDirIterator::url() const
