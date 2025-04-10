@@ -381,13 +381,6 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const FileInfoPointer &child, const QString &travseToken)
-{
-    auto sortInfo = addChild(child);
-    if (sortInfo)
-        Q_EMIT iteratorAddFile(travseToken, sortInfo, child);
-}
-
 void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken)
 {
     QList<SortInfoPointer> sortInfos;
@@ -403,6 +396,33 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
 
     if (sortInfos.length() > 0)
         Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos);
+}
+
+void RootInfo::handleTraversalResultsUpdate(const QList<FileInfoPointer> children, const QString &travseToken)
+{
+    QList<SortInfoPointer> sortInfos;
+    QList<FileInfoPointer> infos;
+    for (const auto &info : children) {
+        if (!info)
+            continue;
+            
+        QUrl childUrl = info->urlOf(dfmbase::UrlInfoType::kUrl);
+        childUrl.setPath(childUrl.path());
+        
+        SortInfoPointer sort = sortFileInfo(info);
+        if (!sort)
+            continue;
+            
+        sortInfos.append(sort);
+        infos.append(info);
+
+        QWriteLocker lk(&childrenLock);
+        // 更新已存在的文件信息
+        sourceDataList.replace(childrenUrlList.indexOf(childUrl), sort);
+    }
+
+    if (sortInfos.length() > 0)
+        Q_EMIT iteratorUpdateFiles(travseToken, sortInfos, infos);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
@@ -454,6 +474,8 @@ void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThre
 {
     connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenManager,
             this, &RootInfo::handleTraversalResults, Qt::DirectConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenInfo,
+            this, &RootInfo::handleTraversalResultsUpdate, Qt::DirectConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::updateLocalChildren,
             this, &RootInfo::handleTraversalLocalResult, Qt::DirectConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalRequestSort,

@@ -42,6 +42,7 @@ public Q_SLOTS:
 public:
     QUrl fileUrl;                           // 搜索URL
     QUrl currentFileUrl;                    // 当前处理的URL
+    QString currentFileContent;             // 当前处理的文件内容
     QString taskId;                         // 搜索任务ID
     quint64 winId;                          // 窗口ID
 

@@ -55,6 +55,23 @@ void FileItemData::clearThumbnail()
         info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QVariant());
 }
 
+void FileItemData::setFileInfo(FileInfoPointer fileInfo)
+{
+    if (fileInfo) {
+        info = fileInfo;
+        info->customData(kItemFileRefreshIcon);
+        updateOnce = !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool();
+        
+        // 如果是本地设备并且不需要更新，那么立即更新属性
+        if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() &&
+            !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool()) {
+            updateOnce = true;
+            info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
+            info->updateAttributes();
+        }
+    }
+}
+
 FileInfoPointer FileItemData::fileInfo() const
 {
     return info;

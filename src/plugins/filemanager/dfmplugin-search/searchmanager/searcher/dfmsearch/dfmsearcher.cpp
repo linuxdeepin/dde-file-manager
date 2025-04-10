@@ -118,11 +118,11 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
         ContentResultAPI contentResult(const_cast<SearchResult &>(result));
         searchResult.setHighlightedContent(contentResult.highlightedContent());
         searchResult.setIsContentMatch(true);
-        searchResult.setMatchScore(0.5); // 内容匹配优先级较低
+        searchResult.setMatchScore(1.0); // 内容匹配优先级较高
     } else {
         // 文件名搜索不包含高亮内容
         searchResult.setIsContentMatch(false);
-        searchResult.setMatchScore(1.0); // 文件名匹配优先级更高
+        searchResult.setMatchScore(0.5); // 文件名匹配优先级低
     }
     
     // 简化：直接添加/覆盖结果，不需要检查重复项

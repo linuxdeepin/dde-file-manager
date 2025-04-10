@@ -124,8 +124,8 @@ QUrl SearchDirIterator::next()
         // 从结果映射中取第一个结果的URL
         auto it = d->childrens.begin();
         d->currentFileUrl = it.key();
+        d->currentFileContent = it->highlightedContent();
         d->childrens.erase(it);
-        fmInfo() << "================ next " << d->currentFileUrl;
         return d->currentFileUrl;
     }
 
@@ -167,20 +167,13 @@ const FileInfoPointer SearchDirIterator::fileInfo() const
         return nullptr;
 
     auto info = InfoFactory::create<FileInfo>(d->currentFileUrl);
-    
-    // 获取搜索结果中的高亮内容
-    QString highlightContent;
-    QMutexLocker lk(&d->mutex);
-    
-    // 从SearchManager直接获取最新结果
-    const auto &results = SearchManager::instance()->matchedResults(d->taskId);
-    auto it = results.find(d->currentFileUrl);
-    if (it != results.end()) {
-        highlightContent = it.value().highlightedContent();
+
+    if (!d->currentFileContent.isEmpty()) {
+        // 设置高亮内容到扩展属性
+        info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, d->currentFileContent);
+        d->currentFileContent.clear();
     }
-    
-    // 设置高亮内容到扩展属性
-    info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, highlightContent);
+
     return info;
 }
 

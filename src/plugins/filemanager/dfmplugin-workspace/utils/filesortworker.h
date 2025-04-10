@@ -108,6 +108,7 @@ public slots:
                               const bool isMixDirAndFile,
                               const bool isFinished);
     void handleIteratorChildren(const QString &key,const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos);
+    void handleIteratorChildrenUpdate(const QString &key,const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos);
     void handleTraversalFinish(const QString &key);
     void handleSortDir(const QString &key, const QUrl &parent);
 

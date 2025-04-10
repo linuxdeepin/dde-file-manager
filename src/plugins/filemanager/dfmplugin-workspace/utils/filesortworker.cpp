@@ -201,6 +201,34 @@ void FileSortWorker::handleIteratorChildren(const QString &key, const QList<Sort
     handleAddChildren(key, children, infos, sortRole, sortOrder, isMixDirAndFile, false, false, false);
 }
 
+void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos)
+{
+    if (key != currentKey || isCanceled)
+        return;
+
+    for (int i = 0; i < children.size(); ++i) {
+        const auto &sortInfo = children.at(i);
+        const auto &fileInfo = infos.at(i);
+        
+        if (!sortInfo || !fileInfo)
+            continue;
+            
+        QUrl fileUrl = sortInfo->fileUrl();
+        
+        QWriteLocker lk(&childrenDataLocker);
+        if (childrenDataMap.contains(fileUrl)) {
+            // 更新已存在的文件信息
+            auto itemData = childrenDataMap.value(fileUrl);
+            if (itemData) {
+                itemData->setFileInfo(fileInfo);
+                int index = indexOfVisibleChild(fileUrl);
+                if (index >= 0)
+                    emit updateRow(index);
+            }
+        }
+    }
+}
+
 void FileSortWorker::handleTraversalFinish(const QString &key)
 {
     if (currentKey != key)

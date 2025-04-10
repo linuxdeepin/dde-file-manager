@@ -147,6 +147,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     timer->restart();
 
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
+    QList<FileInfoPointer> updateList;     // 当前需要更新的文件
     QSet<QUrl> urls;
     int filecount = 0;
     bool noCache = dirIterator->property("FileInfoNoCache").toBool();
@@ -154,13 +155,20 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         if (stopFlag)
             break;
 
+        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling || updateList.count() > countCeiling) {
+            emit updateChildrenManager(childrenList, traversalToken);
+            if (!updateList.isEmpty())
+                emit updateChildrenInfo(updateList, traversalToken);
+            timer->restart();
+            childrenList.clear();
+            updateList.clear();
+        }
+
         // 调用一次fileinfo进行文件缓存
         const auto &fileUrl = dirIterator->next();
         if (!fileUrl.isValid())
             continue;
-        if (urls.contains(fileUrl))
-            continue;
-        urls.insert(fileUrl);
+
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo) {
             fileInfo = InfoFactory::create<FileInfo>(fileUrl,
@@ -173,18 +181,22 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         if (!fileInfo)
             continue;
 
+        if (urls.contains(fileUrl)) {
+            updateList.append(fileInfo);
+            continue;
+        }
+
+        urls.insert(fileUrl);
+
         childrenList.append(fileInfo);
         filecount++;
-
-        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling) {
-            emit updateChildrenManager(childrenList, traversalToken);
-            timer->restart();
-            childrenList.clear();
-        }
     }
 
     if (childrenList.length() > 0)
         emit updateChildrenManager(childrenList, traversalToken);
+    
+    if (updateList.length() > 0)
+        emit updateChildrenInfo(updateList, traversalToken);
 
     emit traversalRequestSort(traversalToken);
 

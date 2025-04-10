@@ -62,15 +62,13 @@ public:
     QStringList getKeyWords() const;
 
 Q_SIGNALS:
-
-    void itemAdded();
     void iteratorLocalFiles(const QString &key,
                             const QList<SortInfoPointer> children,
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
                             const bool isMixDirAndFile);
-    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const FileInfoPointer info);
     void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
+    void iteratorUpdateFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
     void watcherAddFiles(const QList<SortInfoPointer> &children);
     void watcherRemoveFiles(const QList<SortInfoPointer> &children);
     void traversalFinished(const QString &key);
@@ -98,8 +96,8 @@ public Q_SLOTS:
     void doWatcherEvent();
     void doThreadWatcherEvent();
 
-    void handleTraversalResult(const FileInfoPointer &child, const QString &travseToken);
     void handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken);
+    void handleTraversalResultsUpdate(const QList<FileInfoPointer> children, const QString &travseToken);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
