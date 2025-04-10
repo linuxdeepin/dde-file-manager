@@ -172,6 +172,7 @@ void FileViewModel::doExpand(const QModelIndex &index)
     connect(expandRoot, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
     connect(expandRoot, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
     connect(expandRoot, &RootInfo::iteratorAddFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildren, Qt::QueuedConnection);
+    connect(expandRoot, &RootInfo::iteratorUpdateFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildrenUpdate, Qt::QueuedConnection);
     connect(expandRoot, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
     connect(expandRoot, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
     connect(expandRoot, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
@@ -741,6 +742,15 @@ void FileViewModel::setTreeView(const bool isTree)
     Q_EMIT requestTreeView(isTree);
 }
 
+QStringList FileViewModel::getKeyWords()
+{
+    auto rootInfo = FileDataManager::instance()->fetchRoot(dirRootUrl);
+    if (rootInfo)
+        return rootInfo->getKeyWords();
+
+    return {};
+}
+
 void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
 {
     auto updateIndex = getIndexByUrl(url);
@@ -877,6 +887,7 @@ void FileViewModel::connectRootAndFilterSortWork(RootInfo *root, const bool refr
     connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
     connect(root, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
     connect(root, &RootInfo::iteratorAddFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::iteratorUpdateFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorChildrenUpdate, Qt::QueuedConnection);
     connect(root, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
     connect(root, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
     connect(root, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
@@ -921,7 +932,7 @@ void FileViewModel::initFilterSortWork()
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
     filterSortWorker->setTreeView(DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
-                                  && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()));
+                                  && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
 
     // connect signals

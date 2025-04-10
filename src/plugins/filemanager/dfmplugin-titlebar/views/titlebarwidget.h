@@ -36,8 +36,6 @@ public:
     TabBar *tabBar() const;
     void openNewTab(const QUrl &url);
 
-    void startSpinner();
-    void stopSpinner();
     void showSearchFilterButton(bool visible);
     void setViewModeState(int mode);
     void handleSplitterAnimation(const QVariant &position);

@@ -7,7 +7,6 @@
 #include "private/fileview_p.h"
 #include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
-#include "models/rootinfo.h"
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
@@ -23,8 +22,6 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
-#include "utils/filedatamanager.h"
-#include "utils/itemdelegatehelper.h"
 #include "utils/viewanimationhelper.h"
 #include "events/workspaceeventsequence.h"
 
@@ -215,13 +212,10 @@ bool FileView::setRootUrl(const QUrl &url)
     selectionModel()->clear();
     d->statusBar->itemCounted(0);
 
-    // Todo(yanghao&lzj):!url.isSearchFile()
-    setFocus();
-
     const QUrl &fileUrl = parseSelectedUrl(url);
     const QModelIndex &index = model()->setRootUrl(fileUrl);
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
-            && WorkspaceHelper::instance()->supportTreeView(fileUrl.scheme());
+            && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
 
     setRootIndex(index);
 
@@ -558,7 +552,6 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
         setViewMode(mode);
     }
 
-    setFocus();
     saveViewModeState();
 }
 
@@ -1116,14 +1109,14 @@ void FileView::onDefaultViewModeChanged(int mode)
 {
     Global::ViewMode newMode = static_cast<Global::ViewMode>(mode);
 
-    if (newMode == Global::ViewMode::kTreeMode && !WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme()))
+    if (!WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), newMode))
         return;
 
     if (newMode == d->currentViewMode)
         return;
 
     Global::ViewMode oldMode = d->currentViewMode;
-    loadViewState(rootUrl());
+    d->loadViewMode(rootUrl());
 
     if (oldMode == d->currentViewMode)
         return;
@@ -1160,6 +1153,9 @@ void FileView::onItemWidthLevelChanged(int level)
 void FileView::onItemHeightLevelChanged(int level)
 {
     if (!itemDelegate())
+        return;
+
+    if (!d->fileViewHelper->canChangeListItemHeight())
         return;
 
     if (itemDelegate()->minimumHeightLevel() == level && d->currentListHeightLevel == level)
@@ -1745,12 +1741,6 @@ QModelIndexList FileView::selectedIndexes() const
     return QModelIndexList();
 }
 
-void FileView::showEvent(QShowEvent *event)
-{
-    DListView::showEvent(event);
-    setFocus();
-}
-
 void FileView::keyboardSearch(const QString &search)
 {
     d->fileViewHelper->keyboardSearch(search);
@@ -2070,7 +2060,7 @@ void FileView::initializeDelegate()
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
 
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
-            && WorkspaceHelper::instance()->supportTreeView(rootUrl().scheme());
+            && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
 }
 
 void FileView::initializeStatusBar()
@@ -2382,10 +2372,17 @@ void FileView::loadViewState(const QUrl &url)
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     QVariant defaultGridDensity = Application::instance()->appAttribute(Application::kGridDensityLevel).toInt();
-    QVariant defaultListHeight = Application::instance()->appAttribute(Application::kListHeightLevel).toInt();
+
     d->currentIconSizeLevel = d->fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
     d->currentGridDensityLevel = d->fileViewStateValue(url, "gridDensityLevel", defaultGridDensity).toInt();
-    d->currentListHeightLevel = d->fileViewStateValue(url, "listHeightLevel", defaultListHeight).toInt();
+
+    int customListHeightLevel = d->fileViewHelper->customDefaultListItemHeightLevel();
+    QVariant defaultListHeight = customListHeightLevel >= 0 ? customListHeightLevel : Application::instance()->appAttribute(Application::kListHeightLevel).toInt();
+    if (d->fileViewHelper->canChangeListItemHeight()) {
+        d->currentListHeightLevel = d->fileViewStateValue(url, "listHeightLevel", defaultListHeight).toInt();
+    } else {
+        d->currentListHeightLevel = customListHeightLevel;
+    }
 }
 
 void FileView::onModelStateChanged()

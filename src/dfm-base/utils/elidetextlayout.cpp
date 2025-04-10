@@ -64,7 +64,8 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QRectF lastLineRect;
     QString elideText;
     QString curText = text();
-    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line) {
+    bool paintLineWithHighlight = enableHighlight && highlightColor.isValid() && !highlightKeywords.isEmpty();
+    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines, paintLineWithHighlight](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
         lRect.setHeight(textLineHeight);
 
@@ -80,9 +81,25 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
             if (background.style() != Qt::NoBrush) {
                 lastLineRect = drawLineBackground(painter, lRect, lastLineRect, background);
             }
+            // 获取当前行的文本
+            QString lineText = curText.mid(line.textStart(), line.textLength());
 
-            // draw text line
-            line.draw(painter, QPoint(0, 0));
+            // 检查当前行是否包含任何关键词
+            bool containsAnyKeyword = false;
+            for (const QString &keyword : highlightKeywords) {
+                if (lineText.contains(keyword, Qt::CaseInsensitive)) {
+                    containsAnyKeyword = true;
+                    break;
+                }
+            }
+
+            if (!paintLineWithHighlight || !containsAnyKeyword) {
+                // draw text line
+                line.draw(painter, QPoint(0, 0));
+                return;
+            }
+
+            drawTextWithHighlight(painter, line, lineText, lRect);
         }
     };
 
@@ -199,6 +216,75 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
 
     painter->restore();
     return lastLineRect;
+}
+
+void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, const QRectF &rect)
+{
+    // 用于记录所有关键词匹配位置
+    struct KeywordMatch {
+        int position;       // 关键词起始位置
+        qsizetype length;   // 关键词长度
+    };
+    QList<KeywordMatch> matches;
+
+    // 查找所有关键词的所有匹配位置
+    for (const QString &keyword : highlightKeywords) {
+        if (keyword.isEmpty())
+            continue;
+
+        int startPos = 0;
+        while (startPos < lineText.length()) {
+            int keywordPos = lineText.indexOf(keyword, startPos, Qt::CaseInsensitive);
+            if (keywordPos == -1)
+                break;
+
+            matches.append({keywordPos, keyword.length()});
+            startPos = keywordPos + keyword.length();
+        }
+    }
+
+    // 按位置排序所有匹配
+    std::sort(matches.begin(), matches.end(),
+              [](const KeywordMatch &a, const KeywordMatch &b) {
+                  return a.position < b.position;
+              });
+
+    // 合并重叠的匹配区域
+    for (int i = 0; i < matches.size() - 1; ) {
+        if (matches[i].position + matches[i].length > matches[i+1].position) {
+            matches[i].length = std::max(matches[i].position + matches[i].length, matches[i+1].position + matches[i+1].length)
+                                - matches[i].position;
+            matches.removeAt(i+1);
+        } else {
+            i++;
+        }
+    }
+
+    // 修改绘制逻辑：先绘制整行文本
+    int lineStartPos = line.textStart();
+    
+    // 1. 先绘制整行普通文本
+    painter->drawText(rect, lineText, QTextOption(document->defaultTextOption().alignment()));
+    
+    // 2. 仅在匹配区域上绘制高亮文本
+    if (!matches.isEmpty()) {
+        painter->save();
+        painter->setPen(highlightColor);
+        
+        for (const KeywordMatch &match : matches) {
+            qreal keywordXPos = line.cursorToX(lineStartPos + match.position) - line.cursorToX(lineStartPos);
+            qreal keywordWidth = line.cursorToX(lineStartPos + match.position + match.length) 
+                               - line.cursorToX(lineStartPos + match.position);
+            
+            // 只绘制高亮关键词
+            QRectF highlightRect(rect.x() + keywordXPos, rect.y(), keywordWidth, rect.height());
+            painter->drawText(highlightRect,
+                             lineText.mid(match.position, match.length),
+                             QTextOption(document->defaultTextOption().alignment()));
+        }
+        
+        painter->restore();
+    }
 }
 
 void ElideTextLayout::initLayoutOption(QTextLayout *lay)

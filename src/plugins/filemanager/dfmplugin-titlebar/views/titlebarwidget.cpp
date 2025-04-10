@@ -91,16 +91,6 @@ void TitleBarWidget::openNewTab(const QUrl &url)
     TitleBarEventCaller::sendCd(this, url);
 }
 
-void TitleBarWidget::startSpinner()
-{
-    searchEditWidget->startSpinner();
-}
-
-void TitleBarWidget::stopSpinner()
-{
-    searchEditWidget->stopSpinner();
-}
-
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 {
     if (position == splitterEndValue) {

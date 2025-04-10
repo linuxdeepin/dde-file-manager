@@ -4,7 +4,7 @@
 
 #include "views/private/viewoptionswidget_p.h"
 #include "views/viewoptionswidget.h"
-#include "events/titlebareventcaller.h"
+#include "utils/optionbuttonmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
@@ -264,6 +264,11 @@ void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)
 {
     bool iconVisible = (mode == ViewMode::kIconMode);
     bool listVisible = (mode == ViewMode::kListMode || mode == ViewMode::kTreeMode);
+    if (OptionButtonManager::instance()->hasVsibleState(fileUrl.scheme())) {
+        auto state = OptionButtonManager::instance()->optBtnVisibleState(fileUrl.scheme());
+        bool hideListHeightOpt = state & OptionButtonManager::kHideListHeightOpt;
+        listVisible = listVisible && !hideListHeightOpt;
+    }
     iconSizeFrame->setVisible(iconVisible);
     gridDensityFrame->setVisible(iconVisible);
     listHeightFrame->setVisible(listVisible);

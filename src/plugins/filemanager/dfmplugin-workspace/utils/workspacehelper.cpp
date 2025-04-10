@@ -90,12 +90,6 @@ void WorkspaceHelper::setWorkspaceMenuScene(const QString &scheme, const QString
         menuSceneMap[scheme] = scene;
 }
 
-void WorkspaceHelper::setDefaultViewMode(const QString &scheme, const Global::ViewMode mode)
-{
-    if (!scheme.isEmpty())
-        defaultViewMode[scheme] = mode;
-}
-
 void WorkspaceHelper::setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode)
 {
     FileView *view = findFileViewByWindowID(windowID);
@@ -122,6 +116,40 @@ void WorkspaceHelper::setViewDragDropMode(const quint64 windowID, const QAbstrac
     FileView *view = findFileViewByWindowID(windowID);
     if (view)
         view->setDragDropMode(mode);
+}
+
+void WorkspaceHelper::registerCustomViewProperty(const QString &scheme, const QVariantMap &propertise)
+{
+    if (scheme.isEmpty())
+        return;
+
+    if (customViewPropertyMap.contains(scheme))
+        customViewPropertyMap[scheme] = CustomViewProperty(propertise);
+    else
+        customViewPropertyMap.insert(scheme, CustomViewProperty(propertise));
+}
+
+CustomViewProperty WorkspaceHelper::findCustomViewProperty(const QString &scheme) const
+{
+    if (customViewPropertyMap.contains(scheme))
+        return customViewPropertyMap[scheme];
+
+    return CustomViewProperty();
+}
+
+bool WorkspaceHelper::isViewModeSupported(const QString &scheme, const dfmbase::Global::ViewMode mode) const
+{
+    auto customProperty = findCustomViewProperty(scheme);
+    switch (mode) {
+    case Global::ViewMode::kTreeMode:
+        return customProperty.supportTreeMode;
+    case Global::ViewMode::kListMode:
+        return customProperty.supportListMode;
+    case Global::ViewMode::kIconMode:
+        return customProperty.supportIconMode;
+    default:
+        return true;
+    }
 }
 
 WorkspaceHelper *WorkspaceHelper::instance()
@@ -190,8 +218,9 @@ QString WorkspaceHelper::findMenuScene(const QString &scheme)
 
 Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
 {
-    if (defaultViewMode.contains(scheme))
-        return defaultViewMode[scheme];
+    auto customProperty = findCustomViewProperty(scheme);
+    if (customProperty.defaultViewMode != ViewMode::kNoneMode)
+        return customProperty.defaultViewMode;
 
     ViewMode mode = static_cast<ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 
@@ -368,17 +397,6 @@ void WorkspaceHelper::registerFileView(const QString &scheme)
 bool WorkspaceHelper::registeredFileView(const QString &scheme) const
 {
     return registeredFileViewScheme.contains(scheme);
-}
-
-void WorkspaceHelper::setNotSupportTreeView(const QString &scheme)
-{
-    if (!notSupportTreeView.contains(scheme))
-        notSupportTreeView.append(scheme);
-}
-
-bool WorkspaceHelper::supportTreeView(const QString &scheme) const
-{
-    return !notSupportTreeView.contains(scheme);
 }
 
 void WorkspaceHelper::setUndoFiles(const QList<QUrl> &files)

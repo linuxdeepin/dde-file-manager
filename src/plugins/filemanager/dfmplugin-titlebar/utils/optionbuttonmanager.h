@@ -24,6 +24,7 @@ public:
         kHideIconViewBtn = 0x02,
         kHideDetailSpaceBtn = 0x04,
         kHideTreeViewBtn = 0x08,
+        kHideListHeightOpt = 0x10,
 
         kHideAllBtn = kHideListViewBtn | kHideIconViewBtn | kHideDetailSpaceBtn | kHideTreeViewBtn,
     };

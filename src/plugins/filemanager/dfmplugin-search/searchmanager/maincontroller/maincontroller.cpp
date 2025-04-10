@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "maincontroller.h"
-#include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/application/application.h>
@@ -25,28 +24,16 @@ MainController::MainController(QObject *parent)
 MainController::~MainController()
 {
     for (auto &task : taskManager) {
-        task->stop();
         task->deleteSelf();
         task = nullptr;
     }
     taskManager.clear();
 }
 
-void MainController::stop(QString taskId)
-{
-    if (taskManager.contains(taskId)) {
-        disconnect(taskManager[taskId]);
-        taskManager[taskId]->stop();
-        taskManager[taskId]->deleteSelf();
-        taskManager[taskId] = nullptr;
-        taskManager.remove(taskId);
-    }
-}
-
 bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString &keyword)
 {
     if (taskManager.contains(taskId))
-        stop(taskId);
+        taskManager[taskId]->deleteSelf();
 
     auto task = new TaskCommander(taskId, url, keyword);
     Q_ASSERT(task);
@@ -66,7 +53,7 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     return false;
 }
 
-QList<QUrl> MainController::getResults(QString taskId)
+DFMSearchResultMap MainController::getResults(QString taskId)
 {
     if (taskManager.contains(taskId))
         return taskManager[taskId]->getResults();
@@ -74,10 +61,20 @@ QList<QUrl> MainController::getResults(QString taskId)
     return {};
 }
 
-void MainController::onFinished(QString taskId)
+QList<QUrl> MainController::getResultUrls(QString taskId)
 {
     if (taskManager.contains(taskId))
-        stop(taskId);
+        return taskManager[taskId]->getResultsUrls();
+
+    return {};
+}
+
+void MainController::onFinished(QString taskId)
+{
+    if (taskManager.contains(taskId)) {
+        taskManager[taskId]->deleteSelf();
+        taskManager.remove(taskId);
+    }
 
     emit searchCompleted(taskId);
 }

@@ -42,7 +42,7 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileSortWorker::handleFileInfoUpdated, Qt::QueuedConnection);
-    currentSupportTreeView = WorkspaceHelper::instance()->supportTreeView(current.scheme());
+    currentSupportTreeView = WorkspaceHelper::instance()->isViewModeSupported(current.scheme(), ViewMode::kTreeMode);
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
 }
@@ -199,6 +199,34 @@ void FileSortWorker::handleSourceChildren(const QString &key,
 void FileSortWorker::handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos)
 {
     handleAddChildren(key, children, infos, sortRole, sortOrder, isMixDirAndFile, false, false, false);
+}
+
+void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos)
+{
+    if (key != currentKey || isCanceled)
+        return;
+
+    for (int i = 0; i < children.size(); ++i) {
+        const auto &sortInfo = children.at(i);
+        const auto &fileInfo = infos.at(i);
+        
+        if (!sortInfo || !fileInfo)
+            continue;
+            
+        QUrl fileUrl = sortInfo->fileUrl();
+        
+        QWriteLocker lk(&childrenDataLocker);
+        if (childrenDataMap.contains(fileUrl)) {
+            // 更新已存在的文件信息
+            auto itemData = childrenDataMap.value(fileUrl);
+            if (itemData) {
+                itemData->setFileInfo(fileInfo);
+                int index = indexOfVisibleChild(fileUrl);
+                if (index >= 0)
+                    emit updateRow(index);
+            }
+        }
+    }
 }
 
 void FileSortWorker::handleTraversalFinish(const QString &key)

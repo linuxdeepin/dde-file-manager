@@ -29,6 +29,8 @@ public:
 
     virtual int iconRectIndex();
 
+    virtual bool supportContentPreview() const;
+
     void setStyleProxy(QStyle *style);
 
 protected:

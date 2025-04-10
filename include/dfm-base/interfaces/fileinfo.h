@@ -117,6 +117,7 @@ public:
         kCustomerStartExtended = 50,   // 其他用户使用
         kFileNeedUpdate = 51,   // 文件信息需要在显示更新
         kFileNeedTransInfo = 52,   // 文件信息需要转换为desktopfileinfo
+        kFileHighlightContent = 53,   // 文件需要高亮内容
         kUnknowExtendedInfo = 255,
     };
     /*!

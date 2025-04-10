@@ -166,7 +166,6 @@ protected:
     void updateGeometries() override;
     void startDrag(Qt::DropActions supportedActions) override;
     QModelIndexList selectedIndexes() const override;
-    void showEvent(QShowEvent *event) override;
     void keyboardSearch(const QString &search) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;

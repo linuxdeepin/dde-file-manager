@@ -238,7 +238,7 @@ void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
     }
 }
 
-void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
+void TitleBarHelper::handleSearch(QWidget *sender, const QString &text)
 {
     const auto &currentDir = QDir::currentPath();
     QUrl currentUrl;
@@ -258,7 +258,6 @@ void TitleBarHelper::handleSearchPressed(QWidget *sender, const QString &text)
     }
 
     fmInfo() << "search :" << text;
-    curTitleBar->startSpinner();
     TitleBarEventCaller::sendSearch(sender, text);
 }
 

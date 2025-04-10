@@ -44,6 +44,11 @@ QList<QRect> ListItemPaintProxy::allPaintRect(const QStyleOptionViewItem &option
     return rects;
 }
 
+bool ListItemPaintProxy::supportContentPreview() const
+{
+    return true;
+}
+
 QRectF ListItemPaintProxy::iconRect(const QModelIndex &index, const QRect &itemRect)
 {
     Q_UNUSED(index)
