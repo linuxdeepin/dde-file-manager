@@ -281,7 +281,7 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
             auto info = item->itemInfo();
             QString reportName = info.reportName;
             QVariantMap data;
-            data.insert("sidebar_item", reportName);
+            data.insert("sidebar_item", reportName.isEmpty() ? info.displayName : reportName);
 
             dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_ReportLog_Commit", QString("Sidebar"), data);
         }
