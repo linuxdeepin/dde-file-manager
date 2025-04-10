@@ -125,7 +125,11 @@ void ListItemEditor::init()
     setObjectName("ListItemDelegate_Editor");
 
     setFrame(false);
-    setAttribute(Qt::WA_TranslucentBackground);
+    // fix bug-309553
+    // 重新设置调色板颜色值，使得背景色正确渲染，而不是保持透明状态。
+    auto p = palette();
+    p.setColor(QPalette::Button, p.color(QPalette::Button));
+    setPalette(p);
     setContentsMargins(0, 0, 0, 0);
     connect(this, &ListItemEditor::textChanged, this, &ListItemEditor::onEditorTextChanged, Qt::UniqueConnection);
 }
