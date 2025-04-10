@@ -2839,7 +2839,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
-        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quieres eliminarlos permanentemente?</translation>
+        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quiere eliminarlos permanentemente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
@@ -2849,7 +2849,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quieres eliminarlos permanentemente?</translation>
+        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quiere eliminarlos permanentemente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
