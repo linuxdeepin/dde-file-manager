@@ -20,6 +20,7 @@
 #include "broker/canvasmodelbroker.h"
 #include "broker/canvasviewbroker.h"
 #include "broker/canvasgridbroker.h"
+#include "recentproxy/canvasrecentproxy.h"
 
 namespace ddplugin_canvas {
 
@@ -63,6 +64,7 @@ public:
     CanvasSelectionModel *selectionModel = nullptr;
     CanvasSelectionHook *selectionHook = nullptr;
     CanvasViewHook *viewHook = nullptr;
+    CanvasRecentProxy* recentFileProxy = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
 public:
     FileInfoModelBroker *sourceModelBroker = nullptr;
