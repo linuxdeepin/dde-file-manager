@@ -10,6 +10,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasbasesortmenuscene.h"
+#include "recentproxy/canvasrecentproxy.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -18,6 +19,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -90,6 +92,7 @@ void CanvasManager::init()
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
     CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
+
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
 
     // update grid by font changed
@@ -108,6 +111,11 @@ void CanvasManager::init()
 
     d->initModel();
     d->initSetting();
+
+    // 处理桌面文件以文件管理器的最近使用文件的联动
+    d->recentFileProxy = new CanvasRecentProxy(this);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, d->recentFileProxy, &CanvasRecentProxy::handleReloadRecentFiles);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, d->recentFileProxy, &CanvasRecentProxy::handleReloadRecentFiles);
 }
 
 void CanvasManager::update()
