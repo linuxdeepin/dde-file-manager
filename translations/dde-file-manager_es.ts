@@ -2914,7 +2914,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>Estos %1 contenidos se eliminarán por completo después de la revocación. ¿Quieres eliminarlos por completo?</translation>
+        <translation>Estos %1 contenidos se eliminarán por completo después de la revocación. ¿Quiere eliminarlos por completo?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
