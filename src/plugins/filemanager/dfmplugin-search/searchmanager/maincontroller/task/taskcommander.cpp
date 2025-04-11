@@ -47,14 +47,14 @@ void TaskCommanderPrivate::processContentResult(const SearchResult &result)
     ContentResultAPI contentResult(const_cast<SearchResult &>(result));
     QUrl url = QUrl::fromLocalFile(result.path());
     
-    // 创建统一的DFMSearchResult
+    // Create unified DFMSearchResult
     DFMSearchResult searchResult(url);
     searchResult.setHighlightedContent(contentResult.highlightedContent());
     searchResult.setIsContentMatch(true);
-    searchResult.setMatchScore(0.5); // 内容匹配的权重
+    searchResult.setMatchScore(0.5); // Weight for content match
     
     QWriteLocker lk(&rwLock);
-    // 检查是否已存在，保留匹配分数更高的
+    // Check if already exists, keep the one with higher match score
     auto it = resultMap.find(url);
     if (it != resultMap.end()) {
         if (searchResult.matchScore() > it.value().matchScore()) {
@@ -70,42 +70,41 @@ void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
     Q_ASSERT(searcher);
 
     if (allSearchers.contains(searcher) && searcher->hasItem()) {
-        // 获取当前搜索器的结果
+        // Get results from current searcher
         auto searchResults = searcher->takeAll();
         
-        // 如果没有结果，不进行处理
+        // If no results, do not process
         if (searchResults.isEmpty())
             return;
             
         QWriteLocker lk(&rwLock);
-        // bool isEmpty = resultMap.isEmpty();
         bool hasNewResults = false;
 
-        // 合并搜索结果到主结果集
-        // 这里的合并逻辑是必要的，因为TaskCommander整合了多个搜索器的结果
+        // Merge search results to the main result set
+        // This merge logic is necessary because TaskCommander integrates results from multiple searchers
         for (auto it = searchResults.begin(); it != searchResults.end(); ++it) {
             const QUrl &url = it.key();
             
-            // 如果已经添加过该URL，则跳过，避免重复处理
+            // If this URL has been processed, skip to avoid duplicate processing
             if (processedUrls.contains(url))
                 continue;
                 
             processedUrls.insert(url);
             
-            // 如果已经有此URL的结果，保留匹配分数更高的
+            // If there's already a result for this URL, keep the one with higher match score
             auto existing = resultMap.find(url);
             if (existing != resultMap.end()) {
                 if (it.value().matchScore() > existing.value().matchScore()) {
                     resultMap[url] = it.value();
                 }
             } else {
-                // 否则直接添加
+                // Otherwise add directly
                 resultMap.insert(url, it.value());
                 hasNewResults = true;
             }
         }
 
-        // 只有在有新结果时才发送信号
+        // Only send signal when there are new results
         if (hasNewResults)
             QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
     }
@@ -177,18 +176,18 @@ void TaskCommander::deleteSelf()
 
 void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
 {
-    // 创建文件名搜索
+    // Create file name searcher
     auto *fileNameSearcher = d->createSearcher(url, keyword, SearchType::FileName);
     connect(fileNameSearcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
     connect(fileNameSearcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
     d->allSearchers << fileNameSearcher;
 
-    // 检查是否启用全文搜索
+    // Check if full text search is enabled
     bool enableContentSearch = DConfigManager::instance()->value(DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
     if (!enableContentSearch)
         return;
 
-    // 创建内容搜索
+    // Create content searcher
     auto *contentSearcher = d->createSearcher(url, keyword, SearchType::Content);
     connect(contentSearcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
     connect(contentSearcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
