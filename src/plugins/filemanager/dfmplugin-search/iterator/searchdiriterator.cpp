@@ -169,11 +169,9 @@ const FileInfoPointer SearchDirIterator::fileInfo() const
 
     auto info = InfoFactory::create<FileInfo>(d->currentFileUrl);
 
-    if (!d->currentFileContent.isEmpty()) {
-        // 设置高亮内容到扩展属性
-        info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, d->currentFileContent);
-        d->currentFileContent.clear();
-    }
+    // 设置高亮内容到扩展属性
+    info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, d->currentFileContent);
+    d->currentFileContent.clear();
 
     return info;
 }
