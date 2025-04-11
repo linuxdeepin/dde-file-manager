@@ -12,7 +12,7 @@
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
-// 单例实现
+// Singleton implementation
 SearchCacheManager *SearchCacheManager::instance()
 {
     static SearchCacheManager instance;
@@ -22,8 +22,8 @@ SearchCacheManager *SearchCacheManager::instance()
 SearchCacheManager::SearchCacheManager(QObject *parent)
     : QObject(parent)
 {
-    // 配置线程池
-    threadPool.setMaxThreadCount(2);  // 限制最大线程数
+    // Configure thread pool
+    threadPool.setMaxThreadCount(2);  // Limit maximum thread count
 }
 
 SearchCacheManager::~SearchCacheManager()
@@ -32,14 +32,14 @@ SearchCacheManager::~SearchCacheManager()
 
 QString SearchCacheManager::getCacheKey(const QUrl &url, const QString &keyword) const
 {
-    // 使用URL和关键字生成唯一缓存键
+    // Generate unique cache key using URL and keyword
     QString combined = url.toString() + "|" + keyword;
     return QCryptographicHash::hash(combined.toUtf8(), QCryptographicHash::Md5).toHex();
 }
 
 bool SearchCacheManager::isCacheValid(const SearchCache &cache) const
 {
-    // 检查缓存是否有效（是否过期）
+    // Check if cache is valid (not expired)
     return cache.timestamp.addSecs(cacheExpireSeconds) > QDateTime::currentDateTime();
 }
 
@@ -51,9 +51,9 @@ bool SearchCacheManager::hasCache(const QUrl &url, const QString &keyword)
     bool hasValid = searchCaches.contains(key) && isCacheValid(searchCaches[key]);
     
     if (hasValid) {
-        fmInfo() << "找到有效缓存:" << keyword << "in" << url.toString()
-                 << "缓存时间:" << searchCaches[key].timestamp.toString()
-                 << "结果数量:" << searchCaches[key].results.size();
+        fmInfo() << "Found valid cache:" << keyword << "in" << url.toString()
+                 << "Cache time:" << searchCaches[key].timestamp.toString()
+                 << "Result count:" << searchCaches[key].results.size();
     }
     
     return hasValid;
@@ -73,14 +73,14 @@ DFMSearchResultMap SearchCacheManager::getResultsFromCache(const QUrl &url, cons
 void SearchCacheManager::updateCache(const QString &taskId, const QUrl &url, const QString &keyword, 
                                      const DFMSearchResultMap &results)
 {
-    // 只有在有结果时才更新缓存
+    // Only update cache when there are results
     if (results.isEmpty()) {
-        fmInfo() << "搜索结果为空，不更新缓存";
+        fmInfo() << "Search results empty, not updating cache";
         return;
     }
     
-    // 将缓存更新操作放入线程池
-    QtConcurrent::run(&threadPool, [this, url, keyword, results]() {
+    // Submit cache update operation to thread pool
+    threadPool.start([this, url, keyword, results]() {
         QString key = getCacheKey(url, keyword);
         SearchCache cache;
         cache.searchUrl = url;
@@ -91,34 +91,34 @@ void SearchCacheManager::updateCache(const QString &taskId, const QUrl &url, con
         QWriteLocker locker(&cacheLock);
         searchCaches[key] = cache;
         
-        fmInfo() << "更新搜索缓存:" << keyword << "in" << url.toString() 
-                 << "结果数量:" << results.size()
-                 << "缓存时间:" << cache.timestamp.toString();
+        fmInfo() << "Updated search cache:" << keyword << "in" << url.toString() 
+                 << "Result count:" << results.size()
+                 << "Cache time:" << cache.timestamp.toString();
     });
 }
 
 void SearchCacheManager::clearSearchCache(const QUrl &url, const QString &keyword)
 {
-    // 将缓存清除操作放入线程池
-    QtConcurrent::run(&threadPool, [this, url, keyword]() {
+    // Submit cache clearing operation to thread pool
+    threadPool.start([this, url, keyword]() {
         QString key = getCacheKey(url, keyword);
         
         QWriteLocker locker(&cacheLock);
         if (searchCaches.contains(key)) {
             searchCaches.remove(key);
-            fmInfo() << "清除搜索缓存:" << keyword << "in" << url.toString();
+            fmInfo() << "Cleared search cache:" << keyword << "in" << url.toString();
         }
     });
 }
 
 void SearchCacheManager::clearAllSearchCache()
 {
-    // 将全部缓存清除操作放入线程池
-    QtConcurrent::run(&threadPool, [this]() {
+    // Submit all cache clearing operation to thread pool
+    threadPool.start([this]() {
         QWriteLocker locker(&cacheLock);
         int count = searchCaches.size();
         searchCaches.clear();
-        fmInfo() << "清除所有搜索缓存, 共" << count << "项";
+        fmInfo() << "Cleared all search caches, total" << count << "items";
     });
 }
 
@@ -126,6 +126,6 @@ void SearchCacheManager::setCacheExpireTime(int seconds)
 {
     if (seconds > 0) {
         cacheExpireSeconds = seconds;
-        fmInfo() << "设置缓存过期时间为" << seconds << "秒";
+        fmInfo() << "Set cache expire time to" << seconds << "seconds";
     }
 }
