@@ -33,11 +33,6 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-namespace DConfigSearch {
-inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
-inline constexpr char kDisplaySearchHistory[] = "displaySearchHistory";
-}
-
 namespace dfmplugin_titlebar {
 class CrumbInterface;
 class AddressBarPrivate : public QObject
