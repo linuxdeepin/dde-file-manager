@@ -1857,7 +1857,7 @@
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
         <source>Updating grub...</source>
-        <translation>Actualizando grub...</translation>
+        <translation>Actualizando GRUB...</translation>
     </message>
 </context>
 <context>
@@ -2839,7 +2839,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
-        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quieres eliminarlos permanentemente?</translation>
+        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quiere eliminarlos permanentemente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
@@ -2849,7 +2849,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quieres eliminarlos permanentemente?</translation>
+        <translation>No se pueden mover los %1 elementos seleccionados a la papelera. ¿Quiere eliminarlos permanentemente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
@@ -2914,7 +2914,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>Estos %1 contenidos se eliminarán por completo después de la revocación. ¿Quieres eliminarlos por completo?</translation>
+        <translation>Estos %1 contenidos se eliminarán por completo después de la revocación. ¿Quiere eliminarlos por completo?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
