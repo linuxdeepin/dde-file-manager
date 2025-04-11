@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmsearcher.h"
-#include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
@@ -13,7 +12,7 @@
 
 #include <QDebug>
 
-static constexpr int kEmitInterval = 50;   // 推送时间间隔（ms）
+static constexpr int kEmitInterval = 50;   // Notification time interval (ms)
 
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
@@ -44,15 +43,15 @@ DFMSearcher::~DFMSearcher()
 
 SearchQuery DFMSearcher::createSearchQuery() const
 {   
-    // 创建搜索查询
+    // Create search query
     if (!keyword.contains(' '))
         return SearchFactory::createQuery(keyword, SearchQuery::Type::Simple);
 
-    // 如果包含空格，使用布尔查询
+    // If contains spaces, use boolean query
     QStringList keywords;
     keywords = keyword.split(' ', Qt::SkipEmptyParts);
     SearchQuery query = SearchFactory::createQuery(keywords, SearchQuery::Type::Boolean);
-    // 设置布尔操作符为 AND
+    // Set boolean operator to AND
     query.setBooleanOperator(SearchQuery::BooleanOperator::AND);
     return query;
 }
@@ -69,7 +68,7 @@ bool DFMSearcher::search()
 
     notifyTimer.start();
 
-    // 设置搜索选项
+    // Set search options
     SearchOptions options;
     options.setSearchMethod(SearchMethod::Indexed);
     options.setSearchPath(path);
@@ -77,7 +76,7 @@ bool DFMSearcher::search()
     options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
     engine->setSearchOptions(options);
 
-    // 创建并执行搜索查询
+    // Create and execute search query
     SearchQuery query = createSearchQuery();
     engine->search(query);
 
@@ -110,23 +109,22 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
 {
     QUrl url = QUrl::fromLocalFile(result.path());
     
-    // 创建统一的搜索结果数据结构
+    // Create unified search result data structure
     DFMSearchResult searchResult(url);
     
-    // 如果是内容搜索，解析高亮内容
+    // If it's content search, parse highlighted content
     if (engine->searchType() == SearchType::Content) {
         ContentResultAPI contentResult(const_cast<SearchResult &>(result));
         searchResult.setHighlightedContent(contentResult.highlightedContent());
         searchResult.setIsContentMatch(true);
-        searchResult.setMatchScore(1.0); // 内容匹配优先级较高
+        searchResult.setMatchScore(1.0); // Content match has higher priority
     } else {
-        // 文件名搜索不包含高亮内容
+        // Filename search doesn't include highlighted content
         searchResult.setIsContentMatch(false);
-        searchResult.setMatchScore(0.5); // 文件名匹配优先级低
+        searchResult.setMatchScore(0.5); // Filename match has lower priority
     }
-    
-    // 简化：直接添加/覆盖结果，不需要检查重复项
-    // DFMSearcher获取的结果在本实例内可以视作唯一
+
+    // Results obtained by DFMSearcher can be considered unique within this instance
     QMutexLocker lk(&mutex);
     allResults.insert(url, searchResult);
 }
@@ -135,8 +133,8 @@ void DFMSearcher::onResultFound(const SearchResult &result)
 {
     processSearchResult(result);
 
-    // 每100ms发送一次结果
-    if (notifyTimer.elapsed() - lastEmit > 100) {
+    // Send results every 50ms
+    if (notifyTimer.elapsed() - lastEmit > kEmitInterval) {
         lastEmit = notifyTimer.elapsed();
         emit unearthed(this);
     }
@@ -144,16 +142,18 @@ void DFMSearcher::onResultFound(const SearchResult &result)
 
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
+    fmInfo() << "Search finished, found" << results.size() << "results";
     if (!engine->searchOptions().resultFoundEnabled()) {
         for (const auto &result : results) {
             processSearchResult(result);
         }
     }
 
+    fmInfo() << "Search finished, result processed";
     if (engine->status() == SearchStatus::Finished && hasItem())
         emit unearthed(this);
 
-    fmInfo() << "Search finished, found" << allResults.size() << "results";
+    fmInfo() << "Search finished, result pushed";
     emit finished();
 }
 
