@@ -143,7 +143,7 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         return;
     }
 
-    // deactivateEdit();
+    searchEdit->setText("");
 }
 
 void SearchEditWidget::onAdvancedButtonClicked()
