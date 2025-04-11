@@ -23,6 +23,8 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/viewdefines.h>
 
+#include <DGuiApplicationHelper>
+
 #include <QScrollBar>
 #include <QVBoxLayout>
 
@@ -31,6 +33,7 @@ DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
+DGUI_USE_NAMESPACE
 
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
@@ -171,16 +174,25 @@ void FileViewPrivate::initContentLabel()
     if (!contentLabel) {
         contentLabel = new QLabel(q);
 
+        QColor color = (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::ColorType::LightType)
+                ? QColor(0, 0, 0, 102)
+                : QColor(255, 255, 255, 102);
         QPalette palette = contentLabel->palette();
-        QStyleOption opt;
-        opt.initFrom(contentLabel);
-        QColor color = opt.palette.color(QPalette::Inactive, QPalette::Text);
         palette.setColor(QPalette::Text, color);
         contentLabel->setPalette(palette);
+        QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+                         contentLabel, [this](DGuiApplicationHelper::ColorType themeType){
+                             QColor textColor = (themeType == DGuiApplicationHelper::ColorType::LightType)
+                                     ? QColor(0, 0, 0, 102)
+                                     : QColor(255, 255, 255, 102);
+                             QPalette labelPalette = contentLabel->palette();
+                             labelPalette.setColor(QPalette::Text, textColor);
+                             contentLabel->setPalette(labelPalette);
+                         });
 
         auto font = contentLabel->font();
         font.setFamily("SourceHanSansSC-Light");
-        font.setPixelSize(20);
+        font.setPixelSize(14);
         contentLabel->setFont(font);
 
         contentLabel.setCenterIn(q);
