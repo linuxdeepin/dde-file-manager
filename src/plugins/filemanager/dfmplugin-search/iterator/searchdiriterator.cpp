@@ -111,6 +111,7 @@ SearchDirIterator::SearchDirIterator(const QUrl &url,
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new SearchDirIteratorPrivate(url, this))
 {
+    setProperty(IteratorProperty::kKeepOrder, true);
 }
 
 SearchDirIterator::~SearchDirIterator()
