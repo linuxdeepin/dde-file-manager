@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "searchcachemanager.h"
+
 #include <dfm-base/base/application/application.h>
 
 #include <QCryptographicHash>
@@ -128,5 +129,3 @@ void SearchCacheManager::setCacheExpireTime(int seconds)
         fmInfo() << "设置缓存过期时间为" << seconds << "秒";
     }
 }
-
-#include "searchcachemanager.moc" 
