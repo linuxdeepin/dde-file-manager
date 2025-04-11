@@ -13,6 +13,11 @@
 #include <QDirIterator>
 
 namespace dfmbase {
+
+namespace IteratorProperty {
+    inline constexpr char kKeepOrder[] = "KeepOrder";
+}
+
 class AbstractDirIterator : public QObject
 {
     Q_OBJECT
