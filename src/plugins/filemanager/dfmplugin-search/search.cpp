@@ -165,9 +165,7 @@ void Search::regSearchSettingConfig()
                                                   { "text", tr("Full-Text search") },
                                                   { "type", "checkBoxWidthTextIndex" },
                                                   { "default", false } });
-    SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kDisplaySearchHistory,
-                                                        tr("Display search history"),
-                                                        true);
+
     SettingBackend::instance()->addSettingAccessor(
             SearchSettings::kFulltextSearch,
             []() {
@@ -180,25 +178,6 @@ void Search::regSearchSettingConfig()
                                                      DConfig::kEnableFullTextSearch,
                                                      val);
             });
-
-    SettingBackend::instance()->addSettingAccessor(
-            SearchSettings::kDisplaySearchHistory,
-            []() {
-                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
-                                                         DConfig::kDisplaySearchHistory,
-                                                         true);
-            },
-            [](const QVariant &val) {
-                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
-                                                     DConfig::kDisplaySearchHistory,
-                                                     val);
-            });
-    SettingJsonGenerator::instance()->addConfig(SearchSettings::kClearSearchHistory,
-                                                { { "key", "04_clear_search_history" },
-                                                  { "desc", tr("Clear dde-file-manager Search Records") },
-                                                  { "text", tr("Clean up") },
-                                                  { "type", "pushButton" },
-                                                  { "trigger", QVariant(Application::kClearSearchHistory) } });
 }
 
 void Search::bindEvents()
