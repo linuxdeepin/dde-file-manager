@@ -1789,7 +1789,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="450"/>
         <source>Are you sure clear search histories?</source>
-        <translation>¿Estás seguro de limpiar historiales de búsqueda?</translation>
+        <translation>¿Está seguro de limpiar los historiales de búsqueda?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
