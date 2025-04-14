@@ -572,6 +572,12 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
         return false;
     }
 
+    // 首先检查是否是符号链接，如果是则只删除链接本身
+    if (info->isAttributes(OptInfoType::kIsSymLink)) {
+        qCInfo(logDFMBase) << "Delete symbolic link: " << url;
+        return deleteFile(url);
+    }
+
     if (!info->isAttributes(OptInfoType::kIsDir))
         return deleteFile(url);
 
