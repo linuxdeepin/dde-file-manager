@@ -24,6 +24,7 @@ public:
     QModelIndexList selectedIndexesCache() const;
     QList<QUrl> selectedUrls() const;
     void selectAll();
+    void hookClear();
 public slots:
     void clearSelectedCache();
     void clear() override;

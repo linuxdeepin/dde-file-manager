@@ -63,11 +63,13 @@ void SelectionSyncHelper::clearExteralSelection()
     if (!enabled || !external || !external->hasSelection())
         return;
 
+    external->setProperty("syncHelperClearing", true);
     // disconnect to prevent signal recursion
     disconnect(external, &QItemSelectionModel::selectionChanged, this, &SelectionSyncHelper::clearInnerSelection);
 
     // clear canvas selection if any selection was operated in collection.
     external->clear();
+    external->setProperty("syncHelperClearing", false);
 
     connect(external, &QItemSelectionModel::selectionChanged, this, &SelectionSyncHelper::clearInnerSelection);
 }
