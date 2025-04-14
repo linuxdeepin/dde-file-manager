@@ -56,3 +56,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-trays)
+
+dtk_add_config_meta_files(
+    APPID "org.deepin.dde.dock"
+    FILES ./config/org.deepin.dde.dock.plugin.diskmount.json
+)

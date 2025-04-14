@@ -1,0 +1,19 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "filemanager-integration":{
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Able to integration with file manager app",
+            "name[zh_CN]":"能够与文件管理器集成",
+            "description[zh_CN]":"如果启用，它就能与文件管理器集成。如果禁用，则在任何情况下都不会尝试打开文件管理器。",
+            "description":"If enabled, it's able to integrate with file manager. If disabled, will not try to open up file manager in any case.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
+
+ 

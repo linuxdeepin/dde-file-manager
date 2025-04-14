@@ -5,6 +5,8 @@
 #include "dockutils.h"
 #include "global_server_defines.h"
 
+#include <DConfig>
+
 #include <QLoggingCategory>
 #include <QStringList>
 #include <QProcess>
@@ -18,6 +20,18 @@
 #include <libmount/libmount.h>
 
 Q_LOGGING_CATEGORY(logAppDock, "org.deepin.dde.dock.plugin.disk-mount")
+DCORE_USE_NAMESPACE
+
+bool common_utils::isIntegratedByFilemanager()
+{
+    std::unique_ptr<DConfig> cfg {
+        DConfig::create("org.deepin.dde.dock", "org.deepin.dde.dock.plugin.diskmount", "")
+    };
+    if (!cfg || !cfg->isValid())
+        return true;
+
+    return cfg->value("filemanager-integration").toBool();
+}
 
 QString size_format::formatDiskSize(const quint64 num)
 {

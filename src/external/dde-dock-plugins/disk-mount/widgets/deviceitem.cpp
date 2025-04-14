@@ -41,6 +41,8 @@ QFrame *DeviceItem::createSeparateLine(int width)
 void DeviceItem::mouseReleaseEvent(QMouseEvent *event)
 {
     QFrame::mouseReleaseEvent(event);
+    if (!common_utils::isIntegratedByFilemanager())
+        return;
     if (event->button() != Qt::LeftButton)
         return;
     openDevice();
