@@ -466,7 +466,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     // sync selection
     d->selectionHelper->setInnerModel(d->selectionModel);
-    //d->selectionHelper->setExternalModel(canvasSelectionShell->selectionModel());
+    d->selectionHelper->setExternalModel(canvasSelectionShell->selectionModel());
     d->selectionHelper->setShell(canvasSelectionShell);
     d->selectionHelper->setEnabled(true);
 
