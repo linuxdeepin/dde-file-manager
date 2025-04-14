@@ -7,6 +7,7 @@
 #include "widgets/diskpluginitem.h"
 #include "widgets/devicelist.h"
 #include "device/dockitemdatamanager.h"
+#include "utils/dockutils.h"
 
 #include <DApplication>
 
@@ -78,12 +79,13 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
 
     QList<QVariant> items;
     items.reserve(2);
-
-    QMap<QString, QVariant> open;
-    open["itemId"] = kOpen;
-    open["itemText"] = tr("Open");
-    open["isActive"] = true;
-    items.push_back(open);
+    if (common_utils::isIntegratedByFilemanager()) {
+        QMap<QString, QVariant> open;
+        open["itemId"] = kOpen;
+        open["itemText"] = tr("Open");
+        open["isActive"] = true;
+        items.push_back(open);
+    }
 
     QMap<QString, QVariant> ejectAll;
     ejectAll["itemId"] = kEjectAll;
