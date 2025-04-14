@@ -1,1 +1,2 @@
 usr/lib/dde-dock/plugins/system-trays/libdde-disk-mount-plugin.so
+usr/share/dsg/configs/org.deepin.dde.dock/*.json

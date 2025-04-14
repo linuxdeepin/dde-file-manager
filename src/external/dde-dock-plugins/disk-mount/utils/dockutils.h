@@ -9,6 +9,10 @@
 #include <QVariantMap>
 #include <QUrl>
 
+namespace common_utils {
+bool isIntegratedByFilemanager();
+}
+
 namespace size_format {
 QString formatDiskSize(const quint64 num);
 QString sizeString(const QString &str);
