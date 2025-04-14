@@ -34,6 +34,8 @@ void ClickSelector::click(const QModelIndex &index)
             continuesSelect(index);
         else
             singleSelect(index);
+
+        view->selectionModel()->hookClear();
     }
     //! update whole view area is low performance
     //view->update();
