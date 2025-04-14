@@ -229,6 +229,14 @@ void PermissionManagerWidget::updateBackgroundColor()
 
     palette.setColor(QPalette::Window, bgColor);
     setPalette(palette);
+
+    // 此处需要设置一下combobox的弹出列表的调色板，否则会带上自定义的背景色
+    if (ownerComboBox && groupComboBox && otherComboBox)
+    {
+        ownerComboBox->view()->setPalette(palette);
+        groupComboBox->view()->setPalette(palette);
+        otherComboBox->view()->setPalette(palette);
+    }
 }
 
 QString PermissionManagerWidget::getPermissionString(int enumFlag)
