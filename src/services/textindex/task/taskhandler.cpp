@@ -88,7 +88,7 @@ DocumentPtr createFileDocument(const QString &file)
         return doc;   // Return document without content
     }
 
-    const QString &contents = contentOpt.value();
+    const QString &contents = contentOpt.value().trimmed();
 
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
