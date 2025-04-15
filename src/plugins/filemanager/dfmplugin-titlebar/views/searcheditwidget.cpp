@@ -143,6 +143,7 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         return;
     }
 
+    lastExecutedSearchText.clear();
     searchEdit->setText("");
 }
 
