@@ -36,9 +36,6 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 
 DFMSearcher::~DFMSearcher()
 {
-    if (engine) {
-        engine->deleteLater();
-    }
 }
 
 SearchQuery DFMSearcher::createSearchQuery() const
