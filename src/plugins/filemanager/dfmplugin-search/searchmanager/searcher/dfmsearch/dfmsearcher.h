@@ -41,7 +41,7 @@ private:
 
 private slots:
     void onSearchStarted();
-    void onResultFound(const DFMSEARCH::SearchResult &result);
+    // void onResultFound(const DFMSEARCH::SearchResult &result);
     void onSearchFinished(const QList<DFMSEARCH::SearchResult> &results);
     void onSearchCancelled();
     void onSearchError(const DFMSEARCH::SearchError &error);
