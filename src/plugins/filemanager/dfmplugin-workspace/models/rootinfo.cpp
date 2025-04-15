@@ -428,7 +428,6 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
     traversaling = false;
     emit traversalFinished(travseToken);
-    qWarning() << "==================== root send traversalFinished";
     traversalFinish = true;
     if (isRefresh) {
         isRefresh = false;

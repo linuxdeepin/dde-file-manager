@@ -242,7 +242,6 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
     
     // Iterator is not waiting for updates, so signal that we're done
     emit traversalFinished(traversalToken);
-    qWarning() << "====================== send traversalFinished";
 
     return fileList;
 }

@@ -206,7 +206,6 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
     if (key != currentKey || isCanceled)
         return;
 
-    qWarning() << "=============== handle update to old";
     QList<SortInfoPointer> newChildren {};
     for (const auto &sortInfo : children) {
         if (!sortInfo)
@@ -226,9 +225,7 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
         }
     }
 
-    qWarning() << "=============== handle update to new";
     handleAddChildren(key, newChildren, {});
-    qWarning() << "=============== handle update finish";
 }
 
 void FileSortWorker::handleTraversalFinish(const QString &key)
@@ -236,7 +233,6 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
     if (currentKey != key)
         return;
 
-    qWarning() << "====================" << "handleTraversalFinish";
     Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
 
     HandleNameFilters(nameFilters);
