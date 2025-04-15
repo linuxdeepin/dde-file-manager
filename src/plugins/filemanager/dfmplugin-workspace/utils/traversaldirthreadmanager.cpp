@@ -147,7 +147,6 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     timer->restart();
 
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
-    QList<SortInfoPointer> updateList;     // 当前需要更新的文件 - 修改为SortInfoPointer
     QSet<QUrl> urls;
     int filecount = 0;
     bool noCache = dirIterator->property("FileInfoNoCache").toBool();
@@ -155,19 +154,13 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         if (stopFlag)
             break;
 
-        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling || updateList.count() > countCeiling) {
-            emit updateChildrenManager(childrenList, traversalToken);
-            if (!updateList.isEmpty())
-                emit updateChildrenInfo(updateList, traversalToken);
-            timer->restart();
-            childrenList.clear();
-            updateList.clear();
-        }
-
         // 调用一次fileinfo进行文件缓存
         const auto &fileUrl = dirIterator->next();
         if (!fileUrl.isValid())
             continue;
+        if (urls.contains(fileUrl))
+            continue;
+        urls.insert(fileUrl);
 
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo) {
@@ -181,28 +174,18 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         if (!fileInfo)
             continue;
 
-        if (urls.contains(fileUrl)) {
-            // 创建SortInfoPointer而不是使用FileInfoPointer
-            auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
-            sortInfo->setUrl(fileUrl);
-            
-            // 如果有其他需要从fileInfo复制到sortInfo的属性,可以在这里添加
-            
-            updateList.append(sortInfo);
-            continue;
-        }
-
-        urls.insert(fileUrl);
-
         childrenList.append(fileInfo);
         filecount++;
+
+        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling) {
+            emit updateChildrenManager(childrenList, traversalToken);
+            timer->restart();
+            childrenList.clear();
+        }
     }
 
     if (childrenList.length() > 0)
         emit updateChildrenManager(childrenList, traversalToken);
-    
-    if (updateList.length() > 0)
-        emit updateChildrenInfo(updateList, traversalToken);
 
     if (!dirIterator->property(IteratorProperty::kKeepOrder).toBool())
         emit traversalRequestSort(traversalToken);
