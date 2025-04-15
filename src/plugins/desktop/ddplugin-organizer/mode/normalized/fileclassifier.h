@@ -34,7 +34,7 @@ public:
     virtual QString classify(const QUrl &) const = 0;
     virtual QString className(const QString &) const = 0;
     virtual void reset(const QList<QUrl> &);
-    virtual void updateClassifier() = 0;
+    virtual bool updateClassifier() = 0;   // return true if changed
 
 public:
     CollectionBaseDataPtr baseData(const QString &key) const;
