@@ -14,6 +14,7 @@
 #include <QMutex>
 #include <QElapsedTimer>
 #include <QMap>
+#include <QAtomicInt>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -34,6 +35,9 @@ private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
     DFMSEARCH::SearchType getSearchType() const;
+    
+    // Improves thread safety by using atomic value for notification tracking
+    void checkNotifyThreshold();
 
 private slots:
     void onSearchStarted();
@@ -47,7 +51,10 @@ private:
     DFMSearchResultMap allResults;
     mutable QMutex mutex;
     QElapsedTimer notifyTimer;
-    int lastEmit { 0 };
+    QAtomicInt lastEmit { 0 };
+    QAtomicInt resultCount { 0 };
+    static constexpr int kBatchSize = 10;    // Number of results to batch before notifying
+    static constexpr int kEmitInterval = 50; // Milliseconds between notifications
 };
 
 DPSEARCH_END_NAMESPACE

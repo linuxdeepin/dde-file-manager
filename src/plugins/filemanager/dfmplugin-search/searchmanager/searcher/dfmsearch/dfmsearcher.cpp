@@ -64,6 +64,8 @@ bool DFMSearcher::search()
     }
 
     notifyTimer.start();
+    lastEmit.storeRelaxed(0);
+    resultCount.storeRelaxed(0);
 
     // Set search options
     SearchOptions options;
@@ -89,12 +91,38 @@ bool DFMSearcher::hasItem() const
 DFMSearchResultMap DFMSearcher::takeAll()
 {
     QMutexLocker lk(&mutex);
-    return std::move(allResults);
+    DFMSearchResultMap result = std::move(allResults);
+    allResults.clear();
+    resultCount.storeRelaxed(0);
+    return result;
 }
 
 SearchType DFMSearcher::getSearchType() const
 {
     return engine ? engine->searchType() : SearchType::FileName;
+}
+
+void DFMSearcher::checkNotifyThreshold()
+{
+    // Send notification signal if we have reached the batch size or time interval
+    bool shouldNotify = false;
+    
+    // Check batch size threshold
+    if (resultCount.loadRelaxed() >= kBatchSize) {
+        shouldNotify = true;
+    } else {
+        // Check time interval threshold (if we have any results to send)
+        if (resultCount.loadRelaxed() > 0 && 
+            notifyTimer.elapsed() - lastEmit.loadRelaxed() > kEmitInterval) {
+            shouldNotify = true;
+        }
+    }
+    
+    if (shouldNotify) {
+        lastEmit.storeRelaxed(notifyTimer.elapsed());
+        resultCount.storeRelaxed(0);
+        emit unearthed(this);
+    }
 }
 
 void DFMSearcher::onSearchStarted()
@@ -121,34 +149,36 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
         searchResult.setMatchScore(0.5); // Filename match has lower priority
     }
 
-    // Results obtained by DFMSearcher can be considered unique within this instance
-    QMutexLocker lk(&mutex);
-    allResults.insert(url, searchResult);
+    // Store the result in a thread-safe way
+    {
+        QMutexLocker lk(&mutex);
+        allResults.insert(url, searchResult);
+    }
+    
+    // Increment result count for batch processing
+    resultCount.fetchAndAddRelaxed(1);
 }
 
 void DFMSearcher::onResultFound(const SearchResult &result)
 {
     processSearchResult(result);
-
-    // Send results every 50ms
-    if (notifyTimer.elapsed() - lastEmit > kEmitInterval) {
-        lastEmit = notifyTimer.elapsed();
-        emit unearthed(this);
-    }
+    checkNotifyThreshold();
 }
 
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
     fmInfo() << "Search finished, found" << results.size() << "results";
+    
     if (!engine->searchOptions().resultFoundEnabled()) {
         for (const auto &result : results) {
             processSearchResult(result);
         }
     }
 
-    fmInfo() << "Search finished, result processed";
-    if (engine->status() == SearchStatus::Finished && hasItem())
+    // Ensure we notify about any remaining results
+    if (resultCount.loadRelaxed() > 0) {
         emit unearthed(this);
+    }
 
     fmInfo() << "Search finished, result pushed";
     emit finished();
@@ -157,6 +187,12 @@ void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 void DFMSearcher::onSearchCancelled()
 {
     fmInfo() << "Search cancelled";
+    
+    // Send any remaining results
+    if (resultCount.loadRelaxed() > 0) {
+        emit unearthed(this);
+    }
+    
     emit finished();
 }
 
@@ -167,5 +203,11 @@ void DFMSearcher::onSearchError(const SearchError &error)
                 << "Category:" << error.code().category().name()
                 << "Name:" << error.name()
                 << "Message:" << error.message();
+                
+    // Send any results we have so far
+    if (resultCount.loadRelaxed() > 0) {
+        emit unearthed(this);
+    }
+    
     emit finished();
 } 
