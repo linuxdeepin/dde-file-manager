@@ -120,41 +120,17 @@ SearchDirIterator::~SearchDirIterator()
 
 QUrl SearchDirIterator::next()
 {
-    if (!d->childrens.isEmpty()) {
-        QMutexLocker lk(&d->mutex);
-        // 从结果映射中取第一个结果的URL
-        auto it = d->childrens.begin();
-        d->currentFileUrl = it.key();
-        d->currentFileContent = it->highlightedContent();
-        d->childrens.erase(it);
-        return d->currentFileUrl;
-    }
-
     return {};
 }
 
 bool SearchDirIterator::hasNext() const
 {
-    std::call_once(d->searchOnceFlag, [this]() {
-        d->searchStoped = false;
-        emit this->sigSearch();
-    });
-
-    if (d->searchStoped) {
-        emit sigStopSearch();
-        return false;
-    }
-
-    QMutexLocker lk(&d->mutex);
-    bool hasNext = !(d->childrens.isEmpty() && d->searchFinished);
-    if (!hasNext)
-        emit sigStopSearch();
-    return hasNext;
+    return false;
 }
 
 QString SearchDirIterator::fileName() const
 {
-    return fileInfo()->nameOf(NameInfoType::kFileName);
+    return "";
 }
 
 QUrl SearchDirIterator::fileUrl() const
@@ -164,16 +140,7 @@ QUrl SearchDirIterator::fileUrl() const
 
 const FileInfoPointer SearchDirIterator::fileInfo() const
 {
-    if (!d->currentFileUrl.isValid())
-        return nullptr;
-
-    auto info = InfoFactory::create<FileInfo>(d->currentFileUrl);
-
-    // 设置高亮内容到扩展属性
-    info->setExtendedAttributes(ExtInfoType::kFileHighlightContent, d->currentFileContent);
-    d->currentFileContent.clear();
-
-    return info;
+    return nullptr;
 }
 
 QUrl SearchDirIterator::url() const
