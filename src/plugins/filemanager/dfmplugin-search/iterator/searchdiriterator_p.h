@@ -54,6 +54,7 @@ public:
     mutable QMutex mutex;                   // 互斥锁
     std::once_flag searchOnceFlag;          // 一次性标志
     SearchDirIterator *q = nullptr;         // 指向父类的指针
+    QWaitCondition resultWaitCond;
 };
 
 }
