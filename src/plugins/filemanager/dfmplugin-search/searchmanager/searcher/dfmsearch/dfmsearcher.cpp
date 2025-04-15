@@ -28,7 +28,7 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
     }
 
     connect(engine, &SearchEngine::searchStarted, this, &DFMSearcher::onSearchStarted);
-    connect(engine, &SearchEngine::resultFound, this, &DFMSearcher::onResultFound);
+    // connect(engine, &SearchEngine::resultFound, this, &DFMSearcher::onResultFound);
     connect(engine, &SearchEngine::searchFinished, this, &DFMSearcher::onSearchFinished);
     connect(engine, &SearchEngine::searchCancelled, this, &DFMSearcher::onSearchCancelled);
     connect(engine, &SearchEngine::errorOccurred, this, &DFMSearcher::onSearchError);
@@ -159,11 +159,11 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
     resultCount.fetchAndAddRelaxed(1);
 }
 
-void DFMSearcher::onResultFound(const SearchResult &result)
-{
-    processSearchResult(result);
-    checkNotifyThreshold();
-}
+// void DFMSearcher::onResultFound(const SearchResult &result)
+// {
+//     processSearchResult(result);
+//     checkNotifyThreshold();
+// }
 
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {

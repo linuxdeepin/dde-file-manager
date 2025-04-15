@@ -83,6 +83,8 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
             
         QMutexLocker lk(&mutex);
         childrens = results;
+
+        resultWaitCond.wakeAll();
     }
 }
 
@@ -101,6 +103,8 @@ void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
         emit q->sigStopSearch();
         if (searchRootWatcher)
             searchRootWatcher->stopWatcher();
+
+        resultWaitCond.wakeAll();
     }
 }
 
@@ -158,24 +162,21 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
         emit this->sigSearch();
     });
     
-    // 等待第一个结果到达
-    while (d->childrens.isEmpty() && !d->searchStoped) {
-        if (d->searchFinished)
-            return {};
-        QThread::msleep(10);
-    }
-    
+    // Lock and wait for children to be populated or search to stop/finish.
     QMutexLocker lk(&d->mutex);
+    while (d->childrens.isEmpty() && !d->searchStoped) {
+        d->resultWaitCond.wait(&d->mutex);
+    }
+    if (d->searchFinished && d->childrens.isEmpty())
+        return {};
+
     for (auto it = d->childrens.begin(); it != d->childrens.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
-
         result.append(sortInfo);
     }
-
     d->childrens.clear();
-
     return result;
 }
 
