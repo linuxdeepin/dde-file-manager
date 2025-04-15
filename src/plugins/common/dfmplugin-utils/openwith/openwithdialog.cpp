@@ -47,9 +47,9 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_utils;
 
-OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent)
+OpenWithDialogListItem::OpenWithDialogListItem(const QString &iconName, const QString &text, QWidget *parent)
     : QWidget(parent),
-      icon(icon.isNull() ? QIcon::fromTheme("application-x-desktop") : icon),
+      iconName(iconName.isEmpty() ? "application-x-desktop" : iconName),
       checkButton(new DIconButton(this)),
       iconLabel(new DLabel(this)),
       label(new DLabel(this))
@@ -87,15 +87,38 @@ void OpenWithDialogListItem::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int size = DSizeModeHelper::element(25, 30);
-    iconLabel->setFixedSize(size, size);
-    iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
     setFixedSize(220, DSizeModeHelper::element(40, 50));
 #else
     int size = 30;
-    iconLabel->setFixedSize(size, size);
     iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
     setFixedSize(220, 50);
 #endif
+    iconLabel->setFixedSize(size, size);
+    updateLabelIcon(iconName, size);
+}
+
+void OpenWithDialogListItem::updateLabelIcon(const QString &iconName, int size)
+{
+    const QSize iconSize(size, size);
+    const qreal dpr = qApp->devicePixelRatio();
+
+    DDciIcon dciIcon = DDciIcon::fromTheme(iconName);
+    if (!dciIcon.isNull()) {
+        iconLabel->setPixmap(dciIcon.pixmap(dpr, size,
+                                            DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType
+                                                    ? DDciIcon::Light
+                                                    : DDciIcon::Dark));
+        return;
+    }
+
+    QIcon icon = QIcon::fromTheme(iconName);
+    if (!icon.isNull()) {
+        iconLabel->setPixmap(icon.pixmap(iconSize, dpr));
+        return;
+    }
+
+    if (iconName != "application-x-desktop")
+        updateLabelIcon("application-x-desktop", size);
 }
 
 QString OpenWithDialogListItem::text() const
@@ -366,12 +389,12 @@ void OpenWithDialog::initData()
     const QString &defaultApp = MimesAppsManager::instance()->getDefaultAppByMimeType(mimeType);
     const QStringList &recommendApps = curUrl.isValid() || !urlList.isEmpty() ?
                 MimesAppsManager::instance()->getRecommendedApps(curUrl.isValid() ? curUrl : urlList.first())
-              : MimesAppsManager::instance()->getRecommendedAppsByQio(mimeType);
+                                                                              : MimesAppsManager::instance()->getRecommendedAppsByQio(mimeType);
 
     for (int i = 0; i < recommendApps.count(); ++i) {
         const DesktopFile &desktopInfo = MimesAppsManager::instance()->DesktopObjs.value(recommendApps.at(i));
 
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktopInfo.desktopIcon()), desktopInfo.desktopDisplayName(), recommendApps.at(i));
+        OpenWithDialogListItem *item = createItem(desktopInfo.desktopIcon(), desktopInfo.desktopDisplayName(), recommendApps.at(i));
         recommandLayout->addWidget(item);
 
         if (!defaultApp.isEmpty() && recommendApps.at(i).endsWith(defaultApp))
@@ -411,7 +434,7 @@ void OpenWithDialog::initData()
 
         otherAppList << MimesAppsManager::instance()->DesktopObjs.value(f);
         QString iconName = otherAppList.last().desktopIcon();
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), otherAppList.last().desktopDisplayName(), f);
+        OpenWithDialogListItem *item = createItem(iconName, otherAppList.last().desktopDisplayName(), f);
         otherLayout->addWidget(item);
 
         if (!defaultApp.isEmpty() && f.endsWith(defaultApp))
@@ -496,8 +519,7 @@ void OpenWithDialog::useOtherApplication()
         }
     }
 
-    OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName.isEmpty() ? "application-x-desktop" : iconName),
-                                              info.fileName(), targetDesktopFileName);
+    OpenWithDialogListItem *item = createItem(iconName, info.fileName(), targetDesktopFileName);
 
     int otherLayoutSizeHintHeight = otherLayout->sizeHint().height();
     otherLayout->addWidget(item);
@@ -506,9 +528,9 @@ void OpenWithDialog::useOtherApplication()
     checkItem(item);
 }
 
-OpenWithDialogListItem *OpenWithDialog::createItem(const QIcon &icon, const QString &name, const QString &filePath)
+OpenWithDialogListItem *OpenWithDialog::createItem(const QString &iconName, const QString &name, const QString &filePath)
 {
-    OpenWithDialogListItem *item = new OpenWithDialogListItem(icon, name, this);
+    OpenWithDialogListItem *item = new OpenWithDialogListItem(iconName, name, this);
 
     item->setProperty("app", filePath);
     item->installEventFilter(this);
