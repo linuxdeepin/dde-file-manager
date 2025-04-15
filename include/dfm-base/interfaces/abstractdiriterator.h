@@ -126,6 +126,10 @@ public:
     {
         return {};
     }
+    virtual bool isWaitingForUpdates() const
+    {
+        return false;
+    }
 };
 
 }

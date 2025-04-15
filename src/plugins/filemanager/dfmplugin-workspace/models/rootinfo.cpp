@@ -398,31 +398,16 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
         Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos);
 }
 
-void RootInfo::handleTraversalResultsUpdate(const QList<FileInfoPointer> children, const QString &travseToken)
+void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken)
 {
-    QList<SortInfoPointer> sortInfos;
-    QList<FileInfoPointer> infos;
-    for (const auto &info : children) {
-        if (!info)
-            continue;
-            
-        QUrl childUrl = info->urlOf(dfmbase::UrlInfoType::kUrl);
-        childUrl.setPath(childUrl.path());
-        
-        SortInfoPointer sort = sortFileInfo(info);
-        if (!sort)
-            continue;
-            
-        sortInfos.append(sort);
-        infos.append(info);
+    if (children.isEmpty())
+        return;
 
-        QWriteLocker lk(&childrenLock);
-        // 更新已存在的文件信息
-        sourceDataList.replace(childrenUrlList.indexOf(childUrl), sort);
-    }
+    QWriteLocker lk(&childrenLock);
+    // 更新已存在的文件信息
+    sourceDataList = children;
 
-    if (sortInfos.length() > 0)
-        Q_EMIT iteratorUpdateFiles(travseToken, sortInfos, infos);
+    Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
@@ -443,6 +428,7 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
     traversaling = false;
     emit traversalFinished(travseToken);
+    qWarning() << "==================== root send traversalFinished";
     traversalFinish = true;
     if (isRefresh) {
         isRefresh = false;
