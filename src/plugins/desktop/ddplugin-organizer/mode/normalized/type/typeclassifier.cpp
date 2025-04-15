@@ -185,9 +185,11 @@ QString TypeClassifier::className(const QString &key) const
     return d->keyNames.value(key);
 }
 
-void TypeClassifier::updateClassifier()
+bool TypeClassifier::updateClassifier()
 {
+    const auto tmp = d->categories;
     d->categories = CfgPresenter->enabledTypeCategories();
+    return tmp != d->categories;
 }
 
 QString TypeClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)

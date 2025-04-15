@@ -678,9 +678,9 @@ void NormalizedMode::rebuild(bool reorganize)
     QElapsedTimer time;
     time.start();
     {
+        if (reorganize && d->classifier->updateClassifier())  // classifier's categories should be updated.
+            model->refresh(model->rootIndex(), false, 0);
         auto files = model->files();
-        if (reorganize)   // classifier's categories should be updated.
-            d->classifier->updateClassifier();
         d->classifier->reset(files);
 
         // order item as config
