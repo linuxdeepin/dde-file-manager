@@ -59,6 +59,16 @@ void SortFileInfo::setExecutable(const bool executable)
     d->executable = executable;
 }
 
+void SortFileInfo::setHighlightContent(const QString &content)
+{
+    d->highlightContent = content;
+}
+
+QString SortFileInfo::highlightContent() const
+{
+    return d->highlightContent;
+}
+
 QUrl SortFileInfo::fileUrl() const
 {
     return d->url;

@@ -27,6 +27,7 @@ public:
     bool readable { false };
     bool writeable { false };
     bool executable { false };
+    QString highlightContent { "" };   // 存储文件的高亮内容
 };
 
 }

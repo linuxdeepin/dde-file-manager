@@ -37,14 +37,12 @@ private slots:
     void onUnearthed(AbstractSearcher *searcher);
     void onFinished();
     void checkAllFinished();
-    void processContentResult(const DFMSEARCH::SearchResult &result);
 
 private:
     TaskCommander *q { nullptr };
     QString taskId { "" };
     QList<AbstractSearcher *> allSearchers {};
     DFMSearchResultMap resultMap {};             // 使用统一的结果集
-    QSet<QUrl> processedUrls;                 // 记录已处理的 URL
     QReadWriteLock rwLock;
     QAtomicInt finishedCount { 0 };
     bool deleted { false };

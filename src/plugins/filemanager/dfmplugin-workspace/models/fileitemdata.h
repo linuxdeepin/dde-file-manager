@@ -23,7 +23,6 @@ public:
 
     void refreshInfo();
     void clearThumbnail();
-    void setFileInfo(FileInfoPointer fileInfo);
     FileInfoPointer fileInfo() const;
     FileItemData *parentData() const;
     QIcon fileIcon() const;

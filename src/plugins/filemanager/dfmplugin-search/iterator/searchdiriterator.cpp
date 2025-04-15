@@ -181,12 +181,59 @@ QUrl SearchDirIterator::url() const
     return SearchHelper::rootUrl();
 }
 
+QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
+{
+    QList<QSharedPointer<SortFileInfo>> result;
+    
+    // 确保搜索已经开始
+    std::call_once(d->searchOnceFlag, [this]() {
+        d->searchStoped = false;
+        emit this->sigSearch();
+    });
+    
+    // 等待第一个结果到达
+    while (d->childrens.isEmpty() && !d->searchStoped) {
+        if (d->searchFinished)
+            return {};
+        QThread::msleep(10);
+    }
+    
+    QMutexLocker lk(&d->mutex);
+    for (auto it = d->childrens.begin(); it != d->childrens.end(); ++it) {
+        auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
+        sortInfo->setUrl(it.key());
+        sortInfo->setHighlightContent(it->highlightedContent());
+
+        result.append(sortInfo);
+    }
+
+    d->childrens.clear();
+
+    return result;
+}
+
 void SearchDirIterator::close()
 {
     if (d->taskId.isEmpty())
         return;
 
     SearchManager::instance()->stop(d->taskId);
+}
+
+bool SearchDirIterator::isWaitingForUpdates() const
+{
+    // We're waiting for updates if:
+    // 1. Search has started (check if the once_flag has been called)
+    // 2. Search is not finished 
+    // 3. Search is not stopped
+    
+    // Since we can't directly check if once_flag has been called,
+    // we can infer it from the taskId not being empty
+    
+    // Protect access to shared variables
+    QMutexLocker lk(&d->mutex);
+    
+    return !d->taskId.isEmpty() && !d->searchFinished && !d->searchStoped;
 }
 
 }

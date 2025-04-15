@@ -42,33 +42,11 @@ AbstractSearcher *TaskCommanderPrivate::createSearcher(const QUrl &url, const QS
     return new DFMSearcher(url, keyword, q, type);
 }
 
-void TaskCommanderPrivate::processContentResult(const SearchResult &result)
-{
-    ContentResultAPI contentResult(const_cast<SearchResult &>(result));
-    QUrl url = QUrl::fromLocalFile(result.path());
-    
-    // Create unified DFMSearchResult
-    DFMSearchResult searchResult(url);
-    searchResult.setHighlightedContent(contentResult.highlightedContent());
-    searchResult.setIsContentMatch(true);
-    searchResult.setMatchScore(0.5); // Weight for content match
-    
-    QWriteLocker lk(&rwLock);
-    // Check if already exists, keep the one with higher match score
-    auto it = resultMap.find(url);
-    if (it != resultMap.end()) {
-        if (searchResult.matchScore() > it.value().matchScore()) {
-            resultMap[url] = searchResult;
-        }
-    } else {
-        resultMap.insert(url, searchResult);
-    }
-}
-
 void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
 {
     Q_ASSERT(searcher);
 
+    bool hasNewResults = false;
     if (allSearchers.contains(searcher) && searcher->hasItem()) {
         // Get results from current searcher
         auto searchResults = searcher->takeAll();
@@ -76,38 +54,29 @@ void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
         // If no results, do not process
         if (searchResults.isEmpty())
             return;
-            
-        QWriteLocker lk(&rwLock);
-        bool hasNewResults = false;
 
+        hasNewResults = true;
+        QWriteLocker lk(&rwLock);
         // Merge search results to the main result set
         // This merge logic is necessary because TaskCommander integrates results from multiple searchers
         for (auto it = searchResults.begin(); it != searchResults.end(); ++it) {
             const QUrl &url = it.key();
             
-            // If this URL has been processed, skip to avoid duplicate processing
-            if (processedUrls.contains(url))
-                continue;
-                
-            processedUrls.insert(url);
-            
             // If there's already a result for this URL, keep the one with higher match score
             auto existing = resultMap.find(url);
             if (existing != resultMap.end()) {
-                if (it.value().matchScore() > existing.value().matchScore()) {
+                if (it.value().matchScore() > existing.value().matchScore())
                     resultMap[url] = it.value();
-                }
             } else {
                 // Otherwise add directly
                 resultMap.insert(url, it.value());
-                hasNewResults = true;
             }
         }
-
-        // Only send signal when there are new results
-        if (hasNewResults)
-            QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
     }
+
+    // Only send signal when there are new results
+    if (hasNewResults)
+        QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
 }
 
 void TaskCommanderPrivate::onFinished()

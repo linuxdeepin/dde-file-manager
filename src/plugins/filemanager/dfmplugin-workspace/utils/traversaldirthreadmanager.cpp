@@ -147,7 +147,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     timer->restart();
 
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
-    QList<FileInfoPointer> updateList;     // 当前需要更新的文件
+    QList<SortInfoPointer> updateList;     // 当前需要更新的文件 - 修改为SortInfoPointer
     QSet<QUrl> urls;
     int filecount = 0;
     bool noCache = dirIterator->property("FileInfoNoCache").toBool();
@@ -182,7 +182,13 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
             continue;
 
         if (urls.contains(fileUrl)) {
-            updateList.append(fileInfo);
+            // 创建SortInfoPointer而不是使用FileInfoPointer
+            auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
+            sortInfo->setUrl(fileUrl);
+            
+            // 如果有其他需要从fileInfo复制到sortInfo的属性,可以在这里添加
+            
+            updateList.append(sortInfo);
             continue;
         }
 
@@ -220,10 +226,23 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
         return {};
     }
     Q_EMIT iteratorInitFinished();
+    
+    // Get the initial list of files
     auto fileList = dirIterator->sortFileInfoList();
-
+    
+    // Emit the initial file list
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile, traversalToken);
+    
+    // Check if the iterator is waiting for more updates (search still in progress, etc.)
+    while (dirIterator->isWaitingForUpdates()) {
+        fileList = dirIterator->sortFileInfoList();
+        if (!fileList.isEmpty())
+            emit updateChildrenInfo(fileList, traversalToken);
+    }
+    
+    // Iterator is not waiting for updates, so signal that we're done
     emit traversalFinished(traversalToken);
+    qWarning() << "====================== send traversalFinished";
 
     return fileList;
 }
