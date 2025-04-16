@@ -32,6 +32,7 @@ private:
     QList<QUrl> getResultsUrls() const;
     
     bool start();
+    void stop();
     void deleteSelf();
     void createSearcher(const QUrl &url, const QString &keyword);
 
