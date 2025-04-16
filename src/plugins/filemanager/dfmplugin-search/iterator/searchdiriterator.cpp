@@ -83,9 +83,9 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
             
         QMutexLocker lk(&mutex);
         childrens = results;
-
-        resultWaitCond.wakeAll();
     }
+
+    resultWaitCond.wakeAll();
 }
 
 void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
@@ -94,6 +94,8 @@ void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
         fmInfo() << "taskId: " << taskId << "search completed!";
         searchFinished = true;
     }
+
+    resultWaitCond.wakeAll();
 }
 
 void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
@@ -103,9 +105,9 @@ void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
         emit q->sigStopSearch();
         if (searchRootWatcher)
             searchRootWatcher->stopWatcher();
-
-        resultWaitCond.wakeAll();
     }
+
+    resultWaitCond.wakeAll();
 }
 
 SearchDirIterator::SearchDirIterator(const QUrl &url,
@@ -165,6 +167,8 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
     // Lock and wait for children to be populated or search to stop/finish.
     QMutexLocker lk(&d->mutex);
     while (d->childrens.isEmpty() && !d->searchStoped) {
+        if (d->searchFinished)
+            break;
         d->resultWaitCond.wait(&d->mutex);
     }
     if (d->searchFinished && d->childrens.isEmpty())
