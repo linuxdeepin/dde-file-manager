@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QMultiMap>
 
 namespace dfmplugin_search {
 
@@ -52,7 +53,8 @@ private:
     ~SearchManager();
 
     MainController *mainController = nullptr;
-    QMap<quint64, QString> taskIdMap;
+    QMap<quint64, QString> taskIdMap;  // 当前窗口最近一次的搜索taskId
+    QMultiMap<quint64, QString> winTasksMap;  // 窗口ID对应的所有搜索任务ID
     QMap<QString, QPair<QUrl, QString>> taskInfoMap; // 保存任务ID对应的url和keyword
 };
 
