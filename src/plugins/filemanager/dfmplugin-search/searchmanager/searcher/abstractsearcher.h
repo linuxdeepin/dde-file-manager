@@ -26,7 +26,7 @@ public:
 
     explicit AbstractSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
     virtual bool search() = 0;
-    // virtual void stop() = 0;
+    virtual void stop() = 0;
     virtual bool hasItem() const = 0;
     virtual DFMSearchResultMap takeAll() = 0;
     

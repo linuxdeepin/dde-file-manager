@@ -5,6 +5,7 @@
 #include "taskcommander.h"
 #include "taskcommander_p.h"
 #include "searchmanager/searcher/dfmsearch/dfmsearcher.h"
+#include "searchmanager/searcher/iterator/iteratorsearcher.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -194,7 +195,13 @@ AbstractSearcher *TaskCommanderPrivate::createSearcher(const QUrl &url, const QS
 {
     const char *typeStr = type == SearchType::FileName ? "file name" : "content";
     fmInfo() << "Using dfm-search for" << typeStr << "search";
-    return new DFMSearcher(url, keyword, q, type);
+    auto *searcher = new DFMSearcher(url, keyword, q, type);
+
+    connect(searcher, &AbstractSearcher::unearthed, this, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
+    connect(searcher, &AbstractSearcher::finished, this, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
+    allSearchers << searcher;
+
+    return searcher;
 }
 
 void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
@@ -202,9 +209,8 @@ void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
     Q_ASSERT(searcher);
 
     // Pass the searcher to the worker thread for processing
-    if (allSearchers.contains(searcher) && searcher->hasItem() && resultWorker) {
+    if (allSearchers.contains(searcher) && searcher->hasItem() && resultWorker)
         resultWorker->processResults(searcher);
-    }
 }
 
 void TaskCommanderPrivate::onResultsUpdated(const QString &id)
@@ -290,6 +296,19 @@ bool TaskCommander::start()
     return true;
 }
 
+void TaskCommander::stop()
+{
+    // Stop all searchers
+    for (auto searcher : d->allSearchers) {
+        searcher->stop();
+    }
+
+    // Stop the result worker
+    if (d->resultWorker) {
+        d->resultWorker->stop();
+    }
+}
+
 void TaskCommander::deleteSelf()
 {
     d->deleted = true;
@@ -300,20 +319,23 @@ void TaskCommander::deleteSelf()
 
 void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
 {
-    // Create file name searcher
-    auto *fileNameSearcher = d->createSearcher(url, keyword, SearchType::FileName);
-    connect(fileNameSearcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
-    connect(fileNameSearcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
-    d->allSearchers << fileNameSearcher;
+    if (DFMSearcher::supportUrl(url)) {
+        // Create file name searcher
+        d->createSearcher(url, keyword, SearchType::FileName);
 
-    // Check if full text search is enabled
-    bool enableContentSearch = DConfigManager::instance()->value(DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
-    if (!enableContentSearch)
+        // Check if full text search is enabled
+        bool enableContentSearch = DConfigManager::instance()->value(DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
+        if (!enableContentSearch)
+            return;
+
+        // Create content searcher
+        d->createSearcher(url, keyword, SearchType::Content);
         return;
+    }
 
-    // Create content searcher
-    auto *contentSearcher = d->createSearcher(url, keyword, SearchType::Content);
-    connect(contentSearcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
-    connect(contentSearcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
-    d->allSearchers << contentSearcher;
+    // Create iterator searcher
+    auto *searcher = new IteratorSearcher(url, keyword);
+    connect(searcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
+    connect(searcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
+    d->allSearchers << searcher;
 }

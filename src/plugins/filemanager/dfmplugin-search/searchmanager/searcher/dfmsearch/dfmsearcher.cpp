@@ -38,6 +38,11 @@ DFMSearcher::~DFMSearcher()
 {
 }
 
+bool DFMSearcher::supportUrl(const QUrl &url)
+{
+    return url.scheme() == "file";
+}
+
 SearchQuery DFMSearcher::createSearchQuery() const
 {   
     // Create search query
@@ -80,6 +85,14 @@ bool DFMSearcher::search()
     engine->search(query);
 
     return true;
+}
+
+void DFMSearcher::stop()
+{
+    if (engine && engine->status() == SearchStatus::Searching) {
+        fmInfo() << "Stopping search for:" << keyword;
+        engine->cancel();
+    }
 }
 
 bool DFMSearcher::hasItem() const
