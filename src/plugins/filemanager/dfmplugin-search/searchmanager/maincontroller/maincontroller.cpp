@@ -71,10 +71,10 @@ QList<QUrl> MainController::getResultUrls(QString taskId)
 
 void MainController::onFinished(QString taskId)
 {
+    emit searchCompleted(taskId);
+
     if (taskManager.contains(taskId)) {
         taskManager[taskId]->deleteSelf();
         taskManager.remove(taskId);
     }
-
-    emit searchCompleted(taskId);
 }
