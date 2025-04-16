@@ -27,7 +27,10 @@ public:
     explicit DFMSearcher(const QUrl &url, const QString &keyword, QObject *parent, DFMSEARCH::SearchType type);
     ~DFMSearcher() override;
 
+    static bool supportUrl(const QUrl &url);
+
     bool search() override;
+    void stop() override;
     bool hasItem() const override;
     DFMSearchResultMap takeAll() override;
 

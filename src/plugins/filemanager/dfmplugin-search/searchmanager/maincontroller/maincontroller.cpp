@@ -53,6 +53,12 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     return false;
 }
 
+void MainController::stop(QString taskId)
+{
+    if (taskManager.contains(taskId))
+        taskManager[taskId]->stop();
+}
+
 DFMSearchResultMap MainController::getResults(QString taskId)
 {
     if (taskManager.contains(taskId))

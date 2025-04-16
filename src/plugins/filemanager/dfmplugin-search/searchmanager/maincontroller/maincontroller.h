@@ -22,6 +22,7 @@ private:
     ~MainController();
 
     bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);
+    void stop(QString taskId);
     
     // 获取统一的搜索结果
     DFMSearchResultMap getResults(QString taskId);
