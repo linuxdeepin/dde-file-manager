@@ -167,7 +167,7 @@ void SearchEditWidget::onTextEdited(const QString &text)
 
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
     bool isFirstInputAfterLongGap = (currentTime - lastSearchTime) > 2000;  // 2秒的毫秒数
-    if (isFirstInputAfterLongGap && shouldDelaySearch(text)) {
+    if (isFirstInputAfterLongGap && !shouldDelaySearch(text)) {
         // 超过2秒后的第一次输入，立即触发搜索
         delayTimer->stop();
         performSearch();
