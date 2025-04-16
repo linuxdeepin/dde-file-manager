@@ -29,6 +29,9 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
     // Save task information first for caching results later
     taskInfoMap[taskId] = qMakePair(url, keyword);
     
+    // Track all search tasks for this window
+    winTasksMap.insert(winId, taskId);
+    
     // Check if cache is available
     auto cacheManager = SearchCacheManager::instance();
     if (cacheManager->hasCache(url, keyword)) {
@@ -101,8 +104,28 @@ void SearchManager::stop(const QString &taskId)
 
 void SearchManager::stop(quint64 winId)
 {
-    if (taskIdMap.contains(winId))
-        stop(taskIdMap[winId]);
+    if (taskIdMap.contains(winId)) {
+        QString taskId = taskIdMap[winId];
+        
+        // Clear all search caches for this window
+        QList<QString> taskIds = winTasksMap.values(winId);
+        for (const QString &tid : taskIds) {
+            if (taskInfoMap.contains(tid)) {
+                const auto &info = taskInfoMap[tid];
+                const QUrl &url = info.first;
+                const QString &keyword = info.second;
+                
+                // Clear the search cache for this specific search
+                SearchCacheManager::instance()->clearSearchCache(url, keyword);
+                fmInfo() << "Cleared search cache for" << keyword << "in" << url.toString() << "on stop";
+            }
+        }
+        
+        // Remove all tasks associated with this window
+        winTasksMap.remove(winId);
+        
+        stop(taskId);
+    }
 }
 
 void SearchManager::onDConfigValueChanged(const QString &config, const QString &key)
