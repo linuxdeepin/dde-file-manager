@@ -15,7 +15,7 @@ namespace Helper {
 bool isHiddenExtMenu(const QUrl &dirUrl);
 bool isHiddenMenu(const QString &app);
 bool isHiddenDesktopMenu();
-bool showOpenAction(const QList<QUrl> &urlList);
+bool canOpenSelectedItems(const QList<QUrl> &urlList);
 }   //  namespace Helper
 }   //  namespace dfmplugin_menu
 #endif   // MENUHELPER_H
