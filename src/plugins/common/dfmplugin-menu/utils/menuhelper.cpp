@@ -85,21 +85,31 @@ bool isHiddenDesktopMenu()
     return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
 }
 
-bool showOpenAction(const QList<QUrl> &urlList)
+bool canOpenSelectedItems(const QList<QUrl> &urls)
 {
-    if (urlList.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
-        int dirCount { 0 };
-        for (auto url : urlList) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
-            if (info && info->isAttributes(OptInfoType::kIsDir))
-                ++dirCount;
+    constexpr int kMaxScanCount = 1000;
+    const int kMaxDirThreshold = DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount;
 
-            if (dirCount > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount)
-                return false;
+    // 快速检查：如果总数未超过阈值，直接允许
+    if (urls.size() <= kMaxDirThreshold)
+        return true;
+
+    // 优化：最多只扫描前kMaxScanCount个URL
+    int dirCount = 0;
+    const int scanLimit = qMin(urls.size(), kMaxScanCount);
+
+    for (int i = 0; i < scanLimit; ++i) {
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(
+                urls[i], Global::CreateFileInfoType::kCreateFileInfoAuto);
+
+        if (info && info->isAttributes(OptInfoType::kIsDir)) {
+            if (++dirCount > kMaxDirThreshold) {
+                return false;   // 超过目录阈值，需要新窗口
+            }
         }
     }
 
-    return true;
+    return true;   // 未超过阈值，可以正常打开
 }
 
 }   //  namespace Helper
