@@ -110,7 +110,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         return true;
 
     QAction *tempAction { nullptr };
-    if (Helper::showOpenAction(d->selectFiles)) {
+    if (Helper::canOpenSelectedItems(d->selectFiles)) {
         tempAction = parent->addAction(d->predicateName.value(ActionID::kOpen));
         d->predicateAction[ActionID::kOpen] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOpen));

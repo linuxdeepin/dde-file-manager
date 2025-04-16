@@ -31,6 +31,8 @@ target_link_libraries(${BIN_NAME}
     DFM6::framework
 )
 
+target_compile_definitions(${BIN_NAME} PRIVATE MENU_CHECK_FOCUSONLY)
+
 # 安装库文件
 install(TARGETS
     ${BIN_NAME}

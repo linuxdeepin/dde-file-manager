@@ -103,7 +103,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
     if (d->selectFiles.isEmpty() || !d->focusFile.isValid())
         return false;
 
-    if (!Helper::showOpenAction(d->selectFiles))
+    if (!Helper::canOpenSelectedItems(d->selectFiles))
         return false;
 
     if (d->isFocusOnDDEDesktopFile || d->isSystemPathIncluded)
