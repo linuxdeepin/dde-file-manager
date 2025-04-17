@@ -119,6 +119,12 @@ void SearchResultWorker::processQueue()
 void SearchResultWorker::mergeResults(const DFMSearchResultMap &newResults)
 {
     QWriteLocker lk(&rwLock);
+
+    // first time, just copy the result
+    if (resultMap.isEmpty()) {
+        resultMap = newResults;
+        return;
+    }
     
     // Merge search results to the main result set
     for (auto it = newResults.constBegin(); it != newResults.constEnd(); ++it) {

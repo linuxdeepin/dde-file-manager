@@ -36,6 +36,12 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 
 DFMSearcher::~DFMSearcher()
 {
+    // Cancel and wait for any background processing to finish before destruction
+    if (processingFuture.isRunning()) {
+        fmInfo() << "Canceling background result processing during destruction";
+        processingFuture.cancel();
+        processingFuture.waitForFinished();
+    }
 }
 
 bool DFMSearcher::supportUrl(const QUrl &url)
@@ -92,6 +98,13 @@ void DFMSearcher::stop()
     if (engine && engine->status() == SearchStatus::Searching) {
         fmInfo() << "Stopping search for:" << keyword;
         engine->cancel();
+    }
+    
+    // Cancel and wait for any background processing to finish
+    if (processingFuture.isRunning()) {
+        fmInfo() << "Canceling background result processing";
+        processingFuture.cancel();
+        processingFuture.waitForFinished();
     }
 }
 
@@ -163,10 +176,8 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
     }
 
     // Store the result in a thread-safe way
-    {
-        QMutexLocker lk(&mutex);
-        allResults.insert(url, searchResult);
-    }
+    QMutexLocker lk(&mutex);
+    allResults.insert(url, searchResult);
     
     // Increment result count for batch processing
     resultCount.fetchAndAddRelaxed(1);
@@ -178,23 +189,59 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
 //     checkNotifyThreshold();
 // }
 
+void DFMSearcher::processResultsAsync(const QList<SearchResult> &results)
+{
+    // Process all results in a background thread
+    for (const auto &result : results) {
+        processSearchResult(result);
+    }
+    
+    // Notify the UI thread about the results
+    QMetaObject::invokeMethod(this, [this]() {
+        if (resultCount.loadRelaxed() > 0) {
+            emit unearthed(this);
+            resultCount.storeRelaxed(0);
+        }
+        emit finished();
+    }, Qt::QueuedConnection);
+    
+    fmInfo() << "Finished processing" << results.size() << "search results in background thread";
+}
+
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
     fmInfo() << "Search finished, found" << results.size() << "results";
     
     if (!engine->searchOptions().resultFoundEnabled()) {
-        for (const auto &result : results) {
-            processSearchResult(result);
+        if (results.size() > 50) {  // Process in background thread if we have many results
+            fmInfo() << "Processing large result set asynchronously";
+            processingFuture = QtConcurrent::run([this, results]() {
+                processResultsAsync(results);
+            });
+        } else {
+            // Process directly for small result sets
+            for (const auto &result : results) {
+                processSearchResult(result);
+            }
+            
+            // Ensure we notify about any remaining results
+            if (resultCount.loadRelaxed() > 0) {
+                emit unearthed(this);
+            }
+            
+            fmInfo() << "Search finished, result pushed";
+            emit finished();
         }
+    } else {
+        // In this case, results have already been processed via onResultFound
+        // Just make sure we emit any remaining results
+        if (resultCount.loadRelaxed() > 0) {
+            emit unearthed(this);
+        }
+        
+        fmInfo() << "Search finished, result pushed";
+        emit finished();
     }
-
-    // Ensure we notify about any remaining results
-    if (resultCount.loadRelaxed() > 0) {
-        emit unearthed(this);
-    }
-
-    fmInfo() << "Search finished, result pushed";
-    emit finished();
 }
 
 void DFMSearcher::onSearchCancelled()
