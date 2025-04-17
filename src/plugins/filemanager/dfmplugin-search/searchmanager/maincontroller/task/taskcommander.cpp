@@ -203,8 +203,8 @@ AbstractSearcher *TaskCommanderPrivate::createSearcher(const QUrl &url, const QS
     fmInfo() << "Using dfm-search for" << typeStr << "search";
     auto *searcher = new DFMSearcher(url, keyword, q, type);
 
-    connect(searcher, &AbstractSearcher::unearthed, this, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
-    connect(searcher, &AbstractSearcher::finished, this, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
+    connect(searcher, &AbstractSearcher::unearthed, this, &TaskCommanderPrivate::onUnearthed, Qt::QueuedConnection);
+    connect(searcher, &AbstractSearcher::finished, this, &TaskCommanderPrivate::onFinished, Qt::QueuedConnection);
     allSearchers << searcher;
 
     return searcher;
