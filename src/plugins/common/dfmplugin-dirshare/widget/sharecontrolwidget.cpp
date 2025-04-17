@@ -239,6 +239,7 @@ QHBoxLayout *ShareControlWidget::setupNetworkPath()
     });
 
     QHBoxLayout *hBoxLine = new QHBoxLayout(this);
+    hBoxLine->setSpacing(0);
     hBoxLine->setContentsMargins(0, 0, 2, 0);
     hBoxLine->addWidget(netScheme);
     hBoxLine->addWidget(networkAddrLabel);
