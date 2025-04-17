@@ -94,31 +94,28 @@ void OpenWithDialogListItem::initUiForSizeMode()
     setFixedSize(220, 50);
 #endif
     iconLabel->setFixedSize(size, size);
-    updateLabelIcon(iconName, size);
+    updateLabelIcon(size);
 }
 
-void OpenWithDialogListItem::updateLabelIcon(const QString &iconName, int size)
+void OpenWithDialogListItem::updateLabelIcon(int size)
 {
+    const QStringList iconCandidates = { iconName, "application-x-desktop" };
     const QSize iconSize(size, size);
     const qreal dpr = qApp->devicePixelRatio();
+    const bool isLightTheme = (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType);
 
-    DDciIcon dciIcon = DDciIcon::fromTheme(iconName);
-    if (!dciIcon.isNull()) {
-        iconLabel->setPixmap(dciIcon.pixmap(dpr, size,
-                                            DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType
-                                                    ? DDciIcon::Light
-                                                    : DDciIcon::Dark));
-        return;
+    for (const QString &candidate : iconCandidates) {
+        DDciIcon dciIcon = DDciIcon::fromTheme(candidate);
+        if (!dciIcon.isNull()) {
+            iconLabel->setPixmap(dciIcon.pixmap(dpr, size, isLightTheme ? DDciIcon::Light : DDciIcon::Dark));
+            return;
+        }
+        QIcon icon = QIcon::fromTheme(candidate);
+        if (!icon.isNull()) {
+            iconLabel->setPixmap(icon.pixmap(iconSize, dpr));
+            return;
+        }
     }
-
-    QIcon icon = QIcon::fromTheme(iconName);
-    if (!icon.isNull()) {
-        iconLabel->setPixmap(icon.pixmap(iconSize, dpr));
-        return;
-    }
-
-    if (iconName != "application-x-desktop")
-        updateLabelIcon("application-x-desktop", size);
 }
 
 QString OpenWithDialogListItem::text() const
