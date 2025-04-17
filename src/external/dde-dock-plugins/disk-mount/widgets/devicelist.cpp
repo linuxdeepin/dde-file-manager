@@ -141,7 +141,7 @@ QWidget *DeviceList::createHeader()
     headerWidget->setLayout(headerLay);
 
     QLabel *title = new QLabel(tr("Disks"), this);
-    DFontSizeManager::instance()->bind(title, DFontSizeManager::T3, QFont::Medium);
+    DFontSizeManager::instance()->bind(title, DFontSizeManager::T5, QFont::DemiBold);
     lay->addWidget(title);
 
     auto line = DeviceItem::createSeparateLine(1);
