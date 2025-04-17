@@ -39,9 +39,8 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     Q_ASSERT(task);
     fmInfo() << "new task: " << task << task->taskID();
 
-    //直连，防止1被事件循环打乱时序
-    connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::DirectConnection);
-    connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::DirectConnection);
+    connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::QueuedConnection);
+    connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::QueuedConnection);
 
     if (task->start()) {
         taskManager.insert(taskId, task);
