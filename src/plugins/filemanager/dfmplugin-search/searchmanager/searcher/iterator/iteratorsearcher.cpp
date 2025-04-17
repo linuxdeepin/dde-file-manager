@@ -4,6 +4,7 @@
 
 #include "iteratorsearcher.h"
 #include "utils/searchhelper.h"
+#include "searchworker.h"
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -13,52 +14,51 @@
 #include <QCoreApplication>
 #include <QThread>
 
-static int kEmitInterval = 50;   // 推送时间间隔（ms
-static constexpr char kFilterFolders[] = "^/(dev|proc|sys|run|tmpfs).*$";
-
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
 IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &key, QObject *parent)
     : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(key), parent)
 {
-    searchPathList << url;
-    regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
-    
     qDebug() << "[Search] IteratorSearcher created with url:" << url.toString() << "keyword:" << key;
     
-    // Connect the iterator creation signal to the processing slot with queued connection
-    // This allows safe thread transition for directory iterators from main to worker thread
-    connect(this, &IteratorSearcher::iteratorCreated, 
-            this, &IteratorSearcher::processDirIterator, 
-            Qt::QueuedConnection);
+    // Create regex for search pattern
+    regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     
-    // Connect the request signal to main thread handler
-    // This connection is crucial for thread transitions (worker→main)
-    connect(this, &IteratorSearcher::requestIteratorCreation,
-            QCoreApplication::instance(), [this](const QUrl &url) {
-                this->createDirIterator(url);
-            }, Qt::QueuedConnection);
+    // Create worker and move to worker thread
+    worker = QSharedPointer<SearchWorker>::create(url, regex);
+    worker->moveToThread(&workerThread);
     
-    // Connect thread finished signal to cleanup handler
-    // IMPORTANT: Uses direct connection as QThread::finished is emitted from the thread
-    // that calls quit() or exit(), not from the thread itself
-    connect(&searchThread, &QThread::finished, 
-            this, &IteratorSearcher::onSearchThreadFinished, 
-            Qt::DirectConnection);
+    // Connect worker signals to searcher slots
+    connect(worker.data(), &SearchWorker::requestIteratorCreation, 
+            this, &IteratorSearcher::createDirIterator);
     
-    // Move searcher object to worker thread
-    this->moveToThread(&searchThread);
+    connect(worker.data(), &SearchWorker::resultsReady,
+            this, &IteratorSearcher::onResultsReady);
+    
+    connect(worker.data(), &SearchWorker::searchFinished,
+            this, &IteratorSearcher::onSearchFinished);
+    
+    // Connect thread finished signal to ensure proper cleanup
+    connect(&workerThread, &QThread::finished, [this]() {
+        if (worker) {
+            worker.clear();
+        }
+    });
 }
 
 IteratorSearcher::~IteratorSearcher()
 {
-    // Ensure thread is properly terminated
-    if (searchThread.isRunning()) {
-        searchThread.quit();
-        if (!searchThread.wait(500)) {
-            searchThread.terminate();
-            searchThread.wait();
+    // Ensure worker thread is properly terminated
+    if (workerThread.isRunning()) {
+        if (worker) {
+            QMetaObject::invokeMethod(worker.data(), "requestStop", Qt::QueuedConnection);
+        }
+        
+        workerThread.quit();
+        if (!workerThread.wait(500)) {
+            workerThread.terminate();
+            workerThread.wait();
         }
     }
 }
@@ -70,36 +70,35 @@ bool IteratorSearcher::search()
         qDebug() << "[Search] Cannot start search - not in Ready state";
         return false;
     }
-
-    notifyTimer.start();
     
     // Start worker thread and trigger search process
-    searchThread.start();
-    QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+    workerThread.start();
+    QMetaObject::invokeMethod(worker.data(), "startSearch", Qt::QueuedConnection);
     
     return true;
 }
 
 void IteratorSearcher::stop()
 {
-    // Mark as terminated and ensure pending results are processed
+    // Mark as terminated
     status.storeRelease(kTerminated);
     
+    // Ensure pending results are processed
     if (hasItem()) {
         emit unearthed(this);
     }
     
+    // Request worker to stop
+    if (worker && workerThread.isRunning()) {
+        QMetaObject::invokeMethod(worker.data(), "requestStop", Qt::QueuedConnection);
+    }
+    
     // Terminate thread if running
-    if (searchThread.isRunning()) {
-        searchThread.quit();
-        if (!searchThread.wait(200)) {
-            searchThread.terminate();
-            searchThread.wait();
-        }
-        
-        // Ensure cleanup handler is called
-        if (status.loadAcquire() == kTerminated) {
-            onSearchThreadFinished();
+    if (workerThread.isRunning()) {
+        workerThread.quit();
+        if (!workerThread.wait(200)) {
+            workerThread.terminate();
+            workerThread.wait();
         }
     }
     
@@ -132,56 +131,12 @@ QList<QUrl> IteratorSearcher::takeAllUrls()
     return urls;
 }
 
-void IteratorSearcher::tryNotify()
-{
-    int cur = notifyTimer.elapsed();
-    if (hasItem() && (cur - lastEmit) > kEmitInterval) {
-        lastEmit = cur;
-        emit unearthed(this);
-    }
-}
-
-void IteratorSearcher::doSearch()
-{
-    // Get next URL to process
-    QUrl url;
-    {
-        QMutexLocker locker(&pathMutex);
-        if (!searchPathList.isEmpty() && status.loadAcquire() == kRuning) {
-            url = searchPathList.takeAt(0);
-        }
-    }
-    
-    if (!url.isEmpty()) {
-        // Create directory iterator in main thread using a signal/slot based approach
-        emit requestIteratorCreation(url);
-    } else if (status.loadAcquire() == kRuning) {
-        // Search complete, all URLs processed
-        qDebug() << "[Search] All directories processed, quitting search thread";
-        searchThread.quit();
-    }
-}
-
-// Handler for creating directory iterators in main thread context
 void IteratorSearcher::createDirIterator(const QUrl &url)
 {
-    // This method must be connected to requestIteratorCreation signal 
-    // and executed in main thread context
-    
+    // This method is executed in main thread context
     Q_ASSERT(QThread::currentThread() == QCoreApplication::instance()->thread());
     
     if (status.loadAcquire() != kRuning) {
-        QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
-        return;
-    }
-    
-    // Apply directory filters
-    QRegularExpression reg(kFilterFolders);
-    const auto &searchRootPath = searchUrl.toLocalFile();
-    const auto &filePath = url.toLocalFile();
-    
-    if (url.isLocalFile() && !reg.match(searchRootPath).hasMatch() && reg.match(filePath).hasMatch()) {
-        QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
         return;
     }
     
@@ -189,79 +144,40 @@ void IteratorSearcher::createDirIterator(const QUrl &url)
     auto iterator = DirIteratorFactory::create(url, QStringList(), 
                                               QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
     if (!iterator) {
-        QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
         return;
     }
     
     iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,"
                          "standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
     
-    // Send iterator back to worker thread
-    emit iteratorCreated(iterator, url);
+    // Send iterator back to worker thread for processing
+    QMetaObject::invokeMethod(worker.data(), "processDirIterator", 
+                             Qt::QueuedConnection, 
+                             Q_ARG(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator>, iterator),
+                             Q_ARG(QUrl, url));
 }
 
-void IteratorSearcher::processDirIterator(QSharedPointer<AbstractDirIterator> iterator, const QUrl &url)
+void IteratorSearcher::onResultsReady(const DFMSearchResultMap &results)
 {
-    // Process each item from the iterator
-    if (status.loadAcquire() != kRuning || !iterator) {
-        QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+    if (status.loadAcquire() != kRuning) {
         return;
     }
-
-    int itemCount = 0;
-    int matchCount = 0;
-    int dirCount = 0;
     
-    // Process directory contents
-    while (iterator->hasNext() && status.loadAcquire() == kRuning) {
-        iterator->next();
-        auto info = iterator->fileInfo();
-        if (!info || !info->exists())
-            continue;
-
-        itemCount++;
-        
-        // Add subdirectories to search queue
-        if (info->isAttributes(OptInfoType::kIsDir) && !info->isAttributes(OptInfoType::kIsSymLink)) {
-            const auto &dirUrl = info->urlOf(UrlInfoType::kUrl);
-            if (!dirUrl.path().startsWith("/sys/")) {
-                QMutexLocker locker(&pathMutex);
-                if (!searchPathList.contains(dirUrl)) {
-                    searchPathList << dirUrl;
-                    dirCount++;
-                }
-            }
-        }
-
-        // Check if file name matches search pattern
-        QRegularExpressionMatch match = regex.match(info->displayOf(DisPlayInfoType::kFileDisplayName));
-        if (match.hasMatch()) {
-            const auto &fileUrl = info->urlOf(UrlInfoType::kUrl);
-            {
-                info->updateAttributes();
-                QMutexLocker lk(&mutex);
-                
-                if (!resultMap.contains(fileUrl)) {
-                    DFMSearchResult result(fileUrl);
-                    result.setMatchScore(1.0);
-                    result.setIsContentMatch(false);
-                    resultMap.insert(fileUrl, result);
-                    matchCount++;
-                }
-            }
-
-            tryNotify();
+    // Add results to result map without checking for duplicates
+    {
+        QMutexLocker lk(&mutex);
+        for (auto it = results.constBegin(); it != results.constEnd(); ++it) {
+            resultMap.insert(it.key(), it.value());
         }
     }
     
-    // Cleanup and continue to next URL
-    iterator.clear();
-    QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+    // Notify about new results
+    emit unearthed(this);
 }
 
-void IteratorSearcher::onSearchThreadFinished()
+void IteratorSearcher::onSearchFinished()
 {
-    // Final state transition and cleanup
+    // Final state transition
     if (status.testAndSetRelease(kRuning, kCompleted)) {
         if (hasItem()) {
             emit unearthed(this);

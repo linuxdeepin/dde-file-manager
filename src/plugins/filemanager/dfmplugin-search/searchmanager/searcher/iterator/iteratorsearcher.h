@@ -7,14 +7,11 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "searchmanager/searcher/abstractsearcher.h"
+#include "searchworker.h"
 
-#include <QTime>
 #include <QMutex>
-#include <QElapsedTimer>
 #include <QRegularExpression>
 #include <QThread>
-#include <QWaitCondition>
-#include <QQueue>
 #include <QSharedPointer>
 
 DFMBASE_BEGIN_NAMESPACE
@@ -38,31 +35,24 @@ private:
     bool hasItem() const override;
     DFMSearchResultMap takeAll() override;
     QList<QUrl> takeAllUrls() override;
-    void tryNotify();
 
 private slots:
-    void doSearch();
+    // Handler for directory iterator creation in main thread
     void createDirIterator(const QUrl &url);
-    void processDirIterator(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> iterator, const QUrl &url);
-    void onSearchThreadFinished();
-
-signals:
-    void requestIteratorCreation(const QUrl &url);
-    void iteratorCreated(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> iterator, const QUrl &url);
+    
+    // Handler for receiving search results from worker
+    void onResultsReady(const DFMSearchResultMap &results);
+    
+    // Handler for search completion
+    void onSearchFinished();
 
 private:
     QAtomicInt status = kReady;
     DFMSearchResultMap resultMap;
     mutable QMutex mutex;
-    QList<QUrl> searchPathList;
     QRegularExpression regex;
-    QThread searchThread;
-    QMutex pathMutex;
-    QWaitCondition iteratorCondition;
-
-    //计时
-    QElapsedTimer notifyTimer;
-    int lastEmit = 0;
+    QThread workerThread;
+    QSharedPointer<SearchWorker> worker;
 };
 
 DPSEARCH_END_NAMESPACE
