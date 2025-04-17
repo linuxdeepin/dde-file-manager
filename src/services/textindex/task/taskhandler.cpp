@@ -211,7 +211,7 @@ std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &pa
                      << "count: " << result.value().count();
             return std::make_unique<DirectFileListProvider>(result.value());
         }
-        fmWarning() << "Failed to get file list via ANYTHING!";
+        fmWarning() << "Failed to get file list via ANYTHING!" << result.error().message();
     }
     return std::make_unique<FileSystemProvider>(path);
 }
