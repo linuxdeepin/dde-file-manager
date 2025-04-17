@@ -80,6 +80,13 @@ DocumentPtr createFileDocument(const QString &file)
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
+    // hidden tag
+    QString hiddenTag = "N";
+    if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
+        hiddenTag = "Y";
+    doc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
+                              Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
     // file contents
     const auto &contentOpt = DocUtils::extractFileContent(file);
 
@@ -193,6 +200,7 @@ std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &pa
         SearchOptions options;
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
+        options.setIncludeHidden(true);
         FileNameOptionsAPI fileNameOptions(options);
         fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
         engine->setSearchOptions(options);
