@@ -15,6 +15,9 @@
 #include <QElapsedTimer>
 #include <QMap>
 #include <QAtomicInt>
+#include <QThreadPool>
+#include <QFuture>
+#include <QtConcurrent>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -37,6 +40,7 @@ public:
 private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
+    void processResultsAsync(const QList<DFMSEARCH::SearchResult> &results);
     DFMSEARCH::SearchType getSearchType() const;
     
     // Improves thread safety by using atomic value for notification tracking
@@ -56,6 +60,7 @@ private:
     QElapsedTimer notifyTimer;
     QAtomicInt lastEmit { 0 };
     QAtomicInt resultCount { 0 };
+    QFuture<void> processingFuture;
     static constexpr int kBatchSize = 10;    // Number of results to batch before notifying
     static constexpr int kEmitInterval = 50; // Milliseconds between notifications
 };
