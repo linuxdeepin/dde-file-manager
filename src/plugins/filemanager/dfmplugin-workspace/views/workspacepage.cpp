@@ -248,9 +248,7 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
 
     if (topWidgets.contains(scheme)) {
         bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
-        fmDebug() << interface->isKeepShow() << showUrl;
         topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
-        fmDebug() << topWidgets[scheme]->contentsMargins();
     } else {
         TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
         if (topWidgetPtr) {

@@ -347,8 +347,12 @@ int SearchEditWidget::determineSearchDelay(const QString &inputText)
     int delay = 200; // 毫秒
 
     // 针对短输入增加延迟
-    if (inputText.length() <= 2)
+    if (inputText.length() <= 2) {
         delay += 150;
+
+        if (inputText == ".")
+            delay += 1000;
+    }
 
     // 对于可能返回大量结果的特殊字符增加延迟
     if (inputText.contains('*') || inputText.contains('?') || inputText.startsWith('.'))
