@@ -549,6 +549,9 @@ Qt::DropActions FileViewModel::supportedDropActions() const
 
 void FileViewModel::sort(int column, Qt::SortOrder order)
 {
+    if (state == ModelState::kBusy)
+        return;
+
     ItemRoles role = getRoleByColumn(column);
     Q_EMIT requestSortChildren(order, role,
                                Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
