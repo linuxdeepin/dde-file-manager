@@ -455,6 +455,9 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
+    if (model()->currentState() == ModelState::kBusy)
+        return;
+
     recordSelectedUrls();
 
     model()->sort(logicalIndex, order);
@@ -732,6 +735,9 @@ void FileView::setEnabledSelectionModes(const QList<QAbstractItemView::Selection
 
 void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
 {
+    if (model()->currentState() == ModelState::kBusy)
+        return;
+
     if (role == model()->sortRole() && order == model()->sortOrder())
         return;
 
@@ -2384,8 +2390,16 @@ void FileView::onModelStateChanged()
     updateSelectedUrl();
 
     if (model()->currentState() == ModelState::kBusy) {
+        if (d->headerView) {
+            d->headerView->setSortIndicatorShown(false);
+            d->headerView->setSectionsClickable(false);
+        }
         d->animationHelper->reset();
     } else {
+        if (d->headerView) {
+            d->headerView->setSortIndicatorShown(true);
+            d->headerView->setSectionsClickable(true);
+        }
         d->animationHelper->initAnimationHelper();
     }
 
