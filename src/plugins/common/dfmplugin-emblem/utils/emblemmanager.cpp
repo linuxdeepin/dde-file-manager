@@ -46,7 +46,13 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     if (!helper->isExtEmblemProhibited(info, url)) {
         // add gio embelm icons
         helper->pending(info);
-        emblems.append(helper->gioEmblemIcons(url));
+        const auto &gioEmblems = helper->gioEmblemIcons(url);
+        if (emblems.isEmpty()) {
+            emblems = gioEmblems;
+        } else if (emblems.size() < gioEmblems.size()) {
+            // Ensure that the custom emblems do not affect the display position by the system emblems
+            emblems.append(gioEmblems.mid(emblems.size()));
+        }
 
         // add custom emblem icons
         EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblems);
