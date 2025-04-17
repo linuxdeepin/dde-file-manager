@@ -52,7 +52,7 @@ public slots:
     void initUiForSizeMode();
 
 private:
-    void updateLabelIcon(const QString &iconName, int size);
+    void updateLabelIcon(int size);
 
     QString iconName;
     DIconButton *checkButton;
