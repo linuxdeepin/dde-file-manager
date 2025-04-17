@@ -217,7 +217,7 @@ void DockItemDataManager::notify(const QString &title, const QString &msg)
     QVariantList args;
     args << QString("dde-file-manager")
          << static_cast<uint>(0)
-         << QString("media-eject")
+         << QString("drive-removable-dock")
          << title
          << msg
          << QStringList()
