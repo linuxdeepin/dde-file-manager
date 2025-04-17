@@ -23,7 +23,7 @@ public:
     ~FrameManager() override;
     bool initialize();
     void layout();
-    void turnOn(bool build = true);
+    void turnOn();
     void turnOff();
 
     bool organizerEnabled();
