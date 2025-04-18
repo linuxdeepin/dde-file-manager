@@ -18,9 +18,14 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 namespace Defines {
 
 inline constexpr char kAnythingDocType[] { "doc" };
+// NOTE: The version number must be upgraded
+// when the index contents are changed to ensure
+// that the index can be rebuilt!!!
+inline constexpr int kIndexVersion { 0 };
 
 // json
-inline constexpr char kLastUpdateTime[] { "lastUpdateTime" };
+inline constexpr char kVersionKey[] { "version" };
+inline constexpr char kLastUpdateTimeKey[] { "lastUpdateTime" };
 }   // namespace Defines
 
 DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)

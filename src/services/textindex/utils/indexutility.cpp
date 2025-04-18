@@ -65,8 +65,14 @@ void clearIndexDirectory()
 
 void saveIndexStatus(const QDateTime &lastUpdateTime)
 {
+    saveIndexStatus(lastUpdateTime, Defines::kIndexVersion);
+}
+
+void saveIndexStatus(const QDateTime &lastUpdateTime, int version)
+{
     QJsonObject status;
-    status[Defines::kLastUpdateTime] = lastUpdateTime.toString(Qt::ISODate);
+    status[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
+    status[Defines::kVersionKey] = version;
 
     QJsonDocument doc(status);
     QFile file(statusFilePath());
@@ -79,11 +85,77 @@ void saveIndexStatus(const QDateTime &lastUpdateTime)
         file.close();
         fmInfo() << "Index status saved successfully:" << file.fileName()
                  << "lastUpdateTime:" << lastUpdateTime.toString(Qt::ISODate)
+                 << "version:" << version
                  << "[Updated index status configuration]";
     } else {
         fmWarning() << "Failed to save index status to:" << file.fileName()
                     << "[Failed to write index status configuration]";
     }
+}
+
+QString getLastUpdateTime()
+{
+    QFile file(IndexUtility::statusFilePath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return QString();
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
+
+    if (doc.isObject()) {
+        QJsonObject obj = doc.object();
+        if (obj.contains(Defines::kLastUpdateTimeKey)) {
+            QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTimeKey].toString(), Qt::ISODate);
+            return time.toString("yyyy-MM-dd hh:mm:ss");
+        }
+    }
+    return QString();
+}
+
+int getIndexVersion()
+{
+    QFile file(IndexUtility::statusFilePath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return -1;   // File doesn't exist or can't be opened
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
+
+    if (doc.isObject()) {
+        QJsonObject obj = doc.object();
+        if (obj.contains(Defines::kVersionKey)) {
+            return obj[Defines::kVersionKey].toInt(-1);
+        }
+    }
+    return -1;   // Version not found in status file
+}
+
+bool isCompatibleVersion()
+{
+    int currentVersion = getIndexVersion();
+
+    // If version is -1, it means either:
+    // 1. Status file doesn't exist
+    // 2. Status file is corrupted
+    // 3. Version field is not present in the status file
+    // In all these cases, we need to rebuild the index
+    if (currentVersion == -1) {
+        fmWarning() << "Index version not found or invalid in status file"
+                    << "[Index compatibility check failed]";
+        return false;
+    }
+
+    // Check if the version in status file matches the current code version
+    bool isCompatible = (currentVersion == Defines::kIndexVersion);
+    if (!isCompatible) {
+        fmWarning() << "Index version mismatch. Status file version:" << currentVersion
+                    << "Current code version:" << Defines::kIndexVersion
+                    << "[Index version incompatible]";
+    }
+
+    return isCompatible;
 }
 
 }   // namespace IndexUtility
