@@ -50,6 +50,12 @@ static const char *const kMultiFileDirs = "MultiFileDirs";
 static const char *const kCommandKey = "Exec";
 static const char *const kCommandArg[] { "%p", "%f", "%F", "%u", "%U" };
 
+static QString oemMenuExtensionsPath()
+{
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+            + QStringLiteral("/deepin/dde-file-manager/oem-menuextensions");
+}
+
 OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
     : q(qq)
 {
@@ -61,7 +67,7 @@ OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
 
     oemMenuPath << QStringLiteral("/usr/etc/deepin/menu-extensions")
                 << QStringLiteral("/etc/deepin/menu-extensions")
-                << QStringLiteral("/usr/share/deepin/dde-file-manager/oem-menuextensions");
+                << oemMenuExtensionsPath();
 
     menuTypes << kEmptyArea
               << kSingleFile
@@ -87,6 +93,9 @@ OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
                 delayedLoadFileTimer->start();
             });
             QObject::connect(watcher, &LocalFileWatcher::subfileCreated, delayedLoadFileTimer.data(), [=]() {
+                delayedLoadFileTimer->start();
+            });
+            QObject::connect(watcher, &LocalFileWatcher::fileAttributeChanged, delayedLoadFileTimer.data(), [=]() {
                 delayedLoadFileTimer->start();
             });
 
@@ -407,6 +416,9 @@ void OemMenu::loadDesktopFile()
             continue;
 
         for (const QFileInfo &fileInfo : oemDir.entryInfoList({ "*.desktop" })) {
+            DesktopFile df(fileInfo.absoluteFilePath());
+            if (df.isNoShow())
+                continue;
 
             DDesktopEntry entry(fileInfo.absoluteFilePath());
             QStringList &&menuTypes = d->getValues(entry, kMenuTypeKey, kMenuTypeAliasKey, kDesktopEntryGroup, d->menuTypes);
@@ -554,7 +566,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
             supportMimeTypes.removeAll({});
             match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
 
-            //The file attributes of some MTP mounted device directories do not meet the specifications
+            // The file attributes of some MTP mounted device directories do not meet the specifications
             //(the ordinary directory mimeType is considered octet stream), so special treatment is required
             if (file.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream")) {
                 match = false;
@@ -648,7 +660,7 @@ QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl
         supportMimeTypes.removeAll({});
         match = d->isMimeTypeMatch(siblingMimeTypes, supportMimeTypes);
 
-        //The file attributes of some MTP mounted device directories do not meet the specifications
+        // The file attributes of some MTP mounted device directories do not meet the specifications
         //(the ordinary directory mimeType is considered octet stream), so special treatment is required
         if (foucs.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream")
             && siblingMimeTypes.contains("application/octet-stream")) {
