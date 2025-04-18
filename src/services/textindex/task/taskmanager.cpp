@@ -153,7 +153,7 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         } else if (result.success && !result.interrupted) {
             fmInfo() << "Root indexing completed successfully, updating status"
                      << "[Root index task succeeded]";
-            IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
+            IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
         }
     }
 
@@ -182,24 +182,4 @@ void TaskManager::cleanupTask()
         currentTask->deleteLater();
         currentTask = nullptr;
     }
-}
-
-QString TaskManager::getLastUpdateTime() const
-{
-    QFile file(IndexUtility::statusFilePath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        return QString();
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    if (doc.isObject()) {
-        QJsonObject obj = doc.object();
-        if (obj.contains(Defines::kLastUpdateTime)) {
-            QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTime].toString(), Qt::ISODate);
-            return time.toString("yyyy-MM-dd hh:mm:ss");
-        }
-    }
-    return QString();
 }

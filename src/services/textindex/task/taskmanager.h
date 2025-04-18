@@ -23,7 +23,6 @@ public:
     bool startTask(IndexTask::Type type, const QString &path);
     bool hasRunningTask() const;
     void stopCurrentTask();
-    QString getLastUpdateTime() const;
 
 Q_SIGNALS:
     void taskFinished(const QString &type, const QString &path, bool success);

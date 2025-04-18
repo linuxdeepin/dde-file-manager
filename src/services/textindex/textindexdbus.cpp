@@ -4,6 +4,7 @@
 
 #include "textindexdbus.h"
 #include "private/textindexdbus_p.h"
+#include "utils/indexutility.h"
 
 static constexpr char kTextIndexObjPath[] { "/org/deepin/Filemanager/TextIndex" };
 
@@ -70,10 +71,24 @@ bool TextIndexDBus::HasRunningTask()
 
 bool TextIndexDBus::IndexDatabaseExists()
 {
-    return DFMSEARCH::Global::isContentIndexAvailable();
+    // First check if the index files exist
+    if (!DFMSEARCH::Global::isContentIndexAvailable()) {
+        return false;
+    }
+    
+    // Then check if the version is compatible
+    if (!IndexUtility::isCompatibleVersion()) {
+        fmWarning() << "Index database exists but version is incompatible or missing."
+                   << "Current version:" << Defines::kIndexVersion
+                   << "Stored version:" << IndexUtility::getIndexVersion()
+                   << "[Index considered invalid due to version mismatch]";
+        return false;
+    }
+    
+    return true;
 }
 
 QString TextIndexDBus::GetLastUpdateTime()
 {
-    return d->taskManager->getLastUpdateTime();
+    return IndexUtility::getLastUpdateTime();
 }
