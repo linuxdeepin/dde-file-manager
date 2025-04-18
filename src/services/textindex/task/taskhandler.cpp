@@ -241,7 +241,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                     FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     true,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
@@ -315,7 +315,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                     FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
@@ -372,7 +372,7 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
                     FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
