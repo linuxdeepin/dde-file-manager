@@ -18,6 +18,7 @@
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
 #include "oemmenuscene/oemmenu.h"
+#include "oemmenuscene/extensionmonitor.h"
 #include "templatemenuscene/templatemenuscene.h"
 #include "templatemenuscene/templatemenu.h"
 
@@ -228,6 +229,9 @@ void Menu::initialize()
 
 bool Menu::start()
 {
+    const auto &appName = qApp->applicationName();
+    if (appName == "org.deepin.dde-shell" || appName == "dde-desktop")
+        ExtensionMonitor::instance()->start();
     return true;
 }
 
