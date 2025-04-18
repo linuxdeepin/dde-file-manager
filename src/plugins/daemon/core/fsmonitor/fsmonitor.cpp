@@ -20,6 +20,7 @@ DCORE_USE_NAMESPACE
 DAEMONPCORE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+// Example:
 // void testMonitor()
 // {
 //     FSMonitor::instance().setMaxResourceUsage(0.6);
@@ -39,8 +40,20 @@ DFMBASE_USE_NAMESPACE
 //                   << "->"
 //                   << toPath << "/" << toName;
 //     });
+//     connect(&FSMonitor::instance(), &FSMonitor::directoryCreated, this, [](const QString &path, const QString &name) {
+//         fmDebug() << "File created:" << path << "/" << name;
+//     });
+//     connect(&FSMonitor::instance(), &FSMonitor::directoryDeleted, this, [](const QString &path, const QString &name) {
+//         fmDebug() << "File deleted:" << path << "/" << name;
+//     });
+//     connect(&FSMonitor::instance(), &FSMonitor::directoryMoved, this, [](const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName) {
+//         fmDebug() << "File moved:"
+//                   << fromPath << "/" << fromName
+//                   << "->"
+//                   << toPath << "/" << toName;
+//     });
 
-//     if (FSMonitor::instance().initialize()) {
+//     if (FSMonitor::instance().initialize("/home/zhangs/Videos")) {
 //         if (FSMonitor::instance().start()) {
 //             fmDebug() << "File monitoring started successfully";
 //             fmDebug() << "Max watches available:" << FSMonitor::instance().maxAvailableWatchCount();
@@ -345,7 +358,7 @@ bool FSMonitorPrivate::isWithinWatchLimit() const
         return true;   // No limit determined, assume it's fine
     }
 
-    int maxAllowed = qRound(maxWatches * maxUsagePercentage);
+    int maxAllowed = qFloor(maxWatches * maxUsagePercentage);
     return watchedDirectories.size() < maxAllowed;
 }
 
