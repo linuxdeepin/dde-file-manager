@@ -13,9 +13,14 @@ namespace IndexUtility {
 bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
 QString statusFilePath();
+QString getLastUpdateTime();
+int getIndexVersion();
+bool isCompatibleVersion();
+
 void removeIndexStatusFile();
 void clearIndexDirectory();
 void saveIndexStatus(const QDateTime &lastUpdateTime);
+void saveIndexStatus(const QDateTime &lastUpdateTime, int version);
 
 }   // namespace IndexUtility
 
