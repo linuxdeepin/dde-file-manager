@@ -75,6 +75,8 @@ bool isSMBFile(const QUrl &url)
 
 bool isLocalFile(const QUrl &url)
 {
+    Q_ASSERT(!url.scheme().isEmpty());
+
     if (!url.isLocalFile())
         return false;
     if (isRemoteFile(url))
