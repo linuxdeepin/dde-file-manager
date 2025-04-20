@@ -2849,7 +2849,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation>Nie można przenieść &quot;%1&quot; do kosza. Czy chcesz go usunąć permanentnie?</translation>
+        <translation>Nie można przenieść &quot;%1&quot; do kosza. Czy usunąć plik permanentnie?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
