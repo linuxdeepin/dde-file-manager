@@ -5048,7 +5048,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation>El dispositiu %1 s&apos;està encriptant. Si us plau, feu la desencriptació un cop hagi acabat.</translation>
+        <translation>El dispositiu %1 s&apos;encripta. Si us plau, feu la desencriptació un cop hagi acabat.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
