@@ -73,9 +73,6 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     case IndexTask::Type::Update:
         handler = TaskHandlers::UpdateIndexHandler();
         break;
-    case IndexTask::Type::Remove:
-        handler = TaskHandlers::RemoveIndexHandler();
-        break;
     default:
         fmWarning() << "Unknown task type:" << static_cast<int>(type);
         return false;

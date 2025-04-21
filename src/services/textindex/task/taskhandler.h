@@ -29,7 +29,6 @@ using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &
 namespace TaskHandlers {
 TaskHandler CreateIndexHandler();
 TaskHandler UpdateIndexHandler();
-TaskHandler RemoveIndexHandler();
 
 // 创建文件提供者
 std::unique_ptr<FileProvider> createFileProvider(const QString &path);
