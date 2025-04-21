@@ -57,6 +57,18 @@ public:
     // Check if max event count exceeded
     bool isMaxEventCountExceeded() const;
 
+    // Remove redundant file entries that are under directories already in the list
+    void removeRedundantEntries(QSet<QString> &filesList);
+
+    // Check if a path is a child of any path in the given set
+    bool isChildOfAnyPath(const QString &path, const QSet<QString> &pathSet) const;
+
+    // Check if path is a directory
+    bool isDirectory(const QString &path) const;
+
+    // Remove redundant entries from all event lists
+    void cleanupRedundantEntries();
+
     // Debug and error logging helpers
     void logDebug(const QString &message) const;
     void logError(const QString &message) const;
