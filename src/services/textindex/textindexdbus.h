@@ -26,7 +26,6 @@ public:
 public Q_SLOTS:
     bool CreateIndexTask(const QString &path);
     bool UpdateIndexTask(const QString &path);
-    bool RemoveIndexTask(const QStringList &paths);
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();

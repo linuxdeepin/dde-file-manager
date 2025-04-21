@@ -49,12 +49,6 @@ bool TextIndexDBus::UpdateIndexTask(const QString &path)
     return d->taskManager->startTask(IndexTask::Type::Update, path);
 }
 
-bool TextIndexDBus::RemoveIndexTask(const QStringList &paths)
-{
-    QString pathString = paths.join("|");
-    return d->taskManager->startTask(IndexTask::Type::Remove, pathString);
-}
-
 bool TextIndexDBus::StopCurrentTask()
 {
     if (!d->taskManager->hasRunningTask())
@@ -75,16 +69,16 @@ bool TextIndexDBus::IndexDatabaseExists()
     if (!DFMSEARCH::Global::isContentIndexAvailable()) {
         return false;
     }
-    
+
     // Then check if the version is compatible
     if (!IndexUtility::isCompatibleVersion()) {
         fmWarning() << "Index database exists but version is incompatible or missing."
-                   << "Current version:" << Defines::kIndexVersion
-                   << "Stored version:" << IndexUtility::getIndexVersion()
-                   << "[Index considered invalid due to version mismatch]";
+                    << "Current version:" << Defines::kIndexVersion
+                    << "Stored version:" << IndexUtility::getIndexVersion()
+                    << "[Index considered invalid due to version mismatch]";
         return false;
     }
-    
+
     return true;
 }
 
