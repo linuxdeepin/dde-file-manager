@@ -42,6 +42,9 @@ void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const Q
         return;
 
     auto url = item->url();
+    if (!url.isValid())
+        return;
+
     auto info = item->itemInfo();
     if (info.contextMenuCb) {
         info.contextMenuCb(windowId, url, globalPos);
