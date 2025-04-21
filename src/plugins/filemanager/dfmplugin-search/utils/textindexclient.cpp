@@ -145,9 +145,9 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
     case TaskType::Update:
         pendingTask = interface->UpdateIndexTask(paths.first());   // Update只支持单路径
         break;
-    case TaskType::Remove:
-        pendingTask = interface->RemoveIndexTask(paths);
-        break;
+    default:
+        fmWarning() << "Unknown task type:" << static_cast<int>(type);
+        return;
     }
 
     pendingTask.waitForFinished();
