@@ -140,37 +140,24 @@ void TextIndexController::startIndexTask(bool isCreate)
         return;
     }
 
-    fmInfo() << "[TextIndex] Checking for running tasks";
-    auto pendingHasTask = interface->HasRunningTask();
-    pendingHasTask.waitForFinished();
-
-    if (pendingHasTask.isError()) {
-        fmWarning() << "[TextIndex] Failed to check running task:" << pendingHasTask.error().message();
-        return;
+    QDBusPendingReply<bool> pendingTask;
+    // TODO(search): dfm-search
+    if (isCreate) {
+        fmInfo() << "[TextIndex] Starting CREATE task for root directory";
+        pendingTask = interface->CreateIndexTask(QDir::homePath());
+    } else {
+        fmInfo() << "[TextIndex] Starting UPDATE task for root directory";
+        pendingTask = interface->UpdateIndexTask(QDir::homePath());
     }
 
-    if (!pendingHasTask.value()) {
-        QDBusPendingReply<bool> pendingTask;
-        // TODO(search): dfm-search
-        if (isCreate) {
-            fmInfo() << "[TextIndex] Starting CREATE task for root directory";
-            pendingTask = interface->CreateIndexTask(QDir::homePath());
-        } else {
-            fmInfo() << "[TextIndex] Starting UPDATE task for root directory";
-            pendingTask = interface->UpdateIndexTask(QDir::homePath());
-        }
-
-        pendingTask.waitForFinished();
-        if (pendingTask.isError()) {
-            fmWarning() << "[TextIndex] Failed to start task:" << pendingTask.error().message();
-        } else if (pendingTask.value()) {
-            fmInfo() << "[TextIndex] Task started successfully, transitioning to Running state";
-            updateState(State::Running);
-        } else {
-            fmWarning() << "[TextIndex] Task start returned false";
-        }
+    pendingTask.waitForFinished();
+    if (pendingTask.isError()) {
+        fmWarning() << "[TextIndex] Failed to start task:" << pendingTask.error().message();
+    } else if (pendingTask.value()) {
+        fmInfo() << "[TextIndex] Task started successfully, transitioning to Running state";
+        updateState(State::Running);
     } else {
-        fmInfo() << "[TextIndex] Another task is already running";
+        fmWarning() << "[TextIndex] Task start returned false";
     }
 }
 
