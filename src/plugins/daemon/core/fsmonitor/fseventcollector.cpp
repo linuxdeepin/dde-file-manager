@@ -153,8 +153,18 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
         deletedFilesList.remove(fullPath);
         logDebug(QString("Removed from deleted list due to re-creation: %1").arg(fullPath));
     } else {
-        createdFilesList.insert(fullPath);
-        logDebug(QString("Added to created list: %1").arg(fullPath));
+        // Check if this file is under a directory that's already in the created list
+        if (!isChildOfAnyPath(fullPath, createdFilesList)) {
+            createdFilesList.insert(fullPath);
+            logDebug(QString("Added to created list: %1").arg(fullPath));
+            
+            // If this is a directory, remove any files in the list that are under this directory
+            if (isDirectory(fullPath)) {
+                removeRedundantEntries(createdFilesList);
+            }
+        } else {
+            logDebug(QString("Skipped adding to created list (parent directory already added): %1").arg(fullPath));
+        }
     }
 
     // Check if max event count exceeded after adding
@@ -185,8 +195,19 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
             modifiedFilesList.remove(fullPath);
             logDebug(QString("Removed from modified list due to deletion: %1").arg(fullPath));
         }
-        deletedFilesList.insert(fullPath);
-        logDebug(QString("Added to deleted list: %1").arg(fullPath));
+        
+        // Check if this file is under a directory that's already in the deleted list
+        if (!isChildOfAnyPath(fullPath, deletedFilesList)) {
+            deletedFilesList.insert(fullPath);
+            logDebug(QString("Added to deleted list: %1").arg(fullPath));
+            
+            // If this is a directory, remove any files in the list that are under this directory
+            if (isDirectory(fullPath)) {
+                removeRedundantEntries(deletedFilesList);
+            }
+        } else {
+            logDebug(QString("Skipped adding to deleted list (parent directory already added): %1").arg(fullPath));
+        }
     }
 
     // Check if max event count exceeded after adding
@@ -213,8 +234,15 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
         // No need to track modifications for newly created or deleted files
         logDebug(QString("Ignored modification for created/deleted file: %1").arg(fullPath));
     } else {
-        modifiedFilesList.insert(fullPath);
-        logDebug(QString("Added to modified list: %1").arg(fullPath));
+        // For modified files, we only care about actual files, not directories
+        // So we don't need to check for parent directories or redundant entries
+        if (!isDirectory(fullPath) && !isChildOfAnyPath(fullPath, createdFilesList) &&
+            !isChildOfAnyPath(fullPath, deletedFilesList)) {
+            modifiedFilesList.insert(fullPath);
+            logDebug(QString("Added to modified list: %1").arg(fullPath));
+        } else {
+            logDebug(QString("Skipped adding to modified list (directory or parent directory already in lists): %1").arg(fullPath));
+        }
     }
 
     // Check if max event count exceeded after adding
@@ -264,6 +292,8 @@ void FSEventCollectorPrivate::handleDirectoryMoved(const QString &fromPath, cons
 
 void FSEventCollectorPrivate::flushCollectedEvents()
 {
+    // First, clean up redundant entries in all lists
+    cleanupRedundantEntries();
 
     // Prepare the lists of events to emit
     QStringList created = createdFilesList.values();
@@ -292,6 +322,112 @@ void FSEventCollectorPrivate::flushCollectedEvents()
 
     if (!modified.isEmpty()) {
         Q_EMIT q_ptr->filesModified(modified);
+    }
+}
+
+void FSEventCollectorPrivate::removeRedundantEntries(QSet<QString> &filesList)
+{
+    QSet<QString> directoryPaths;
+    QSet<QString> filePaths;
+    
+    // First, separate directories from files
+    for (const QString &path : filesList) {
+        if (isDirectory(path)) {
+            directoryPaths.insert(path);
+        } else {
+            filePaths.insert(path);
+        }
+    }
+    
+    // Remove any files that are under any of the directories
+    QSet<QString> redundantPaths;
+    for (const QString &filePath : filePaths) {
+        if (isChildOfAnyPath(filePath, directoryPaths)) {
+            redundantPaths.insert(filePath);
+        }
+    }
+    
+    // Remove redundant paths from the original list
+    for (const QString &path : redundantPaths) {
+        filesList.remove(path);
+        logDebug(QString("Removed redundant entry (parent directory exists in list): %1").arg(path));
+    }
+}
+
+bool FSEventCollectorPrivate::isChildOfAnyPath(const QString &path, const QSet<QString> &pathSet) const
+{
+    // Quick check for empty set
+    if (pathSet.isEmpty()) {
+        return false;
+    }
+    
+    // For each potential parent directory in the set
+    for (const QString &potentialParent : pathSet) {
+        // Skip if the potential parent is not a directory
+        if (!isDirectory(potentialParent)) {
+            continue;
+        }
+        
+        // Check if path starts with potentialParent + "/"
+        // First, normalize both paths to ensure consistent comparison
+        QString normalizedPath = QDir::cleanPath(path);
+        QString normalizedParent = QDir::cleanPath(potentialParent);
+        
+        // Make sure the parent path ends with a separator
+        if (!normalizedParent.endsWith('/')) {
+            normalizedParent += '/';
+        }
+        
+        // Path is a child if it starts with the parent path (including the trailing slash)
+        if (normalizedPath.startsWith(normalizedParent)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+bool FSEventCollectorPrivate::isDirectory(const QString &path) const
+{
+    QFileInfo fileInfo(path);
+    return fileInfo.isDir();
+}
+
+void FSEventCollectorPrivate::cleanupRedundantEntries()
+{
+    // Clean up each list separately
+    removeRedundantEntries(createdFilesList);
+    removeRedundantEntries(deletedFilesList);
+    
+    // For the modified list, we need to remove entries that:
+    // 1. Are under directories in the created list (creation supersedes modification)
+    // 2. Are under directories in the deleted list (deletion supersedes modification)
+    
+    // First, get all directory paths from created and deleted lists
+    QSet<QString> allDirectories;
+    for (const QString &path : createdFilesList) {
+        if (isDirectory(path)) {
+            allDirectories.insert(path);
+        }
+    }
+    for (const QString &path : deletedFilesList) {
+        if (isDirectory(path)) {
+            allDirectories.insert(path);
+        }
+    }
+    
+    // Remove any modified files that are under these directories
+    QSet<QString> redundantModified;
+    for (const QString &modifiedPath : modifiedFilesList) {
+        if (isChildOfAnyPath(modifiedPath, allDirectories)) {
+            redundantModified.insert(modifiedPath);
+            logDebug(QString("Removed redundant modified entry (parent directory in created/deleted lists): %1").arg(modifiedPath));
+        }
+    }
+    
+    // Remove the redundant entries
+    for (const QString &path : redundantModified) {
+        modifiedFilesList.remove(path);
     }
 }
 
