@@ -31,13 +31,19 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onTaskProgress(IndexTask::Type type, qint64 count);
-    void onTaskFinished(IndexTask::Type type, HandlerResult result);
+    void onTaskFinished(IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:
     void cleanupTask();
+    void startPendingTaskIfAny();
 
     QThread workerThread;
     IndexTask *currentTask { nullptr };
+
+    // 保存待执行的任务信息
+    IndexTask::Type pendingTaskType;
+    QString pendingTaskPath;
+    bool hasPendingTask { false };
 
     static QString typeToString(IndexTask::Type type);
 };

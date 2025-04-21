@@ -51,14 +51,32 @@ TaskManager::~TaskManager()
 
 bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 {
-    if (hasRunningTask() || currentTask) {
-        fmWarning() << "Cannot start new task, another task is running";
+    if (!IndexUtility::isDefaultIndexedDirectory(path)) {
+        fmWarning() << "Cannot start new task, path isn't default direcroty";
         return false;
     }
+
+    // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
+    if (hasRunningTask() || currentTask) {
+        fmInfo() << "Task already running, stopping current task and queuing new task for path:" << path;
+        
+        // 保存待执行的任务信息
+        pendingTaskType = type;
+        pendingTaskPath = path;
+        hasPendingTask = true;
+        
+        // 停止当前任务
+        stopCurrentTask();
+        
+        // 返回true表示任务已经被接受，将在当前任务停止后执行
+        return true;
+    }
+
+    // 正常启动任务流程
     fmInfo() << "Starting new task for path:" << path;
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
-    if (IndexUtility::isDefaultIndexedDirectory(path) && type == IndexTask::Type::Create) {
+    if (type == IndexTask::Type::Create) {
         fmInfo() << "Home path task detected, clearing existing index status"
                  << "[Initializing new root indexing task]";
         IndexUtility::removeIndexStatusFile();
@@ -156,6 +174,9 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
+    
+    // 检查是否有待执行的任务
+    startPendingTaskIfAny();
 }
 
 bool TaskManager::hasRunningTask() const
@@ -178,5 +199,21 @@ void TaskManager::cleanupTask()
         disconnect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start);
         currentTask->deleteLater();
         currentTask = nullptr;
+    }
+}
+
+void TaskManager::startPendingTaskIfAny()
+{
+    // 检查是否有待执行的任务
+    if (hasPendingTask) {
+        fmInfo() << "Starting pending task for path:" << pendingTaskPath;
+        
+        // 保存任务信息并清除待执行标记
+        IndexTask::Type type = pendingTaskType;
+        QString path = pendingTaskPath;
+        hasPendingTask = false;
+                
+        // 启动待执行的任务
+        startTask(type, path);
     }
 }
