@@ -25,6 +25,11 @@ bool isDefaultIndexedDirectory(const QString &path)
     return DFMSEARCH::Global::defaultIndexedDirectory().contains(path);
 }
 
+bool isPathInContentIndexDirectory(const QString &path)
+{
+    return DFMSEARCH::Global::isPathInContentIndexDirectory(path);
+}
+
 QString statusFilePath()
 {
     return DFMSEARCH::Global::contentIndexDirectory() + "/index_status.json";
