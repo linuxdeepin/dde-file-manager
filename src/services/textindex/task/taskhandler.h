@@ -30,8 +30,14 @@ namespace TaskHandlers {
 TaskHandler CreateIndexHandler();
 TaskHandler UpdateIndexHandler();
 
+// 文件列表任务处理器
+TaskHandler CreateFileListHandler(const QStringList &fileList);
+TaskHandler UpdateFileListHandler(const QStringList &fileList);
+TaskHandler RemoveFileListHandler(const QStringList &fileList); // 待实现的删除索引接口
+
 // 创建文件提供者
 std::unique_ptr<FileProvider> createFileProvider(const QString &path);
+std::unique_ptr<FileProvider> createFileListProvider(const QStringList &fileList);
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

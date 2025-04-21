@@ -52,22 +52,25 @@ TaskManager::~TaskManager()
 bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 {
     if (!IndexUtility::isDefaultIndexedDirectory(path)) {
-        fmWarning() << "Cannot start new task, path isn't default direcroty";
+        fmWarning() << "Cannot start new task, path isn't default directory";
         return false;
     }
 
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
     if (hasRunningTask() || currentTask) {
-        fmInfo() << "Task already running, stopping current task and queuing new task for path:" << path;
-        
-        // 保存待执行的任务信息
-        pendingTaskType = type;
-        pendingTaskPath = path;
-        hasPendingTask = true;
-        
+        fmInfo() << "Task already running, queuing new task for path:" << path;
+
         // 停止当前任务
+        // startTask 的优先级高于 startFileListTask，因此直接重置任务队列
         stopCurrentTask();
-        
+        taskQueue.clear();
+
+        // 将任务加入队列
+        TaskQueueItem item;
+        item.type = type;
+        item.path = path;
+        taskQueue.enqueue(item);
+
         // 返回true表示任务已经被接受，将在当前任务停止后执行
         return true;
     }
@@ -83,15 +86,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     // 获取对应的任务处理器
-    TaskHandler handler;
-    switch (type) {
-    case IndexTask::Type::Create:
-        handler = TaskHandlers::CreateIndexHandler();
-        break;
-    case IndexTask::Type::Update:
-        handler = TaskHandlers::UpdateIndexHandler();
-        break;
-    default:
+    TaskHandler handler = getTaskHandler(type);
+    if (!handler) {
         fmWarning() << "Unknown task type:" << static_cast<int>(type);
         return false;
     }
@@ -110,6 +106,75 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     return true;
 }
 
+bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList)
+{
+    if (fileList.isEmpty()) {
+        fmWarning() << "Cannot start file list task, file list is empty";
+        return false;
+    }
+
+    // 如果当前有任务在运行，将新任务加入队列
+    if (hasRunningTask() || currentTask) {
+        fmInfo() << "Task already running, queuing new file list task with" << fileList.size() << "files";
+
+        // 将任务加入队列
+        TaskQueueItem item;
+        item.type = type;
+        item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+        item.fileList = fileList;
+        taskQueue.enqueue(item);
+
+        return true;
+    }
+
+    // 正常启动任务流程
+    fmInfo() << "Starting new file list task with" << fileList.size() << "files";
+
+    // 获取对应的任务处理器
+    TaskHandler handler;
+    switch (type) {
+    case IndexTask::Type::CreateFileList:
+        handler = TaskHandlers::CreateFileListHandler(fileList);
+        break;
+    case IndexTask::Type::UpdateFileList:
+        handler = TaskHandlers::UpdateFileListHandler(fileList);
+        break;
+    case IndexTask::Type::RemoveFileList:
+        handler = TaskHandlers::RemoveFileListHandler(fileList);
+        break;
+    default:
+        fmWarning() << "Unknown file list task type:" << static_cast<int>(type);
+        return false;
+    }
+
+    QString pathId = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+
+    Q_ASSERT(!currentTask);
+    currentTask = new IndexTask(type, pathId, handler);
+    currentTask->moveToThread(&workerThread);
+
+    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
+    workerThread.start();
+
+    emit startTaskInThread();
+    fmDebug() << "File list task started in worker thread";
+    return true;
+}
+
+TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
+{
+    switch (type) {
+    case IndexTask::Type::Create:
+        return TaskHandlers::CreateIndexHandler();
+    case IndexTask::Type::Update:
+        return TaskHandlers::UpdateIndexHandler();
+    default:
+        return nullptr;
+    }
+}
+
 QString TaskManager::typeToString(IndexTask::Type type)
 {
     switch (type) {
@@ -117,8 +182,12 @@ QString TaskManager::typeToString(IndexTask::Type type)
         return "create";
     case IndexTask::Type::Update:
         return "update";
-    case IndexTask::Type::Remove:
-        return "remove";
+    case IndexTask::Type::CreateFileList:
+        return "create-file-list";
+    case IndexTask::Type::UpdateFileList:
+        return "update-file-list";
+    case IndexTask::Type::RemoveFileList:
+        return "remove-file-list";
     default:
         return "unknown";
     }
@@ -174,9 +243,9 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
-    
+
     // 检查是否有待执行的任务
-    startPendingTaskIfAny();
+    startNextTask();
 }
 
 bool TaskManager::hasRunningTask() const
@@ -202,18 +271,26 @@ void TaskManager::cleanupTask()
     }
 }
 
-void TaskManager::startPendingTaskIfAny()
+bool TaskManager::startNextTask()
 {
-    // 检查是否有待执行的任务
-    if (hasPendingTask) {
-        fmInfo() << "Starting pending task for path:" << pendingTaskPath;
-        
-        // 保存任务信息并清除待执行标记
-        IndexTask::Type type = pendingTaskType;
-        QString path = pendingTaskPath;
-        hasPendingTask = false;
-                
-        // 启动待执行的任务
-        startTask(type, path);
+    // 检查队列是否为空
+    if (taskQueue.isEmpty()) {
+        return false;
+    }
+
+    // 从队列中取出下一个任务
+    TaskQueueItem nextTask = taskQueue.dequeue();
+
+    fmInfo() << "Starting next queued task of type:" << static_cast<int>(nextTask.type);
+
+    // 根据任务类型启动相应的任务
+    if (nextTask.type == IndexTask::Type::CreateFileList
+        || nextTask.type == IndexTask::Type::UpdateFileList
+        || nextTask.type == IndexTask::Type::RemoveFileList) {
+        // 启动文件列表任务
+        return startFileListTask(nextTask.type, nextTask.fileList);
+    } else {
+        // 启动常规任务
+        return startTask(nextTask.type, nextTask.path);
     }
 }

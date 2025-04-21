@@ -12,6 +12,7 @@ namespace IndexUtility {
 
 bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
+bool isPathInContentIndexDirectory(const QString &path);
 QString statusFilePath();
 QString getLastUpdateTime();
 int getIndexVersion();

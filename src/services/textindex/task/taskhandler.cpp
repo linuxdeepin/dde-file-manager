@@ -189,6 +189,22 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
+void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
+{
+    try {
+#ifdef QT_DEBUG
+        fmDebug() << "Remove [" << path << "]";
+#endif
+        TermPtr term = newLucene<Term>(L"path", path.toStdWString());
+        writer->deleteDocuments(term);
+        if (reporter) {
+            reporter->increment();
+        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Remove file failed:" << path << e.what();
+    }
+}
+
 }   // namespace
 
 // 创建文件提供者
@@ -214,6 +230,12 @@ std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &pa
         fmWarning() << "Failed to get file list via ANYTHING!" << result.error().message();
     }
     return std::make_unique<FileSystemProvider>(path);
+}
+
+// 创建文件列表提供者
+std::unique_ptr<FileProvider> TaskHandlers::createFileListProvider(const QStringList &fileList)
+{
+    return std::make_unique<MixedPathListProvider>(fileList);
 }
 
 // 公开的任务处理函数实现
@@ -355,6 +377,205 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
         } catch (const std::exception &e) {
             // 其他异常不需要重建
             fmWarning() << "Update index failed with exception:" << e.what();
+        }
+
+        return result;
+    };
+}
+
+// 基于文件列表创建索引
+TaskHandler TaskHandlers::CreateFileListHandler(const QStringList &fileList)
+{
+    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+        Q_UNUSED(path)
+        fmInfo() << "Creating index for file list with" << fileList.size() << "entries";
+
+        HandlerResult result { false, false };
+        QDir dir;
+        if (!dir.exists(DFMSEARCH::Global::contentIndexDirectory())) {
+            if (!dir.mkpath(DFMSEARCH::Global::contentIndexDirectory())) {
+                fmWarning() << "Unable to create index directory:" << DFMSEARCH::Global::contentIndexDirectory();
+                return result;
+            }
+        }
+
+        try {
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
+                    newLucene<ChineseAnalyzer>(),
+                    true,
+                    IndexWriter::MaxFieldLengthUNLIMITED);
+
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            fmInfo() << "Indexing files to directory:" << DFMSEARCH::Global::contentIndexDirectory();
+
+            writer->deleteAll();
+
+            // 使用文件列表提供者遍历文件
+            auto provider = createFileListProvider(fileList);
+            if (!provider) {
+                fmWarning() << "Failed to create file list provider";
+                return result;
+            }
+
+            ProgressReporter reporter;
+            provider->traverse(running, [&](const QString &file) {
+                processFile(file, writer, &reporter);
+            });
+
+            // Only the creation of an index that is interrupted is also considered a failure
+            // Created indexes must be guaranteed to be complete
+            if (!running.isRunning()) {
+                fmWarning() << "Create index task was interrupted";
+                result.interrupted = true;
+                result.success = false;   // 创建被打断若不失败索引是不完整的
+                return result;
+            }
+
+            writer->optimize();
+            result.success = true;
+
+            return result;
+        } catch (const LuceneException &e) {
+            fmWarning() << "Create index failed with Lucene exception:"
+                        << QString::fromStdWString(e.getError());
+        } catch (const std::exception &e) {
+            fmWarning() << "Create index failed with exception:" << e.what();
+        }
+
+        return result;
+    };
+}
+
+// 基于文件列表更新索引
+TaskHandler TaskHandlers::UpdateFileListHandler(const QStringList &fileList)
+{
+    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+        Q_UNUSED(path)
+        fmInfo() << "Updating index for file list with" << fileList.size() << "entries";
+        HandlerResult result { false, false };
+
+        try {
+            IndexReaderPtr reader = IndexReader::open(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()), true);
+
+            // 添加 reader 的 ScopeGuard
+            ScopeGuard readerCloser([&reader]() {
+                try {
+                    if (reader) reader->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
+                    newLucene<ChineseAnalyzer>(),
+                    false,
+                    IndexWriter::MaxFieldLengthUNLIMITED);
+
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            // 使用文件列表提供者遍历文件
+            auto provider = createFileListProvider(fileList);
+            if (!provider) {
+                fmWarning() << "Failed to create file list provider";
+                return result;
+            }
+
+            ProgressReporter reporter;
+            provider->traverse(running, [&](const QString &file) {
+                updateFile(file, reader, writer, &reporter);
+            });
+
+            if (!running.isRunning()) {
+                fmWarning() << "Update index task was interrupted";
+                result.interrupted = true;
+            }
+
+            writer->optimize();
+            result.success = true;
+
+            return result;
+        } catch (const LuceneException &e) {
+            // Lucene异常表示索引损坏
+            fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
+                        << QString::fromStdWString(e.getError());
+            throw;   // 重新抛出异常，让 IndexTask 捕获并处理
+        } catch (const std::exception &e) {
+            // 其他异常不需要重建
+            fmWarning() << "Update index failed with exception:" << e.what();
+        }
+
+        return result;
+    };
+}
+
+// 基于文件列表删除索引
+TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
+{
+    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+        Q_UNUSED(path)
+        fmWarning() << "Remove file list index handler not implemented yet for" << fileList.size() << "files";
+        // 后续实现删除索引的逻辑
+        HandlerResult result { false, false };
+
+        try {
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
+                    newLucene<ChineseAnalyzer>(),
+                    false,
+                    IndexWriter::MaxFieldLengthUNLIMITED);
+
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            // 使用文件列表提供者遍历文件
+            auto provider = createFileListProvider(fileList);
+            if (!provider) {
+                fmWarning() << "Failed to create file list provider";
+                return result;
+            }
+
+            ProgressReporter reporter;
+            provider->traverse(running, [&](const QString &file) {
+                removeFile(file, writer, &reporter);
+            });
+
+            if (!running.isRunning()) {
+                fmWarning() << "Remove index task was interrupted";
+                result.interrupted = true;
+            }
+
+            writer->optimize();
+            result.success = true;
+            return result;
+        } catch (const LuceneException &e) {
+            fmWarning() << "Remove index failed with Lucene exception:"
+                        << QString::fromStdWString(e.getError());
+        } catch (const std::exception &e) {
+            fmWarning() << "Remove index failed with exception:" << e.what();
         }
 
         return result;

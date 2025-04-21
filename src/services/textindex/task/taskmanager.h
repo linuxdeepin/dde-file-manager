@@ -10,8 +10,17 @@
 
 #include <QObject>
 #include <QThread>
+#include <QQueue>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
+
+// 任务队列项
+struct TaskQueueItem
+{
+    IndexTask::Type type;
+    QString path;
+    QStringList fileList;   // 仅在文件列表类型任务中使用
+};
 
 class TaskManager : public QObject
 {
@@ -20,7 +29,12 @@ public:
     explicit TaskManager(QObject *parent = nullptr);
     ~TaskManager();
 
+    // 原有的基于路径的任务启动方法
     bool startTask(IndexTask::Type type, const QString &path);
+
+    // 新增的基于文件列表的任务启动方法
+    bool startFileListTask(IndexTask::Type type, const QStringList &fileList);
+
     bool hasRunningTask() const;
     void stopCurrentTask();
 
@@ -35,15 +49,14 @@ private Q_SLOTS:
 
 private:
     void cleanupTask();
-    void startPendingTaskIfAny();
+    bool startNextTask();
+    TaskHandler getTaskHandler(IndexTask::Type type);
 
     QThread workerThread;
     IndexTask *currentTask { nullptr };
 
     // 保存待执行的任务信息
-    IndexTask::Type pendingTaskType;
-    QString pendingTaskPath;
-    bool hasPendingTask { false };
+    QQueue<TaskQueueItem> taskQueue;
 
     static QString typeToString(IndexTask::Type type);
 };
