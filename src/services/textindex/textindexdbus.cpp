@@ -86,3 +86,30 @@ QString TextIndexDBus::GetLastUpdateTime()
 {
     return IndexUtility::getLastUpdateTime();
 }
+
+bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles, 
+                                      const QStringList &modifiedFiles, 
+                                      const QStringList &deletedFiles)
+{
+    bool tasksQueued = false;
+    
+    // 处理删除的文件（优先处理，因为这些文件可能已经不存在）
+    if (!deletedFiles.isEmpty()) {
+        fmInfo() << "Processing" << deletedFiles.size() << "deleted files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::RemoveFileList, deletedFiles) || tasksQueued;
+    }
+    
+    // 处理新增的文件
+    if (!createdFiles.isEmpty()) {
+        fmInfo() << "Processing" << createdFiles.size() << "created files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::CreateFileList, createdFiles) || tasksQueued;
+    }
+    
+    // 处理修改的文件
+    if (!modifiedFiles.isEmpty()) {
+        fmInfo() << "Processing" << modifiedFiles.size() << "modified files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::UpdateFileList, modifiedFiles) || tasksQueued;
+    }
+    
+    return tasksQueued;
+}

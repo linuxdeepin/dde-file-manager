@@ -31,5 +31,11 @@
     <method name="GetLastUpdateTime">
       <arg type="s" direction="out"/>
     </method>
+    <method name="ProcessFileChanges">
+      <arg type="b" direction="out"/>
+      <arg name="createdFiles" type="as" direction="in"/>
+      <arg name="modifiedFiles" type="as" direction="in"/>
+      <arg name="deletedFiles" type="as" direction="in"/>
+    </method>
   </interface>
 </node>

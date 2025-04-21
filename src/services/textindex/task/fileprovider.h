@@ -51,6 +51,17 @@ private:
     DFMSEARCH::SearchResultList m_fileList;
 };
 
+// 混合文件和目录列表提供者
+class MixedPathListProvider : public FileProvider
+{
+public:
+    explicit MixedPathListProvider(const QStringList &pathList);
+    void traverse(TaskState &state, const FileHandler &handler) override;
+
+private:
+    QStringList m_pathList;
+};
+
 SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FILEPROVIDER_H

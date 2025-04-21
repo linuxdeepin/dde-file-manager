@@ -19,9 +19,11 @@ class IndexTask : public QObject
     Q_OBJECT
 public:
     enum class Type {
-        Create,
-        Update,
-        Remove
+        Create,   // 创建索引
+        Update,   // 更新索引
+        CreateFileList,   // 基于文件列表创建索引
+        UpdateFileList,   // 基于文件列表更新索引
+        RemoveFileList   // 基于文件列表删除索引
     };
     Q_ENUM(Type)
 
