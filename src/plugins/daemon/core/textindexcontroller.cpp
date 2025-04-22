@@ -95,6 +95,7 @@ void TextIndexController::initialize()
         return;
     }
     fmInfo() << "[TextIndex] Successfully registered search config";
+    isEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
 
     // Setup FSEventCollector
     setupFSEventCollector();
@@ -187,9 +188,9 @@ void TextIndexController::updateState(State newState)
 void TextIndexController::setupFSEventCollector()
 {
     fsEventCollector = std::make_unique<FSEventCollector>(this);
-    fsEventCollector->setCollectionInterval(180);   // Default 3 minutes
+    fsEventCollector->setCollectionInterval(60);   // Default 1 minutes
     fsEventCollector->setMaxEventCount(10000);   // Default 10k events
-    if (DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool())
+    if (isEnabled)
         startFSMonitoring();
     connect(fsEventCollector.get(), &FSEventCollector::filesCreated,
             this, &TextIndexController::onFilesCreated);
@@ -255,9 +256,9 @@ void TextIndexController::processFSEvents()
 {
     if (!interface) {
         fmWarning() << "[TextIndex] Cannot process FS events: DBus interface not initialized";
-        return;
+        setupDBusConnections();
     }
-
+    Q_ASSERT(interface);
     // Check if we have any events to process
     if (collectedCreatedFiles.isEmpty() && collectedModifiedFiles.isEmpty() && collectedDeletedFiles.isEmpty()) {
         fmInfo() << "[TextIndex] No file system events to process";

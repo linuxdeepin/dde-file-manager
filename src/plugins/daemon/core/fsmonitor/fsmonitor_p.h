@@ -6,13 +6,11 @@
 #define FSMONITOR_P_H
 
 #include "fsmonitor.h"
+#include "fsmonitorworker.h"
 
 #include <QFileInfo>
-#include <QQueue>
-#include <QTimer>
-#include <QFuture>
-#include <QThreadPool>
-#include <QtConcurrent>
+#include <QSet>
+#include <QThread>
 
 namespace Dtk {
 namespace Core {
@@ -67,8 +65,8 @@ public:
     // Parse and connect watcher signals
     void setupWatcherConnections();
 
-    // Process a directory in the queue (non-blocking)
-    void processNextPendingDirectory();
+    // Set up the worker thread and connections
+    void setupWorkerThread();
 
     // Handle file creation event
     void handleFileCreated(const QString &path, const QString &name);
@@ -94,12 +92,13 @@ public:
     FSMonitor *q_ptr;
     QScopedPointer<Dtk::Core::DFileSystemWatcher> watcher;
 
+    // Worker thread members
+    QThread workerThread;
+    FSMonitorWorker *worker { nullptr };
+
     QString rootPath;
     QSet<QString> watchedDirectories;
     QSet<QString> blacklistedPaths;
-    QQueue<QString> pendingDirectories;
-    QThreadPool threadPool;
-    QTimer processingTimer;
     bool active { false };
 
     // Resource limits

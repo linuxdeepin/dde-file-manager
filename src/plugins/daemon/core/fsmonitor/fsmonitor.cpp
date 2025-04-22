@@ -15,6 +15,7 @@
 #include <QTextStream>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QUrl>
 
 DCORE_USE_NAMESPACE
 DAEMONPCORE_BEGIN_NAMESPACE
@@ -75,22 +76,19 @@ const QStringList FSMonitorPrivate::defaultBlacklistedDirs = {
 FSMonitorPrivate::FSMonitorPrivate(FSMonitor *qq)
     : q_ptr(qq)
 {
-    // Set thread pool properties for optimal performance
-    threadPool.setMaxThreadCount(std::min(4, QThread::idealThreadCount()));
-    threadPool.setExpiryTimeout(30000);   // 30 seconds
-
-    // Setup timer for processing directories
-    processingTimer.setInterval(100);
-    processingTimer.setSingleShot(true);
-    QObject::connect(&processingTimer, &QTimer::timeout, qq, [this]() {
-        processNextPendingDirectory();
-    });
+    // Setup worker thread
+    setupWorkerThread();
 }
 
 FSMonitorPrivate::~FSMonitorPrivate()
 {
     stopMonitoring();
-    threadPool.waitForDone();
+
+    // Clean up worker thread
+    if (workerThread.isRunning()) {
+        workerThread.quit();
+        workerThread.wait();
+    }
 }
 
 bool FSMonitorPrivate::init(const QString &rootPath)
@@ -113,6 +111,11 @@ bool FSMonitorPrivate::init(const QString &rootPath)
         blacklistedPaths.insert(dir);
     }
 
+    // Configure worker with exclusion logic
+    worker->setExclusionChecker([this](const QString &path) {
+        return shouldExcludePath(path);
+    });
+
     logDebug(QString("FSMonitor initialized with root path: %1").arg(this->rootPath));
     return true;
 }
@@ -131,13 +134,19 @@ bool FSMonitorPrivate::startMonitoring()
         maxWatches = 8192;
     }
 
-    // Start watching the root directory recursively
+    // Start monitoring
     active = true;
-    pendingDirectories.clear();
-    pendingDirectories.enqueue(rootPath);
+    watchedDirectories.clear();
 
-    // Start processing directories
-    processNextPendingDirectory();
+    // Start worker thread
+    if (!workerThread.isRunning()) {
+        workerThread.start();
+    }
+
+    // Process the root directory first
+    QMetaObject::invokeMethod(worker, "processDirectory",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, rootPath));
 
     logDebug(QString("Started monitoring with max watches: %1, usage limit: %2%")
                      .arg(maxWatches)
@@ -153,19 +162,58 @@ void FSMonitorPrivate::stopMonitoring()
     }
 
     active = false;
-    processingTimer.stop();
-    pendingDirectories.clear();
 
-    if (watcher) {
-        // Remove all directories from watch
-        const QStringList dirs = watchedDirectories.values();
-        if (!dirs.isEmpty()) {
-            watcher->removePaths(dirs);
-        }
+    // Clear all watched directories
+    if (!watchedDirectories.isEmpty() && watcher) {
+        watcher->removePaths(watchedDirectories.values());
         watchedDirectories.clear();
     }
 
     logDebug("Stopped all monitoring");
+}
+
+void FSMonitorPrivate::setupWorkerThread()
+{
+    // Create worker and move to thread
+    worker = new FSMonitorWorker();
+    worker->moveToThread(&workerThread);
+
+    // Connect thread finished signal to clean up worker
+    QObject::connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+
+    // Connect worker signals
+    QObject::connect(
+            worker, &FSMonitorWorker::directoryToWatch,
+            q_ptr, [this](const QString &path) {
+                addWatchForDirectory(path);
+            },
+            Qt::QueuedConnection);
+
+    QObject::connect(
+            worker, &FSMonitorWorker::subdirectoriesFound,
+            q_ptr, [this](const QStringList &directories) {
+                // Process each subdirectory
+                for (const QString &dir : directories) {
+                    if (active) {
+                        QMetaObject::invokeMethod(worker, "processDirectory",
+                                                  Qt::QueuedConnection,
+                                                  Q_ARG(QString, dir));
+                    }
+                }
+            },
+            Qt::QueuedConnection);
+}
+
+void FSMonitorPrivate::addDirectoryRecursively(const QString &path)
+{
+    if (!active || path.isEmpty()) {
+        return;
+    }
+
+    // Queue the directory for processing
+    QMetaObject::invokeMethod(worker, "processDirectory",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, path));
 }
 
 int FSMonitorPrivate::getMaxUserWatches() const
@@ -294,26 +342,15 @@ bool FSMonitorPrivate::isExternalMount(const QString &path) const
     return false;
 }
 
-void FSMonitorPrivate::addDirectoryRecursively(const QString &path)
-{
-    if (!active || path.isEmpty()) {
-        return;
-    }
-
-    // Add this directory to the queue
-    pendingDirectories.enqueue(path);
-
-    // If not already processing, start
-    if (!processingTimer.isActive()) {
-        processingTimer.start();
-    }
-}
-
 bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
 {
-    // Skip if path is empty, already watching, or should exclude
-    if (path.isEmpty() || watchedDirectories.contains(path) || shouldExcludePath(path)) {
+    // Skip if path is empty or should exclude
+    if (path.isEmpty() || shouldExcludePath(path)) {
         return false;
+    }
+
+    if (watchedDirectories.contains(path)) {
+        return true;   // Already watching
     }
 
     // Check if we're within watch limits
@@ -331,7 +368,7 @@ bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
     // Add to watcher
     if (watcher->addPath(path)) {
         watchedDirectories.insert(path);
-        logDebug(QString("Added watch for directory: %1").arg(path));
+        //   logDebug(QString("Added watch for directory: %1").arg(path));
         return true;
     }
 
@@ -386,60 +423,6 @@ void FSMonitorPrivate::setupWatcherConnections()
                      });
 }
 
-void FSMonitorPrivate::processNextPendingDirectory()
-{
-    if (!active || pendingDirectories.isEmpty()) {
-        return;
-    }
-
-    // Process next directory in queue
-    QString dirPath = pendingDirectories.dequeue();
-
-    // Skip if directory is empty, doesn't exist, is a symlink, or should be excluded
-    if (dirPath.isEmpty() || !QDir(dirPath).exists() || shouldExcludePath(dirPath)) {
-        // Process next one if available
-        if (!pendingDirectories.isEmpty()) {
-            processingTimer.start();
-        }
-        return;
-    }
-
-    // Add this directory to watch
-    addWatchForDirectory(dirPath);
-
-    // Use QtConcurrent to scan subdirectories asynchronously
-    QFuture<void> future = QtConcurrent::run(&threadPool, [this, dirPath]() {
-        QDir dir(dirPath);
-        QFileInfoList entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-        QStringList subDirs;
-        for (const QFileInfo &info : std::as_const(entries)) {
-            if (info.isDir() && !isSymbolicLink(info.absoluteFilePath()) && !shouldExcludePath(info.absoluteFilePath())) {
-                subDirs << info.absoluteFilePath();
-            }
-        }
-
-        // Add subdirectories to the pending queue in the main thread
-        QMetaObject::invokeMethod(
-                q_ptr, [this, subDirs]() {
-                    for (const QString &subDir : subDirs) {
-                        pendingDirectories.enqueue(subDir);
-                    }
-
-                    // Continue processing
-                    if (!pendingDirectories.isEmpty() && !processingTimer.isActive()) {
-                        processingTimer.start();
-                    }
-                },
-                Qt::QueuedConnection);
-    });
-
-    // Process next directory if more are pending
-    if (!pendingDirectories.isEmpty()) {
-        processingTimer.start();
-    }
-}
-
 void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &name)
 {
     if (!active || path.isEmpty()) {
@@ -488,7 +471,8 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
         Q_EMIT q_ptr->directoryDeleted(path, name);
 
         // Remove from watch
-        removeWatchForDirectory(fullPath);
+        watcher->removePath(fullPath);
+        watchedDirectories.remove(fullPath);
     } else {
         // Regular file deleted
         logDebug(QString("File deleted: %1/%2").arg(path, name));
@@ -534,7 +518,8 @@ void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &f
         Q_EMIT q_ptr->directoryMoved(fromPath, fromName, toPath, toName);
 
         // Update directory watches
-        removeWatchForDirectory(fromFullPath);
+        watcher->removePath(fromFullPath);
+        watchedDirectories.remove(fromFullPath);
 
         // Add the destination directory to watch
         if (!toPath.isEmpty() && !isSymbolicLink(toFullPath) && !shouldExcludePath(toFullPath)) {
