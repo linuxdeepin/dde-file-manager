@@ -158,19 +158,19 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        delayTimer->stop();
         quitSearch();
         return;
     }
 
-    delayTimer->start(determineSearchDelay(text));
+    delayTimer->stop();
 
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
-    bool isFirstInputAfterLongGap = (currentTime - lastSearchTime) > 2000;  // 2秒的毫秒数
+    bool isFirstInputAfterLongGap = (lastSearchTime != 0) && (currentTime - lastSearchTime) > 2000;   // 2秒的毫秒数
     if (isFirstInputAfterLongGap && !shouldDelaySearch(text)) {
         // 超过2秒后的第一次输入，立即触发搜索
-        delayTimer->stop();
         performSearch();
+    } else {
+        delayTimer->start(determineSearchDelay(text));
     }
 }
 
@@ -190,14 +190,14 @@ void SearchEditWidget::performSearch()
     QString trimmedSearchText = pendingSearchText.trimmed();
     if (trimmedSearchText.isEmpty())
         return;
-        
+
     // Check if this is the same as the last executed search
     if (trimmedSearchText == lastExecutedSearchText)
         return;
-        
+
     lastExecutedSearchText = trimmedSearchText;
     lastSearchTime = QDateTime::currentMSecsSinceEpoch();
-    
+
     // 执行搜索
     TitleBarHelper::handleSearch(this, trimmedSearchText);
 }
@@ -263,7 +263,7 @@ void SearchEditWidget::initConnect()
     connect(searchEdit, &DSearchEdit::textEdited, this, &SearchEditWidget::onTextEdited, Qt::QueuedConnection);
     connect(searchEdit, &DSearchEdit::searchAborted, this, &SearchEditWidget::quitSearch);
     connect(advancedButton, &DToolButton::clicked, this, &SearchEditWidget::onAdvancedButtonClicked);
-    connect(delayTimer, &QTimer::timeout, this, &SearchEditWidget::performSearch); // 连接计时器超时信号
+    connect(delayTimer, &QTimer::timeout, this, &SearchEditWidget::performSearch);   // 连接计时器超时信号
 
     // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
     // 选中内容时，记录光标开始位置以及选中的长度
@@ -336,6 +336,7 @@ void SearchEditWidget::updateSearchWidgetLayout()
 
 void SearchEditWidget::quitSearch()
 {
+    lastSearchTime = 0;
     delayTimer->stop();
     // deactivateEdit();
     Q_EMIT searchQuit();
@@ -344,7 +345,7 @@ void SearchEditWidget::quitSearch()
 int SearchEditWidget::determineSearchDelay(const QString &inputText)
 {
     // 基础等待时间
-    int delay = 200; // 毫秒
+    int delay = 200;   // 毫秒
 
     // 针对短输入增加延迟
     if (inputText.length() <= 2) {
@@ -352,6 +353,8 @@ int SearchEditWidget::determineSearchDelay(const QString &inputText)
 
         if (inputText == ".")
             delay += 1000;
+    } else if (inputText.length() >= 5) {
+        delay = 50;
     }
 
     // 对于可能返回大量结果的特殊字符增加延迟
