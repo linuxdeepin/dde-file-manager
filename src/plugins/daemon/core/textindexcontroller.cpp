@@ -39,6 +39,9 @@ TextIndexController::TextIndexController(QObject *parent)
             setupDBusConnections();
         }
 
+        // Start FS monitoring when idle state is activated
+        startFSMonitoring();
+
         fmInfo() << "[TextIndex] Checking index database existence";
         auto pendingExists = interface->IndexDatabaseExists();
         pendingExists.waitForFinished();
@@ -93,6 +96,9 @@ void TextIndexController::initialize()
     }
     fmInfo() << "[TextIndex] Successfully registered search config";
 
+    // Setup FSEventCollector
+    setupFSEventCollector();
+
     connect(DConfigManager::instance(), &DConfigManager::valueChanged,
             this, &TextIndexController::handleConfigChanged);
 }
@@ -103,6 +109,9 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
         bool newEnabled = DConfigManager::instance()->value(config, key).toBool();
         fmInfo() << "[TextIndex] Full text search enable changed:" << isEnabled << "->" << newEnabled;
         isEnabled = newEnabled;
+
+        if (!isEnabled)
+            stopFSMonitoring();
 
         if (auto handler = stateHandlers.find(currentState); handler != stateHandlers.end()) {
             fmInfo() << "[TextIndex] Triggering state handler for current state:" << static_cast<int>(currentState);
@@ -127,6 +136,8 @@ void TextIndexController::setupDBusConnections()
 
     connect(interface.get(), &OrgDeepinFilemanagerTextIndexInterface::TaskFinished,
             this, [this](const QString &type, const QString &path, bool success) {
+                if (path != QDir::homePath())
+                    return;
                 if (auto handler = taskFinishHandlers.find(currentState); handler != taskFinishHandlers.end()) {
                     handler->second(success);
                 }
@@ -169,6 +180,152 @@ void TextIndexController::updateState(State newState)
              << "Running(" << static_cast<int>(State::Running) << ")"
              << static_cast<int>(currentState) << "->" << static_cast<int>(newState);
     currentState = newState;
+}
+
+// FSEventCollector setup and handling methods
+
+void TextIndexController::setupFSEventCollector()
+{
+    fsEventCollector = std::make_unique<FSEventCollector>(this);
+    fsEventCollector->setCollectionInterval(180);   // Default 3 minutes
+    fsEventCollector->setMaxEventCount(10000);   // Default 10k events
+    if (DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool())
+        startFSMonitoring();
+    connect(fsEventCollector.get(), &FSEventCollector::filesCreated,
+            this, &TextIndexController::onFilesCreated);
+    connect(fsEventCollector.get(), &FSEventCollector::filesDeleted,
+            this, &TextIndexController::onFilesDeleted);
+    connect(fsEventCollector.get(), &FSEventCollector::filesModified,
+            this, &TextIndexController::onFilesModified);
+    connect(fsEventCollector.get(), &FSEventCollector::flushFinished,
+            this, &TextIndexController::onFlushFinished);
+}
+
+void TextIndexController::startFSMonitoring()
+{
+    if (!fsEventCollector) {
+        fmWarning() << "[TextIndex] Cannot start FS monitoring: FSEventCollector not initialized";
+        return;
+    }
+
+    if (fsEventCollector->isActive()) {
+        fmInfo() << "[TextIndex] FS monitoring already active";
+        return;
+    }
+
+    // Initialize with home directory (same as text index)
+    bool success = fsEventCollector->initialize(QDir::homePath());
+    if (!success) {
+        fmWarning() << "[TextIndex] Failed to initialize FSEventCollector";
+        return;
+    }
+
+    // Clear any previously collected events
+    collectedCreatedFiles.clear();
+    collectedDeletedFiles.clear();
+    collectedModifiedFiles.clear();
+
+    // Start the collector
+    success = fsEventCollector->start();
+    if (!success) {
+        fmWarning() << "[TextIndex] Failed to start FSEventCollector";
+        return;
+    }
+
+    fmInfo() << "[TextIndex] FS monitoring started successfully";
+}
+
+void TextIndexController::stopFSMonitoring()
+{
+    if (!fsEventCollector || !fsEventCollector->isActive()) {
+        return;
+    }
+
+    fsEventCollector->stop();
+
+    // Clear any collected events
+    collectedCreatedFiles.clear();
+    collectedDeletedFiles.clear();
+    collectedModifiedFiles.clear();
+
+    fmInfo() << "[TextIndex] FS monitoring stopped";
+}
+
+void TextIndexController::processFSEvents()
+{
+    if (!interface) {
+        fmWarning() << "[TextIndex] Cannot process FS events: DBus interface not initialized";
+        return;
+    }
+
+    // Check if we have any events to process
+    if (collectedCreatedFiles.isEmpty() && collectedModifiedFiles.isEmpty() && collectedDeletedFiles.isEmpty()) {
+        fmInfo() << "[TextIndex] No file system events to process";
+        return;
+    }
+
+    fmInfo() << "[TextIndex] Processing file changes - Created:" << collectedCreatedFiles.size()
+             << "Modified:" << collectedModifiedFiles.size()
+             << "Deleted:" << collectedDeletedFiles.size();
+
+    auto pendingTask = interface->ProcessFileChanges(
+            collectedCreatedFiles, collectedModifiedFiles, collectedDeletedFiles);
+
+    pendingTask.waitForFinished();
+    if (pendingTask.isError()) {
+        fmWarning() << "[TextIndex] Failed to process file changes:" << pendingTask.error().message();
+    } else if (pendingTask.value()) {
+        fmInfo() << "[TextIndex] File changes processing started successfully";
+    } else {
+        fmWarning() << "[TextIndex] File changes processing returned false";
+    }
+
+    // Clear collections
+    collectedCreatedFiles.clear();
+    collectedDeletedFiles.clear();
+    collectedModifiedFiles.clear();
+}
+
+// FSEventCollector slots
+
+void TextIndexController::onFilesCreated(const QStringList &paths)
+{
+    if (!isEnabled) {
+        return;
+    }
+
+    fmInfo() << "[TextIndex] FS event: Files created -" << paths.size() << "items";
+    collectedCreatedFiles.append(paths);
+}
+
+void TextIndexController::onFilesDeleted(const QStringList &paths)
+{
+    if (!isEnabled) {
+        return;
+    }
+
+    fmInfo() << "[TextIndex] FS event: Files deleted -" << paths.size() << "items";
+    collectedDeletedFiles.append(paths);
+}
+
+void TextIndexController::onFilesModified(const QStringList &paths)
+{
+    if (!isEnabled) {
+        return;
+    }
+
+    fmInfo() << "[TextIndex] FS event: Files modified -" << paths.size() << "items";
+    collectedModifiedFiles.append(paths);
+}
+
+void TextIndexController::onFlushFinished()
+{
+    if (!isEnabled) {
+        return;
+    }
+
+    fmInfo() << "[TextIndex] FS event: Flush finished, processing events";
+    processFSEvents();
 }
 
 DAEMONPCORE_END_NAMESPACE
