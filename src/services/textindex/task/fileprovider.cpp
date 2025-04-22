@@ -106,6 +106,13 @@ MixedPathListProvider::MixedPathListProvider(const QStringList &pathList)
 
 void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handler)
 {
+    // TODO (search): use dconfig
+    // Default blacklisted directories
+    static QStringList kDefaultBlacklistedDirs = {
+        ".git", ".svn", ".hg", ".cache", ".local/share/Trash", ".Trash",
+        ".thumbnails", "thumbnails", ".mozilla"
+    };
+
     QSet<QString> processedFiles;   // 避免重复处理文件
     QSet<QString> visitedDirs;   // 避免目录循环引用
 
@@ -128,8 +135,17 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 processedFiles.insert(path);
             }
         } else if (fileInfo.isDir()) {
-            // 将目录加入队列
-            dirQueue.enqueue(path);
+            // 检查目录是否在黑名单中
+            bool isBlacklisted = false;
+            QString dirName = fileInfo.fileName();
+            if (kDefaultBlacklistedDirs.contains(dirName)) {
+                isBlacklisted = true;
+            }
+            
+            // 只有不在黑名单中的目录才加入队列
+            if (!isBlacklisted) {
+                dirQueue.enqueue(path);
+            }
         }
     }
 
@@ -169,8 +185,13 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
             if (IndexTraverseUtils::isSpecialDir(entry->d_name))
                 continue;
+            
+            QString entryName = QString::fromUtf8(entry->d_name);
+            // 检查目录名是否在黑名单中
+            if (kDefaultBlacklistedDirs.contains(entryName))
+                continue;
 
-            QString fullPath = QDir::cleanPath(currentDir + QDir::separator() + QString::fromUtf8(entry->d_name));
+            QString fullPath = QDir::cleanPath(currentDir + QDir::separator() + entryName);
 
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1)
@@ -186,6 +207,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
             }
             // 对于目录，加入队列
             else if (S_ISDIR(st.st_mode)) {
+                // 目录已在上面检查过黑名单，所以这里直接加入队列
                 dirQueue.enqueue(fullPath);
             }
         }

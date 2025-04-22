@@ -67,6 +67,7 @@ DFMBASE_USE_NAMESPACE
 //     }
 // }
 
+// TODO (search): use dconfig
 // Default blacklisted directories
 const QStringList FSMonitorPrivate::defaultBlacklistedDirs = {
     ".git", ".svn", ".hg", ".cache", ".local/share/Trash", ".Trash",
