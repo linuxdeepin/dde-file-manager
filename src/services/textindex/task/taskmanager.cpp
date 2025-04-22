@@ -134,10 +134,10 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     TaskHandler handler;
     switch (type) {
     case IndexTask::Type::CreateFileList:
-        handler = TaskHandlers::CreateFileListHandler(fileList);
+        handler = TaskHandlers::CreateOrUpdateFileListHandler(fileList);
         break;
     case IndexTask::Type::UpdateFileList:
-        handler = TaskHandlers::UpdateFileListHandler(fileList);
+        handler = TaskHandlers::CreateOrUpdateFileListHandler(fileList);
         break;
     case IndexTask::Type::RemoveFileList:
         handler = TaskHandlers::RemoveFileListHandler(fileList);

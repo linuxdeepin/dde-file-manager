@@ -37,10 +37,10 @@ class FSEventCollector : public QObject
 public:
     // Constructor with explicit FSMonitor reference
     explicit FSEventCollector(FSMonitor &monitor, QObject *parent = nullptr);
-    
+
     // Constructor with default FSMonitor (uses FSMonitor::instance())
     explicit FSEventCollector(QObject *parent = nullptr);
-    
+
     ~FSEventCollector() override;
 
     // Initialize the collector with monitor root path
@@ -89,6 +89,7 @@ Q_SIGNALS:
     void filesCreated(const QStringList &paths);
     void filesDeleted(const QStringList &paths);
     void filesModified(const QStringList &paths);
+    void flushFinished();
 
     // Emitted when maximum event count is reached
     void maxEventCountReached(int count);
@@ -104,4 +105,4 @@ private:
 
 DAEMONPCORE_END_NAMESPACE
 
-#endif // FSEVENTCOLLECTOR_H 
+#endif   // FSEVENTCOLLECTOR_H
