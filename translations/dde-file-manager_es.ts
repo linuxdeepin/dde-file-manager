@@ -407,7 +407,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Usar el diálogo del selector de archivos del administrador de archivos</translation>
+        <translation>Usar cuadro de diálogo nativo de Deepin para abrir y guardar archivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
@@ -3351,7 +3351,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Usar el diálogo del selector de archivos del administrador de archivos</translation>
+        <translation>Usar cuadro de diálogo nativo de Deepin para abrir y guardar archivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="429"/>
