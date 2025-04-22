@@ -52,7 +52,7 @@ class FileViewPrivate
     FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
     ViewAnimationHelper *animationHelper { nullptr };
-    QWidget *emptyInteractionArea { nullptr };
+    QWidget *headerWidget { nullptr };
 
     QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
