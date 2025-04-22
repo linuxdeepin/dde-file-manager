@@ -80,12 +80,12 @@ QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 
 void FileViewPrivate::initIconModeView()
 {
-    if (emptyInteractionArea) {
-        emptyInteractionArea->setVisible(false);
+    if (headerWidget) {
+        headerWidget->setVisible(false);
 
         if (headerView) {
             headerView->disconnect();
-            auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+            auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
             headerLayout->takeAt(0);
             delete headerView;
             headerView = nullptr;
@@ -112,20 +112,18 @@ void FileViewPrivate::initListModeView()
     if (q->itemDelegate())
         q->itemDelegate()->setItemMinimumHeightByHeightLevel(currentListHeightLevel);
 
-    if (!emptyInteractionArea) {
-        emptyInteractionArea = new QWidget(q);
-        QVBoxLayout *headerLayout = new QVBoxLayout;
-        headerLayout->setContentsMargins(0, 0, 0, 0);
+    if (!headerWidget) {
+        headerWidget = new QWidget(q);
+        QVBoxLayout *headerLayout = new QVBoxLayout(headerWidget);
+        headerLayout->setContentsMargins(0, 0, 0, 10);
         headerLayout->setAlignment(Qt::AlignTop);
-        emptyInteractionArea->setLayout(headerLayout);
-        emptyInteractionArea->setFixedHeight(10 + kListViewHeaderHeight);
-        emptyInteractionArea->installEventFilter(q);
-        q->addHeaderWidget(emptyInteractionArea);
+        headerWidget->installEventFilter(q);
+        q->addHeaderWidget(headerWidget);
     }
 
     if (!headerView) {
         q->initDefaultHeaderView();
-        auto headerLayout = qobject_cast<QVBoxLayout *>(emptyInteractionArea->layout());
+        auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
 
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
@@ -152,7 +150,7 @@ void FileViewPrivate::initListModeView()
         });
     }
 
-    emptyInteractionArea->setVisible(true);
+    headerWidget->setVisible(true);
 
     if (statusBar)
         statusBar->setScalingVisible(false);

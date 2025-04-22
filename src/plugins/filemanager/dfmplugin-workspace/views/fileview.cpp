@@ -1550,7 +1550,6 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
         && d->lastMousePressedIndex == indexAt(event->pos())) {
         selectionModel()->select(d->lastMousePressedIndex, QItemSelectionModel::Deselect);
     }
-
 }
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)
@@ -1952,7 +1951,7 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         }
     } break;
     case QEvent::MouseButtonPress: {
-        if (obj != d->emptyInteractionArea)
+        if (obj != d->headerWidget)
             break;
         auto e = dynamic_cast<QMouseEvent *>(event);
         if (!e)
@@ -2155,9 +2154,18 @@ void FileView::initializeScrollBarWatcher()
 
     connect(verticalScrollBar(), &QScrollBar::sliderPressed, this, [this] { d->scrollBarSliderPressed = true; });
     connect(verticalScrollBar(), &QScrollBar::sliderReleased, this, [this] { d->scrollBarSliderPressed = false; });
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this] {
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this](int value) {
         if (d->scrollBarSliderPressed)
             d->scrollBarValueChangedTimer->start();
+
+        if (d->headerWidget && d->headerWidget->isVisible()) {
+            auto headerLayout = d->headerWidget->layout();
+            auto margins = headerLayout->contentsMargins();
+            if (value > 0 && margins.bottom() != 0)
+                headerLayout->setContentsMargins(0, 0, 0, 0);
+            else if (value == 0 && margins.bottom() == 0)
+                headerLayout->setContentsMargins(0, 0, 0, 10);
+        }
     });
 }
 
