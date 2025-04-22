@@ -383,80 +383,8 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
     };
 }
 
-// 基于文件列表创建索引
-TaskHandler TaskHandlers::CreateFileListHandler(const QStringList &fileList)
-{
-    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
-        Q_UNUSED(path)
-        fmInfo() << "Creating index for file list with" << fileList.size() << "entries";
-
-        HandlerResult result { false, false };
-        QDir dir;
-        if (!dir.exists(DFMSEARCH::Global::contentIndexDirectory())) {
-            if (!dir.mkpath(DFMSEARCH::Global::contentIndexDirectory())) {
-                fmWarning() << "Unable to create index directory:" << DFMSEARCH::Global::contentIndexDirectory();
-                return result;
-            }
-        }
-
-        try {
-            IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
-                    true,
-                    IndexWriter::MaxFieldLengthUNLIMITED);
-
-            // 添加 writer 的 ScopeGuard
-            ScopeGuard writerCloser([&writer]() {
-                try {
-                    if (writer) writer->close();
-                } catch (...) {
-                    // 忽略关闭时的异常
-                }
-            });
-
-            fmInfo() << "Indexing files to directory:" << DFMSEARCH::Global::contentIndexDirectory();
-
-            writer->deleteAll();
-
-            // 使用文件列表提供者遍历文件
-            auto provider = createFileListProvider(fileList);
-            if (!provider) {
-                fmWarning() << "Failed to create file list provider";
-                return result;
-            }
-
-            ProgressReporter reporter;
-            provider->traverse(running, [&](const QString &file) {
-                processFile(file, writer, &reporter);
-            });
-
-            // Only the creation of an index that is interrupted is also considered a failure
-            // Created indexes must be guaranteed to be complete
-            if (!running.isRunning()) {
-                fmWarning() << "Create index task was interrupted";
-                result.interrupted = true;
-                result.success = false;   // 创建被打断若不失败索引是不完整的
-                return result;
-            }
-
-            writer->optimize();
-            result.success = true;
-
-            return result;
-        } catch (const LuceneException &e) {
-            fmWarning() << "Create index failed with Lucene exception:"
-                        << QString::fromStdWString(e.getError());
-        } catch (const std::exception &e) {
-            fmWarning() << "Create index failed with exception:" << e.what();
-        }
-
-        return result;
-    };
-}
-
 // 基于文件列表更新索引
-TaskHandler TaskHandlers::UpdateFileListHandler(const QStringList &fileList)
+TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileList)
 {
     return [fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
