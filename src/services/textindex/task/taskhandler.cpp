@@ -216,7 +216,8 @@ std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &pa
         SearchOptions options;
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
-        options.setIncludeHidden(true);
+        // TODO (search): dconfig
+        options.setIncludeHidden(false);   // Note: too many hidden files!
         FileNameOptionsAPI fileNameOptions(options);
         fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
         engine->setSearchOptions(options);
