@@ -37,9 +37,6 @@ void Core::initialize()
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 
-    // limit CPU to 50%
-    QProcess::startDetached("systemctl", { "--runtime", "--user", "set-property", "dde-file-manager.service", "CPUQuota=50%" });
-
     textIndexController.reset(new TextIndexController);
     textIndexController->initialize();
 }
