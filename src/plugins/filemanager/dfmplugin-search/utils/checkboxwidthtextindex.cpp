@@ -148,6 +148,9 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     });
 
     auto client = TextIndexClient::instance();
+    // Note: checkService 非常重要！不激活后端无法正确的连接信号
+    auto status = client->checkService();
+    fmDebug() << "TextIndex backend status:" << status;
     connect(client, &TextIndexClient::taskProgressChanged,
             this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count) {
                 fmDebug() << "Index task changed:" << type << path << count;
