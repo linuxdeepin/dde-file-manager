@@ -2,7 +2,6 @@
     "name": "org.deepin.Filemanager.TextIndex",
     "libPath": "libdde-filemanager-textindex.so",
     "policyStartType": "OnDemand",
-    "idleTime": 180,
     "pluginType": "qt",
     "policy": [
         {

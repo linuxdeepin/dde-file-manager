@@ -5,7 +5,7 @@
 #ifndef FSEVENTCOLLECTOR_H
 #define FSEVENTCOLLECTOR_H
 
-#include "daemonplugin_core_global.h"
+#include "service_textindex_global.h"
 #include "fsmonitor.h"
 
 #include <QObject>
@@ -15,7 +15,7 @@
 #include <QTimer>
 #include <QMutex>
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSEventCollectorPrivate;
 
@@ -103,6 +103,6 @@ private:
     Q_DECLARE_PRIVATE(FSEventCollector)
 };
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FSEVENTCOLLECTOR_H

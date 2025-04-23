@@ -5,7 +5,7 @@
 #define TEXTINDEXCONTROLLER_H
 
 #include "daemonplugin_core_global.h"
-#include "fsmonitor/fseventcollector.h"
+
 #include <QObject>
 #include <memory>
 #include <functional>
@@ -37,29 +37,12 @@ private:
     void startIndexTask(bool isCreate);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
-    
-    // File system monitoring methods
-    void setupFSEventCollector();
-    void startFSMonitoring();
-    void stopFSMonitoring();
-    void processFSEvents();
-
-private slots:
-    void onFilesCreated(const QStringList &paths);
-    void onFilesDeleted(const QStringList &paths);
-    void onFilesModified(const QStringList &paths);
-    void onFlushFinished();
+    void activeBackend();
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
-    std::unique_ptr<FSEventCollector> fsEventCollector;
     State currentState { State::Disabled };
     bool isEnabled { false };
-
-    // Collected file events
-    QStringList collectedCreatedFiles;
-    QStringList collectedDeletedFiles;
-    QStringList collectedModifiedFiles;
 
     // 状态处理器映射
     std::map<State, StateHandler> stateHandlers;

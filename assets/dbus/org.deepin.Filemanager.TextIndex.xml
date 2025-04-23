@@ -11,6 +11,12 @@
       <arg name="path" type="s" direction="out"/>
       <arg name="count" type="x" direction="out"/>
     </signal>
+    <method name="isEnabled">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setEnabled">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
     <method name="CreateIndexTask">
       <arg type="b" direction="out"/>
       <arg name="path" type="s" direction="in"/>

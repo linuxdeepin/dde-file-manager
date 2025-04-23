@@ -17,9 +17,10 @@
 #include <QStorageInfo>
 #include <QUrl>
 
-DCORE_USE_NAMESPACE
-DAEMONPCORE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DCORE_USE_NAMESPACE
+
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 // Example:
 // void testMonitor()
@@ -648,4 +649,4 @@ int FSMonitor::maxAvailableWatchCount() const
     return d->maxWatches;
 }
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
