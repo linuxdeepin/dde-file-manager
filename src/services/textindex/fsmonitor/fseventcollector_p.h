@@ -69,6 +69,9 @@ public:
     // Remove redundant entries from all event lists
     void cleanupRedundantEntries();
 
+    // Check if a file should be indexed based on its extension
+    bool shouldIndexFile(const QString &path) const;
+
     // Debug and error logging helpers
     void logDebug(const QString &message) const;
     void logError(const QString &message) const;

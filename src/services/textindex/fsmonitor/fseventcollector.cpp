@@ -138,6 +138,27 @@ void FSEventCollectorPrivate::stopCollecting()
     logDebug("Stopped event collection");
 }
 
+bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
+{
+    // Always track directories regardless of extension
+    if (isDirectory(path)) {
+        return true;
+    }
+    
+    // Get file suffix for extension check
+    QFileInfo fileInfo(path);
+    QString suffix = fileInfo.suffix();
+    
+    // Check if extension is supported for content search
+    bool supported = DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
+    
+    if (!supported) {
+        logDebug(QString("Skipping file with unsupported extension: %1 (suffix: %2)").arg(path, suffix));
+    }
+    
+    return supported;
+}
+
 void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QString &name)
 {
     QString fullPath = normalizePath(path, name);
@@ -156,12 +177,15 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
     } else {
         // Check if this file is under a directory that's already in the created list
         if (!isChildOfAnyPath(fullPath, createdFilesList)) {
-            createdFilesList.insert(fullPath);
-            logDebug(QString("Added to created list: %1").arg(fullPath));
+            // Only insert if file has supported extension or is a directory
+            if (shouldIndexFile(fullPath)) {
+                createdFilesList.insert(fullPath);
+                logDebug(QString("Added to created list: %1").arg(fullPath));
 
-            // If this is a directory, remove any files in the list that are under this directory
-            if (isDirectory(fullPath)) {
-                removeRedundantEntries(createdFilesList);
+                // If this is a directory, remove any files in the list that are under this directory
+                if (isDirectory(fullPath)) {
+                    removeRedundantEntries(createdFilesList);
+                }
             }
         } else {
             logDebug(QString("Skipped adding to created list (parent directory already added): %1").arg(fullPath));
@@ -199,12 +223,15 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
 
         // Check if this file is under a directory that's already in the deleted list
         if (!isChildOfAnyPath(fullPath, deletedFilesList)) {
-            deletedFilesList.insert(fullPath);
-            logDebug(QString("Added to deleted list: %1").arg(fullPath));
+            // Only insert if file has supported extension or is a directory
+            if (shouldIndexFile(fullPath)) {
+                deletedFilesList.insert(fullPath);
+                logDebug(QString("Added to deleted list: %1").arg(fullPath));
 
-            // If this is a directory, remove any files in the list that are under this directory
-            if (isDirectory(fullPath)) {
-                removeRedundantEntries(deletedFilesList);
+                // If this is a directory, remove any files in the list that are under this directory
+                if (isDirectory(fullPath)) {
+                    removeRedundantEntries(deletedFilesList);
+                }
             }
         } else {
             logDebug(QString("Skipped adding to deleted list (parent directory already added): %1").arg(fullPath));
@@ -238,8 +265,11 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
         // For modified files, we only care about actual files, not directories
         // So we don't need to check for parent directories or redundant entries
         if (!isDirectory(fullPath) && !isChildOfAnyPath(fullPath, createdFilesList) && !isChildOfAnyPath(fullPath, deletedFilesList)) {
-            modifiedFilesList.insert(fullPath);
-            logDebug(QString("Added to modified list: %1").arg(fullPath));
+            // Only insert if file has supported extension
+            if (shouldIndexFile(fullPath)) {
+                modifiedFilesList.insert(fullPath);
+                logDebug(QString("Added to modified list: %1").arg(fullPath));
+            }
         } else {
             logDebug(QString("Skipped adding to modified list (directory or parent directory already in lists): %1").arg(fullPath));
         }
