@@ -25,13 +25,14 @@ public:
     ~TextIndexDBus();
 
 public Q_SLOTS:
+    bool isEnabled();
+    void setEnabled(bool enabled);
     bool CreateIndexTask(const QString &path);
     bool UpdateIndexTask(const QString &path);
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();
     QString GetLastUpdateTime();
-
     bool ProcessFileChanges(const QStringList &createdFiles, const QStringList &modifiedFiles, const QStringList &deletedFiles);
 
 Q_SIGNALS:

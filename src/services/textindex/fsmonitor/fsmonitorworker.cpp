@@ -9,7 +9,7 @@
 #include <QCoreApplication>
 #include <QMetaObject>
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 FSMonitorWorker::FSMonitorWorker(QObject *parent)
     : QObject(parent)
@@ -66,4 +66,4 @@ void FSMonitorWorker::setExclusionChecker(const std::function<bool(const QString
     }
 }
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE

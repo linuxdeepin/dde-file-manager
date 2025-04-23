@@ -5,7 +5,7 @@
 #ifndef FSMONITORWORKER_H
 #define FSMONITORWORKER_H
 
-#include "daemonplugin_core_global.h"
+#include "service_textindex_global.h"
 
 #include <QObject>
 #include <QDir>
@@ -13,7 +13,7 @@
 
 #include <functional>
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSMonitorWorker : public QObject
 {
@@ -42,6 +42,6 @@ private:
     std::function<bool(const QString &)> exclusionChecker;
 };
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FSMONITORWORKER_H
