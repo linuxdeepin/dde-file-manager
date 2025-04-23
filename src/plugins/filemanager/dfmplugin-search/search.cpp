@@ -132,31 +132,6 @@ void Search::regSearchSettingConfig()
         fmWarning() << "cannot regist dconfig of search plugin:" << err;
 
     SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
-    if (SearchHelper::anythingInterface().isValid()) {
-        SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexInternal,
-                                                            tr("Auto index internal disk"),
-                                                            true);
-        SettingBackend::instance()->addSettingAccessor(
-                SearchSettings::kIndexInternal,
-                []() {
-                    return SearchHelper::anythingInterface().property("autoIndexInternal");
-                },
-                [](const QVariant &val) {
-                    SearchHelper::anythingInterface().setProperty("autoIndexInternal", val);
-                });
-
-        SettingJsonGenerator::instance()->addCheckBoxConfig(SearchSettings::kIndexExternal,
-                                                            tr("Index external storage device after connected to computer"),
-                                                            false);
-        SettingBackend::instance()->addSettingAccessor(
-                SearchSettings::kIndexExternal,
-                []() {
-                    return SearchHelper::anythingInterface().property("autoIndexExternal");
-                },
-                [](const QVariant &val) {
-                    SearchHelper::anythingInterface().setProperty("autoIndexExternal", val);
-                });
-    }
 
     QString textIndexKey { SearchSettings::kFulltextSearch };
     DialogManager::instance()->registerSettingWidget("checkBoxWidthTextIndex", &SearchHelper::createCheckBoxWidthTextIndex);
