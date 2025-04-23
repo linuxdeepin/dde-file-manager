@@ -139,6 +139,12 @@ bool isSupportedFile(const QString &path)
     if (!fileInfo.exists() || !fileInfo.isFile())
         return false;
 
+    // TODO (search): dconfig
+    // 检查文件大小是否超过 50MB（50 * 1024 * 1024 字节）
+    const qint64 kMaxSupportedSize = 50 * 1024 * 1024;   // 50MB
+    if (fileInfo.size() > kMaxSupportedSize)
+        return false;
+
     const QString &suffix = fileInfo.suffix().toLower();
     return DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
 }
