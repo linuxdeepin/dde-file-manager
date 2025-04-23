@@ -435,7 +435,6 @@ void FSEventCollectorPrivate::cleanupRedundantEntries()
 
 bool FSEventCollectorPrivate::isMaxEventCountExceeded() const
 {
-
     int total = createdFilesList.size() + deletedFilesList.size() + modifiedFilesList.size();
     return total >= maxEvents;
 }
