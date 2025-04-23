@@ -4,8 +4,9 @@
 
 #include "fsmonitor_p.h"
 
-#include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/protocolutils.h>
+
+#include <dfm-search/dsearch_global.h>
 
 #include <DFileSystemWatcher>
 
@@ -259,14 +260,9 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
         }
 
         // Check if any parent directory is hidden
-        QString parentPath = fileInfo.path();
-        while (!parentPath.isEmpty() && parentPath != "/") {
-            QFileInfo parentInfo(parentPath);
-            if (parentInfo.fileName().startsWith('.')) {
-                logDebug(QString("Excluding file in hidden directory: %1").arg(path));
-                return true;
-            }
-            parentPath = parentInfo.path();
+        if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath())) {
+            logDebug(QString("Excluding file in hidden directory: %1").arg(path));
+            return true;
         }
     }
 
@@ -310,7 +306,8 @@ bool FSMonitorPrivate::isSymbolicLink(const QString &path) const
 
 bool FSMonitorPrivate::showHidden() const
 {
-    return Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    // TODO (search): dconfig
+    return false;
 }
 
 bool FSMonitorPrivate::isExternalMount(const QString &path) const
