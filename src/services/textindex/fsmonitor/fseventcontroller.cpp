@@ -31,7 +31,7 @@ void FSEventController::setupFSEventCollector()
     m_stopTimer->setSingleShot(true);
     connect(m_stopTimer, &QTimer::timeout, this, [this]() {
         if (m_enabled) {
-            fmWarning() << "Cannot stop monitor, enabled statec has been changed";
+            fmWarning() << "Cannot stop monitor, enabled state has been changed";
             return;
         }
         stopFSMonitoring();
