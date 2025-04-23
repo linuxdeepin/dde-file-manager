@@ -11,7 +11,7 @@
 #include <QSet>
 #include <QDateTime>
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSEventCollectorPrivate
 {
@@ -105,6 +105,6 @@ public:
     QSet<QString> modifiedFilesList;
 };
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FSEVENTCOLLECTOR_P_H

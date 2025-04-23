@@ -10,8 +10,9 @@
 #include <QDir>
 #include <QFileInfo>
 
-DAEMONPCORE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 FSEventCollectorPrivate::FSEventCollectorPrivate(FSEventCollector *qq, FSMonitor &monitor)
     : q_ptr(qq), fsMonitor(monitor)
@@ -630,4 +631,4 @@ int FSEventCollector::totalEventsCount() const
     return d->createdFilesList.size() + d->deletedFilesList.size() + d->modifiedFilesList.size();
 }
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE

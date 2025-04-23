@@ -53,6 +53,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    DFM6::base
     Qt6::Core
     Qt6::DBus
     Qt6::Gui

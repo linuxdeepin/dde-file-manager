@@ -15,6 +15,11 @@ SERVICETEXTINDEX_END_NAMESPACE
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
 
+void TextIndexDBusPrivate::initialize()
+{
+    fsEventController->setupFSEventCollector();
+}
+
 void TextIndexDBusPrivate::initConnect()
 {
     QObject::connect(taskManager, &TaskManager::taskFinished,
@@ -26,6 +31,9 @@ void TextIndexDBusPrivate::initConnect()
                      q, [this](const QString &type, const QString &path, qint64 count) {
                          emit q->TaskProgressChanged(type, path, count);
                      });
+
+    QObject::connect(fsEventController, &FSEventController::requestProcessFileChanges,
+                     q, &TextIndexDBus::ProcessFileChanges);
 }
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
@@ -38,6 +46,18 @@ TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
 }
 
 TextIndexDBus::~TextIndexDBus() { }
+
+bool TextIndexDBus::isEnabled()
+{
+    return d->fsEventController->isEnabled();
+}
+
+void TextIndexDBus::setEnabled(bool enabled)
+{
+    Q_ASSERT(d->fsEventController);
+    // TODO: (search) update all indexs and fsmonitor if first launched
+    d->fsEventController->setEnabled(enabled);
+}
 
 bool TextIndexDBus::CreateIndexTask(const QString &path)
 {
@@ -87,29 +107,29 @@ QString TextIndexDBus::GetLastUpdateTime()
     return IndexUtility::getLastUpdateTime();
 }
 
-bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles, 
-                                      const QStringList &modifiedFiles, 
-                                      const QStringList &deletedFiles)
+bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
+                                       const QStringList &modifiedFiles,
+                                       const QStringList &deletedFiles)
 {
     bool tasksQueued = false;
-    
+
     // 处理删除的文件（优先处理，因为这些文件可能已经不存在）
     if (!deletedFiles.isEmpty()) {
         fmInfo() << "Processing" << deletedFiles.size() << "deleted files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::RemoveFileList, deletedFiles) || tasksQueued;
     }
-    
+
     // 处理新增的文件
     if (!createdFiles.isEmpty()) {
         fmInfo() << "Processing" << createdFiles.size() << "created files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::CreateFileList, createdFiles) || tasksQueued;
     }
-    
+
     // 处理修改的文件
     if (!modifiedFiles.isEmpty()) {
         fmInfo() << "Processing" << modifiedFiles.size() << "modified files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::UpdateFileList, modifiedFiles) || tasksQueued;
     }
-    
+
     return tasksQueued;
 }

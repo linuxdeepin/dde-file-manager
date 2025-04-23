@@ -5,7 +5,7 @@
 #ifndef FSMONITOR_H
 #define FSMONITOR_H
 
-#include "daemonplugin_core_global.h"
+#include "service_textindex_global.h"
 
 #include <QObject>
 #include <QStringList>
@@ -20,13 +20,13 @@ class DFileSystemWatcher;
 }
 }
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSMonitorPrivate;
 
 // FSMonitor: A recursive file system monitor based on DFileSystemWatcher
 // Monitors user's home directory and handles file/directory events for indexing
-// 
+//
 // Features:
 // - Recursively watches directories
 // - Manages system resource usage by limiting watch count
@@ -117,6 +117,6 @@ private:
     Q_DECLARE_PRIVATE(FSMonitor)
 };
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FSMONITOR_H

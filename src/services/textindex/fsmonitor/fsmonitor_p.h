@@ -18,7 +18,7 @@ class DFileSystemWatcher;
 }
 }
 
-DAEMONPCORE_BEGIN_NAMESPACE
+SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSMonitorPrivate
 {
@@ -109,6 +109,6 @@ public:
     static const QStringList defaultBlacklistedDirs;
 };
 
-DAEMONPCORE_END_NAMESPACE
+SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // FSMONITOR_P_H
