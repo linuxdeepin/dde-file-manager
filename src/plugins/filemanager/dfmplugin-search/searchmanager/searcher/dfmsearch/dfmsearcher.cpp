@@ -74,10 +74,13 @@ bool DFMSearcher::search()
         return false;
     }
 
+    // Transform the path using FileUtils::bindPathTransform to handle bind mounts
+    const QString transformedPath = FileUtils::bindPathTransform(path, false);
+
     // Set search options
     SearchOptions options;
     options.setSearchMethod(SearchMethod::Indexed);
-    options.setSearchPath(path);
+    options.setSearchPath(transformedPath);
     options.setCaseSensitive(false);
     options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
     engine->setSearchOptions(options);
