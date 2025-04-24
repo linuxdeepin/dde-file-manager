@@ -50,6 +50,7 @@ QString pbkdf2::createRandomSalt(int byte)
 
     char *cstr = BN_bn2hex(rnd);
     QString strRandSalt = QString::fromUtf8(QByteArray(cstr));
+    free(cstr);
     BN_free(rnd);
 
     return strRandSalt;

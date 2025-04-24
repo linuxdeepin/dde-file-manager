@@ -215,7 +215,7 @@ void VaultHelper::appendWinID(const quint64 &winId)
 DMenu *VaultHelper::createMenu()
 {
     DMenu *menu = new DMenu;
-    DMenu *timeMenu = new DMenu;
+    DMenu *timeMenu = new DMenu(menu);
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted:
         menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::createVaultDialog);
