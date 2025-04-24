@@ -37,7 +37,7 @@ Q_SIGNALS:
                                    const QStringList &deletedFiles);
 
 private:
-    bool m_enabled { true };
+    bool m_enabled { false };
     std::unique_ptr<FSEventCollector> m_fsEventCollector;
     QTimer *m_stopTimer;
 

@@ -51,6 +51,8 @@ TaskManager::~TaskManager()
 
 bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 {
+    Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
+               "Type error", "Only create and update supported");
     if (!IndexUtility::isDefaultIndexedDirectory(path)) {
         fmWarning() << "Cannot start new task, path isn't default directory";
         return false;
@@ -128,7 +130,8 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     }
 
     // 正常启动任务流程
-    fmInfo() << "Starting new file list task with" << fileList.size() << "files";
+    fmInfo() << "Starting new file list task with" << fileList.size() << "files. "
+             << "Type:" << type;
 
     // 获取对应的任务处理器
     TaskHandler handler;

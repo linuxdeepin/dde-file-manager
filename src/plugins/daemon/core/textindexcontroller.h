@@ -7,6 +7,8 @@
 #include "daemonplugin_core_global.h"
 
 #include <QObject>
+#include <QTimer>
+
 #include <memory>
 #include <functional>
 
@@ -38,11 +40,14 @@ private:
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
     void activeBackend();
+    void keepBackendAlive();
+    bool isBackendAvaliable();
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
     State currentState { State::Disabled };
     bool isEnabled { false };
+    QTimer *keepAliveTimer { nullptr };
 
     // 状态处理器映射
     std::map<State, StateHandler> stateHandlers;

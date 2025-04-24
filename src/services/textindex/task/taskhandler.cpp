@@ -395,7 +395,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
 {
     return [fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
-        fmInfo() << "Updating index for file list with" << fileList.size() << "entries";
+        fmInfo() << "Creating/Updating index for file list with" << fileList.size() << "entries";
         HandlerResult result { false, false };
 
         try {
