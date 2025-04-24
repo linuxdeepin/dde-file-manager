@@ -19,6 +19,7 @@ public:
     void setupFSEventCollector();
     bool isEnabled() const;
     void setEnabled(bool enabled);
+    void setEnabledNow(bool enabled);
 
 private Q_SLOTS:
     void onFilesCreated(const QStringList &paths);

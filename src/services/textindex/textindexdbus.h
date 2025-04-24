@@ -24,6 +24,8 @@ public:
     explicit TextIndexDBus(const char *name, QObject *parent = nullptr);
     ~TextIndexDBus();
 
+    void cleanup();
+
 public Q_SLOTS:
     bool isEnabled();
     void setEnabled(bool enabled);
