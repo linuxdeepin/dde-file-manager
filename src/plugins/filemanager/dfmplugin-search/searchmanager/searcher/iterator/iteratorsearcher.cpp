@@ -4,76 +4,73 @@
 
 #include "iteratorsearcher.h"
 #include "utils/searchhelper.h"
-#include "searchworker.h"
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QDebug>
+#include <QDirIterator>
+#include <QFileInfo>
 #include <QApplication>
-#include <QCoreApplication>
-#include <QThread>
+#include <QMetaObject>
 
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
 IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &key, QObject *parent)
-    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(key), parent)
+    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(key), parent),
+      isStopped(false),
+      isProcessingQueue(false)
 {
-    qDebug() << "[Search] IteratorSearcher created with url:" << url.toString() << "keyword:" << key;
-    
     // Create regex for search pattern
-    regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
-    
-    // Create worker and move to worker thread
-    worker = QSharedPointer<SearchWorker>::create(url, regex);
-    worker->moveToThread(&workerThread);
-    
-    // Connect worker signals to searcher slots
-    connect(worker.data(), &SearchWorker::requestIteratorCreation, 
-            this, &IteratorSearcher::createDirIterator);
-    
-    connect(worker.data(), &SearchWorker::resultsReady,
-            this, &IteratorSearcher::onResultsReady);
-    
-    connect(worker.data(), &SearchWorker::searchFinished,
-            this, &IteratorSearcher::onSearchFinished);
-    
-    // Connect thread finished signal to ensure proper cleanup
-    connect(&workerThread, &QThread::finished, [this]() {
-        if (worker) {
-            worker.clear();
-        }
-    });
+    regex = QRegularExpression(keyword);
 }
 
 IteratorSearcher::~IteratorSearcher()
 {
-    // Ensure worker thread is properly terminated
-    if (workerThread.isRunning()) {
-        if (worker) {
-            QMetaObject::invokeMethod(worker.data(), "requestStop", Qt::QueuedConnection);
-        }
-        
-        workerThread.quit();
-        if (!workerThread.wait(500)) {
-            workerThread.terminate();
-            workerThread.wait();
-        }
-    }
+    pendingDirs.clear();
 }
 
 bool IteratorSearcher::search()
 {
     // Atomic state transition from Ready to Running
     if (!status.testAndSetRelease(kReady, kRuning)) {
-        qDebug() << "[Search] Cannot start search - not in Ready state";
         return false;
     }
-    
-    // Start worker thread and trigger search process
-    workerThread.start();
-    QMetaObject::invokeMethod(worker.data(), "startSearch", Qt::QueuedConnection);
+
+    // Connect our signal to the main thread's slot using Qt::ConnectionType::BlockingQueuedConnection
+    // This must be set up before search starts
+    QObject *mainThreadReceiver = qApp;
+    connect(this, &IteratorSearcher::requestCreateIterator, mainThreadReceiver, 
+            [this](const QUrl &url) {
+                // This lambda runs in the main thread
+                if (status.loadAcquire() != kRuning || isStopped) {
+                    return;
+                }
+                
+                // Create iterator in main thread
+                auto iterator = DirIteratorFactory::create(url, QStringList(), 
+                                                         QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
+                if (!iterator) {
+                    // Signal back to our worker thread
+                    QMetaObject::invokeMethod(this, "onIteratorCreated", Qt::QueuedConnection,
+                                           Q_ARG(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator>, nullptr),
+                                           Q_ARG(QUrl, url));
+                    return;
+                }
+                
+                iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,"
+                                    "standard::is-symlink,standard::symlink-target,access::*,time::*");
+                
+                // Pass the iterator back to our worker thread
+                QMetaObject::invokeMethod(this, "onIteratorCreated", Qt::QueuedConnection,
+                                       Q_ARG(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator>, iterator),
+                                       Q_ARG(QUrl, url));
+            }, 
+            Qt::ConnectionType::QueuedConnection);
+
+    // Start with the root search URL
+    processDirectory(searchUrl);
     
     return true;
 }
@@ -82,25 +79,14 @@ void IteratorSearcher::stop()
 {
     // Mark as terminated
     status.storeRelease(kTerminated);
+    isStopped = true;
+    
+    // Clear pending directories
+    pendingDirs.clear();
     
     // Ensure pending results are processed
-    if (hasItem()) {
+    if (hasItem())
         emit unearthed(this);
-    }
-    
-    // Request worker to stop
-    if (worker && workerThread.isRunning()) {
-        QMetaObject::invokeMethod(worker.data(), "requestStop", Qt::QueuedConnection);
-    }
-    
-    // Terminate thread if running
-    if (workerThread.isRunning()) {
-        workerThread.quit();
-        if (!workerThread.wait(200)) {
-            workerThread.terminate();
-            workerThread.wait();
-        }
-    }
     
     emit finished();
 }
@@ -114,7 +100,9 @@ bool IteratorSearcher::hasItem() const
 DFMSearchResultMap IteratorSearcher::takeAll()
 {
     QMutexLocker lk(&mutex);
-    return std::move(resultMap);
+    DFMSearchResultMap results = resultMap;
+    resultMap.clear();
+    return results;
 }
 
 QList<QUrl> IteratorSearcher::takeAllUrls()
@@ -131,58 +119,106 @@ QList<QUrl> IteratorSearcher::takeAllUrls()
     return urls;
 }
 
-void IteratorSearcher::createDirIterator(const QUrl &url)
+void IteratorSearcher::processDirectory(const QUrl &url)
 {
-    // This method is executed in main thread context
-    Q_ASSERT(QThread::currentThread() == QCoreApplication::instance()->thread());
-    
-    if (status.loadAcquire() != kRuning) {
+    if (status.loadAcquire() != kRuning || isStopped)
         return;
-    }
-    
-    // Create directory iterator
-    auto iterator = DirIteratorFactory::create(url, QStringList(), 
-                                              QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
-    if (!iterator) {
-        return;
-    }
-    
-    iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,"
-                         "standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
-    
-    // Send iterator back to worker thread for processing
-    QMetaObject::invokeMethod(worker.data(), "processDirIterator", 
-                             Qt::QueuedConnection, 
-                             Q_ARG(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator>, iterator),
-                             Q_ARG(QUrl, url));
-}
 
-void IteratorSearcher::onResultsReady(const DFMSearchResultMap &results)
-{
-    if (status.loadAcquire() != kRuning) {
-        return;
-    }
-    
-    // Add results to result map without checking for duplicates
-    {
-        QMutexLocker lk(&mutex);
-        for (auto it = results.constBegin(); it != results.constEnd(); ++it) {
-            resultMap.insert(it.key(), it.value());
-        }
-    }
-    
-    // Notify about new results
-    emit unearthed(this);
-}
+    // Add to pending queue
+    if (url.isValid())
+        pendingDirs.enqueue(url);
 
-void IteratorSearcher::onSearchFinished()
-{
-    // Final state transition
-    if (status.testAndSetRelease(kRuning, kCompleted)) {
-        if (hasItem()) {
-            emit unearthed(this);
-        }
-        
+    // If all done, notify finished
+    if (pendingDirs.isEmpty() && !isStopped && status.loadAcquire() == kRuning) {
+        status.storeRelease(kCompleted);
         emit finished();
     }
+
+    // If already processing queue, just return
+    if (isProcessingQueue)
+        return;
+    
+    // Process the first URL in the queue
+    isProcessingQueue = true;
+    
+    // Process all pending directories
+    while (!pendingDirs.isEmpty() && !isStopped && status.loadAcquire() == kRuning) {
+        QUrl currentUrl = pendingDirs.dequeue();
+        
+        // Request iterator creation in the main thread
+        emit requestCreateIterator(currentUrl);
+    }
+    
+    isProcessingQueue = false;
+}
+
+void IteratorSearcher::onIteratorCreated(QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> iterator, const QUrl &url)
+{
+    if (status.loadAcquire() != kRuning || isStopped)
+        return;
+    
+    // If iterator creation failed, just move on
+    if (!iterator) {
+        // Continue processing the queue
+        QMetaObject::invokeMethod(this, "processDirectory", Qt::QueuedConnection, 
+                                 Q_ARG(QUrl, QUrl()));
+        return;
+    }
+    
+    // Process directory entries with our iterator
+    DFMSearchResultMap newResults;
+    QList<QUrl> subDirs;
+    
+    while (iterator->hasNext() && !isStopped) {
+        if (status.loadAcquire() != kRuning) {
+            break;
+        }
+        
+        QUrl fileUrl = iterator->next();
+        auto info = iterator->fileInfo();
+        if (!info || !info->exists())
+            continue;
+        
+        // Add subdirectories to search queue
+        if (info->isAttributes(OptInfoType::kIsDir) && !info->isAttributes(OptInfoType::kIsSymLink)) {
+            const auto &dirUrl = info->urlOf(UrlInfoType::kUrl);
+            if (!dirUrl.path().startsWith("/sys/")) {
+                subDirs << dirUrl;
+            }
+        }
+        
+        // Check if file name matches search pattern
+        if (regex.match(info->displayOf(DisPlayInfoType::kFileDisplayName)).hasMatch()) {
+            // Create search result
+            DFMSearchResult result;
+            result.setUrl(fileUrl);
+            result.setMatchScore(1.0);  // Default match score
+            
+            // Add to results
+            newResults.insert(fileUrl, result);
+        }
+    }
+
+    // Process results
+    if (!newResults.isEmpty() && !isStopped) {
+        // Add results to result map
+        {
+            QMutexLocker lk(&mutex);
+            for (auto it = newResults.constBegin(); it != newResults.constEnd(); ++it) {
+                resultMap.insert(it.key(), it.value());
+            }
+        }
+        
+        // Notify about new results
+        emit unearthed(this);
+    }
+    
+    // Add subdirectories to the queue
+    for (const QUrl &subDir : subDirs) {
+        pendingDirs.enqueue(subDir);
+    }
+    
+    // Continue processing the queue
+    QMetaObject::invokeMethod(this, "processDirectory", Qt::QueuedConnection, 
+                             Q_ARG(QUrl, QUrl()));
 }
