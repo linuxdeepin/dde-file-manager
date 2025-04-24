@@ -42,6 +42,7 @@ private:
     void activeBackend();
     void keepBackendAlive();
     bool isBackendAvaliable();
+    void updateKeepAliveTimer();
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;

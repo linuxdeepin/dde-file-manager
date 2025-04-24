@@ -94,11 +94,10 @@ void TextIndexController::initialize()
     fmInfo() << "[TextIndex] Successfully registered search config";
     isEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
     keepAliveTimer->setInterval(5 * 60 * 1000);   // 5 min
+    updateKeepAliveTimer();
 
-    if (isEnabled) {
-        keepAliveTimer->start();
+    if (isEnabled)
         activeBackend();
-    }
 
     // 使用心跳，否则 textindex backend 会被退出
     connect(keepAliveTimer, &QTimer::timeout, this, &TextIndexController::keepBackendAlive);
@@ -114,11 +113,7 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
         fmInfo() << "[TextIndex] Full text search enable changed:" << isEnabled << "->" << newEnabled;
         isEnabled = newEnabled;
         activeBackend();
-
-        if (isEnabled)
-            keepAliveTimer->start();
-        else
-            keepAliveTimer->stop();
+        updateKeepAliveTimer();
 
         if (auto handler = stateHandlers.find(currentState); handler != stateHandlers.end()) {
             fmInfo() << "[TextIndex] Triggering state handler for current state:" << static_cast<int>(currentState);
@@ -159,6 +154,14 @@ bool TextIndexController::isBackendAvaliable()
         return false;
 
     return true;
+}
+
+void TextIndexController::updateKeepAliveTimer()
+{
+    if (isEnabled && !keepAliveTimer->isActive())
+        keepAliveTimer->start();
+    else if (!isEnabled && keepAliveTimer->isActive())
+        keepAliveTimer->stop();
 }
 
 void TextIndexController::setupDBusConnections()
