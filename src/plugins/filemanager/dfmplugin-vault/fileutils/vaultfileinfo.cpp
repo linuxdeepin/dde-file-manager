@@ -90,6 +90,7 @@ VaultFileInfo::VaultFileInfo(const QUrl &url, const FileInfoPointer &proxy)
 
 VaultFileInfo::~VaultFileInfo()
 {
+    delete d;
 }
 
 VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
