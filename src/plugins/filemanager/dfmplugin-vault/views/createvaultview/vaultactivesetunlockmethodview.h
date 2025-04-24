@@ -35,6 +35,7 @@ class VaultActiveSetUnlockMethodView : public QWidget
     Q_OBJECT
 public:
     explicit VaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
+    ~VaultActiveSetUnlockMethodView();
     void clearText();
 
 signals:
