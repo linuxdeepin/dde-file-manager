@@ -211,6 +211,40 @@ void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressRepor
     }
 }
 
+void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
+{
+    try {
+        fmInfo() << "Checking for deleted files in index...";
+        SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+
+        // 获取所有文档
+        TermPtr allDocsTerm = newLucene<Term>(L"path", L"*");
+        WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
+        TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
+
+        int removedCount = 0;
+        // 检查每个文档对应的文件是否存在
+        for (int32_t i = 0; i < allDocs->totalHits && running.isRunning(); ++i) {
+            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
+            String pathValue = doc->get(L"path");
+            QString filePath = QString::fromStdWString(pathValue);
+
+            if (!QFileInfo::exists(filePath)) {
+                TermPtr term = newLucene<Term>(L"path", pathValue);
+                writer->deleteDocuments(term);
+                removedCount++;
+            }
+        }
+
+        if (removedCount > 0) {
+            fmInfo() << "Removed" << removedCount << "deleted files from index";
+        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Error checking for deleted files:" << e.what();
+        // 继续执行，不要因为清理失败而中断整个更新过程
+    }
+}
+
 }   // namespace
 
 // 创建文件提供者
@@ -354,6 +388,9 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                     // 忽略关闭时的异常
                 }
             });
+
+            // 清理已删除文件的索引
+            cleanupIndexs(reader, writer, running);
 
             // 使用文件提供者遍历文件
             auto provider = createFileProvider(path);
