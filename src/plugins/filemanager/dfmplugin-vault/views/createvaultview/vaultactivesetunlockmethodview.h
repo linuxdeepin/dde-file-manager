@@ -6,6 +6,7 @@
 #define VAULTSETUNLOCKMETHODVIEW_H
 
 #include "dfmplugin_vault_global.h"
+#include "vaultbaseview.h"
 
 #include <dtkwidget_global.h>
 #include <DSuggestButton>
@@ -30,18 +31,14 @@ DWIDGET_END_NAMESPACE
 namespace dfmplugin_vault {
 inline constexpr int kPasswordLength { 18 };
 
-class VaultActiveSetUnlockMethodView : public QWidget
+class VaultActiveSetUnlockMethodView : public VaultBaseView
 {
     Q_OBJECT
 public:
     explicit VaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
     ~VaultActiveSetUnlockMethodView();
     void clearText();
-
-signals:
-    void sigAccepted();
-
-public slots:
+    void setEncryptInfo(EncryptInfo &info) override;
 
 private slots:
     void slotPasswordEditing();
@@ -51,8 +48,6 @@ private slots:
     void slotRepeatPasswordEditing();
     void slotRepeatPasswordEditFocusChanged(bool bFocus);
     void slotGenerateEditChanged(const QString &str);
-    //! 下一步按钮点击
-    void slotNextBtnClicked();
     //! 类型切换
     void slotTypeChanged(int index);
     //! 随即密码长度改变

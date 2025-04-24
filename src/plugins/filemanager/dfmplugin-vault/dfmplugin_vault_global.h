@@ -232,6 +232,26 @@ enum class Connectivity {
     Full   // 主机已连接到网络，并且似乎能够访问完整的Internet
 };
 
+enum EncryptMode {
+    kKeyMode = 0,   // 密钥加密
+    kTransparentMode   // 透明加密
+};
+
+// 加密信息
+struct EncryptInfo
+{
+    EncryptMode mode;
+    QString password;
+    QString hint;
+    QString keyPath;
+};
+
+struct Result
+{
+    bool result;
+    QString message;
+};
+
 inline constexpr char kVaultDConfigName[] { "org.deepin.dde.file-manager.vault" };
 }
 

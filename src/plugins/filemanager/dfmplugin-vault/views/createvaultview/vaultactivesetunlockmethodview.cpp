@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultactivesetunlockmethodview.h"
-#include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
 #include "utils/encryption/vaultconfig.h"
 
@@ -28,13 +27,10 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
-    : QWidget(parent)
+    : VaultBaseView(parent)
 {
     initUi();
     initConnect();
-
-    if (!OperatorCenter::getInstance()->createDirAndFile())
-        fmCritical() << "Vault: create dir and file failed!";
 }
 
 VaultActiveSetUnlockMethodView::~VaultActiveSetUnlockMethodView()
@@ -50,9 +46,8 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new DComboBox(this);
-    QStringList lstItems;
-    lstItems << tr("Key encryption") << tr("Transparent encryption");
-    typeCombo->addItems(lstItems);
+    typeCombo->addItem(tr("Key encryption"), EncryptMode::kKeyMode);
+    typeCombo->addItem(tr("Transparent encryption"), EncryptMode::kTransparentMode);
 
     QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
     QValidator *validator = new QRegularExpressionValidator(regx, this);
@@ -160,7 +155,7 @@ void VaultActiveSetUnlockMethodView::initConnect()
     connect(repeatPasswordEdit, &DPasswordEdit::focusChanged,
             this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
     connect(nextBtn, &DPushButton::clicked,
-            this, &VaultActiveSetUnlockMethodView::slotNextBtnClicked);
+            this, &VaultActiveSetUnlockMethodView::accepted);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -180,6 +175,15 @@ void VaultActiveSetUnlockMethodView::clearText()
     //! 修复BUG-51508 取消密码框警告状态
     repeatPasswordEdit->setAlert(false);
     tipsEdit->clear();
+}
+
+void VaultActiveSetUnlockMethodView::setEncryptInfo(EncryptInfo &info)
+{
+    info.mode = typeCombo->currentData().value<EncryptMode>();
+    if (info.mode == EncryptMode::kKeyMode) {
+        info.password = passwordEdit->text();
+        info.hint = tipsEdit->text();
+    }
 }
 
 void VaultActiveSetUnlockMethodView::slotPasswordEditing()
@@ -261,37 +265,6 @@ void VaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
         nextBtn->setEnabled(false);
     } else {
         nextBtn->setEnabled(true);
-    }
-}
-
-void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
-{
-    VaultConfig config;
-    config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
-
-    if (typeCombo->currentIndex() == 0) {   // key encryption
-        QString strPassword = passwordEdit->text();
-        QString strPasswordHint = tipsEdit->text();
-        if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
-            && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
-            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
-            emit sigAccepted();
-        }
-    } else {   // transparent encryption
-        const QString &password = OperatorCenter::getInstance()->autoGeneratePassword(kPasswordLength);
-        if (password.isEmpty()) {
-            fmCritical() << "Vault: auto Generate password failed!";
-            return;
-        }
-
-        // save password to keyring
-        if (OperatorCenter::getInstance()->savePasswordToKeyring(password)) {
-            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodTransparent));
-            config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
-            emit sigAccepted();
-        } else {
-            fmCritical() << "Vault: save password to keyring failed!";
-        }
     }
 }
 
