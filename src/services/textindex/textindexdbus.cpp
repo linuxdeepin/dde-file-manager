@@ -47,6 +47,12 @@ TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
 
 TextIndexDBus::~TextIndexDBus() { }
 
+void TextIndexDBus::cleanup()
+{
+    d->fsEventController->setEnabledNow(false);
+    StopCurrentTask();
+}
+
 bool TextIndexDBus::isEnabled()
 {
     return d->fsEventController->isEnabled();
