@@ -109,14 +109,13 @@ void SimplifiedSearchWorker::createSearchers()
     // 使用IteratorSearcher作为文件系统搜索器
     IteratorSearcher *searcher = new IteratorSearcher(searchUrl, searchKeyword, this);
 
-    // 连接信号，IteratorSearcher需要在主线程中创建DirIterator
-    // 由于IteratorSearcher内部已经处理了主线程创建逻辑，不需要额外处理
+    // 连接信号以接收搜索结果和完成通知
     connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
     connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
 
     searchers.append(searcher);
 
-    // 启动搜索 - IteratorSearcher会通过requestCreateIterator信号在主线程创建DirIterator
+    // 启动搜索
     searcher->search();
 }
 
