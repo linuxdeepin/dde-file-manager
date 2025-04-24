@@ -147,7 +147,7 @@ void FSEventController::onFlushFinished()
         return;
     }
 
-    fmInfo() << " Processing file changes - Created:" << m_collectedCreatedFiles.size()
+    fmInfo() << "Processing file changes - Created:" << m_collectedCreatedFiles.size()
              << "Modified:" << m_collectedModifiedFiles.size()
              << "Deleted:" << m_collectedDeletedFiles.size();
 

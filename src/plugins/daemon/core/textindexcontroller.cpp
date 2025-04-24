@@ -14,7 +14,7 @@ static constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
 static constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
 
 TextIndexController::TextIndexController(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), keepAliveTimer(new QTimer(this))
 {
     // 初始化状态处理器
     stateHandlers[State::Disabled] = [this](bool enable) {
@@ -34,7 +34,7 @@ TextIndexController::TextIndexController(QObject *parent)
             return;
         }
 
-        if (!interface) {
+        if (!isBackendAvaliable()) {
             fmInfo() << "[TextIndex] Setting up DBus connections in Idle state";
             setupDBusConnections();
         }
@@ -93,9 +93,15 @@ void TextIndexController::initialize()
     }
     fmInfo() << "[TextIndex] Successfully registered search config";
     isEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
+    keepAliveTimer->setInterval(5 * 60 * 1000);   // 5 min
 
-    if (isEnabled)
+    if (isEnabled) {
+        keepAliveTimer->start();
         activeBackend();
+    }
+
+    // 使用心跳，否则 textindex backend 会被退出
+    connect(keepAliveTimer, &QTimer::timeout, this, &TextIndexController::keepBackendAlive);
 
     connect(DConfigManager::instance(), &DConfigManager::valueChanged,
             this, &TextIndexController::handleConfigChanged);
@@ -109,6 +115,11 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
         isEnabled = newEnabled;
         activeBackend();
 
+        if (isEnabled)
+            keepAliveTimer->start();
+        else
+            keepAliveTimer->stop();
+
         if (auto handler = stateHandlers.find(currentState); handler != stateHandlers.end()) {
             fmInfo() << "[TextIndex] Triggering state handler for current state:" << static_cast<int>(currentState);
             handler->second(isEnabled);
@@ -120,15 +131,34 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
 
 void TextIndexController::activeBackend()
 {
-    if (!interface)
-        setupDBusConnections();
-
-    if (!interface) {
-        fmWarning() << "[TextIndex] Cannot process FS events: DBus interface not initialized";
+    if (!isBackendAvaliable()) {
+        fmWarning() << "activeBackend failed, DBus interface not initialized";
         return;
     }
 
     interface->setEnabled(isEnabled);
+}
+
+void TextIndexController::keepBackendAlive()
+{
+    if (!isBackendAvaliable()) {
+        fmWarning() << "keepBackend failed, DBus interface not initialized";
+        return;
+    }
+
+    bool enabled = interface->isEnabled();
+    fmInfo() << "Textindex backend status: " << enabled;
+}
+
+bool TextIndexController::isBackendAvaliable()
+{
+    if (!interface)
+        setupDBusConnections();
+
+    if (!interface)
+        return false;
+
+    return true;
 }
 
 void TextIndexController::setupDBusConnections()
