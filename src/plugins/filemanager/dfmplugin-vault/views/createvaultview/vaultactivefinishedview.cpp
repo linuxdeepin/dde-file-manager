@@ -40,7 +40,7 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
-    : QWidget(parent)
+    : VaultBaseView(parent)
 {
     initUi();
     initConnect();
@@ -71,11 +71,11 @@ void VaultActiveFinishedView::initUi()
 
     // 加密完成完成图片
     encryptFinishedImageLabel = new DLabel(this);
-    encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
     encryptFinishedImageLabel->setAlignment(Qt::AlignHCenter);
     // 加密完成提示
-    tipsThree = new DLabel(tr("The setup is complete"), this);
+    tipsThree = new DLabel(this);
     tipsThree->setAlignment(Qt::AlignHCenter);
+    tipsThree->setWordWrap(true);
 
     // 加密保险箱按钮
     finishedBtn = new DSuggestButton(tr("Encrypt"), this);
@@ -101,7 +101,7 @@ void VaultActiveFinishedView::initUi()
     play3->setContentsMargins(0, 22, 0, 0);
     play3->addWidget(encryptFinishedImageLabel, 0, Qt::AlignCenter);
     play3->addSpacing(22);
-    play3->addWidget(tipsThree, 0, Qt::AlignCenter);
+    play3->addWidget(tipsThree);
 
     QVBoxLayout *m_pLay = new QVBoxLayout(this);
     m_pLay->setContentsMargins(0, 0, 0, 0);
@@ -116,9 +116,6 @@ void VaultActiveFinishedView::initUi()
     widgetThree->setVisible(false);
 
     initUiForSizeMode();
-
-    // 初始化定时器
-    timer = new QTimer(this);
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultFinishTitle);
@@ -145,10 +142,6 @@ void VaultActiveFinishedView::initConnect()
 {
     connect(finishedBtn, &DPushButton::clicked,
             this, &VaultActiveFinishedView::slotEncryptVault);
-    connect(VaultHelper::instance(), &VaultHelper::sigCreateVault,
-            this, &VaultActiveFinishedView::slotEncryptComplete);
-    connect(timer, &QTimer::timeout,
-            this, &VaultActiveFinishedView::slotTimeout);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -166,15 +159,27 @@ void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
     widgetThree->setVisible(false);
 }
 
-void VaultActiveFinishedView::slotEncryptComplete(int nState)
+void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
 {
+    waterProgress->stop();
+    widgetOne->setVisible(false);
+    widgetTow->setVisible(false);
+    widgetThree->setVisible(true);
+    finishedBtn->setEnabled(true);
+    // 显示右上角关闭按钮
+    if (parentWidget()) {
+        DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
+        if (pParent) {
+            pParent->setCloseButtonVisible(true);
+        }
+    }
+
     using namespace dfmplugin_utils;
-    if (nState == 0) {   // 创建保险箱成功
+    if (success) {   // 创建保险箱成功
         waterProgress->setValue(100);
-        waterProgress->stop();
-        repaint();
-        timer->setSingleShot(true);
-        timer->start(500);
+        encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
+        tipsThree->setText(tr("The setup is complete"));
+        finishedBtn->setText(tr("OK"));
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
 
         // report log
@@ -183,8 +188,15 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
 
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
     } else {
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", QString(tr("Failed to create file vault: %1").arg(nState)));
+        encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(100, 100));
+        tipsThree->setText(msg);
+        finishedBtn->setText(tr("Close"));
     }
+}
+
+void VaultActiveFinishedView::setProgressValue(int value)
+{
+    waterProgress->setValue(value);
 }
 
 void VaultActiveFinishedView::slotEncryptVault()
@@ -193,62 +205,31 @@ void VaultActiveFinishedView::slotEncryptVault()
         // 异步授权
         VaultUtils::instance().showAuthorityDialog(kPolkitVaultCreate);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
-                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
+                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished,
+                Qt::UniqueConnection);
         // 灰化按钮，避免异步时用户再次点击按钮
         finishedBtn->setEnabled(false);
     } else {
-        // 切换到保险箱主页面
-        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
-        VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
-        VaultHelper::recordTime(kjsonGroupName, kjsonKeyLockTime);
-        emit sigAccepted();
+        if (finishedBtn->text() == tr("OK")) {
+            // 切换到保险箱主页面
+            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
+            VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+            VaultHelper::recordTime(kjsonGroupName, kjsonKeyLockTime);
+        }
+        emit accepted();
     }
 }
 
 void VaultActiveFinishedView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
-               this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
-    if (isVisible()) {
-        if (result) {
-            if (finishedBtn->text() == tr("Encrypt")) {
-                // 完成按钮灰化
-                finishedBtn->setEnabled(false);
-
-                // 进度条
-                waterProgress->start();
-                widgetOne->setVisible(false);
-                widgetTow->setVisible(true);
-                widgetThree->setVisible(false);
-
-                std::thread t([]() {
-                    VaultConfig config;
-                    QString encrypitonMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
-                    if (encrypitonMethod == QString(kConfigKeyNotExist)) {
-                        fmWarning() << "Vault: Get encryption method failed!";
-                        return;
-                    }
-
-                    QString password { "" };
-                    if (encrypitonMethod == QString(kConfigValueMethodKey)) {
-                        password = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
-                    } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
-                        password = OperatorCenter::getInstance()->passwordFromKeyring();
-                    } else {
-                        fmWarning() << "Vault: Get encryption method failed, can't create vault!";
-                    }
-                    if (!password.isEmpty()) {
-                        VaultHelper::instance()->createVault(password);
-                        OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-                    } else {
-                        fmWarning() << "Vault: Get password is empty, failed to create the vault!";
-                    }
-                });
-                t.detach();
-            }
-        } else {
-            finishedBtn->setEnabled(true);
-        }
+    finishedBtn->setEnabled(!result);
+    if (result && isVisible() && finishedBtn->text() == tr("Encrypt")) {
+        // 进度条
+        waterProgress->start();
+        widgetOne->setVisible(false);
+        widgetTow->setVisible(true);
+        widgetThree->setVisible(false);
+        emit reqEncryptVault();
     }
 }
 

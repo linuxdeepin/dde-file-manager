@@ -25,7 +25,7 @@ public:
      * \brief createDirAndFile 创建保险箱目录及密钥文件
      * \return 是否成功
      */
-    bool createDirAndFile();
+    Result createDirAndFile();
 
     /*!
      * \brief savePasswordAndPasswordHint Save password, save Password hint to file
@@ -33,7 +33,7 @@ public:
      * \param passwordHint 密码提示
      * \return 是否成功
      */
-    bool savePasswordAndPasswordHint(const QString &password, const QString &passwordHint);
+    Result savePasswordAndPasswordHint(const QString &password, const QString &passwordHint);
 
     /*!
      * \brief createKey rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）
@@ -95,7 +95,7 @@ public:
     //! 执行shell命令并获得shell命令的返回值
     int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
-    bool savePasswordToKeyring(const QString &password);
+    Result savePasswordToKeyring(const QString &password);
     QString passwordFromKeyring();
 
     void removeVault(const QString &basePath);
@@ -120,7 +120,7 @@ public:
      * \param in password 密码
      * \return 是否成功
      */
-    bool createKeyNew(const QString &password);
+    Result createKeyNew(const QString &password);
 
     /*!
      * \brief saveKey 保存公钥
@@ -128,7 +128,7 @@ public:
      * \param path 保存路径
      * \return
      */
-    bool saveKey(QString key, QString path);
+    Result saveKey(QString key, QString path);
 
     /*!
      * \brief getPubKey 获得密码公钥

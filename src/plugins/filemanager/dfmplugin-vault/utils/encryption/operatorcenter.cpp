@@ -146,7 +146,7 @@ void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *remo
     emit fileRemovedProgress(value);
 }
 
-bool OperatorCenter::createKeyNew(const QString &password)
+Result OperatorCenter::createKeyNew(const QString &password)
 {
     strPubKey.clear();
     QString strPriKey("");
@@ -157,9 +157,9 @@ bool OperatorCenter::createKeyNew(const QString &password)
 
     // 验证公钥长度
     if (strPubKey.length() < 2 * kUserKeyInterceptIndex + 32) {
-        fmCritical("Vault: USER_KEY_LENGTH is to long!");
+        fmCritical("Vault: USER_KEY_LENGTH is too long!");
         strPubKey.clear();
-        return false;
+        return { false, tr("Failed to create public key: The key length is too long!") };
     }
 
     // 保存密文
@@ -167,29 +167,32 @@ bool OperatorCenter::createKeyNew(const QString &password)
     QFile cipherFile(strCipherFilePath);
     if (!cipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         fmCritical("Vault: open rsa cipher file failed!");
-        return false;
+        return { false, tr("Failed to save rsa ciphertext file: %1").arg(strerror(errno)) };
     }
     QTextStream out2(&cipherFile);
     out2 << strCipher;
     cipherFile.close();
 
-    return true;
+    return { true };
 }
 
-bool OperatorCenter::saveKey(QString key, QString path)
+Result OperatorCenter::saveKey(QString key, QString path)
 {
+    if (key.isEmpty())
+        return { false, tr("Failed to save public key file: The public key is empty.") };
+
     // 保存部分公钥
     QString publicFilePath = path;
     QFile publicFile(publicFilePath);
     if (!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         fmCritical() << "Vault: open public key file failure!";
-        return false;
+        return { false, tr("Failed to save public key file: %1").arg(strerror(errno)) };
     }
     publicFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     QTextStream out(&publicFile);
     out << key;
     publicFile.close();
-    return true;
+    return { true };
 }
 
 QString OperatorCenter::getPubKey()
@@ -241,7 +244,7 @@ OperatorCenter::~OperatorCenter()
 {
 }
 
-bool OperatorCenter::createDirAndFile()
+Result OperatorCenter::createDirAndFile()
 {
     // 创建配置文件目录
     QString strConfigDir = makeVaultLocalPath();
@@ -250,7 +253,7 @@ bool OperatorCenter::createDirAndFile()
         bool ok = configDir.mkpath(strConfigDir);
         if (!ok) {
             fmCritical() << "Vault: create config dir failed!";
-            return false;
+            return { false, tr("Failed to create config dir: %1").arg(strerror(errno)) };
         }
     }
 
@@ -272,7 +275,7 @@ bool OperatorCenter::createDirAndFile()
     QFile prikeyFile(strPriKeyFile);
     if (!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         fmCritical() << "Vault: create rsa private key file failed!";
-        return false;
+        return { false, tr("Failed to create rsa private key file: %1").arg(strerror(errno)) };
     }
     prikeyFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     prikeyFile.close();
@@ -282,7 +285,7 @@ bool OperatorCenter::createDirAndFile()
     QFile rsaCiphertextFile(strRsaCiphertext);
     if (!rsaCiphertextFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         fmCritical() << "Vault: create rsa ciphertext file failed!";
-        return false;
+        return { false, tr("Failed to create rsa ciphertext file: %1").arg(strerror(errno)) };
     }
     rsaCiphertextFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     rsaCiphertextFile.close();
@@ -292,15 +295,15 @@ bool OperatorCenter::createDirAndFile()
     QFile passwordHintFile(strPasswordHintFilePath);
     if (!passwordHintFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         fmCritical() << "Vault: create password hint file failed!";
-        return false;
+        return { false, tr("Failed to create hint file: %1").arg(strerror(errno)) };
     }
     passwordHintFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     passwordHintFile.close();
 
-    return true;
+    return { true };
 }
 
-bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
+Result OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
 {
     // encrypt password，write salt and cihper to file
     // random salt
@@ -317,7 +320,7 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
     QFile passwordHintFile(strPasswordHintFilePath);
     if (!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         fmCritical() << "Vault: open password hint file failed!";
-        return false;
+        return { false, tr("Failed to save hint info: %1").arg(strerror(errno)) };
     }
     QTextStream out2(&passwordHintFile);
     out2 << passwordHint;
@@ -331,7 +334,7 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
         strCryfsPassword = strSaltAndCiphertext;
     }
 
-    return true;
+    return { true };
 }
 
 bool OperatorCenter::createKey(const QString &password, int bytes)
@@ -617,7 +620,7 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
     }
 }
 
-bool OperatorCenter::savePasswordToKeyring(const QString &password)
+Result OperatorCenter::savePasswordToKeyring(const QString &password)
 {
     fmInfo() << "Vault: start store password to keyring!";
 
@@ -643,12 +646,12 @@ bool OperatorCenter::savePasswordToKeyring(const QString &password)
 
     if (error != Q_NULLPTR) {
         fmCritical() << "Vault: Store password failed! error :" << QString(error->message);
-        return false;
+        return { false, tr("Save password failed: %1").arg(error->message) };
     }
 
     fmInfo() << "Vault: Store password end!";
 
-    return true;
+    return { true };
 }
 
 QString OperatorCenter::passwordFromKeyring()
