@@ -37,6 +37,12 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
         fmCritical() << "Vault: create dir and file failed!";
 }
 
+VaultActiveSetUnlockMethodView::~VaultActiveSetUnlockMethodView()
+{
+    if (!transEncryptTextLay->parent())
+        delete transEncryptTextLay;
+}
+
 void VaultActiveSetUnlockMethodView::initUi()
 {
     titleLabel = new DLabel(tr("Set Vault Password"), this);
