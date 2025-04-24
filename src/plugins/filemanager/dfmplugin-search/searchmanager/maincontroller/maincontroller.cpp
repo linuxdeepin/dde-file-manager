@@ -23,17 +23,18 @@ MainController::MainController(QObject *parent)
 
 MainController::~MainController()
 {
-    for (auto &task : taskManager) {
-        task->deleteSelf();
-        task = nullptr;
+    for (auto task : taskManager.values()) {
+        task->stop();
+        task->deleteLater();
     }
     taskManager.clear();
 }
 
 bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString &keyword)
 {
-    if (taskManager.contains(taskId))
-        taskManager[taskId]->deleteSelf();
+    if (taskManager.contains(taskId)) {
+        taskManager[taskId]->stop();
+    }
 
     auto task = new TaskCommander(taskId, url, keyword);
     Q_ASSERT(task);
@@ -48,14 +49,16 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     }
 
     fmWarning() << "fail to start task " << task << task->taskID();
-    task->deleteSelf();
+    task->deleteLater();
     return false;
 }
 
 void MainController::stop(QString taskId)
 {
-    if (taskManager.contains(taskId))
+    if (taskManager.contains(taskId)) {
         taskManager[taskId]->stop();
+        taskManager.remove(taskId);
+    }
 }
 
 DFMSearchResultMap MainController::getResults(QString taskId)
@@ -77,9 +80,4 @@ QList<QUrl> MainController::getResultUrls(QString taskId)
 void MainController::onFinished(QString taskId)
 {
     emit searchCompleted(taskId);
-
-    if (taskManager.contains(taskId)) {
-        taskManager[taskId]->deleteSelf();
-        taskManager.remove(taskId);
-    }
 }

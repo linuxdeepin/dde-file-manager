@@ -9,13 +9,11 @@
 #include "searchmanager/searcher/searchresult_define.h"
 
 #include <QObject>
-#include <QReadWriteLock>
 #include <QUrl>
 
 DPSEARCH_BEGIN_NAMESPACE
 
 class TaskCommanderPrivate;
-class AbstractSearcher;
 class TaskCommander : public QObject
 {
     Q_OBJECT
@@ -23,22 +21,30 @@ class TaskCommander : public QObject
 
 private:
     explicit TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    ~TaskCommander();
+    
+    // 任务标识
     QString taskID() const;
     
-    // 获取统一的搜索结果
+    // 获取搜索结果
     DFMSearchResultMap getResults() const;
-    
-    // 为了兼容性保留的接口，实际使用 DFMSearchResultMap
     QList<QUrl> getResultsUrls() const;
     
+    // 控制搜索流程
     bool start();
     void stop();
-    void deleteSelf();
-    void createSearcher(const QUrl &url, const QString &keyword);
+    // void deleteSelf();
+    
+    // 准备销毁任务，非阻塞方式停止线程
+    // void prepareForDestroy();
+
+public Q_SLOTS:
+    void onWorkThreadFinished();
 
 signals:
     void matched(QString taskId);
     void finished(QString taskId);
+    void threadFinished(QString taskId);
 
 private:
     TaskCommanderPrivate *d;

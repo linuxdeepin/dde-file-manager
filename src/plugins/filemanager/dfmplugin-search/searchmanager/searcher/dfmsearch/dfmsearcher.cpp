@@ -12,8 +12,6 @@
 
 #include <QDebug>
 
-static constexpr int kEmitInterval = 50;   // Notification time interval (ms)
-
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 DFM_SEARCH_USE_NS
@@ -28,7 +26,15 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
     }
 
     connect(engine, &SearchEngine::searchStarted, this, &DFMSearcher::onSearchStarted);
-    // connect(engine, &SearchEngine::resultFound, this, &DFMSearcher::onResultFound);
+    // connect(engine, &SearchEngine::resultFound, this, [this](const SearchResult &result) {
+    //     // 直接处理搜索结果，不再使用后台处理线程
+    //     processSearchResult(result);
+        
+    //     // 如果找到了结果，发出信号通知
+    //     if (!allResults.isEmpty() && allResults.size() % kBatchSize == 0) {
+    //         emit unearthed(this);
+    //     }
+    // });
     connect(engine, &SearchEngine::searchFinished, this, &DFMSearcher::onSearchFinished);
     connect(engine, &SearchEngine::searchCancelled, this, &DFMSearcher::onSearchCancelled);
     connect(engine, &SearchEngine::errorOccurred, this, &DFMSearcher::onSearchError);
@@ -36,12 +42,6 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 
 DFMSearcher::~DFMSearcher()
 {
-    // Cancel and wait for any background processing to finish before destruction
-    if (processingFuture.isRunning()) {
-        fmInfo() << "Canceling background result processing during destruction";
-        processingFuture.cancel();
-        processingFuture.waitForFinished();
-    }
 }
 
 bool DFMSearcher::supportUrl(const QUrl &url)
@@ -74,10 +74,6 @@ bool DFMSearcher::search()
         return false;
     }
 
-    notifyTimer.start();
-    lastEmit.storeRelaxed(0);
-    resultCount.storeRelaxed(0);
-
     // Set search options
     SearchOptions options;
     options.setSearchMethod(SearchMethod::Indexed);
@@ -99,13 +95,6 @@ void DFMSearcher::stop()
         fmInfo() << "Stopping search for:" << keyword;
         engine->cancel();
     }
-    
-    // Cancel and wait for any background processing to finish
-    if (processingFuture.isRunning()) {
-        fmInfo() << "Canceling background result processing";
-        processingFuture.cancel();
-        processingFuture.waitForFinished();
-    }
 }
 
 bool DFMSearcher::hasItem() const
@@ -119,7 +108,6 @@ DFMSearchResultMap DFMSearcher::takeAll()
     QMutexLocker lk(&mutex);
     DFMSearchResultMap result = std::move(allResults);
     allResults.clear();
-    resultCount.storeRelaxed(0);
     return result;
 }
 
@@ -128,27 +116,28 @@ SearchType DFMSearcher::getSearchType() const
     return engine ? engine->searchType() : SearchType::FileName;
 }
 
-void DFMSearcher::checkNotifyThreshold()
+void DFMSearcher::processSearchResult(const SearchResult &result)
 {
-    // Send notification signal if we have reached the batch size or time interval
-    bool shouldNotify = false;
+    QUrl url = QUrl::fromLocalFile(result.path());
     
-    // Check batch size threshold
-    if (resultCount.loadRelaxed() >= kBatchSize) {
-        shouldNotify = true;
+    // 创建统一的搜索结果数据结构
+    DFMSearchResult searchResult(url);
+    
+    // 根据搜索类型设置不同的字段
+    if (engine->searchType() == SearchType::Content) {
+        ContentResultAPI contentResult(const_cast<SearchResult &>(result));
+        searchResult.setHighlightedContent(contentResult.highlightedContent());
+        searchResult.setIsContentMatch(true);
+        searchResult.setMatchScore(1.0); // 内容匹配优先级更高
     } else {
-        // Check time interval threshold (if we have any results to send)
-        if (resultCount.loadRelaxed() > 0 && 
-            notifyTimer.elapsed() - lastEmit.loadRelaxed() > kEmitInterval) {
-            shouldNotify = true;
-        }
+        // 文件名搜索不包含高亮内容
+        searchResult.setIsContentMatch(false);
+        searchResult.setMatchScore(0.5); // 文件名匹配优先级较低
     }
-    
-    if (shouldNotify) {
-        lastEmit.storeRelaxed(notifyTimer.elapsed());
-        resultCount.storeRelaxed(0);
-        emit unearthed(this);
-    }
+
+    // 安全地存储结果
+    QMutexLocker lk(&mutex);
+    allResults.insert(url, searchResult);
 }
 
 void DFMSearcher::onSearchStarted()
@@ -156,118 +145,30 @@ void DFMSearcher::onSearchStarted()
     fmInfo() << "Search started for:" << keyword;
 }
 
-void DFMSearcher::processSearchResult(const SearchResult &result)
+void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
-    QUrl url = QUrl::fromLocalFile(result.path());
-    
-    // Create unified search result data structure
-    DFMSearchResult searchResult(url);
-    
-    // If it's content search, parse highlighted content
-    if (engine->searchType() == SearchType::Content) {
-        ContentResultAPI contentResult(const_cast<SearchResult &>(result));
-        searchResult.setHighlightedContent(contentResult.highlightedContent());
-        searchResult.setIsContentMatch(true);
-        searchResult.setMatchScore(1.0); // Content match has higher priority
-    } else {
-        // Filename search doesn't include highlighted content
-        searchResult.setIsContentMatch(false);
-        searchResult.setMatchScore(0.5); // Filename match has lower priority
-    }
-
-    // Store the result in a thread-safe way
-    QMutexLocker lk(&mutex);
-    allResults.insert(url, searchResult);
-    
-    // Increment result count for batch processing
-    resultCount.fetchAndAddRelaxed(1);
-}
-
-// void DFMSearcher::onResultFound(const SearchResult &result)
-// {
-//     processSearchResult(result);
-//     checkNotifyThreshold();
-// }
-
-void DFMSearcher::processResultsAsync(const QList<SearchResult> &results)
-{
-    // Process all results in a background thread
+    // 处理最后一批结果
     for (const auto &result : results) {
         processSearchResult(result);
     }
     
-    // Notify the UI thread about the results
-    QMetaObject::invokeMethod(this, [this]() {
-        if (resultCount.loadRelaxed() > 0) {
-            emit unearthed(this);
-            resultCount.storeRelaxed(0);
-        }
-        emit finished();
-    }, Qt::QueuedConnection);
-    
-    fmInfo() << "Finished processing" << results.size() << "search results in background thread";
-}
+    // 最后一次通知有新结果
+    if (!allResults.isEmpty())
+        emit unearthed(this);
 
-void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
-{
-    fmInfo() << "Search finished, found" << results.size() << "results";
-    
-    if (!engine->searchOptions().resultFoundEnabled()) {
-        if (results.size() > 50) {  // Process in background thread if we have many results
-            fmInfo() << "Processing large result set asynchronously";
-            processingFuture = QtConcurrent::run([this, results]() {
-                processResultsAsync(results);
-            });
-        } else {
-            // Process directly for small result sets
-            for (const auto &result : results) {
-                processSearchResult(result);
-            }
-            
-            // Ensure we notify about any remaining results
-            if (resultCount.loadRelaxed() > 0) {
-                emit unearthed(this);
-            }
-            
-            fmInfo() << "Search finished, result pushed";
-            emit finished();
-        }
-    } else {
-        // In this case, results have already been processed via onResultFound
-        // Just make sure we emit any remaining results
-        if (resultCount.loadRelaxed() > 0) {
-            emit unearthed(this);
-        }
-        
-        fmInfo() << "Search finished, result pushed";
-        emit finished();
-    }
+    // 搜索完成
+    emit finished();
 }
 
 void DFMSearcher::onSearchCancelled()
 {
-    fmInfo() << "Search cancelled";
-    
-    // Send any remaining results
-    if (resultCount.loadRelaxed() > 0) {
-        emit unearthed(this);
-    }
-    
+    auto type = getSearchType();
+    fmInfo() << "Search cancelled for:" << keyword << (type == SearchType::FileName ? "File name" : "Content");
     emit finished();
 }
 
 void DFMSearcher::onSearchError(const SearchError &error)
 {
-    fmWarning() << "Search error:"
-                << "Code:" << error.code().value()
-                << "Category:" << error.code().category().name()
-                << "Name:" << error.name()
-                << "Message:" << error.message();
-                
-    // Send any results we have so far
-    if (resultCount.loadRelaxed() > 0) {
-        emit unearthed(this);
-    }
-    
+    fmWarning() << "Search error:" << error.message() << "for query:" << keyword;
     emit finished();
 } 

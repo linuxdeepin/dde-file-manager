@@ -12,12 +12,7 @@
 #include <dfm-search/contentsearchapi.h>
 
 #include <QMutex>
-#include <QElapsedTimer>
-#include <QMap>
-#include <QAtomicInt>
-#include <QThreadPool>
-#include <QFuture>
-#include <QtConcurrent>
+#include <QUrl>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -40,15 +35,10 @@ public:
 private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
-    void processResultsAsync(const QList<DFMSEARCH::SearchResult> &results);
     DFMSEARCH::SearchType getSearchType() const;
-    
-    // Improves thread safety by using atomic value for notification tracking
-    void checkNotifyThreshold();
 
 private slots:
     void onSearchStarted();
-    // void onResultFound(const DFMSEARCH::SearchResult &result);
     void onSearchFinished(const QList<DFMSEARCH::SearchResult> &results);
     void onSearchCancelled();
     void onSearchError(const DFMSEARCH::SearchError &error);
@@ -57,12 +47,9 @@ private:
     DFMSEARCH::SearchEngine *engine { nullptr };
     DFMSearchResultMap allResults;
     mutable QMutex mutex;
-    QElapsedTimer notifyTimer;
-    QAtomicInt lastEmit { 0 };
-    QAtomicInt resultCount { 0 };
-    QFuture<void> processingFuture;
-    static constexpr int kBatchSize = 10;    // Number of results to batch before notifying
-    static constexpr int kEmitInterval = 50; // Milliseconds between notifications
+    
+    // 批处理大小，每找到这么多个结果就通知一次
+    static constexpr int kBatchSize = 10;
 };
 
 DPSEARCH_END_NAMESPACE

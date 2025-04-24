@@ -18,49 +18,62 @@
 #include <QMap>
 #include <QSet>
 #include <QThread>
-#include <QQueue>
 #include <QMutex>
-#include <QWaitCondition>
+#include <QTimer>
 
 DPSEARCH_BEGIN_NAMESPACE
 
-// New worker class for processing search results in a separate thread
-class SearchResultWorker : public QObject
+// 简化的单一搜索工作线程，负责整个搜索流程
+class SimplifiedSearchWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit SearchResultWorker(QObject *parent = nullptr);
-    ~SearchResultWorker() override;
+    explicit SimplifiedSearchWorker(QObject *parent = nullptr);
+    ~SimplifiedSearchWorker() override;
 
-    void processResults(AbstractSearcher *searcher);
-    void stop();
-    DFMSearchResultMap getResults();
+    // 设置搜索参数
+    Q_INVOKABLE void setTaskId(const QString &id) { taskId = id; }
+    Q_INVOKABLE void setSearchUrl(const QUrl &url) { searchUrl = url; }
+    Q_INVOKABLE void setKeyword(const QString &keyword) { searchKeyword = keyword; }
     
-    // 标记所有搜索器已完成，通知工作线程最终处理并等待
-    void allSearchersFinished();
+    // 获取结果
+    Q_INVOKABLE DFMSearchResultMap getResults();
+    Q_INVOKABLE QList<QUrl> getResultUrls();
+    
+    // 控制搜索流程
+    Q_INVOKABLE void startSearch();
+    Q_INVOKABLE void stopSearch();
 
 signals:
     void resultsUpdated(const QString &taskId);
-    void processingFinished();
-    void allProcessingComplete(const QString &taskId);
+    void searchCompleted(const QString &taskId);
 
-public slots:
-    void startProcessing(const QString &taskId);
+protected:
+    void run();
+
+private slots:
+    void onSearcherFinished();
+    void onSearcherUnearthed();
+    void onCheckResults();
 
 private:
-    void processQueue();
-    void mergeResults(const DFMSearchResultMap &newResults);
-    void finalizeProcessing();  // 完成最终处理，清理资源
+    void createSearchers();
+    void cleanupSearchers();
+    void mergeResults(AbstractSearcher *searcher);
 
     QString taskId;
-    QQueue<AbstractSearcher*> searcherQueue;
+    QUrl searchUrl;
+    QString searchKeyword;
+    
+    QList<AbstractSearcher *> searchers;
     DFMSearchResultMap resultMap;
-    QMutex mutex;
-    QWaitCondition condition;
+    
     QReadWriteLock rwLock;
-    bool running { true };
-    QAtomicInt dataProcessingComplete { 0 };  // 标记数据处理是否完成
-    QAtomicInt allSearchersDone { 0 };        // 标记所有搜索器是否完成
+    QMutex mutex;
+    QTimer resultTimer;
+    
+    bool isRunning { false };
+    int finishedSearcherCount { 0 };
 };
 
 class TaskCommanderPrivate : public QObject
@@ -72,27 +85,21 @@ public:
     explicit TaskCommanderPrivate(TaskCommander *parent);
     ~TaskCommanderPrivate();
 
-private:
-    static void working(AbstractSearcher *searcher);
-    AbstractSearcher *createSearcher(const QUrl &url, const QString &keyword, DFMSEARCH::SearchType type);
+    // 非阻塞终止方法
+    // void prepareForDestroy();
 
 private slots:
-    void onUnearthed(AbstractSearcher *searcher);
-    void onFinished();
-    void checkAllFinished();
     void onResultsUpdated(const QString &taskId);
-    void onAllProcessingComplete(const QString &taskId);
+    void onSearchCompleted(const QString &taskId);
 
 private:
     TaskCommander *q { nullptr };
     QString taskId { "" };
-    QList<AbstractSearcher *> allSearchers {};
+    
     QThread workerThread;
-    SearchResultWorker *resultWorker { nullptr };
-    QReadWriteLock rwLock;
-    QAtomicInt finishedCount { 0 };
+    SimplifiedSearchWorker *searchWorker { nullptr };
+    
     bool deleted { false };
-    bool allFinishedNotified { false };  // 防止重复发送finished信号
 };
 
 DPSEARCH_END_NAMESPACE
