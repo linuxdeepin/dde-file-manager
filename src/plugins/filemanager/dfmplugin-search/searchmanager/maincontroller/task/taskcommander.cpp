@@ -4,271 +4,284 @@
 
 #include "taskcommander.h"
 #include "taskcommander_p.h"
+#include "searchmanager/searcher/abstractsearcher.h"
 #include "searchmanager/searcher/dfmsearch/dfmsearcher.h"
 #include "searchmanager/searcher/iterator/iteratorsearcher.h"
+#include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-search/dsearch_global.h>
 
+#include <QDebug>
+
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 DFM_SEARCH_USE_NS
 
-SearchResultWorker::SearchResultWorker(QObject *parent)
+// ======== SimplifiedSearchWorker 实现 ========
+
+SimplifiedSearchWorker::SimplifiedSearchWorker(QObject *parent)
     : QObject(parent),
-      running(true),
-      dataProcessingComplete(0),
-      allSearchersDone(0)
+      isRunning(false),
+      finishedSearcherCount(0)
 {
+    // 设置定时检查结果的计时器
+    resultTimer.setInterval(50); // 50ms定时更新UI
+    connect(&resultTimer, &QTimer::timeout, this, &SimplifiedSearchWorker::onCheckResults);
 }
 
-SearchResultWorker::~SearchResultWorker()
+SimplifiedSearchWorker::~SimplifiedSearchWorker()
 {
-    stop();
+    stopSearch();
 }
 
-void SearchResultWorker::startProcessing(const QString &id)
+DFMSearchResultMap SimplifiedSearchWorker::getResults()
 {
-    taskId = id;
-    running = true;
-    
-    // Process all queued searchers until stopped
-    while (running) {
-        processQueue();
-        
-        // 如果所有搜索器完成且队列为空，执行最终处理
-        if (allSearchersDone.loadAcquire() == 1) {
-            QMutexLocker lock(&mutex);
-            if (searcherQueue.isEmpty()) {
-                finalizeProcessing();
-                break;
-            }
-        }
-    }
-    
-    emit processingFinished();
-}
-
-void SearchResultWorker::processResults(AbstractSearcher *searcher)
-{
-    if (!searcher)
-        return;
-        
-    QMutexLocker lock(&mutex);
-    searcherQueue.enqueue(searcher);
-    condition.wakeOne();
-}
-
-void SearchResultWorker::stop()
-{
-    QMutexLocker lock(&mutex);
-    running = false;
-    condition.wakeAll();
-}
-
-DFMSearchResultMap SearchResultWorker::getResults()
-{
-    QReadLocker lk(&rwLock);
+    QReadLocker locker(&rwLock);
     return resultMap;
 }
 
-void SearchResultWorker::allSearchersFinished()
+QList<QUrl> SimplifiedSearchWorker::getResultUrls()
 {
-    // 设置标志，指示所有搜索器已完成
-    allSearchersDone.storeRelease(1);
-    
-    // 唤醒工作线程检查队列
-    QMutexLocker lock(&mutex);
-    condition.wakeOne();
+    QReadLocker locker(&rwLock);
+    return resultMap.keys();
 }
 
-void SearchResultWorker::processQueue()
+void SimplifiedSearchWorker::startSearch()
 {
-    AbstractSearcher *searcher = nullptr;
-    
-    // Wait for new data with timeout
+    // 重置状态
+    isRunning = true;
+    finishedSearcherCount = 0;
+
     {
-        QMutexLocker lock(&mutex);
-        if (searcherQueue.isEmpty()) {
-            // 如果队列为空且所有搜索器已完成，终止处理
-            if (allSearchersDone.loadAcquire() == 1) {
-                return;
-            }
-            
-            condition.wait(&mutex, 100);  // 带超时等待
-            if (searcherQueue.isEmpty())
-                return;
-        }
-        
-        searcher = searcherQueue.dequeue();
+        QWriteLocker locker(&rwLock);
+        resultMap.clear();
     }
-    
-    if (searcher && searcher->hasItem()) {
-        // Get and process results from current searcher
-        DFMSearchResultMap searchResults = searcher->takeAll();
-        
-        if (!searchResults.isEmpty()) {
-            mergeResults(searchResults);
-            emit resultsUpdated(taskId);
-        }
-    }
+
+    // 创建搜索器并启动搜索
+    createSearchers();
+
+    // 启动结果更新计时器
+    resultTimer.start();
 }
 
-void SearchResultWorker::mergeResults(const DFMSearchResultMap &newResults)
+void SimplifiedSearchWorker::stopSearch()
 {
-    QWriteLocker lk(&rwLock);
+    isRunning = false;
+    // 停止计时器
+    resultTimer.stop();
+    cleanupSearchers();
+}
 
-    // first time, just copy the result
-    if (resultMap.isEmpty()) {
-        resultMap = newResults;
+void SimplifiedSearchWorker::createSearchers()
+{
+    if (DFMSearcher::supportUrl(searchUrl)) {
+        // 支持的搜索类型
+        QList<SearchType> searchTypes = { SearchType::FileName };
+
+        // 检查是否开启了全文搜索
+        bool enableContentSearch = DConfigManager::instance()->value(
+            DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
+
+        if (enableContentSearch) {
+            searchTypes.append(SearchType::Content);
+        }
+
+        // 为每种搜索类型创建搜索器
+        for (auto type : searchTypes) {
+            // 使用DFMSearcher作为默认搜索器
+            AbstractSearcher *searcher = new DFMSearcher(searchUrl, searchKeyword, this, type);
+
+            // 连接信号
+            connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
+            connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
+
+            searchers.append(searcher);
+
+            // 启动搜索
+            searcher->search();
+        }
         return;
     }
-    
-    // Merge search results to the main result set
-    for (auto it = newResults.constBegin(); it != newResults.constEnd(); ++it) {
-        const QUrl &url = it.key();
+
+    // 使用IteratorSearcher作为文件系统搜索器
+    IteratorSearcher *searcher = new IteratorSearcher(searchUrl, searchKeyword, this);
+
+    // 连接信号，IteratorSearcher需要在主线程中创建DirIterator
+    // 由于IteratorSearcher内部已经处理了主线程创建逻辑，不需要额外处理
+    connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
+    connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
+
+    searchers.append(searcher);
+
+    // 启动搜索 - IteratorSearcher会通过requestCreateIterator信号在主线程创建DirIterator
+    searcher->search();
+}
+
+void SimplifiedSearchWorker::cleanupSearchers()
+{
+    // 停止并删除所有搜索器
+    for (auto searcher : searchers) {
+        searcher->disconnect(this);
+        searcher->stop();
         
-        // If there's already a result for this URL, keep the one with higher match score
-        auto existing = resultMap.find(url);
-        if (existing != resultMap.end()) {
-            if (it.value().matchScore() > existing.value().matchScore())
-                resultMap[url] = it.value();
-        } else {
-            // Otherwise add directly
-            resultMap.insert(url, it.value());
+        // 延迟删除搜索器以确保主线程回调完成
+        searcher->deleteLater();
+    }
+
+    searchers.clear();
+}
+
+void SimplifiedSearchWorker::onSearcherUnearthed()
+{
+    // 这个槽会在搜索器找到结果时被调用
+    AbstractSearcher *searcher = qobject_cast<AbstractSearcher *>(sender());
+    if (searcher && isRunning) {
+        // 合并结果
+        mergeResults(searcher);
+        
+        // 通知UI更新结果
+        emit resultsUpdated(taskId);
+    }
+}
+
+void SimplifiedSearchWorker::mergeResults(AbstractSearcher *searcher)
+{
+    if (!searcher || !searcher->hasItem())
+        return;
+
+    // 获取新结果
+    DFMSearchResultMap newResults = searcher->takeAll();
+    
+    if (newResults.isEmpty())
+        return;
+
+    // 合并到主结果集
+    {
+        QWriteLocker locker(&rwLock);
+
+        // 第一次直接复制结果
+        if (resultMap.isEmpty()) {
+            resultMap = newResults;
+            return;
+        }
+
+        // 合并结果，保留匹配分数更高的结果
+        for (auto it = newResults.constBegin(); it != newResults.constEnd(); ++it) {
+            const QUrl &url = it.key();
+            auto existing = resultMap.find(url);
+
+            if (existing != resultMap.end()) {
+                if (it.value().matchScore() > existing.value().matchScore())
+                    resultMap[url] = it.value();
+            } else {
+                resultMap.insert(url, it.value());
+            }
         }
     }
 }
 
-void SearchResultWorker::finalizeProcessing()
+void SimplifiedSearchWorker::onCheckResults()
 {
-    fmInfo() << "Finalizing search result processing for task:" << taskId;
-    
-    // 标记数据处理已完成
-    dataProcessingComplete.storeRelease(1);
-    
-    // 发送所有处理完成的信号
-    emit allProcessingComplete(taskId);
+    // 定时检查结果并通知UI更新
+    if (isRunning && !resultMap.isEmpty()) {
+        emit resultsUpdated(taskId);
+    }
 }
+
+void SimplifiedSearchWorker::onSearcherFinished()
+{
+    AbstractSearcher *searcher = qobject_cast<AbstractSearcher *>(sender());
+    if (!searcher)
+        return;
+
+    if (!searchers.contains(searcher))
+        return;
+
+    // 最后一次检查是否有新结果
+    if (searcher->hasItem() && isRunning) {
+        mergeResults(searcher);
+        emit resultsUpdated(taskId);
+    }
+
+    // 移除完成的搜索器
+    searchers.removeAll(searcher);
+    searcher->deleteLater();
+
+    // 所有搜索器完成时通知搜索完成
+    if (searchers.isEmpty() && isRunning) {
+        // 通知搜索完成
+        emit searchCompleted(taskId);
+
+        // 标记搜索结束
+        isRunning = false;
+    }
+}
+
+// ======== TaskCommanderPrivate 实现 ========
 
 TaskCommanderPrivate::TaskCommanderPrivate(TaskCommander *parent)
     : QObject(parent),
       q(parent),
-      finishedCount(0),
-      allFinishedNotified(false)
+      deleted(false)
 {
-    // Create result worker and move it to the worker thread
-    resultWorker = new SearchResultWorker;
-    resultWorker->moveToThread(&workerThread);
-    
-    // Connect signals and slots
-    connect(&workerThread, &QThread::started, resultWorker, [this]() {
-        resultWorker->startProcessing(taskId);
-    });
-    connect(&workerThread, &QThread::finished, resultWorker, &QObject::deleteLater);
-    connect(resultWorker, &SearchResultWorker::resultsUpdated, this, &TaskCommanderPrivate::onResultsUpdated);
-    connect(resultWorker, &SearchResultWorker::allProcessingComplete, this, &TaskCommanderPrivate::onAllProcessingComplete);
-    
-    // Start the worker thread
+    // 创建搜索工作线程
+    searchWorker = new SimplifiedSearchWorker;
+    searchWorker->moveToThread(&workerThread);
+
+    // 连接信号
+    connect(&workerThread, &QThread::finished, searchWorker, &QObject::deleteLater);
+    connect(searchWorker, &SimplifiedSearchWorker::resultsUpdated,
+            this, &TaskCommanderPrivate::onResultsUpdated);
+    connect(searchWorker, &SimplifiedSearchWorker::searchCompleted,
+            this, &TaskCommanderPrivate::onSearchCompleted);
+    connect(&workerThread, &QThread::finished,
+            q, &TaskCommander::onWorkThreadFinished);
+
+    // 启动工作线程
     workerThread.start();
 }
 
 TaskCommanderPrivate::~TaskCommanderPrivate()
 {
-    // Stop and clean up the worker thread
-    if (resultWorker) {
-        resultWorker->stop();
-    }
-    
-    workerThread.quit();
-    workerThread.wait();
-    
-    // Clean up searchers
-    for (auto searcher : allSearchers) {
-        searcher->deleteLater();
-    }
-    allSearchers.clear();
-}
-
-void TaskCommanderPrivate::working(AbstractSearcher *searcher)
-{
-    searcher->search();
-}
-
-AbstractSearcher *TaskCommanderPrivate::createSearcher(const QUrl &url, const QString &keyword, SearchType type)
-{
-    const char *typeStr = type == SearchType::FileName ? "file name" : "content";
-    fmInfo() << "Using dfm-search for" << typeStr << "search";
-    auto *searcher = new DFMSearcher(url, keyword, q, type);
-
-    connect(searcher, &AbstractSearcher::unearthed, this, &TaskCommanderPrivate::onUnearthed, Qt::QueuedConnection);
-    connect(searcher, &AbstractSearcher::finished, this, &TaskCommanderPrivate::onFinished, Qt::QueuedConnection);
-    allSearchers << searcher;
-
-    return searcher;
-}
-
-void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
-{
-    Q_ASSERT(searcher);
-
-    // Pass the searcher to the worker thread for processing
-    if (allSearchers.contains(searcher) && searcher->hasItem() && resultWorker)
-        resultWorker->processResults(searcher);
 }
 
 void TaskCommanderPrivate::onResultsUpdated(const QString &id)
 {
-    if (id == taskId) {
-        QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
+    if (id == taskId && !deleted) {
+        emit q->matched(taskId);
     }
 }
 
-void TaskCommanderPrivate::onFinished()
+void TaskCommanderPrivate::onSearchCompleted(const QString &id)
 {
-    if (finishedCount.fetchAndAddRelaxed(1) + 1 == allSearchers.size()) {
-        fmInfo() << "All searchers finished for task:" << taskId;
-        
-        // 通知工作线程所有搜索器已完成
-        if (resultWorker) {
-            resultWorker->allSearchersFinished();
-        } else {
-            // 如果没有工作线程，直接检查完成状态
-            checkAllFinished();
-        }
+    if (id == taskId && !deleted) {
+        emit q->finished(taskId);
     }
 }
 
-void TaskCommanderPrivate::onAllProcessingComplete(const QString &id)
-{
-    if (id == taskId && !allFinishedNotified) {
-        fmInfo() << "All data processing complete for task:" << taskId;
-        allFinishedNotified = true;
-        checkAllFinished();
-    }
-}
-
-void TaskCommanderPrivate::checkAllFinished()
-{
-    if (deleted) {
-        q->deleteLater();
-        disconnect(q, nullptr, nullptr, nullptr);
-    } else {
-        // 只有当所有搜索器完成且数据处理完成，或没有工作线程时，才发送finished信号
-        if (!resultWorker || allFinishedNotified) {
-            QMetaObject::invokeMethod(q, "finished", Qt::QueuedConnection, Q_ARG(QString, taskId));
-        }
-    }
-}
+// ======== TaskCommander 实现 ========
 
 TaskCommander::TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent)
-    : QObject(parent),
-      d(new TaskCommanderPrivate(this))
+    : QObject(parent)
 {
+    d = new TaskCommanderPrivate(this);
     d->taskId = taskId;
-    createSearcher(url, keyword);
+
+    // 初始化并设置搜索参数
+    if (d->searchWorker) {
+        QMetaObject::invokeMethod(d->searchWorker, [=]() {
+            d->searchWorker->setTaskId(taskId);
+            d->searchWorker->setSearchUrl(url);
+            d->searchWorker->setKeyword(keyword);
+        }, Qt::QueuedConnection);
+    }
+}
+
+TaskCommander::~TaskCommander()
+{
 }
 
 QString TaskCommander::taskID() const
@@ -278,70 +291,47 @@ QString TaskCommander::taskID() const
 
 DFMSearchResultMap TaskCommander::getResults() const
 {
-    // Get results from the worker thread
-    return d->resultWorker ? d->resultWorker->getResults() : DFMSearchResultMap();
+    if (!d->searchWorker)
+        return DFMSearchResultMap();
+
+    DFMSearchResultMap results;
+    QMetaObject::invokeMethod(d->searchWorker, "getResults",Qt::DirectConnection,
+                           Q_RETURN_ARG(DFMSearchResultMap, results));
+
+    return results;
 }
 
 QList<QUrl> TaskCommander::getResultsUrls() const
 {
-    // Get result URLs directly from the worker thread
-    return d->resultWorker ? d->resultWorker->getResults().keys() : QList<QUrl>();
+    if (!d->searchWorker)
+        return QList<QUrl>();
+
+    QList<QUrl> results;
+    QMetaObject::invokeMethod(d->searchWorker, "getResultUrls", Qt::DirectConnection,
+                           Q_RETURN_ARG(QList<QUrl>, results));
+
+    return results;
 }
 
 bool TaskCommander::start()
 {
-    if (d->allSearchers.isEmpty()) {
-        fmWarning() << "no searcher...";
+    if (!d->searchWorker)
         return false;
-    }
 
-    for (auto searcher : d->allSearchers) {
-        d->working(searcher);
-    }
-
+    QMetaObject::invokeMethod(d->searchWorker, "startSearch", Qt::QueuedConnection);
     return true;
 }
 
 void TaskCommander::stop()
 {
-    // Stop all searchers
-    for (auto searcher : d->allSearchers) {
-        searcher->stop();
-    }
+    if (!d->searchWorker)
+        deleteLater();
 
-    // Stop the result worker
-    if (d->resultWorker) {
-        d->resultWorker->stop();
-    }
+    QMetaObject::invokeMethod(d->searchWorker, "stopSearch", Qt::QueuedConnection);
+    d->workerThread.quit();
 }
 
-void TaskCommander::deleteSelf()
+void TaskCommander::onWorkThreadFinished()
 {
     d->deleted = true;
-    if (d->finishedCount.loadRelaxed() == d->allSearchers.size()) {
-        deleteLater();
-    }
-}
-
-void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
-{
-    if (DFMSearcher::supportUrl(url)) {
-        // Create file name searcher
-        d->createSearcher(url, keyword, SearchType::FileName);
-
-        // Check if full text search is enabled
-        bool enableContentSearch = DConfigManager::instance()->value(DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
-        if (!enableContentSearch)
-            return;
-
-        // Create content searcher
-        d->createSearcher(url, keyword, SearchType::Content);
-        return;
-    }
-
-    // Create iterator searcher
-    auto *searcher = new IteratorSearcher(url, keyword);
-    connect(searcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
-    connect(searcher, &AbstractSearcher::finished, d, &TaskCommanderPrivate::onFinished, Qt::DirectConnection);
-    d->allSearchers << searcher;
 }

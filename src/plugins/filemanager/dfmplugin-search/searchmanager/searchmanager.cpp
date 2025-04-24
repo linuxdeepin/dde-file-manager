@@ -109,6 +109,6 @@ void SearchManager::init()
 
     mainController = new MainController(this);
     // Direct connection to prevent event loop from disrupting the sequence
-    connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::DirectConnection);
-    connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::DirectConnection);
+    connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::QueuedConnection);
+    connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::QueuedConnection);
 }
