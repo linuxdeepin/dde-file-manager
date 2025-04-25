@@ -140,22 +140,31 @@ void FSEventCollectorPrivate::stopCollecting()
 
 bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
 {
-    // Always track directories regardless of extension
-    if (isDirectory(path)) {
+    if (path.isEmpty())
+        return false;
+
+    // For deleted files, don't attempt to check file system since it's gone
+    if (deletedFilesList.contains(path))
         return true;
-    }
-    
+
+    // Always track directories regardless of extension
+    if (isDirectory(path))
+        return true;
+
     // Get file suffix for extension check
     QFileInfo fileInfo(path);
     QString suffix = fileInfo.suffix();
-    
+
+    // Maybe it's a deleted folder ?
+    if (suffix.isEmpty() && !fileInfo.exists())
+        return true;
+
     // Check if extension is supported for content search
     bool supported = DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
-    
-    if (!supported) {
+
+    if (!supported)
         logDebug(QString("Skipping file with unsupported extension: %1 (suffix: %2)").arg(path, suffix));
-    }
-    
+
     return supported;
 }
 
@@ -169,11 +178,17 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
     }
 
     // Logic for handling file creation:
-    // 1. If file was previously deleted, remove from deleted list (creation cancels deletion)
+    // 1. If file was previously deleted, remove from deleted list AND add to created list
+    //    (re-creation needs reindexing as content might have changed)
     // 2. Otherwise, add to created list
     if (deletedFilesList.contains(fullPath)) {
         deletedFilesList.remove(fullPath);
-        logDebug(QString("Removed from deleted list due to re-creation: %1").arg(fullPath));
+
+        // Add to created list to ensure reindexing
+        if (shouldIndexFile(fullPath)) {
+            createdFilesList.insert(fullPath);
+            logDebug(QString("File was deleted and recreated, adding to created list: %1").arg(fullPath));
+        }
     } else {
         // Check if this file is under a directory that's already in the created list
         if (!isChildOfAnyPath(fullPath, createdFilesList)) {
@@ -215,24 +230,19 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
     if (createdFilesList.contains(fullPath)) {
         createdFilesList.remove(fullPath);
         logDebug(QString("Removed from created list due to deletion: %1").arg(fullPath));
+        if (shouldIndexFile(fullPath)) {
+            deletedFilesList.insert(fullPath);
+            logDebug(QString("Added to deleted list: %1").arg(fullPath));
+        }
     } else {
         if (modifiedFilesList.contains(fullPath)) {
             modifiedFilesList.remove(fullPath);
             logDebug(QString("Removed from modified list due to deletion: %1").arg(fullPath));
         }
 
-        // Check if this file is under a directory that's already in the deleted list
-        if (!isChildOfAnyPath(fullPath, deletedFilesList)) {
-            // Only insert if file has supported extension or is a directory
-            if (shouldIndexFile(fullPath)) {
-                deletedFilesList.insert(fullPath);
-                logDebug(QString("Added to deleted list: %1").arg(fullPath));
-
-                // If this is a directory, remove any files in the list that are under this directory
-                if (isDirectory(fullPath)) {
-                    removeRedundantEntries(deletedFilesList);
-                }
-            }
+        if (shouldIndexFile(fullPath)) {
+            deletedFilesList.insert(fullPath);
+            logDebug(QString("Added to deleted list: %1").arg(fullPath));
         } else {
             logDebug(QString("Skipped adding to deleted list (parent directory already added): %1").arg(fullPath));
         }
@@ -389,7 +399,7 @@ void FSEventCollectorPrivate::removeRedundantEntries(QSet<QString> &filesList)
 bool FSEventCollectorPrivate::isChildOfAnyPath(const QString &path, const QSet<QString> &pathSet) const
 {
     // Quick check for empty set
-    if (pathSet.isEmpty()) {
+    if (pathSet.isEmpty() || path.isEmpty()) {
         return false;
     }
 
@@ -482,7 +492,7 @@ void FSEventCollectorPrivate::logError(const QString &message) const
 
 QString FSEventCollectorPrivate::normalizePath(const QString &dirPath, const QString &fileName) const
 {
-    if (dirPath.isEmpty() || fileName.isEmpty()) {
+    if (dirPath.isEmpty()) {
         return QString();
     }
 
