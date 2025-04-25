@@ -29,7 +29,7 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
     // connect(engine, &SearchEngine::resultFound, this, [this](const SearchResult &result) {
     //     // 直接处理搜索结果，不再使用后台处理线程
     //     processSearchResult(result);
-        
+
     //     // 如果找到了结果，发出信号通知
     //     if (!allResults.isEmpty() && allResults.size() % kBatchSize == 0) {
     //         emit unearthed(this);
@@ -50,7 +50,7 @@ bool DFMSearcher::supportUrl(const QUrl &url)
 }
 
 SearchQuery DFMSearcher::createSearchQuery() const
-{   
+{
     // Create search query
     if (!keyword.contains(' '))
         return SearchFactory::createQuery(keyword, SearchQuery::Type::Simple);
@@ -83,6 +83,12 @@ bool DFMSearcher::search()
     options.setSearchPath(transformedPath);
     options.setCaseSensitive(false);
     options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
+
+    if (engine->searchType() == SearchType::Content) {
+        ContentOptionsAPI contentAPI(options);
+        contentAPI.setMaxPreviewLength(200);
+    }
+
     engine->setSearchOptions(options);
 
     // Create and execute search query
@@ -122,20 +128,20 @@ SearchType DFMSearcher::getSearchType() const
 void DFMSearcher::processSearchResult(const SearchResult &result)
 {
     QUrl url = QUrl::fromLocalFile(result.path());
-    
+
     // 创建统一的搜索结果数据结构
     DFMSearchResult searchResult(url);
-    
+
     // 根据搜索类型设置不同的字段
     if (engine->searchType() == SearchType::Content) {
         ContentResultAPI contentResult(const_cast<SearchResult &>(result));
         searchResult.setHighlightedContent(contentResult.highlightedContent());
         searchResult.setIsContentMatch(true);
-        searchResult.setMatchScore(1.0); // 内容匹配优先级更高
+        searchResult.setMatchScore(1.0);   // 内容匹配优先级更高
     } else {
         // 文件名搜索不包含高亮内容
         searchResult.setIsContentMatch(false);
-        searchResult.setMatchScore(0.5); // 文件名匹配优先级较低
+        searchResult.setMatchScore(0.5);   // 文件名匹配优先级较低
     }
 
     // 安全地存储结果
@@ -154,7 +160,7 @@ void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
     for (const auto &result : results) {
         processSearchResult(result);
     }
-    
+
     // 最后一次通知有新结果
     if (!allResults.isEmpty())
         emit unearthed(this);
@@ -174,4 +180,4 @@ void DFMSearcher::onSearchError(const SearchError &error)
 {
     fmWarning() << "Search error:" << error.message() << "for query:" << keyword;
     emit finished();
-} 
+}

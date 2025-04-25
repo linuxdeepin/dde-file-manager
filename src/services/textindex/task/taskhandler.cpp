@@ -541,7 +541,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
             // Lucene异常表示索引损坏
             fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
                         << QString::fromStdWString(e.getError());
-            throw;   // 重新抛出异常，让 IndexTask 捕获并处理
+            // 继续执行，不要因为清理失败而中断整个更新过程
         } catch (const std::exception &e) {
             // 其他异常不需要重建
             fmWarning() << "Update index failed with exception:" << e.what();
