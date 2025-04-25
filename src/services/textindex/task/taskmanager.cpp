@@ -284,7 +284,8 @@ bool TaskManager::startNextTask()
     // 从队列中取出下一个任务
     TaskQueueItem nextTask = taskQueue.dequeue();
 
-    fmInfo() << "Starting next queued task of type:" << static_cast<int>(nextTask.type);
+    fmInfo() << "Number of tasks remaining: " << taskQueue.count();
+    fmInfo() << "Starting next queued task of type: " << nextTask.type << "path: " << nextTask.path;
 
     // 根据任务类型启动相应的任务
     if (nextTask.type == IndexTask::Type::CreateFileList
