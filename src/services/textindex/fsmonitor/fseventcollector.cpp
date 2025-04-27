@@ -432,7 +432,7 @@ bool FSEventCollectorPrivate::isChildOfAnyPath(const QString &path, const QSet<Q
 bool FSEventCollectorPrivate::isDirectory(const QString &path) const
 {
     QFileInfo fileInfo(path);
-    return fileInfo.isDir();
+    return fileInfo.isDir() && !fileInfo.isSymLink();
 }
 
 void FSEventCollectorPrivate::cleanupRedundantEntries()

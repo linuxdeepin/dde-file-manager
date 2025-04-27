@@ -266,7 +266,8 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         TopDocsPtr allDocs = searcher->search(prefixQuery, reader->maxDoc());
 
-        fmInfo() << "Found" << allDocs->totalHits << "documents to remove from directory:" << dirPath;
+        if (allDocs->totalHits > 0)
+            fmInfo() << "Found" << allDocs->totalHits << "documents to remove from directory:" << dirPath;
 
         // 记录已删除的文档路径以避免重复删除
         HashSet<String> pathsToDelete = HashSet<String>::newInstance();

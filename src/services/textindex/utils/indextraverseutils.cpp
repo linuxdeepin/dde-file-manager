@@ -37,6 +37,9 @@ bool isValidDirectory(const QString &path, QSet<QString> &visitedDirs)
     QFileInfo fileInfo(path);
     QString canonicalPath = fileInfo.canonicalFilePath();
 
+    if (fileInfo.isSymLink())
+        return false;
+
     if (canonicalPath.isEmpty())
         return false;
 
