@@ -143,6 +143,7 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         return;
     }
 
+    lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->setText("");
 }
@@ -347,19 +348,18 @@ int SearchEditWidget::determineSearchDelay(const QString &inputText)
     // 基础等待时间
     int delay = 200;   // 毫秒
 
+    // 获取输入文本的字节数
+    int byteCount = inputText.toUtf8().size();
+
     // 针对短输入增加延迟
-    if (inputText.length() <= 2) {
+    if (byteCount <= 2) {
         delay += 150;
 
         if (inputText == ".")
             delay += 1000;
-    } else if (inputText.length() >= 5) {
-        delay = 50;
+    } else if (byteCount > 3) {
+        delay = 0;
     }
-
-    // 对于可能返回大量结果的特殊字符增加延迟
-    if (inputText.contains('*') || inputText.contains('?') || inputText.startsWith('.'))
-        delay += 200;
 
     return delay;
 }
