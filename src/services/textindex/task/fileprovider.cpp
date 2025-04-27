@@ -134,14 +134,14 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 handler(path);
                 processedFiles.insert(path);
             }
-        } else if (fileInfo.isDir()) {
+        } else if (fileInfo.isDir() && !fileInfo.isSymLink()) {
             // 检查目录是否在黑名单中
             bool isBlacklisted = false;
             QString dirName = fileInfo.fileName();
             if (kDefaultBlacklistedDirs.contains(dirName)) {
                 isBlacklisted = true;
             }
-            
+
             // 只有不在黑名单中的目录才加入队列
             if (!isBlacklisted) {
                 dirQueue.enqueue(path);
@@ -185,7 +185,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
             if (IndexTraverseUtils::isSpecialDir(entry->d_name))
                 continue;
-            
+
             QString entryName = QString::fromUtf8(entry->d_name);
             // 检查目录名是否在黑名单中
             if (kDefaultBlacklistedDirs.contains(entryName))
