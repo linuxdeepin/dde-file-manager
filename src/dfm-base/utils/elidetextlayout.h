@@ -65,7 +65,28 @@ public:
 protected:
     QRectF drawLineBackground(QPainter *painter, const QRectF &curLineRect, QRectF lastLineRect, const QBrush &brush) const;
     void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, const QRectF &rect);
+    void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, 
+                              const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches);
     virtual void initLayoutOption(QTextLayout *lay);
+
+private:
+    // 查找文本中所有关键词匹配的位置
+    QList<QPair<int, int>> findKeywordMatches(const QString &text) const;
+
+    // 计算省略文本中的高亮匹配位置
+    QList<QPair<int, int>> calculateElideHighlightMatches(
+        const QString &elideText, 
+        int elidePos, 
+        Qt::TextElideMode elideMode, 
+        const QList<QPair<int, int>> &originalMatches,
+        int lineStartPos) const;
+
+    // 确定省略位置 - 通过比较省略文本和原始文本
+    int determineElidePosition(
+        const QString &elideText,
+        const QString &originalText, 
+        Qt::TextElideMode elideMode) const;
+
 protected:
     QTextDocument *document { nullptr };
     QMap<Attribute, QVariant> attributes {};
