@@ -177,7 +177,25 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
 
     if (options.method() == SearchMethod::Realtime) {
         options.setResultFoundEnabled(true);
-        options.setSearchExcludedPaths(DFMSEARCH::Global::defaultIndexedDirectory());
+        auto excludedPaths = DFMSEARCH::Global::defaultIndexedDirectory();
+        QStringList transPaths;
+
+        std::transform(excludedPaths.begin(), excludedPaths.end(), std::back_inserter(transPaths),
+                       [](const QString &path) {
+                           return FileUtils::bindPathTransform(path, true);
+                       });
+
+        transPaths.erase(std::remove_if(transPaths.begin(), transPaths.end(),
+                                        [&excludedPaths](const QString &transPath) {
+                                            return excludedPaths.contains(transPath);
+                                        }),
+                         transPaths.end());
+
+        if (!transPaths.isEmpty()) {
+            excludedPaths.append(transPaths);
+        }
+
+        options.setSearchExcludedPaths(excludedPaths);
     }
 
     return options;
