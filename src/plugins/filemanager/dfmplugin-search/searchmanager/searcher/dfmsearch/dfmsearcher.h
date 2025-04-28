@@ -38,6 +38,12 @@ private:
     DFMSEARCH::SearchType getSearchType() const;
     DFMSEARCH::SearchMethod getSearchMethod(const QString &path) const;
     void handleRemainingResults(const QList<DFMSEARCH::SearchResult> &results);
+    bool isEngineReady() const;
+    bool isValidSearchParameters() const;
+    QString prepareSearchPath() const;
+    DFMSEARCH::SearchOptions configureSearchOptions(const QString &transformedPath) const;
+    bool validateSearchType(const QString &transformedPath, DFMSEARCH::SearchOptions &options);
+    void executeSearch();
 
 private slots:
     void onSearchStarted();
