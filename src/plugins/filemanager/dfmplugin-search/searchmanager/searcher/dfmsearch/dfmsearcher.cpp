@@ -27,14 +27,7 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 
     connect(engine, &SearchEngine::searchStarted, this, &DFMSearcher::onSearchStarted);
     connect(engine, &SearchEngine::resultsFound, this, [this](const DFMSEARCH::SearchResultList &results) {
-        // 直接处理搜索结果，不再使用后台处理线程
-        for (const auto &result : results) {
-            processSearchResult(result);
-        }
-        // 如果找到了结果，发出信号通知
-        if (!allResults.isEmpty()) {
-            emit unearthed(this);
-        }
+        handleRemainingResults(results);
     });
     connect(engine, &SearchEngine::searchFinished, this, &DFMSearcher::onSearchFinished);
     connect(engine, &SearchEngine::searchCancelled, this, &DFMSearcher::onSearchCancelled);
@@ -77,20 +70,20 @@ bool DFMSearcher::search()
 
     // Transform the path using FileUtils::bindPathTransform to handle bind mounts
     const QString &transformedPath = FileUtils::bindPathTransform(path, false);
-    const auto methdod = getSearchMethod(transformedPath);
+    const auto method = getSearchMethod(transformedPath);
     // Set search options
     SearchOptions options;
-    options.setSearchMethod(methdod);
+    options.setSearchMethod(method);
     options.setSearchPath(transformedPath);
     options.setCaseSensitive(false);
     options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
-    if (methdod == SearchMethod::Realtime)
+    if (method == SearchMethod::Realtime)
         options.setResultFoundEnabled(true);
 
     if (engine->searchType() == SearchType::Content) {
         // Full-text search is currently only supported for Indexed
         if (!DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
-            fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexe: " << transformedPath;
+            fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
             emit finished();
             return true;
         } else {
@@ -159,6 +152,17 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
     allResults.insert(url, searchResult);
 }
 
+void DFMSearcher::handleRemainingResults(const QList<SearchResult> &results)
+{
+    for (const auto &result : results) {
+        processSearchResult(result);
+    }
+
+    if (!allResults.isEmpty()) {
+        emit unearthed(this);
+    }
+}
+
 SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
 {
     if (engine->searchType() == SearchType::FileName
@@ -178,14 +182,7 @@ void DFMSearcher::onSearchStarted()
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
     if (!engine->searchOptions().resultFoundEnabled()) {
-        if (allResults.isEmpty()) {
-            for (const auto &result : results) {
-                processSearchResult(result);
-            }
-        }
-
-        if (!allResults.isEmpty())
-            emit unearthed(this);
+        handleRemainingResults(results);
     }
     // 搜索完成
     emit finished();
