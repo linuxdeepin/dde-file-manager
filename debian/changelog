@@ -1,3 +1,9 @@
+dde-file-manager (6.5.47.3) unstable; urgency=medium
+
+  * enhance real-time search
+
+ -- Zhang Shedng <zhangsheng@uniontech.com>  Mon, 28 Apr 2025 13:48:11 +0800
+
 dde-file-manager (6.5.47.2) unstable; urgency=medium
 
   * real-time search
