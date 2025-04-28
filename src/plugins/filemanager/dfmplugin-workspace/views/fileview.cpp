@@ -78,7 +78,8 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDefaultDropAction(Qt::CopyAction);
     setDragDropOverwriteMode(true);
     setDragEnabled(true);
-    setLayoutMode(QListView::Batched);
+//  TODO (search): perf
+//  setLayoutMode(QListView::Batched);
 #ifdef QT_SCROLL_WHEEL_ANI
     QScrollBar *bar = verticalScrollBar();
     bar->setSingleStep(1);
