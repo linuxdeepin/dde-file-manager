@@ -43,6 +43,12 @@ bool DFMSearcher::supportUrl(const QUrl &url)
     return url.scheme() == "file";
 }
 
+QString DFMSearcher::realSearchPath(const QUrl &url)
+{
+    const QString &path = UrlRoute::urlToPath(url);
+    return FileUtils::bindPathTransform(path, false);
+}
+
 SearchQuery DFMSearcher::createSearchQuery() const
 {
     // Create search query
@@ -64,7 +70,7 @@ bool DFMSearcher::search()
         return false;
     }
 
-    QString transformedPath = prepareSearchPath();
+    QString transformedPath = realSearchPath(searchUrl);
     SearchOptions options = configureSearchOptions(transformedPath);
 
     if (!validateSearchType(transformedPath, options)) {
@@ -140,12 +146,6 @@ bool DFMSearcher::isValidSearchParameters() const
     return !path.isEmpty() && !keyword.isEmpty();
 }
 
-QString DFMSearcher::prepareSearchPath() const
-{
-    const QString &path = UrlRoute::urlToPath(searchUrl);
-    return FileUtils::bindPathTransform(path, false);
-}
-
 bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
 {
     if (engine->searchType() == SearchType::Content) {
@@ -176,6 +176,7 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
 
     if (options.method() == SearchMethod::Realtime) {
         options.setResultFoundEnabled(true);
+        options.setSearchExcludedPaths(DFMSEARCH::Global::defaultIndexedDirectory());
     }
 
     return options;
