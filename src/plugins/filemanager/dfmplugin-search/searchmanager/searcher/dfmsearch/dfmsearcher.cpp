@@ -60,43 +60,20 @@ SearchQuery DFMSearcher::createSearchQuery() const
 
 bool DFMSearcher::search()
 {
-    if (!engine || engine->status() != SearchStatus::Ready)
-        return false;
-
-    const QString &path = UrlRoute::urlToPath(searchUrl);
-    if (path.isEmpty() || keyword.isEmpty()) {
+    if (!isEngineReady() || !isValidSearchParameters()) {
         return false;
     }
 
-    // Transform the path using FileUtils::bindPathTransform to handle bind mounts
-    const QString &transformedPath = FileUtils::bindPathTransform(path, false);
-    const auto method = getSearchMethod(transformedPath);
-    // Set search options
-    SearchOptions options;
-    options.setSearchMethod(method);
-    options.setSearchPath(transformedPath);
-    options.setCaseSensitive(false);
-    options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
-    if (method == SearchMethod::Realtime)
-        options.setResultFoundEnabled(true);
+    QString transformedPath = prepareSearchPath();
+    SearchOptions options = configureSearchOptions(transformedPath);
 
-    if (engine->searchType() == SearchType::Content) {
-        // Full-text search is currently only supported for Indexed
-        if (!DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
-            fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
-            emit finished();
-            return true;
-        } else {
-            ContentOptionsAPI contentAPI(options);
-            contentAPI.setMaxPreviewLength(200);
-        }
+    if (!validateSearchType(transformedPath, options)) {
+        emit finished();
+        return true;   // Early exit if validation fails
     }
 
     engine->setSearchOptions(options);
-
-    // Create and execute search query
-    SearchQuery query = createSearchQuery();
-    engine->search(query);
+    executeSearch();
 
     return true;
 }
@@ -150,6 +127,58 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
     // 安全地存储结果
     QMutexLocker lk(&mutex);
     allResults.insert(url, searchResult);
+}
+
+bool DFMSearcher::isEngineReady() const
+{
+    return engine && engine->status() == SearchStatus::Ready;
+}
+
+bool DFMSearcher::isValidSearchParameters() const
+{
+    const QString &path = UrlRoute::urlToPath(searchUrl);
+    return !path.isEmpty() && !keyword.isEmpty();
+}
+
+QString DFMSearcher::prepareSearchPath() const
+{
+    const QString &path = UrlRoute::urlToPath(searchUrl);
+    return FileUtils::bindPathTransform(path, false);
+}
+
+bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
+{
+    if (engine->searchType() == SearchType::Content) {
+        if (!DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
+            fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
+            return false;
+        } else {
+            ContentOptionsAPI contentAPI(options);
+            contentAPI.setMaxPreviewLength(200);
+        }
+    }
+    return true;
+}
+
+void DFMSearcher::executeSearch()
+{
+    SearchQuery query = createSearchQuery();
+    engine->search(query);
+}
+
+SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath) const
+{
+    SearchOptions options;
+    options.setSearchMethod(getSearchMethod(transformedPath));
+    options.setSearchPath(transformedPath);
+    options.setCaseSensitive(false);
+    options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
+
+    if (options.method() == SearchMethod::Realtime) {
+        options.setResultFoundEnabled(true);
+    }
+
+    return options;
 }
 
 void DFMSearcher::handleRemainingResults(const QList<SearchResult> &results)
