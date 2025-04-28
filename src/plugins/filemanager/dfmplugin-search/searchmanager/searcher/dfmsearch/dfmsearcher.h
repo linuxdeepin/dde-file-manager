@@ -26,6 +26,7 @@ public:
     ~DFMSearcher() override;
 
     static bool supportUrl(const QUrl &url);
+    static QString realSearchPath(const QUrl &url);
 
     bool search() override;
     void stop() override;
@@ -40,7 +41,6 @@ private:
     void handleRemainingResults(const QList<DFMSEARCH::SearchResult> &results);
     bool isEngineReady() const;
     bool isValidSearchParameters() const;
-    QString prepareSearchPath() const;
     DFMSEARCH::SearchOptions configureSearchOptions(const QString &transformedPath) const;
     bool validateSearchType(const QString &transformedPath, DFMSEARCH::SearchOptions &options);
     void executeSearch();
