@@ -36,6 +36,7 @@ private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
     DFMSEARCH::SearchType getSearchType() const;
+    DFMSEARCH::SearchMethod getSearchMethod(const QString &path) const;
 
 private slots:
     void onSearchStarted();
@@ -47,11 +48,11 @@ private:
     DFMSEARCH::SearchEngine *engine { nullptr };
     DFMSearchResultMap allResults;
     mutable QMutex mutex;
-    
+
     // 批处理大小，每找到这么多个结果就通知一次
     static constexpr int kBatchSize = 10;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // DFMSEARCHER_H 
+#endif   // DFMSEARCHER_H
