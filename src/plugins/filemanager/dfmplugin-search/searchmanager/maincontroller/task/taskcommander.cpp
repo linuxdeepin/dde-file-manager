@@ -28,7 +28,7 @@ SimplifiedSearchWorker::SimplifiedSearchWorker(QObject *parent)
       finishedSearcherCount(0)
 {
     // 设置定时检查结果的计时器
-    resultTimer.setInterval(50); // 50ms定时更新UI
+    resultTimer.setInterval(50);   // 50ms定时更新UI
     connect(&resultTimer, &QTimer::timeout, this, &SimplifiedSearchWorker::onCheckResults);
 }
 
@@ -78,31 +78,35 @@ void SimplifiedSearchWorker::stopSearch()
 void SimplifiedSearchWorker::createSearchers()
 {
     if (DFMSearcher::supportUrl(searchUrl)) {
-        // 支持的搜索类型
-        QList<SearchType> searchTypes = { SearchType::FileName };
+        const QString &searchPath = DFMSearcher::realSearchPath(searchUrl);
+        const QStringList &indexedPaths = DFMSEARCH::Global::defaultIndexedDirectory();
 
-        // 检查是否开启了全文搜索
-        bool enableContentSearch = DConfigManager::instance()->value(
-            DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool();
+        // 检查搜索路径与索引路径的关系
+        bool isParentOfAnyIndexedPath = false;
+        QStringList relevantIndexedPaths;
 
-        if (enableContentSearch) {
-            searchTypes.append(SearchType::Content);
+        for (const QString &indexedPath : indexedPaths) {
+            if (isParentPath(searchPath, indexedPath)) {
+                isParentOfAnyIndexedPath = true;
+                relevantIndexedPaths.append(indexedPath);
+            }
         }
 
-        // 为每种搜索类型创建搜索器
-        for (auto type : searchTypes) {
-            // 使用DFMSearcher作为默认搜索器
-            AbstractSearcher *searcher = new DFMSearcher(searchUrl, searchKeyword, this, type);
+        // 当searchPath是任何indexedPath的父路径
+        if (isParentOfAnyIndexedPath) {
+            // 创建当前searchUrl的搜索器
+            createSearchersForUrl(searchUrl);
 
-            // 连接信号
-            connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
-            connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
-
-            searchers.append(searcher);
-
-            // 启动搜索
-            searcher->search();
+            // 为每个相关的索引路径创建搜索器
+            for (const QString &indexedPath : relevantIndexedPaths) {
+                QUrl indexedUrl = QUrl::fromLocalFile(indexedPath);
+                createSearchersForUrl(indexedUrl);
+            }
+        } else {
+            // 当searchPath不是任何indexedPath的父路径时，只搜索当前路径
+            createSearchersForUrl(searchUrl);
         }
+
         return;
     }
 
@@ -119,13 +123,52 @@ void SimplifiedSearchWorker::createSearchers()
     searcher->search();
 }
 
+bool SimplifiedSearchWorker::isParentPath(const QString &parentPath, const QString &childPath) const
+{
+    // 确保路径格式一致（带尾部斜杠）
+    QString normalizedParent = parentPath.endsWith('/') ? parentPath : parentPath + '/';
+
+    // 检查childPath是否以parentPath开头
+    return childPath.startsWith(normalizedParent);
+}
+
+void SimplifiedSearchWorker::createSearchersForUrl(const QUrl &url)
+{
+    // 支持的搜索类型
+    QList<SearchType> searchTypes = { SearchType::FileName };
+
+    // 检查是否开启了全文搜索
+    bool enableContentSearch = DConfigManager::instance()->value(
+                                                                 DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false)
+                                       .toBool();
+
+    if (enableContentSearch) {
+        searchTypes.append(SearchType::Content);
+    }
+
+    // 为每种搜索类型创建搜索器
+    for (auto type : searchTypes) {
+        // 使用DFMSearcher作为默认搜索器
+        AbstractSearcher *searcher = new DFMSearcher(url, searchKeyword, this, type);
+
+        // 连接信号
+        connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
+        connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
+
+        searchers.append(searcher);
+
+        // 启动搜索
+        searcher->search();
+    }
+}
+
 void SimplifiedSearchWorker::cleanupSearchers()
 {
     // 停止并删除所有搜索器
     for (auto searcher : searchers) {
         searcher->disconnect(this);
         searcher->stop();
-        
+
         // 延迟删除搜索器以确保主线程回调完成
         searcher->deleteLater();
     }
@@ -140,7 +183,7 @@ void SimplifiedSearchWorker::onSearcherUnearthed()
     if (searcher && isRunning) {
         // 合并结果
         mergeResults(searcher);
-        
+
         // 通知UI更新结果
         emit resultsUpdated(taskId);
     }
@@ -153,7 +196,7 @@ void SimplifiedSearchWorker::mergeResults(AbstractSearcher *searcher)
 
     // 获取新结果
     DFMSearchResultMap newResults = searcher->takeAll();
-    
+
     if (newResults.isEmpty())
         return;
 
@@ -271,11 +314,13 @@ TaskCommander::TaskCommander(QString taskId, const QUrl &url, const QString &key
 
     // 初始化并设置搜索参数
     if (d->searchWorker) {
-        QMetaObject::invokeMethod(d->searchWorker, [=]() {
-            d->searchWorker->setTaskId(taskId);
-            d->searchWorker->setSearchUrl(url);
-            d->searchWorker->setKeyword(keyword);
-        }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(
+                d->searchWorker, [=]() {
+                    d->searchWorker->setTaskId(taskId);
+                    d->searchWorker->setSearchUrl(url);
+                    d->searchWorker->setKeyword(keyword);
+                },
+                Qt::QueuedConnection);
     }
 }
 
@@ -294,8 +339,8 @@ DFMSearchResultMap TaskCommander::getResults() const
         return DFMSearchResultMap();
 
     DFMSearchResultMap results;
-    QMetaObject::invokeMethod(d->searchWorker, "getResults",Qt::DirectConnection,
-                           Q_RETURN_ARG(DFMSearchResultMap, results));
+    QMetaObject::invokeMethod(d->searchWorker, "getResults", Qt::DirectConnection,
+                              Q_RETURN_ARG(DFMSearchResultMap, results));
 
     return results;
 }
@@ -307,7 +352,7 @@ QList<QUrl> TaskCommander::getResultsUrls() const
 
     QList<QUrl> results;
     QMetaObject::invokeMethod(d->searchWorker, "getResultUrls", Qt::DirectConnection,
-                           Q_RETURN_ARG(QList<QUrl>, results));
+                              Q_RETURN_ARG(QList<QUrl>, results));
 
     return results;
 }

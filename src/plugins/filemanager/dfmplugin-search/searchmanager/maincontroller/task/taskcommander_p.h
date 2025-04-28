@@ -58,6 +58,8 @@ private slots:
 
 private:
     void createSearchers();
+    bool isParentPath(const QString &parentPath, const QString &childPath) const;
+    void createSearchersForUrl(const QUrl &url);
     void cleanupSearchers();
     void mergeResults(AbstractSearcher *searcher);
 
