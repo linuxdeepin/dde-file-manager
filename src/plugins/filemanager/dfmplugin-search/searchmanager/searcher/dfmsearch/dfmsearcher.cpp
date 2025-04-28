@@ -27,6 +27,7 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 
     connect(engine, &SearchEngine::searchStarted, this, &DFMSearcher::onSearchStarted);
     connect(engine, &SearchEngine::resultsFound, this, [this](const DFMSEARCH::SearchResultList &results) {
+        fmDebug() << "Real time found " << results.size() << "results";
         handleRemainingResults(results);
     });
     connect(engine, &SearchEngine::searchFinished, this, &DFMSearcher::onSearchFinished);
@@ -211,6 +212,7 @@ void DFMSearcher::onSearchStarted()
 
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
+    fmDebug() << engine->searchType() << "search finished, results count:" << results.size();
     if (!engine->searchOptions().resultFoundEnabled()) {
         handleRemainingResults(results);
     }
