@@ -192,7 +192,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <source>System Disk</source>
-        <translation>Disco del sistema</translation>
+        <translation>Disco de sistema</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="384"/>
@@ -3632,7 +3632,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="110"/>
         <source>System Disk</source>
-        <translation>Disco del sistema</translation>
+        <translation>Disco de sistema</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="111"/>
