@@ -37,6 +37,7 @@ private:
     void processSearchResult(const DFMSEARCH::SearchResult &result);
     DFMSEARCH::SearchType getSearchType() const;
     DFMSEARCH::SearchMethod getSearchMethod(const QString &path) const;
+    void handleRemainingResults(const QList<DFMSEARCH::SearchResult> &results);
 
 private slots:
     void onSearchStarted();
