@@ -32,15 +32,19 @@
 
 using namespace dfmplugin_sidebar;
 DFMBASE_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
 
 QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
+constexpr int kWinOptimalPerformance = 4;
+constexpr char kWindowEffectTypeKey[] = "user_type";
 
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarViewContainer(new DBlurEffectWidget(this))
 {
+    compositingConfig = DConfig::create("org.kde.kwin", "org.kde.kwin.compositing", QString(), this);
     sidebarView = new SideBarView(sidebarViewContainer);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
@@ -307,6 +311,20 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
     SideBarManager::instance()->runRename(item, SideBarHelper::windowId(this), newName);
 }
 
+void SideBarWidget::updateWindowEffect()
+{
+    if (!compositingConfig)
+        return;
+
+    auto winEffect = compositingConfig->value(kWindowEffectTypeKey).toInt() != kWinOptimalPerformance;
+    if (winEffect == isWindowEffect)
+        return;
+
+    isWindowEffect = winEffect;
+    sidebarViewContainer->setBlurEnabled(winEffect);
+    setAutoFillBackground(!winEffect);
+}
+
 void SideBarWidget::initializeUi()
 {
     sidebarViewContainer->setMode(DBlurEffectWidget::GaussianBlur);
@@ -354,6 +372,7 @@ void SideBarWidget::initializeUi()
     resize(size);
 
     setFocusProxy(sidebarView);
+    updateWindowEffect();
 }
 
 void SideBarWidget::initDefaultModel()
@@ -413,6 +432,12 @@ void SideBarWidget::initConnect()
     connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
+
+    // 监听窗口特效模式切换
+    connect(compositingConfig, &DConfig::valueChanged, this, [this](const QString &key) {
+        if (key == kWindowEffectTypeKey)
+            updateWindowEffect();
+    });
 }
 
 void SideBarWidget::clearSettingPanel()
