@@ -38,6 +38,9 @@ public:
     bool hasRunningTask() const;
     void stopCurrentTask();
 
+    std::optional<IndexTask::Type> currentTaskType() const;
+    std::optional<QString> currentTaskPath() const;
+
 Q_SIGNALS:
     void taskFinished(const QString &type, const QString &path, bool success);
     void taskProgressChanged(const QString &type, const QString &path, qint64 count);

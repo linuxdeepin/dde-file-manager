@@ -59,12 +59,13 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
-    if (hasRunningTask() || currentTask) {
+    if (hasRunningTask()) {
         fmInfo() << "Task already running, queuing new task for path:" << path;
 
         // 停止当前任务
-        // startTask 的优先级高于 startFileListTask，因此直接重置任务队列
         stopCurrentTask();
+
+        // startTask 的优先级高于 startFileListTask，因此直接重置任务队列
         taskQueue.clear();
 
         // 将任务加入队列
@@ -78,7 +79,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     // 正常启动任务流程
-    fmInfo() << "Starting new task for path:" << path;
+    fmInfo() << "Starting new task for path: " << path << "Type: " << type;
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
@@ -262,6 +263,22 @@ void TaskManager::stopCurrentTask()
         fmInfo() << "Stopping current task...";
         currentTask->stop();
     }
+}
+
+std::optional<IndexTask::Type> TaskManager::currentTaskType() const
+{
+    if (!hasRunningTask())
+        return std::nullopt;
+
+    return currentTask->taskType();
+}
+
+std::optional<QString> TaskManager::currentTaskPath() const
+{
+    if (!hasRunningTask())
+        return std::nullopt;
+
+    return currentTask->taskPath();
 }
 
 void TaskManager::cleanupTask()

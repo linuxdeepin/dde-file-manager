@@ -74,7 +74,7 @@ TextIndexController::TextIndexController(QObject *parent)
         } else {
             fmWarning() << "[TextIndex] Task failed, transitioning to Disabled state";
             updateState(State::Disabled);
-            isEnabled = false;
+            isConfigEnabled = false;
             fmWarning() << "[TextIndex] Service disabled due to task failure";
         }
     };
@@ -92,11 +92,11 @@ void TextIndexController::initialize()
         return;
     }
     fmInfo() << "[TextIndex] Successfully registered search config";
-    isEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
+    isConfigEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
     keepAliveTimer->setInterval(5 * 60 * 1000);   // 5 min
     updateKeepAliveTimer();
 
-    if (isEnabled)
+    if (isConfigEnabled)
         activeBackend();
 
     // 使用心跳，否则 textindex backend 会被退出
@@ -110,14 +110,14 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
 {
     if (config == kSearchCfgPath && key == kEnableFullTextSearch) {
         bool newEnabled = DConfigManager::instance()->value(config, key).toBool();
-        fmInfo() << "[TextIndex] Full text search enable changed:" << isEnabled << "->" << newEnabled;
-        isEnabled = newEnabled;
+        fmInfo() << "[TextIndex] Full text search enable changed:" << isConfigEnabled << "->" << newEnabled;
+        isConfigEnabled = newEnabled;
         activeBackend();
         updateKeepAliveTimer();
 
         if (auto handler = stateHandlers.find(currentState); handler != stateHandlers.end()) {
             fmInfo() << "[TextIndex] Triggering state handler for current state:" << static_cast<int>(currentState);
-            handler->second(isEnabled);
+            handler->second(isConfigEnabled);
         } else {
             fmWarning() << "[TextIndex] No handler found for current state:" << static_cast<int>(currentState);
         }
@@ -131,7 +131,8 @@ void TextIndexController::activeBackend()
         return;
     }
 
-    interface->setEnabled(isEnabled);
+    fmInfo() << "active backend: " << isConfigEnabled;
+    interface->setEnabled(isConfigEnabled);
 }
 
 void TextIndexController::keepBackendAlive()
@@ -141,8 +142,13 @@ void TextIndexController::keepBackendAlive()
         return;
     }
 
-    bool enabled = interface->isEnabled();
-    fmInfo() << "Textindex backend status: " << enabled;
+    bool backendEnabled = interface->isEnabled();
+    fmInfo() << "Textindex backend status: " << backendEnabled;
+
+    // 配置启动全文索引时，backendEnabled 一定要 true，
+    // 若不满足说明 backend 出现了崩溃等异常，需要重新激活
+    if (!backendEnabled && isConfigEnabled)
+        activeBackend();
 }
 
 bool TextIndexController::isBackendAvaliable()
@@ -158,9 +164,9 @@ bool TextIndexController::isBackendAvaliable()
 
 void TextIndexController::updateKeepAliveTimer()
 {
-    if (isEnabled && !keepAliveTimer->isActive())
+    if (isConfigEnabled && !keepAliveTimer->isActive())
         keepAliveTimer->start();
-    else if (!isEnabled && keepAliveTimer->isActive())
+    else if (!isConfigEnabled && keepAliveTimer->isActive())
         keepAliveTimer->stop();
 }
 
