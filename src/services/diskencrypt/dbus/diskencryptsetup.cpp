@@ -201,7 +201,7 @@ void DiskEncryptSetupPrivate::initialize()
     QtConcurrent::run([] {
         filesystem_helper::remountBoot();
         common_helper::createDFMDesktopEntry();
-        crypttab_helper::updateCryptTab();
+        crypttab_helper::mergeCryptTab();
     });
     job_file_helper::checkJobs();
     resumeEncryption();

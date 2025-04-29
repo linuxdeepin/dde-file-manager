@@ -15,6 +15,7 @@
 FILE_ENCRYPT_USE_NS
 
 static constexpr char kCryptTabPath[] { "/etc/crypttab" };
+static constexpr char kBackupCryptTabPath[] { "/boot/usec-crypt/config/crypttab" };
 
 bool crypttab_helper::addCryptOption(const QString &activeName, const QString &opt)
 {
@@ -66,8 +67,7 @@ bool crypttab_helper::updateCryptTab()
         crypt_setup_helper::genDetachHeaderPath(devptr->device(), &detachHeaderName);
 
         // has header or detached header, treat as encrypted device.
-        if (devptr->isEncrypted() ||
-            (!detachHeaderName.isEmpty() && QFile(detachHeaderName).exists())) {
+        if (devptr->isEncrypted() || (!detachHeaderName.isEmpty() && QFile::exists(detachHeaderName))) {
             newItems.append(item);
             continue;
         }
@@ -96,11 +96,50 @@ bool crypttab_helper::insertCryptItem(const CryptItem &item)
     return true;
 }
 
-QList<crypttab_helper::CryptItem> crypttab_helper::cryptItems()
+/*
+ * 合并加密设备配置文件
+ * 1. 如果当前配置文件中存在完全相同的项，则跳过
+ * 2. 如果当前配置文件中存在相同的 target，则跳过
+ * 3. 否则，将备份配置文件中的项添加到当前配置文件中
+ */
+bool crypttab_helper::mergeCryptTab()
 {
-    QFile f(kCryptTabPath);
+    bool merged = false;
+    auto backupItems = cryptItems(kBackupCryptTabPath);
+    auto currentItems = cryptItems();
+
+    QSet<QString> currentItemTargets;
+    for (const auto &item : currentItems) {
+        currentItemTargets.insert(item.target);
+    }
+
+    for (const auto &backupItem : backupItems) {
+        // 如果有完全相同的项或相同的 target，则跳过
+        if (currentItems.contains(backupItem) || currentItemTargets.contains(backupItem.target))
+            continue;
+
+        // 否则，添加到 currentItems
+        currentItems.append(backupItem);
+        currentItemTargets.insert(backupItem.target);
+        qInfo() << "new crypt item is added." << backupItem.source << backupItem.target;
+        merged = true;
+    }
+
+    if (merged) {
+        // updateInitramfs 会在 updateCryptTab 中调用
+        saveCryptItems(currentItems, false);
+        updateCryptTab();
+    }
+
+    return merged;
+}
+
+QList<crypttab_helper::CryptItem> crypttab_helper::cryptItems(const QString &crypttabFile)
+{
+    auto path = crypttabFile.isEmpty() ? kCryptTabPath : crypttabFile;
+    QFile f(path);
     if (!f.exists()) {
-        qWarning() << kCryptTabPath << "not exist!";
+        qWarning() << path << "not exist!";
         return {};
     }
 
@@ -132,7 +171,7 @@ QList<crypttab_helper::CryptItem> crypttab_helper::cryptItems()
     return ret;
 }
 
-void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
+void crypttab_helper::saveCryptItems(const QList<CryptItem> &items, bool doUpdateInitramfs)
 {
     QFile f(kCryptTabPath);
     if (!f.exists()) {
@@ -160,7 +199,8 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items)
     f.flush();
     f.close();
 
-    updateInitramfs();
+    if (doUpdateInitramfs)
+        updateInitramfs();
 }
 
 void crypttab_helper::updateInitramfs()
