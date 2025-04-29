@@ -10,6 +10,8 @@
 
 #include <qdbusservice.h>
 
+// see https://github.com/linuxdeepin/deepin-service-manager/blob/master/develop-guide.md for more information
+
 class DiskEncryptSetupPrivate;
 class DiskEncryptSetup : public QDBusService, public QDBusContext
 {

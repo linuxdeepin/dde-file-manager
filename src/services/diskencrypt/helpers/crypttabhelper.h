@@ -16,15 +16,21 @@ struct CryptItem
     QString source;
     QString keyFile;
     QStringList options;
+
+    bool operator==(const CryptItem &other) const
+    {
+        return target == other.target && source == other.source && keyFile == other.keyFile && options == other.options;
+    }
 };
 
-QList<CryptItem> cryptItems();
-void saveCryptItems(const QList<CryptItem> &items);
+QList<CryptItem> cryptItems(const QString &crypttabFile = QString());
+void saveCryptItems(const QList<CryptItem> &items, bool doUpdateInitramfs = true);
 
 bool addCryptOption(const QString &activeName, const QString &opt);
 bool removeCryptItem(const QString &activeName);
 bool insertCryptItem(const CryptItem &item);
 bool updateCryptTab();
+bool mergeCryptTab();
 
 void updateInitramfs();
 }   // namespace crypttab_helper
