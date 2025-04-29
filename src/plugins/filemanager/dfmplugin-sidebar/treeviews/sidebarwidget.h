@@ -10,6 +10,7 @@
 #include <dfm-base/interfaces/abstractframe.h>
 
 #include <DBlurEffectWidget>
+#include <DConfig>
 
 #include <QUrl>
 
@@ -52,6 +53,7 @@ private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
     void customContextMenuCall(const QPoint &pos);
     void onItemRenamed(const QModelIndex &index, const QString &newName);
+    void updateWindowEffect();
 
 private:
     void initializeUi();
@@ -67,6 +69,9 @@ private:
     static QSharedPointer<SideBarModel> kSidebarModelIns;
     QStringList currentGroups;
     QMap<QString, QString> groupDisplayName;
+
+    DTK_CORE_NAMESPACE::DConfig *compositingConfig { nullptr };
+    bool isWindowEffect { true };
 };
 }
 
