@@ -42,6 +42,8 @@ public:
 
     void initialize();
     void initConnect();
+    void handleMonitoring(bool start);
+    bool canSilentlyRefreshIndex(const QString &path) const;
 
 private:
     TextIndexDBus *q { nullptr };

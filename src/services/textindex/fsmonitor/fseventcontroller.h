@@ -17,9 +17,16 @@ public:
     explicit FSEventController(QObject *parent = nullptr);
 
     void setupFSEventCollector();
+
     bool isEnabled() const;
     void setEnabled(bool enabled);
     void setEnabledNow(bool enabled);
+
+    void startFSMonitoring();
+    void stopFSMonitoring();
+
+    void setSilentlyRefreshStarted();
+    bool silentlyRefreshStarted() const;
 
 private Q_SLOTS:
     void onFilesCreated(const QStringList &paths);
@@ -29,18 +36,20 @@ private Q_SLOTS:
 
 private:
     void clearCollections();
-    void startFSMonitoring();
-    void stopFSMonitoring();
 
 Q_SIGNALS:
     void requestProcessFileChanges(const QStringList &createdFiles,
                                    const QStringList &modifiedFiles,
                                    const QStringList &deletedFiles);
+    void monitoring(bool start);
 
 private:
     bool m_enabled { false };
+    bool m_silentlyFlag { false };
+    int m_collectorIntervalSecs { 120 };   // seconds
     std::unique_ptr<FSEventCollector> m_fsEventCollector;
-    QTimer *m_stopTimer;
+    QTimer *m_startTimer { nullptr };
+    QTimer *m_stopTimer { nullptr };
 
     // Collected file events
     QStringList m_collectedCreatedFiles;

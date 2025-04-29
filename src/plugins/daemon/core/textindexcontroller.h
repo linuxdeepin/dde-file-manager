@@ -47,7 +47,7 @@ private:
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
     State currentState { State::Disabled };
-    bool isEnabled { false };
+    bool isConfigEnabled { false };
     QTimer *keepAliveTimer { nullptr };
 
     // 状态处理器映射

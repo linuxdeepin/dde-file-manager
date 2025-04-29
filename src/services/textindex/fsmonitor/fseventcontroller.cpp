@@ -15,7 +15,8 @@ void FSEventController::setupFSEventCollector()
     m_fsEventCollector = std::make_unique<FSEventCollector>(this);
 
     // TODO (search): dconfig
-    m_fsEventCollector->setCollectionInterval(120);   // Default 2 minutes
+    m_collectorIntervalSecs = 120;
+    m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
     connect(m_fsEventCollector.get(), &FSEventCollector::filesCreated,
@@ -27,14 +28,25 @@ void FSEventController::setupFSEventCollector()
     connect(m_fsEventCollector.get(), &FSEventCollector::flushFinished,
             this, &FSEventController::onFlushFinished);
 
+    m_startTimer = new QTimer(this);
     m_stopTimer = new QTimer(this);
+    m_startTimer->setSingleShot(true);
     m_stopTimer->setSingleShot(true);
+
+    connect(m_startTimer, &QTimer::timeout, this, [this]() {
+        if (!m_enabled) {
+            fmWarning() << "Cannot start monitor, enabled state has been changed";
+            return;
+        }
+        emit monitoring(true);
+    });
+
     connect(m_stopTimer, &QTimer::timeout, this, [this]() {
         if (m_enabled) {
             fmWarning() << "Cannot stop monitor, enabled state has been changed";
             return;
         }
-        stopFSMonitoring();
+        emit monitoring(false);
     });
 }
 
@@ -50,9 +62,17 @@ void FSEventController::setEnabled(bool enabled)
     fmInfo() << "FSEventController enabled: " << m_enabled;
     if (m_enabled) {
         m_stopTimer->stop();
-        startFSMonitoring();
+        // TODO (search) : 若启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
+        if (!silentlyRefreshStarted()) {
+            m_startTimer->start(m_collectorIntervalSecs * 1000);
+            setSilentlyRefreshStarted();
+        } else {
+            m_startTimer->start(0);
+        }
     } else {
+        m_startTimer->stop();
         // 停止监控将清除所有的监控目录，重建需要极大的开销，因此延迟清理资源
+        // TODO (search): dconfig
         m_stopTimer->start(30 * 60 * 1000);   // 30分钟
     }
 }
@@ -109,6 +129,16 @@ void FSEventController::stopFSMonitoring()
     clearCollections();
 
     fmInfo() << "FS monitoring stopped";
+}
+
+void FSEventController::setSilentlyRefreshStarted()
+{
+    m_silentlyFlag = true;
+}
+
+bool FSEventController::silentlyRefreshStarted() const
+{
+    return m_silentlyFlag;
 }
 
 void FSEventController::onFilesCreated(const QStringList &paths)

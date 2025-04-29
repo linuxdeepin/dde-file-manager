@@ -52,7 +52,7 @@ void clearIndexDirectory()
 
     if (dir.exists()) {
         // 删除所有索引文件
-        QStringList files = dir.entryList(QDir::Files);
+        const QStringList &files = dir.entryList(QDir::Files);
         for (const QString &file : files) {
             if (dir.remove(file)) {
                 fmWarning() << "Removed corrupted index file:" << file;

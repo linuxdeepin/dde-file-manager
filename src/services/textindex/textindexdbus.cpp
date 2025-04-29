@@ -34,6 +34,57 @@ void TextIndexDBusPrivate::initConnect()
 
     QObject::connect(fsEventController, &FSEventController::requestProcessFileChanges,
                      q, &TextIndexDBus::ProcessFileChanges);
+    QObject::connect(fsEventController, &FSEventController::monitoring,
+                     q, [this](bool start) {
+                         handleMonitoring(start);
+                     });
+}
+
+void TextIndexDBusPrivate::handleMonitoring(bool start)
+{
+    fmInfo() << "FS event monitoring: " << start;
+    if (!start) {
+        fsEventController->stopFSMonitoring();
+        return;
+    }
+
+    fsEventController->startFSMonitoring();
+
+    // NOTE: Used only for silent updates after the service is started for the first time!
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        // Create or update index es silently
+        const auto &dirs = DFMSEARCH::Global::defaultIndexedDirectory();
+        const auto &path = dirs.isEmpty() ? QDir::homePath() : dirs.first();
+
+        if (!canSilentlyRefreshIndex(path)) {
+            fmWarning() << "Unable to refresh the index because there is already a current task for: " << path;
+            return;
+        }
+
+        fmInfo() << "Start a task silently for: " << path;
+        if (q->IndexDatabaseExists()) {   // update
+            q->UpdateIndexTask(path);
+        } else {   // create
+            q->CreateIndexTask(path);
+        }
+    });
+}
+
+bool TextIndexDBusPrivate::canSilentlyRefreshIndex(const QString &path) const
+{
+    if (auto taskTypeOpt = taskManager->currentTaskType(); taskTypeOpt.has_value()) {
+        if (auto taskPathOpt = taskManager->currentTaskPath(); taskPathOpt.has_value()) {
+            const auto &type = *taskTypeOpt;
+            const auto &taskPath = *taskPathOpt;
+
+            if ((type == IndexTask::Type::Create || type == IndexTask::Type::Update) && (taskPath == path)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
@@ -60,8 +111,6 @@ bool TextIndexDBus::isEnabled()
 
 void TextIndexDBus::setEnabled(bool enabled)
 {
-    Q_ASSERT(d->fsEventController);
-    // TODO: (search) update all indexs and fsmonitor if first launched
     d->fsEventController->setEnabled(enabled);
 }
 
