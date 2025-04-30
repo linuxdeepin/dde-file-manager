@@ -31,6 +31,8 @@ public:
     Status status() const;
 
 private:
+    QPixmap iconPixmap(const QString &iconName, int size);
+
     Status currentStatus { Status::Hidden };
     DTK_NAMESPACE::Widget::DSpinner *spinner { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *iconLabel { nullptr };

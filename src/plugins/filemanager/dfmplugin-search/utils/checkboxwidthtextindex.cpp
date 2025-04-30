@@ -4,12 +4,15 @@
 
 #include "searchmanager/searchmanager.h"
 
+#include <DDciIcon>
+
 #include <QVBoxLayout>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
 #include <QStandardPaths>
 
+DGUI_USE_NAMESPACE
 namespace dfmplugin_search {
 
 TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
@@ -29,7 +32,7 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
 
     iconLabel = new DTK_NAMESPACE::Widget::DTipLabel("", this);
     iconLabel->setFixedSize(16, 16);
-    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
+    iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
 
     msgLabel = new DTK_NAMESPACE::Widget::DTipLabel("", this);
     msgLabel->setAlignment(Qt::AlignLeft);
@@ -61,6 +64,24 @@ void TextIndexStatusBar::setRunning(bool running)
     }
 }
 
+QPixmap TextIndexStatusBar::iconPixmap(const QString &iconName, int size)
+{
+    const auto ratio = qApp->devicePixelRatio();
+    const auto &dciIcon = DDciIcon::fromTheme(iconName);
+    QPixmap px;
+    if (!dciIcon.isNull()) {
+        auto theme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType
+                ? DDciIcon::Light
+                : DDciIcon::Dark;
+        px = dciIcon.pixmap(ratio, size, theme);
+    } else {
+        const auto &qicon = QIcon::fromTheme(iconName);
+        px = qicon.pixmap(size);
+    }
+
+    return px;
+}
+
 void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
 {
     currentStatus = status;
@@ -74,13 +95,13 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         setRunning(false);
         QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
         msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
-        iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
+        iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
         break;
     }
     case Status::Failed:
         setRunning(false);
         msgLabel->setText(tr("Index update failed, please turn on the \"Full-Text search\" switch again"));
-        iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
+        iconLabel->setPixmap(iconPixmap("dialog-error", 16));
         break;
     case Status::Hidden:
         iconLabel->hide();
