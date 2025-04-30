@@ -32,7 +32,6 @@ class RootInfo;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
-
 public:
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
@@ -96,6 +95,17 @@ public:
     void setTreeView(const bool isTree);
 
     QStringList getKeyWords();
+
+    // 设置目录加载策略
+    void setDirectoryLoadStrategy(DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
+    DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy directoryLoadStrategy() const;
+
+    // 预先准备URL但不加载（用于搜索等场景）
+    void prepareUrl(const QUrl &url);
+
+    // 执行实际的加载，使用之前准备的URL或当前URL
+    void executeLoad();
+
 Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();
@@ -104,7 +114,6 @@ Q_SIGNALS:
 
     void hiddenFileChanged();
     void filtersChanged(QStringList nameFilters, QDir::Filters filters);
-    void requestGetSourceData();
 
     void requestChangeHiddenFilter();
     void requestChangeFilters(QDir::Filters filters);
@@ -140,6 +149,7 @@ public Q_SLOTS:
 
 private:
     void connectRootAndFilterSortWork(RootInfo *root, const bool refresh = false);
+    void connectFilterSortWorkSignals();
     void initFilterSortWork();
     void quitFilterSortWork();
     void discardFilterSortObjects();
@@ -166,6 +176,9 @@ private:
     QList<QSharedPointer<QObject>> discardedObjects {};
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
+
+    DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
+    QUrl preparedUrl;
 };
 
 }

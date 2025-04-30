@@ -129,6 +129,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_AboutToChangeViewWidth",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleAboutToChangeViewWidth);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterLoadStrategy",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterLoadStrategy);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -420,4 +422,9 @@ void WorkspaceEventReceiver::handleTabChanged(const quint64 windowId, const QStr
     auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
     if (workspace)
         workspace->setCurrentPage(uniqueId);
+}
+
+void WorkspaceEventReceiver::handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
+{
+    WorkspaceHelper::instance()->registerLoadStrategy(scheme, strategy);
 }

@@ -28,6 +28,11 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
+enum class DirectoryLoadStrategy : uint8_t {
+    kCreateNew, // 默认策略：每次切换目录时立即清空视图
+    kPreserve   // 保留策略：保留现有视图内容，直到新目录数据加载完成后再更新视图
+};
+
 namespace ViewCustomKeys {
 inline constexpr char kSupportIconMode[] { "Custom_Key_SupportIconMode" };
 inline constexpr char kSupportListMode[] { "Custom_Key_SupportListMode" };

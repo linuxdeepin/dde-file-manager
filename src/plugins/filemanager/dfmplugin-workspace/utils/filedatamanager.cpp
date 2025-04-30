@@ -94,6 +94,19 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
     }
 }
 
+void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
+{
+    QString rootPath = rootUrl.path();
+    if (!rootPath.endsWith("/"))
+        rootPath.append("/");
+
+    auto rootInfoKeys = rootInfoMap.keys();
+    for (const auto &rootInfo : rootInfoKeys) {
+        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path())
+            rootInfoMap.value(rootInfo)->clearTraversalThread(key, false);
+    }
+}
+
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)
 {
     RootInfo *root = rootInfoMap.value(rootUrl);

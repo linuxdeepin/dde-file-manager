@@ -182,9 +182,11 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
                                                  const QList<SortInfoPointer> children,
                                                  const DEnumerator::SortRoleCompareFlag sortRole,
                                                  const Qt::SortOrder sortOrder,
-                                                 const bool isMixDirAndFile)
+                                                 const bool isMixDirAndFile,
+                                                 bool isFirstBatch)
 {
-    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, false, false);
+    // This is where we handle the first batch flag for kPreserve mode
+    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, false, false, true, isFirstBatch);
 }
 
 void FileSortWorker::handleSourceChildren(const QString &key,
@@ -193,15 +195,18 @@ void FileSortWorker::handleSourceChildren(const QString &key,
                                           const Qt::SortOrder sortOrder, const bool isMixDirAndFile,
                                           const bool isFinished)
 {
-    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, true, isFinished);
+    // Source changes are not the first batch
+    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, true, isFinished, true, false);
 }
 
-void FileSortWorker::handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos)
+void FileSortWorker::handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos, bool isFirstBatch)
 {
-    handleAddChildren(key, children, infos, sortRole, sortOrder, isMixDirAndFile, false, false, false);
+    // The isFirstBatch parameter is only passed through but not used for clearing
+    // since this is not part of the logic path that should use it
+    handleAddChildren(key, children, infos, sortRole, sortOrder, isMixDirAndFile, false, false, false, isFirstBatch);
 }
 
-void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children)
+void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, bool isFirstBatch)
 {
     if (key != currentKey || isCanceled)
         return;
@@ -225,7 +230,8 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
         }
     }
 
-    handleAddChildren(key, newChildren, {});
+    // Pass false for isFirstBatch since these are updates, not initial data
+    handleAddChildren(key, newChildren, {}, isFirstBatch);
 }
 
 void FileSortWorker::handleTraversalFinish(const QString &key)
@@ -248,13 +254,6 @@ void FileSortWorker::handleSortDir(const QString &key, const QUrl &parent)
         dirPath.chop(1);
     dirUrl.setPath(dirPath);
     filterAndSortFiles(dirUrl);
-}
-
-void FileSortWorker::handleModelGetSourceData()
-{
-    if (isCanceled)
-        return;
-    emit getSourceData(currentKey);
 }
 
 void FileSortWorker::handleFilters(QDir::Filters filters)
@@ -723,9 +722,10 @@ void FileSortWorker::handleAddChildren(const QString &key,
                                        const bool isMixDirAndFile,
                                        const bool handleSource,
                                        const bool isFinished,
-                                       const bool isSort)
+                                       const bool isSort,
+                                       const bool isFirstBatch)
 {
-    if (!handleAddChildren(key, children, childInfos))
+    if (!handleAddChildren(key, children, childInfos, isFirstBatch))
         return;
 
     if (children.isEmpty()) {
@@ -760,15 +760,27 @@ void FileSortWorker::handleAddChildren(const QString &key,
         setSourceHandleState(isFinished);
 }
 
-// 这个函数处理的是当前新增加的
 bool FileSortWorker::handleAddChildren(const QString &key,
                                        const QList<SortInfoPointer> &children,
-                                       const QList<FileInfoPointer> &childInfos)
+                                       const QList<FileInfoPointer> &childInfos,
+                                       const bool isFirstBatch)
 {
     if (currentKey != key || isCanceled)
         return false;
     if (children.isEmpty())
         return true;
+
+    // Clear old data when receiving first batch of items in kPreserve mode
+    if (isFirstBatch) {
+        // Clear the existing children data when we're about to insert the first batch
+        QWriteLocker lk(&childrenDataLocker);
+        childrenDataMap.clear();
+
+        QWriteLocker vlk(&locker);
+        visibleChildren.clear();
+
+        this->children.clear();
+    }
 
     // 获取相对于已有的新增加的文件
     QList<QUrl> newChildren;
@@ -807,6 +819,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     depthMap.insert(depth - 1, parentUrl);
     if (newChildren.isEmpty())
         return true;
+
     insertVisibleChildren(startPos + posOffset, newChildren);
 
     return true;

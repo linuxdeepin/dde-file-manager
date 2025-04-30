@@ -433,6 +433,16 @@ void WorkspaceHelper::aboutToChangeViewWidth(const quint64 windowID, int deltaWi
         view->aboutToChangeWidth(deltaWidth);
 }
 
+void WorkspaceHelper::registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
+{
+    loadStrategyMap[scheme] = strategy;
+}
+
+DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy WorkspaceHelper::getLoadStrategy(const QString &scheme)
+{
+    return loadStrategyMap.value(scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew);
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;
