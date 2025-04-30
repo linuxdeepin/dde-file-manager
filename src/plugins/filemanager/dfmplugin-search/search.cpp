@@ -101,6 +101,7 @@ void Search::regSearchToWorkspace()
 {
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SearchHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterLoadStrategy", SearchHelper::scheme(), DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kPreserve);
 
     QVariantMap propertise {
         { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode, false },

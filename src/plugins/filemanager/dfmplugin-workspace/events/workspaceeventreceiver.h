@@ -80,6 +80,7 @@ public slots:
     void handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId);
     void handleTabChanged(const quint64 windowId, const QString &uniqueId);
 
+    void handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };

@@ -116,6 +116,7 @@ void RootInfo::startWork(const QString &key, const bool getCache)
         return handleGetSourceData(key);
 
     traversaling = true;
+    isFirstBatch = true;
     {
         QWriteLocker lk(&childrenLock);
         childrenUrlList.clear();
@@ -394,8 +395,10 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
         infos.append(info);
     }
 
-    if (sortInfos.length() > 0)
-        Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos);
+    if (sortInfos.length() > 0) {
+        bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+        Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos, isFirst);
+    }
 }
 
 void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken)
@@ -407,21 +410,26 @@ void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> childre
     // 更新已存在的文件信息
     sourceDataList = children;
 
-    Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList);
+    bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+    Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList, isFirst);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
-                                          dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
+                                         dfmio::DEnumerator::SortRoleCompareFlag sortRole,
+                                         Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
 {
     originSortRole = sortRole;
     originSortOrder = sortOrder;
     originMixSort = isMixDirAndFile;
 
-    addChildren(children);
-    traversaling = false;
+    if (children.isEmpty())
+        return;
 
-    Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort);
+    addChildren(children);
+
+
+    bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+    Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort, isFirst);
 }
 
 void RootInfo::handleTraversalFinish(const QString &travseToken)
