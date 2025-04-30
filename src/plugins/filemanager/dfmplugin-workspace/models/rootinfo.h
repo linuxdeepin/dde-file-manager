@@ -66,9 +66,10 @@ Q_SIGNALS:
                             const QList<SortInfoPointer> children,
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
-                            const bool isMixDirAndFile);
-    void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
-    void iteratorUpdateFiles(const QString &key, const QList<SortInfoPointer> sortInfos);
+                            const bool isMixDirAndFile,
+                            bool isFirstBatch = false);
+    void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos, bool isFirstBatch = false);
+    void iteratorUpdateFiles(const QString &key, const QList<SortInfoPointer> sortInfos, bool isFirstBatch = false);
     void watcherAddFiles(const QList<SortInfoPointer> &children);
     void watcherRemoveFiles(const QList<SortInfoPointer> &children);
     void traversalFinished(const QString &key);
@@ -137,6 +138,7 @@ private:
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
     std::atomic_bool traversalFinish { false };
     std::atomic_bool traversaling { false };
+    std::atomic_bool isFirstBatch { true };
 
     QReadWriteLock childrenLock;
     QList<QUrl> childrenUrlList {};

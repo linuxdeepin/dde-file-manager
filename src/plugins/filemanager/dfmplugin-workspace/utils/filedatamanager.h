@@ -34,6 +34,7 @@ public:
     // self = false, will clean children
     void cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh = false, const bool self = true);
     void cleanRoot(const QUrl &rootUrl);
+    void stopRootWork(const QUrl &rootUrl, const QString &key);
     void setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active);
 
 public Q_SLOTS:

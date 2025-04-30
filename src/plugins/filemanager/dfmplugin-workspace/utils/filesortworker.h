@@ -100,20 +100,19 @@ public slots:
                                      const QList<SortInfoPointer> children,
                                      const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
                                      const Qt::SortOrder sortOrder,
-                                     const bool isMixDirAndFile);
+                                     const bool isMixDirAndFile,
+                                     bool isFirstBatch = false);
     void handleSourceChildren(const QString &key,
                               const QList<SortInfoPointer> children,
                               const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
                               const Qt::SortOrder sortOrder,
                               const bool isMixDirAndFile,
                               const bool isFinished);
-    void handleIteratorChildren(const QString &key,const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos);
-    void handleIteratorChildrenUpdate(const QString &key,const QList<SortInfoPointer> children);
+    void handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos, bool isFirstBatch = false);
+    void handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, bool isFirstBatch = false);
     void handleTraversalFinish(const QString &key);
     void handleSortDir(const QString &key, const QUrl &parent);
 
-    // Get data from the data area according to the url, filter and sort the data
-    void handleModelGetSourceData();
     void handleFilters(QDir::Filters filters);
     void HandleNameFilters(const QStringList &filters);
     void handleFilterData(const QVariant &data);
@@ -155,10 +154,12 @@ private:
                            const Qt::SortOrder sortOrder,
                            const bool isMixDirAndFile,
                            const bool handleSource,
-                           const bool isFinished, const bool isSort = true);
+                           const bool isFinished, const bool isSort = true,
+                           const bool isFirstBatch = false);
     bool handleAddChildren(const QString &key,
                            const QList<SortInfoPointer> &children,
-                           const QList<FileInfoPointer> &childInfos);
+                           const QList<FileInfoPointer> &childInfos,
+                           const bool isFirstBatch = false);
     void setSourceHandleState(const bool isFinished);
     void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void checkNameFilters(const FileItemDataPointer itemData);

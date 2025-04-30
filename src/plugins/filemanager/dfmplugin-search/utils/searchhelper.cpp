@@ -337,16 +337,6 @@ bool SearchHelper::crumbRedirectUrl(QUrl *redirectUrl)
     return false;
 }
 
-QDBusInterface &SearchHelper::anythingInterface()
-{
-    static QDBusInterface interface("com.deepin.anything",
-                                    "/com/deepin/anything",
-                                    "com.deepin.anything",
-                                    QDBusConnection::systemBus());
-
-    return interface;
-}
-
 QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
