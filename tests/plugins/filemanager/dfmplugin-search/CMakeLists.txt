@@ -14,7 +14,7 @@ find_package(Boost REQUIRED
 pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
 pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
-pkg_check_modules(PCRE REQUIRED libpcre)
+pkg_check_modules(PCRE REQUIRED libpcre2-8)
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE

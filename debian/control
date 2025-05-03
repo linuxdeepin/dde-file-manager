@@ -24,7 +24,7 @@ Build-Depends:
  libsecret-1-dev,
  libpoppler-cpp-dev,
  libcryptsetup-dev,
- libpcre3-dev,
+ libpcre2-dev,
  libdde-shell-dev (>= 0.0.10),
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
  qt6-base-dev,

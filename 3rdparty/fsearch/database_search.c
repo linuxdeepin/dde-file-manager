@@ -24,7 +24,9 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <pcre.h>
+
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
 #include <fnmatch.h>
 
 #include "database_search.h"
@@ -278,12 +280,15 @@ search_regex_thread(void *user_data)
     search_query_t **queries = ctx->queries;
     search_query_t *query = queries[0];
     const char *error;
-    int erroffset;
-    pcre *regex = pcre_compile(query->query,
-                               ctx->search->match_case ? 0 : PCRE_CASELESS,
-                               &error,
-                               &erroffset,
-                               NULL);
+    PCRE2_SIZE erroffset;
+    int errornumber;
+    uint32_t options = ctx->search->match_case ? 0 : PCRE2_CASELESS;
+    pcre2_code *regex = pcre2_compile((PCRE2_SPTR)query->query,
+                                      PCRE2_ZERO_TERMINATED,
+                                      options,
+                                      &errornumber,
+                                      &erroffset,
+                                      NULL);
 
     int ovector[OVECCOUNT];
 
@@ -320,28 +325,28 @@ search_regex_thread(void *user_data)
                 haystack = node->name;
             }
             size_t haystack_len = strlen(haystack);
-
-            if (pcre_exec(regex, NULL, haystack, haystack_len,
-                          0, 0, ovector, OVECCOUNT)
+            pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(regex, NULL);
+            
+            if (pcre2_match(regex, (PCRE2_SPTR)haystack, haystack_len,
+                            0, 0, match_data, NULL) 
                 >= 0) {
-                results[num_results] = node;
-                num_results++;
-            } else if (ctx->search->enable_py && strlen(node->full_py_name)) {
-                if (pcre_exec(regex, NULL, node->first_py_name, strlen(node->first_py_name),
-                              0, 0, ovector, OVECCOUNT)
-                    >= 0) {
-                    results[num_results] = node;
-                    num_results++;
-                } else if (pcre_exec(regex, NULL, node->full_py_name, strlen(node->full_py_name),
-                                     0, 0, ovector, OVECCOUNT)
-                           >= 0) {
-                    results[num_results] = node;
-                    num_results++;
+                    results[num_results++] = node;
+                } else if (ctx->search->enable_py && strlen(node->full_py_name)) {
+                    if (pcre2_match(regex, (PCRE2_SPTR)node->first_py_name,
+                                    strlen(node->first_py_name),
+                                    0, 0, match_data, NULL)
+                        >= 0) {
+                        results[num_results++] = node;
+                    } else if (pcre2_match(regex, (PCRE2_SPTR)node->full_py_name,
+                                           strlen(node->full_py_name),
+                                           0, 0, match_data, NULL)
+                               >= 0) {
+                        results[num_results++] = node;
                 }
             }
         }
         ctx->num_results = num_results;
-        pcre_free(regex);
+        pcre2_code_free(regex);
     }
     return NULL;
 }

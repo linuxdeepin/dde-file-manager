@@ -27,7 +27,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
 pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
-pkg_check_modules(PCRE REQUIRED libpcre)
+pkg_check_modules(PCRE REQUIRED libpcre2-8)
 
 # use TextIndex interface
 set(DBUS_INTERFACE_FILE "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml")
