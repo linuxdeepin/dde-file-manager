@@ -16,6 +16,7 @@ set(XCB_DEFINITIONS ${PC_XCB_CFLAGS_OTHER})
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XCB DEFAULT_MSG XCB_LIBRARIES XCB_INCLUDE_DIRS)
 
+pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
 if(${QT_VERSION_MAJOR} EQUAL "6")
     qt_add_resources(QRC_RESOURCES ${QRC_FILES})
     set(DFM_EXTRA_LIBRARIES "")
@@ -24,7 +25,6 @@ else()
     find_package(KF5Codecs REQUIRED)
     find_package(Qt5 COMPONENTS X11Extras REQUIRED)
     pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
-    pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
     set(DFM_EXTRA_LIBRARIES
         Qt${QT_VERSION_MAJOR}::X11Extras
         PkgConfig::gsettings
@@ -105,6 +105,7 @@ target_link_libraries(${BIN_NAME}
         dfm${DTK_VERSION_MAJOR}-burn
         PkgConfig::mount
         PkgConfig::gio
+        PkgConfig::X11
         poppler-cpp
         ${XCB_LIBRARIES}
         xcb-xfixes
