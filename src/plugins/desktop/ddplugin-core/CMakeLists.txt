@@ -51,6 +51,7 @@ set(CORE_FILES
 set(BIN_NAME dd-core-plugin)
 
 find_package(Qt6 COMPONENTS Core Widgets Gui REQUIRED)
+find_package(DDEShell REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
@@ -72,6 +73,7 @@ target_link_libraries(${BIN_NAME}
     Qt6::Core
     Qt6::Widgets
     Qt6::Gui
+    Dde::Shell
 )
 
 install(TARGETS ${BIN_NAME}
