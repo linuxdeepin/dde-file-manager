@@ -3776,7 +3776,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
-        <translation>No se pudo localizar el directorio de acceso rápido, ¿eliminarlo?</translation>
+        <translation>No se pudo localizar la carpeta del acceso rápido, ¿quiere eliminarlo?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
