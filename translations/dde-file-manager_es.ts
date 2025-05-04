@@ -1380,12 +1380,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
-        <translation>¿Desea eliminar este elemento?</translation>
+        <translation>¿Desea quitar este elemento?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation>¿Desea eliminar %1 elementos?</translation>
+        <translation>¿Desea quitar %1 elementos?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
