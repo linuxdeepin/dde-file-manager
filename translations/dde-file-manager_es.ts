@@ -1824,7 +1824,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation>* Después de encriptar la partición, el sistema no podrá ser revertido a una versión anterior, por favor confirma el encriptado.</translation>
+        <translation>* Después de encriptar la partición, el sistema no podrá ser revertido a una versión anterior, por favor confirme el encriptado.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
