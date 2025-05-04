@@ -1852,7 +1852,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation>El descifrado puede tomar mucho tiempo, así que asegúrate de que esté conectado a la corriente hasta que se complete el descifrado.</translation>
+        <translation>El descifrado puede tomar mucho tiempo, así que asegúrese de que esté conectado a la corriente hasta que se complete el descifrado.</translation>
     </message>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
