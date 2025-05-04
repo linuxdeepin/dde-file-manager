@@ -4862,7 +4862,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="435"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation>El TPM está bloqueado y no puede utilizarse para el cifrado de particiones. Por favor, cancela la contraseña del TPM o elige otro método de desbloqueo.</translation>
+        <translation>El TPM está bloqueado y no puede utilizarse para el cifrado de particiones. Por favor, cancele la contraseña TPM o elija otro método de desbloqueo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="437"/>
