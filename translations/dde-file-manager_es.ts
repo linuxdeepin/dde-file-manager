@@ -5430,7 +5430,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="624"/>
         <source>Failed to create the directory</source>
-        <translation>Error al crear la capeta</translation>
+        <translation>Error al crear la carpeta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1149"/>
@@ -6937,8 +6937,8 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation>El directorio %1 está ocupado,
-borre los archivos de ese directorio e intente desbloquear la caja fuerte de nuevo.</translation>
+        <translation>La carpeta %1 está ocupada,
+borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.</translation>
     </message>
 </context>
 <context>
