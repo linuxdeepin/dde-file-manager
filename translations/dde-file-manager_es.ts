@@ -873,7 +873,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation>El cambio de la pantalla de entrada puede provocar un montaje fallido</translation>
+        <translation>El cambio de la pantalla de entrada puede provocar un fallo en el montaje</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
@@ -1748,7 +1748,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
-        <translation>Fallido</translation>
+        <translation>Falló</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
@@ -3346,7 +3346,7 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="422"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation>El cambio de la pantalla de entrada puede provocar un montaje fallido</translation>
+        <translation>El cambio de la pantalla de entrada puede provocar un fallo en el montaje</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
@@ -5321,7 +5321,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
-        <translation>Restauración fallida: el archivo original no existe</translation>
+        <translation>La restauración falló: el archivo original no existe</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
@@ -6931,7 +6931,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
         <source>Unlock failed</source>
-        <translation>Desbloqueo fallido</translation>
+        <translation>El desbloqueo falló</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
