@@ -1091,9 +1091,6 @@ void FileViewModel::discardFilterSortObjects()
 
 void FileViewModel::changeState(ModelState newState)
 {
-    if (state == newState)
-        return;
-
     state = newState;
     Q_EMIT stateChanged();
 }
