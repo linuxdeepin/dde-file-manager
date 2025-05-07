@@ -110,7 +110,7 @@ public slots:
                               const bool isFinished);
     void handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos, bool isFirstBatch = false);
     void handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, bool isFirstBatch = false);
-    void handleTraversalFinish(const QString &key);
+    void handleTraversalFinish(const QString &key, bool noDataProduced = false);
     void handleSortDir(const QString &key, const QUrl &parent);
 
     void handleFilters(QDir::Filters filters);

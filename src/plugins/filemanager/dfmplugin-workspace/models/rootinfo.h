@@ -72,7 +72,7 @@ Q_SIGNALS:
     void iteratorUpdateFiles(const QString &key, const QList<SortInfoPointer> sortInfos, bool isFirstBatch = false);
     void watcherAddFiles(const QList<SortInfoPointer> &children);
     void watcherRemoveFiles(const QList<SortInfoPointer> &children);
-    void traversalFinished(const QString &key);
+    void traversalFinished(const QString &key, bool noDataProduced = false);
     void sourceDatas(const QString &key,
                      const QList<SortInfoPointer> children,
                      const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
