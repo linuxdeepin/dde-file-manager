@@ -347,10 +347,10 @@ QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &CheckBoxWidthTextIndex::stateChanged, option, [=](int state) {
-        if (state == 0)
+    QObject::connect(cb, &CheckBoxWidthTextIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+        if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
-        else if (state == 2)
+        else if (state == Qt::CheckState::Checked)
             option->setValue(true);
     });
 
