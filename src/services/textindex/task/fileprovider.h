@@ -27,6 +27,7 @@ public:
 
     // 遍历文件并处理
     virtual void traverse(TaskState &state, const FileHandler &handler) = 0;
+    virtual qint64 totalCount() { return 0; }
 };
 
 // 文件系统遍历提供者
@@ -46,6 +47,7 @@ class DirectFileListProvider : public FileProvider
 public:
     explicit DirectFileListProvider(const DFMSEARCH::SearchResultList &files);
     void traverse(TaskState &state, const FileHandler &handler) override;
+    qint64 totalCount() override;
 
 private:
     DFMSEARCH::SearchResultList m_fileList;

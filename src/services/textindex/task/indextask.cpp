@@ -31,11 +31,11 @@ IndexTask::~IndexTask()
                this, &IndexTask::onProgressChanged);
 }
 
-void IndexTask::onProgressChanged(qint64 count)
+void IndexTask::onProgressChanged(qint64 count, qint64 total)
 {
     if (m_state.isRunning()) {
-        fmDebug() << "Task progress:" << count;
-        emit progressChanged(m_type, count);
+        fmDebug() << "Task progress:" << count << total;
+        emit progressChanged(m_type, count, total);
     }
 }
 

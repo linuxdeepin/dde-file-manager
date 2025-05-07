@@ -181,7 +181,7 @@ void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &pat
     runningTaskPath.clear();
 }
 
-void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count)
+void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count, qlonglong total)
 {
     TaskType taskType;
     if (type == "create")
@@ -193,7 +193,7 @@ void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QStri
     else
         return;
 
-    emit taskProgressChanged(taskType, path, count);
+    emit taskProgressChanged(taskType, path, count, total);
 }
 
 std::optional<bool> TextIndexClient::hasRunningTask()

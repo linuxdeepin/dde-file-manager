@@ -27,7 +27,7 @@ public:
 
     explicit TextIndexStatusBar(QWidget *parent = nullptr);
     void setStatus(Status status, const QVariant &data = QVariant());
-    void updateIndexingProgress(qlonglong count);
+    void updateIndexingProgress(qlonglong count, qlonglong total);
     void setRunning(bool running);
     Status status() const;
 
