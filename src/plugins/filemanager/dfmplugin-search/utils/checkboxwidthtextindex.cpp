@@ -185,7 +185,7 @@ void CheckBoxWidthTextIndex::initStatusBar()
             } else {
                 QString lastTime = client->getLastUpdateTime();
                 bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-                statusBar->setStatus((!exitsts || lastTime.isEmpty()) ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed,
+                statusBar->setStatus(!exitsts ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed,
                                      lastTime);
             }
         }

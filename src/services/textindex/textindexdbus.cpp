@@ -167,6 +167,11 @@ bool TextIndexDBus::IndexDatabaseExists()
         return false;
     }
 
+    if (IndexUtility::getLastUpdateTime().isEmpty()) {
+        fmWarning() << "Last update time is empty";
+        return false;
+    }
+
     return true;
 }
 
