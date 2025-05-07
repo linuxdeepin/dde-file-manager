@@ -104,12 +104,18 @@ void TextIndexDBus::cleanup()
     StopCurrentTask();
 }
 
-bool TextIndexDBus::isEnabled()
+void TextIndexDBus::Init()
+{
+    // 预防启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
+    d->fsEventController->setSilentlyRefreshStarted();
+}
+
+bool TextIndexDBus::IsEnabled()
 {
     return d->fsEventController->isEnabled();
 }
 
-void TextIndexDBus::setEnabled(bool enabled)
+void TextIndexDBus::SetEnabled(bool enabled)
 {
     d->fsEventController->setEnabled(enabled);
 }

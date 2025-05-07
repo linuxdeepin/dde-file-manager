@@ -27,8 +27,9 @@ public:
     void cleanup();
 
 public Q_SLOTS:
-    bool isEnabled();
-    void setEnabled(bool enabled);
+    void Init();
+    bool IsEnabled();
+    void SetEnabled(bool enabled);
     bool CreateIndexTask(const QString &path);
     bool UpdateIndexTask(const QString &path);
     bool StopCurrentTask();
