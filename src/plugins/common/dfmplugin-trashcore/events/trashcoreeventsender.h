@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QTimer>
 
 namespace dfmbase {
 class AbstractFileWatcher;
@@ -33,10 +34,12 @@ private slots:
 private:
     explicit TrashCoreEventSender(QObject *parent = nullptr);
     void initTrashWatcher();
+    bool checkAndStartWatcher();
 
 private:
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;
     bool isEmpty { false };
+    QTimer timer;
 };
 
 }

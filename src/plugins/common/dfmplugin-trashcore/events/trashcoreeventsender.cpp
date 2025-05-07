@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/interfaces/abstractfilewatcher.h>
@@ -35,7 +36,26 @@ void TrashCoreEventSender::initTrashWatcher()
 
     connect(trashFileWatcher.data(), &AbstractFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
     connect(trashFileWatcher.data(), &AbstractFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
-    trashFileWatcher->startWatcher();
+
+    if (!checkAndStartWatcher()) {
+        connect(&timer, &QTimer::timeout, this, &TrashCoreEventSender::checkAndStartWatcher);
+        timer.setSingleShot(true);
+        timer.setInterval(5000);
+        timer.start();
+    }
+}
+
+bool TrashCoreEventSender::checkAndStartWatcher()
+{
+    const auto &cifsHost = NetworkUtils::cifsMountHostInfo();
+    if (!cifsHost.isEmpty()) {
+        const auto &mountPoint = cifsHost.constKeyValueBegin()->first;
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(mountPoint))) {
+            timer.start();
+            return false;
+        }
+    }
+    return trashFileWatcher->startWatcher();
 }
 
 TrashCoreEventSender *TrashCoreEventSender::instance()

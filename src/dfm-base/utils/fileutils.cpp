@@ -13,6 +13,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
@@ -353,6 +354,13 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 
 bool FileUtils::trashIsEmpty()
 {
+    const auto &cifsHost = NetworkUtils::cifsMountHostInfo();
+    if (!cifsHost.isEmpty()) {
+        const auto &mountPoint = cifsHost.constKeyValueBegin()->first;
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(mountPoint)))
+            return true;
+    }
+
     // not use cache, because some times info unreliable, such as watcher inited temporality
     auto info = InfoFactory::create<FileInfo>(trashRootUrl(), Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info) {
