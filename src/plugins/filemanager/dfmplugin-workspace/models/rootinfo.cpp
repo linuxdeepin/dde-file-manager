@@ -162,7 +162,7 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
     auto thread = traversalThreads.take(key);
     auto traversalThread = thread->traversalThread;
     if (traversalThread->isRunning())
-        emit traversalFinished(key);
+        emit traversalFinished(key, false);
     traversalThread->disconnect(this);
     if (traversalThread->isRunning()) {
         discardedThread.append(traversalThread);
@@ -435,7 +435,13 @@ void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
 void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
     traversaling = false;
-    emit traversalFinished(travseToken);
+    // Check if isFirstBatch is still true, which means no directory data was produced
+    bool noDataProduced = isFirstBatch.load();
+    // Reset isFirstBatch
+    isFirstBatch.store(false);
+    
+    // Emit signal with additional parameter indicating if no data was produced
+    emit traversalFinished(travseToken, noDataProduced);
     traversalFinish = true;
     if (isRefresh) {
         isRefresh = false;
@@ -453,14 +459,16 @@ void RootInfo::handleGetSourceData(const QString &currentToken)
         startWatcher();
 
     QList<SortInfoPointer> newDatas;
+    bool isEmpty = false;
     {
         QWriteLocker wlk(&childrenLock);
         newDatas = sourceDataList;
+        isEmpty = sourceDataList.isEmpty();
     }
 
     emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
     if (!traversaling)
-        emit traversalFinished(currentToken);
+        emit traversalFinished(currentToken, isEmpty);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)

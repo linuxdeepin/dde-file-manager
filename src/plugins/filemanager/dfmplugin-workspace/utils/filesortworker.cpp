@@ -234,10 +234,21 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
     handleAddChildren(key, newChildren, {}, isFirstBatch);
 }
 
-void FileSortWorker::handleTraversalFinish(const QString &key)
+void FileSortWorker::handleTraversalFinish(const QString &key, bool noDataProduced)
 {
     if (currentKey != key)
         return;
+
+    // If no data was produced during traversal, clear the existing data
+    if (noDataProduced) {
+        QWriteLocker childLock(&childrenDataLocker);
+        childrenDataMap.clear();
+        
+        QWriteLocker visLock(&locker);
+        visibleChildren.clear();
+        
+        children.clear();
+    }
 
     Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
 
