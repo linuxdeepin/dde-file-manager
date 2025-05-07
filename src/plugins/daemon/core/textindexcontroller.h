@@ -39,7 +39,7 @@ private:
     void startIndexTask(bool isCreate);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
-    void activeBackend();
+    void activeBackend(bool isInit = false);
     void keepBackendAlive();
     bool isBackendAvaliable();
     void updateKeepAliveTimer();

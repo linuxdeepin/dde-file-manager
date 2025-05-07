@@ -97,7 +97,7 @@ void TextIndexController::initialize()
     updateKeepAliveTimer();
 
     if (isConfigEnabled)
-        activeBackend();
+        activeBackend(true);   // init
 
     // 使用心跳，否则 textindex backend 会被退出
     connect(keepAliveTimer, &QTimer::timeout, this, &TextIndexController::keepBackendAlive);
@@ -124,15 +124,19 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
     }
 }
 
-void TextIndexController::activeBackend()
+void TextIndexController::activeBackend(bool isInit)
 {
     if (!isBackendAvaliable()) {
         fmWarning() << "activeBackend failed, DBus interface not initialized";
         return;
     }
 
-    fmInfo() << "active backend: " << isConfigEnabled;
-    interface->setEnabled(isConfigEnabled);
+    if (isInit) {
+        fmInfo() << "Init backend";
+        interface->Init();
+    }
+    fmInfo() << "Active backend: " << isConfigEnabled;
+    interface->SetEnabled(isConfigEnabled);
 }
 
 void TextIndexController::keepBackendAlive()
@@ -142,7 +146,7 @@ void TextIndexController::keepBackendAlive()
         return;
     }
 
-    bool backendEnabled = interface->isEnabled();
+    bool backendEnabled = interface->IsEnabled();
     fmInfo() << "Textindex backend status: " << backendEnabled;
 
     // 配置启动全文索引时，backendEnabled 一定要 true，
