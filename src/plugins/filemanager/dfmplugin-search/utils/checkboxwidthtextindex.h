@@ -49,7 +49,7 @@ public:
     void initStatusBar();
 
 Q_SIGNALS:
-    void stateChanged(int);
+    void checkStateChanged(Qt::CheckState);
 
 private:
     QCheckBox *checkBox { nullptr };

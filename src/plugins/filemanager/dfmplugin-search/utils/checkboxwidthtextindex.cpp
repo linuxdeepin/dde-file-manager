@@ -137,14 +137,14 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     layout->addWidget(checkBox);
     layout->addWidget(statusBar);
 
-    connect(checkBox, &QCheckBox::stateChanged, this, [this](int state) {
+    connect(checkBox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         if (checkBox->isChecked()) {
             statusBar->show();
             statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
         } else {
             statusBar->setStatus(TextIndexStatusBar::Status::Hidden);
         }
-        emit stateChanged(state);
+        emit checkStateChanged(state);
     });
 
     auto client = TextIndexClient::instance();
