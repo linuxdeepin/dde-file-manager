@@ -575,7 +575,6 @@ QWidget *TaskWidget::createConflictWidget()
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addLayout(conflictMainLayout);
-    hLayout->addStretch();
     conflictWidget->setLayout(hLayout);
     conflictWidget->setMaximumWidth(565);
 
