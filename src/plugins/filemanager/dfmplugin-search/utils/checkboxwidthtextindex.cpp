@@ -12,6 +12,7 @@
 #include <QDir>
 
 namespace dfmplugin_search {
+DWIDGET_USE_NAMESPACE
 
 TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     : QWidget { parent }
@@ -33,32 +34,46 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
 
     msgLabel = new DTK_NAMESPACE::Widget::DTipLabel("", this);
-    msgLabel->setAlignment(Qt::AlignLeft);
+    msgLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     msgLabel->setWordWrap(true);
+    msgLabel->setContentsMargins(4, 0, 0, 0);
+
+    updateBtn = new DCommandLinkButton("", this);
+    updateBtn->setFocusPolicy(Qt::NoFocus);
+    updateBtn->setContentsMargins(0, 0, 0, 0);
+    QFont font = msgLabel->font();
+    updateBtn->setFont(font);
+    connect(updateBtn, &DCommandLinkButton::clicked, this, [this]() {
+        emit resetIndex();
+    });
 
     // 添加到布局
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(spinner);
     layout->addWidget(iconLabel);
-    layout->addWidget(msgLabel, 1);
+    layout->addWidget(msgLabel);
+    layout->addWidget(updateBtn);
     layout->addStretch();
 
     // 初始状态
+    updateBtn->hide();
     spinner->hide();
     iconLabel->show();
-    hide();
 }
 
 void TextIndexStatusBar::setRunning(bool running)
 {
-    msgLabel->show();
     if (running) {
         spinner->show();
         spinner->start();
         iconLabel->hide();
+        updateBtn->hide();
     } else {
         spinner->hide();
         spinner->stop();
         iconLabel->show();
+        updateBtn->show();
     }
 }
 
@@ -75,18 +90,20 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         setRunning(false);
         QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
         msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
+        updateBtn->setText(tr("Update Index Now"));
         iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
         break;
     }
     case Status::Failed:
         setRunning(false);
-        msgLabel->setText(tr("Index update failed, please turn on the \"Full-Text search\" switch again"));
+        msgLabel->setText(tr("Index update failed, please"));
+        updateBtn->setText(tr("try updating again."));
         iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
         break;
-    case Status::Hidden:
+    case Status::Inactive:
+        setRunning(false);
         iconLabel->hide();
-        msgLabel->hide();
-        hide();
+        msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
         break;
     }
 }
@@ -118,15 +135,35 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
 
     connect(checkBox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         if (checkBox->isChecked()) {
-            statusBar->show();
             statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
         } else {
-            statusBar->setStatus(TextIndexStatusBar::Status::Hidden);
+            statusBar->setStatus(TextIndexStatusBar::Status::Inactive);
         }
         emit checkStateChanged(state);
     });
 
+    connect(SearchManager::instance(), &SearchManager::enableFullTextSearchChanged,
+            this, [this](bool enable) {
+                setChecked(enable);
+            });
+
+    connect(statusBar, &TextIndexStatusBar::resetIndex, this, [this]() {
+        auto client = TextIndexClient::instance();
+        bool exitsts = client->indexExists().has_value() && client->indexExists().value();
+        // TODO(search): dfm-search
+        if (exitsts) {
+            client->startTask(TextIndexClient::TaskType::Update, QDir::homePath());
+        } else {
+            client->startTask(TextIndexClient::TaskType::Create, QDir::homePath());
+        }
+        statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
+    });
+}
+
+void CheckBoxWidthTextIndex::connectToBackend()
+{
     auto client = TextIndexClient::instance();
+
     // Note: checkService 非常重要！不激活后端无法正确的连接信号
     auto status = client->checkService();
     fmDebug() << "TextIndex backend status:" << status;
@@ -154,11 +191,6 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                     statusBar->setStatus(TextIndexStatusBar::Status::Failed);
                 }
             });
-
-    connect(SearchManager::instance(), &SearchManager::enableFullTextSearchChanged,
-            this, [this](bool enable) {
-                setChecked(enable);
-            });
 }
 
 void CheckBoxWidthTextIndex::setDisplayText(const QString &text)
@@ -176,7 +208,6 @@ void CheckBoxWidthTextIndex::setChecked(bool checked)
 void CheckBoxWidthTextIndex::initStatusBar()
 {
     if (checkBox->isChecked()) {
-        statusBar->show();
         auto client = TextIndexClient::instance();
         auto running = client->hasRunningRootTask();
         if (running.has_value()) {
@@ -190,7 +221,7 @@ void CheckBoxWidthTextIndex::initStatusBar()
             }
         }
     } else {
-        statusBar->setStatus(TextIndexStatusBar::Status::Hidden);
+        statusBar->setStatus(TextIndexStatusBar::Status::Inactive);
     }
 }
 

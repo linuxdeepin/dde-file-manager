@@ -7,6 +7,7 @@
 
 #include <DTipLabel>
 #include <DSpinner>
+#include <DCommandLinkButton>
 
 #include <QCheckBox>
 
@@ -21,7 +22,7 @@ public:
         Indexing,   // 正在更新
         Completed,   // 更新完成
         Failed,   // 更新失败
-        Hidden   // 隐藏状态
+        Inactive   // 未开启
     };
 
     explicit TextIndexStatusBar(QWidget *parent = nullptr);
@@ -30,11 +31,15 @@ public:
     void setRunning(bool running);
     Status status() const;
 
+Q_SIGNALS:
+    void resetIndex();
+
 private:
-    Status currentStatus { Status::Hidden };
+    Status currentStatus { Status::Inactive };
     DTK_NAMESPACE::Widget::DSpinner *spinner { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *iconLabel { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *updateBtn { nullptr };
 };
 
 class CheckBoxWidthTextIndex : public QWidget
@@ -42,6 +47,7 @@ class CheckBoxWidthTextIndex : public QWidget
     Q_OBJECT
 public:
     explicit CheckBoxWidthTextIndex(QWidget *parent = nullptr);
+    void connectToBackend();
     void setDisplayText(const QString &text);
     void setChecked(bool checked);
     void initStatusBar();
