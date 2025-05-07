@@ -67,7 +67,7 @@ Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
     void taskFinished(TaskType type, const QString &path, bool success);
     void taskFailed(TaskType type, const QString &path, const QString &error);
-    void taskProgressChanged(TaskType type, const QString &path, qlonglong count);
+    void taskProgressChanged(TaskType type, const QString &path, qlonglong count, qlonglong total);
 
 private:
     explicit TextIndexClient(QObject *parent = nullptr);
@@ -82,7 +82,7 @@ private:
 
 private Q_SLOTS:
     void onDBusTaskFinished(const QString &type, const QString &path, bool success);
-    void onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count);
+    void onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count, qlonglong total);
 };
 
 DPSEARCH_END_NAMESPACE

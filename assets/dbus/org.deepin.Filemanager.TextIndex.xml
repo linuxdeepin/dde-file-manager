@@ -10,6 +10,7 @@
       <arg name="type" type="s" direction="out"/>
       <arg name="path" type="s" direction="out"/>
       <arg name="count" type="x" direction="out"/>
+      <arg name="total" type="x" direction="out"/>
     </signal>
     <method name="Init">
     </method>

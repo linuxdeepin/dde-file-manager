@@ -197,12 +197,12 @@ QString TaskManager::typeToString(IndexTask::Type type)
     }
 }
 
-void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count)
+void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count, qint64 total)
 {
     if (!currentTask) return;
 
     fmDebug() << "Task progress:" << type << count;
-    emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count);
+    emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count, total);
 }
 
 void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)

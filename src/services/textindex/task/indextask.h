@@ -50,12 +50,12 @@ public:
     void setIndexCorrupted(bool corrupted);
 
 Q_SIGNALS:
-    void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count);
+    void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count, qint64 total);
     void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:
     void doTask();
-    void onProgressChanged(qint64 count);
+    void onProgressChanged(qint64 count, qint64 total);
 
     Type m_type;
     QString m_path;

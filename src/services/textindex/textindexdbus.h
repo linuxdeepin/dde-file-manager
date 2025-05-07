@@ -40,7 +40,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void TaskFinished(const QString &type, const QString &path, bool success);
-    void TaskProgressChanged(const QString &type, const QString &path, qint64 count);
+    void TaskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
 
 private:
     QScopedPointer<SERVICETEXTINDEX_NAMESPACE::TextIndexDBusPrivate> d;
