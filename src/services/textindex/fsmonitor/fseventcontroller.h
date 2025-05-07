@@ -25,7 +25,7 @@ public:
     void startFSMonitoring();
     void stopFSMonitoring();
 
-    void setSilentlyRefreshStarted();
+    void setSilentlyRefreshStarted(bool flag);
     bool silentlyRefreshStarted() const;
 
 private Q_SLOTS:
@@ -42,10 +42,12 @@ Q_SIGNALS:
                                    const QStringList &modifiedFiles,
                                    const QStringList &deletedFiles);
     void monitoring(bool start);
+    void requestSlientStart();
 
 private:
     bool m_enabled { false };
     bool m_silentlyFlag { false };
+    bool m_lastSilentlyFlag { m_silentlyFlag };
     int m_collectorIntervalSecs { 120 };   // seconds
     std::unique_ptr<FSEventCollector> m_fsEventCollector;
     QTimer *m_startTimer { nullptr };
