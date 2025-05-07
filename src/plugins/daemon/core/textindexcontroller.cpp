@@ -42,15 +42,13 @@ TextIndexController::TextIndexController(QObject *parent)
         fmInfo() << "[TextIndex] Checking index database existence";
         auto pendingExists = interface->IndexDatabaseExists();
         pendingExists.waitForFinished();
-        auto lastUpdateTime = interface->GetLastUpdateTime();
-        lastUpdateTime.waitForFinished();
 
-        if (pendingExists.isError() || lastUpdateTime.isError()) {
+        if (pendingExists.isError()) {
             fmWarning() << "[TextIndex] Failed to check index existence:" << pendingExists.error().message();
             return;
         }
 
-        bool needCreate = (!pendingExists.value() || lastUpdateTime.value().isEmpty());
+        bool needCreate = !pendingExists.value();
         fmInfo() << "[TextIndex] Index check result - Need create:" << needCreate;
         startIndexTask(needCreate);
     };
