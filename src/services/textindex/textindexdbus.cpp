@@ -38,6 +38,10 @@ void TextIndexDBusPrivate::initConnect()
                      q, [this](bool start) {
                          handleMonitoring(start);
                      });
+    QObject::connect(fsEventController, &FSEventController::requestSlientStart,
+                     q, [this]() {
+                         handleSlientStart();
+                     });
 }
 
 void TextIndexDBusPrivate::handleMonitoring(bool start)
@@ -49,7 +53,10 @@ void TextIndexDBusPrivate::handleMonitoring(bool start)
     }
 
     fsEventController->startFSMonitoring();
+}
 
+void TextIndexDBusPrivate::handleSlientStart()
+{
     // NOTE: Used only for silent updates after the service is started for the first time!
     static std::once_flag flag;
     std::call_once(flag, [this]() {
@@ -107,7 +114,7 @@ void TextIndexDBus::cleanup()
 void TextIndexDBus::Init()
 {
     // 预防启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
-    d->fsEventController->setSilentlyRefreshStarted();
+    d->fsEventController->setSilentlyRefreshStarted(true);
 }
 
 bool TextIndexDBus::IsEnabled()

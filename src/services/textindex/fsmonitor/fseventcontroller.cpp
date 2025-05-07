@@ -39,6 +39,9 @@ void FSEventController::setupFSEventCollector()
             return;
         }
         emit monitoring(true);
+
+        if (m_lastSilentlyFlag)
+            emit requestSlientStart();
     });
 
     connect(m_stopTimer, &QTimer::timeout, this, [this]() {
@@ -62,9 +65,10 @@ void FSEventController::setEnabled(bool enabled)
     fmInfo() << "FSEventController enabled: " << m_enabled;
     if (m_enabled) {
         m_stopTimer->stop();
-        if (!silentlyRefreshStarted()) {
+        m_lastSilentlyFlag = silentlyRefreshStarted();
+        if (silentlyRefreshStarted()) {
             m_startTimer->start(m_collectorIntervalSecs * 1000);
-            setSilentlyRefreshStarted();
+            setSilentlyRefreshStarted(false);
         } else {
             m_startTimer->start(0);
         }
@@ -130,9 +134,9 @@ void FSEventController::stopFSMonitoring()
     fmInfo() << "FS monitoring stopped";
 }
 
-void FSEventController::setSilentlyRefreshStarted()
+void FSEventController::setSilentlyRefreshStarted(bool flag)
 {
-    m_silentlyFlag = true;
+    m_silentlyFlag = flag;
 }
 
 bool FSEventController::silentlyRefreshStarted() const
