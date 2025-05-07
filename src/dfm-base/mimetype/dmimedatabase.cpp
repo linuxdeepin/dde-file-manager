@@ -5,6 +5,7 @@
 #include "dmimedatabase.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/protocolutils.h>
@@ -100,6 +101,14 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
     if (!inod.isEmpty() && inodMimetypeCache.contains(inod)) {
         return inodMimetypeCache.value(inod);
     }
+
+    QUrl url = QUrl::fromLocalFile(fileName);
+    if (!ProtocolUtils::isLocalFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url))
+        return QMimeType();
+    auto link = FileUtils::symlinkTarget(url);
+    if (!link.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(link)))
+        return QMimeType();
+
     return mimeTypeForFile(QFileInfo(fileName), mode, inod, isGvfs);
 }
 
