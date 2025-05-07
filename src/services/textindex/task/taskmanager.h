@@ -43,11 +43,11 @@ public:
 
 Q_SIGNALS:
     void taskFinished(const QString &type, const QString &path, bool success);
-    void taskProgressChanged(const QString &type, const QString &path, qint64 count);
+    void taskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
     void startTaskInThread();
 
 private Q_SLOTS:
-    void onTaskProgress(IndexTask::Type type, qint64 count);
+    void onTaskProgress(IndexTask::Type type, qint64 count, qint64 total);
     void onTaskFinished(IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:

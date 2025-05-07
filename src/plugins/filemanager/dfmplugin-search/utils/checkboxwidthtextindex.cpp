@@ -79,12 +79,14 @@ void TextIndexStatusBar::setRunning(bool running)
 
 void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
 {
+    Q_UNUSED(data)
+
     currentStatus = status;
 
     switch (status) {
     case Status::Indexing:
         setRunning(true);
-        updateIndexingProgress(data.toLongLong());
+        updateIndexingProgress(0, 0);
         break;
     case Status::Completed: {
         setRunning(false);
@@ -101,18 +103,30 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
         break;
     case Status::Inactive:
-        setRunning(false);
         iconLabel->hide();
+        updateBtn->hide();
         msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
         break;
     }
 }
 
-void TextIndexStatusBar::updateIndexingProgress(qlonglong count)
+void TextIndexStatusBar::updateIndexingProgress(qlonglong count, qlonglong total)
 {
-    if (currentStatus == Status::Indexing) {
-        msgLabel->setText(tr("Building index, %1 files indexed").arg(count));
+    if (currentStatus != Status::Indexing) {
+        return;
     }
+
+    if (count == 0 && total == 0) {
+        msgLabel->setText(tr("Building index"));
+        return;
+    }
+
+    if (count != 0 && total == 0) {
+        msgLabel->setText(tr("Building index, %1 files indexed").arg(count));
+        return;
+    }
+
+    msgLabel->setText(tr("Building index, %1/%2 items indexed").arg(count).arg(total));
 }
 
 TextIndexStatusBar::Status TextIndexStatusBar::status() const
@@ -168,13 +182,13 @@ void CheckBoxWidthTextIndex::connectToBackend()
     auto status = client->checkService();
     fmDebug() << "TextIndex backend status:" << status;
     connect(client, &TextIndexClient::taskProgressChanged,
-            this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count) {
-                fmDebug() << "Index task changed:" << type << path << count;
+            this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count, qlonglong total) {
+                fmDebug() << "Index task changed:" << type << path << count << total;
                 if (shouldHandleIndexEvent(path, type)) {
                     if (statusBar->status() != TextIndexStatusBar::Status::Indexing) {
                         statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
                     }
-                    statusBar->updateIndexingProgress(count);
+                    statusBar->updateIndexingProgress(count, total);
                 }
             });
 
@@ -214,10 +228,8 @@ void CheckBoxWidthTextIndex::initStatusBar()
             if (running.value()) {
                 statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
             } else {
-                QString lastTime = client->getLastUpdateTime();
                 bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-                statusBar->setStatus(!exitsts ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed,
-                                     lastTime);
+                statusBar->setStatus(!exitsts ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed);
             }
         }
     } else {

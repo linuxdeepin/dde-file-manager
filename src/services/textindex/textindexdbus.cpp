@@ -28,8 +28,8 @@ void TextIndexDBusPrivate::initConnect()
                      });
 
     QObject::connect(taskManager, &TaskManager::taskProgressChanged,
-                     q, [this](const QString &type, const QString &path, qint64 count) {
-                         emit q->TaskProgressChanged(type, path, count);
+                     q, [this](const QString &type, const QString &path, qint64 count, qint64 total) {
+                         emit q->TaskProgressChanged(type, path, count, total);
                      });
 
     QObject::connect(fsEventController, &FSEventController::requestProcessFileChanges,

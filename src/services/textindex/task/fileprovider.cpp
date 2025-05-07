@@ -99,6 +99,11 @@ void DirectFileListProvider::traverse(TaskState &state, const FileHandler &handl
     }
 }
 
+qint64 DirectFileListProvider::totalCount()
+{
+    return m_fileList.count();
+}
+
 MixedPathListProvider::MixedPathListProvider(const QStringList &pathList)
     : m_pathList(pathList)
 {

@@ -18,7 +18,7 @@ public:
     static ProgressNotifier *instance();
 
 Q_SIGNALS:
-    void progressChanged(qint64 count);
+    void progressChanged(qint64 count, qint64 total);
 
 private:
     explicit ProgressNotifier(QObject *parent = nullptr)

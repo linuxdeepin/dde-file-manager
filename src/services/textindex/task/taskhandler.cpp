@@ -34,14 +34,19 @@ class ProgressReporter
 {
 public:
     explicit ProgressReporter()
-        : processedCount(0), lastReportTime(QDateTime::currentDateTime())
+        : processedCount(0), toltalCount(0), lastReportTime(QDateTime::currentDateTime())
     {
     }
 
     ~ProgressReporter()
     {
         // 确保最后一次进度能够显示
-        emit ProgressNotifier::instance()->progressChanged(processedCount);
+        emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
+    }
+
+    void setTotal(qint64 count)
+    {
+        toltalCount = count;
     }
 
     void increment()
@@ -51,13 +56,14 @@ public:
         // 检查是否经过了足够的时间间隔(1秒)
         QDateTime now = QDateTime::currentDateTime();
         if (lastReportTime.msecsTo(now) >= 1000) {   // 1000ms = 1s
-            emit ProgressNotifier::instance()->progressChanged(processedCount);
+            emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
             lastReportTime = now;
         }
     }
 
 private:
     qint64 processedCount;
+    qint64 toltalCount;
     QDateTime lastReportTime;
 };
 
@@ -382,6 +388,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             }
 
             ProgressReporter reporter;
+            reporter.setTotal(provider->totalCount());
             provider->traverse(running, [&](const QString &file) {
                 processFile(file, writer, &reporter);
             });
@@ -455,6 +462,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             }
 
             ProgressReporter reporter;
+            reporter.setTotal(provider->totalCount());
             provider->traverse(running, [&](const QString &file) {
                 updateFile(file, reader, writer, &reporter);
             });
@@ -526,6 +534,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
             }
 
             ProgressReporter reporter;
+            reporter.setTotal(provider->totalCount());
             provider->traverse(running, [&](const QString &file) {
                 updateFile(file, reader, writer, &reporter);
             });
