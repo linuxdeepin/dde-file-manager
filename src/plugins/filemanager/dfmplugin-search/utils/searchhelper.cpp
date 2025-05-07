@@ -343,6 +343,7 @@ QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
     const QString &text = option->data("text").toString();
 
     CheckBoxWidthTextIndex *cb = new CheckBoxWidthTextIndex;
+    cb->connectToBackend();
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
