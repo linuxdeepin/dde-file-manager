@@ -62,7 +62,6 @@ void FSEventController::setEnabled(bool enabled)
     fmInfo() << "FSEventController enabled: " << m_enabled;
     if (m_enabled) {
         m_stopTimer->stop();
-        // TODO (search) : 若启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
         if (!silentlyRefreshStarted()) {
             m_startTimer->start(m_collectorIntervalSecs * 1000);
             setSilentlyRefreshStarted();
