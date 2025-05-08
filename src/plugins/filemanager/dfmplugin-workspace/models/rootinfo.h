@@ -47,6 +47,7 @@ public:
                               DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder);
     void startWork(const QString &key, const bool getCache = false);
     int clearTraversalThread(const QString &key, const bool isRefresh);
+    void setFirstBatch(bool first);
 
     void reset();
 
@@ -138,7 +139,7 @@ private:
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
     std::atomic_bool traversalFinish { false };
     std::atomic_bool traversaling { false };
-    std::atomic_bool isFirstBatch { true };
+    std::atomic_bool isFirstBatch { false };
 
     QReadWriteLock childrenLock;
     QList<QUrl> childrenUrlList {};

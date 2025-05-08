@@ -838,6 +838,7 @@ void FileViewModel::executeLoad()
         
         // 获取目标URL的RootInfo，准备数据获取
         RootInfo *newRoot = FileDataManager::instance()->fetchRoot(dirRootUrl);
+        newRoot->setFirstBatch(true);
         
         // 连接信号，使当前filterSortWorker监听新RootInfo的数据
         connectRootAndFilterSortWork(newRoot, true);
