@@ -49,7 +49,7 @@ TaskManager::~TaskManager()
     fmInfo() << "TaskManager destroyed";
 }
 
-bool TaskManager::startTask(IndexTask::Type type, const QString &path)
+bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool silent)
 {
     Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
                "Type error", "Only create and update supported");
@@ -72,6 +72,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
         TaskQueueItem item;
         item.type = type;
         item.path = path;
+        item.silent = silent;
         taskQueue.enqueue(item);
 
         // 返回true表示任务已经被接受，将在当前任务停止后执行
@@ -79,7 +80,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     }
 
     // 正常启动任务流程
-    fmInfo() << "Starting new task for path: " << path << "Type: " << type;
+    fmInfo() << "Starting new task for path: " << path << "Type: " << type << "Slient: " << silent;
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
@@ -97,6 +98,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 
     Q_ASSERT(!currentTask);
     currentTask = new IndexTask(type, path, handler);
+    currentTask->setSilent(silent);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
@@ -109,7 +111,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
     return true;
 }
 
-bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList)
+bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList, bool silent)
 {
     if (fileList.isEmpty()) {
         fmWarning() << "Cannot start file list task, file list is empty";
@@ -125,6 +127,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         item.type = type;
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
+        item.silent = silent;
         taskQueue.enqueue(item);
 
         return true;
@@ -132,7 +135,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
 
     // 正常启动任务流程
     fmInfo() << "Starting new file list task with" << fileList.size() << "files. "
-             << "Type:" << type;
+             << "Type:" << type << "Slient: " << silent;
 
     // 获取对应的任务处理器
     TaskHandler handler;
@@ -155,6 +158,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
 
     Q_ASSERT(!currentTask);
     currentTask = new IndexTask(type, pathId, handler);
+    currentTask->setSilent(silent);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
@@ -309,7 +313,7 @@ bool TaskManager::startNextTask()
         || nextTask.type == IndexTask::Type::UpdateFileList
         || nextTask.type == IndexTask::Type::RemoveFileList) {
         // 启动文件列表任务
-        return startFileListTask(nextTask.type, nextTask.fileList);
+        return startFileListTask(nextTask.type, nextTask.fileList, nextTask.silent);
     } else {
         // 启动常规任务
         return startTask(nextTask.type, nextTask.path);
