@@ -10,6 +10,7 @@
 #include <DCommandLinkButton>
 
 #include <QCheckBox>
+#include <QHBoxLayout>
 
 namespace dfmplugin_search {
 
@@ -30,6 +31,7 @@ public:
     void updateIndexingProgress(qlonglong count, qlonglong total);
     void setRunning(bool running);
     Status status() const;
+    void updateUI(Status status);
 
 Q_SIGNALS:
     void resetIndex();
@@ -40,6 +42,7 @@ private:
     DTK_NAMESPACE::Widget::DTipLabel *iconLabel { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DCommandLinkButton *updateBtn { nullptr };
+    QHBoxLayout *boxLayout { nullptr };
 };
 
 class CheckBoxWidthTextIndex : public QWidget

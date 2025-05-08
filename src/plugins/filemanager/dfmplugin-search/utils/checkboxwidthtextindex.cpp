@@ -20,10 +20,10 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     setContentsMargins(4, 0, 0, 0);
 
     // 创建水平布局
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(5);
-    setLayout(layout);
+    boxLayout = new QHBoxLayout(this);
+    boxLayout->setContentsMargins(0, 0, 0, 0);
+    boxLayout->setSpacing(5);
+    setLayout(boxLayout);
 
     // 创建控件
     spinner = new DTK_NAMESPACE::Widget::DSpinner(this);
@@ -48,13 +48,13 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     });
 
     // 添加到布局
-    layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(spinner);
-    layout->addWidget(iconLabel);
-    layout->addWidget(msgLabel);
-    layout->addWidget(updateBtn);
-    layout->addStretch();
+    boxLayout->setSpacing(0);
+    boxLayout->setContentsMargins(0, 0, 0, 0);
+    boxLayout->addWidget(spinner);
+    boxLayout->addWidget(iconLabel);
+    boxLayout->addWidget(msgLabel);
+    boxLayout->addWidget(updateBtn);
+    boxLayout->addStretch();
 
     // 初始状态
     updateBtn->hide();
@@ -77,12 +77,25 @@ void TextIndexStatusBar::setRunning(bool running)
     }
 }
 
+void TextIndexStatusBar::updateUI(Status status)
+{
+    if (!boxLayout)
+        return;
+    int index = boxLayout->indexOf(msgLabel);
+    if (status == Status::Inactive || status == Status::Indexing) {
+        boxLayout->setStretch(index, 1);
+    } else {
+        boxLayout->setStretch(index, 0);
+    }
+    boxLayout->update();
+}
+
 void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
 {
     Q_UNUSED(data)
 
     currentStatus = status;
-
+    updateUI(status);
     switch (status) {
     case Status::Indexing:
         setRunning(true);
