@@ -5,6 +5,7 @@
 #include "indextask.h"
 
 #include "progressnotifier.h"
+#include "utils/systemdcpuutils.h"
 
 #include <LuceneException.h>
 
@@ -36,6 +37,29 @@ void IndexTask::onProgressChanged(qint64 count, qint64 total)
     if (m_state.isRunning()) {
         fmDebug() << "Task progress:" << count << total;
         emit progressChanged(m_type, count, total);
+    }
+}
+
+bool IndexTask::silent() const
+{
+    return m_silent;
+}
+
+void IndexTask::setSilent(bool newSilent)
+{
+    m_silent = newSilent;
+}
+
+void IndexTask::throttleCpuUsage()
+{
+    if (!silent())
+        return;
+
+    fmInfo() << "Limit CPU to 50%";
+
+    QString msg;
+    if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, 50, &msg)) {
+        fmWarning() << "Limit cpu to 50% failed";
     }
 }
 
@@ -101,11 +125,15 @@ void IndexTask::doTask()
     if (m_handler) {
         try {
             setIndexCorrupted(false);
+            throttleCpuUsage();
             result = m_handler(m_path, m_state);
         } catch (const LuceneException &) {
             // 捕获到 Lucene 异常，说明索引损坏
             setIndexCorrupted(true);
             result.success = false;
+        } catch (...) {   // 捕获所有异常
+            result.success = false;
+            fmCritical() << "Unexpected exception in task handler";
         }
     } else {
         fmWarning() << "No task handler provided";

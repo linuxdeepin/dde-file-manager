@@ -49,11 +49,15 @@ public:
     bool isIndexCorrupted() const;
     void setIndexCorrupted(bool corrupted);
 
+    bool silent() const;
+    void setSilent(bool newSilent);
+
 Q_SIGNALS:
     void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count, qint64 total);
     void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:
+    void throttleCpuUsage();
     void doTask();
     void onProgressChanged(qint64 count, qint64 total);
 
@@ -63,6 +67,7 @@ private:
     TaskState m_state;
     TaskHandler m_handler;
     bool m_indexCorrupted { false };
+    bool m_silent { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
