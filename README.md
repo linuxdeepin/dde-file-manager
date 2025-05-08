@@ -1,12 +1,12 @@
 ### dde-file-manager
 
-Deepin File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, viewing file property and other file management functions.
+Deepin File Manager is a file management tool independently developed by Deepin Technology, featuring functions such as searching, copying, trash management, compression/decompression and viewing file properties.
 
 ### Dependencies
 
 ### Build dependencies
 
-_The **master** branch is current development branch, build dependencies may changes without update README.md, refer to `./debian/control` for a working build depends list_
+_The **master** branch is current development branch, build dependencies may change without updating README.md. Please refer to `./debian/control` for an accurate list of build dependencies_
 
 - cmake,
 - debhelper (>=9),
@@ -54,9 +54,9 @@ _The **master** branch is current development branch, build dependencies may cha
 
 1. Make sure you have installed all dependencies.
 
-_Package name may be different between distros, if dde-file-manager is available from your distro, check the packaging script delivered from your distro is a better idea._
+_The package name may vary between different distros. If dde-file-manager is available in your distro, it is a better idea to check the packaging script provided by your distro._
 
-Assume you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or other debian-based distro which got dde-file-manager delivered:
+Assume you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or another Debian-based distro that provides dde-file-manager:
 
 ``` shell
 $ git clone https://github.com/linuxdeepin/dde-file-manager
@@ -81,7 +81,7 @@ The executable binary file could be found at `/usr/bin/dde-file-manager`
 
 Execute `dde-file-manager`
 
-## Documentations
+## Documentation
 
  - [Development Documentation](https://linuxdeepin.github.io/dde-file-manager/)
  - [User Documentation](https://wiki.deepin.org/wiki/Deepin_File_Manager) | [用户文档](https://wiki.deepin.org/index.php?title=%E6%B7%B1%E5%BA%A6%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8)
