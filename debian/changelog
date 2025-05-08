@@ -1,3 +1,9 @@
+dde-file-manager (6.5.48.1) unstable; urgency=medium
+
+  * test for search
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 08 May 2025 09:48:07 +0800
+
 dde-file-manager (6.5.47.4) unstable; urgency=medium
 
   * enable full-text default
