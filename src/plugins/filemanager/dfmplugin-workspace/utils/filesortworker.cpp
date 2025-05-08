@@ -241,6 +241,8 @@ void FileSortWorker::handleTraversalFinish(const QString &key, bool noDataProduc
 
     // If no data was produced during traversal, clear the existing data
     if (noDataProduced) {
+        visibleTreeChildren.clear();
+
         QWriteLocker childLock(&childrenDataLocker);
         childrenDataMap.clear();
         
@@ -783,6 +785,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
 
     // Clear old data when receiving first batch of items in kPreserve mode
     if (isFirstBatch) {
+        visibleTreeChildren.clear();
         // Clear the existing children data when we're about to insert the first batch
         QWriteLocker lk(&childrenDataLocker);
         childrenDataMap.clear();
