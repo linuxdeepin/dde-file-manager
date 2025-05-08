@@ -116,7 +116,6 @@ void RootInfo::startWork(const QString &key, const bool getCache)
         return handleGetSourceData(key);
 
     traversaling = true;
-    isFirstBatch = true;
     {
         QWriteLocker lk(&childrenLock);
         childrenUrlList.clear();
@@ -174,6 +173,11 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 
     this->isRefresh = isRefresh;
     return traversalThreads.count();
+}
+
+void RootInfo::setFirstBatch(bool first)
+{
+    isFirstBatch = first;
 }
 
 void RootInfo::reset()
