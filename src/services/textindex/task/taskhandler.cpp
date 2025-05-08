@@ -311,6 +311,7 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
 std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
 {
     if (IndexUtility::isIndexWithAnything(path)) {
+        fmInfo() << "Try get docs by anything";
         QObject holder;
         SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
         SearchOptions options;

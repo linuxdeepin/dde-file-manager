@@ -17,15 +17,18 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace Defines {
 
-inline constexpr char kAnythingDocType[] { "doc" };
+inline const QString kTextIndexServiceName =
+        QLatin1String("deepin-service-plugin@org.deepin.Filemanager.TextIndex.service");
+inline const QString kAnythingDocType = QLatin1String("doc");
+
 // NOTE: The version number must be upgraded
 // when the index contents are changed to ensure
 // that the index can be rebuilt!!!
 inline constexpr int kIndexVersion { 0 };
 
 // json
-inline constexpr char kVersionKey[] { "version" };
-inline constexpr char kLastUpdateTimeKey[] { "lastUpdateTime" };
+inline const QString kVersionKey = QLatin1String("version");
+inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
 }   // namespace Defines
 
 DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)
