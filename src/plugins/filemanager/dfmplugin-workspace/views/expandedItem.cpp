@@ -74,8 +74,9 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     if (!info)
         return;
 
+    QStringList textList {};
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
-    const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight));
+    const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight), &textList);
 
     textBounding = GlobalPrivate::boundingRect(lines).toRect();
 }
