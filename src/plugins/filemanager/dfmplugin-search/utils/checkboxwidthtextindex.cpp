@@ -105,7 +105,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         setRunning(false);
         QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
         msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
-        updateBtn->setText(tr("Update Index Now"));
+        updateBtn->setText(tr("Update index now"));
         iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
         break;
     }
