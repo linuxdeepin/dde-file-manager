@@ -648,8 +648,14 @@ bool DFMBASE_NAMESPACE::FileInfoPrivate::canDrop() const
 
     FileInfoPointer info = nullptr;
     QString linkTargetPath = q->pathOf(PathInfoType::kSymLinkTarget);
-
+    QSet<QString> targetPaths {};
     do {
+        if (targetPaths.contains(linkTargetPath)) {
+            return false;
+        } else {
+            targetPaths.insert(linkTargetPath);
+        }
+
         const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
 
         if (targetUrl == q->fileUrl()) {
