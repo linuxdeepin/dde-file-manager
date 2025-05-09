@@ -66,20 +66,32 @@ void TextIndexDBusPrivate::handleSlientStart()
     // NOTE: Used only for silent updates after the service is started for the first time!
     static std::once_flag flag;
     std::call_once(flag, [this]() {
-        // Create or update index es silently
-        const auto &dirs = DFMSEARCH::Global::defaultIndexedDirectory();
-        const auto &path = dirs.isEmpty() ? QDir::homePath() : dirs.first();
+        // Create or update indexes silently
+        const auto &configuredDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+        QStringList pathsToProcess;
 
-        if (!canSilentlyRefreshIndex(path)) {
-            fmWarning() << "Unable to refresh the index because there is already a current task for: " << path;
-            return;
+        if (configuredDirs.isEmpty()) {
+            pathsToProcess.append(QDir::homePath());
+        } else {
+            pathsToProcess = configuredDirs;   // Assuming configuredDirs is a QStringList or compatible
         }
 
-        fmInfo() << "Start a task silently for: " << path;
-        if (q->IndexDatabaseExists()) {   // update
-            taskManager->startTask(IndexTask::Type::Update, path, true);
-        } else {   // create
-            taskManager->startTask(IndexTask::Type::Create, path, true);
+        for (const QString &path : std::as_const(pathsToProcess)) {
+            if (!canSilentlyRefreshIndex(path)) {
+                fmWarning() << "Unable to refresh the index because there is already a current task for: " << path;
+                continue;   // Skip to the next path
+            }
+
+            fmInfo() << "Start a task silently for: " << path;
+            // The decision to create or update is based on q->IndexDatabaseExists().
+            // This implies IndexDatabaseExists() is either a global check,
+            // or its state is relevant for any path being considered.
+            // This retains the original logic for choosing task type, now applied per path.
+            if (q->IndexDatabaseExists()) {   // update
+                taskManager->startTask(IndexTask::Type::Update, path, true);
+            } else {   // create
+                taskManager->startTask(IndexTask::Type::Create, path, true);
+            }
         }
     });
 }
