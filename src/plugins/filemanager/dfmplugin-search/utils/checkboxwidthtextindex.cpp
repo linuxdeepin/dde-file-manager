@@ -127,7 +127,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
         msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
         iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
-        updateBtn->setText(tr("Update Index Now"));
+        updateBtn->setText(tr("Update index now"));
         break;
     }
     case Status::Failed:
