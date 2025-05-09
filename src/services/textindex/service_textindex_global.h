@@ -21,6 +21,17 @@ inline const QString kTextIndexServiceName =
         QLatin1String("deepin-service-plugin@org.deepin.Filemanager.TextIndex.service");
 inline const QString kAnythingDocType = QLatin1String("doc");
 
+// Dconfig
+namespace DConf {
+inline const QString kTextIndexSchema = QLatin1String("org.deepin.dde.file-manager.textindex");
+inline const QString kAutoIndexUpdateInterval = QLatin1String("autoIndexUpdateInterval");
+inline const QString kInotifyResourceCleanupDelay = QLatin1String("inotifyResourceCleanupDelay");
+inline const QString kMaxIndexFileSizeMB = QLatin1String("maxIndexFileSizeMB");
+inline const QString kSupportedFileExtensions = QLatin1String("supportedFileExtensions");
+inline const QString kIndexHiddenFiles = QLatin1String("indexHiddenFiles");
+inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters");
+}   // namesapce DConf
+
 // NOTE: The version number must be upgraded
 // when the index contents are changed to ensure
 // that the index can be rebuilt!!!

@@ -202,7 +202,6 @@ void TextIndexController::startIndexTask(bool isCreate)
     }
 
     QDBusPendingReply<bool> pendingTask;
-    // TODO(search): dfm-search
     if (isCreate) {
         fmInfo() << "[TextIndex] Starting CREATE task for root directory";
         pendingTask = interface->CreateIndexTask(QDir::homePath());

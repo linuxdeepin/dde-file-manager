@@ -177,7 +177,7 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     connect(statusBar, &TextIndexStatusBar::resetIndex, this, [this]() {
         auto client = TextIndexClient::instance();
         bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-        // TODO(search): dfm-search
+        // TODO (search): dfm-search
         if (exitsts) {
             client->startTask(TextIndexClient::TaskType::Update, QDir::homePath());
         } else {
@@ -252,7 +252,7 @@ void CheckBoxWidthTextIndex::initStatusBar()
 
 bool CheckBoxWidthTextIndex::shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const
 {
-    // TODO(search): dfm-search
+    // TODO (search): dfm-search
     return checkBox->isChecked() && path == QDir::homePath() && type != TextIndexClient::TaskType::Remove;
 }
 

@@ -68,3 +68,4 @@ target_link_libraries(${PROJECT_NAME}
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-service-manager/)
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/user/)
 INSTALL_DBUS_SERVICE(org.deepin.Filemanager.TextIndex)
+INSTALL_DCONFIG("org.deepin.dde.file-manager.textindex.json")

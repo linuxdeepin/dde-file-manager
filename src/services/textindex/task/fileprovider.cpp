@@ -6,6 +6,7 @@
 #include "utils/indextraverseutils.h"
 #include "utils/indexutility.h"
 #include "utils/scopeguard.h"
+#include "utils/textindexconfig.h"
 
 #include <QDir>
 #include <QDirIterator>
@@ -111,12 +112,8 @@ MixedPathListProvider::MixedPathListProvider(const QStringList &pathList)
 
 void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handler)
 {
-    // TODO (search): use dconfig
     // Default blacklisted directories
-    static QStringList kDefaultBlacklistedDirs = {
-        ".git", ".svn", ".hg", ".cache", ".local/share/Trash", ".Trash",
-        ".thumbnails", "thumbnails", ".mozilla"
-    };
+    QStringList defaultBlacklistedDirs = TextIndexConfig::instance().folderExcludeFilters();
 
     QSet<QString> processedFiles;   // 避免重复处理文件
     QSet<QString> visitedDirs;   // 避免目录循环引用
@@ -143,7 +140,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
             // 检查目录是否在黑名单中
             bool isBlacklisted = false;
             QString dirName = fileInfo.fileName();
-            if (kDefaultBlacklistedDirs.contains(dirName)) {
+            if (defaultBlacklistedDirs.contains(dirName)) {
                 isBlacklisted = true;
             }
 
@@ -193,7 +190,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
             QString entryName = QString::fromUtf8(entry->d_name);
             // 检查目录名是否在黑名单中
-            if (kDefaultBlacklistedDirs.contains(entryName))
+            if (defaultBlacklistedDirs.contains(entryName))
                 continue;
 
             QString fullPath = QDir::cleanPath(currentDir + QDir::separator() + entryName);
