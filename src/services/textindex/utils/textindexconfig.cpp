@@ -19,7 +19,7 @@ TextIndexConfig::TextIndexConfig(QObject *parent)
       m_dconfigManager(DConfigManager::instance())   // Get DConfigManager instance
 {
     QString err;
-    if (!DFMBASE_NAMESPACE::DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.textindex", &err))
+    if (!DFMBASE_NAMESPACE::DConfigManager::instance()->addConfig(Defines::DConf::kTextIndexSchema, &err))
         fmWarning() << "load dconfiog failed: " << err;
 
     loadAllConfigs();
