@@ -237,16 +237,16 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
              << (result.success ? "completed successfully" : "failed");
 
     // 如果是根目录的任务，更新状态文件
-    if (IndexUtility::isDefaultIndexedDirectory(taskPath)) {
-        if (!result.success) {
-            fmWarning() << "Root indexing failed, clearing status"
-                        << "[Root index task failed]";
-            IndexUtility::removeIndexStatusFile();
-        } else if (result.success && !result.interrupted) {
-            fmInfo() << "Root indexing completed successfully, updating status"
-                     << "[Root index task succeeded]";
-            IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
-        }
+    if (IndexUtility::isDefaultIndexedDirectory(taskPath) && !result.success) {
+        fmWarning() << "Root indexing failed, clearing status"
+                    << "[Root index task failed]";
+        IndexUtility::removeIndexStatusFile();
+    }
+
+    if (result.success && !result.interrupted) {
+        fmInfo() << "Indexing completed successfully, updating status"
+                 << "[Index task succeeded]";
+        IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
     }
 
     emit taskFinished(typeToString(type), taskPath, result.success);
