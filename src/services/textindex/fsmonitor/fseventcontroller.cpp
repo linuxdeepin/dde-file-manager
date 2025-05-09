@@ -101,6 +101,7 @@ void FSEventController::startFSMonitoring()
     }
 
     // Initialize with home directory (same as text index)
+    // TODO (search): dconfig
     bool success = m_fsEventCollector->initialize(QDir::homePath());
     if (!success) {
         fmWarning() << "Failed to initialize FSEventCollector";
