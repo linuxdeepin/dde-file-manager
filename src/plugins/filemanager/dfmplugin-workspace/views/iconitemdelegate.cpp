@@ -659,7 +659,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         labelRect.setHeight(labelRect.height() > normalHeight ? normalHeight : labelRect.height());
     }
 
-    layout->layout(labelRect, opt.textElideMode, painter, background);
+    QStringList textList {};
+    layout->layout(labelRect, opt.textElideMode, painter, background, &textList);
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const
