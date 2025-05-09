@@ -218,7 +218,7 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
     } else if (elideMode == Qt::ElideLeft && elidePos > 0) {
         // 左侧省略：检查每个原始匹配项是否在省略处被截断
         int originalLineStart = lineStartPos;
-        int visibleStartInOriginal = originalLineStart + elideText.length() - elidePos;
+        int visibleStartInOriginal = originalLineStart + elidePos + 1;
         
         for (const auto &match : originalMatches) {
             int matchStart = match.first;
@@ -538,31 +538,6 @@ void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &
         
         painter->restore();
     }
-}
-
-void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, const QRectF &rect)
-{
-    // 创建一个临时的匹配列表，仅包含当前行内的匹配
-    QList<QPair<int, int>> lineMatches;
-    int lineStartPos = line.textStart();
-    
-    // 查找当前行所有关键词的所有匹配位置
-    for (const QString &keyword : highlightKeywords) {
-        if (keyword.isEmpty())
-            continue;
-
-        int startPos = 0;
-        while (startPos < lineText.length()) {
-            int keywordPos = lineText.indexOf(keyword, startPos, Qt::CaseInsensitive);
-            if (keywordPos == -1)
-                break;
-
-            lineMatches.append(qMakePair(lineStartPos + keywordPos, keyword.length()));
-            startPos = keywordPos + 1;
-        }
-    }
-    
-    drawTextWithHighlight(painter, line, lineText, rect, lineStartPos, lineMatches);
 }
 
 void ElideTextLayout::initLayoutOption(QTextLayout *lay)

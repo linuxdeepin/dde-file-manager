@@ -64,7 +64,6 @@ public:
 
 protected:
     QRectF drawLineBackground(QPainter *painter, const QRectF &curLineRect, QRectF lastLineRect, const QBrush &brush) const;
-    void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, const QRectF &rect);
     void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, 
                               const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches);
     virtual void initLayoutOption(QTextLayout *lay);
