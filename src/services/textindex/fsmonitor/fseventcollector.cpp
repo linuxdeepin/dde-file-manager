@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fseventcollector_p.h"
+#include "utils/textindexconfig.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/protocolutils.h>
@@ -160,8 +161,7 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
         return true;
 
     // Check if extension is supported for content search
-    bool supported = DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
-
+    bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
     if (!supported)
         logDebug(QString("Skipping file with unsupported extension: %1 (suffix: %2)").arg(path, suffix));
 

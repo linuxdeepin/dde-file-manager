@@ -8,6 +8,7 @@
 #include "utils/scopeguard.h"
 #include "utils/docutils.h"
 #include "utils/indexutility.h"
+#include "utils/textindexconfig.h"
 
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
@@ -139,20 +140,37 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
     }
 }
 
+bool checkFileSize(const QFileInfo &fileInfo)
+{
+    static const qint64 kMaxFileSizeInBytes = [] {
+        qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
+        // 在这里进行上述的健全性检查
+        if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
+            sizeMBFromConfig = 50LL;   // Default fallback
+        }
+        return sizeMBFromConfig * 1024LL * 1024LL;
+    }();
+
+    if (fileInfo.size() > kMaxFileSizeInBytes) {
+        fmDebug() << "File" << fileInfo.fileName() << "size" << fileInfo.size()
+                  << "exceeds max allowed size" << kMaxFileSizeInBytes;
+        return false;
+    }
+    return true;
+}
+
 bool isSupportedFile(const QString &path)
 {
     QFileInfo fileInfo(path);
     if (!fileInfo.exists() || !fileInfo.isFile())
         return false;
 
-    // TODO (search): dconfig
-    // 检查文件大小是否超过 50MB（50 * 1024 * 1024 字节）
-    const qint64 kMaxSupportedSize = 50 * 1024 * 1024;   // 50MB
-    if (fileInfo.size() > kMaxSupportedSize)
+    // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
+    if (!checkFileSize(fileInfo))
         return false;
 
     const QString &suffix = fileInfo.suffix().toLower();
-    return DFMSEARCH::Global::isSupportedContentSearchExtension(suffix);
+    return TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
 }
 
 void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
@@ -227,18 +245,56 @@ void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         TermPtr allDocsTerm = newLucene<Term>(L"path", L"*");
         WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
         TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
+        if (!allDocs)
+            return;
 
         int removedCount = 0;
+        const QStringList supportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
         // 检查每个文档对应的文件是否存在
         for (int32_t i = 0; i < allDocs->totalHits && running.isRunning(); ++i) {
+            // Ensure scoreDocs[i] is not null before accessing ->doc
+            if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
+                // Log error or skip
+                continue;
+            }
+
             DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
+            if (!doc) {   // Ensure document is valid
+                // Log error or skip
+                continue;
+            }
+
             String pathValue = doc->get(L"path");
             QString filePath = QString::fromStdWString(pathValue);
 
-            if (!QFileInfo::exists(filePath)) {
-                TermPtr term = newLucene<Term>(L"path", pathValue);
+            bool shouldDelete = false;
+
+            QFileInfo fileInfo(filePath);
+
+            //  Check existence first
+            if (!fileInfo.exists()) {
+                shouldDelete = true;
+            } else {
+                // If exists, check suffix (only if not already marked for deletion)
+                QString suffix = fileInfo.suffix().toLower();   // Normalize to lowercase for case-insensitive comparison
+
+                // Use the pre-fetched list/set
+                // if (!supportedExtensionsSet.contains(suffix)) { // If using QSet
+                if (!supportedExtensions.contains(suffix, Qt::CaseInsensitive)) {   // QStringList::contains with case insensitivity
+                    shouldDelete = true;
+                }
+            }
+
+            //  Delete if necessary
+            if (shouldDelete) {
+                TermPtr term = newLucene<Term>(L"path", pathValue);   // Create Term only when needed
                 writer->deleteDocuments(term);
                 removedCount++;
+                // `term` should be managed by Lucene's memory management or be a smart pointer
+                // that cleans up. If it's a raw pointer you manage, ensure it's deleted
+                // if newLucene doesn't transfer ownership or if writer->deleteDocuments doesn't.
+                // Often, Lucene handles this, but it's good to be aware.
+                // For example, if newLucene returns a std::shared_ptr or similar, it's fine.
             }
         }
 
@@ -317,8 +373,7 @@ std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &pa
         SearchOptions options;
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
-        // TODO (search): dconfig
-        options.setIncludeHidden(false);   // Note: too many hidden files!
+        options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());   // Note: too many hidden files!
         FileNameOptionsAPI fileNameOptions(options);
         fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
         engine->setSearchOptions(options);

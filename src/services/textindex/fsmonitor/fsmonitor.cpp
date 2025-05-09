@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fsmonitor_p.h"
+#include "utils/textindexconfig.h"
 
 #include <dfm-base/utils/protocolutils.h>
 
@@ -69,13 +70,6 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 //     }
 // }
 
-// TODO (search): use dconfig
-// Default blacklisted directories
-const QStringList FSMonitorPrivate::defaultBlacklistedDirs = {
-    ".git", ".svn", ".hg", ".cache", ".local/share/Trash", ".Trash",
-    ".thumbnails", "thumbnails", ".mozilla"
-};
-
 FSMonitorPrivate::FSMonitorPrivate(FSMonitor *qq)
     : q_ptr(qq)
 {
@@ -110,6 +104,7 @@ bool FSMonitorPrivate::init(const QString &rootPath)
     setupWatcherConnections();
 
     // Add default blacklisted paths
+    const auto &defaultBlacklistedDirs = TextIndexConfig::instance().folderExcludeFilters();
     for (const QString &dir : defaultBlacklistedDirs) {
         blacklistedPaths.insert(dir);
     }
@@ -306,8 +301,7 @@ bool FSMonitorPrivate::isSymbolicLink(const QString &path) const
 
 bool FSMonitorPrivate::showHidden() const
 {
-    // TODO (search): dconfig
-    return false;
+    return TextIndexConfig::instance().indexHiddenFiles();
 }
 
 bool FSMonitorPrivate::isExternalMount(const QString &path) const
