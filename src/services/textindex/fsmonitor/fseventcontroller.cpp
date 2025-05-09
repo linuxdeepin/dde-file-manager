@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "fseventcontroller.h"
 
+#include <utils/textindexconfig.h>
+
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 FSEventController::FSEventController(QObject *parent)
@@ -14,8 +16,7 @@ void FSEventController::setupFSEventCollector()
 {
     m_fsEventCollector = std::make_unique<FSEventCollector>(this);
 
-    // TODO (search): dconfig
-    m_collectorIntervalSecs = 120;
+    m_collectorIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
     m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
@@ -75,8 +76,7 @@ void FSEventController::setEnabled(bool enabled)
     } else {
         m_startTimer->stop();
         // 停止监控将清除所有的监控目录，重建需要极大的开销，因此延迟清理资源
-        // TODO (search): dconfig
-        m_stopTimer->start(30 * 60 * 1000);   // 30分钟
+        m_stopTimer->start(TextIndexConfig::instance().inotifyResourceCleanupDelayMs());
     }
 }
 

@@ -1,0 +1,86 @@
+{
+	"magic": "dsg.config.meta",
+	"version": "1.0",
+	"contents": {
+		"autoIndexUpdateInterval": {
+			"value": 180,
+			"serial": 0,
+			"flags": [],
+			"name": "Auto index update interval",
+			"name[zh_CN]": "自动更新索引时间间隔",
+			"description[zh_CN]": "全文索引的自动更新索引时间间隔，单位为秒",
+			"description": "Automatic index update interval for full-text indexes in seconds",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"inotifyResourceCleanupDelay": {
+			"value": 600000,
+			"serial": 0,
+			"flags": [],
+			"name": "Inotify Resource Cleanup Delay (ms)",
+			"name[zh_CN]": "Inotify 资源清理延迟（毫秒）",
+			"description[zh_CN]": "停止文件系统监控后，延迟清理 inotify 监控资源的等待时间，单位为毫秒。此延迟有助于避免因频繁停止/启动监控而导致的高昂重建开销。",
+			"description": "The delay in milliseconds before inotify monitoring resources are cleaned up after file system monitoring is stopped. This delay helps to avoid expensive rebuild costs due to frequent stop/start of monitoring",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"maxIndexFileSizeMB": {
+			"value": 50,
+			"serial": 0,
+			"flags": [],
+			"name": "Max index file size (MB)",
+			"name[zh_CN]": "最大索引文件大小（MB）",
+			"description[zh_CN]": "单个索引文件的最大大小，单位为兆字节（MB）。",
+			"description": "Maximum size for an individual index file in Megabytes (MB).",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"supportedFileExtensions": {
+			"value": [
+				"rtf", "odt", "ods", "odp", "odg", "docx",
+				"xlsx", "pptx", "ppsx", "md", "xls", "xlsb",
+				"doc", "dot", "wps", "ppt", "pps", "txt",
+				"pdf", "dps", "sh", "html", "htm", "xml",
+				"xhtml", "dhtml", "shtm", "shtml", "json",
+				"css", "yaml", "ini", "bat", "js", "sql",
+				"uof", "ofd"
+			],
+			"serial": 0,
+			"flags": [],
+			"name": "Supported file extensions",
+			"name[zh_CN]": "支持的文件后缀列表",
+			"description[zh_CN]": "将被考虑用于索引的文件后缀名列表。",
+			"description": "List of file extensions that will be considered for indexing.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"indexHiddenFiles": {
+			"value": false,
+			"serial": 0,
+			"flags": [],
+			"name": "Index hidden files",
+			"name[zh_CN]": "索引隐藏文件",
+			"description[zh_CN]": "是否索引被操作系统标记为隐藏的文件和文件夹。默认为否。",
+			"description": "Whether to index files and folders marked as hidden by the operating system. Defaults to false.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"folderExcludeFilters": {
+			"value": [
+				".git", ".svn", ".hg", ".cache", ".local/share/Trash", ".Trash",
+				".thumbnails", "thumbnails", ".mozilla", "CMakeFiles",
+				"CMakeTmp",
+				"CMakeTmpQmake",
+				"lost+found"
+			],
+			"serial": 0,
+			"flags": [],
+			"name": "Folder exclude filters",
+			"name[zh_CN]": "排除的目录过滤器",
+			"description[zh_CN]": "从索引中排除的目录名称模式列表。这些目录及其内容将不会被索引。",
+			"description": "List of directory name patterns to exclude from indexing. These directories and their contents will not be indexed.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		}
+	}
+}
