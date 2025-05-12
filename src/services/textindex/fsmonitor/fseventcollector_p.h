@@ -20,7 +20,7 @@ public:
     ~FSEventCollectorPrivate();
 
     // Initialize the collector with monitor root path
-    bool init(const QString &rootPath);
+    bool init(const QStringList &rootPaths);
 
     // Start collecting events
     bool startCollecting();
@@ -94,8 +94,8 @@ public:
     // Collection interval in milliseconds (default: 180000ms = 3 minutes)
     int collectionIntervalMs { 180000 };
 
-    // Root path being monitored
-    QString rootPath;
+    // Root paths being monitored
+    QStringList rootPaths;
 
     // Maximum event count before auto-flush (default: 10000)
     int maxEvents { 10000 };

@@ -88,17 +88,25 @@ FSMonitorPrivate::~FSMonitorPrivate()
     }
 }
 
-bool FSMonitorPrivate::init(const QString &rootPath)
+bool FSMonitorPrivate::init(const QStringList &rootPaths)
 {
-    // Initialize with root path and create the watcher
-    this->rootPath = QDir(rootPath).absolutePath();
-    watcher.reset(new DFileSystemWatcher());
+    // Initialize with root paths and create the watcher
+    this->rootPaths.clear();
+    for (const QString &path : rootPaths) {
+        QString absPath = QDir(path).absolutePath();
+        if (QDir(absPath).exists()) {
+            this->rootPaths.append(absPath);
+        } else {
+            logError(QString("Root path does not exist: %1").arg(absPath));
+        }
+    }
 
-    // Check if root path exists
-    if (!QDir(this->rootPath).exists()) {
-        logError(QString("Root path does not exist: %1").arg(this->rootPath));
+    if (this->rootPaths.isEmpty()) {
+        logError("No valid root paths provided");
         return false;
     }
+
+    watcher.reset(new DFileSystemWatcher());
 
     // Setup watcher connections
     setupWatcherConnections();
@@ -114,7 +122,7 @@ bool FSMonitorPrivate::init(const QString &rootPath)
         return shouldExcludePath(path);
     });
 
-    logDebug(QString("FSMonitor initialized with root path: %1").arg(this->rootPath));
+    logDebug(QString("FSMonitor initialized with %1 root paths").arg(this->rootPaths.size()));
     return true;
 }
 
@@ -141,10 +149,12 @@ bool FSMonitorPrivate::startMonitoring()
         workerThread.start();
     }
 
-    // Process the root directory first
-    QMetaObject::invokeMethod(worker, "processDirectory",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, rootPath));
+    // Process the root directorys
+    for (const QString &dir : std::as_const(rootPaths)) {
+        QMetaObject::invokeMethod(worker, "processDirectory",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QString, dir));
+    }
 
     logDebug(QString("Started monitoring with max watches: %1, usage limit: %2%")
                      .arg(maxWatches)
@@ -565,10 +575,10 @@ FSMonitor::~FSMonitor()
     stop();
 }
 
-bool FSMonitor::initialize(const QString &rootPath)
+bool FSMonitor::initialize(const QStringList &rootPaths)
 {
     Q_D(FSMonitor);
-    return d->init(rootPath);
+    return d->init(rootPaths);
 }
 
 bool FSMonitor::start()

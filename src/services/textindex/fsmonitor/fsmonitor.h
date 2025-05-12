@@ -42,8 +42,8 @@ public:
     // Singleton access
     static FSMonitor &instance();
 
-    // Initialize monitoring with root path (defaults to user's home directory)
-    bool initialize(const QString &rootPath = QDir::homePath());
+    // Initialize monitoring with root paths
+    bool initialize(const QStringList &rootPaths);
 
     // Start monitoring
     bool start();

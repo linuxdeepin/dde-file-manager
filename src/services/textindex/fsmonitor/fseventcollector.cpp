@@ -35,17 +35,32 @@ FSEventCollectorPrivate::~FSEventCollectorPrivate()
     stopCollecting();
 }
 
-bool FSEventCollectorPrivate::init(const QString &rootPath)
+bool FSEventCollectorPrivate::init(const QStringList &rootPaths)
 {
-    this->rootPath = QDir(rootPath).absolutePath();
+    // Convert all paths to absolute paths
+    this->rootPaths.clear();
+    for (const QString &path : rootPaths) {
+        QString absPath = QDir(path).absolutePath();
+        if (QDir(absPath).exists()) {
+            this->rootPaths.append(absPath);
+        } else {
+            logError(QString("Root path does not exist: %1").arg(absPath));
+        }
+    }
 
-    // Initialize the underlying FSMonitor with the same root path
-    if (!fsMonitor.initialize(rootPath)) {
-        logError(QString("Failed to initialize FSMonitor with root path: %1").arg(rootPath));
+    if (this->rootPaths.isEmpty()) {
+        logError("No valid root paths provided");
         return false;
     }
 
-    logDebug(QString("FSEventCollector initialized with root path: %1").arg(this->rootPath));
+    // Initialize the underlying FSMonitor with the first root path
+    // FSMonitor will handle multiple paths internally
+    if (!fsMonitor.initialize(this->rootPaths)) {
+        logError(QString("Failed to initialize FSMonitor with root paths"));
+        return false;
+    }
+
+    logDebug(QString("FSEventCollector initialized with %1 root paths").arg(this->rootPaths.size()));
     return true;
 }
 
@@ -526,10 +541,10 @@ FSEventCollector::~FSEventCollector()
     // of FSEventCollectorPrivate, which stops collecting
 }
 
-bool FSEventCollector::initialize(const QString &rootPath)
+bool FSEventCollector::initialize(const QStringList &rootPaths)
 {
     Q_D(FSEventCollector);
-    return d->init(rootPath);
+    return d->init(rootPaths);
 }
 
 bool FSEventCollector::start()
