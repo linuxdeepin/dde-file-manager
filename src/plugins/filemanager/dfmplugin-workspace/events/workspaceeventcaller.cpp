@@ -101,3 +101,8 @@ void WorkspaceEventCaller::sendCloseTab(const QUrl &url)
 {
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", url);
 }
+
+void WorkspaceEventCaller::sendViewModeChanged(quint64 windowId, Global::ViewMode mode)
+{
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, windowId, static_cast<int>(mode));
+}

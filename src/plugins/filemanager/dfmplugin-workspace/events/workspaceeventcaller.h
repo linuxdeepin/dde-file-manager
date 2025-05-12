@@ -43,6 +43,8 @@ public:
 
     static bool sendCheckTabAddable(quint64 windowId);
     static void sendCloseTab(const QUrl &url);
+
+    static void sendViewModeChanged(quint64 windowId, DFMGLOBAL_NAMESPACE::ViewMode mode);
 };
 
 }

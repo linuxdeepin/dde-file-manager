@@ -8,6 +8,7 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "utils/workspacehelper.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -101,19 +102,19 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         {
             // display as icon
             if (actionId == ActionID::kDisplayIcon) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kIconMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kIconMode);
                 return true;
             }
 
             // display as list
             if (actionId == ActionID::kDisplayList) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kListMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
                 return true;
             }
 
             // display as tree
             if (actionId == ActionID::kDisplayTree) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kTreeMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
                 return true;
             }
         }
