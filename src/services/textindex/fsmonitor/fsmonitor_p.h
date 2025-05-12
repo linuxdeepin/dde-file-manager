@@ -26,8 +26,9 @@ public:
     FSMonitorPrivate(FSMonitor *qq);
     ~FSMonitorPrivate();
 
-    // Initializes the monitor with the root path
-    bool init(const QString &rootPath);
+    // Initialize the monitor with root paths
+    bool init(const QStringList &rootPaths);
+    bool init(const QString &rootPath);  // For backward compatibility
 
     // Start monitoring using DFileSystemWatcher
     bool startMonitoring();
@@ -96,7 +97,7 @@ public:
     QThread workerThread;
     FSMonitorWorker *worker { nullptr };
 
-    QString rootPath;
+    QStringList rootPaths;
     QSet<QString> watchedDirectories;
     QSet<QString> blacklistedPaths;
     bool active { false };

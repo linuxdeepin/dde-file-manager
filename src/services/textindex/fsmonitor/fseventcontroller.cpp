@@ -91,7 +91,6 @@ void FSEventController::setEnabledNow(bool enabled)
 void FSEventController::startFSMonitoring()
 {
     if (!m_fsEventCollector) {
-        fmWarning() << "Cannot start FS monitoring: FSEventCollector not initialized";
         return;
     }
 
@@ -100,9 +99,14 @@ void FSEventController::startFSMonitoring()
         return;
     }
 
-    // Initialize with home directory (same as text index)
-    // TODO (search): dconfig
-    bool success = m_fsEventCollector->initialize(QDir::homePath());
+    // Initialize with default indexed directories
+    QStringList indexedDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+    if (indexedDirs.isEmpty()) {
+        fmWarning() << "No default indexed directories found";
+        return;
+    }
+
+    bool success = m_fsEventCollector->initialize(indexedDirs);
     if (!success) {
         fmWarning() << "Failed to initialize FSEventCollector";
         return;
@@ -118,7 +122,7 @@ void FSEventController::startFSMonitoring()
         return;
     }
 
-    fmInfo() << "FS monitoring started successfully";
+    fmInfo() << "FS monitoring started successfully with" << indexedDirs.size() << "directories";
 }
 
 void FSEventController::stopFSMonitoring()

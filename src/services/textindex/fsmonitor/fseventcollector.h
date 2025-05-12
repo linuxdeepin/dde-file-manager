@@ -43,8 +43,8 @@ public:
 
     ~FSEventCollector() override;
 
-    // Initialize the collector with monitor root path
-    bool initialize(const QString &rootPath = QDir::homePath());
+    // Initialize the collector with monitor root paths
+    bool initialize(const QStringList &rootPaths);
 
     // Start collecting events
     bool start();
