@@ -36,7 +36,6 @@ public:
     static TextIndexClient *instance();
 
     // 异步方法，通过信号返回结果
-    void startTask(TaskType type, const QString &path);
     void startTask(TaskType type, const QStringList &paths);
 
     // 返回值：

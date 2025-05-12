@@ -39,8 +39,10 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
         QString currentPath = dirQueue.dequeue();
 
         // 检查是否是系统目录或绑定目录
-        if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath))
-            continue;
+        if (!IndexUtility::isDefaultIndexedDirectory(currentPath)) {
+            if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath))
+                continue;
+        }
 
         // 检查路径长度和深度限制
         if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20)

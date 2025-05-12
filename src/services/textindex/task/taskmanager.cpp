@@ -49,18 +49,44 @@ TaskManager::~TaskManager()
     fmInfo() << "TaskManager destroyed";
 }
 
+// 单路径版本，调用多路径版本保持兼容性
 bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool silent)
+{
+    return startTask(type, QStringList { path }, silent);
+}
+
+// 多路径版本的startTask实现
+bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, bool silent)
 {
     Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
                "Type error", "Only create and update supported");
-    if (!IndexUtility::isDefaultIndexedDirectory(path)) {
-        fmWarning() << "Cannot start new task, path isn't default directory";
+
+    // 检查路径列表是否为空
+    if (pathList.isEmpty()) {
+        fmWarning() << "Cannot start new task, path list is empty";
         return false;
     }
 
+    // 所有路径都必须是默认索引目录
+    bool allPathsValid = true;
+    for (const auto &path : pathList) {
+        if (!IndexUtility::isDefaultIndexedDirectory(path)) {
+            fmWarning() << "Cannot start new task, path isn't default directory:" << path;
+            allPathsValid = false;
+            break;
+        }
+    }
+
+    if (!allPathsValid) {
+        return false;
+    }
+
+    // 获取第一个路径作为任务的主路径（用于日志和进度通知）
+    QString primaryPath = pathList.first();
+
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
     if (hasRunningTask()) {
-        fmInfo() << "Task already running, queuing new task for path:" << path;
+        fmInfo() << "Task already running, queuing new task for" << pathList.size() << "paths, primary:" << primaryPath;
 
         // 停止当前任务
         stopCurrentTask();
@@ -71,7 +97,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool sile
         // 将任务加入队列
         TaskQueueItem item;
         item.type = type;
-        item.path = path;
+        item.path = primaryPath;   // 保留主路径用于兼容现有代码
+        item.pathList = pathList;   // 保存所有路径
         item.silent = silent;
         taskQueue.enqueue(item);
 
@@ -80,7 +107,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool sile
     }
 
     // 正常启动任务流程
-    fmInfo() << "Starting new task for path: " << path << "Type: " << type << "Slient: " << silent;
+    fmInfo() << "Starting new task for" << pathList.size() << "paths, primary:" << primaryPath
+             << "Type:" << type << "Silent:" << silent;
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
@@ -97,7 +125,41 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool sile
     }
 
     Q_ASSERT(!currentTask);
-    currentTask = new IndexTask(type, path, handler);
+    // 创建新的任务对象，使用路径列表作为输入
+    // 注意：为了最小修改现有代码，我们仍然将主路径作为任务路径，但在handler中会使用整个路径列表
+    currentTask = new IndexTask(type, primaryPath, [handler, pathList](const QString &, TaskState &state) -> HandlerResult {
+        // 在这个lambda中，我们会对每个路径执行原始的handler
+        HandlerResult finalResult { true, false };
+
+        for (const auto &path : pathList) {
+            if (!state.isRunning()) {
+                finalResult.interrupted = true;
+                break;
+            }
+
+            // 对每个路径执行handler
+            HandlerResult pathResult = handler(path, state);
+
+            // 如果任何一个路径处理失败，整个任务就失败
+            if (!pathResult.success) {
+                finalResult.success = false;
+            }
+
+            // 如果被中断，设置中断标志并退出循环
+            if (pathResult.interrupted) {
+                finalResult.interrupted = true;
+                break;
+            }
+
+            if (pathResult.useAnything) {
+                fmInfo() << "Since anything gets all directory paths, it skips the other path tasks.";
+                break;
+            }
+        }
+
+        return finalResult;
+    });
+
     currentTask->setSilent(silent);
     currentTask->moveToThread(&workerThread);
 
@@ -225,8 +287,17 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 
             // 启动新的创建任务
             cleanupTask();   // 清理当前失败的任务
-            if (startTask(IndexTask::Type::Create, taskPath)) {
-                return;   // 新任务已启动，等待其完成
+
+            // 原始代码可能是以单一路径处理的，这里修改为支持多路径
+            // 如果原始任务是多路径任务，我们需要获取对应的所有路径
+            if (!taskQueue.isEmpty() && taskQueue.head().pathList.contains(taskPath)) {
+                // 队列中有包含这个路径的任务，直接让队列处理
+                fmInfo() << "Found queued task containing the corrupted path, letting queue handle it";
+            } else {
+                // 单路径情况，直接创建新任务
+                if (startTask(IndexTask::Type::Create, taskPath)) {
+                    return;   // 新任务已启动，等待其完成
+                }
             }
         } else {
             fmInfo() << "Update task failed but index is not corrupted, skipping rebuild for path:" << taskPath;
@@ -306,16 +377,21 @@ bool TaskManager::startNextTask()
     TaskQueueItem nextTask = taskQueue.dequeue();
 
     fmInfo() << "Number of tasks remaining: " << taskQueue.count();
-    fmInfo() << "Starting next queued task of type: " << nextTask.type << "path: " << nextTask.path;
 
     // 根据任务类型启动相应的任务
     if (nextTask.type == IndexTask::Type::CreateFileList
         || nextTask.type == IndexTask::Type::UpdateFileList
         || nextTask.type == IndexTask::Type::RemoveFileList) {
         // 启动文件列表任务
+        fmInfo() << "Starting next queued file list task of type: " << nextTask.type;
         return startFileListTask(nextTask.type, nextTask.fileList, nextTask.silent);
+    } else if (!nextTask.pathList.isEmpty()) {
+        // 启动多路径任务
+        fmInfo() << "Starting next queued multi-path task of type: " << nextTask.type << "with" << nextTask.pathList.size() << "paths";
+        return startTask(nextTask.type, nextTask.pathList, nextTask.silent);
     } else {
-        // 启动常规任务
-        return startTask(nextTask.type, nextTask.path);
+        // 启动单路径任务
+        fmInfo() << "Starting next queued task of type: " << nextTask.type << "path: " << nextTask.path;
+        return startTask(nextTask.type, nextTask.path, nextTask.silent);
     }
 }

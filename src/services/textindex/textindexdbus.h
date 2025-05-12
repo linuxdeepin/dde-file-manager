@@ -30,8 +30,8 @@ public Q_SLOTS:
     void Init();
     bool IsEnabled();
     void SetEnabled(bool enabled);
-    bool CreateIndexTask(const QString &path);
-    bool UpdateIndexTask(const QString &path);
+    bool CreateIndexTask(const QStringList &paths);
+    bool UpdateIndexTask(const QStringList &paths);
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();

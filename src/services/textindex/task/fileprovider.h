@@ -28,6 +28,7 @@ public:
     // 遍历文件并处理
     virtual void traverse(TaskState &state, const FileHandler &handler) = 0;
     virtual qint64 totalCount() { return 0; }
+    virtual QString name() { return ""; }
 };
 
 // 文件系统遍历提供者
@@ -36,6 +37,7 @@ class FileSystemProvider : public FileProvider
 public:
     explicit FileSystemProvider(const QString &rootPath);
     void traverse(TaskState &state, const FileHandler &handler) override;
+    QString name() override { return "FileSystemProvider"; }
 
 private:
     QString m_rootPath;
@@ -48,6 +50,7 @@ public:
     explicit DirectFileListProvider(const DFMSEARCH::SearchResultList &files);
     void traverse(TaskState &state, const FileHandler &handler) override;
     qint64 totalCount() override;
+    QString name() override { return "DirectFileListProvider"; }
 
 private:
     DFMSEARCH::SearchResultList m_fileList;
@@ -59,6 +62,7 @@ class MixedPathListProvider : public FileProvider
 public:
     explicit MixedPathListProvider(const QStringList &pathList);
     void traverse(TaskState &state, const FileHandler &handler) override;
+    QString name() override { return "MixedPathListProvider"; }
 
 private:
     QStringList m_pathList;

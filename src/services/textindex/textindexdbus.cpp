@@ -76,22 +76,17 @@ void TextIndexDBusPrivate::handleSlientStart()
             pathsToProcess = configuredDirs;   // Assuming configuredDirs is a QStringList or compatible
         }
 
-        for (const QString &path : std::as_const(pathsToProcess)) {
-            if (!canSilentlyRefreshIndex(path)) {
-                fmWarning() << "Unable to refresh the index because there is already a current task for: " << path;
-                continue;   // Skip to the next path
-            }
+        if (!canSilentlyRefreshIndex(pathsToProcess.first())) {
+            fmWarning() << "Unable to refresh the index because there is already a current task for: " << pathsToProcess.first();
+            return;
+        }
 
-            fmInfo() << "Start a task silently for: " << path;
-            // The decision to create or update is based on q->IndexDatabaseExists().
-            // This implies IndexDatabaseExists() is either a global check,
-            // or its state is relevant for any path being considered.
-            // This retains the original logic for choosing task type, now applied per path.
-            if (q->IndexDatabaseExists()) {   // update
-                taskManager->startTask(IndexTask::Type::Update, path, true);
-            } else {   // create
-                taskManager->startTask(IndexTask::Type::Create, path, true);
-            }
+        fmInfo() << "Start a task silently for: " << pathsToProcess;
+
+        if (q->IndexDatabaseExists()) {   // update
+            taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
+        } else {   // create
+            taskManager->startTask(IndexTask::Type::Create, pathsToProcess, true);
         }
     });
 }
@@ -145,14 +140,14 @@ void TextIndexDBus::SetEnabled(bool enabled)
     d->fsEventController->setEnabled(enabled);
 }
 
-bool TextIndexDBus::CreateIndexTask(const QString &path)
+bool TextIndexDBus::CreateIndexTask(const QStringList &paths)
 {
-    return d->taskManager->startTask(IndexTask::Type::Create, path);
+    return d->taskManager->startTask(IndexTask::Type::Create, paths);
 }
 
-bool TextIndexDBus::UpdateIndexTask(const QString &path)
+bool TextIndexDBus::UpdateIndexTask(const QStringList &paths)
 {
-    return d->taskManager->startTask(IndexTask::Type::Update, path);
+    return d->taskManager->startTask(IndexTask::Type::Update, paths);
 }
 
 bool TextIndexDBus::StopCurrentTask()

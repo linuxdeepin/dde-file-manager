@@ -4,6 +4,8 @@
 
 #include "searchmanager/searchmanager.h"
 
+#include <dfm-search/dsearch_global.h>
+
 #include <DDciIcon>
 
 #include <QVBoxLayout>
@@ -198,11 +200,10 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     connect(statusBar, &TextIndexStatusBar::resetIndex, this, [this]() {
         auto client = TextIndexClient::instance();
         bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-        // TODO (search): dfm-search
         if (exitsts) {
-            client->startTask(TextIndexClient::TaskType::Update, QDir::homePath());
+            client->startTask(TextIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
         } else {
-            client->startTask(TextIndexClient::TaskType::Create, QDir::homePath());
+            client->startTask(TextIndexClient::TaskType::Create, DFMSEARCH::Global::defaultIndexedDirectory());
         }
         statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
     });
@@ -273,8 +274,8 @@ void CheckBoxWidthTextIndex::initStatusBar()
 
 bool CheckBoxWidthTextIndex::shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const
 {
-    // TODO (search): dfm-search
-    return checkBox->isChecked() && path == QDir::homePath() && type != TextIndexClient::TaskType::Remove;
+    bool isIndexedPath = DFMSEARCH::Global::defaultIndexedDirectory().contains(path);
+    return checkBox->isChecked() && isIndexedPath && type != TextIndexClient::TaskType::Remove;
 }
 
 }   // namespace dfmplugin_search

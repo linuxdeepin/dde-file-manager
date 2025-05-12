@@ -367,10 +367,13 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
 std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
 {
     if (IndexUtility::isIndexWithAnything(path)) {
-        fmInfo() << "Try get docs by anything";
+        fmInfo() << "Try get docs by anything, int path: " << path;
         QObject holder;
         SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
         SearchOptions options;
+        options.setSyncSearchTimeout(120);
+        // rootPath: Rely on anything's own path whitelisting mechanism to get all document paths,
+        // reducing redundant operations.
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
         options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());   // Note: too many hidden files!
@@ -402,7 +405,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
     return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Creating index for path:" << path;
 
-        HandlerResult result { false, false };
+        HandlerResult result { false, false, false };
         QDir dir;
         if (!dir.exists(path)) {
             fmWarning() << "Source directory doesn't exist:" << path;
@@ -443,6 +446,10 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                 return result;
             }
 
+            if (provider->name() == "DirectFileListProvider") {
+                result.useAnything = true;
+            }
+
             ProgressReporter reporter;
             reporter.setTotal(provider->totalCount());
             provider->traverse(running, [&](const QString &file) {
@@ -477,7 +484,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
 {
     return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Updating index for path:" << path;
-        HandlerResult result { false, false };
+        HandlerResult result { false, false, false };
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -517,6 +524,10 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 return result;
             }
 
+            if (provider->name() == "DirectFileListProvider") {
+                result.useAnything = true;
+            }
+
             ProgressReporter reporter;
             reporter.setTotal(provider->totalCount());
             provider->traverse(running, [&](const QString &file) {
@@ -552,7 +563,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
     return [fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
         fmInfo() << "Creating/Updating index for file list with" << fileList.size() << "entries";
-        HandlerResult result { false, false };
+        HandlerResult result { false, false, false };
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -624,7 +635,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
     return [fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
         fmInfo() << "Removing index for" << fileList.size() << "files/directories";
-        HandlerResult result { false, false };
+        HandlerResult result { false, false, false };
 
         try {
             // 打开索引读取器，用于目录前缀查询
