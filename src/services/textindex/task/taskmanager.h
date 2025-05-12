@@ -19,6 +19,7 @@ struct TaskQueueItem
 {
     IndexTask::Type type;
     QString path;
+    QStringList pathList;   // 当传入多个路径时使用
     QStringList fileList;   // 仅在文件列表类型任务中使用
     bool silent { false };
 };
@@ -30,10 +31,9 @@ public:
     explicit TaskManager(QObject *parent = nullptr);
     ~TaskManager();
 
-    // 原有的基于路径的任务启动方法
+    bool startTask(IndexTask::Type type, const QStringList &pathList, bool silent = false);
     bool startTask(IndexTask::Type type, const QString &path, bool silent = false);
 
-    // 新增的基于文件列表的任务启动方法
     bool startFileListTask(IndexTask::Type type, const QStringList &fileList, bool silent = false);
 
     bool hasRunningTask() const;

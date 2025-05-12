@@ -114,13 +114,6 @@ std::optional<bool> TextIndexClient::indexExists()
     return pendingExists.value();
 }
 
-void TextIndexClient::startTask(TaskType type, const QString &path)
-{
-    QStringList paths;
-    paths << path;
-    startTask(type, paths);
-}
-
 void TextIndexClient::startTask(TaskType type, const QStringList &paths)
 {
     if (!ensureInterface()) {
@@ -140,10 +133,10 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
     QDBusPendingReply<bool> pendingTask;
     switch (type) {
     case TaskType::Create:
-        pendingTask = interface->CreateIndexTask(paths.first());   // Create只支持单路径
+        pendingTask = interface->CreateIndexTask(paths);
         break;
     case TaskType::Update:
-        pendingTask = interface->UpdateIndexTask(paths.first());   // Update只支持单路径
+        pendingTask = interface->UpdateIndexTask(paths);
         break;
     default:
         fmWarning() << "Unknown task type:" << static_cast<int>(type);

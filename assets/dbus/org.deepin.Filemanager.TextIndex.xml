@@ -22,11 +22,11 @@
     </method>
     <method name="CreateIndexTask">
       <arg type="b" direction="out"/>
-      <arg name="path" type="s" direction="in"/>
+      <arg name="paths" type="as" direction="in"/>
     </method>
     <method name="UpdateIndexTask">
       <arg type="b" direction="out"/>
-      <arg name="path" type="s" direction="in"/>
+      <arg name="paths" type="as" direction="in"/>
     </method>
     <method name="StopCurrentTask">
       <arg type="b" direction="out"/>
