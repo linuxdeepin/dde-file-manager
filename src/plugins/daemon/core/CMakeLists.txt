@@ -21,6 +21,7 @@ find_package(Qt6 COMPONENTS
     REQUIRED)
 
 find_package(Dtk6 COMPONENTS Core REQUIRED)
+find_package(dfm6-search REQUIRED)
 
 # DBus: DeviceManager
 qt6_generate_dbus_interface(
@@ -61,6 +62,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::DBus
     Qt6::Concurrent
     Dtk6::Core
+    dfm6-search
 )
 
 #install library file

@@ -5,6 +5,8 @@
 
 #include "textindex_interface.h"
 
+#include <dfm-search/dsearch_global.h>
+
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 DFMBASE_USE_NAMESPACE
@@ -202,13 +204,12 @@ void TextIndexController::startIndexTask(bool isCreate)
     }
 
     QDBusPendingReply<bool> pendingTask;
-    // TODO (search): dconfig
     if (isCreate) {
         fmInfo() << "[TextIndex] Starting CREATE task for root directory";
-        pendingTask = interface->CreateIndexTask(QDir::homePath());
+        pendingTask = interface->CreateIndexTask(DFMSEARCH::Global::defaultIndexedDirectory());
     } else {
         fmInfo() << "[TextIndex] Starting UPDATE task for root directory";
-        pendingTask = interface->UpdateIndexTask(QDir::homePath());
+        pendingTask = interface->UpdateIndexTask(DFMSEARCH::Global::defaultIndexedDirectory());
     }
 
     pendingTask.waitForFinished();
