@@ -16,6 +16,7 @@
 #include "utils/fileviewmenuhelper.h"
 #include "utils/viewanimationhelper.h"
 #include "utils/fileviewhelper.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -250,6 +251,9 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
     if (currentViewMode == Global::ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
         currentViewMode = Global::ViewMode::kListMode;
+
+    auto winId = WorkspaceHelper::instance()->windowId(q);
+    WorkspaceEventCaller::sendViewModeChanged(winId, currentViewMode);
 }
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
