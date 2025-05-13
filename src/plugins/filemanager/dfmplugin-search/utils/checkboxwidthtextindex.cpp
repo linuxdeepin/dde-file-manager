@@ -118,6 +118,8 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
         break;
     case Status::Inactive:
+        spinner->hide();
+        spinner->stop();
         iconLabel->hide();
         updateBtn->hide();
         msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
