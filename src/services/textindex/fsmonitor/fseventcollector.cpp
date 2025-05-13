@@ -60,6 +60,8 @@ bool FSEventCollectorPrivate::init(const QStringList &rootPaths)
         return false;
     }
 
+    fsMonitor.setMaxResourceUsage(TextIndexConfig::instance().inotifyWatchesCoefficient());
+
     logDebug(QString("FSEventCollector initialized with %1 root paths").arg(this->rootPaths.size()));
     return true;
 }

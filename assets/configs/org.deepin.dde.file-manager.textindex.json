@@ -81,6 +81,28 @@
 			"description": "List of directory name patterns to exclude from indexing. These directories and their contents will not be indexed.",
 			"permissions": "readwrite",
 			"visibility": "public"
+		},
+		"cpuUsageLimitPercent": {
+			"value": 50,
+			"serial": 0,
+			"flags": [],
+			"name": "Percentage of CPU utilization limits silently updated",
+			"name[zh_CN]": "静默更新的 CPU 使用率限制百分比",
+			"description[zh_CN]": "允许进程使用的最大 CPU 百分比（10-100）。",
+			"description": "The maximum CPU percentage the process is allowed to use (10-100).",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"inotifyWatchesCoefficient": {
+			"value": 0.5,
+			"serial": 0,
+			"flags": [],
+			"name": "Inotify Watches Coefficient",
+			"name[zh_CN]": "Inotify 监控数系数",
+			"description[zh_CN]": "应用程序允许使用的系统 fs.inotify.max_user_watches 最大值的系数 (0.1-1.0)。例如，0.8 表示使用系统限制的80%。",
+			"description": "Coefficient for the system's fs.inotify.max_user_watches that the application is allowed to use (0.1-1.0). E.g., 0.8 means use 80% of the system limit.",
+			"permissions": "readwrite",
+			"visibility": "public"
 		}
 	}
 }

@@ -6,6 +6,7 @@
 
 #include "progressnotifier.h"
 #include "utils/systemdcpuutils.h"
+#include "utils/textindexconfig.h"
 
 #include <LuceneException.h>
 
@@ -55,11 +56,12 @@ void IndexTask::throttleCpuUsage()
     if (!silent())
         return;
 
-    fmInfo() << "Limit CPU to 50%";
+    int limit = TextIndexConfig::instance().cpuUsageLimitPercent();
+    fmInfo() << "Limit CPU to " << limit << "%";
 
     QString msg;
-    if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, 50, &msg)) {
-        fmWarning() << "Limit cpu to 50% failed";
+    if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, limit, &msg)) {
+        fmWarning() << "Limit cpu failed:" << msg;
     }
 }
 

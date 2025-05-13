@@ -30,6 +30,8 @@ public:
     QStringList supportedFileExtensions() const;
     bool indexHiddenFiles() const;
     QStringList folderExcludeFilters() const;
+    int cpuUsageLimitPercent() const;
+    double inotifyWatchesCoefficient() const;
 
     // Call this if you need to manually reload all configurations
     Q_INVOKABLE void reloadConfig();
@@ -53,6 +55,8 @@ private:
     QStringList m_supportedFileExtensions;
     bool m_indexHiddenFiles;
     QStringList m_folderExcludeFilters;
+    int m_cpuUsageLimitPercent;
+    double m_inotifyWatchesCoefficient;
 
     mutable QMutex m_mutex;
 
@@ -61,6 +65,8 @@ private:
     static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800LL;   // 30 * 60 * 1000
     static const int DEFAULT_MAX_INDEX_FILE_SIZE_MB = 50;
     static const bool DEFAULT_INDEX_HIDDEN_FILES = false;
+    static const int DEFAULT_CPU_USAGE_LIMIT_PERCENT = 50;
+    static constexpr double DEFAULT_INOTIFY_WATCHES_COEFFICIENT = 0.5;
     // Default QStringLists need to be initialized in the .cpp or constructor
     // For simplicity here, we'll define them directly in loadAllConfigs logic
 };
