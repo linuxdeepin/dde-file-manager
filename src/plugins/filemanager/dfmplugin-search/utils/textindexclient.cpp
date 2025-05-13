@@ -5,7 +5,10 @@
 #include "textindexclient.h"
 #include "textindex_interface.h"
 
+#include <dfm-base/utils/finallyutil.h>
+
 DPSEARCH_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 namespace {
 void registerMetaTypes()
@@ -67,12 +70,6 @@ bool TextIndexClient::ensureInterface()
             return false;
         }
 
-        // 验证接口是否真正可用
-        auto testReply = interface->HasRunningTask();
-        testReply.waitForFinished();
-        if (testReply.isError())
-            fmWarning() << "[TextIndex] Interface test failed:" << testReply.error().message();
-
         // 接口可用，连接信号
         connect(interface.get(), &OrgDeepinFilemanagerTextIndexInterface::TaskFinished,
                 this, &TextIndexClient::onDBusTaskFinished);
@@ -85,33 +82,57 @@ bool TextIndexClient::ensureInterface()
     return interface && interface->isValid();
 }
 
-TextIndexClient::ServiceStatus TextIndexClient::checkService()
+void TextIndexClient::checkServiceStatus()
 {
-    if (!ensureInterface())
-        return ServiceStatus::Unavailable;
+    if (!ensureInterface()) {
+        emit serviceStatusResult(ServiceStatus::Unavailable);
+        return;
+    }
 
-    // 尝试一个简单的调用来验证服务是否正常工作
+    // 异步调用来验证服务是否正常工作
     auto pendingHasTask = interface->HasRunningTask();
-    pendingHasTask.waitForFinished();
-
-    if (pendingHasTask.isError())
-        return ServiceStatus::Error;
-
-    return ServiceStatus::Available;
+    auto watcher = new QDBusPendingCallWatcher(pendingHasTask, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, &TextIndexClient::handleServiceTestReply);
 }
 
-std::optional<bool> TextIndexClient::indexExists()
+void TextIndexClient::handleServiceTestReply(QDBusPendingCallWatcher *watcher)
 {
-    if (!ensureInterface())
-        return std::nullopt;
+    FinallyUtil finaly([watcher]() {
+        watcher->deleteLater();
+    });
+    QDBusPendingReply<bool> reply = *watcher;
+
+    if (reply.isError()) {
+        emit serviceStatusResult(ServiceStatus::Error);
+    } else {
+        emit serviceStatusResult(ServiceStatus::Available);
+    }
+}
+
+void TextIndexClient::checkIndexExists()
+{
+    if (!ensureInterface()) {
+        emit indexExistsResult(false, false);
+        return;
+    }
 
     auto pendingExists = interface->IndexDatabaseExists();
-    pendingExists.waitForFinished();
+    auto watcher = new QDBusPendingCallWatcher(pendingExists, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, &TextIndexClient::handleIndexExistsReply);
+}
 
-    if (pendingExists.isError())
-        return std::nullopt;
+void TextIndexClient::handleIndexExistsReply(QDBusPendingCallWatcher *watcher)
+{
+    FinallyUtil finaly([watcher]() {
+        watcher->deleteLater();
+    });
+    QDBusPendingReply<bool> reply = *watcher;
 
-    return pendingExists.value();
+    if (reply.isError()) {
+        emit indexExistsResult(false, false);
+    } else {
+        emit indexExistsResult(reply.value(), true);
+    }
 }
 
 void TextIndexClient::startTask(TaskType type, const QStringList &paths)
@@ -121,15 +142,30 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
         return;
     }
 
-    // 检查是否有任务在运行
+    // 异步检查是否有任务在运行
     auto pendingHasTask = interface->HasRunningTask();
-    pendingHasTask.waitForFinished();
-    if (pendingHasTask.isError() || pendingHasTask.value()) {
-        emit taskFailed(type, paths.join("|"), "Another task is running");
+    auto watcher = new QDBusPendingCallWatcher(pendingHasTask, this);
+
+    // 使用lambda捕获任务类型和路径信息，在回调中处理
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, type, paths](QDBusPendingCallWatcher *watcher) {
+        this->handleTaskStartReply(watcher, type, paths);
+    });
+}
+
+void TextIndexClient::handleTaskStartReply(QDBusPendingCallWatcher *watcher, TaskType type, const QStringList &paths)
+{
+    FinallyUtil finaly([watcher]() {
+        watcher->deleteLater();
+    });
+    QDBusPendingReply<bool> reply = *watcher;
+
+    if (reply.isError() || reply.value()) {
+        emit taskFailed(type, paths.join("|"),
+                        reply.isError() ? reply.error().message() : "Another task is running");
         return;
     }
 
-    // 启动任务
+    // 异步启动任务
     QDBusPendingReply<bool> pendingTask;
     switch (type) {
     case TaskType::Create:
@@ -143,15 +179,22 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
         return;
     }
 
-    pendingTask.waitForFinished();
-    if (pendingTask.isError() || !pendingTask.value()) {
-        emit taskFailed(type, paths.join("|"),
-                        pendingTask.isError() ? pendingTask.error().message() : "Failed to start task");
-        return;
-    }
+    auto taskWatcher = new QDBusPendingCallWatcher(pendingTask, this);
+    connect(taskWatcher, &QDBusPendingCallWatcher::finished, this, [this, type, paths](QDBusPendingCallWatcher *watcher) {
+        FinallyUtil finaly([watcher]() {
+            watcher->deleteLater();
+        });
+        QDBusPendingReply<bool> reply = *watcher;
 
-    emit taskStarted(type, paths.join("|"));
-    runningTaskPath = paths.join("|");
+        if (reply.isError() || !reply.value()) {
+            emit taskFailed(type, paths.join("|"),
+                            reply.isError() ? reply.error().message() : "Failed to start task");
+            return;
+        }
+
+        emit taskStarted(type, paths.join("|"));
+        runningTaskPath = paths.join("|");
+    });
 }
 
 void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &path, bool success)
@@ -189,43 +232,84 @@ void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QStri
     emit taskProgressChanged(taskType, path, count, total);
 }
 
-std::optional<bool> TextIndexClient::hasRunningTask()
+void TextIndexClient::checkHasRunningTask()
 {
-    if (!ensureInterface())
-        return std::nullopt;
+    if (!ensureInterface()) {
+        emit hasRunningTaskResult(false, false);
+        return;
+    }
 
     auto pendingHasTask = interface->HasRunningTask();
-    pendingHasTask.waitForFinished();
+    auto watcher = new QDBusPendingCallWatcher(pendingHasTask, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, &TextIndexClient::handleHasRunningTaskReply);
+}
 
-    if (pendingHasTask.isError()) {
-        fmWarning() << "[TextIndex] Failed to check running task:" << pendingHasTask.error().message();
-        return std::nullopt;
+void TextIndexClient::handleHasRunningTaskReply(QDBusPendingCallWatcher *watcher)
+{
+    FinallyUtil finaly([watcher]() {
+        watcher->deleteLater();
+    });
+    QDBusPendingReply<bool> reply = *watcher;
+
+    if (reply.isError()) {
+        fmWarning() << "[TextIndex] Failed to check running task:" << reply.error().message();
+        emit hasRunningTaskResult(false, false);
+    } else {
+        emit hasRunningTaskResult(reply.value(), true);
+    }
+}
+
+void TextIndexClient::checkHasRunningRootTask()
+{
+    if (!ensureInterface()) {
+        emit hasRunningRootTaskResult(false, false);
+        return;
     }
 
-    return pendingHasTask.value();
+    // 先检查是否有任务运行
+    auto pendingHasTask = interface->HasRunningTask();
+    auto watcher = new QDBusPendingCallWatcher(pendingHasTask, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *watcher) {
+        FinallyUtil finaly([watcher]() {
+            watcher->deleteLater();
+        });
+        QDBusPendingReply<bool> reply = *watcher;
+
+        if (reply.isError()) {
+            emit hasRunningRootTaskResult(false, false);
+            return;
+        }
+
+        // 判断正在运行的是否是根任务
+        bool isRunning = reply.value();
+        bool isRootTask = isRunning && runningTaskPath == "/";
+        emit hasRunningRootTaskResult(isRootTask, true);
+    });
 }
 
-std::optional<bool> TextIndexClient::hasRunningRootTask()
+void TextIndexClient::getLastUpdateTime()
 {
-    auto hasTask = hasRunningTask();
-    if (!hasTask)
-        return std::nullopt;
-
-    return *hasTask && runningTaskPath == "/";
-}
-
-QString TextIndexClient::getLastUpdateTime()
-{
-    if (!ensureInterface())
-        return QString();
+    if (!ensureInterface()) {
+        emit lastUpdateTimeResult(QString(), false);
+        return;
+    }
 
     auto pendingReply = interface->GetLastUpdateTime();
-    pendingReply.waitForFinished();
+    auto watcher = new QDBusPendingCallWatcher(pendingReply, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, &TextIndexClient::handleGetLastUpdateTimeReply);
+}
 
-    if (pendingReply.isError()) {
-        fmWarning() << "[TextIndex] Get last update time failed:" << pendingReply.error().message();
-        return QString();
+void TextIndexClient::handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher)
+{
+    FinallyUtil finaly([watcher]() {
+        watcher->deleteLater();
+    });
+    QDBusPendingReply<QString> reply = *watcher;
+
+    if (reply.isError()) {
+        fmWarning() << "[TextIndex] Get last update time failed:" << reply.error().message();
+        emit lastUpdateTimeResult(QString(), false);
+    } else {
+        emit lastUpdateTimeResult(reply.value(), true);
     }
-
-    return pendingReply.value();
 }

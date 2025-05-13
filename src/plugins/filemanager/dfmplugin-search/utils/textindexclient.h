@@ -8,6 +8,7 @@
 #include "dfmplugin_search_global.h"
 
 #include <QObject>
+#include <QDBusPendingCallWatcher>
 #include <memory>
 #include <optional>
 
@@ -38,40 +39,45 @@ public:
     // 异步方法，通过信号返回结果
     void startTask(TaskType type, const QStringList &paths);
 
-    // 返回值：
-    // - std::nullopt: 服务不可用或出错
-    // - true/false: 索引是否存在
-    std::optional<bool> indexExists();
+    // 异步检查索引是否存在，结果通过信号 indexExistsResult 返回
+    void checkIndexExists();
 
-    // 检查服务状态
-    ServiceStatus checkService();
+    // 异步检查服务状态，结果通过信号 serviceStatusResult 返回
+    void checkServiceStatus();
 
-    // 检查根目录("/")的索引任务是否正在运行
-    // 返回值：
-    // - std::nullopt: 服务不可用或出错
-    // - true: 根目录索引任务正在运行
-    // - false: 根目录索引任务未运行
-    std::optional<bool> hasRunningRootTask();
+    // 异步检查根目录("/")的索引任务是否正在运行，结果通过信号 hasRunningRootTaskResult 返回
+    void checkHasRunningRootTask();
 
-    // 检查是否有任务在运行
-    // 返回值：
-    // - std::nullopt: 服务不可用或出错
-    // - true: 有任务在运行
-    // - false: 没有任务在运行
-    std::optional<bool> hasRunningTask();
+    // 异步检查是否有任务在运行，结果通过信号 hasRunningTaskResult 返回
+    void checkHasRunningTask();
 
-    QString getLastUpdateTime();
+    // 异步获取最后更新时间，结果通过信号 lastUpdateTimeResult 返回
+    void getLastUpdateTime();
 
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
     void taskFinished(TaskType type, const QString &path, bool success);
     void taskFailed(TaskType type, const QString &path, const QString &error);
     void taskProgressChanged(TaskType type, const QString &path, qlonglong count, qlonglong total);
+    
+    // 新增信号用于异步返回结果
+    void indexExistsResult(bool exists, bool success);
+    void serviceStatusResult(ServiceStatus status);
+    void hasRunningTaskResult(bool running, bool success);
+    void hasRunningRootTaskResult(bool running, bool success);
+    void lastUpdateTimeResult(const QString &time, bool success);
 
 private:
     explicit TextIndexClient(QObject *parent = nullptr);
     ~TextIndexClient();
     bool ensureInterface();
+    
+    // 新增：处理DBus回调的私有方法
+    void handleTaskStartReply(QDBusPendingCallWatcher *watcher, TaskType type, const QStringList &paths);
+    void handleHasRunningTaskReply(QDBusPendingCallWatcher *watcher);
+    void handleIndexExistsReply(QDBusPendingCallWatcher *watcher);
+    void handleServiceTestReply(QDBusPendingCallWatcher *watcher);
+    void handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher);
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
