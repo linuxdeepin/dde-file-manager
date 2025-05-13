@@ -103,6 +103,26 @@ void TextIndexConfig::loadAllConfigs()
                                                      QVariant::fromValue(defaultFolderExcludeFilters))   // Pass QVariant holding QStringList
                                      .toStringList();
 
+    // CPU isage limit percent
+    m_cpuUsageLimitPercent = m_dconfigManager->value(
+                                                     Defines::DConf::kTextIndexSchema,
+                                                     Defines::DConf::kCpuUsageLimitPercent,
+                                                     DEFAULT_CPU_USAGE_LIMIT_PERCENT)
+                                     .toInt();
+    if (m_cpuUsageLimitPercent < 10 || m_cpuUsageLimitPercent >= 100) {
+        m_cpuUsageLimitPercent = DEFAULT_CPU_USAGE_LIMIT_PERCENT;
+    }
+
+    // Inotify watches coefficient
+    m_inotifyWatchesCoefficient = m_dconfigManager->value(
+                                                          Defines::DConf::kTextIndexSchema,
+                                                          Defines::DConf::kInotifyWatchesCoefficient,
+                                                          DEFAULT_INOTIFY_WATCHES_COEFFICIENT)
+                                          .toDouble();
+    if (m_inotifyWatchesCoefficient < 0.1 || m_inotifyWatchesCoefficient > 1.0) {
+        m_inotifyWatchesCoefficient = DEFAULT_INOTIFY_WATCHES_COEFFICIENT;
+    }
+
     qDebug() << "Text index configurations loaded.";
     // You might want to print the loaded values here for debugging if needed
     // qDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
@@ -150,6 +170,18 @@ QStringList TextIndexConfig::folderExcludeFilters() const
 {
     QMutexLocker locker(&m_mutex);
     return m_folderExcludeFilters;
+}
+
+int TextIndexConfig::cpuUsageLimitPercent() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_cpuUsageLimitPercent;
+}
+
+double TextIndexConfig::inotifyWatchesCoefficient() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_inotifyWatchesCoefficient;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

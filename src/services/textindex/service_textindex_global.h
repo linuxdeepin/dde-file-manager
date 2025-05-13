@@ -30,6 +30,9 @@ inline const QString kMaxIndexFileSizeMB = QLatin1String("maxIndexFileSizeMB");
 inline const QString kSupportedFileExtensions = QLatin1String("supportedFileExtensions");
 inline const QString kIndexHiddenFiles = QLatin1String("indexHiddenFiles");
 inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters");
+inline const QString kCpuUsageLimitPercent = QLatin1String("cpuUsageLimitPercent");
+inline const QString kInotifyWatchesCoefficient = QLatin1String("inotifyWatchesCoefficient");
+
 }   // namesapce DConf
 
 // NOTE: The version number must be upgraded
