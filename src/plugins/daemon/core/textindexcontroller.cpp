@@ -199,6 +199,14 @@ void TextIndexController::setupDBusConnections()
                     handler->second(success);
                 }
             });
+    connect(interface.get(), &OrgDeepinFilemanagerTextIndexInterface::TaskProgressChanged,
+            this, [this]() {
+                if (currentState == State::Running)
+                    return;
+                updateState(State::Running);
+                if (!isConfigEnabled)
+                    interface->StopCurrentTask();
+            });
 }
 
 void TextIndexController::startIndexTask(bool isCreate)

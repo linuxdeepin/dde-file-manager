@@ -139,6 +139,8 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         updateBtn->setText(tr("try updating again."));
         break;
     case Status::Inactive:
+        spinner->hide();
+        spinner->stop();
         iconLabel->hide();
         updateBtn->hide();
         msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
