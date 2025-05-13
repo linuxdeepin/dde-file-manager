@@ -1,3 +1,9 @@
+dde-file-manager (6.5.10.6) unstable; urgency=medium
+
+  * Fix prevent infinite loop in canDrop method of FileInfoPrivate
+
+ -- Liu Yangming <liuyangming@uniontech.com>  Tue, 13 May 2025 09:58:11 +0800
+
 dde-file-manager (6.5.10.5) unstable; urgency=medium
 
   * Fix the problem of directory creation failure when samba mount.
