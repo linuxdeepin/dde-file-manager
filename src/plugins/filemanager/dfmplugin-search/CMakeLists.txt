@@ -11,10 +11,6 @@ find_package(dfm6-search REQUIRED)
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_SOURCE_DIR}/3rdparty/fsearch/*.c"
-    "${CMAKE_SOURCE_DIR}/3rdparty/fsearch/*.h"
-    "${CMAKE_SOURCE_DIR}/3rdparty/fulltext/*.cpp"
-    "${CMAKE_SOURCE_DIR}/3rdparty/fulltext/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
@@ -28,7 +24,6 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
 pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
-pkg_check_modules(PCRE REQUIRED libpcre2-8)
 
 # use TextIndex interface
 set(DBUS_INTERFACE_FILE "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml")
@@ -47,7 +42,6 @@ target_include_directories(${BIN_NAME}
     PUBLIC
         ${CMAKE_SOURCE_DIR}/3rdparty
         ${GLIB_INCLUDE_DIRS}
-        ${PCRE_INCLUDE_DIRS}
         ${dfm6-search_INCLUDE_DIR}
 )
 
@@ -55,7 +49,6 @@ target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
     ${GLIB_LIBRARIES}
-    ${PCRE_LIBRARIES}
     PkgConfig::Lucene
     PkgConfig::Docparser
     dfm6-search
