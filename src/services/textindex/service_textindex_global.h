@@ -35,7 +35,9 @@ inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters
 // NOTE: The version number must be upgraded
 // when the index contents are changed to ensure
 // that the index can be rebuilt!!!
-inline constexpr int kIndexVersion { 0 };
+// History:
+// Version 1: add "filename" filed
+inline constexpr int kIndexVersion { 1 };
 
 // json
 inline const QString kVersionKey = QLatin1String("version");

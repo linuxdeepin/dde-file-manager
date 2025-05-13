@@ -156,6 +156,7 @@ bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptio
         } else {
             ContentOptionsAPI contentAPI(options);
             contentAPI.setMaxPreviewLength(200);
+            contentAPI.setFilenameContentMixedAndSearchEnabled(true);
         }
     }
     return true;
