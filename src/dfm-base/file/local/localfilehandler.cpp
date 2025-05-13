@@ -763,11 +763,8 @@ bool LocalFileHandlerPrivate::isFileExecutable(const QString &path)
     if (kinValidateType.contains(info->nameOf(NameInfoType::kSuffix)))
         return false;
 
-    QFile::Permissions permissions { info->permissions() };
-    bool isExeUser = permissions & QFile::Permission::ExeUser;
-    bool isReadUser = permissions & QFile::Permission::ReadUser;
-
-    return isExeUser && isReadUser;
+    return info->isAttributes(FileInfo::FileIsType::kIsExecutable)
+            && info->isAttributes(FileInfo::FileIsType::kIsReadable);
 }
 
 bool LocalFileHandlerPrivate::openExcutableScriptFile(const QString &path, int flag)
