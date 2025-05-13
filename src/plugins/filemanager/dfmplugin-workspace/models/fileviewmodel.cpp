@@ -584,12 +584,13 @@ void FileViewModel::sort(int column, Qt::SortOrder order)
                                Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
 }
 
-void FileViewModel::stopTraversWork()
+void FileViewModel::stopTraversWork(const QUrl &newUrl)
 {
     changeState(ModelState::kIdle);
     closeCursorTimer();
 
-    if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve) {
+    bool canUsePreserveStrategy = dirRootUrl.isValid() && (newUrl.scheme() == dirRootUrl.scheme());
+    if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve && canUsePreserveStrategy) {
         // stop work but do not clean current data
         FileDataManager::instance()->stopRootWork(dirRootUrl, currentKey);
         return;
@@ -970,6 +971,12 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
 
     this->changeState(ModelState::kIdle);
     closeCursorTimer();
+
+    // 如果是保留策略，在加载完成后清理旧的RootInfo对象
+    if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve) {
+        // 获取当前URL所有子目录的RootInfo
+        FileDataManager::instance()->cleanUnusedRoots(dirRootUrl, currentKey);
+    }
 }
 
 void FileViewModel::onDataChanged(int first, int last)

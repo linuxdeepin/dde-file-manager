@@ -361,6 +361,24 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
     return false;
 }
 
+bool UniversalUtils::urlEqualsWithQuery(const QUrl &url1, const QUrl &url2)
+{
+    if (!url1.isValid() || !url2.isValid())
+        return false;
+    if (url1 == url2)
+        return true;
+
+    auto path1 { url1.path() }, path2 { url2.path() };
+    if (!path1.endsWith("/"))
+        path1.append("/");
+    if (!path2.endsWith("/"))
+        path2.append("/");
+
+    if (url1.scheme() == url2.scheme() && path1 == path2 && url1.host() == url2.host() && url1.query() == url2.query())
+        return true;
+    return false;
+}
+
 bool UniversalUtils::urlsTransformToLocal(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls)
 {
     Q_ASSERT(targetUrls);

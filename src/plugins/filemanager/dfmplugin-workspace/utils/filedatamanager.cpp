@@ -102,8 +102,10 @@ void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
 
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path())
+        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
+            rootInfoMap.value(rootInfo)->disconnect();
             rootInfoMap.value(rootInfo)->clearTraversalThread(key, false);
+        }
     }
 }
 
@@ -184,5 +186,40 @@ void FileDataManager::handleDeletion(RootInfo *root)
     } else {
         root->reset();
         deleteLaterList.append(root);
+    }
+}
+
+// NOTE: in tree mode, this func will clean all child node data.
+void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &key)
+{
+    if (!currentUrl.isValid())
+        return;
+        
+    // 确保路径以/结尾，用于目录比较
+    QString currentPath = currentUrl.path();
+    if (!currentPath.endsWith("/"))
+        currentPath.append("/");
+        
+    QList<QUrl> rootsToClean;
+    
+    // 找出所有需要清理的RootInfo
+    for (const auto &rootUrl : rootInfoMap.keys()) {
+        // 跳过当前URL
+        if (UniversalUtils::urlEqualsWithQuery(rootUrl, currentUrl))
+            continue;
+
+        rootsToClean.append(rootUrl);
+    }
+    
+    // 清理标记的RootInfo
+    for (const auto &rootUrl : rootsToClean) {
+        // 先停止线程工作
+        rootInfoMap.value(rootUrl)->clearTraversalThread(key, false);
+        
+        // 从Map中移除并处理删除
+        auto root = rootInfoMap.take(rootUrl);
+        if (root) {
+            handleDeletion(root);
+        }
     }
 }
