@@ -303,9 +303,9 @@ void FileView::setModel(QAbstractItemModel *model)
     DListView::setModel(model);
 }
 
-void FileView::stopWork()
+void FileView::stopWork(const QUrl &newUrl)
 {
-    model()->stopTraversWork();
+    model()->stopTraversWork(newUrl);
 }
 
 void FileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)

@@ -73,7 +73,7 @@ public:
     DFMGLOBAL_NAMESPACE::ItemRoles columnToRole(int column) const;
     QString roleDisplayString(int role) const;
 
-    void stopTraversWork();
+    void stopTraversWork(const QUrl &newUrl);
 
     void updateFile(const QUrl &url);
 

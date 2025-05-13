@@ -66,7 +66,7 @@ public:
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
-    void stopWork();
+    void stopWork(const QUrl &newUrl);
 
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                      const QVector<int> &roles = QVector<int>()) override;
