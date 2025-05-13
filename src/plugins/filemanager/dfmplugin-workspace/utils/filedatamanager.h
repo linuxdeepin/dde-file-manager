@@ -34,6 +34,8 @@ public:
     // self = false, will clean children
     void cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh = false, const bool self = true);
     void cleanRoot(const QUrl &rootUrl);
+    // 清理不再需要的RootInfo对象，保留当前URL和其直接子目录的RootInfo
+    void cleanUnusedRoots(const QUrl &currentUrl, const QString &key);
     void stopRootWork(const QUrl &rootUrl, const QString &key);
     void setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active);
 

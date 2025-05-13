@@ -45,7 +45,7 @@ void WorkspacePage::setUrl(const QUrl &url)
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
         if (view)
-            view->stopWork();
+            view->stopWork(url);
     }
 
     auto lastUrl = currentPageUrl;
