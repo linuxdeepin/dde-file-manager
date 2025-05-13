@@ -32,6 +32,10 @@ public:
     void setRunning(bool running);
     Status status() const;
     void updateUI(Status status);
+    
+    // 将这些控件设为public以便外部访问
+    DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
+    DTK_NAMESPACE::Widget::DCommandLinkButton *updateBtn { nullptr };
 
 Q_SIGNALS:
     void resetIndex();
@@ -40,9 +44,14 @@ private:
     Status currentStatus { Status::Inactive };
     DTK_NAMESPACE::Widget::DSpinner *spinner { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *iconLabel { nullptr };
-    DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
-    DTK_WIDGET_NAMESPACE::DCommandLinkButton *updateBtn { nullptr };
     QHBoxLayout *boxLayout { nullptr };
+};
+
+// 用于跟踪当前检查索引存在的上下文
+enum class IndexCheckContext {
+    None,        // 无特定上下文
+    ResetIndex,  // 重置索引按钮触发
+    InitStatus   // 初始化状态检查
 };
 
 class CheckBoxWidthTextIndex : public QWidget
@@ -61,6 +70,7 @@ Q_SIGNALS:
 private:
     QCheckBox *checkBox { nullptr };
     TextIndexStatusBar *statusBar { nullptr };
+    IndexCheckContext currentIndexCheckContext { IndexCheckContext::None };
     bool shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const;
 };
 }   // namespace dfmplugin_search

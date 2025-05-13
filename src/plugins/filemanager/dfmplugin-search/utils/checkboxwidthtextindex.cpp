@@ -105,8 +105,9 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         break;
     case Status::Completed: {
         setRunning(false);
-        QString lastTime = TextIndexClient::instance()->getLastUpdateTime();
-        msgLabel->setText(tr("Index update completed, last update time: %1").arg(lastTime));
+        msgLabel->clear();
+        auto client = TextIndexClient::instance();
+        client->getLastUpdateTime();
         updateBtn->setText(tr("Update index now"));
         iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
         break;
@@ -152,7 +153,7 @@ TextIndexStatusBar::Status TextIndexStatusBar::status() const
 }
 
 CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
-    : QWidget { parent }
+    : QWidget { parent }, currentIndexCheckContext(IndexCheckContext::None)
 {
     setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -178,25 +179,81 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                 setChecked(enable);
             });
 
+    // 修复resetIndex处理逻辑，将检查和后续动作分离
     connect(statusBar, &TextIndexStatusBar::resetIndex, this, [this]() {
+        currentIndexCheckContext = IndexCheckContext::ResetIndex;
         auto client = TextIndexClient::instance();
-        bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-        if (exitsts) {
-            client->startTask(TextIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
-        } else {
-            client->startTask(TextIndexClient::TaskType::Create, DFMSEARCH::Global::defaultIndexedDirectory());
-        }
-        statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
+        client->checkIndexExists();
     });
+
+    // 连接异步信号处理
+    connect(TextIndexClient::instance(), &TextIndexClient::indexExistsResult, this,
+            [this](bool exists, bool success) {
+                if (!success) {
+                    fmWarning() << "[TextIndex] Failed to check if index exists";
+                    return;
+                }
+
+                // 根据不同的检查上下文执行不同的操作
+                if (currentIndexCheckContext == IndexCheckContext::ResetIndex) {
+                    // 重置索引按钮的特定处理逻辑
+                    auto client = TextIndexClient::instance();
+                    if (exists) {
+                        client->startTask(TextIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
+                    } else {
+                        client->startTask(TextIndexClient::TaskType::Create, DFMSEARCH::Global::defaultIndexedDirectory());
+                    }
+                    statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
+                } else if (currentIndexCheckContext == IndexCheckContext::InitStatus) {
+                    // 初始化状态检查的特定处理逻辑
+                    if (checkBox->isChecked()) {
+                        statusBar->setStatus(exists ? TextIndexStatusBar::Status::Completed : TextIndexStatusBar::Status::Failed);
+                    }
+                }
+
+                // 重置上下文
+                currentIndexCheckContext = IndexCheckContext::None;
+            });
+
+    connect(TextIndexClient::instance(), &TextIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
+        if (success && !time.isEmpty()) {
+            statusBar->msgLabel->setText(tr("Index update completed, last update time: %1").arg(time));
+        }
+    });
+
+    // 修复hasRunningRootTaskResult处理逻辑，将检查和后续动作分离
+    connect(TextIndexClient::instance(), &TextIndexClient::hasRunningRootTaskResult, this,
+            [this](bool running, bool success) {
+                if (!success) {
+                    fmWarning() << "[TextIndex] Failed to check if root task is running";
+                    return;
+                }
+
+                // 初始化状态栏特定处理逻辑
+                if (checkBox->isChecked()) {
+                    if (running) {
+                        statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
+                    } else {
+                        // 异步检查索引是否存在，并设置上下文以指示这是初始化检查
+                        currentIndexCheckContext = IndexCheckContext::InitStatus;
+                        TextIndexClient::instance()->checkIndexExists();
+                    }
+                }
+            });
 }
 
 void CheckBoxWidthTextIndex::connectToBackend()
 {
     auto client = TextIndexClient::instance();
 
-    // Note: checkService 非常重要！不激活后端无法正确的连接信号
-    auto status = client->checkService();
-    fmDebug() << "TextIndex backend status:" << status;
+    // 使用异步方式检查服务状态
+    client->checkServiceStatus();
+
+    // 连接服务状态结果信号
+    connect(client, &TextIndexClient::serviceStatusResult, this, [](TextIndexClient::ServiceStatus status) {
+        fmDebug() << "TextIndex backend status:" << status;
+    });
+
     connect(client, &TextIndexClient::taskProgressChanged,
             this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count, qlonglong total) {
                 fmDebug() << "Index task changed:" << type << path << count << total;
@@ -239,15 +296,9 @@ void CheckBoxWidthTextIndex::initStatusBar()
 {
     if (checkBox->isChecked()) {
         auto client = TextIndexClient::instance();
-        auto running = client->hasRunningRootTask();
-        if (running.has_value()) {
-            if (running.value()) {
-                statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
-            } else {
-                bool exitsts = client->indexExists().has_value() && client->indexExists().value();
-                statusBar->setStatus(!exitsts ? TextIndexStatusBar::Status::Failed : TextIndexStatusBar::Status::Completed);
-            }
-        }
+        // 使用异步API检查根目录索引任务是否正在运行
+        client->checkHasRunningRootTask();
+        // 处理逻辑已移至hasRunningRootTaskResult信号处理器
     } else {
         statusBar->setStatus(TextIndexStatusBar::Status::Inactive);
     }
