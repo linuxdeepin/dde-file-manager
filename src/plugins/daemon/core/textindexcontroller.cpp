@@ -42,17 +42,22 @@ TextIndexController::TextIndexController(QObject *parent)
         }
 
         fmInfo() << "[TextIndex] Checking index database existence";
-        auto pendingExists = interface->IndexDatabaseExists();
-        pendingExists.waitForFinished();
+        QDBusPendingCall pendingCall = interface->IndexDatabaseExists();
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pendingCall, this);
 
-        if (pendingExists.isError()) {
-            fmWarning() << "[TextIndex] Failed to check index existence:" << pendingExists.error().message();
-            return;
-        }
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *call) {
+            QDBusPendingReply<bool> reply = *watcher;
 
-        bool needCreate = !pendingExists.value();
-        fmInfo() << "[TextIndex] Index check result - Need create:" << needCreate;
-        startIndexTask(needCreate);
+            if (reply.isError()) {
+                fmWarning() << "[TextIndex] Failed to check index existence:" << reply.error().message();
+            } else {
+                bool needCreate = !reply.value();
+                fmInfo() << "[TextIndex] Index check result - Need create:" << needCreate;
+                startIndexTask(needCreate);
+            }
+
+            watcher->deleteLater();
+        });
     };
 
     stateHandlers[State::Running] = [this](bool enable) {
@@ -212,15 +217,19 @@ void TextIndexController::startIndexTask(bool isCreate)
         pendingTask = interface->UpdateIndexTask(DFMSEARCH::Global::defaultIndexedDirectory());
     }
 
-    pendingTask.waitForFinished();
-    if (pendingTask.isError()) {
-        fmWarning() << "[TextIndex] Failed to start task:" << pendingTask.error().message();
-    } else if (pendingTask.value()) {
-        fmInfo() << "[TextIndex] Task started successfully, transitioning to Running state";
-        updateState(State::Running);
-    } else {
-        fmWarning() << "[TextIndex] Task start returned false";
-    }
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pendingTask, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *call) {
+        QDBusPendingReply<bool> reply = *watcher;
+        if (reply.isError()) {
+            fmWarning() << "[TextIndex] Failed to start task:" << reply.error().message();
+        } else if (reply.value()) {
+            fmInfo() << "[TextIndex] Task started successfully, transitioning to Running state";
+            updateState(State::Running);
+        } else {
+            fmWarning() << "[TextIndex] Task start returned false";
+        }
+        watcher->deleteLater();   // 清理 watcher
+    });
 }
 
 void TextIndexController::updateState(State newState)
