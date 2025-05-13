@@ -217,7 +217,8 @@ static void handleSIGTERM(int sig)
     if (qApp) {
         // Don't use headless if SIGTERM, cause system shutdown blocked
         qApp->setProperty("SIGTERM", true);
-        qApp->quit();
+        // 重启或关闭系统时，信号处理会阻塞进程
+        QTimer::singleShot(0, qApp, &QApplication::quit);
     }
 }
 
