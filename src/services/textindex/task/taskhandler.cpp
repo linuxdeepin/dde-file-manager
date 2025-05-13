@@ -87,6 +87,10 @@ DocumentPtr createFileDocument(const QString &file)
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
+    // file name
+    doc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
+                              Field::STORE_YES, Field::INDEX_ANALYZED));
+
     // hidden tag
     QString hiddenTag = "N";
     if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
