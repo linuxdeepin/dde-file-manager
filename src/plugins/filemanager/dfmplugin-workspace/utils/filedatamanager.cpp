@@ -102,7 +102,7 @@ void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
 
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
+        if (UniversalUtils::urlEqualsWithQuery(rootInfo, rootUrl) || (rootInfo.path() != rootPath && rootInfo.path().startsWith(rootPath))) {
             rootInfoMap.value(rootInfo)->disconnect();
             rootInfoMap.value(rootInfo)->clearTraversalThread(key, false);
         }
