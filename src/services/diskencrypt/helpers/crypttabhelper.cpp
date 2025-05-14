@@ -128,9 +128,10 @@ bool crypttab_helper::mergeCryptTab()
     if (merged) {
         // updateInitramfs 会在 updateCryptTab 中调用
         saveCryptItems(currentItems, false);
-        updateCryptTab();
     }
 
+    // 更新加密设备配置文件
+    updateCryptTab();
     return merged;
 }
 

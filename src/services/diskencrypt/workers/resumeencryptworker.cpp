@@ -183,7 +183,7 @@ void ResumeEncryptWorker::updateCryptTab()
 {
     if (m_authArgs.tpmToken.isEmpty())
         return;
-    crypttab_helper::addCryptOption(m_jobArgs.clearDev, "tpm2-device=auto");
+    crypttab_helper::addCryptOption(m_jobArgs.volume, "tpm2-device=auto");
 }
 
 void ResumeEncryptWorker::saveRecoveryKey()
