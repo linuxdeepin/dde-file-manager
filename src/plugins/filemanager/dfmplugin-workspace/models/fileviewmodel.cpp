@@ -593,6 +593,7 @@ void FileViewModel::stopTraversWork(const QUrl &newUrl)
     if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve && canUsePreserveStrategy) {
         // stop work but do not clean current data
         FileDataManager::instance()->stopRootWork(dirRootUrl, currentKey);
+        FileDataManager::instance()->cleanUnusedRoots(dirRootUrl, currentKey);
         return;
     }
 
