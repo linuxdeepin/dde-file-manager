@@ -11,6 +11,7 @@
 #include <QFileInfo>
 #include <QSet>
 #include <QThread>
+#include <QTimer>
 
 namespace Dtk {
 namespace Core {
@@ -28,13 +29,16 @@ public:
 
     // Initialize the monitor with root paths
     bool init(const QStringList &rootPaths);
-    bool init(const QString &rootPath);  // For backward compatibility
+    bool init(const QString &rootPath);   // For backward compatibility
 
     // Start monitoring using DFileSystemWatcher
     bool startMonitoring();
 
     // Stop all monitoring
     void stopMonitoring();
+
+    // Process the root directories using traditional method
+    void travelRootDirectories();
 
     // Get the maximum number of watches supported by the system
     int getMaxUserWatches() const;
@@ -82,12 +86,22 @@ public:
     void handleFileMoved(const QString &fromPath, const QString &fromName,
                          const QString &toPath, const QString &toName);
 
+    // Handle fast scan completion
+    void handleFastScanCompleted(bool success);
+
+    // Handle batch of directories to watch
+    void handleDirectoriesBatch(const QStringList &paths);
+
     // Detect if a path is a directory
     bool isDirectory(const QString &path, const QString &name) const;
 
     // Debug and error logging helpers
     void logDebug(const QString &message) const;
+    void logInfo(const QString &message) const;
     void logError(const QString &message) const;
+
+    // Fast scan control
+    bool useFastScan { true };   // Whether to try fast scan first
 
     // Data members
     FSMonitor *q_ptr;
@@ -105,9 +119,6 @@ public:
     // Resource limits
     double maxUsagePercentage { 0.5 };   // Default to 50% of available watches
     int maxWatches { -1 };   // Will be determined at runtime
-
-    // Default blacklisted directories
-    static const QStringList defaultBlacklistedDirs;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

@@ -18,6 +18,8 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QUrl>
+#include <QTimer>
+#include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -121,6 +123,7 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     worker->setExclusionChecker([this](const QString &path) {
         return shouldExcludePath(path);
     });
+    worker->setMaxFastScanResults(getMaxUserWatches());
 
     logDebug(QString("FSMonitor initialized with %1 root paths").arg(this->rootPaths.size()));
     return true;
@@ -149,11 +152,13 @@ bool FSMonitorPrivate::startMonitoring()
         workerThread.start();
     }
 
-    // Process the root directorys
-    for (const QString &dir : std::as_const(rootPaths)) {
-        QMetaObject::invokeMethod(worker, "processDirectory",
-                                  Qt::QueuedConnection,
-                                  Q_ARG(QString, dir));
+    // Try fast directory scan first if enabled
+    if (useFastScan) {
+        logDebug("Attempting fast directory scan...");
+        QMetaObject::invokeMethod(worker, "tryFastDirectoryScan",
+                                  Qt::QueuedConnection);
+    } else {
+        travelRootDirectories();
     }
 
     logDebug(QString("Started monitoring with max watches: %1, usage limit: %2%")
@@ -178,6 +183,19 @@ void FSMonitorPrivate::stopMonitoring()
     }
 
     logDebug("Stopped all monitoring");
+}
+
+void FSMonitorPrivate::travelRootDirectories()
+{
+    // Process the root directories using traditional method
+    // If fast scan succeeds, this will complement any directories
+    // that might have been missed. If fast scan fails, this ensures
+    // we still monitor everything.
+    for (const QString &dir : std::as_const(rootPaths)) {
+        QMetaObject::invokeMethod(worker, "processDirectory",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QString, dir));
+    }
 }
 
 void FSMonitorPrivate::setupWorkerThread()
@@ -208,6 +226,21 @@ void FSMonitorPrivate::setupWorkerThread()
                                                   Q_ARG(QString, dir));
                     }
                 }
+            },
+            Qt::QueuedConnection);
+
+    // Connect fast scan related signals
+    QObject::connect(
+            worker, &FSMonitorWorker::fastScanCompleted,
+            q_ptr, [this](bool success) {
+                handleFastScanCompleted(success);
+            },
+            Qt::QueuedConnection);
+
+    QObject::connect(
+            worker, &FSMonitorWorker::directoriesBatchToWatch,
+            q_ptr, [this](const QStringList &paths) {
+                handleDirectoriesBatch(paths);
             },
             Qt::QueuedConnection);
 }
@@ -551,10 +584,70 @@ void FSMonitorPrivate::logDebug(const QString &message) const
     fmDebug() << "[FSMonitor]" << message;
 }
 
+void FSMonitorPrivate::logInfo(const QString &message) const
+{
+    fmInfo() << "[FSMonitor]" << message;
+}
+
 void FSMonitorPrivate::logError(const QString &message) const
 {
     fmWarning() << "[FSMonitor]" << message;
     Q_EMIT q_ptr->errorOccurred(message);
+}
+
+void FSMonitorPrivate::handleFastScanCompleted(bool success)
+{
+    if (success) {
+        logDebug("Fast directory scan completed successfully");
+    } else {
+        logError("Fast directory scan failed, continuing with traditional scan");
+        travelRootDirectories();
+    }
+}
+
+void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
+{
+    if (paths.isEmpty()) {
+        return;
+    }
+
+    logDebug(QString("Received batch of %1 directories to watch").arg(paths.size()));
+
+    int addedCount = 0;
+    int skipCount = 0;
+    int failCount = 0;
+
+    // 直接处理这个批次，而不是添加到pendingDirectories
+    for (const QString &path : paths) {
+        // 检查资源限制
+        if (!isWithinWatchLimit()) {
+            logError(QString("Watch limit reached (%1/%2), stopping batch processing")
+                             .arg(watchedDirectories.size())
+                             .arg(maxWatches));
+            Q_EMIT q_ptr->resourceLimitReached(watchedDirectories.size(), maxWatches);
+            break;
+        }
+
+        if (!watchedDirectories.contains(path) && !shouldExcludePath(path)) {
+            qApp->processEvents();
+            // 每个路径单独添加，避免addPaths可能导致的阻塞
+            if (watcher->addPath(path)) {
+                watchedDirectories.insert(path);
+                addedCount++;
+            } else {
+                logError(QString("Failed to add directory watch: %1").arg(path));
+                failCount++;
+            }
+        } else {
+            skipCount++;
+        }
+    }
+
+    logInfo(QString("Batch processing complete: added %1, skipped %2, failed %3, total watching %4")
+                    .arg(addedCount)
+                    .arg(skipCount)
+                    .arg(failCount)
+                    .arg(watchedDirectories.size()));
 }
 
 // ========== FSMonitor implementation ==========
@@ -648,6 +741,24 @@ int FSMonitor::maxAvailableWatchCount() const
 {
     Q_D(const FSMonitor);
     return d->maxWatches;
+}
+
+void FSMonitor::setUseFastScan(bool enable)
+{
+    Q_D(FSMonitor);
+
+    if (d->active) {
+        fmWarning() << "Cannot change fast scan setting while monitor is active";
+        return;
+    }
+
+    d->useFastScan = enable;
+}
+
+bool FSMonitor::useFastScan() const
+{
+    Q_D(const FSMonitor);
+    return d->useFastScan;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

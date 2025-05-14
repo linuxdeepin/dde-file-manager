@@ -33,6 +33,7 @@ class FSMonitorPrivate;
 // - Excludes blacklisted, system, external, and network mounts automatically
 // - Skips symbolic links to prevent circular watch issues
 // - Respects the system hidden files setting - ignores hidden files when configured
+// - Can optionally use fast directory scanning at startup for performance
 class FSMonitor : public QObject
 {
     Q_OBJECT
@@ -77,6 +78,12 @@ public:
 
     // Get maximum available watch count from system
     int maxAvailableWatchCount() const;
+
+    // Enable or disable fast directory scanning (must be called before start)
+    void setUseFastScan(bool enable);
+
+    // Check if fast scanning is enabled
+    bool useFastScan() const;
 
 Q_SIGNALS:
     // Emitted when a file is created

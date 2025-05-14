@@ -20,6 +20,7 @@ namespace Defines {
 inline const QString kTextIndexServiceName =
         QLatin1String("deepin-service-plugin@org.deepin.Filemanager.TextIndex.service");
 inline const QString kAnythingDocType = QLatin1String("doc");
+inline const QString kAnythingDirType = QLatin1String("dir");
 
 // Dconfig
 namespace DConf {
