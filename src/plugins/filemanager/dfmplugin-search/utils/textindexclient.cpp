@@ -299,6 +299,13 @@ void TextIndexClient::getLastUpdateTime()
     connect(watcher, &QDBusPendingCallWatcher::finished, this, &TextIndexClient::handleGetLastUpdateTimeReply);
 }
 
+void TextIndexClient::setEnable(bool enabled)
+{
+    if (ensureInterface()) {
+        interface->SetEnabled(enabled);
+    }
+}
+
 void TextIndexClient::handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher)
 {
     FinallyUtil finaly([watcher]() {

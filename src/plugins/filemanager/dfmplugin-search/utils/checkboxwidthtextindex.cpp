@@ -198,6 +198,8 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                 if (currentIndexCheckContext == IndexCheckContext::ResetIndex) {
                     // 重置索引按钮的特定处理逻辑
                     auto client = TextIndexClient::instance();
+                    // 预防在首次自动更新前执行reset时，目录还未监控
+                    client->setEnable(true);
                     if (exists) {
                         client->startTask(TextIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
                     } else {

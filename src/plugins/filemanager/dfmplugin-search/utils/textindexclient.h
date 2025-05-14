@@ -54,12 +54,14 @@ public:
     // 异步获取最后更新时间，结果通过信号 lastUpdateTimeResult 返回
     void getLastUpdateTime();
 
+    void setEnable(bool enabled);
+
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
     void taskFinished(TaskType type, const QString &path, bool success);
     void taskFailed(TaskType type, const QString &path, const QString &error);
     void taskProgressChanged(TaskType type, const QString &path, qlonglong count, qlonglong total);
-    
+
     // 新增信号用于异步返回结果
     void indexExistsResult(bool exists, bool success);
     void serviceStatusResult(ServiceStatus status);
@@ -71,7 +73,7 @@ private:
     explicit TextIndexClient(QObject *parent = nullptr);
     ~TextIndexClient();
     bool ensureInterface();
-    
+
     // 新增：处理DBus回调的私有方法
     void handleTaskStartReply(QDBusPendingCallWatcher *watcher, TaskType type, const QStringList &paths);
     void handleHasRunningTaskReply(QDBusPendingCallWatcher *watcher);
