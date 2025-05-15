@@ -532,7 +532,6 @@ void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &
             // 绘制高亮文本
             QRectF highlightRect(rect.x() + keywordXPos, rect.y(), keywordWidth + 1, rect.height()); // 宽度加1防止误差导致绘制异常
             QString highlightText(lineText.mid(highlightStart, highlightLength));
-            painter->drawRect(highlightRect);
             painter->drawText(highlightRect,
                              highlightText,
                              QTextOption(document->defaultTextOption().alignment()));
