@@ -33,6 +33,7 @@ QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 QList<QString> TitleBarHelper::kKeepTitleStatusSchemeList {};
 
 bool TitleBarHelper::newWindowAndTabEnabled { true };
+bool TitleBarHelper::searchEnabled { false };
 
 QList<TitleBarWidget *> TitleBarHelper::titlebars()
 {

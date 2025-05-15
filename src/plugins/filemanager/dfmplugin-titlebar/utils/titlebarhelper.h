@@ -41,6 +41,7 @@ public:
 
 public:
     static bool newWindowAndTabEnabled;
+    static bool searchEnabled;
 
 private:
     static QMutex &mutex();

@@ -187,6 +187,9 @@ void SearchEditWidget::performSearch()
     if (pendingSearchText.isEmpty())
         return;
 
+    if (!TitleBarHelper::searchEnabled)
+        return;
+
     // Trim whitespace from the search string
     QString trimmedSearchText = pendingSearchText.trimmed();
     if (trimmedSearchText.isEmpty())
