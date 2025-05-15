@@ -39,6 +39,17 @@ bool TitleBar::start()
     // file scheme for crumbar
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kFile), QVariantMap {});
 
+    auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
+    if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        TitleBarHelper::searchEnabled = true;
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
+            [](const QString &, const QString &name) {
+                if (name == "dfmplugin-search") TitleBarHelper::searchEnabled = true;
+            },
+        Qt::DirectConnection);
+    }
+
     return true;
 }
 
