@@ -214,8 +214,12 @@ void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &ke
     // 清理标记的RootInfo
     for (const auto &rootUrl : rootsToClean) {
         // 先停止线程工作
-        rootInfoMap.value(rootUrl)->clearTraversalThread(key, false);
-        
+        int rootThreadCount = rootInfoMap.value(rootUrl)->clearTraversalThread(key, false);
+
+        // 剩余迭代线程大于0,说明该rootinfo还在被其他view-model使用，不能直接移除
+        if (rootThreadCount > 0)
+            continue;
+
         // 从Map中移除并处理删除
         auto root = rootInfoMap.take(rootUrl);
         if (root) {
