@@ -32,14 +32,19 @@ public:
     void setRunning(bool running);
     Status status() const;
     void updateUI(Status status);
-    
+
     DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
+
+    // 格式化带无下划线链接的文本
+    void setFormattedTextWithLink(const QString &mainText, const QString &linkText, const QString &href);
 
 Q_SIGNALS:
     void resetIndex();
 
 private:
     QPixmap iconPixmap(const QString &iconName, int size);
+    // 获取链接样式定义
+    QString getLinkStyle() const;
 
     Status currentStatus { Status::Inactive };
     DTK_NAMESPACE::Widget::DSpinner *spinner { nullptr };
@@ -49,8 +54,8 @@ private:
 
 // 用于跟踪当前检查索引存在的上下文
 enum class IndexCheckContext {
-    None,        // 无特定上下文
-    ResetIndex,  // 重置索引按钮触发
+    None,   // 无特定上下文
+    ResetIndex,   // 重置索引按钮触发
     InitStatus   // 初始化状态检查
 };
 
