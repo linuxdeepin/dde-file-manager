@@ -1,3 +1,9 @@
+dde-file-manager (6.5.51.1) unstable; urgency=medium
+
+  * test for search
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 16 May 2025 18:01:16 +0800
+
 dde-file-manager (6.5.49.2) unstable; urgency=medium
 
   * test for search 
