@@ -35,9 +35,11 @@ enum TPMError {
     kTPMMissingAlog,
 };
 
+bool tpmSupportInterAlgo();
+bool tpmSupportSMAlgo();
 bool getAlgorithm(QString *sessionHashAlgo, QString *sessionKeyAlgo,
                   QString *primaryHashAlgo, QString *primaryKeyAlgo,
-                  QString *minorHashAlgo, QString *minorKeyAlgo);
+                  QString *minorHashAlgo, QString *minorKeyAlgo, QString *pcr, QString *pcrbank);
 int genPassphraseFromTPM(const QString &dev, const QString &pin, QString *passphrase);
 QString getPassphraseFromTPM(const QString &dev, const QString &pin);
 
@@ -49,6 +51,11 @@ namespace config_utils {
 bool exportKeyEnabled();
 QString cipherType();
 bool enableEncrypt();
+bool enableAlgoFromDConfig();
+bool tpmAlgoFromDConfig(QString *sessionHash, QString *sessionKey,
+                        QString *primaryHash, QString *primaryKey,
+                        QString *minorHash, QString *minorKey,
+                        QString *pcr, QString *pcrBank);
 }   // namespace config_utils
 
 namespace recovery_key_utils {

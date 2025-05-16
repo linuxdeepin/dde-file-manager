@@ -392,18 +392,6 @@ bool EncryptParamsInputDialog::encryptByTpm(const QString &deviceName)
             btn->setEnabled(true);
     });
 
-    QString sessionHashAlgo, sessionKeyAlgo, primaryHashAlgo, primaryKeyAlgo, minorHashAlgo, minorKeyAlgo;
-    bool checkAlgo = tpm_passphrase_utils::getAlgorithm(&sessionHashAlgo,
-                                                        &sessionKeyAlgo,
-                                                        &primaryHashAlgo,
-                                                        &primaryKeyAlgo,
-                                                        &minorHashAlgo,
-                                                        &minorKeyAlgo);
-    if (!checkAlgo) {
-        qCritical() << "TPM algo choice failed!";
-        return false;
-    }
-
     DSpinner spinner(this);
     spinner.setFixedSize(50, 50);
     spinner.move((width() - spinner.width()) / 2, (height() - spinner.height()) / 2);
