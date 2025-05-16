@@ -53,6 +53,8 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePipeg), 1024 * 1024 * 30);
     // High file limit size only for FLAC files.
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
+
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppAppimage), INT64_MAX);
 }
 
 const QStringList &ThumbnailHelper::defaultThumbnailDirs()
@@ -111,6 +113,10 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
                  || mimeName == Mime::kTypeAppCRRMedia
                  || mimeName == Mime::kTypeAppMxf))
         return checkStatus(Application::kPreviewDocumentFile);
+
+    // appimage 是可执行程序包，应该显示图标
+    if (mimeName == Mime::kTypeAppAppimage)
+        return true;
 
     return false;
 }
