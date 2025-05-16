@@ -34,11 +34,17 @@ public:
     void updateUI(Status status);
     
     DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
+    
+    // 格式化带无下划线链接的文本
+    void setFormattedTextWithLink(const QString &mainText, const QString &linkText, const QString &href);
 
 Q_SIGNALS:
     void resetIndex();
 
 private:
+    // 获取链接样式定义
+    QString getLinkStyle() const;
+    
     Status currentStatus { Status::Inactive };
     DTK_NAMESPACE::Widget::DSpinner *spinner { nullptr };
     DTK_NAMESPACE::Widget::DTipLabel *iconLabel { nullptr };
