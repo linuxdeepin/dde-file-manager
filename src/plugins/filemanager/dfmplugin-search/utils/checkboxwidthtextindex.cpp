@@ -14,6 +14,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QDir>
+#include <QSizePolicy>
 
 DGUI_USE_NAMESPACE
 namespace dfmplugin_search {
@@ -23,6 +24,11 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     : QWidget { parent }
 {
     setContentsMargins(4, 0, 0, 0);
+
+    // 设置整体控件的尺寸策略，使其能够水平扩展
+    QSizePolicy policy = sizePolicy();
+    policy.setHorizontalPolicy(QSizePolicy::Expanding);
+    setSizePolicy(policy);
 
     // 创建水平布局
     boxLayout = new QHBoxLayout(this);
@@ -42,13 +48,16 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     msgLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     msgLabel->setWordWrap(true);
     msgLabel->setContentsMargins(4, 0, 0, 0);
+    msgLabel->setOpenExternalLinks(false);   // 不自动打开外部链接，而是发出linkActivated信号
 
-    updateBtn = new DCommandLinkButton("", this);
-    updateBtn->setFocusPolicy(Qt::NoFocus);
-    updateBtn->setContentsMargins(0, 0, 0, 0);
-    QFont font = msgLabel->font();
-    updateBtn->setFont(font);
-    connect(updateBtn, &DCommandLinkButton::clicked, this, [this]() {
+    // 设置水平尺寸策略为扩展，确保能尽可能在一行显示
+    QSizePolicy policyMsgLabel = msgLabel->sizePolicy();
+    policyMsgLabel.setHorizontalPolicy(QSizePolicy::Expanding);
+    policyMsgLabel.setHorizontalStretch(1);
+    msgLabel->setSizePolicy(policyMsgLabel);
+
+    // 连接linkActivated信号来处理点击事件
+    connect(msgLabel, &QLabel::linkActivated, this, [this](const QString &) {
         emit resetIndex();
     });
 
@@ -57,12 +66,9 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     boxLayout->setContentsMargins(0, 0, 0, 0);
     boxLayout->addWidget(spinner);
     boxLayout->addWidget(iconLabel);
-    boxLayout->addWidget(msgLabel);
-    boxLayout->addWidget(updateBtn);
-    boxLayout->addStretch();
+    boxLayout->addWidget(msgLabel, 1);   // 给标签添加伸展因子
 
     // 初始状态
-    updateBtn->hide();
     spinner->hide();
     iconLabel->show();
 }
@@ -73,12 +79,10 @@ void TextIndexStatusBar::setRunning(bool running)
         spinner->show();
         spinner->start();
         iconLabel->hide();
-        updateBtn->hide();
     } else {
         spinner->hide();
         spinner->stop();
         iconLabel->show();
-        updateBtn->show();
     }
 }
 
@@ -128,22 +132,22 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         setRunning(false);
         iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
         msgLabel->clear();
+        iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
+
+        // 再次获取最后更新时间，以便回调更新具体时间
         auto client = TextIndexClient::instance();
         client->getLastUpdateTime();
-        updateBtn->setText(tr("Update index now"));
         break;
     }
     case Status::Failed:
         setRunning(false);
+        msgLabel->setText(tr("Index update failed, please <a href=\"update\">try updating again</a>."));
         iconLabel->setPixmap(iconPixmap("dialog-error", 16));
-        msgLabel->setText(tr("Index update failed, please"));
-        updateBtn->setText(tr("try updating again."));
         break;
     case Status::Inactive:
         spinner->hide();
         spinner->stop();
         iconLabel->hide();
-        updateBtn->hide();
         msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
         break;
     }
@@ -177,8 +181,15 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
     : QWidget { parent }, currentIndexCheckContext(IndexCheckContext::None)
 {
     setContentsMargins(0, 0, 0, 0);
+
+    // 设置控件尺寸策略，使其能水平扩展
+    QSizePolicy policy = sizePolicy();
+    policy.setHorizontalPolicy(QSizePolicy::Expanding);
+    setSizePolicy(policy);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(4);   // 添加适当的垂直间距
     setLayout(layout);
 
     checkBox = new QCheckBox(this);
@@ -240,7 +251,8 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
 
     connect(TextIndexClient::instance(), &TextIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
         if (success && !time.isEmpty()) {
-            statusBar->msgLabel->setText(tr("Index update completed, last update time: %1").arg(time));
+            // 使用HTML格式添加可点击链接
+            statusBar->msgLabel->setText(tr("Index update completed, last update time: %1 <a href=\"update\">Update index now</a>").arg(time));
         }
     });
 

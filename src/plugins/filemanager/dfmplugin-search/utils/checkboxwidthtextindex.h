@@ -7,10 +7,10 @@
 
 #include <DTipLabel>
 #include <DSpinner>
-#include <DCommandLinkButton>
 
 #include <QCheckBox>
 #include <QHBoxLayout>
+#include <QLabel>
 
 namespace dfmplugin_search {
 
@@ -33,9 +33,7 @@ public:
     Status status() const;
     void updateUI(Status status);
     
-    // 将这些控件设为public以便外部访问
     DTK_NAMESPACE::Widget::DTipLabel *msgLabel { nullptr };
-    DTK_NAMESPACE::Widget::DCommandLinkButton *updateBtn { nullptr };
 
 Q_SIGNALS:
     void resetIndex();
