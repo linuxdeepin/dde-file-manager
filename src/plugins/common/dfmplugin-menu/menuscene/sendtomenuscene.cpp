@@ -147,6 +147,13 @@ void SendToMenuScene::updateState(QMenu *parent)
 {
     // remove device self action
     if (!d->isEmptyArea) {
+        if (auto sendToAction = d->predicateAction.value(ActionID::kSendTo)) {
+            if (!d->focusFileInfo->exists()) {
+                sendToAction->setDisabled(true);
+                return AbstractMenuScene::updateState(parent);
+            }
+        }
+
         auto actions = parent->actions();
         bool removed = false;
         for (auto act : actions) {

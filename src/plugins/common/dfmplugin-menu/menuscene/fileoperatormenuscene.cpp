@@ -189,6 +189,11 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             rename->setDisabled(true);
     }
 
+    if (auto openAction = d->predicateAction.value(ActionID::kOpen)) {
+        if (!d->focusFileInfo->exists())
+            openAction->setDisabled(true);
+    }
+
     // set as wallpaper
     if (auto setWallpaper = d->predicateAction.value(ActionID::kSetAsWallpaper)) {
         auto focusUrl = d->focusFileInfo->urlOf(UrlInfoType::kUrl);
