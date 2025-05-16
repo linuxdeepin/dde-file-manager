@@ -32,6 +32,7 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
     registerThumbnailCreator("image/*", ThumbnailCreators::imageThumbnailCreator);
     registerThumbnailCreator("audio/*", ThumbnailCreators::audioThumbnailCreator);
     registerThumbnailCreator("video/*", ThumbnailCreators::videoThumbnailCreator);
+    registerThumbnailCreator(Mime::kTypeAppAppimage, ThumbnailCreators::appimageThumbnailCreator);
 
     init();
 }

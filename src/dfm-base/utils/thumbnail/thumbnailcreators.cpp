@@ -314,3 +314,59 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
 
     return img;
 }
+
+QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, ThumbnailSize size)
+{
+    // 1. 确认 appimage 存在
+    if (!QFile::exists(filePath)) {
+        qCWarning(logDFMBase) << "File not found:" << filePath;
+        return QImage();
+    }
+
+    // 2. 检查文件是否为 appimage 类型，且有可执行权限
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
+                                              Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info
+        || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
+        || !info->isAttributes(FileInfo::FileIsType::kIsExecutable)) {
+        qCWarning(logDFMBase) << "File is not a valid AppImage or has no executable permission:" << filePath
+                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null")
+                              << "isExecutable:" << (info ? info->isAttributes(FileInfo::FileIsType::kIsExecutable) : false);
+        return QImage();
+    }
+
+    // 3. 创建临时目录 /tmp/<appimage-name>-extract，用于解压 appimage，使用随机字符串避免跨进程生成时的冲突
+    auto randomStr = QString::number(QRandomGenerator::global()->generate(), 16);
+    auto extractTo = "/tmp/" + QFileInfo(filePath).fileName() + "-extract-" + randomStr;
+    if (!QDir().mkpath(extractTo)) {
+        qCWarning(logDFMBase) << "Failed to create temporary directory for AppImage extraction:" << extractTo;
+        return QImage();
+    }
+
+    // 4. 解压 appimage 到临时目录
+    QProcess proc;
+    proc.setWorkingDirectory(extractTo);
+    proc.start(filePath, { "--appimage-extract" });
+    proc.waitForFinished();
+    qCDebug(logDFMBase) << "AppImage extracted to:" << extractTo;
+
+    // 5. 遍历临时目录下的 png/svg 文件
+    QString iconPath;
+    QDir extractDir(extractTo + "/squashfs-root");
+    auto files = extractDir.entryInfoList(QStringList { "*.png", "*.svg" },
+                                          QDir::Files | QDir::NoDotAndDotDot);
+    iconPath = files.isEmpty() ? "" : files.first().filePath();
+
+    QImage icon;
+    if (!iconPath.isEmpty())
+        icon = QImage(iconPath).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    // 6. 删除临时目录
+    QDir extractRoot(extractTo);
+    if (extractRoot.exists()) {
+        auto removed = extractRoot.removeRecursively();
+        qCDebug(logDFMBase) << "Temporary extraction directory removed:" << extractRoot.path() << "Result:" << removed;
+    }
+
+    return icon;
+}
