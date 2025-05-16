@@ -19,6 +19,7 @@
 #include <QPainter>
 #include <QImageReader>
 #include <QDebug>
+#include <QTemporaryDir>
 
 // use original poppler api
 #include <poppler/cpp/poppler-document.h>
@@ -313,4 +314,58 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
         img = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     return img;
+}
+
+QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, ThumbnailSize size)
+{
+    // 1. 确认 appimage 存在
+    if (!QFile::exists(filePath)) {
+        qCWarning(logDFMBase) << "File not found:" << filePath;
+        return QImage();
+    }
+
+    // 2. 检查文件是否为 appimage 类型，且有可执行权限
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
+                                              Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info
+        || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
+        || !info->isAttributes(FileInfo::FileIsType::kIsExecutable)) {
+        qCWarning(logDFMBase) << "File is not a valid AppImage or has no executable permission:" << filePath
+                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null")
+                              << "isExecutable:" << (info ? info->isAttributes(FileInfo::FileIsType::kIsExecutable) : false);
+        return QImage();
+    }
+
+    // 3. 创建临时目录，用于解压 appimage
+    QTemporaryDir tempDir;
+    if (!tempDir.isValid()) {
+        qCWarning(logDFMBase) << "Cannot create temporary directory for extraction. Error:" << tempDir.errorString()
+                              << "File:" << filePath;
+        return QImage();
+    }
+    auto extractTo = tempDir.path();
+
+    // 4. 解压 appimage 到临时目录
+    QProcess proc;
+    proc.setWorkingDirectory(extractTo);
+    proc.start(filePath, { "--appimage-extract" });
+    auto done = proc.waitForFinished();
+    qCInfo(logDFMBase) << "AppImage extraction completed for" << filePath
+                       << "to" << extractTo
+                       << "with status:" << (done ? "success" : "failed");
+
+    // 5. 遍历临时目录下的 png/svg 文件
+    QString iconPath;
+    QDir extractDir(extractTo + "/squashfs-root");
+    auto files = extractDir.entryInfoList(QStringList { "*.png", "*.svg" },
+                                          QDir::Files | QDir::NoDotAndDotDot);
+    iconPath = files.isEmpty() ? "" : files.first().filePath();
+
+    QImage icon;
+    if (!iconPath.isEmpty())
+        icon = QImage(iconPath).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    else
+        qCWarning(logDFMBase) << "Failed to find icon in AppImage:" << filePath;
+
+    return icon;
 }
