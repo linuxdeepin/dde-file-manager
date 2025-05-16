@@ -76,6 +76,8 @@ void VaultActiveSaveKeyFileView::initUI()
     selectfileSavePathEdit = new DFileChooserEdit(this);
     DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
+    selectfileSavePathEdit->lineEdit()->setReadOnly(true);
+    selectfileSavePathEdit->lineEdit()->setClearButtonEnabled(false);
     filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setDefaultSuffix(QString("key"));
