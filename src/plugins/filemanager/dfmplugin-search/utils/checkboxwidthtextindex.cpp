@@ -96,6 +96,23 @@ void TextIndexStatusBar::updateUI(Status status)
     boxLayout->update();
 }
 
+QString TextIndexStatusBar::getLinkStyle() const
+{
+    // 定义全局链接样式以保持一致性
+    return "<style> a {text-decoration: none; color: #0081FF;} a:hover {color: #40A9FF;} </style>";
+}
+
+void TextIndexStatusBar::setFormattedTextWithLink(const QString &mainText, const QString &linkText, const QString &href)
+{
+    // 使用内嵌样式去除链接下划线并添加悬停效果
+    const QString styleHtml = getLinkStyle();
+
+    // 组合成最终显示文本
+    // 对于"Index update failed, please"这样的文本，需要在链接后添加句点
+    QString format = "%1 %2 <a href=\"%3\">%4</a>";
+    msgLabel->setText(QString(format).arg(styleHtml, mainText, href, linkText));
+}
+
 void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
 {
     Q_UNUSED(data)
@@ -117,16 +134,20 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         client->getLastUpdateTime();
         break;
     }
-    case Status::Failed:
+    case Status::Failed: {
         setRunning(false);
-        msgLabel->setText(tr("Index update failed, please <a href=\"update\">try updating again</a>."));
+        setFormattedTextWithLink(
+                tr("Index update failed, please"),
+                tr("try updating again"),
+                "update");
         iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
         break;
+    }
     case Status::Inactive:
         spinner->hide();
         spinner->stop();
         iconLabel->hide();
-        msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes."));
+        msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes"));
         break;
     }
 }
@@ -229,8 +250,11 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
 
     connect(TextIndexClient::instance(), &TextIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
         if (success && !time.isEmpty()) {
-            // 使用HTML格式添加可点击链接
-            statusBar->msgLabel->setText(tr("Index update completed, last update time: %1 <a href=\"update\">Update index now</a>").arg(time));
+            // 使用辅助方法设置带有样式的链接文本
+            statusBar->setFormattedTextWithLink(
+                    tr("Index update completed, last update time: %1").arg(time),
+                    tr("Update index now"),
+                    "update");
         }
     });
 
