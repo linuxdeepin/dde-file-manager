@@ -564,6 +564,7 @@ void ConnectToServerDialog::updateUiState()
     const QString &currUrlStr = getCurrentUrlString();
     int row = model->findItem(currUrlStr);
     collectionServerView->setCurrentIndex(model->index(row));
+    getButton(kConnectButton)->setEnabled(!serverComboBox->currentText().isEmpty());
 }
 
 QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
