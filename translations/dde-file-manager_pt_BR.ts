@@ -1017,12 +1017,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="62"/>
         <source>Spreadsheet</source>
-        <translation>Planilha</translation>
+        <translation>Planilha (.xls)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>Presentation</source>
-        <translation>Apresentação</translation>
+        <translation>Apresentação (.ppt)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
@@ -5518,22 +5518,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="35"/>
         <source>Office Text</source>
-        <translation>Texto</translation>
+        <translation>Texto com formatação (.doc)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="36"/>
         <source>Spreadsheets</source>
-        <translation>Planilha</translation>
+        <translation>Planilha (.xls)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="37"/>
         <source>Presentation</source>
-        <translation>Apresentação</translation>
+        <translation>Apresentação (.ppt)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="38"/>
         <source>Plain Text</source>
-        <translation>Texto Simples</translation>
+        <translation>Texto sem formatação (.txt)</translation>
     </message>
 </context>
 <context>
