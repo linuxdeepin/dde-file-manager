@@ -256,7 +256,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
         <source>Home</source>
-        <translation>Pasta Pessoal</translation>
+        <translation>Meu Usuário</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
@@ -3592,7 +3592,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="102"/>
         <source>Home</source>
-        <translation>Pasta Pessoal</translation>
+        <translation>Meu Usuário</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="103"/>
