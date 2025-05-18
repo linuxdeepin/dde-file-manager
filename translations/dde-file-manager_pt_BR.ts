@@ -22,7 +22,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="304"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>O Gerenciador de Arquivos é uma ferramenta poderosa e fácil de usar para manusear os arquivos.</translation>
+        <translation>O Gerenciador de Arquivos é uma ferramenta poderosa e fácil de usar, com recursos como busca, cópia, lixeira, compactação/descompactação, propriedades do arquivo e outras funções úteis.</translation>
     </message>
 </context>
 <context>
@@ -90,7 +90,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
-        <translation>O dispositivo (%1) está ocupado, não pode %2 agora.</translation>
+        <translation>O dispositivo (%1) está em uso e não pode ser %2 no momento.</translation>
     </message>
 </context>
 <context>
