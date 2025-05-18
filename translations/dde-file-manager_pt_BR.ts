@@ -5566,7 +5566,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
-        <translation>Seleção inversa</translation>
+        <translation>Inverter seleção</translation>
     </message>
 </context>
 <context>
