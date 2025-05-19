@@ -1545,25 +1545,39 @@ void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 wind
     if (selectUrls.isEmpty() || dirUrls.isEmpty())
         return;
 
-    QString selectListStr;
-    QString dirListStr;
+    // Create temporary file
+    // 使用QTemporaryFile的autoRemove = false，避免进程关闭后文件被删除
+    QTemporaryFile tempFile;
+    tempFile.setAutoRemove(false);
+    if (!tempFile.open()) {
+        fmWarning() << "Failed to create temporary file for preview data";
+        return;
+    }
 
+    // Write data to temporary file in JSON format
+    QJsonObject data;
+    data["windowId"] = QString::number(windowId);
+
+    QJsonArray selectUrlsArray;
     for (const auto &url : selectUrls) {
-        selectListStr.append(url.toString());
-        selectListStr.append(";");
+        selectUrlsArray.append(url.toString());
     }
-    if (!selectListStr.isEmpty())
-        selectListStr.chop(1);
+    data["selectUrls"] = selectUrlsArray;
 
+    QJsonArray dirUrlsArray;
     for (const auto &url : dirUrls) {
-        dirListStr.append(url.toString());
-        dirListStr.append(";");
+        dirUrlsArray.append(url.toString());
     }
-    if (!dirListStr.isEmpty())
-        dirListStr.chop(1);
+    data["dirUrls"] = dirUrlsArray;
 
+    QJsonDocument doc(data);
+    tempFile.write(doc.toJson());
+    QString tempFileName = tempFile.fileName();
+    tempFile.close();
+
+    // Pass temporary file path as argument
     QStringList args;
-    args << QString::number(windowId) << selectListStr << dirListStr;
+    args << tempFileName;
     QString cmd(DFM_PREVIEW_TOOL);
     QProcess::startDetached(cmd, args);
 }
