@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-fileoperations)
 
+configure_file(
+    "${APP_SOURCE_DIR}/config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # 设置二进制文件名

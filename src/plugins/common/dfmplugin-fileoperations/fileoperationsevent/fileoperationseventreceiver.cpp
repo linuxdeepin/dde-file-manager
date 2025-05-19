@@ -7,6 +7,8 @@
 #include "fileoperationsevent/fileoperationseventhandler.h"
 #include "fileoperations/operationsstackproxy.h"
 
+#include "config.h"   //cmake
+
 #include <dfm-base/utils/hidefilehelper.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/file/local/localfilehandler.h>
@@ -1562,7 +1564,7 @@ void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 wind
 
     QStringList args;
     args << QString::number(windowId) << selectListStr << dirListStr;
-    QString cmd("/usr/libexec/dde-file-manager-preview");
+    QString cmd(DFM_PREVIEW_TOOL);
     QProcess::startDetached(cmd, args);
 }
 
