@@ -14,6 +14,9 @@
 #include <QFile>
 #include <QDir>
 #include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include <linux/limits.h>
 
@@ -53,16 +56,45 @@ void PreviewSingleApplication::handleNewClient(const QString &uniqueKey)
 void PreviewSingleApplication::processArgs(const QStringList &list)
 {
     // parse args
-    if (list.count() < 4)
+    if (list.count() < 2)
         return;
 
-    quint64 winId = list[1].toULongLong();
+    // Read data from temporary file
+    QFile file(list[1]);
+    if (!file.open(QIODevice::ReadOnly)) {
+        fmWarning() << "Failed to open temporary file for preview data";
+        return;
+    }
 
-    QStringList selectUrlsStr = list[2].split(";");
-    QStringList dirUrlsStr = list[3].split(";");
+    // Parse JSON data
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
 
-    QList<QUrl> selectUrls(QUrl::fromStringList(selectUrlsStr));
-    QList<QUrl> dirUrls(QUrl::fromStringList(dirUrlsStr));
+    if (doc.isNull() || !doc.isObject()) {
+        fmWarning() << "Invalid JSON data in temporary file";
+        return;
+    }
+
+    QJsonObject data = doc.object();
+    quint64 winId = data["windowId"].toString().toULongLong();
+
+    // 正确处理JSON数组转换为QUrl列表
+    const QJsonArray &selectUrlsArray = data["selectUrls"].toArray();
+    QStringList selectUrlStrs;
+    for (const QJsonValue &value : selectUrlsArray) {
+        selectUrlStrs << value.toString();
+    }
+    QList<QUrl> selectUrls = QUrl::fromStringList(selectUrlStrs);
+
+    const QJsonArray &dirUrlsArray = data["dirUrls"].toArray();
+    QStringList dirUrlStrs;
+    for (const QJsonValue &value : dirUrlsArray) {
+        dirUrlStrs << value.toString();
+    }
+    QList<QUrl> dirUrls = QUrl::fromStringList(dirUrlStrs);
+
+    // Delete temporary file
+    QFile::remove(list[1]);
 
     static PreviewLibrary lib;
     if (!lib.load())
