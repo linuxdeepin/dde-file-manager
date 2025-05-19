@@ -59,6 +59,7 @@ private:
     void onAddButtonClicked();
     void onDelButtonClicked();
     QString schemeWithSlash(const QString &scheme) const;
+    void updateTheme();
 
     enum DialogButton {
         kCannelButton,
@@ -71,6 +72,7 @@ private:
     DTK_WIDGET_NAMESPACE::DComboBox *schemeComboBox { nullptr };
     QCompleter *completer { nullptr };
     DTK_WIDGET_NAMESPACE::DFrame *emptyFrame { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *noFavoritesLabel { nullptr };
     bool isAddState { true };
     DTK_WIDGET_NAMESPACE::DIconButton *theAddButton { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *theDelButton { nullptr };
