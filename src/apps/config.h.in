@@ -74,6 +74,12 @@
 #    warning "cmake unseting definition DFM_THUMBNAIL_TOOL"
 #endif
 
+#ifndef DFM_PREVIEW_TOOL
+#    define DFM_PREVIEW_TOOL "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager-preview"
+#elif
+#    warning "cmake unseting definition DFM_PREVIEW_TOOL"
+#endif
+
 #ifndef VERSION
 #    define VERSION "@VERSION@"
 #endif
