@@ -451,20 +451,16 @@ void ConnectToServerDialog::initializeUi()
         emptyFrame->setMaximumHeight(295);
         emptyFrame->setLayout(emptyLayout);
 
-        DLabel *emptyIcon = new DLabel();
-        emptyIcon->setContentsMargins(120, 40, 0, 0);
-        emptyIcon->setMaximumHeight(200);
-        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            emptyIcon->setPixmap(QIcon(":icons/deepin/builtin/light/icons/no_favorites_yet.svg").pixmap({ 145, 145 }));
-        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            emptyIcon->setPixmap(QIcon(":icons/deepin/builtin/dark/icons/no_favorites_yet.svg").pixmap({ 145, 145 }));
+        noFavoritesLabel = new DLabel();
+        noFavoritesLabel->setContentsMargins(120, 40, 0, 0);
+        noFavoritesLabel->setMaximumHeight(200);
 
         DLabel *centerNotes = new DLabel();
         centerNotes->setMaximumHeight(30);
         centerNotes->setText(tr("No favorites yet"));
         centerNotes->setStyleSheet("color:gray;");
 
-        emptyLayout->addWidget(emptyIcon, Qt::AlignHCenter);
+        emptyLayout->addWidget(noFavoritesLabel, Qt::AlignHCenter);
         emptyLayout->addSpacing(5);
         emptyLayout->addWidget(centerNotes, 0, Qt::AlignHCenter | Qt::AlignTop);
         emptyLayout->setSpacing(0);
@@ -508,6 +504,7 @@ void ConnectToServerDialog::initializeUi()
     setContentsMargins(0, 0, 0, 0);
     updateUiState();
     initUiForSizeMode();
+    updateTheme();
 }
 
 void ConnectToServerDialog::initConnect()
@@ -519,6 +516,7 @@ void ConnectToServerDialog::initConnect()
     connect(collectionServerView, &DListView::clicked, this, &ConnectToServerDialog::onCollectionViewClicked);
     connect(schemeComboBox, &DComboBox::currentTextChanged, this, [=](const QString &) { updateUiState(); });
     connect(charsetComboBox, &DComboBox::currentTextChanged, this, [=] { updateUiState(); });
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &ConnectToServerDialog::updateTheme);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &ConnectToServerDialog::initUiForSizeMode);
@@ -570,6 +568,15 @@ void ConnectToServerDialog::updateUiState()
 QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
 {
     return scheme + "://";
+}
+
+void ConnectToServerDialog::updateTheme()
+{
+    const auto &noFavoritesIcon = DDciIcon::fromTheme("no_favorites_yet");
+    const auto themeType = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType
+            ? DDciIcon::Light
+            : DDciIcon::Dark;
+    noFavoritesLabel->setPixmap(noFavoritesIcon.pixmap(qApp->devicePixelRatio(), 145, themeType));
 }
 
 void ConnectToServerDialog::initUiForSizeMode()
