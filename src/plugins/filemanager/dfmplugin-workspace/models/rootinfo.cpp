@@ -21,13 +21,19 @@
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
-
 RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
     : QObject(parent), url(u), canCache(canCache)
 {
     QUrlQuery query(url.query());
-    if (query.hasQueryItem("keyword"))
-        keyWords = query.queryItemValue("keyword").split(" ");
+    if (query.hasQueryItem("keyword")) {
+        QString keywordValue = query.queryItemValue("keyword");
+        // 先对URL编码的字符进行解码，确保能处理所有空白字符
+        keywordValue = QUrl::fromPercentEncoding(keywordValue.toUtf8());
+        
+        // 使用\s+匹配所有空白字符（空格、换行、制表符等）
+        static const QRegularExpression kWhitespaceDelimiter("\\s+");
+        keyWords = keywordValue.split(kWhitespaceDelimiter, Qt::SkipEmptyParts);
+    }
 
     hiddenFileUrl.setScheme(url.scheme());
     hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
@@ -400,7 +406,7 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
     }
 
     if (sortInfos.length() > 0) {
-        bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+        bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
         Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos, isFirst);
     }
 }
@@ -414,13 +420,13 @@ void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> childre
     // 更新已存在的文件信息
     sourceDataList = children;
 
-    bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
     Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList, isFirst);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
-                                         dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                                         Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
+                                          dfmio::DEnumerator::SortRoleCompareFlag sortRole,
+                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
 {
     originSortRole = sortRole;
     originSortOrder = sortOrder;
@@ -431,8 +437,7 @@ void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
 
     addChildren(children);
 
-
-    bool isFirst = isFirstBatch.exchange(false); // Get and reset the flag
+    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
     Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort, isFirst);
 }
 
@@ -443,7 +448,7 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
     bool noDataProduced = isFirstBatch.load();
     // Reset isFirstBatch
     isFirstBatch.store(false);
-    
+
     // Emit signal with additional parameter indicating if no data was produced
     emit traversalFinished(travseToken, noDataProduced);
     traversalFinish = true;

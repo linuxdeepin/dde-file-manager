@@ -52,13 +52,16 @@ QString DFMSearcher::realSearchPath(const QUrl &url)
 
 SearchQuery DFMSearcher::createSearchQuery() const
 {
+    // Static regular expressions to avoid recreation
+    static const QRegularExpression kWhitespacePattern("\\s");
+    static const QRegularExpression kWhitespaceDelimiter("\\s+");
+
     // Create search query
-    if (!keyword.contains(' '))
+    if (!keyword.contains(kWhitespacePattern))
         return SearchFactory::createQuery(keyword, SearchQuery::Type::Simple);
 
-    // If contains spaces, use boolean query
-    QStringList keywords;
-    keywords = keyword.split(' ', Qt::SkipEmptyParts);
+    // If contains any whitespace characters, use boolean query
+    QStringList keywords = keyword.split(kWhitespaceDelimiter, Qt::SkipEmptyParts);
     SearchQuery query = SearchFactory::createQuery(keywords, SearchQuery::Type::Boolean);
     // Set boolean operator to AND
     query.setBooleanOperator(SearchQuery::BooleanOperator::AND);
