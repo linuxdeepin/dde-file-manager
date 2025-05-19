@@ -1548,14 +1548,14 @@ void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 wind
     QString selectListStr;
     QString dirListStr;
 
-    for (auto url : selectUrls) {
+    for (const auto &url : selectUrls) {
         selectListStr.append(url.toString());
         selectListStr.append(";");
     }
     if (!selectListStr.isEmpty())
         selectListStr.chop(1);
 
-    for (auto url : dirUrls) {
+    for (const auto &url : dirUrls) {
         dirListStr.append(url.toString());
         dirListStr.append(";");
     }
