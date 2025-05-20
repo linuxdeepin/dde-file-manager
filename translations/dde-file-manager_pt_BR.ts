@@ -6986,12 +6986,12 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao salvar informações da dica: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="649"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao salvar a senha: %1</translation>
     </message>
 </context>
 <context>
