@@ -7400,17 +7400,17 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="62"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao criar o cofre: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="154"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao criar o cofre: Falha ao obter o método de criptografia!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="214"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao gerar senha automaticamente!</translation>
     </message>
 </context>
 <context>
