@@ -3,11 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskhandler.h"
-
+#include "fileprovider.h"
 #include "progressnotifier.h"
-#include "utils/indextraverseutils.h"
 #include "utils/scopeguard.h"
 #include "utils/docutils.h"
+#include "utils/indexutility.h"
+#include "utils/textindexconfig.h"
+
+#include <dfm-search/searchfactory.h>
+#include <dfm-search/filenamesearchapi.h>
 
 #include <fulltext/chineseanalyzer.h>
 
@@ -18,20 +22,12 @@
 #include <QueryWrapperFilter.h>
 
 #include <QDir>
-#include <QDirIterator>
 #include <QDateTime>
-#include <QRegularExpression>
-#include <QStandardPaths>
-#include <QQueue>
-
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
 using namespace Lucene;
+DFM_SEARCH_USE_NS
 
 namespace {
 
@@ -39,14 +35,19 @@ class ProgressReporter
 {
 public:
     explicit ProgressReporter()
-        : processedCount(0), lastReportTime(QDateTime::currentDateTime())
+        : processedCount(0), toltalCount(0), lastReportTime(QDateTime::currentDateTime())
     {
     }
 
     ~ProgressReporter()
     {
         // 确保最后一次进度能够显示
-        emit ProgressNotifier::instance()->progressChanged(processedCount);
+        emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
+    }
+
+    void setTotal(qint64 count)
+    {
+        toltalCount = count;
     }
 
     void increment()
@@ -56,26 +57,19 @@ public:
         // 检查是否经过了足够的时间间隔(1秒)
         QDateTime now = QDateTime::currentDateTime();
         if (lastReportTime.msecsTo(now) >= 1000) {   // 1000ms = 1s
-            emit ProgressNotifier::instance()->progressChanged(processedCount);
+            emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
             lastReportTime = now;
         }
     }
 
 private:
     qint64 processedCount;
+    qint64 toltalCount;
     QDateTime lastReportTime;
 };
 
 // 目录遍历相关函数
 using FileHandler = std::function<void(const QString &path)>;
-
-// 常量定义
-static constexpr char kSupportFiles[] = "^(rtf|odt|ods|odp|odg|docx"
-                                        "|xlsx|pptx|ppsx|md|xls|xlsb"
-                                        "|doc|dot|wps|ppt|pps|txt|pdf"
-                                        "|dps|sh|html|htm|xml|xhtml|dhtml"
-                                        "|shtm|shtml|json|css|yaml|ini"
-                                        "|bat|js|sql|uof|ofd)$";
 
 // 文档处理相关函数
 DocumentPtr createFileDocument(const QString &file)
@@ -93,6 +87,17 @@ DocumentPtr createFileDocument(const QString &file)
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
+    // file name
+    doc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
+                              Field::STORE_YES, Field::INDEX_ANALYZED));
+
+    // hidden tag
+    QString hiddenTag = "N";
+    if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
+        hiddenTag = "Y";
+    doc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
+                              Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
     // file contents
     const auto &contentOpt = DocUtils::extractFileContent(file);
 
@@ -101,7 +106,7 @@ DocumentPtr createFileDocument(const QString &file)
         return doc;   // Return document without content
     }
 
-    const QString &contents = contentOpt.value();
+    const QString &contents = contentOpt.value().trimmed();
 
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -139,15 +144,37 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
     }
 }
 
+bool checkFileSize(const QFileInfo &fileInfo)
+{
+    static const qint64 kMaxFileSizeInBytes = [] {
+        qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
+        // 在这里进行上述的健全性检查
+        if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
+            sizeMBFromConfig = 50LL;   // Default fallback
+        }
+        return sizeMBFromConfig * 1024LL * 1024LL;
+    }();
+
+    if (fileInfo.size() > kMaxFileSizeInBytes) {
+        fmDebug() << "File" << fileInfo.fileName() << "size" << fileInfo.size()
+                  << "exceeds max allowed size" << kMaxFileSizeInBytes;
+        return false;
+    }
+    return true;
+}
+
 bool isSupportedFile(const QString &path)
 {
     QFileInfo fileInfo(path);
     if (!fileInfo.exists() || !fileInfo.isFile())
         return false;
 
-    QString suffix = fileInfo.suffix().toLower();
-    static const QRegularExpression suffixRegex(kSupportFiles);
-    return suffixRegex.match(suffix).hasMatch();
+    // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
+    if (!checkFileSize(fileInfo))
+        return false;
+
+    const QString &suffix = fileInfo.suffix().toLower();
+    return TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
 }
 
 void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
@@ -196,113 +223,212 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
-void traverseDirectoryCommon(const QString &rootPath, TaskState &state,
-                             const FileHandler &fileHandler)
+void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
-    QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
-    QSet<QString> visitedDirs;
-    QQueue<QString> dirQueue;
-    dirQueue.enqueue(rootPath);
-
-    while (!dirQueue.isEmpty()) {
-        if (!state.isRunning())
-            break;
-
-        QString currentPath = dirQueue.dequeue();
-
-        // 检查是否是系统目录或绑定目录
-        if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath))
-            continue;
-
-        // 检查路径长度和深度限制
-        if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20)
-            continue;
-
-        // 检查目录是否已访问
-        if (!IndexTraverseUtils::isValidDirectory(currentPath, visitedDirs))
-            continue;
-
-        DIR *dir = opendir(currentPath.toStdString().c_str());
-        if (!dir) {
-            fmWarning() << "Cannot open directory:" << currentPath;
-            continue;
+    try {
+#ifdef QT_DEBUG
+        fmDebug() << "Remove [" << path << "]";
+#endif
+        TermPtr term = newLucene<Term>(L"path", path.toStdWString());
+        writer->deleteDocuments(term);
+        if (reporter) {
+            reporter->increment();
         }
-
-        ScopeGuard dirCloser([dir]() { closedir(dir); });
-
-        struct dirent *entry;
-        while ((entry = readdir(dir))) {
-            if (!state.isRunning())
-                break;
-
-            if (IndexTraverseUtils::isHiddenFile(entry->d_name) || IndexTraverseUtils::isSpecialDir(entry->d_name))
-                continue;
-
-            QString fullPath = QDir::cleanPath(currentPath + QDir::separator() + QString::fromUtf8(entry->d_name));
-
-            struct stat st;
-            if (lstat(fullPath.toStdString().c_str(), &st) == -1)
-                continue;
-
-            // 对于普通文件，只检查路径有效性
-            if (S_ISREG(st.st_mode)) {
-                if (IndexTraverseUtils::isValidFile(fullPath)) {
-                    fileHandler(fullPath);
-                }
-            }
-            // 对于目录，加入队列（后续会检查是否访问过）
-            else if (S_ISDIR(st.st_mode)) {
-                dirQueue.enqueue(fullPath);
-            }
-        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Remove file failed:" << path << e.what();
     }
 }
 
-void traverseDirectory(const QString &rootPath, const IndexWriterPtr &writer,
-                       TaskState &running)
+void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
 {
-    ProgressReporter reporter;
-    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
-        processFile(path, writer, &reporter);
-    });
+    try {
+        fmInfo() << "Checking for deleted files in index...";
+        SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+
+        // 获取所有文档
+        TermPtr allDocsTerm = newLucene<Term>(L"path", L"*");
+        WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
+        TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
+        if (!allDocs)
+            return;
+
+        int removedCount = 0;
+        const QStringList supportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
+        // 检查每个文档对应的文件是否存在
+        for (int32_t i = 0; i < allDocs->totalHits && running.isRunning(); ++i) {
+            // Ensure scoreDocs[i] is not null before accessing ->doc
+            if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
+                // Log error or skip
+                continue;
+            }
+
+            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
+            if (!doc) {   // Ensure document is valid
+                // Log error or skip
+                continue;
+            }
+
+            String pathValue = doc->get(L"path");
+            QString filePath = QString::fromStdWString(pathValue);
+
+            bool shouldDelete = false;
+
+            QFileInfo fileInfo(filePath);
+
+            //  Check existence first
+            if (!fileInfo.exists()) {
+                shouldDelete = true;
+            } else {
+                // If exists, check suffix (only if not already marked for deletion)
+                QString suffix = fileInfo.suffix().toLower();   // Normalize to lowercase for case-insensitive comparison
+
+                // Use the pre-fetched list/set
+                // if (!supportedExtensionsSet.contains(suffix)) { // If using QSet
+                if (!supportedExtensions.contains(suffix, Qt::CaseInsensitive)) {   // QStringList::contains with case insensitivity
+                    shouldDelete = true;
+                }
+            }
+
+            //  Delete if necessary
+            if (shouldDelete) {
+                TermPtr term = newLucene<Term>(L"path", pathValue);   // Create Term only when needed
+                writer->deleteDocuments(term);
+                removedCount++;
+                // `term` should be managed by Lucene's memory management or be a smart pointer
+                // that cleans up. If it's a raw pointer you manage, ensure it's deleted
+                // if newLucene doesn't transfer ownership or if writer->deleteDocuments doesn't.
+                // Often, Lucene handles this, but it's good to be aware.
+                // For example, if newLucene returns a std::shared_ptr or similar, it's fine.
+            }
+        }
+
+        if (removedCount > 0) {
+            fmInfo() << "Removed" << removedCount << "deleted files from index";
+        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Error checking for deleted files:" << e.what();
+        // 继续执行，不要因为清理失败而中断整个更新过程
+    }
 }
 
-void traverseForUpdate(const QString &rootPath, const IndexReaderPtr &reader,
-                       const IndexWriterPtr &writer, TaskState &running)
+// 移除目录下所有文件的索引，使用前缀匹配
+void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
+                          const IndexReaderPtr &reader, ProgressReporter *reporter)
 {
-    ProgressReporter reporter;
-    traverseDirectoryCommon(rootPath, running, [&](const QString &path) {
-        updateFile(path, reader, writer, &reporter);
-    });
+    try {
+        QString normalizedPath = dirPath;
+        if (!normalizedPath.endsWith('/')) {
+            normalizedPath += '/';   // 确保目录路径以/结尾，便于前缀匹配
+        }
+#ifdef QT_DEBUG
+        fmDebug() << "Remove directory [" << normalizedPath << "]";
+#endif
+
+        // 创建前缀查询，查找所有以该目录路径开头的文档
+        PrefixQueryPtr prefixQuery = newLucene<PrefixQuery>(
+                newLucene<Term>(L"path", normalizedPath.toStdWString()));
+
+        // 使用索引读取器和搜索器来找到所有匹配的文档
+        SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+        TopDocsPtr allDocs = searcher->search(prefixQuery, reader->maxDoc());
+
+        if (allDocs->totalHits > 0)
+            fmInfo() << "Found" << allDocs->totalHits << "documents to remove from directory:" << dirPath;
+
+        // 记录已删除的文档路径以避免重复删除
+        HashSet<String> pathsToDelete = HashSet<String>::newInstance();
+
+        // 收集所有匹配的文档路径
+        for (int32_t i = 0; i < allDocs->totalHits; ++i) {
+            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
+            String pathValue = doc->get(L"path");
+            pathsToDelete.add(pathValue);
+        }
+
+        // 批量删除所有匹配的文档
+        if (!pathsToDelete.empty()) {
+            int deleteCount = 0;
+            for (HashSet<String>::iterator it = pathsToDelete.begin();
+                 it != pathsToDelete.end(); ++it) {
+                TermPtr term = newLucene<Term>(L"path", *it);
+                writer->deleteDocuments(term);
+                deleteCount++;
+
+                if (reporter) {
+                    reporter->increment();
+                }
+            }
+            fmInfo() << "Removed" << deleteCount << "documents from index for directory:" << dirPath;
+        }
+    } catch (const std::exception &e) {
+        fmWarning() << "Remove directory index failed:" << dirPath << e.what();
+    }
 }
 
 }   // namespace
 
+// 创建文件提供者
+std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
+{
+    if (IndexUtility::isIndexWithAnything(path)) {
+        fmInfo() << "Try get docs by anything, int path: " << path;
+        QObject holder;
+        SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
+        SearchOptions options;
+        options.setSyncSearchTimeout(120);
+        // rootPath: Rely on anything's own path whitelisting mechanism to get all document paths,
+        // reducing redundant operations.
+        options.setSearchPath(QDir::rootPath());
+        options.setSearchMethod(SearchMethod::Indexed);
+        options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());   // Note: too many hidden files!
+        FileNameOptionsAPI fileNameOptions(options);
+        fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
+        engine->setSearchOptions(options);
+        SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
+        const SearchResultExpected &result = engine->searchSync(query);
+        if (result.hasValue() && !result->isEmpty()) {
+            fmInfo() << "File listings are provided by ANYTHING."
+                     << "count: " << result.value().count();
+            return std::make_unique<DirectFileListProvider>(result.value());
+        }
+        fmWarning() << "Failed to get file list via ANYTHING!";
+    }
+    fmInfo() << "Use FileSystemProvider for: " << path;
+    return std::make_unique<FileSystemProvider>(path);
+}
+
+// 创建文件列表提供者
+std::unique_ptr<FileProvider> TaskHandlers::createFileListProvider(const QStringList &fileList)
+{
+    return std::make_unique<MixedPathListProvider>(fileList);
+}
+
 // 公开的任务处理函数实现
 TaskHandler TaskHandlers::CreateIndexHandler()
 {
-    return [](const QString &path, TaskState &running) -> bool {
+    return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Creating index for path:" << path;
 
+        HandlerResult result { false, false, false };
         QDir dir;
         if (!dir.exists(path)) {
             fmWarning() << "Source directory doesn't exist:" << path;
-            return false;
+            return result;
         }
 
-        if (!dir.exists(indexStorePath())) {
-            if (!dir.mkpath(indexStorePath())) {
-                fmWarning() << "Unable to create index directory:" << indexStorePath();
-                return false;
+        if (!dir.exists(DFMSEARCH::Global::contentIndexDirectory())) {
+            if (!dir.mkpath(DFMSEARCH::Global::contentIndexDirectory())) {
+                fmWarning() << "Unable to create index directory:" << DFMSEARCH::Global::contentIndexDirectory();
+                return result;
             }
         }
 
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     true,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
@@ -313,18 +439,40 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                 }
             });
 
-            fmInfo() << "Indexing to directory:" << indexStorePath();
+            fmInfo() << "Indexing to directory:" << DFMSEARCH::Global::contentIndexDirectory();
 
             writer->deleteAll();
-            traverseDirectory(path, writer, running);
 
+            // 使用文件提供者遍历文件
+            auto provider = createFileProvider(path);
+            if (!provider) {
+                fmWarning() << "Failed to create file provider for path:" << path;
+                return result;
+            }
+
+            if (provider->name() == "DirectFileListProvider") {
+                result.useAnything = true;
+            }
+
+            ProgressReporter reporter;
+            reporter.setTotal(provider->totalCount());
+            provider->traverse(running, [&](const QString &file) {
+                processFile(file, writer, &reporter);
+            });
+
+            // Only the creation of an index that is interrupted is also considered a failure
+            // Created indexes must be guaranteed to be complete
             if (!running.isRunning()) {
-                fmInfo() << "Create index task was interrupted";
-                return false;
+                fmWarning() << "Create index task was interrupted";
+                result.interrupted = true;
+                result.success = false;   // 创建被打断若不失败索引是不完整的
+                return result;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+
+            return result;
         } catch (const LuceneException &e) {
             fmWarning() << "Create index failed with Lucene exception:"
                         << QString::fromStdWString(e.getError());
@@ -332,18 +480,19 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             fmWarning() << "Create index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }
 
 TaskHandler TaskHandlers::UpdateIndexHandler()
 {
-    return [](const QString &path, TaskState &running) -> bool {
+    return [](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "Updating index for path:" << path;
+        HandlerResult result { false, false, false };
 
         try {
             IndexReaderPtr reader = IndexReader::open(
-                    FSDirectory::open(indexStorePath().toStdWString()), true);
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()), true);
 
             // 添加 reader 的 ScopeGuard
             ScopeGuard readerCloser([&reader]() {
@@ -355,10 +504,10 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             });
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
@@ -369,15 +518,35 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 }
             });
 
-            traverseForUpdate(path, reader, writer, running);
+            // 清理已删除文件的索引
+            cleanupIndexs(reader, writer, running);
+
+            // 使用文件提供者遍历文件
+            auto provider = createFileProvider(path);
+            if (!provider) {
+                fmWarning() << "Failed to create file provider for path:" << path;
+                return result;
+            }
+
+            if (provider->name() == "DirectFileListProvider") {
+                result.useAnything = true;
+            }
+
+            ProgressReporter reporter;
+            reporter.setTotal(provider->totalCount());
+            provider->traverse(running, [&](const QString &file) {
+                updateFile(file, reader, writer, &reporter);
+            });
 
             if (!running.isRunning()) {
-                fmInfo() << "Update index task was interrupted";
-                return false;
+                fmWarning() << "Update index task was interrupted";
+                result.interrupted = true;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+
+            return result;
         } catch (const LuceneException &e) {
             // Lucene异常表示索引损坏
             fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
@@ -388,21 +557,36 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             fmWarning() << "Update index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }
 
-TaskHandler TaskHandlers::RemoveIndexHandler()
+// 基于文件列表更新索引
+TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileList)
 {
-    return [](const QString &pathList, TaskState &running) -> bool {
-        fmInfo() << "Removing index for paths:" << pathList;
+    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+        Q_UNUSED(path)
+        fmInfo() << "Creating/Updating index for file list with" << fileList.size() << "entries";
+        HandlerResult result { false, false, false };
 
         try {
+            IndexReaderPtr reader = IndexReader::open(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()), true);
+
+            // 添加 reader 的 ScopeGuard
+            ScopeGuard readerCloser([&reader]() {
+                try {
+                    if (reader) reader->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
             IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexStorePath().toStdWString()),
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
                     newLucene<ChineseAnalyzer>(),
                     false,
-                    IndexWriter::MaxFieldLengthLIMITED);
+                    IndexWriter::MaxFieldLengthUNLIMITED);
 
             // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
@@ -413,32 +597,111 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
                 }
             });
 
-            // 将路径列表字符串转换为QStringList
-            QStringList paths = pathList.split("|", Qt::SkipEmptyParts);
+            // 使用文件列表提供者遍历文件
+            auto provider = createFileListProvider(fileList);
+            if (!provider) {
+                fmWarning() << "Failed to create file list provider";
+                return result;
+            }
 
             ProgressReporter reporter;
-            for (const QString &path : paths) {
+            reporter.setTotal(provider->totalCount());
+            provider->traverse(running, [&](const QString &file) {
+                updateFile(file, reader, writer, &reporter);
+            });
+
+            if (!running.isRunning()) {
+                fmWarning() << "Update index task was interrupted";
+                result.interrupted = true;
+            }
+
+            writer->optimize();
+            result.success = true;
+
+            return result;
+        } catch (const LuceneException &e) {
+            // Lucene异常表示索引损坏
+            fmWarning() << "Update index failed with Lucene exception, needs rebuild:"
+                        << QString::fromStdWString(e.getError());
+            throw;   // 重新抛出异常，让 IndexTask 捕获并处理
+        } catch (const std::exception &e) {
+            // 其他异常不需要重建
+            fmWarning() << "Update index failed with exception:" << e.what();
+        }
+
+        return result;
+    };
+}
+
+// 基于文件列表删除索引
+TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
+{
+    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+        Q_UNUSED(path)
+        fmInfo() << "Removing index for" << fileList.size() << "files/directories";
+        HandlerResult result { false, false, false };
+
+        try {
+            // 打开索引读取器，用于目录前缀查询
+            IndexReaderPtr reader = IndexReader::open(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()), true);
+
+            // 添加 reader 的 ScopeGuard
+            ScopeGuard readerCloser([&reader]() {
+                try {
+                    if (reader) reader->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            // 打开索引写入器
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(DFMSEARCH::Global::contentIndexDirectory().toStdWString()),
+                    newLucene<ChineseAnalyzer>(),
+                    false,
+                    IndexWriter::MaxFieldLengthUNLIMITED);
+
+            // 添加 writer 的 ScopeGuard
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    // 忽略关闭时的异常
+                }
+            });
+
+            ProgressReporter reporter;
+
+            // 直接遍历文件列表，不使用MixedPathListProvider
+            for (const QString &path : fileList) {
                 if (!running.isRunning())
                     break;
 
-                try {
-                    fmDebug() << "Removing index for path:" << path;
-                    TermPtr term = newLucene<Term>(L"path", path.toStdWString());
-                    writer->deleteDocuments(term);
-                    reporter.increment();
-                } catch (const std::exception &e) {
-                    fmWarning() << "Failed to remove index for path:" << path << e.what();
-                    // 继续处理其他路径
+                // 首先尝试从索引中查找该路径
+                SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+                TermQueryPtr pathQuery = newLucene<TermQuery>(
+                        newLucene<Term>(L"path", path.toStdWString()));
+
+                TopDocsPtr result = searcher->search(pathQuery, 1);
+
+                if (result->totalHits > 0) {
+                    // 如果找到了匹配的文档，按文件处理
+                    removeFile(path, writer, &reporter);
+                } else {
+                    // 如果没有找到精确匹配，尝试作为目录处理
+                    removeDirectoryIndex(path, writer, reader, &reporter);
                 }
             }
 
             if (!running.isRunning()) {
-                fmInfo() << "Remove index task was interrupted";
-                return false;
+                fmWarning() << "Remove index task was interrupted";
+                result.interrupted = true;
             }
 
             writer->optimize();
-            return true;
+            result.success = true;
+            return result;
         } catch (const LuceneException &e) {
             fmWarning() << "Remove index failed with Lucene exception:"
                         << QString::fromStdWString(e.getError());
@@ -446,6 +709,6 @@ TaskHandler TaskHandlers::RemoveIndexHandler()
             fmWarning() << "Remove index failed with exception:" << e.what();
         }
 
-        return false;
+        return result;
     };
 }

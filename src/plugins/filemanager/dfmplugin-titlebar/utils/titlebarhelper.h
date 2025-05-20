@@ -28,7 +28,7 @@ public:
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
     static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
     static void handleJumpToPressed(QWidget *sender, const QString &text);
-    static void handleSearchPressed(QWidget *sender, const QString &text);
+    static void handleSearch(QWidget *sender, const QString &text);
 
     static void openCurrentUrlInNewTab(quint64 windowId);
     static void showSettingsDialog(quint64 windowId);
@@ -41,6 +41,7 @@ public:
 
 public:
     static bool newWindowAndTabEnabled;
+    static bool searchEnabled;
 
 private:
     static QMutex &mutex();

@@ -43,6 +43,7 @@ inline constexpr char kComputerSettingHide3rdEntries[] { COMPUTER_SETTING_GROUP 
 inline constexpr char kComputerSettingShowFsTag[] { COMPUTER_SETTING_GROUP ".04_show_filesystemtag_on_diskicon" };
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 namespace dfmplugin_computer {
 DFM_LOG_REISGER_CATEGORY(DPCOMPUTER_NAMESPACE)
@@ -158,9 +159,9 @@ void Computer::initComputerItems()
 void Computer::regComputerCrumbToTitleBar()
 {
     QVariantMap property;
-    property["Property_Key_HideIconViewBtn"] = true;
-    property["Property_Key_HideListViewBtn"] = true;
-    property["Property_Key_HideTreeViewBtn"] = true;
+    property[ViewCustomKeys::kSupportIconMode] = false;
+    property[ViewCustomKeys::kSupportListMode] = false;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
     property["Property_Key_HideDetailSpaceBtn"] = true;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }

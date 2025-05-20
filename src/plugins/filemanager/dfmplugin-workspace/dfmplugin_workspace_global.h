@@ -114,6 +114,26 @@ struct CustomTopWidgetInfo
     }
 };
 
+struct CustomViewProperty
+{
+    bool supportIconMode { true };
+    bool supportListMode { true };
+    bool supportTreeMode { true };
+    dfmbase::Global::ViewMode defaultViewMode { dfmbase::Global::ViewMode::kNoneMode };
+    int defaultListHeight { -1 };
+    bool allowChangeListHeight { true };
+
+    CustomViewProperty() = default;
+    inline CustomViewProperty(const QVariantMap &map) {
+        supportIconMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportIconMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportIconMode].toBool() : true;
+        supportListMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportListMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportListMode].toBool() : true;
+        supportTreeMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode].toBool() : true;
+        defaultViewMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultViewMode) ? static_cast<dfmbase::Global::ViewMode>(map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultViewMode].toInt()) : dfmbase::Global::ViewMode::kNoneMode;
+        defaultListHeight = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultListHeight) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultListHeight].toInt() : -1;
+        allowChangeListHeight = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kAllowChangeListHeight) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kAllowChangeListHeight].toBool() : true;
+    }
+};
+
 namespace AcName {
 inline constexpr char kAcFileView[] { "file_view" };
 inline constexpr char kAcFileviewMenu[] { "fileview_menu" };

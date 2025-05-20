@@ -161,6 +161,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         if (urls.contains(fileUrl))
             continue;
         urls.insert(fileUrl);
+
         auto fileInfo = dirIterator->fileInfo();
         if (fileUrl.isValid() && !fileInfo) {
             fileInfo = InfoFactory::create<FileInfo>(fileUrl,
@@ -186,7 +187,8 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     if (childrenList.length() > 0)
         emit updateChildrenManager(childrenList, traversalToken);
 
-    emit traversalRequestSort(traversalToken);
+    if (!dirIterator->property(IteratorProperty::kKeepOrder).toBool())
+        emit traversalRequestSort(traversalToken);
 
     emit traversalFinished(traversalToken);
 
@@ -207,9 +209,21 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
         return {};
     }
     Q_EMIT iteratorInitFinished();
+    
+    // Get the initial list of files
     auto fileList = dirIterator->sortFileInfoList();
-
+    
+    // Emit the initial file list
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile, traversalToken);
+    
+    // Check if the iterator is waiting for more updates (search still in progress, etc.)
+    while (dirIterator->isWaitingForUpdates()) {
+        fileList = dirIterator->sortFileInfoList();
+        if (!fileList.isEmpty())
+            emit updateChildrenInfo(fileList, traversalToken);
+    }
+    
+    // Iterator is not waiting for updates, so signal that we're done
     emit traversalFinished(traversalToken);
 
     return fileList;

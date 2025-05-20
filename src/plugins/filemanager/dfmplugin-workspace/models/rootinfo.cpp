@@ -21,10 +21,20 @@
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
-
 RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
     : QObject(parent), url(u), canCache(canCache)
 {
+    QUrlQuery query(url.query());
+    if (query.hasQueryItem("keyword")) {
+        QString keywordValue = query.queryItemValue("keyword");
+        // 先对URL编码的字符进行解码，确保能处理所有空白字符
+        keywordValue = QUrl::fromPercentEncoding(keywordValue.toUtf8());
+        
+        // 使用\s+匹配所有空白字符（空格、换行、制表符等）
+        static const QRegularExpression kWhitespaceDelimiter("\\s+");
+        keyWords = keywordValue.split(kWhitespaceDelimiter, Qt::SkipEmptyParts);
+    }
+
     hiddenFileUrl.setScheme(url.scheme());
     hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
 }
@@ -157,7 +167,7 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
     auto thread = traversalThreads.take(key);
     auto traversalThread = thread->traversalThread;
     if (traversalThread->isRunning())
-        emit traversalFinished(key);
+        emit traversalFinished(key, false);
     traversalThread->disconnect(this);
     if (traversalThread->isRunning()) {
         discardedThread.append(traversalThread);
@@ -169,6 +179,11 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 
     this->isRefresh = isRefresh;
     return traversalThreads.count();
+}
+
+void RootInfo::setFirstBatch(bool first)
+{
+    isFirstBatch = first;
 }
 
 void RootInfo::reset()
@@ -217,6 +232,11 @@ bool RootInfo::canDelete() const
             return false;
     }
     return true;
+}
+
+QStringList RootInfo::getKeyWords() const
+{
+    return keyWords;
 }
 
 void RootInfo::doFileDeleted(const QUrl &url)
@@ -372,13 +392,6 @@ void RootInfo::doThreadWatcherEvent()
     });
 }
 
-void RootInfo::handleTraversalResult(const FileInfoPointer &child, const QString &travseToken)
-{
-    auto sortInfo = addChild(child);
-    if (sortInfo)
-        Q_EMIT iteratorAddFile(travseToken, sortInfo, child);
-}
-
 void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken)
 {
     QList<SortInfoPointer> sortInfos;
@@ -392,8 +405,23 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
         infos.append(info);
     }
 
-    if (sortInfos.length() > 0)
-        Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos);
+    if (sortInfos.length() > 0) {
+        bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
+        Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos, isFirst);
+    }
+}
+
+void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken)
+{
+    if (children.isEmpty())
+        return;
+
+    QWriteLocker lk(&childrenLock);
+    // 更新已存在的文件信息
+    sourceDataList = children;
+
+    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
+    Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList, isFirst);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
@@ -404,16 +432,25 @@ void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
     originSortOrder = sortOrder;
     originMixSort = isMixDirAndFile;
 
-    addChildren(children);
-    traversaling = false;
+    if (children.isEmpty())
+        return;
 
-    Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort);
+    addChildren(children);
+
+    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
+    Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort, isFirst);
 }
 
 void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
     traversaling = false;
-    emit traversalFinished(travseToken);
+    // Check if isFirstBatch is still true, which means no directory data was produced
+    bool noDataProduced = isFirstBatch.load();
+    // Reset isFirstBatch
+    isFirstBatch.store(false);
+
+    // Emit signal with additional parameter indicating if no data was produced
+    emit traversalFinished(travseToken, noDataProduced);
     traversalFinish = true;
     if (isRefresh) {
         isRefresh = false;
@@ -431,20 +468,24 @@ void RootInfo::handleGetSourceData(const QString &currentToken)
         startWatcher();
 
     QList<SortInfoPointer> newDatas;
+    bool isEmpty = false;
     {
         QWriteLocker wlk(&childrenLock);
         newDatas = sourceDataList;
+        isEmpty = sourceDataList.isEmpty();
     }
 
     emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
     if (!traversaling)
-        emit traversalFinished(currentToken);
+        emit traversalFinished(currentToken, isEmpty);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
 {
     connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenManager,
             this, &RootInfo::handleTraversalResults, Qt::DirectConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenInfo,
+            this, &RootInfo::handleTraversalResultsUpdate, Qt::DirectConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::updateLocalChildren,
             this, &RootInfo::handleTraversalLocalResult, Qt::DirectConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalRequestSort,

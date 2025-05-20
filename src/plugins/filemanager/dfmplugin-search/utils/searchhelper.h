@@ -11,7 +11,6 @@
 
 #include <QUrl>
 #include <QWidget>
-#include <QDBusInterface>
 
 namespace dfmplugin_search {
 
@@ -64,7 +63,6 @@ public:
 
     bool crumbRedirectUrl(QUrl *redirectUrl);
 
-    static QDBusInterface &anythingInterface();
     [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
 
 private:

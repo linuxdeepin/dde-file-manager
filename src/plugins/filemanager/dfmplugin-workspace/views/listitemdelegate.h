@@ -49,7 +49,10 @@ private:
                          const QModelIndex &index) const;
     void paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index, const QRectF &iconRect) const;
-    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight, const QUrl &url) const;
+    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, 
+                       const int &role, const QRectF &rect, const int &textLineHeight, const QUrl &url) const;
+    QString getCorrectDisplayName(QPainter *painter, const QModelIndex &index, const QStyleOptionViewItem &option,
+                                  const QUrl &url, const int &role, const int &textLineHeight, const QRectF &rect) const;
 
     bool setEditorData(ListItemEditor *editor);
 

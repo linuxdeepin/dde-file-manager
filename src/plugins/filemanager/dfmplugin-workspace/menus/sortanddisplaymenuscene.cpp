@@ -8,6 +8,7 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "utils/workspacehelper.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -19,6 +20,7 @@
 #include <QMenu>
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
@@ -100,19 +102,19 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         {
             // display as icon
             if (actionId == ActionID::kDisplayIcon) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kIconMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kIconMode);
                 return true;
             }
 
             // display as list
             if (actionId == ActionID::kDisplayList) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kListMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
                 return true;
             }
 
             // display as tree
             if (actionId == ActionID::kDisplayTree) {
-                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kTreeMode));
+                WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
                 return true;
             }
         }
@@ -220,7 +222,7 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
     predicateAction[ActionID::kDisplayList] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
 
-    if (WorkspaceHelper::instance()->supportTreeView(view->rootUrl().scheme())
+    if (WorkspaceHelper::instance()->isViewModeSupported(view->rootUrl().scheme(), ViewMode::kTreeMode)
         && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         tempAction = subMenu->addAction(predicateName.value(ActionID::kDisplayTree));
         tempAction->setCheckable(true);

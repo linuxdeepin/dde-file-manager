@@ -139,6 +139,11 @@ void OpenWithMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
+    if (auto openAction = d->predicateAction.value(ActionID::kOpenWith)) {
+        if (!d->focusFileInfo->exists())
+            openAction->setDisabled(true);
+    }
+
     // open with by focus fileinfo
 
     AbstractMenuScene::updateState(parent);

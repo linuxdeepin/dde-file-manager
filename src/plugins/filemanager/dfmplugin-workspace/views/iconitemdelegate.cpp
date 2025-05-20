@@ -638,6 +638,9 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     int lineHeight = UniversalUtils::getTextLineHeight(displayName, parent()->parent()->fontMetrics());
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter, painter));
+    layout->setHighlightEnabled(!isSelected);
+    layout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
+    layout->setHighlightColor(opt.palette.color(QPalette::Active, QPalette::Highlight));
 
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
@@ -656,7 +659,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         labelRect.setHeight(labelRect.height() > normalHeight ? normalHeight : labelRect.height());
     }
 
-    layout->layout(labelRect, opt.textElideMode, painter, background);
+    QStringList textList {};
+    layout->layout(labelRect, opt.textElideMode, painter, background, &textList);
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const

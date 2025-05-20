@@ -8,6 +8,7 @@
 #include "service_textindex_global.h"
 #include "task/taskmanager.h"
 #include "textindexadaptor.h"
+#include "fsmonitor/fseventcontroller.h"
 
 #include <FileUtils.h>
 #include <FilterIndexReader.h>
@@ -29,18 +30,27 @@ class TextIndexDBusPrivate
 
 public:
     explicit TextIndexDBusPrivate(TextIndexDBus *qq)
-        : q(qq), adapter(new TextIndexAdaptor(qq)), taskManager(new TaskManager(qq))
+        : q(qq),
+          adapter(new TextIndexAdaptor(qq)),
+          taskManager(new TaskManager(qq)),
+          fsEventController(new FSEventController(qq))
     {
+        initialize();
         initConnect();
     }
     ~TextIndexDBusPrivate() { }
 
+    void initialize();
     void initConnect();
+    void handleMonitoring(bool start);
+    void handleSlientStart();
+    bool canSilentlyRefreshIndex(const QString &path) const;
 
 private:
     TextIndexDBus *q { nullptr };
     TextIndexAdaptor *adapter { nullptr };
     TaskManager *taskManager { nullptr };
+    FSEventController *fsEventController { nullptr };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

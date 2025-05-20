@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QDBusContext>
+#include <QStringList>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 class TextIndexDBusPrivate;
@@ -23,18 +24,23 @@ public:
     explicit TextIndexDBus(const char *name, QObject *parent = nullptr);
     ~TextIndexDBus();
 
+    void cleanup();
+
 public Q_SLOTS:
-    bool CreateIndexTask(const QString &path);
-    bool UpdateIndexTask(const QString &path);
-    bool RemoveIndexTask(const QStringList &paths);
+    void Init();
+    bool IsEnabled();
+    void SetEnabled(bool enabled);
+    bool CreateIndexTask(const QStringList &paths);
+    bool UpdateIndexTask(const QStringList &paths);
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();
     QString GetLastUpdateTime();
+    bool ProcessFileChanges(const QStringList &createdFiles, const QStringList &modifiedFiles, const QStringList &deletedFiles);
 
 Q_SIGNALS:
     void TaskFinished(const QString &type, const QString &path, bool success);
-    void TaskProgressChanged(const QString &type, const QString &path, qint64 count);
+    void TaskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
 
 private:
     QScopedPointer<SERVICETEXTINDEX_NAMESPACE::TextIndexDBusPrivate> d;

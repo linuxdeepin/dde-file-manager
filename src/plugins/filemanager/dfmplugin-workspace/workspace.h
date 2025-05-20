@@ -38,13 +38,12 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_GetCustomTopWidgetVisible)
     DPF_EVENT_REG_SLOT(slot_CheckSchemeViewIsFileView)
     DPF_EVENT_REG_SLOT(slot_RefreshDir)
-    DPF_EVENT_REG_SLOT(slot_NotSupportTreeView)
 
+    DPF_EVENT_REG_SLOT(slot_View_SetCustomViewProperty)
     DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
     DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)
     DPF_EVENT_REG_SLOT(slot_View_GetCurrentViewMode)
     DPF_EVENT_REG_SLOT(slot_View_GetDefaultViewMode)
-    DPF_EVENT_REG_SLOT(slot_View_SetDefaultViewMode)
     DPF_EVENT_REG_SLOT(slot_View_GetSelectedUrls)
     DPF_EVENT_REG_SLOT(slot_View_SelectFiles)
     DPF_EVENT_REG_SLOT(slot_View_SelectAll)
@@ -70,6 +69,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Model_ColumnRoles)
     DPF_EVENT_REG_SLOT(slot_Model_SetSort)
     DPF_EVENT_REG_SLOT(slot_Model_RegisterDataCache)
+    DPF_EVENT_REG_SLOT(slot_Model_RegisterLoadStrategy)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)

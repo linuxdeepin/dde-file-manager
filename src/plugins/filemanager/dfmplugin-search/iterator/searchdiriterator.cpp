@@ -16,6 +16,9 @@
 
 #include <QUuid>
 
+DFMBASE_USE_NAMESPACE
+DPSEARCH_USE_NAMESPACE
+
 namespace dfmplugin_search {
 
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
@@ -46,7 +49,6 @@ void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
     if (targetUrl.isLocalFile()) {
-        DFMBASE_USE_NAMESPACE
         searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
         searchRootWatcher->startWatcher();
         connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
@@ -74,10 +76,16 @@ void SearchDirIteratorPrivate::doSearch()
 void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
+        // 从SearchManager获取结果，这些结果已经经过合并处理
         const auto &results = SearchManager::instance()->matchedResults(taskId);
+        if (results.isEmpty())
+            return;
+            
         QMutexLocker lk(&mutex);
-        childrens.append(std::move(results));
+        childrens = results;
     }
+
+    resultWaitCond.wakeAll();
 }
 
 void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
@@ -86,6 +94,8 @@ void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
         fmInfo() << "taskId: " << taskId << "search completed!";
         searchFinished = true;
     }
+
+    resultWaitCond.wakeAll();
 }
 
 void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
@@ -96,6 +106,8 @@ void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
         if (searchRootWatcher)
             searchRootWatcher->stopWatcher();
     }
+
+    resultWaitCond.wakeAll();
 }
 
 SearchDirIterator::SearchDirIterator(const QUrl &url,
@@ -105,6 +117,7 @@ SearchDirIterator::SearchDirIterator(const QUrl &url,
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new SearchDirIteratorPrivate(url, this))
 {
+    setProperty(IteratorProperty::kKeepOrder, true);
 }
 
 SearchDirIterator::~SearchDirIterator()
@@ -113,37 +126,17 @@ SearchDirIterator::~SearchDirIterator()
 
 QUrl SearchDirIterator::next()
 {
-    if (!d->childrens.isEmpty()) {
-        QMutexLocker lk(&d->mutex);
-        d->currentFileUrl = d->childrens.takeFirst();
-        return d->currentFileUrl;
-    }
-
     return {};
 }
 
 bool SearchDirIterator::hasNext() const
 {
-    std::call_once(d->searchOnceFlag, [this]() {
-        d->searchStoped = false;
-        emit this->sigSearch();
-    });
-
-    if (d->searchStoped) {
-        emit sigStopSearch();
-        return false;
-    }
-
-    QMutexLocker lk(&d->mutex);
-    bool hasNext = !(d->childrens.isEmpty() && d->searchFinished);
-    if (!hasNext)
-        emit sigStopSearch();
-    return hasNext;
+    return false;
 }
 
 QString SearchDirIterator::fileName() const
 {
-    return fileInfo()->nameOf(NameInfoType::kFileName);
+    return "";
 }
 
 QUrl SearchDirIterator::fileUrl() const
@@ -153,15 +146,42 @@ QUrl SearchDirIterator::fileUrl() const
 
 const FileInfoPointer SearchDirIterator::fileInfo() const
 {
-    if (!d->currentFileUrl.isValid())
-        return nullptr;
-
-    return InfoFactory::create<FileInfo>(d->currentFileUrl);
+    return nullptr;
 }
 
 QUrl SearchDirIterator::url() const
 {
     return SearchHelper::rootUrl();
+}
+
+QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
+{
+    QList<QSharedPointer<SortFileInfo>> result;
+    
+    // 确保搜索已经开始
+    std::call_once(d->searchOnceFlag, [this]() {
+        d->searchStoped = false;
+        emit this->sigSearch();
+    });
+    
+    // Lock and wait for children to be populated or search to stop/finish.
+    QMutexLocker lk(&d->mutex);
+    while (d->childrens.isEmpty() && !d->searchStoped) {
+        if (d->searchFinished)
+            break;
+        d->resultWaitCond.wait(&d->mutex);
+    }
+    if (d->searchFinished && d->childrens.isEmpty())
+        return {};
+
+    for (auto it = d->childrens.begin(); it != d->childrens.end(); ++it) {
+        auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
+        sortInfo->setUrl(it.key());
+        sortInfo->setHighlightContent(it->highlightedContent());
+        result.append(sortInfo);
+    }
+    d->childrens.clear();
+    return result;
 }
 
 void SearchDirIterator::close()
@@ -170,6 +190,22 @@ void SearchDirIterator::close()
         return;
 
     SearchManager::instance()->stop(d->taskId);
+}
+
+bool SearchDirIterator::isWaitingForUpdates() const
+{
+    // We're waiting for updates if:
+    // 1. Search has started (check if the once_flag has been called)
+    // 2. Search is not finished 
+    // 3. Search is not stopped
+    
+    // Since we can't directly check if once_flag has been called,
+    // we can infer it from the taskId not being empty
+    
+    // Protect access to shared variables
+    QMutexLocker lk(&d->mutex);
+    
+    return !d->taskId.isEmpty() && !d->searchFinished && !d->searchStoped;
 }
 
 }

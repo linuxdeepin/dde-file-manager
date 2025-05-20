@@ -77,10 +77,8 @@ std::optional<QString> extractHtmlContent(const QString &filePath)
     QString plainText = doc.toPlainText();
 
     // Check if extraction was successful (non-empty result)
-    if (plainText.trimmed().isEmpty()) {
-        fmWarning() << "HTML extraction resulted in empty content for:" << filePath;
+    if (plainText.trimmed().isEmpty())
         return std::nullopt;
-    }
 
     return plainText;
 }

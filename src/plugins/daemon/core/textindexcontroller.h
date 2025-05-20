@@ -5,7 +5,10 @@
 #define TEXTINDEXCONTROLLER_H
 
 #include "daemonplugin_core_global.h"
+
 #include <QObject>
+#include <QTimer>
+
 #include <memory>
 #include <functional>
 
@@ -36,11 +39,16 @@ private:
     void startIndexTask(bool isCreate);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
+    void activeBackend(bool isInit = false);
+    void keepBackendAlive();
+    bool isBackendAvaliable();
+    void updateKeepAliveTimer();
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
     State currentState { State::Disabled };
-    bool isEnabled { false };
+    bool isConfigEnabled { false };
+    QTimer *keepAliveTimer { nullptr };
 
     // 状态处理器映射
     std::map<State, StateHandler> stateHandlers;

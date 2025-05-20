@@ -70,9 +70,9 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCheckSchemeViewIsFileView);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RefreshDir",
                             WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_NotSupportTreeView",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleNotSupportTreeView);
 
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetCustomViewProperty",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetCustomViewProperty);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetViewItemRect",
@@ -81,8 +81,6 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetCurrentViewMode);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetDefaultViewMode",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetDefaultViewMode);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetDefaultViewMode",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetDefaultViewMode);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetSelectedUrls",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetSelectedUrls);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SelectFiles",
@@ -131,6 +129,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_AboutToChangeViewWidth",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleAboutToChangeViewWidth);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterLoadStrategy",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterLoadStrategy);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -174,11 +174,6 @@ void WorkspaceEventReceiver::handleReverseSelect(quint64 windowId)
 void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
 {
     WorkspaceHelper::instance()->setSort(windowId, role);
-}
-
-void WorkspaceEventReceiver::handleNotSupportTreeView(const QString &scheme)
-{
-    WorkspaceHelper::instance()->setNotSupportTreeView(scheme);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)
@@ -295,9 +290,9 @@ QRectF WorkspaceEventReceiver::handleGetViewItemRect(const quint64 windowID, con
     return QRectF(0, 0, 0, 0);
 }
 
-void WorkspaceEventReceiver::handleSetDefaultViewMode(const QString &scheme, const ViewMode mode)
+void WorkspaceEventReceiver::handleSetCustomViewProperty(const QString &scheme, const QVariantMap &properties)
 {
-    WorkspaceHelper::instance()->setDefaultViewMode(scheme, mode);
+    WorkspaceHelper::instance()->registerCustomViewProperty(scheme, properties);
 }
 
 ViewMode WorkspaceEventReceiver::handleGetDefaultViewMode(const QString &scheme)
@@ -427,4 +422,9 @@ void WorkspaceEventReceiver::handleTabChanged(const quint64 windowId, const QStr
     auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
     if (workspace)
         workspace->setCurrentPage(uniqueId);
+}
+
+void WorkspaceEventReceiver::handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
+{
+    WorkspaceHelper::instance()->registerLoadStrategy(scheme, strategy);
 }

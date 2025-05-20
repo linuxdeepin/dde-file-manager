@@ -10,16 +10,21 @@
       <arg name="type" type="s" direction="out"/>
       <arg name="path" type="s" direction="out"/>
       <arg name="count" type="x" direction="out"/>
+      <arg name="total" type="x" direction="out"/>
     </signal>
+    <method name="Init">
+    </method>
+    <method name="IsEnabled">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="SetEnabled">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
     <method name="CreateIndexTask">
       <arg type="b" direction="out"/>
-      <arg name="path" type="s" direction="in"/>
+      <arg name="paths" type="as" direction="in"/>
     </method>
     <method name="UpdateIndexTask">
-      <arg type="b" direction="out"/>
-      <arg name="path" type="s" direction="in"/>
-    </method>
-    <method name="RemoveIndexTask">
       <arg type="b" direction="out"/>
       <arg name="paths" type="as" direction="in"/>
     </method>
@@ -34,6 +39,12 @@
     </method>
     <method name="GetLastUpdateTime">
       <arg type="s" direction="out"/>
+    </method>
+    <method name="ProcessFileChanges">
+      <arg type="b" direction="out"/>
+      <arg name="createdFiles" type="as" direction="in"/>
+      <arg name="modifiedFiles" type="as" direction="in"/>
+      <arg name="deletedFiles" type="as" direction="in"/>
     </method>
   </interface>
 </node>

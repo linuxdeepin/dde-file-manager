@@ -66,7 +66,7 @@ public:
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
-    void stopWork();
+    void stopWork(const QUrl &newUrl);
 
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                      const QVector<int> &roles = QVector<int>()) override;
@@ -166,7 +166,6 @@ protected:
     void updateGeometries() override;
     void startDrag(Qt::DropActions supportedActions) override;
     QModelIndexList selectedIndexes() const override;
-    void showEvent(QShowEvent *event) override;
     void keyboardSearch(const QString &search) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;

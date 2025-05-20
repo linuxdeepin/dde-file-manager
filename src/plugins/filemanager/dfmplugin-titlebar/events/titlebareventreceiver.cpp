@@ -16,6 +16,7 @@
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 TitleBarEventReceiver *TitleBarEventReceiver::instance()
 {
@@ -32,10 +33,15 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
     }
 
     bool keepAddressBar { properties.value(CustomKey::kKeepAddressBar).toBool() };
-    bool hideListViewBtn { properties.value(CustomKey::kHideListViewBtn).toBool() };
-    bool hideIconViewBtn { properties.value(CustomKey::kHideIconViewBtn).toBool() };
-    bool hideTreeViewBtn { properties.value(CustomKey::kHideTreeViewBtn).toBool() };
     bool hideDetailSpaceBtn { properties.value(CustomKey::kHideDetailSpaceBtn).toBool() };
+    bool hideListViewBtn = properties.contains(ViewCustomKeys::kSupportListMode) &&
+                            !properties.value(ViewCustomKeys::kSupportListMode).toBool();
+    bool hideIconViewBtn = properties.contains(ViewCustomKeys::kSupportIconMode) &&
+                            !properties.value(ViewCustomKeys::kSupportIconMode).toBool();
+    bool hideTreeViewBtn = properties.contains(ViewCustomKeys::kSupportTreeMode) &&
+                            !properties.value(ViewCustomKeys::kSupportTreeMode).toBool();
+    bool hideListHeightOpt = properties.contains(ViewCustomKeys::kAllowChangeListHeight) &&
+                            !properties.value(ViewCustomKeys::kAllowChangeListHeight).toBool();
 
     int state { OptionButtonManager::kDoNotHide };
     if (hideListViewBtn)
@@ -46,6 +52,8 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
         state |= OptionButtonManager::kHideTreeViewBtn;
     if (hideDetailSpaceBtn)
         state |= OptionButtonManager::kHideDetailSpaceBtn;
+    if (hideListHeightOpt)
+        state |= OptionButtonManager::kHideListHeightOpt;
     if (state != OptionButtonManager::kDoNotHide)
         OptionButtonManager::instance()->setOptBtnVisibleState(scheme, static_cast<OptionButtonManager::OptBtnVisibleState>(state));
 
@@ -63,18 +71,10 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 
 void TitleBarEventReceiver::handleStartSpinner(quint64 windowId)
 {
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->startSpinner();
 }
 
 void TitleBarEventReceiver::handleStopSpinner(quint64 windowId)
 {
-    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
-        return;
-    w->stopSpinner();
 }
 
 void TitleBarEventReceiver::handleShowFilterButton(quint64 windowId, bool visible)

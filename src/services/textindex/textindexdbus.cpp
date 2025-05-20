@@ -4,6 +4,8 @@
 
 #include "textindexdbus.h"
 #include "private/textindexdbus_p.h"
+#include "utils/indexutility.h"
+#include "utils/systemdcpuutils.h"
 
 static constexpr char kTextIndexObjPath[] { "/org/deepin/Filemanager/TextIndex" };
 
@@ -14,17 +16,95 @@ SERVICETEXTINDEX_END_NAMESPACE
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
 
+void TextIndexDBusPrivate::initialize()
+{
+    fsEventController->setupFSEventCollector();
+}
+
 void TextIndexDBusPrivate::initConnect()
 {
     QObject::connect(taskManager, &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
-        emit q->TaskFinished(type, path, success);
-    });
+                         QString msg;
+                         fmInfo() << "Reset cpu limit";
+                         if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
+                             fmWarning() << "Reset CpuQuota failed: " << msg;
+                         }
+                         emit q->TaskFinished(type, path, success);
+                     });
 
     QObject::connect(taskManager, &TaskManager::taskProgressChanged,
-                     q, [this](const QString &type, const QString &path, qint64 count) {
-        emit q->TaskProgressChanged(type, path, count);
+                     q, [this](const QString &type, const QString &path, qint64 count, qint64 total) {
+                         emit q->TaskProgressChanged(type, path, count, total);
+                     });
+
+    QObject::connect(fsEventController, &FSEventController::requestProcessFileChanges,
+                     q, &TextIndexDBus::ProcessFileChanges);
+    QObject::connect(fsEventController, &FSEventController::monitoring,
+                     q, [this](bool start) {
+                         handleMonitoring(start);
+                     });
+    QObject::connect(fsEventController, &FSEventController::requestSlientStart,
+                     q, [this]() {
+                         handleSlientStart();
+                     });
+}
+
+void TextIndexDBusPrivate::handleMonitoring(bool start)
+{
+    fmInfo() << "FS event monitoring: " << start;
+    if (!start) {
+        fsEventController->stopFSMonitoring();
+        return;
+    }
+
+    fsEventController->startFSMonitoring();
+}
+
+void TextIndexDBusPrivate::handleSlientStart()
+{
+    // NOTE: Used only for silent updates after the service is started for the first time!
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        // Create or update indexes silently
+        const auto &configuredDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+        QStringList pathsToProcess;
+
+        if (configuredDirs.isEmpty()) {
+            pathsToProcess.append(QDir::homePath());
+        } else {
+            pathsToProcess = configuredDirs;   // Assuming configuredDirs is a QStringList or compatible
+        }
+
+        if (!canSilentlyRefreshIndex(pathsToProcess.first())) {
+            fmWarning() << "Unable to refresh the index because there is already a current task for: " << pathsToProcess.first();
+            return;
+        }
+
+        fmInfo() << "Start a task silently for: " << pathsToProcess;
+
+        if (q->IndexDatabaseExists()) {   // update
+            taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
+        } else {   // create
+            taskManager->startTask(IndexTask::Type::Create, pathsToProcess, true);
+        }
     });
+}
+
+bool TextIndexDBusPrivate::canSilentlyRefreshIndex(const QString &path) const
+{
+    if (auto taskTypeOpt = taskManager->currentTaskType(); taskTypeOpt.has_value()) {
+        if (auto taskPathOpt = taskManager->currentTaskPath(); taskPathOpt.has_value()) {
+            const auto &type = *taskTypeOpt;
+            const auto &taskPath = *taskPathOpt;
+
+            if ((type == IndexTask::Type::Create || type == IndexTask::Type::Update) && (taskPath == path)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
@@ -38,20 +118,36 @@ TextIndexDBus::TextIndexDBus(const char *name, QObject *parent)
 
 TextIndexDBus::~TextIndexDBus() { }
 
-bool TextIndexDBus::CreateIndexTask(const QString &path)
+void TextIndexDBus::cleanup()
 {
-    return d->taskManager->startTask(IndexTask::Type::Create, path);
+    d->fsEventController->setEnabledNow(false);
+    StopCurrentTask();
 }
 
-bool TextIndexDBus::UpdateIndexTask(const QString &path)
+void TextIndexDBus::Init()
 {
-    return d->taskManager->startTask(IndexTask::Type::Update, path);
+    // 预防启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
+    d->fsEventController->setSilentlyRefreshStarted(true);
 }
 
-bool TextIndexDBus::RemoveIndexTask(const QStringList &paths)
+bool TextIndexDBus::IsEnabled()
 {
-    QString pathString = paths.join("|");
-    return d->taskManager->startTask(IndexTask::Type::Remove, pathString);
+    return d->fsEventController->isEnabled();
+}
+
+void TextIndexDBus::SetEnabled(bool enabled)
+{
+    d->fsEventController->setEnabled(enabled);
+}
+
+bool TextIndexDBus::CreateIndexTask(const QStringList &paths)
+{
+    return d->taskManager->startTask(IndexTask::Type::Create, paths);
+}
+
+bool TextIndexDBus::UpdateIndexTask(const QStringList &paths)
+{
+    return d->taskManager->startTask(IndexTask::Type::Update, paths);
 }
 
 bool TextIndexDBus::StopCurrentTask()
@@ -70,10 +166,56 @@ bool TextIndexDBus::HasRunningTask()
 
 bool TextIndexDBus::IndexDatabaseExists()
 {
-    return IndexReader::indexExists(FSDirectory::open(indexStorePath().toStdWString()));
+    // First check if the index files exist
+    if (!DFMSEARCH::Global::isContentIndexAvailable()) {
+        return false;
+    }
+
+    // Then check if the version is compatible
+    if (!IndexUtility::isCompatibleVersion()) {
+        fmWarning() << "Index database exists but version is incompatible or missing."
+                    << "Current version:" << Defines::kIndexVersion
+                    << "Stored version:" << IndexUtility::getIndexVersion()
+                    << "[Index considered invalid due to version mismatch]";
+        return false;
+    }
+
+    if (IndexUtility::getLastUpdateTime().isEmpty()) {
+        fmWarning() << "Last update time is empty";
+        return false;
+    }
+
+    return true;
 }
 
 QString TextIndexDBus::GetLastUpdateTime()
 {
-    return d->taskManager->getLastUpdateTime();
+    return IndexUtility::getLastUpdateTime();
+}
+
+bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
+                                       const QStringList &modifiedFiles,
+                                       const QStringList &deletedFiles)
+{
+    bool tasksQueued = false;
+
+    // 处理删除的文件（优先处理，因为这些文件可能已经不存在）
+    if (!deletedFiles.isEmpty()) {
+        fmInfo() << "Processing" << deletedFiles.size() << "deleted files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::RemoveFileList, deletedFiles, true) || tasksQueued;
+    }
+
+    // 处理新增的文件
+    if (!createdFiles.isEmpty()) {
+        fmInfo() << "Processing" << createdFiles.size() << "created files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::CreateFileList, createdFiles, true) || tasksQueued;
+    }
+
+    // 处理修改的文件
+    if (!modifiedFiles.isEmpty()) {
+        fmInfo() << "Processing" << modifiedFiles.size() << "modified files";
+        tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::UpdateFileList, modifiedFiles, true) || tasksQueued;
+    }
+
+    return tasksQueued;
 }

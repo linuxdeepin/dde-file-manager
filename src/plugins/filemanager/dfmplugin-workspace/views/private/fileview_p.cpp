@@ -7,7 +7,6 @@
 #include "views/fileviewstatusbar.h"
 #include "views/baseitemdelegate.h"
 #include "models/fileviewmodel.h"
-#include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/dragdrophelper.h"
 #include "utils/viewdrawhelper.h"
@@ -16,6 +15,8 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/viewanimationhelper.h"
+#include "utils/fileviewhelper.h"
+#include "events/workspaceeventcaller.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -242,7 +243,7 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
     if (parentViewMode != -1) {
         currentViewMode = static_cast<Global::ViewMode>(parentViewMode);
-    } else if (savedViewMode != -1) {
+    } else if (savedViewMode != -1 && WorkspaceHelper::instance()->isViewModeSupported(url.scheme(), static_cast<Global::ViewMode>(savedViewMode))) {  // saved view mode in old version may not be supported
         currentViewMode = static_cast<Global::ViewMode>(savedViewMode);
     } else {
         currentViewMode = static_cast<Global::ViewMode>(defaultViewMode);
@@ -250,6 +251,9 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
     if (currentViewMode == Global::ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
         currentViewMode = Global::ViewMode::kListMode;
+
+    auto winId = WorkspaceHelper::instance()->windowId(q);
+    WorkspaceEventCaller::sendViewModeChanged(winId, currentViewMode);
 }
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)

@@ -337,30 +337,21 @@ bool SearchHelper::crumbRedirectUrl(QUrl *redirectUrl)
     return false;
 }
 
-QDBusInterface &SearchHelper::anythingInterface()
-{
-    static QDBusInterface interface("com.deepin.anything",
-                                    "/com/deepin/anything",
-                                    "com.deepin.anything",
-                                    QDBusConnection::systemBus());
-
-    return interface;
-}
-
 QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
 
     CheckBoxWidthTextIndex *cb = new CheckBoxWidthTextIndex;
+    cb->connectToBackend();
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &CheckBoxWidthTextIndex::stateChanged, option, [=](int state) {
-        if (state == 0)
+    QObject::connect(cb, &CheckBoxWidthTextIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+        if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
-        else if (state == 2)
+        else if (state == Qt::CheckState::Checked)
             option->setValue(true);
     });
 

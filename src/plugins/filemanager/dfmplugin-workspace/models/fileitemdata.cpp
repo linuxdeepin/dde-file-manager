@@ -247,6 +247,11 @@ QVariant FileItemData::data(int role) const
                 const_cast<FileItemData *>(this)->transFileInfo();
         }
         return QVariant();
+    case kItemFileContentPreviewRole:
+    if (sortInfo)
+        return sortInfo->highlightContent();
+
+    return QString();
     default:
         return QVariant();
     }

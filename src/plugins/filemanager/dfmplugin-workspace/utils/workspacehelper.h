@@ -52,6 +52,9 @@ public:
     void setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes);
     void setViewDragEnabled(const quint64 windowID, const bool enable);
     void setViewDragDropMode(const quint64 windowID, const QAbstractItemView::DragDropMode mode);
+    void registerCustomViewProperty(const QString &scheme, const QVariantMap &propertise);
+    CustomViewProperty findCustomViewProperty(const QString &scheme) const;
+    bool isViewModeSupported(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode) const;
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
@@ -91,9 +94,6 @@ public:
     void registerFileView(const QString &scheme);
     bool registeredFileView(const QString &scheme) const;
 
-    void setNotSupportTreeView(const QString &scheme);
-    bool supportTreeView(const QString &scheme) const;
-
     void setUndoFiles(const QList<QUrl> &files);
     QList<QUrl> filterUndoFiles(const QList<QUrl> &urlList) const;
 
@@ -101,6 +101,8 @@ public:
 
     void aboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
 
+    void registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
+    DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy getLoadStrategy(const QString &scheme);
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
@@ -123,11 +125,10 @@ private:
 private:
     TopWidgetCreatorMap topWidgetCreators;
     MenuSceneMap menuSceneMap;
-    DefaultViewMode defaultViewMode;
 
     QList<QString> registeredFileViewScheme {};
-    QList<QString> notSupportTreeView{};
-
+    QMap<QString, CustomViewProperty> customViewPropertyMap {};
+    QMap<QString, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy> loadStrategyMap {};
     QList<QUrl> undoFiles {};
 
     Q_DISABLE_COPY(WorkspaceHelper)

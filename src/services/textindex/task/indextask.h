@@ -19,9 +19,11 @@ class IndexTask : public QObject
     Q_OBJECT
 public:
     enum class Type {
-        Create,
-        Update,
-        Remove
+        Create,   // 创建索引
+        Update,   // 更新索引
+        CreateFileList,   // 基于文件列表创建索引
+        UpdateFileList,   // 基于文件列表更新索引
+        RemoveFileList   // 基于文件列表删除索引
     };
     Q_ENUM(Type)
 
@@ -47,13 +49,17 @@ public:
     bool isIndexCorrupted() const;
     void setIndexCorrupted(bool corrupted);
 
+    bool silent() const;
+    void setSilent(bool newSilent);
+
 Q_SIGNALS:
-    void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count);
-    void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, bool success);
+    void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count, qint64 total);
+    void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:
+    void throttleCpuUsage();
     void doTask();
-    void onProgressChanged(qint64 count);
+    void onProgressChanged(qint64 count, qint64 total);
 
     Type m_type;
     QString m_path;
@@ -61,6 +67,7 @@ private:
     TaskState m_state;
     TaskHandler m_handler;
     bool m_indexCorrupted { false };
+    bool m_silent { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

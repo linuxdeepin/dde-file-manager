@@ -38,6 +38,7 @@ public:
     static QVariantHash convertFromQMap(const QVariantMap map);
 
     static bool urlEquals(const QUrl &url1, const QUrl &url2);
+    static bool urlEqualsWithQuery(const QUrl &url1, const QUrl &url2);
     static bool urlsTransformToLocal(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls);
     static bool urlTransformToLocal(const QUrl &sourceUrl, QUrl *targetUrls);
 

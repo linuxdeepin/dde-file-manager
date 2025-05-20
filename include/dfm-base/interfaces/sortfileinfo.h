@@ -39,6 +39,9 @@ public:
     bool isWriteable() const;
     bool isExecutable() const;
 
+    void setHighlightContent(const QString &content);
+    QString highlightContent() const;
+
 private:
     QScopedPointer<SortFileInfoPrivate> d;
 };

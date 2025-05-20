@@ -25,6 +25,13 @@ SearchManager *SearchManager::instance()
 
 bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword)
 {
+    // Save task information
+    taskInfoMap[taskId] = qMakePair(url, keyword);
+    
+    // Track all search tasks for this window
+    winTasksMap.insert(winId, taskId);
+    
+    // Perform search
     if (mainController) {
         taskIdMap[winId] = taskId;
         return mainController->doSearchTask(taskId, url, keyword);
@@ -33,10 +40,20 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
     return false;
 }
 
-QList<QUrl> SearchManager::matchedResults(const QString &taskId)
+DFMSearchResultMap SearchManager::matchedResults(const QString &taskId)
 {
+    // Get real-time results from controller
     if (mainController)
         return mainController->getResults(taskId);
+
+    return {};
+}
+
+QList<QUrl> SearchManager::matchedResultUrls(const QString &taskId)
+{
+    // Get real-time result URLs from controller
+    if (mainController)
+        return mainController->getResultUrls(taskId);
 
     return {};
 }
@@ -51,8 +68,14 @@ void SearchManager::stop(const QString &taskId)
 
 void SearchManager::stop(quint64 winId)
 {
-    if (taskIdMap.contains(winId))
-        stop(taskIdMap[winId]);
+    if (taskIdMap.contains(winId)) {
+        QString taskId = taskIdMap[winId];
+        
+        // Remove all tasks associated with this window
+        winTasksMap.remove(winId);
+        
+        stop(taskId);
+    }
 }
 
 void SearchManager::onDConfigValueChanged(const QString &config, const QString &key)
@@ -85,7 +108,7 @@ void SearchManager::init()
     Q_ASSERT(mainController == nullptr);
 
     mainController = new MainController(this);
-    //直连，防止被事件循环打乱时序
-    connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::DirectConnection);
-    connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::DirectConnection);
+    // Direct connection to prevent event loop from disrupting the sequence
+    connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::QueuedConnection);
+    connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::QueuedConnection);
 }

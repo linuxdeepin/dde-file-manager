@@ -8,6 +8,7 @@
 #include <QString>
 #include <QBrush>
 #include <QVariant>
+#include <QTextLine>
 
 class QPainter;
 class QTextDocument;
@@ -46,12 +47,52 @@ public:
         return attributes.value(attr).value<T>();
     }
 
+    // 设置高亮关键字
+    inline void setHighlightKeywords(const QStringList &keywords) {
+        highlightKeywords.append(keywords);
+    }
+
+    // 设置高亮颜色
+    inline void setHighlightColor(const QColor &color) {
+        highlightColor = color;
+    }
+
+    // 启用或禁用高亮
+    inline void setHighlightEnabled(bool enable) {
+        enableHighlight = enable;
+    }
+
 protected:
     QRectF drawLineBackground(QPainter *painter, const QRectF &curLineRect, QRectF lastLineRect, const QBrush &brush) const;
+    void drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText, 
+                              const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches);
     virtual void initLayoutOption(QTextLayout *lay);
+
+private:
+    // 查找文本中所有关键词匹配的位置
+    QList<QPair<int, int>> findKeywordMatches(const QString &text) const;
+
+    // 计算省略文本中的高亮匹配位置
+    QList<QPair<int, int>> calculateElideHighlightMatches(
+        const QString &elideText, 
+        int elidePos, 
+        Qt::TextElideMode elideMode, 
+        const QList<QPair<int, int>> &originalMatches,
+        int lineStartPos) const;
+
+    // 确定省略位置 - 通过比较省略文本和原始文本
+    int determineElidePosition(
+        const QString &elideText,
+        const QString &originalText, 
+        Qt::TextElideMode elideMode) const;
+
 protected:
-    QTextDocument *document = nullptr;
-    QMap<Attribute, QVariant> attributes;
+    QTextDocument *document { nullptr };
+    QMap<Attribute, QVariant> attributes {};
+
+    QStringList highlightKeywords {};  // 需要高亮的关键字
+    QColor highlightColor { QColor() };     // 高亮颜色
+    bool enableHighlight { false };      // 是否启用高亮
 };
 }
 

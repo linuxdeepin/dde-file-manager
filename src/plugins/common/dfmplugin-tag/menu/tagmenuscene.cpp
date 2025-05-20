@@ -60,6 +60,13 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
     d->predicateName.insert(TagActionId::kActTagAddKey, tr("Tag information"));
 
+    QString errString;
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (d->focusFileInfo.isNull()) {
+        fmDebug() << errString;
+        return false;
+    }
+
     auto subScenes = subscene();
     if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
         subScenes << filterScene;
@@ -78,6 +85,9 @@ bool TagMenuScene::create(QMenu *parent)
         return false;
     // create by focus fileinfo
     if (!TagManager::instance()->canTagFile(d->focusFile))
+        return false;
+
+    if (!d->focusFileInfo->exists())
         return false;
 
     // create by focus fileinfo

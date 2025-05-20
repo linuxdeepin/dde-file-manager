@@ -28,7 +28,7 @@ class TraversalDirThreadManager : public TraversalDirThread
     dfmio::DEnumerator::SortRoleCompareFlag sortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
     bool isMixDirAndFile { false };
     QElapsedTimer *timer = Q_NULLPTR;
-    int timeCeiling = 1500;
+    int timeCeiling = 200;
     int countCeiling = 500;
     dfmio::DEnumeratorFuture *future { nullptr };
     QString traversalToken;
@@ -57,6 +57,7 @@ Q_SIGNALS:
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
                              bool isMixDirAndFile, QString traversalToken);
+    void updateChildrenInfo(const QList<SortInfoPointer> updateInfos, QString traversalToken);
     void traversalFinished(QString traversalToken);
     void traversalRequestSort(QString traversalToken);
 

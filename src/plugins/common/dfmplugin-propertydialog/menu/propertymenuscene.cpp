@@ -87,6 +87,13 @@ bool PropertyMenuScene::initialize(const QVariantHash &params)
         d->selectFiles << d->currentDir;
     }
 
+    QString errString;
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
+    if (d->focusFileInfo.isNull()) {
+        fmDebug() << errString;
+        return false;
+    }
+
     return AbstractMenuScene::initialize(params);
 }
 
@@ -117,6 +124,11 @@ void PropertyMenuScene::updateState(QMenu *parent)
 {
     if (!parent)
         return;
+
+    if (auto pAction = d->predicateAction.value(PropertyActionId::kProperty)) {
+        if (!d->focusFileInfo->exists())
+            pAction->setDisabled(true);
+    }
 
     d->updateMenu(parent);
 

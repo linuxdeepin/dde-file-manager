@@ -94,6 +94,21 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
     }
 }
 
+void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
+{
+    QString rootPath = rootUrl.path();
+    if (!rootPath.endsWith("/"))
+        rootPath.append("/");
+
+    auto rootInfoKeys = rootInfoMap.keys();
+    for (const auto &rootInfo : rootInfoKeys) {
+        if (UniversalUtils::urlEqualsWithQuery(rootInfo, rootUrl) || (rootInfo.path() != rootPath && rootInfo.path().startsWith(rootPath))) {
+            rootInfoMap.value(rootInfo)->disconnect();
+            rootInfoMap.value(rootInfo)->clearTraversalThread(key, false);
+        }
+    }
+}
+
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)
 {
     RootInfo *root = rootInfoMap.value(rootUrl);
@@ -171,5 +186,44 @@ void FileDataManager::handleDeletion(RootInfo *root)
     } else {
         root->reset();
         deleteLaterList.append(root);
+    }
+}
+
+// NOTE: in tree mode, this func will clean all child node data.
+void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &key)
+{
+    if (!currentUrl.isValid())
+        return;
+        
+    // 确保路径以/结尾，用于目录比较
+    QString currentPath = currentUrl.path();
+    if (!currentPath.endsWith("/"))
+        currentPath.append("/");
+        
+    QList<QUrl> rootsToClean;
+    
+    // 找出所有需要清理的RootInfo
+    for (const auto &rootUrl : rootInfoMap.keys()) {
+        // 跳过当前URL
+        if (UniversalUtils::urlEqualsWithQuery(rootUrl, currentUrl))
+            continue;
+
+        rootsToClean.append(rootUrl);
+    }
+    
+    // 清理标记的RootInfo
+    for (const auto &rootUrl : rootsToClean) {
+        // 先停止线程工作
+        int rootThreadCount = rootInfoMap.value(rootUrl)->clearTraversalThread(key, false);
+
+        // 剩余迭代线程大于0,说明该rootinfo还在被其他view-model使用，不能直接移除
+        if (rootThreadCount > 0)
+            continue;
+
+        // 从Map中移除并处理删除
+        auto root = rootInfoMap.take(rootUrl);
+        if (root) {
+            handleDeletion(root);
+        }
     }
 }

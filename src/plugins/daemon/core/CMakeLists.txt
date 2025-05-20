@@ -17,7 +17,11 @@ FILE(GLOB_RECURSE SRC_FILES
 find_package(Qt6 COMPONENTS
     Core
     DBus
+    Concurrent
     REQUIRED)
+
+find_package(Dtk6 COMPONENTS Core REQUIRED)
+find_package(dfm6-search REQUIRED)
 
 # DBus: DeviceManager
 qt6_generate_dbus_interface(
@@ -56,6 +60,9 @@ target_link_libraries(${PROJECT_NAME}
     DFM6::framework
     Qt6::Core
     Qt6::DBus
+    Qt6::Concurrent
+    Dtk6::Core
+    dfm6-search
 )
 
 #install library file

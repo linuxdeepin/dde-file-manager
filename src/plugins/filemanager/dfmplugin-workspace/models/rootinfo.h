@@ -47,6 +47,7 @@ public:
                               DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder);
     void startWork(const QString &key, const bool getCache = false);
     int clearTraversalThread(const QString &key, const bool isRefresh);
+    void setFirstBatch(bool first);
 
     void reset();
 
@@ -59,20 +60,20 @@ public:
     QStringList connectTokens() const { return connectedTokens; }
 
     bool canDelete() const;
+    QStringList getKeyWords() const;
 
 Q_SIGNALS:
-
-    void itemAdded();
     void iteratorLocalFiles(const QString &key,
                             const QList<SortInfoPointer> children,
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
-                            const bool isMixDirAndFile);
-    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const FileInfoPointer info);
-    void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos);
+                            const bool isMixDirAndFile,
+                            bool isFirstBatch = false);
+    void iteratorAddFiles(const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos, bool isFirstBatch = false);
+    void iteratorUpdateFiles(const QString &key, const QList<SortInfoPointer> sortInfos, bool isFirstBatch = false);
     void watcherAddFiles(const QList<SortInfoPointer> &children);
     void watcherRemoveFiles(const QList<SortInfoPointer> &children);
-    void traversalFinished(const QString &key);
+    void traversalFinished(const QString &key, bool noDataProduced = false);
     void sourceDatas(const QString &key,
                      const QList<SortInfoPointer> children,
                      const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
@@ -97,8 +98,8 @@ public Q_SLOTS:
     void doWatcherEvent();
     void doThreadWatcherEvent();
 
-    void handleTraversalResult(const FileInfoPointer &child, const QString &travseToken);
     void handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken);
+    void handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
@@ -138,6 +139,7 @@ private:
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
     std::atomic_bool traversalFinish { false };
     std::atomic_bool traversaling { false };
+    std::atomic_bool isFirstBatch { false };
 
     QReadWriteLock childrenLock;
     QList<QUrl> childrenUrlList {};
@@ -160,6 +162,8 @@ private:
     std::atomic_bool needStartWatcher { true };
     std::atomic_bool isRefresh { false };
     QStringList connectedTokens;
+
+    QStringList keyWords {};
 };
 }
 

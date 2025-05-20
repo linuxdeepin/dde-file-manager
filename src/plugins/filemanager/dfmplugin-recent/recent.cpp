@@ -35,6 +35,7 @@ Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 namespace dfmplugin_recent {
 DFM_LOG_REISGER_CATEGORY(DPRECENT_NAMESPACE)
@@ -63,7 +64,10 @@ bool Recent::start()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentHelper::scheme(), RecentMenuCreator::name());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", RecentHelper::scheme());
+
+    QVariantMap property;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", RecentHelper::scheme(), property);
 
     // add to property
     BasicViewFieldFunc func { RecentHelper::propetyExtensionFunc };
@@ -147,7 +151,7 @@ void Recent::bindWindows()
 void Recent::regRecentCrumbToTitleBar()
 {
     QVariantMap property;
-    property["Property_Key_HideTreeViewBtn"] = true;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), property);
 }
 

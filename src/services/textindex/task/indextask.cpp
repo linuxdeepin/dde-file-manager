@@ -5,6 +5,8 @@
 #include "indextask.h"
 
 #include "progressnotifier.h"
+#include "utils/systemdcpuutils.h"
+#include "utils/textindexconfig.h"
 
 #include <LuceneException.h>
 
@@ -31,11 +33,35 @@ IndexTask::~IndexTask()
                this, &IndexTask::onProgressChanged);
 }
 
-void IndexTask::onProgressChanged(qint64 count)
+void IndexTask::onProgressChanged(qint64 count, qint64 total)
 {
     if (m_state.isRunning()) {
-        fmDebug() << "Task progress:" << count;
-        emit progressChanged(m_type, count);
+        fmDebug() << "Task progress:" << count << total;
+        emit progressChanged(m_type, count, total);
+    }
+}
+
+bool IndexTask::silent() const
+{
+    return m_silent;
+}
+
+void IndexTask::setSilent(bool newSilent)
+{
+    m_silent = newSilent;
+}
+
+void IndexTask::throttleCpuUsage()
+{
+    if (!silent())
+        return;
+
+    int limit = TextIndexConfig::instance().cpuUsageLimitPercent();
+    fmInfo() << "Limit CPU to " << limit << "%";
+
+    QString msg;
+    if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, limit, &msg)) {
+        fmWarning() << "Limit cpu failed:" << msg;
     }
 }
 
@@ -65,7 +91,7 @@ void IndexTask::stop()
 
 bool IndexTask::isRunning() const
 {
-    return m_state.isRunning();
+    return m_status == Status::Running;
 }
 
 QString IndexTask::taskPath() const
@@ -97,28 +123,32 @@ void IndexTask::doTask()
 {
     fmInfo() << "Processing task for path:" << m_path;
 
-    bool success = false;
+    HandlerResult result { false, false };
     if (m_handler) {
         try {
             setIndexCorrupted(false);
-            success = m_handler(m_path, m_state);
+            throttleCpuUsage();
+            result = m_handler(m_path, m_state);
         } catch (const LuceneException &) {
             // 捕获到 Lucene 异常，说明索引损坏
             setIndexCorrupted(true);
-            success = false;
+            result.success = false;
+        } catch (...) {   // 捕获所有异常
+            result.success = false;
+            fmCritical() << "Unexpected exception in task handler";
         }
     } else {
         fmWarning() << "No task handler provided";
     }
 
     m_state.stop();
-    m_status = success ? Status::Finished : Status::Failed;
+    m_status = result.success ? Status::Finished : Status::Failed;
 
-    if (success) {
+    if (result.success) {
         fmInfo() << "Task completed successfully for path:" << m_path;
     } else {
         fmWarning() << "Task failed for path:" << m_path;
     }
 
-    emit finished(m_type, success);
+    emit finished(m_type, result);
 }

@@ -28,6 +28,20 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
+enum class DirectoryLoadStrategy : uint8_t {
+    kCreateNew, // 默认策略：每次切换目录时立即清空视图
+    kPreserve   // 保留策略：保留现有视图内容，直到新目录数据加载完成后再更新视图
+};
+
+namespace ViewCustomKeys {
+inline constexpr char kSupportIconMode[] { "Custom_Key_SupportIconMode" };
+inline constexpr char kSupportListMode[] { "Custom_Key_SupportListMode" };
+inline constexpr char kSupportTreeMode[] { "Custom_Key_SupportTreeMode" };
+inline constexpr char kDefaultViewMode[] { "Custom_Key_DefaultViewMode" };
+inline constexpr char kDefaultListHeight[] { "Custom_Key_DefaultListHeight" };
+inline constexpr char kAllowChangeListHeight[] { "Custom_Key_AllowChangeListHeight" };
+} // namespace ViewCustomKeys
+
 enum class TransparentStatus : uint8_t {
     kDefault,
     kTransparent,
@@ -97,6 +111,7 @@ enum ItemRoles {
     kItemTreeViewExpandedRole = Qt::UserRole + 35,
     kItemTreeViewCanExpandRole = Qt::UserRole + 36,   // item can expand
     kItemUpdateAndTransFileInfoRole = Qt::UserRole + 37,
+    kItemFileContentPreviewRole = Qt::UserRole + 38,   // item file content
     kItemUnknowRole = Qt::UserRole + 999
 };
 

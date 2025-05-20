@@ -39,17 +39,12 @@ inline constexpr char kCurmbDisplayText[] {"CrumbData_Key_DisplayText"};
 
 namespace SearchSettings {
 inline constexpr char kGroupSearch[] { SEARCH_SETTING_GROUP };
-inline constexpr char kIndexInternal[] { SEARCH_SETTING_GROUP ".00_index_internal" };
-inline constexpr char kIndexExternal[] { SEARCH_SETTING_GROUP ".01_index_external" };
-inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".02_fulltext_search" };
-inline constexpr char kDisplaySearchHistory[] { SEARCH_SETTING_GROUP ".03_display_search_history" };
-inline constexpr char kClearSearchHistory[] { SEARCH_SETTING_GROUP ".04_clear_search_history" };
+inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".00_fulltext_search" };
 }
 
 namespace DConfig {
 inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
 inline constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
-inline constexpr char kDisplaySearchHistory[] { "displaySearchHistory" };
 }
 
 DPSEARCH_END_NAMESPACE
