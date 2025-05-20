@@ -23,6 +23,7 @@
 
 namespace dfmbase {
 class FileInfo;
+class SortFileInfo;
 }
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -92,7 +93,7 @@ inline constexpr char kShowTopWidgetCallback[] { "Property_Key_ShowTopWidgetCall
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
-using FileViewFilterCallback = std::function<bool(dfmbase::FileInfo *, QVariant)>;
+using FileViewFilterCallback = std::function<bool(dfmbase::SortFileInfo *, QVariant)>;
 using FileViewRoutePrehaldler = std::function<void(quint64 winId, const QUrl &, std::function<void()>)>;
 
 struct CustomTopWidgetInfo
