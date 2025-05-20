@@ -43,6 +43,11 @@ void FileItemData::setSortFileInfo(SortInfoPointer info)
     sortInfo = info;
 }
 
+SortInfoPointer FileItemData::fileSortInfo()
+{
+    return sortInfo;
+}
+
 void FileItemData::refreshInfo()
 {
     if (!info.isNull())

@@ -295,7 +295,7 @@ void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
     filterInfoCache[currentSearchUrl] = options;
 }
 
-bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVariant data)
+bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVariant data)
 {
     if (!data.isValid())
         return true;
@@ -321,7 +321,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
         if (!parentPath.endsWith("/"))
             parentPath += '/';
 
-        QString filePath = info->pathOf(PathInfoType::kFilePath);
+        QString filePath = info->fileUrl().path();
         int index = filePath.indexOf(parentPath);
         if (index != -1) {
             int indexWithoutParent = index + parentPath.length();
@@ -332,14 +332,14 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
     }
 
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
+        QString fileTypeStr = info->displayType();
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }
 
     if (filter.comboValid[kSizeRange]) {
         // note: FileSizeInKiloByteRole is the size of Byte, not KB!
-        quint64 fileSize = static_cast<quint64>(info->size());
+        quint64 fileSize = static_cast<quint64>(info->fileSize());
         quint32 blockSize = 1 << 10;
         quint64 lower = filter.sizeRange.first * blockSize;
         quint64 upper = filter.sizeRange.second * blockSize;
@@ -349,19 +349,19 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
     }
 
     if (filter.comboValid[kDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastModifedTime());
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kAccessDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastReadTime());
         if (filemtime < filter.accessDateRangeStart || filemtime > filter.accessDateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kCreateDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->createTime());
         if (filemtime < filter.createDateRangeStart || filemtime > filter.createDateRangeEnd)
             return false;
     }
