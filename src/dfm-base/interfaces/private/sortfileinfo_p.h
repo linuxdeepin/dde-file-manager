@@ -27,6 +27,13 @@ public:
     bool readable { false };
     bool writeable { false };
     bool executable { false };
+
+    // time info
+    qint64 lastRead { 0 };
+    qint64 lastModifed { 0 };
+    qint64 create { 0 };
+
+    QString displayType { "" };  // 文件类型
     QString highlightContent { "" };   // 存储文件的高亮内容
 };
 

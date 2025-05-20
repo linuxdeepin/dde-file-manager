@@ -1464,27 +1464,29 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     const auto &leftItem = childrenDataMap.value(left);
     const auto &rightItem = childrenDataMap.value(right);
 
-    const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
-            ? leftItem->fileInfo()
-            : InfoFactory::create<FileInfo>(left);
-    const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
-            ? rightItem->fileInfo()
-            : InfoFactory::create<FileInfo>(right);
+    const SortInfoPointer leftSortInfo = (leftItem && leftItem->fileSortInfo()) ? leftItem->fileSortInfo() : nullptr;
+    const SortInfoPointer rightSortInfo = (rightItem && rightItem->fileSortInfo()) ? rightItem->fileSortInfo() : nullptr;
 
-    if (!leftInfo)
+    if (!leftSortInfo)
         return false;
-    if (!rightInfo)
+    if (!rightSortInfo)
         return false;
 
     if (sortAndFilter) {
+        const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
+                ? leftItem->fileInfo()
+                : InfoFactory::create<FileInfo>(left);
+        const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
+                ? rightItem->fileInfo()
+                : InfoFactory::create<FileInfo>(right);
         auto result = sortAndFilter->lessThan(leftInfo, rightInfo, isMixDirAndFile,
                                               orgSortRole, sort);
         if (result > 0)
             return result;
     }
 
-    bool isDirLeft = leftInfo->isAttributes(OptInfoType::kIsDir);
-    bool isDirRight = rightInfo->isAttributes(OptInfoType::kIsDir);
+    bool isDirLeft = leftSortInfo->isDir();
+    bool isDirRight = rightSortInfo->isDir();
 
     // The folder is fixed in the front position
     if (!isMixDirAndFile)
@@ -1494,13 +1496,13 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     if (isCanceled)
         return false;
 
-    QVariant leftData = data(leftInfo, orgSortRole);
-    QVariant rightData = data(rightInfo, orgSortRole);
+    QVariant leftData = data(leftSortInfo, orgSortRole);
+    QVariant rightData = data(rightSortInfo, orgSortRole);
 
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = leftInfo->displayOf(DisPlayInfoType::kFileDisplayName);
-        QString rightName = rightInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+        QString leftName = data(leftSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
+        QString rightName = data(rightSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
         return FileUtils::compareByStringEx(leftName, rightName);
     }
 
@@ -1512,11 +1514,11 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
         return FileUtils::compareByStringEx(leftData.toString(), rightData.toString());
     case kItemFileSizeRole: {
         // 文件夹不参与按文件大小的排序
-        qint64 sizel = isDirLeft ? -1 : leftInfo->size();
-        qint64 sizer = isDirRight ? -1 : rightInfo->size();
+        qint64 sizel = isDirLeft ? -1 : leftSortInfo->fileSize();
+        qint64 sizer = isDirRight ? -1 : rightSortInfo->fileSize();
         if (sizel == sizer) {
-            QString leftName = leftInfo->displayOf(DisPlayInfoType::kFileDisplayName);
-            QString rightName = rightInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+            QString leftName = data(leftSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
+            QString rightName = data(rightSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
             return FileUtils::compareByStringEx(leftName, rightName);
         }
         return sizel < sizer;
@@ -1577,6 +1579,31 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
     }
 }
 
+QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles role)
+{
+    if (info.isNull())
+        return QVariant();
+
+    switch (role) {
+    case kItemFileLastModifiedRole: {
+        auto lastModified = QDateTime::fromSecsSinceEpoch(info->lastModifedTime());
+        return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
+    }
+    case kItemFileCreatedRole: {
+        auto created = QDateTime::fromSecsSinceEpoch(info->createTime());
+        return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
+    }
+    case kItemFileDisplayNameRole:
+        return info->fileUrl().fileName();
+    case kItemFileMimeTypeRole:
+        return info->displayType();
+    case kItemFileSizeRole:
+        return info->fileSize();
+    default:
+        return QVariant();
+    }
+}
+
 bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool byInfo)
 {
     if (sortInfo.isNull())
@@ -1609,22 +1636,12 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     if (filters == QDir::NoFilter)
         return true;
 
-    FileInfoPointer fileInfo { nullptr };
-
-    if (byInfo) {
-        auto itemdata = childData(sortInfo->fileUrl());
-        fileInfo = itemdata ? itemdata->fileInfo() : InfoFactory::create<FileInfo>(sortInfo->fileUrl());
-    }
-
-    if (fileInfo && !fileInfo->exists())
-        return false;
-
-    const bool isDir = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsDir) : sortInfo->isDir();
+    const bool isDir = sortInfo->isDir();
 
     // dir filter
-    const bool readable = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsReadable) : sortInfo->isReadable();
-    const bool writable = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsWritable) : sortInfo->isWriteable();
-    const bool executable = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsExecutable) : sortInfo->isExecutable();
+    const bool readable = sortInfo->isReadable();
+    const bool writable = sortInfo->isWriteable();
+    const bool executable = sortInfo->isExecutable();
 
     auto checkRWE = [&]() -> bool {
         if ((filters & QDir::Readable) == QDir::Readable) {
@@ -1667,16 +1684,16 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     }
 
     if ((filters & QDir::NoSymLinks) == QDir::NoSymLinks) {
-        const bool isSymlinks = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsSymLink) : sortInfo->isSymLink();
+        const bool isSymlinks = sortInfo->isSymLink();
         if (isSymlinks)
             return false;
     }
 
     const bool showHidden = (filters & QDir::Hidden) == QDir::Hidden;
     if (!showHidden) {   // hide files
-        bool isHidden = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsHidden) : sortInfo->isHide();
+        bool isHidden = sortInfo->isHide();
         // /mount-point/root, /mount-point/lost+found of LOCAL disk should be treat as hidden file.
-        if (isHidden || isDefaultHiddenFile(fileInfo ? fileInfo->urlOf(UrlInfoType::kUrl) : sortInfo->fileUrl()))
+        if (isHidden || isDefaultHiddenFile(sortInfo->fileUrl()))
             return false;
     }
 
@@ -1687,7 +1704,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     }
 
     if (filterCallback)
-        return filterCallback(InfoFactory::create<FileInfo>(sortInfo->fileUrl()).data(), filterData);
+        return filterCallback(sortInfo.data(), filterData);
 
     return true;
 }
