@@ -59,6 +59,26 @@ void SortFileInfo::setExecutable(const bool executable)
     d->executable = executable;
 }
 
+void SortFileInfo::setLastReadTime(const qint64 time)
+{
+    d->lastRead = time;
+}
+
+void SortFileInfo::setLastModifedTime(const qint64 time)
+{
+    d->lastModifed = time;
+}
+
+void SortFileInfo::setCreateTime(const qint64 time)
+{
+    d->create = time;
+}
+
+void SortFileInfo::setDisplayType(const QString &displayType)
+{
+    d->displayType = displayType;
+}
+
 void SortFileInfo::setHighlightContent(const QString &content)
 {
     d->highlightContent = content;
@@ -112,6 +132,26 @@ bool SortFileInfo::isWriteable() const
 bool SortFileInfo::isExecutable() const
 {
     return d->executable;
+}
+
+qint64 SortFileInfo::lastReadTime() const
+{
+    return d->lastRead;
+}
+
+qint64 SortFileInfo::lastModifedTime() const
+{
+    return d->lastModifed;
+}
+
+qint64 SortFileInfo::createTime() const
+{
+    return d->create;
+}
+
+QString SortFileInfo::displayType() const
+{
+    return d->displayType;
 }
 
 SortFileInfoPrivate::SortFileInfoPrivate(SortFileInfo *qq)
