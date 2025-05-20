@@ -65,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <translation>S’hyhet dot te kartela!</translation>
     </message>
 </context>
 <context>
@@ -576,7 +576,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
-        <translation>Përparoje karaktere e emrës së failit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
@@ -2242,7 +2242,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>No more prompts</source>
-        <translation>Nuk janë më ekuqe</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3642,12 +3642,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation>Po krijohet faili shtyrë %1 Info i faillit i konfliktit e faillit i shfaqjes failli!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation>Po krijohet faili cilni %1 Info i faillit i konfliktit e faillit i shfaqjes failli!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
@@ -4047,7 +4047,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="184"/>
         <source>Computer display items</source>
-        <translation>Elementet e përshtatjes së kompjuterit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
@@ -6100,12 +6100,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="277"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="278"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje treguesin tani</translation>
     </message>
 </context>
 <context>
@@ -6153,22 +6153,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="162"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit dështoi, ju lutemi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="163"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>riprovoni përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizoni lejim kërkimi në lëndë kartelash. Indeksimi mund të dojë pak minuta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="189"/>
@@ -6178,7 +6178,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="193"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
     </message>
 </context>
 <context>
@@ -6350,8 +6350,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation>Nuk është i mundur të shtypni URL i lartë!
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
@@ -6947,27 +6946,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="162"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohet kyç publik: Gjatësia e kyçit është shumë e madhe!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="170"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohet kartelë teksti shifre rsa: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="182"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ruhej kartelë kyçi publik: Kyçi publik është i zbrazët!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="189"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ruhej kartelë kyçi publik: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="256"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej drejtori formësimi: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="278"/>
@@ -7879,7 +7878,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="357"/>
         <source>Foreground:</source>
-        <translation>Foreground:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="372"/>
@@ -7894,7 +7893,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="397"/>
         <source>HighlightForeground:</source>
-        <translation>HighlightForeground:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
