@@ -6946,12 +6946,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="162"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation>S’u arrit të krijohet kyç publik: Gjatësia e kyçit është shumë e madhe!</translation>
+        <translation>S’u arrit të krijohej kyç publik: Gjatësia e kyçit është shumë e madhe!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="170"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation>S’u arrit të krijohet kartelë teksti shifre rsa: %1</translation>
+        <translation>S’u arrit të krijohej kartelë teksti shifre rsa: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="182"/>
@@ -6971,27 +6971,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="278"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej kartelë kyçi privat rsa: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="288"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej kartelë teksti shifre rsa: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="298"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej kartelë ndihmëz: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ruheshin hollësi ndihmëze: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="649"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Dështoi ruajtje fjalëkalimi: %1</translation>
     </message>
 </context>
 <context>
@@ -7236,7 +7236,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Mbylle</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
@@ -7400,17 +7400,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="62"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej kasafortë: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="154"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të krijohej kasafortë. Dështoi marrje metode fshehtëzimi!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="214"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"/>
+        <translation>Vetëprodhimi i  fjalëkalimit dështoi!</translation>
     </message>
 </context>
 <context>
