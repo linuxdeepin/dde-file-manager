@@ -20,6 +20,7 @@ public:
 
     void setParentData(FileItemData *p);
     void setSortFileInfo(SortInfoPointer info);
+    SortInfoPointer fileSortInfo();
 
     void refreshInfo();
     void clearThumbnail();

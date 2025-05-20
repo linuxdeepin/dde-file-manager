@@ -199,6 +199,7 @@ private:
                        AbstractSortFilter::SortScenarios sort);
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
     QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
+    QVariant data(const SortInfoPointer &info, Global::ItemRoles role);
 
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     bool isDefaultHiddenFile(const QUrl &fileUrl);
