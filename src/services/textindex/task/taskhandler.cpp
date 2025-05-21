@@ -79,25 +79,25 @@ DocumentPtr createFileDocument(const QString &file)
 
         // file path
         doc->add(newLucene<Field>(L"path", file.toStdWString(),
-                                Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file last modified time
         QFileInfo fileInfo(file);
         const QDateTime modifyTime = fileInfo.lastModified();
         const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
         doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
-                                Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file name
         doc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
-                                Field::STORE_YES, Field::INDEX_ANALYZED));
+                                  Field::STORE_YES, Field::INDEX_ANALYZED));
 
         // hidden tag
         QString hiddenTag = "N";
         if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
             hiddenTag = "Y";
         doc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
-                                Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file contents
         const auto &contentOpt = DocUtils::extractFileContent(file);
@@ -110,7 +110,7 @@ DocumentPtr createFileDocument(const QString &file)
         const QString &contents = contentOpt.value().trimmed();
 
         doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
-                                Field::STORE_YES, Field::INDEX_ANALYZED));
+                                  Field::STORE_YES, Field::INDEX_ANALYZED));
 
         return doc;
     } catch (const LuceneException &e) {
@@ -120,16 +120,16 @@ DocumentPtr createFileDocument(const QString &file)
     } catch (...) {
         fmWarning() << "Create document failed with unknown exception:" << file;
     }
-    
+
     // 发生异常时返回一个空的基本文档，防止调用方受到影响
     try {
         DocumentPtr basicDoc = newLucene<Document>();
         basicDoc->add(newLucene<Field>(L"path", file.toStdWString(),
-                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+                                       Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         return basicDoc;
     } catch (...) {
         fmWarning() << "Failed to create even a basic document for:" << file;
-        return nullptr;  // 最坏情况，返回空指针，调用方需要检查
+        return nullptr;   // 最坏情况，返回空指针，调用方需要检查
     }
 }
 
@@ -158,7 +158,7 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
 
         return modifyEpoch.toStdWString() != storeTime;
     } catch (const LuceneException &e) {
-        fmWarning() << "Check update failed with Lucene exception:" << file 
+        fmWarning() << "Check update failed with Lucene exception:" << file
                     << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
@@ -184,7 +184,7 @@ bool checkFileSize(const QFileInfo &fileInfo)
 
         if (fileInfo.size() > kMaxFileSizeInBytes) {
             fmDebug() << "File" << fileInfo.fileName() << "size" << fileInfo.size()
-                    << "exceeds max allowed size" << kMaxFileSizeInBytes;
+                      << "exceeds max allowed size" << kMaxFileSizeInBytes;
             return false;
         }
         return true;
@@ -237,7 +237,7 @@ void processFile(const QString &path, const IndexWriterPtr &writer, ProgressRepo
             reporter->increment();
         }
     } catch (const LuceneException &e) {
-        fmWarning() << "Process file failed with Lucene exception:" << path 
+        fmWarning() << "Process file failed with Lucene exception:" << path
                     << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
         fmWarning() << "Process file failed:" << path << e.what();
@@ -260,7 +260,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 fmWarning() << "Failed to create document for:" << path;
                 return;
             }
-            
+
             if (needAdd) {
 #ifdef QT_DEBUG
                 fmDebug() << "Adding [" << path << "]";
@@ -277,7 +277,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
             reporter->increment();
         }
     } catch (const LuceneException &e) {
-        fmWarning() << "Update file failed with Lucene exception:" << path 
+        fmWarning() << "Update file failed with Lucene exception:" << path
                     << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
         fmWarning() << "Update file failed:" << path << e.what();
@@ -298,7 +298,7 @@ void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressRepor
             reporter->increment();
         }
     } catch (const LuceneException &e) {
-        fmWarning() << "Remove file failed with Lucene exception:" << path 
+        fmWarning() << "Remove file failed with Lucene exception:" << path
                     << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
         fmWarning() << "Remove file failed:" << path << e.what();
@@ -307,19 +307,19 @@ void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressRepor
     }
 }
 
-void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
+bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
 {
     try {
         if (!reader || !writer) {
             fmWarning() << "Invalid reader or writer for index cleanup";
-            return;
+            return false;
         }
-        
+
         fmInfo() << "Checking for deleted files in index...";
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         if (!searcher) {
             fmWarning() << "Failed to create searcher for index cleanup";
-            return;
+            return false;
         }
 
         // 获取所有文档
@@ -328,7 +328,7 @@ void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
         if (!allDocs) {
             fmWarning() << "Search returned null result for index cleanup";
-            return;
+            return false;
         }
 
         int removedCount = 0;
@@ -338,21 +338,21 @@ void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
             // Ensure scoreDocs[i] is not null before accessing ->doc
             if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
                 fmWarning() << "Null scoreDoc at index" << i << "during index cleanup";
-                continue;
+                return false;
             }
 
             DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
             if (!doc) {   // Ensure document is valid
                 fmWarning() << "Null document at index" << i << "during index cleanup";
-                continue;
+                return false;
             }
 
             String pathValue = doc->get(L"path");
             if (pathValue.empty()) {
                 fmWarning() << "Document at index" << i << "has empty path during index cleanup";
-                continue;
+                return false;
             }
-            
+
             QString filePath = QString::fromStdWString(pathValue);
 
             bool shouldDelete = false;
@@ -394,16 +394,21 @@ void cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         if (removedCount > 0) {
             fmInfo() << "Removed" << removedCount << "deleted files from index";
         }
+
+        return true;
     } catch (const LuceneException &e) {
-        fmWarning() << "Error checking for deleted files with Lucene exception:" 
-                   << QString::fromStdWString(e.getError());
+        fmWarning() << "Error checking for deleted files with Lucene exception:"
+                    << QString::fromStdWString(e.getError());
         // 继续执行，不要因为清理失败而中断整个更新过程
+        return false;
     } catch (const std::exception &e) {
         fmWarning() << "Error checking for deleted files:" << e.what();
         // 继续执行，不要因为清理失败而中断整个更新过程
+        return false;
     } catch (...) {
         fmWarning() << "Error checking for deleted files with unknown exception";
         // 继续执行，不要因为清理失败而中断整个更新过程
+        return false;
     }
 }
 
@@ -427,7 +432,7 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
         // 使用索引读取器和搜索器来找到所有匹配的文档
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         TopDocsPtr allDocs = searcher->search(prefixQuery, reader->maxDoc());
-        
+
         // 检查allDocs是否有效
         if (!allDocs) {
             fmWarning() << "Search returned null result for directory:" << dirPath;
@@ -447,13 +452,13 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
                 fmWarning() << "Null scoreDoc at index" << i << "for directory:" << dirPath;
                 continue;
             }
-            
+
             DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
             if (!doc) {
                 fmWarning() << "Null document at index" << i << "for directory:" << dirPath;
                 continue;
             }
-            
+
             String pathValue = doc->get(L"path");
             pathsToDelete.add(pathValue);
         }
@@ -474,8 +479,8 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
             fmInfo() << "Removed" << deleteCount << "documents from index for directory:" << dirPath;
         }
     } catch (const LuceneException &e) {
-        fmWarning() << "Remove directory index failed with Lucene exception:" << dirPath 
-                   << QString::fromStdWString(e.getError());
+        fmWarning() << "Remove directory index failed with Lucene exception:" << dirPath
+                    << QString::fromStdWString(e.getError());
     } catch (const std::exception &e) {
         fmWarning() << "Remove directory index failed:" << dirPath << e.what();
     } catch (...) {
@@ -637,7 +642,12 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             });
 
             // 清理已删除文件的索引
-            cleanupIndexs(reader, writer, running);
+            if (!cleanupIndexs(reader, writer, running)) {
+                fmWarning() << "Index cleanup failed";
+                result.success = false;
+                result.fatal = true;
+                return result;
+            }
 
             // 使用文件提供者遍历文件
             auto provider = createFileProvider(path);

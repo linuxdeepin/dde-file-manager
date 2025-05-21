@@ -129,7 +129,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     // 注意：为了最小修改现有代码，我们仍然将主路径作为任务路径，但在handler中会使用整个路径列表
     currentTask = new IndexTask(type, primaryPath, [handler, pathList](const QString &, TaskState &state) -> HandlerResult {
         // 在这个lambda中，我们会对每个路径执行原始的handler
-        HandlerResult finalResult { true, false };
+        HandlerResult finalResult { true, false, false, false };
 
         for (const auto &path : pathList) {
             if (!state.isRunning()) {
@@ -143,6 +143,11 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
             // 如果任何一个路径处理失败，整个任务就失败
             if (!pathResult.success) {
                 finalResult.success = false;
+            }
+
+            if (pathResult.fatal) {
+                finalResult.fatal = true;
+                break;
             }
 
             // 如果被中断，设置中断标志并退出循环

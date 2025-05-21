@@ -129,6 +129,9 @@ void IndexTask::doTask()
             setIndexCorrupted(false);
             throttleCpuUsage();
             result = m_handler(m_path, m_state);
+            if (result.fatal) {
+                setIndexCorrupted(true);
+            }
         } catch (const LuceneException &) {
             // 捕获到 Lucene 异常，说明索引损坏
             setIndexCorrupted(true);
