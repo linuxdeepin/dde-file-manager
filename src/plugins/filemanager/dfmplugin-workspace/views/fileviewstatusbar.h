@@ -11,6 +11,7 @@
 
 #include <dpicturesequenceview.h>
 #include <dslider.h>
+#include <DTipLabel>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -28,9 +29,10 @@ public:
     DSlider *scalingSlider() const;
     void showLoadingIncator(const QString &tip);
     void hideLoadingIncator();
-
+    
 protected:
     void clearLayoutAndAnchors() override;
+    DTipLabel *findTipLabel() const;
 
 private:
     void initScalingSlider();
@@ -40,6 +42,7 @@ private:
     DPictureSequenceView *loadingIndicator { nullptr };
     DSlider *scaleSlider { nullptr };
     QWidget *stretchWidget { nullptr };
+    QWidget *centerContainer { nullptr };
 };
 
 }
