@@ -64,6 +64,13 @@ bool isHtmlStyleDocument(const QString &filePath);
  */
 std::optional<QString> extractHtmlContent(const QString &filePath);
 
+/**
+ * @brief Gets the encoding of a file. If it's a text file, detects the encoding; otherwise returns UTF-8
+ * @param filePath Path to the file
+ * @return Encoding name (detected for text files, UTF-8 for non-text files)
+ */
+QString getFileEncoding(const QString &filePath);
+
 }   // namespace DocUtils
 
 SERVICETEXTINDEX_END_NAMESPACE
