@@ -13,6 +13,7 @@
 #include <QTextDocument>
 #include <QFileInfo>
 #include <QDebug>
+#include <QMimeDatabase>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -28,6 +29,20 @@ bool convertTextEncoding(const QByteArray &input, QByteArray &output,
 {
     return Dtk::Core::DTextEncoding::convertTextEncodingEx(const_cast<QByteArray &>(input), output,
                                                            toEncoding.toUtf8(), fromEncoding.toUtf8());
+}
+
+QString getFileEncoding(const QString &filePath)
+{
+    // Check if file is a text file before detecting encoding
+    QMimeDatabase mimeDb;
+    QString mimeTypeName = mimeDb.mimeTypeForFile(filePath).name();
+    
+    // Detect encoding only for text files, otherwise default to UTF-8
+    if (mimeTypeName.startsWith("text/")) {
+        return QString::fromUtf8(detectFileEncoding(filePath));
+    } else {
+        return QString("utf-8");
+    }
 }
 
 std::optional<QString> convertToUtf8(const QByteArray &content, const QString &fromEncoding)
@@ -65,7 +80,8 @@ std::optional<QString> extractHtmlContent(const QString &filePath)
     const QByteArray &htmlBytes = file.readAll();
     file.close();
 
-    QString fromEncoding = detectFileEncoding(filePath);
+    // Get file encoding (text files: detected, non-text files: UTF-8)
+    QString fromEncoding = getFileEncoding(filePath);
 
     auto convertedContent = convertToUtf8(htmlBytes, fromEncoding);
     if (!convertedContent) {
@@ -96,8 +112,8 @@ std::optional<QString> extractFileContent(const QString &filePath)
 
     // Use DocParser for all other files or as fallback
     try {
-        // Detect encoding
-        QString fromEncoding = detectFileEncoding(filePath);
+        // Get file encoding (text files: detected, non-text files: UTF-8)
+        QString fromEncoding = getFileEncoding(filePath);
 
         // Convert file content
         const std::string &stdContents = DocParser::convertFile(filePath.toStdString());
