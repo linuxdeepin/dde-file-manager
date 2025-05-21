@@ -743,7 +743,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
                 result.interrupted = true;
             }
 
-            writer->optimize();
+            writer->commit();
             result.success = true;
 
             return result;
@@ -827,7 +827,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
                 result.interrupted = true;
             }
 
-            writer->optimize();
+            writer->commit();
             result.success = true;
             return result;
         } catch (const LuceneException &e) {
