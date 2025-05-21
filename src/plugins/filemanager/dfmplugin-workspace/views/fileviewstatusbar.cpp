@@ -17,7 +17,11 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 FileViewStatusBar::FileViewStatusBar(QWidget *parent)
-    : BasicStatusBar(parent)
+    : BasicStatusBar(parent),
+      loadingIndicator(nullptr),
+      scaleSlider(nullptr),
+      stretchWidget(nullptr),
+      centerContainer(nullptr)
 {
     initScalingSlider();
     initLoadingIndicator();
@@ -59,16 +63,20 @@ DSlider *FileViewStatusBar::scalingSlider() const
 
 void FileViewStatusBar::showLoadingIncator(const QString &tip)
 {
-    loadingIndicator->setVisible(true);
-    loadingIndicator->play();
+    if (loadingIndicator) {
+        loadingIndicator->setVisible(true);
+        loadingIndicator->play();
+    }
 
     setTipText(tip.isEmpty() ? tr("Loading...") : tip);
 }
 
 void FileViewStatusBar::hideLoadingIncator()
 {
-    loadingIndicator->stop();
-    loadingIndicator->setVisible(false);
+    if (loadingIndicator) {
+        loadingIndicator->stop();
+        loadingIndicator->setVisible(false);
+    }
 
     setTipText(QString());
 }
@@ -100,10 +108,52 @@ void FileViewStatusBar::initLoadingIndicator()
     loadingIndicator->hide();
 }
 
+DTipLabel *FileViewStatusBar::findTipLabel() const
+{
+    // Find the DTipLabel in the widget hierarchy
+    for (QObject *child : children()) {
+        if (DTipLabel *tipLabel = qobject_cast<DTipLabel *>(child))
+            return tipLabel;
+            
+        // Look one level deeper if needed
+        for (QObject *grandchild : child->children()) {
+            if (DTipLabel *tipLabel = qobject_cast<DTipLabel *>(grandchild))
+                return tipLabel;
+        }
+    }
+    return nullptr;
+}
+
 void FileViewStatusBar::setCustomLayout()
 {
-    insertWidget(0, loadingIndicator);
-
+    clearLayoutAndAnchors();
+    
+    if (!centerContainer) {
+        // Create a container widget for center alignment
+        centerContainer = new QWidget(this);
+    }
+    QHBoxLayout *centerLayout = new QHBoxLayout(centerContainer);
+    centerLayout->setContentsMargins(0, 0, 0, 0);
+    centerLayout->setSpacing(5);
+    
+    // Add loadingIndicator to the center container
+    centerLayout->addWidget(loadingIndicator);
+    
+    // Find the tip label from base class
+    DTipLabel *tipLabel = findTipLabel();
+    if (tipLabel) {
+        // Move the tip from its original parent to our center container
+        tipLabel->setParent(centerContainer);
+        centerLayout->addWidget(tipLabel);
+    }
+    
+    // Set alignment for the center container
+    centerContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    
+    // Add the center container to the main layout
+    insertWidget(0, centerContainer, 1, Qt::AlignCenter);
+    
+    // Add scaling slider to the right
     stretchWidget = new QWidget(this);
     stretchWidget->setMinimumWidth(0);
     stretchWidget->setMaximumWidth(120);
@@ -118,6 +168,8 @@ void FileViewStatusBar::setCustomLayout()
 void FileViewStatusBar::clearLayoutAndAnchors()
 {
     BasicStatusBar::clearLayoutAndAnchors();
-
+    
     DAnchorsBase::clearAnchors(scaleSlider);
+    if (centerContainer)
+        DAnchorsBase::clearAnchors(centerContainer);
 }
