@@ -177,7 +177,14 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
     options.setSearchMethod(getSearchMethod(transformedPath));
     options.setSearchPath(transformedPath);
     options.setCaseSensitive(false);
-    options.setIncludeHidden(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
+
+    // Always include hidden files when searching in hidden directories
+    bool includeHidden = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    bool inHiddenDir = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(transformedPath);
+    if (inHiddenDir) {
+        includeHidden = true;
+    }
+    options.setIncludeHidden(includeHidden);
 
     if (options.method() == SearchMethod::Realtime) {
         options.setResultFoundEnabled(true);
@@ -199,7 +206,9 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
             excludedPaths.append(transPaths);
         }
 
-        options.setSearchExcludedPaths(excludedPaths);
+        if (!inHiddenDir) {
+            options.setSearchExcludedPaths(excludedPaths);
+        }
     }
 
     return options;
@@ -218,9 +227,16 @@ void DFMSearcher::handleRemainingResults(const QList<SearchResult> &results)
 
 SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
 {
-    if (engine->searchType() == SearchType::FileName
-        && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(path)) {
-        fmInfo() << "Use realtime methdo to: " << path;
+    // 不使用索引的情况：文件名搜索 且 (路径不在索引目录中 或 路径在隐藏目录中)
+    if (engine->searchType() != SearchType::FileName)
+        return SearchMethod::Indexed;
+
+    // 对于文件名搜索，检查是否需要使用实时搜索
+    const bool notInIndexDir = !DFMSEARCH::Global::isPathInFileNameIndexDirectory(path);
+    const bool inHiddenDir = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(path);
+
+    if (notInIndexDir || inHiddenDir) {
+        fmInfo() << "Use realtime method to: " << path;
         return SearchMethod::Realtime;
     }
 
