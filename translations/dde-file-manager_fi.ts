@@ -65,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostoon ei oikeuksia!</translation>
     </message>
 </context>
 <context>
@@ -6100,12 +6100,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="277"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Indeksi on valmis, viimeisin päivitysaika: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="278"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Päivitä indeksi nyt</translation>
     </message>
 </context>
 <context>
@@ -6153,22 +6153,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="162"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Indeksin päivitys epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="163"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>yritä päivittää uudelleen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Ota tiedostojen indeksi-haku käyttöön. Indeksointi kestää muutaman minuutin.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Rakennetaan indeksiä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="189"/>
@@ -6178,7 +6178,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="193"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Rakennetaan, %1/%2 tiedostoa indeksoitu</translation>
     </message>
 </context>
 <context>
