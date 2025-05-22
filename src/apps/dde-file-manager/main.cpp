@@ -325,6 +325,7 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName(a.translate("Application", "File Manager"));
     a.setApplicationVersion(BUILD_VERSION);
     a.setProductIcon(QIcon::fromTheme("dde-file-manager"));
+    a.setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     a.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     a.setApplicationDescription(a.translate("Application", "File Manager is a powerful and "
                                                            "easy-to-use file management tool, "
