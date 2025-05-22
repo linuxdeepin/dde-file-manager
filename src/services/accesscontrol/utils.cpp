@@ -19,12 +19,6 @@
 
 SERVICEACCESSCONTROL_USE_NAMESPACE
 
-const QStringList Utils::whiteProcess()
-{
-    static const QStringList processList { "/usr/bin/dmcg", "/usr/bin/dde-file-manager"};
-    return processList;
-}
-
 const QString Utils::devConfigPath()
 {
     static const QString path { "/etc/deepin/devAccessConfig.json" };
@@ -74,15 +68,6 @@ bool Utils::isValidVaultPolicy(const QVariantMap &policy)
     if (policy.value(kPolicyType).toInt() < 0 || policy.value(kVaultHideState).toInt() < 0)
         return false;
     return true;
-}
-
-bool Utils::isValidInvoker(uint pid, QString &invokerPath)
-{
-    QFileInfo f(QString("/proc/%1/exe").arg(pid));
-    if (!f.exists())
-        return false;
-    invokerPath = f.canonicalFilePath();
-    return whiteProcess().contains(invokerPath);
 }
 
 void Utils::saveDevPolicy(const QVariantMap &policy)

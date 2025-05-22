@@ -44,8 +44,6 @@ using VaultPolicyType = QMap<QString, int>;
 class Utils
 {
 public:
-    static const QStringList whiteProcess();
-
     static const QString devConfigPath();
     static const QString valultConfigPath();
     static int accessMode(const QString &mps);
@@ -53,7 +51,6 @@ public:
 
     static bool isValidDevPolicy(const QVariantMap &policy, const QString &realInvoker);
     static bool isValidVaultPolicy(const QVariantMap &policy);
-    static bool isValidInvoker(uint pid, QString &invokerPath);
 
     static void saveDevPolicy(const QVariantMap &policy);
     static void loadDevPolicy(DevPolicyType *devPolicies);
