@@ -49,6 +49,7 @@ TextIndexStatusBar::TextIndexStatusBar(QWidget *parent)
     msgLabel->setWordWrap(true);
     msgLabel->setContentsMargins(4, 0, 0, 0);
     msgLabel->setOpenExternalLinks(false);   // 不自动打开外部链接，而是发出linkActivated信号
+    msgLabel->setTextFormat(Qt::RichText);   // 设置为富文本格式，确保HTML标签能够正确解析
 
     // 设置水平尺寸策略为扩展，确保能尽可能在一行显示
     QSizePolicy policyMsgLabel = msgLabel->sizePolicy();
@@ -128,6 +129,9 @@ void TextIndexStatusBar::setFormattedTextWithLink(const QString &mainText, const
     // 使用内嵌样式去除链接下划线并添加悬停效果
     const QString styleHtml = getLinkStyle();
 
+    // 确保设置为富文本格式，才能正确解析HTML标签
+    msgLabel->setTextFormat(Qt::RichText);
+
     // 组合成最终显示文本
     // 对于"Index update failed, please"这样的文本，需要在链接后添加句点
     QString format = "%1 %2 <a href=\"%3\">%4</a>";
@@ -169,6 +173,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         spinner->hide();
         spinner->stop();
         iconLabel->hide();
+        msgLabel->setTextFormat(Qt::PlainText);
         msgLabel->setText(tr("Enable to search file contents. Indexing may take a few minutes"));
         break;
     }
@@ -181,15 +186,18 @@ void TextIndexStatusBar::updateIndexingProgress(qlonglong count, qlonglong total
     }
 
     if (count == 0 && total == 0) {
+        msgLabel->setTextFormat(Qt::PlainText);
         msgLabel->setText(tr("Building index"));
         return;
     }
 
     if (count != 0 && total == 0) {
+        msgLabel->setTextFormat(Qt::PlainText);
         msgLabel->setText(tr("Building index, %1 files indexed").arg(count));
         return;
     }
 
+    msgLabel->setTextFormat(Qt::PlainText);
     msgLabel->setText(tr("Building index, %1/%2 items indexed").arg(count).arg(total));
 }
 
