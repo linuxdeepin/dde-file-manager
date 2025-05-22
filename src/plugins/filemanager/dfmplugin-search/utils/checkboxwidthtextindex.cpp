@@ -365,8 +365,10 @@ void CheckBoxWidthTextIndex::initStatusBar()
 
 bool CheckBoxWidthTextIndex::shouldHandleIndexEvent(const QString &path, TextIndexClient::TaskType type) const
 {
-    bool isIndexedPath = DFMSEARCH::Global::defaultIndexedDirectory().contains(path);
-    return checkBox->isChecked() && isIndexedPath && type != TextIndexClient::TaskType::Remove;
+    Q_UNUSED(path)
+    Q_UNUSED(type)
+
+    return checkBox->isChecked();
 }
 
 }   // namespace dfmplugin_search
