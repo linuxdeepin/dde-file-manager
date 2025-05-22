@@ -142,30 +142,7 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
         return;
     }
 
-    // 异步检查是否有任务在运行
-    auto pendingHasTask = interface->HasRunningTask();
-    auto watcher = new QDBusPendingCallWatcher(pendingHasTask, this);
-
-    // 使用lambda捕获任务类型和路径信息，在回调中处理
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, type, paths](QDBusPendingCallWatcher *watcher) {
-        this->handleTaskStartReply(watcher, type, paths);
-    });
-}
-
-void TextIndexClient::handleTaskStartReply(QDBusPendingCallWatcher *watcher, TaskType type, const QStringList &paths)
-{
-    FinallyUtil finaly([watcher]() {
-        watcher->deleteLater();
-    });
-    QDBusPendingReply<bool> reply = *watcher;
-
-    if (reply.isError() || reply.value()) {
-        emit taskFailed(type, paths.join("|"),
-                        reply.isError() ? reply.error().message() : "Another task is running");
-        return;
-    }
-
-    // 异步启动任务
+    // 直接启动任务，不检查是否有任务在运行
     QDBusPendingReply<bool> pendingTask;
     switch (type) {
     case TaskType::Create:
@@ -193,42 +170,57 @@ void TextIndexClient::handleTaskStartReply(QDBusPendingCallWatcher *watcher, Tas
         }
 
         emit taskStarted(type, paths.join("|"));
-        runningTaskPath = paths.join("|");
     });
+}
+
+// 添加一个私有辅助方法用于检查任务类型是否支持
+bool TextIndexClient::isSupportedTaskType(const QString &type)
+{
+    static const QStringList supportedTypes = {
+        "create", "update", "create-file-list", "update-file-list", "remove-file-list"
+    };
+    return supportedTypes.contains(type);
+}
+
+TextIndexClient::TaskType TextIndexClient::stringToTaskType(const QString &type)
+{
+    static const QMap<QString, TaskType> typeMap = {
+        {"create", TaskType::Create},
+        {"update", TaskType::Update},
+        {"create-file-list", TaskType::CreateFileList},
+        {"update-file-list", TaskType::UpdateFileList},
+        {"remove-file-list", TaskType::RemoveFileList}
+    };
+    
+    if (!typeMap.contains(type)) {
+        fmWarning() << "Unknown task type string:" << type;
+        return TaskType::Create; // 默认返回类型
+    }
+    return typeMap.value(type);
 }
 
 void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &path, bool success)
 {
-    TaskType taskType;
-    if (type == "create")
-        taskType = TaskType::Create;
-    else if (type == "update")
-        taskType = TaskType::Update;
-    else if (type == "remove")
-        taskType = TaskType::Remove;
-    else
+    // 检查是否为支持的类型
+    if (!isSupportedTaskType(type))
         return;
-
+    
+    TaskType taskType = stringToTaskType(type);
+    
     if (success) {
         emit taskFinished(taskType, path, true);
     } else {
         emit taskFailed(taskType, path, "Task failed");
     }
-    runningTaskPath.clear();
 }
 
 void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count, qlonglong total)
 {
-    TaskType taskType;
-    if (type == "create")
-        taskType = TaskType::Create;
-    else if (type == "update")
-        taskType = TaskType::Update;
-    else if (type == "remove")
-        taskType = TaskType::Remove;
-    else
+    // 检查是否为支持的类型
+    if (!isSupportedTaskType(type))
         return;
-
+    
+    TaskType taskType = stringToTaskType(type);
     emit taskProgressChanged(taskType, path, count, total);
 }
 
@@ -282,7 +274,7 @@ void TextIndexClient::checkHasRunningRootTask()
 
         // 判断正在运行的是否是根任务
         bool isRunning = reply.value();
-        bool isRootTask = isRunning && runningTaskPath == "/";
+        bool isRootTask = isRunning;
         emit hasRunningRootTaskResult(isRootTask, true);
     });
 }

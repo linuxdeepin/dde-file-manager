@@ -23,7 +23,9 @@ public:
     enum class TaskType {
         Create,
         Update,
-        Remove
+        CreateFileList,
+        UpdateFileList,
+        RemoveFileList
     };
     Q_ENUM(TaskType)
 
@@ -74,18 +76,20 @@ private:
     ~TextIndexClient();
     bool ensureInterface();
 
-    // 新增：处理DBus回调的私有方法
-    void handleTaskStartReply(QDBusPendingCallWatcher *watcher, TaskType type, const QStringList &paths);
+    // 处理DBus回调的私有方法
     void handleHasRunningTaskReply(QDBusPendingCallWatcher *watcher);
     void handleIndexExistsReply(QDBusPendingCallWatcher *watcher);
     void handleServiceTestReply(QDBusPendingCallWatcher *watcher);
     void handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher);
+    
+    // 工具方法：将字符串转换为TaskType
+    TaskType stringToTaskType(const QString &type);
+    
+    // 工具方法：检查任务类型是否支持
+    bool isSupportedTaskType(const QString &type);
 
 private:
     std::unique_ptr<OrgDeepinFilemanagerTextIndexInterface> interface;
-
-    // 添加成员变量来跟踪当前运行的任务路径
-    QString runningTaskPath;
 
 private Q_SLOTS:
     void onDBusTaskFinished(const QString &type, const QString &path, bool success);
