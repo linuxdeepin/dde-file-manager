@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE policyconfig PUBLIC
  "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
 <policyconfig>
   <vendor />
   <vendor_url />
   <action id="org.deepin.Filemanager.MountController">
-    <description>Mount control</description>
-    <message>Authentication is required to unmount the device mounted by other user</message>
-    <message xml:lang="zh_CN">需要授权以卸载其他用户挂载的设备</message>
-    <message xml:lang="zh_HK">需要授權以卸載其他用戶掛載的設備</message>
-    <message xml:lang="zh_TW">需要授權以卸載其他用戶掛載的設備</message>
+    <description>Mount and unmount file systems</description>
+    <message>Authentication is required to mount or unmount file systems</message>
+    <message xml:lang="zh_CN">挂载或卸载文件系统需要认证</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
