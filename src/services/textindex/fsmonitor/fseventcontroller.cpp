@@ -29,6 +29,10 @@ void FSEventController::setupFSEventCollector()
     connect(m_fsEventCollector.get(), &FSEventCollector::flushFinished,
             this, &FSEventController::onFlushFinished);
 
+    // Connect to configuration changes to dynamically update collection interval
+    connect(&TextIndexConfig::instance(), &TextIndexConfig::configChanged,
+            this, &FSEventController::onConfigChanged);
+
     m_startTimer = new QTimer(this);
     m_stopTimer = new QTimer(this);
     m_startTimer->setSingleShot(true);
@@ -207,6 +211,25 @@ void FSEventController::clearCollections()
     m_collectedCreatedFiles.clear();
     m_collectedDeletedFiles.clear();
     m_collectedModifiedFiles.clear();
+}
+
+void FSEventController::onConfigChanged()
+{
+    const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
+    
+    if (newIntervalSecs != m_collectorIntervalSecs) {
+        fmInfo() << "FSEventController: Collection interval changed from" 
+                 << m_collectorIntervalSecs << "to" << newIntervalSecs << "seconds";
+        
+        m_collectorIntervalSecs = newIntervalSecs;
+        
+        // Update the collector's interval if it exists
+        if (m_fsEventCollector) {
+            m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
+            fmInfo() << "FSEventController: Updated FSEventCollector collection interval to" 
+                     << m_collectorIntervalSecs << "seconds";
+        }
+    }
 }
 
 SERVICETEXTINDEX_END_NAMESPACE
