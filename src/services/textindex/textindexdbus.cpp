@@ -6,6 +6,9 @@
 #include "private/textindexdbus_p.h"
 #include "utils/indexutility.h"
 #include "utils/systemdcpuutils.h"
+#include "utils/textindexconfig.h"
+
+#include <QDir>
 
 static constexpr char kTextIndexObjPath[] { "/org/deepin/Filemanager/TextIndex" };
 
@@ -19,6 +22,7 @@ using namespace Lucene;
 void TextIndexDBusPrivate::initialize()
 {
     fsEventController->setupFSEventCollector();
+    initializeSupportedExtensions();
 }
 
 void TextIndexDBusPrivate::initConnect()
@@ -47,6 +51,12 @@ void TextIndexDBusPrivate::initConnect()
     QObject::connect(fsEventController, &FSEventController::requestSlientStart,
                      q, [this]() {
                          handleSlientStart();
+                     });
+
+    // Connect to TextIndexConfig changes
+    QObject::connect(&TextIndexConfig::instance(), &TextIndexConfig::configChanged,
+                     q, [this]() {
+                         handleConfigChanged();
                      });
 }
 
@@ -218,4 +228,42 @@ bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
     }
 
     return tasksQueued;
+}
+
+void TextIndexDBusPrivate::initializeSupportedExtensions()
+{
+    m_currentSupportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
+    fmInfo() << "Initialized supported file extensions:" << m_currentSupportedExtensions.size() << "extensions";
+}
+
+void TextIndexDBusPrivate::handleConfigChanged()
+{
+    const auto newSupportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
+    
+    // Check if supported file extensions have changed
+    if (m_currentSupportedExtensions != newSupportedExtensions) {
+        fmInfo() << "Supported file extensions changed from" << m_currentSupportedExtensions.size() 
+                 << "to" << newSupportedExtensions.size() << "extensions";
+        
+        // Update stored extensions
+        m_currentSupportedExtensions = newSupportedExtensions;
+        
+        // Trigger index update for configured directories
+        const auto &configuredDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+        QStringList pathsToProcess;
+
+        if (configuredDirs.isEmpty()) {
+            pathsToProcess.append(QDir::homePath());
+        } else {
+            pathsToProcess = configuredDirs;
+        }
+
+        // Only start update task if index database exists
+        if (q->IndexDatabaseExists()) {
+            fmInfo() << "Starting index update task due to supported file extensions change for paths:" << pathsToProcess;
+            taskManager->startTask(IndexTask::Type::Update, pathsToProcess);
+        } else {
+            fmWarning() << "Cannot start index update task: index database does not exist";
+        }
+    }
 }
