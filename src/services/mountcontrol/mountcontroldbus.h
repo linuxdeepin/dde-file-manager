@@ -29,6 +29,7 @@ public slots:
     Q_SCRIPTABLE QStringList SupportedFileSystems();
 
 private:
+    bool checkAuthentication();
     QScopedPointer<SERVICEMOUNTCONTROL_NAMESPACE::MountControlDBusPrivate> d;
 };
 
