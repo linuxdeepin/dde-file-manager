@@ -33,6 +33,7 @@ private Q_SLOTS:
     void onFilesDeleted(const QStringList &paths);
     void onFilesModified(const QStringList &paths);
     void onFlushFinished();
+    void onConfigChanged();
 
 private:
     void clearCollections();
