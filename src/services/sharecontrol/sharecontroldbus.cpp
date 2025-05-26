@@ -14,6 +14,11 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFileInfo>
+#include <QTextStream>
+#include <QRegularExpression>
+#include <unistd.h>
+#include <QDataStream>
+#include <QByteArray>
 
 static constexpr char kUserShareObjPath[] { "/org/deepin/Filemanager/UserShareManager" };
 static constexpr char kPolicyKitActionId[] { "org.deepin.Filemanager.UserShareManager" };
@@ -91,7 +96,7 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     return ret;
 }
 
-bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &passwd)
+bool ShareControlDBus::SetUserSharePassword(const QDBusUnixFileDescriptor &credentialsFd)
 {
     fmInfo() << "[ShareControlDBus::SetUserSharePassword] Request to set password for user:" << name;
     
@@ -100,17 +105,67 @@ bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &
         return false;
     }
 
-    QString passwdDec = dfmbase::FileUtils::decryptString(passwd);
+    if (!credentialsFd.isValid()) {
+        fmInfo() << "Invalid file descriptor provided";
+        return false;
+    }
 
+    // Read credentials from pipe file descriptor
+    int fd = credentialsFd.fileDescriptor();
+    if (fd < 0) {
+        fmInfo() << "Invalid file descriptor value:" << fd;
+        return false;
+    }
+
+    // Read all data from pipe into buffer
+    QByteArray buffer;
+    char readBuffer[1024];
+    ssize_t bytesRead;
+
+    while ((bytesRead = read(fd, readBuffer, sizeof(readBuffer))) > 0) {
+        buffer.append(readBuffer, bytesRead);
+    }
+
+    if (buffer.isEmpty()) {
+        fmInfo() << "No data received from pipe";
+        return false;
+    }
+
+    // Parse credentials using QDataStream (matching client-side serialization)
+    QDataStream stream(&buffer, QIODevice::ReadOnly);
+    QString username, password;
+    stream >> username >> password;
+
+    if (stream.status() != QDataStream::Ok) {
+        fmInfo() << "Failed to parse credentials from pipe data, stream status:" << stream.status();
+        return false;
+    }
+
+    // Validate username to prevent command injection
+    if (!isValidUsername(username)) {
+        fmInfo() << "Invalid username provided:" << username;
+        return false;
+    }
+
+    // Decrypt password
+    QString passwdDec = dfmbase::FileUtils::decryptString(password);
+
+    // Set the password using smbpasswd
     QStringList args;
-    args << "-a" << name << "-s";
+    args << "-a" << username << "-s";
     QProcess p;
     fmInfo() << "[ShareControlDBus::SetUserSharePassword] Executing smbpasswd command for user:" << name;
     p.start("smbpasswd", args);
-    p.write(passwdDec.toStdString().c_str());
+    if (!p.waitForStarted()) {
+        fmInfo() << "Failed to start smbpasswd process";
+        return false;
+    }
+
+    p.write(passwdDec.toUtf8());
     p.write("\n");
-    p.write(passwdDec.toStdString().c_str());
+    p.write(passwdDec.toUtf8());
     p.closeWriteChannel();
+
     bool r = p.waitForFinished();
     
     if (r) {
@@ -188,5 +243,26 @@ bool ShareControlDBus::checkAuthentication()
         return false;
     }
     fmInfo() << "[ShareControlDBus::checkAuthentication] Authentication successful for action ID:" << kPolicyKitActionId;
+    return true;
+}
+
+bool ShareControlDBus::isValidUsername(const QString &username) const
+{
+    if (username.isEmpty() || username.length() > 32) {
+        return false;
+    }
+
+    // Username should only contain alphanumeric characters, underscore, and hyphen
+    // Should not start with hyphen to prevent command line parameter injection
+    static QRegularExpression kRegex("^[a-zA-Z0-9_][a-zA-Z0-9_-]*$");
+    if (!kRegex.match(username).hasMatch()) {
+        return false;
+    }
+
+    // Additional check: username should not contain sequences that could be interpreted as options
+    if (username.startsWith("-") || username.contains("--")) {
+        return false;
+    }
+
     return true;
 }
