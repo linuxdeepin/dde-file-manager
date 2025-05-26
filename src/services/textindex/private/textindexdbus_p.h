@@ -9,6 +9,7 @@
 #include "task/taskmanager.h"
 #include "textindexadaptor.h"
 #include "fsmonitor/fseventcontroller.h"
+#include "utils/textindexconfig.h"
 
 #include <FileUtils.h>
 #include <FilterIndexReader.h>
@@ -47,10 +48,17 @@ public:
     bool canSilentlyRefreshIndex(const QString &path) const;
 
 private:
+    void handleConfigChanged();
+    void initializeSupportedExtensions();
+
+private:
     TextIndexDBus *q { nullptr };
     TextIndexAdaptor *adapter { nullptr };
     TaskManager *taskManager { nullptr };
     FSEventController *fsEventController { nullptr };
+    
+    // Store current supported file extensions for comparison
+    QStringList m_currentSupportedExtensions;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
