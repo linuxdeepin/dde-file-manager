@@ -65,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <translation>Brak dostępu do pliku!</translation>
     </message>
 </context>
 <context>
@@ -6100,12 +6100,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="277"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Zakończono aktualizację indeksu, ostatnia zmiana: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="278"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Zaktualizuj indeks teraz</translation>
     </message>
 </context>
 <context>
@@ -6153,22 +6153,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="162"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się zaktualizować inteksu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="163"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>spróbuj ponownie</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Włącz, aby przeszukiwać zawartość plików. Indeksowanie potrwa parę minut</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Budowanie indeksu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="189"/>
@@ -6178,7 +6178,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="193"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Budowanie indeksu, zindeksowano %1/%2 plików</translation>
     </message>
 </context>
 <context>
@@ -6946,17 +6946,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="162"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się utworzyć klucza publicznego: Długość klucza jest zbyt duża!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="170"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się zapisać pliku RSA ciphertext: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="182"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się zapisać klucza publicznego: Klucz publiczny jest pusty.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="189"/>
