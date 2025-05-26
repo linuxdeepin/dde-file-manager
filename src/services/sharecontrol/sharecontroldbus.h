@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 class UserShareManagerAdaptor;
 class ShareControlDBus : public QObject, public QDBusContext
@@ -20,7 +21,7 @@ public:
 
 public slots:
     Q_SCRIPTABLE bool CloseSmbShareByShareName(const QString &name, bool show);
-    Q_SCRIPTABLE bool SetUserSharePassword(const QString &name, const QString &passwd);
+    Q_SCRIPTABLE bool SetUserSharePassword(const QDBusUnixFileDescriptor &credentialsFd);
     Q_SCRIPTABLE bool EnableSmbServices();
     Q_SCRIPTABLE bool IsUserSharePasswordSet(const QString &username);
 
@@ -28,6 +29,13 @@ protected:
     bool checkAuthentication();
 
 private:
+    /**
+     * @brief Validates username to prevent command injection
+     * @param username The username to validate
+     * @return true if username is safe, false otherwise
+     */
+    bool isValidUsername(const QString &username) const;
+
     UserShareManagerAdaptor *adapter = nullptr;
 };
 
