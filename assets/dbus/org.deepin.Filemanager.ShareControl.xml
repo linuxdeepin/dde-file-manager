@@ -8,8 +8,7 @@
     </method>
     <method name="SetUserSharePassword">
       <arg type="b" direction="out"/>
-      <arg name="name" type="s" direction="in"/>
-      <arg name="passwd" type="s" direction="in"/>
+      <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="EnableSmbServices">
       <arg type="b" direction="out"/>
