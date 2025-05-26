@@ -233,21 +233,26 @@ bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
 void TextIndexDBusPrivate::initializeSupportedExtensions()
 {
     m_currentSupportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
-    fmInfo() << "Initialized supported file extensions:" << m_currentSupportedExtensions.size() << "extensions";
+    fmInfo() << "Initialized supported file extensions (" << m_currentSupportedExtensions.size() << "):"
+             << m_currentSupportedExtensions;
 }
 
 void TextIndexDBusPrivate::handleConfigChanged()
 {
     const auto newSupportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
-    
-    // Check if supported file extensions have changed
-    if (m_currentSupportedExtensions != newSupportedExtensions) {
-        fmInfo() << "Supported file extensions changed from" << m_currentSupportedExtensions.size() 
+
+    // Convert to sets for order-insensitive comparison
+    const QSet<QString> currentExtensionsSet(m_currentSupportedExtensions.begin(), m_currentSupportedExtensions.end());
+    const QSet<QString> newExtensionsSet(newSupportedExtensions.begin(), newSupportedExtensions.end());
+
+    // Check if supported file extensions have changed (order-insensitive)
+    if (currentExtensionsSet != newExtensionsSet) {
+        fmInfo() << "Supported file extensions changed from" << m_currentSupportedExtensions.size()
                  << "to" << newSupportedExtensions.size() << "extensions";
-        
+
         // Update stored extensions
         m_currentSupportedExtensions = newSupportedExtensions;
-        
+
         // Trigger index update for configured directories
         const auto &configuredDirs = DFMSEARCH::Global::defaultIndexedDirectory();
         QStringList pathsToProcess;
