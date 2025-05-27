@@ -177,7 +177,7 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
 bool TextIndexClient::isSupportedTaskType(const QString &type)
 {
     static const QStringList supportedTypes = {
-        "create", "update", "create-file-list", "update-file-list", "remove-file-list"
+        "create", "update", "create-file-list", "update-file-list", "remove-file-list", "move-file-list"
     };
     return supportedTypes.contains(type);
 }
@@ -185,16 +185,17 @@ bool TextIndexClient::isSupportedTaskType(const QString &type)
 TextIndexClient::TaskType TextIndexClient::stringToTaskType(const QString &type)
 {
     static const QMap<QString, TaskType> typeMap = {
-        {"create", TaskType::Create},
-        {"update", TaskType::Update},
-        {"create-file-list", TaskType::CreateFileList},
-        {"update-file-list", TaskType::UpdateFileList},
-        {"remove-file-list", TaskType::RemoveFileList}
+        { "create", TaskType::Create },
+        { "update", TaskType::Update },
+        { "create-file-list", TaskType::CreateFileList },
+        { "update-file-list", TaskType::UpdateFileList },
+        { "remove-file-list", TaskType::RemoveFileList },
+        { "move-file-list", TaskType::MoveFileList }
     };
-    
+
     if (!typeMap.contains(type)) {
         fmWarning() << "Unknown task type string:" << type;
-        return TaskType::Create; // 默认返回类型
+        return TaskType::Create;   // 默认返回类型
     }
     return typeMap.value(type);
 }
@@ -204,9 +205,9 @@ void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &pat
     // 检查是否为支持的类型
     if (!isSupportedTaskType(type))
         return;
-    
+
     TaskType taskType = stringToTaskType(type);
-    
+
     if (success) {
         emit taskFinished(taskType, path, true);
     } else {
@@ -219,7 +220,7 @@ void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QStri
     // 检查是否为支持的类型
     if (!isSupportedTaskType(type))
         return;
-    
+
     TaskType taskType = stringToTaskType(type);
     emit taskProgressChanged(taskType, path, count, total);
 }
