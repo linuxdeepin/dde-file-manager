@@ -269,7 +269,7 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
 
 QUrl BlockEntryFileEntity::mountPoint() const
 {
-    auto mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
+    const auto &mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
     QUrl target;
 
     if (mptList.isEmpty())

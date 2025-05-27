@@ -379,9 +379,11 @@ QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
     // get system disk name if there is no alias
     if (DeviceUtils::isSystemDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return QObject::tr("System Disk");
+
+    if (DeviceUtils::isDataDisk(clearInfo.isEmpty() ? datas : clearInfo))
+        return QObject::tr("Data Disk");
+
     if (!canPowerOff && !mountPoint.isEmpty()) {
-        if (label.startsWith("_dde_data"))
-            return QObject::tr("Data Disk");
         if (label.startsWith("_dde_"))
             return datas.value(kIdLabel).toString().mid(5);
     }
@@ -737,7 +739,7 @@ bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
 
     // 检查标签是否为数据盘标识
     QString label = devInfo.value(kIdLabel).toString();
-    return label.startsWith("_dde_data");
+    return label.startsWith("_dde_data") || label.startsWith("_dde_home");
 }
 
 bool DeviceUtils::isDataDisk(const QVariantMap &devInfo)
