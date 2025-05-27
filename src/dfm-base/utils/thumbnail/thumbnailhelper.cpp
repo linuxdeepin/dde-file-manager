@@ -41,8 +41,9 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPptx), INT64_MAX);
 
-    //images
+    // images
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageIef), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageTiff), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageXTMultipage), 1024 * 1024 * 80);
@@ -111,7 +112,8 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 
     if (Q_LIKELY(mimeList.contains(Mime::kTypeAppPdf)
                  || mimeName == Mime::kTypeAppCRRMedia
-                 || mimeName == Mime::kTypeAppMxf))
+                 || mimeName == Mime::kTypeAppMxf)
+        || mimeName == Mime::kTypeAppPptx)
         return checkStatus(Application::kPreviewDocumentFile);
 
     // appimage 是可执行程序包，应该显示图标
