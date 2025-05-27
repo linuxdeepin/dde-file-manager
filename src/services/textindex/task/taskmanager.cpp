@@ -238,6 +238,56 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     return true;
 }
 
+bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, bool silent)
+{
+    if (movedFiles.isEmpty()) {
+        fmWarning() << "Cannot start file move task, moved files list is empty";
+        return false;
+    }
+
+    // 如果当前有任务在运行，将新任务加入队列
+    if (hasRunningTask() || currentTask) {
+        fmInfo() << "Task already running, queuing new file move task with" << movedFiles.size() << "files";
+
+        // 将任务加入队列
+        TaskQueueItem item;
+        item.type = IndexTask::Type::MoveFileList;
+        item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+        item.movedFiles = movedFiles;
+        item.silent = silent;
+        taskQueue.enqueue(item);
+
+        return true;
+    }
+
+    // 正常启动任务流程
+    fmInfo() << "Starting new file move task with" << movedFiles.size() << "files. "
+             << "Silent: " << silent;
+
+    // 获取对应的任务处理器
+    TaskHandler handler = TaskHandlers::MoveFileListHandler(movedFiles);
+    if (!handler) {
+        fmWarning() << "Failed to create move file list handler";
+        return false;
+    }
+
+    QString pathId = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+
+    Q_ASSERT(!currentTask);
+    currentTask = new IndexTask(IndexTask::Type::MoveFileList, pathId, handler);
+    currentTask->setSilent(silent);
+    currentTask->moveToThread(&workerThread);
+
+    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
+    workerThread.start();
+
+    emit startTaskInThread();
+    fmDebug() << "File move task started in worker thread";
+    return true;
+}
+
 TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
 {
     switch (type) {
@@ -263,6 +313,8 @@ QString TaskManager::typeToString(IndexTask::Type type)
         return "update-file-list";
     case IndexTask::Type::RemoveFileList:
         return "remove-file-list";
+    case IndexTask::Type::MoveFileList:
+        return "move-file-list";
     default:
         return "unknown";
     }
@@ -390,6 +442,10 @@ bool TaskManager::startNextTask()
         // 启动文件列表任务
         fmInfo() << "Starting next queued file list task of type: " << nextTask.type;
         return startFileListTask(nextTask.type, nextTask.fileList, nextTask.silent);
+    } else if (nextTask.type == IndexTask::Type::MoveFileList) {
+        // 启动文件移动任务
+        fmInfo() << "Starting next queued file move task";
+        return startFileMoveTask(nextTask.movedFiles, nextTask.silent);
     } else if (!nextTask.pathList.isEmpty()) {
         // 启动多路径任务
         fmInfo() << "Starting next queued multi-path task of type: " << nextTask.type << "with" << nextTask.pathList.size() << "paths";

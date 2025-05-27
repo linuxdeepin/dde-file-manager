@@ -26,6 +26,8 @@ void FSEventController::setupFSEventCollector()
             this, &FSEventController::onFilesDeleted);
     connect(m_fsEventCollector.get(), &FSEventCollector::filesModified,
             this, &FSEventController::onFilesModified);
+    connect(m_fsEventCollector.get(), &FSEventCollector::filesMoved,
+            this, &FSEventController::onFilesMoved);
     connect(m_fsEventCollector.get(), &FSEventCollector::flushFinished,
             this, &FSEventController::onFlushFinished);
 
@@ -183,6 +185,20 @@ void FSEventController::onFilesModified(const QStringList &paths)
     m_collectedModifiedFiles.append(paths);
 }
 
+void FSEventController::onFilesMoved(const QHash<QString, QString> &movedPaths)
+{
+    if (!m_enabled) {
+        return;
+    }
+
+    fmInfo() << "FS event: Files moved -" << movedPaths.size() << "items";
+    
+    // Merge the moved paths into our collection
+    for (auto it = movedPaths.constBegin(); it != movedPaths.constEnd(); ++it) {
+        m_collectedMovedFiles.insert(it.key(), it.value());
+    }
+}
+
 void FSEventController::onFlushFinished()
 {
     if (!m_enabled) {
@@ -192,16 +208,26 @@ void FSEventController::onFlushFinished()
     fmInfo() << "FS event: Flush finished, processing events";
 
     // Check if we have any events to process
-    if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty() && m_collectedDeletedFiles.isEmpty()) {
+    if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty() && 
+        m_collectedDeletedFiles.isEmpty() && m_collectedMovedFiles.isEmpty()) {
         fmInfo() << "No file system events to process";
         return;
     }
 
     fmInfo() << "Processing file changes - Created:" << m_collectedCreatedFiles.size()
              << "Modified:" << m_collectedModifiedFiles.size()
-             << "Deleted:" << m_collectedDeletedFiles.size();
+             << "Deleted:" << m_collectedDeletedFiles.size()
+             << "Moved:" << m_collectedMovedFiles.size();
 
-    emit requestProcessFileChanges(m_collectedCreatedFiles, m_collectedModifiedFiles, m_collectedDeletedFiles);
+    // Process regular file changes (create, modify, delete)
+    if (!m_collectedCreatedFiles.isEmpty() || !m_collectedModifiedFiles.isEmpty() || !m_collectedDeletedFiles.isEmpty()) {
+        emit requestProcessFileChanges(m_collectedCreatedFiles, m_collectedModifiedFiles, m_collectedDeletedFiles);
+    }
+    
+    // Process file moves separately for optimization
+    if (!m_collectedMovedFiles.isEmpty()) {
+        emit requestProcessFileMoves(m_collectedMovedFiles);
+    }
 
     clearCollections();
 }
@@ -211,6 +237,7 @@ void FSEventController::clearCollections()
     m_collectedCreatedFiles.clear();
     m_collectedDeletedFiles.clear();
     m_collectedModifiedFiles.clear();
+    m_collectedMovedFiles.clear();
 }
 
 void FSEventController::onConfigChanged()

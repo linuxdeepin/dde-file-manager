@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QSet>
 #include <QDateTime>
+#include <QHash>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -106,6 +107,9 @@ public:
     QSet<QString> createdFilesList;
     QSet<QString> deletedFilesList;
     QSet<QString> modifiedFilesList;
+    
+    // New: Track moved/renamed files separately for efficient index updates
+    QHash<QString, QString> movedFilesList; // fromPath -> toPath mapping
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

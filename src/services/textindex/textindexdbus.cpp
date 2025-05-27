@@ -44,6 +44,8 @@ void TextIndexDBusPrivate::initConnect()
 
     QObject::connect(fsEventController, &FSEventController::requestProcessFileChanges,
                      q, &TextIndexDBus::ProcessFileChanges);
+    QObject::connect(fsEventController, &FSEventController::requestProcessFileMoves,
+                     q, &TextIndexDBus::ProcessFileMoves);
     QObject::connect(fsEventController, &FSEventController::monitoring,
                      q, [this](bool start) {
                          handleMonitoring(start);
@@ -228,6 +230,21 @@ bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
     }
 
     return tasksQueued;
+}
+
+bool TextIndexDBus::ProcessFileMoves(const QHash<QString, QString> &movedFiles)
+{
+    if (movedFiles.isEmpty()) {
+        fmInfo() << "No file moves to process";
+        return false;
+    }
+
+    fmInfo() << "Processing" << movedFiles.size() << "moved files";
+    
+    // 启动文件移动任务
+    bool taskQueued = d->taskManager->startFileMoveTask(movedFiles, true);
+    
+    return taskQueued;
 }
 
 void TextIndexDBusPrivate::initializeSupportedExtensions()

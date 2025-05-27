@@ -77,18 +77,28 @@ public:
     QStringList createdFiles() const;
     QStringList deletedFiles() const;
     QStringList modifiedFiles() const;
+    
+    // Get current moved files mapping (fromPath -> toPath)
+    QHash<QString, QString> movedFiles() const;
 
     // Get current count of collected events
     int createdFilesCount() const;
     int deletedFilesCount() const;
     int modifiedFilesCount() const;
     int totalEventsCount() const;
+    
+    // Get count of moved files
+    int movedFilesCount() const;
 
 Q_SIGNALS:
     // Emitted when collection interval expires with batched events
     void filesCreated(const QStringList &paths);
     void filesDeleted(const QStringList &paths);
     void filesModified(const QStringList &paths);
+    
+    // Emitted when files/directories are moved/renamed (fromPath -> toPath mapping)
+    void filesMoved(const QHash<QString, QString> &movedPaths);
+    
     void flushFinished();
 
     // Emitted when maximum event count is reached

@@ -32,6 +32,7 @@ private Q_SLOTS:
     void onFilesCreated(const QStringList &paths);
     void onFilesDeleted(const QStringList &paths);
     void onFilesModified(const QStringList &paths);
+    void onFilesMoved(const QHash<QString, QString> &movedPaths);
     void onFlushFinished();
     void onConfigChanged();
 
@@ -42,6 +43,9 @@ Q_SIGNALS:
     void requestProcessFileChanges(const QStringList &createdFiles,
                                    const QStringList &modifiedFiles,
                                    const QStringList &deletedFiles);
+    
+    void requestProcessFileMoves(const QHash<QString, QString> &movedFiles);
+    
     void monitoring(bool start);
     void requestSlientStart();
 
@@ -58,6 +62,7 @@ private:
     QStringList m_collectedCreatedFiles;
     QStringList m_collectedDeletedFiles;
     QStringList m_collectedModifiedFiles;
+    QHash<QString, QString> m_collectedMovedFiles;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
