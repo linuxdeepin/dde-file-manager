@@ -36,7 +36,7 @@ QString getFileEncoding(const QString &filePath)
     // Check if file is a text file before detecting encoding
     QMimeDatabase mimeDb;
     QString mimeTypeName = mimeDb.mimeTypeForFile(filePath).name();
-    
+
     // Detect encoding only for text files, otherwise default to UTF-8
     if (mimeTypeName.startsWith("text/")) {
         return QString::fromUtf8(detectFileEncoding(filePath));
@@ -126,6 +126,33 @@ std::optional<QString> extractFileContent(const QString &filePath)
     }
 
     return std::nullopt;
+}
+
+Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
+                                    const Lucene::String &excludeFieldName)
+{
+    using namespace Lucene;
+    
+    if (!sourceDoc) {
+        return nullptr;
+    }
+
+    DocumentPtr newDoc = newLucene<Document>();
+    Collection<FieldablePtr> fields = sourceDoc->getFields();
+
+    for (Collection<FieldablePtr>::iterator fieldIt = fields.begin(); fieldIt != fields.end(); ++fieldIt) {
+        FieldablePtr fieldable = *fieldIt;
+        String fieldName = fieldable->name();
+
+        if (fieldName != excludeFieldName) {
+            // Copy field with original properties
+            newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
+                                         fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
+                                         fieldable->isIndexed() ? (fieldable->isTokenized() ? Field::INDEX_ANALYZED : Field::INDEX_NOT_ANALYZED) : Field::INDEX_NO));
+        }
+    }
+
+    return newDoc;
 }
 
 }   // namespace DocUtils

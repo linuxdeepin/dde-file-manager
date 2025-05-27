@@ -165,4 +165,35 @@ bool isCompatibleVersion()
 
 }   // namespace IndexUtility
 
+namespace PathCalculator {
+
+QString calculateNewPathForDirectoryMove(const QString &oldPath, 
+                                       const QString &fromDirPath, 
+                                       const QString &toDirPath)
+{
+    if (oldPath.startsWith(fromDirPath)) {
+        return toDirPath + "/" + oldPath.mid(fromDirPath.length());
+    } else if (oldPath == fromDirPath.chopped(1)) { // Remove trailing slash for comparison
+        return toDirPath;
+    }
+    return oldPath; // No change needed
+}
+
+QString normalizeDirectoryPath(const QString &dirPath)
+{
+    QString normalized = dirPath;
+    if (!normalized.endsWith('/')) {
+        normalized += '/';
+    }
+    return normalized;
+}
+
+bool isDirectoryMove(const QString &toPath)
+{
+    QFileInfo toFileInfo(toPath);
+    return toFileInfo.exists() && toFileInfo.isDir();
+}
+
+}   // namespace PathCalculator
+
 SERVICETEXTINDEX_END_NAMESPACE

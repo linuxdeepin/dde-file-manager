@@ -11,6 +11,8 @@
 
 #include <optional>
 
+#include <lucene++/LuceneHeaders.h>
+
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class DTextEncoding;
@@ -70,6 +72,15 @@ std::optional<QString> extractHtmlContent(const QString &filePath);
  * @return Encoding name (detected for text files, UTF-8 for non-text files)
  */
 QString getFileEncoding(const QString &filePath);
+
+/**
+ * @brief Copy all fields from source document except the specified excluded field
+ * @param sourceDoc Source document to copy from
+ * @param excludeFieldName Field name to exclude from copying
+ * @return New document with copied fields
+ */
+Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc, 
+                                    const Lucene::String &excludeFieldName);
 
 }   // namespace DocUtils
 
