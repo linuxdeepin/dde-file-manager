@@ -213,19 +213,22 @@ void DeviceProxyManagerPrivate::initConnection()
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
         emit q->devMngDBusRegistered();
-        qCWarning(logDFMBase) << "server dbus registered, connected to DBus...";
+        qCInfo(logDFMBase) << "Device manager DBus service registered, switching to DBus connection";
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
         devMngDBus.reset();
         connectToAPI();
         emit q->devMngDBusUnregistered();
-        qCWarning(logDFMBase) << "server dbus unregistered, connected to API...";
+        qCInfo(logDFMBase) << "Device manager DBus service unregistered, switching to direct API connection";
     });
 
-    if (isDBusRuning())
+    if (isDBusRuning()) {
+        qCInfo(logDFMBase) << "Device manager DBus service is available, connecting to DBus";
         connectToDBus();
-    else
+    } else {
+        qCInfo(logDFMBase) << "Device manager DBus service not available, connecting to API directly";
         connectToAPI();
+    }
 }
 
 void DeviceProxyManagerPrivate::initMounts()
@@ -280,7 +283,7 @@ void DeviceProxyManagerPrivate::connectToDBus()
     if (currentConnectionType == kDBusConnecting)
         return;
     if (qApp->property("SIGTERM").toBool()) {
-        qWarning() << "Current app state is SIGTERM";
+        qCWarning(logDFMBase) << "Application is in SIGTERM state, skipping DBus connection";
         return;
     }
 
@@ -320,6 +323,7 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(DevMngIns, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
 
     currentConnectionType = kDBusConnecting;
+    qCInfo(logDFMBase) << "Device proxy manager connected to DBus service successfully";
 }
 
 void DeviceProxyManagerPrivate::connectToAPI()
@@ -360,6 +364,7 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
 
     currentConnectionType = kAPIConnecting;
+    qCInfo(logDFMBase) << "Device proxy manager connected to API directly";
 
     DevMngIns->startMonitor();
 }

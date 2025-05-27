@@ -53,11 +53,13 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     if (in.isEmpty())
         return {};
     libmnt_table *tab { mnt_new_table() };
-    if (!tab)
+    if (!tab) {
+        qCWarning(logDFMBase) << "Failed to create mount table for query:" << in;
         return {};
+    }
     FinallyUtil finally { [tab]() { if (tab) mnt_free_table(tab); } };
     if (mnt_table_parse_mtab(tab, nullptr) != 0) {
-        qCWarning(logDFMBase) << "Invalid mnt_table_parse_mtab call";
+        qCWarning(logDFMBase) << "Failed to parse mount table for query:" << in;
         return {};
     }
 
@@ -68,7 +70,7 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     if (fs)
         return { get(fs) };
 
-    qCWarning(logDFMBase) << "Invalid libmnt_fs*";
+    qCWarning(logDFMBase) << "Mount info not found for:" << in;
     return {};
 }
 
@@ -616,6 +618,7 @@ QString DeviceUtils::getLongestMountRootPath(const QString &filePath)
     auto found = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
     return found != mpts.cend() ? *found : "/";
 }
+
 QString DeviceUtils::fileSystemType(const QUrl &url)
 {
     return DFMIO::DFMUtils::fsTypeFromUrl(url);
@@ -785,7 +788,7 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
-        qCWarning(logDFMBase) << "device: cannot parse mtab" << ret;
+        qCWarning(logDFMBase) << "Failed to parse mount table for DLNFS path search, return code:" << ret;
         return false;
     }
 
@@ -795,11 +798,14 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
             continue;
         if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
             QString mpt = unifyPath(mnt_fs_get_target(fs));
-            if (func(unifyPath(target), mpt))
+            if (func(unifyPath(target), mpt)) {
+                qCDebug(logDFMBase) << "DLNFS path match found - target:" << target << "mount point:" << mpt;
                 return true;
+            }
         }
     }
 
+    qCDebug(logDFMBase) << "No DLNFS path match found for target:" << target;
     return false;
 }
 

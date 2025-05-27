@@ -139,42 +139,47 @@ void SettingBackend::addSettingAccessor(const QString &key, GetOptFunc get, Save
     if (set)
         d->setters.insert(key, set);
     else
-        qCInfo(logDFMBase) << "null setter function is passed for key: " << key;
+        qCWarning(logDFMBase) << "Null setter function provided for setting key:" << key;
     if (get)
         d->getters.insert(key, get);
     else
-        qCInfo(logDFMBase) << "null getter function is passed for key: " << key;
+        qCWarning(logDFMBase) << "Null getter function provided for setting key:" << key;
+    
+    qCDebug(logDFMBase) << "Setting accessor added for key:" << key;
 }
 
 void SettingBackend::removeSettingAccessor(const QString &key)
 {
     if (!d->setters.contains(key) || !d->getters.contains(key)) {
-        qCWarning(logDFMBase) << "Invalid key, cannot remove!";
+        qCWarning(logDFMBase) << "Cannot remove setting accessor - key not found:" << key;
         return;
     }
 
     d->setters.remove(key);
     d->getters.remove(key);
+    qCDebug(logDFMBase) << "Setting accessor removed for key:" << key;
 }
 
 void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToAA.containsValue(attr)) {
-        qCWarning(logDFMBase) << "NO mapped for ApplicationAttr::" << attr;
+        qCWarning(logDFMBase) << "No UI key mapping found for ApplicationAttribute:" << static_cast<int>(attr);
         return;
     }
     auto uiKey = d->keyToAA.key(attr);
     addSettingAccessor(uiKey, nullptr, set);
+    qCDebug(logDFMBase) << "Setting accessor added for ApplicationAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
 void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToGA.containsValue(attr)) {
-        qCWarning(logDFMBase) << "NO map for GenericAttr::" << attr;
+        qCWarning(logDFMBase) << "No UI key mapping found for GenericAttribute:" << static_cast<int>(attr);
         return;
     }
     auto uiKey = d->keyToGA.key(attr);
     addSettingAccessor(uiKey, nullptr, set);
+    qCDebug(logDFMBase) << "Setting accessor added for GenericAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
 void SettingBackend::addToSerialDataKey(const QString &key)

@@ -71,7 +71,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
 {
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "Failed to create block device:" << id;
         return QVariantMap();
     }
     return loadBlockInfo(dev);
@@ -174,7 +174,7 @@ QVariantMap DeviceHelper::loadProtocolInfo(const QString &id)
 {
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "Failed to create protocol device:" << id;
         return {};
     }
     return loadProtocolInfo(dev);
@@ -303,7 +303,7 @@ void DeviceHelper::openFileManagerToDevice(const QString &blkId, const QString &
         //            mountPoint = QString("burn:///dev/%1/disc_files/").arg(blkId.mid(blkId.lastIndexOf("/") + 1));
         //        }
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountPoint });
-        qCInfo(logDFMBase) << "open by dde-file-manager: " << mountPoint;
+        qCInfo(logDFMBase) << "Opened device in file manager - device:" << blkId << "mount point:" << mountPoint;
         return;
     }
 
@@ -349,7 +349,9 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
 
-    qCDebug(logDFMBase) << "optical usage persistented: " << datas;
+    qCDebug(logDFMBase) << "Optical device usage info persisted for device:" << tag
+                        << "total size:" << info[kBurnTotalSize].toULongLong()
+                        << "used size:" << info[kBurnUsedSize].toULongLong();
 }
 
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
@@ -364,13 +366,6 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
         datas[DeviceProperty::kSizeFree] = datas[DeviceProperty::kSizeTotal].toULongLong() - datas[DeviceProperty::kSizeUsed].toULongLong();
         datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
         datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
-
-        qCDebug(logDFMBase) << "optical usage loaded: " << tag << "\n"
-                            << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << "\n"
-                            << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << "\n"
-                            << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << "\n"
-                            << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
-                            << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
 }
 
@@ -387,16 +382,16 @@ bool DeviceHelper::checkNetworkConnection(const QString &id)
             return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
                                [host](const QString &port) {
                                    bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
-                                   qCDebug(logDFMBase) << "checking network connection of" << host
-                                                       << "at" << port
-                                                       << connected;
+                                   qCDebug(logDFMBase) << "Network connection check for host:" << host
+                                                       << "port:" << port
+                                                       << "result:" << connected;
                                    return connected;
                                });
         }
         return NetworkUtils::instance()->checkNetConnection(host, port);
     }
 
-    qCWarning(logDFMBase) << "cannot parse host and port of" << id;
+    qCWarning(logDFMBase) << "Failed to parse host and port from device ID:" << id;
     return true;
 }
 
