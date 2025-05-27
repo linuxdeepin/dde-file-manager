@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QDBusContext>
 #include <QStringList>
+#include <QHash>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 class TextIndexDBusPrivate;
@@ -37,6 +38,7 @@ public Q_SLOTS:
     bool IndexDatabaseExists();
     QString GetLastUpdateTime();
     bool ProcessFileChanges(const QStringList &createdFiles, const QStringList &modifiedFiles, const QStringList &deletedFiles);
+    bool ProcessFileMoves(const QHash<QString, QString> &movedFiles);
 
 Q_SIGNALS:
     void TaskFinished(const QString &type, const QString &path, bool success);

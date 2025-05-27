@@ -39,6 +39,7 @@ TaskHandler RemoveFileListHandler(const QStringList &fileList);   // 待实现�
 // 创建文件提供者
 std::unique_ptr<FileProvider> createFileProvider(const QString &path);
 std::unique_ptr<FileProvider> createFileListProvider(const QStringList &fileList);
+TaskHandler MoveFileListHandler(const QHash<QString, QString> &movedFiles);
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

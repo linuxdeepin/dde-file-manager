@@ -113,6 +113,7 @@ bool FSEventCollectorPrivate::startCollecting()
     createdFilesList.clear();
     deletedFilesList.clear();
     modifiedFilesList.clear();
+    movedFilesList.clear();
 
     // Start the FSMonitor
     if (!fsMonitor.start()) {
@@ -152,6 +153,7 @@ void FSEventCollectorPrivate::stopCollecting()
     createdFilesList.clear();
     deletedFilesList.clear();
     modifiedFilesList.clear();
+    movedFilesList.clear();
 
     logDebug("Stopped event collection");
 }
@@ -326,9 +328,59 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
         return;
     }
 
-    // Regular move within monitored directories
-    handleFileDeleted(fromPath, fromName);
-    handleFileCreated(toPath, toName);
+    // Regular move within monitored directories - optimize for rename operations
+    QString fullFromPath = normalizePath(fromPath, fromName);
+    QString fullToPath = normalizePath(toPath, toName);
+
+    // Skip if max event count exceeded
+    if (isMaxEventCountExceeded()) {
+        return;
+    }
+
+    // Only track moves for files that should be indexed
+    if (!shouldIndexFile(fullFromPath) && !shouldIndexFile(fullToPath)) {
+        logError(QString("Skipped move tracking for unsupported file types: %1 -> %2").arg(fullFromPath, fullToPath));
+        return;
+    }
+
+    // Check if this is a move that conflicts with existing operations
+    bool hasConflict = false;
+
+    // If the source was in created list, remove it and treat as a pure creation at new location
+    if (createdFilesList.contains(fullFromPath)) {
+        createdFilesList.remove(fullFromPath);
+        if (shouldIndexFile(fullToPath)) {
+            createdFilesList.insert(fullToPath);
+            logDebug(QString("Converted move to creation (source was newly created): %1 -> %2").arg(fullFromPath, fullToPath));
+        }
+        hasConflict = true;
+    }
+
+    // If the source was in modified list, remove it since it's being moved
+    if (modifiedFilesList.contains(fullFromPath)) {
+        modifiedFilesList.remove(fullFromPath);
+        logDebug(QString("Removed from modified list due to move: %1").arg(fullFromPath));
+    }
+
+    // If destination already exists in any list, we have a conflict - fall back to delete+create
+    if (createdFilesList.contains(fullToPath) || deletedFilesList.contains(fullToPath) || modifiedFilesList.contains(fullToPath) || movedFilesList.contains(fullToPath)) {
+        logError(QString("Move conflict detected, falling back to delete+create: %1 -> %2").arg(fullFromPath, fullToPath));
+        handleFileDeleted(fromPath, fromName);
+        handleFileCreated(toPath, toName);
+        return;
+    }
+
+    // If no conflicts, track as a move operation for efficient index update
+    if (!hasConflict) {
+        movedFilesList.insert(fullFromPath, fullToPath);
+        logDebug(QString("Added to moved list: %1 -> %2").arg(fullFromPath, fullToPath));
+
+        // Check if max event count exceeded after adding
+        if (isMaxEventCountExceeded()) {
+            flushCollectedEvents();
+            Q_EMIT q_ptr->maxEventCountReached(maxEvents);
+        }
+    }
 }
 
 void FSEventCollectorPrivate::handleDirectoryCreated(const QString &path, const QString &name)
@@ -356,17 +408,20 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     QStringList created = createdFilesList.values();
     QStringList deleted = deletedFilesList.values();
     QStringList modified = modifiedFilesList.values();
+    QHash<QString, QString> moved = movedFilesList;
 
     // Clear the internal sets for next collection period
     createdFilesList.clear();
     deletedFilesList.clear();
     modifiedFilesList.clear();
+    movedFilesList.clear();
 
     // Log statistics
-    logDebug(QString("Flushing events - Created: %1, Deleted: %2, Modified: %3")
+    logDebug(QString("Flushing events - Created: %1, Deleted: %2, Modified: %3, Moved: %4")
                      .arg(created.size())
                      .arg(deleted.size())
-                     .arg(modified.size()));
+                     .arg(modified.size())
+                     .arg(moved.size()));
 
     // Emit signals with collected events (only if not empty)
     if (!created.isEmpty()) {
@@ -379,6 +434,10 @@ void FSEventCollectorPrivate::flushCollectedEvents()
 
     if (!modified.isEmpty()) {
         Q_EMIT q_ptr->filesModified(modified);
+    }
+
+    if (!moved.isEmpty()) {
+        Q_EMIT q_ptr->filesMoved(moved);
     }
 
     Q_EMIT q_ptr->flushFinished();
@@ -492,7 +551,7 @@ void FSEventCollectorPrivate::cleanupRedundantEntries()
 
 bool FSEventCollectorPrivate::isMaxEventCountExceeded() const
 {
-    int total = createdFilesList.size() + deletedFilesList.size() + modifiedFilesList.size();
+    int total = createdFilesList.size() + deletedFilesList.size() + modifiedFilesList.size() + movedFilesList.size();
     return total >= maxEvents;
 }
 
@@ -634,6 +693,7 @@ void FSEventCollector::clearEvents()
     d->createdFilesList.clear();
     d->deletedFilesList.clear();
     d->modifiedFilesList.clear();
+    d->movedFilesList.clear();
 
     d->logDebug("Cleared all collected events");
 }
@@ -659,6 +719,13 @@ QStringList FSEventCollector::modifiedFiles() const
     return d->modifiedFilesList.values();
 }
 
+QHash<QString, QString> FSEventCollector::movedFiles() const
+{
+    Q_D(const FSEventCollector);
+
+    return d->movedFilesList;
+}
+
 int FSEventCollector::createdFilesCount() const
 {
     Q_D(const FSEventCollector);
@@ -680,11 +747,18 @@ int FSEventCollector::modifiedFilesCount() const
     return d->modifiedFilesList.size();
 }
 
+int FSEventCollector::movedFilesCount() const
+{
+    Q_D(const FSEventCollector);
+
+    return d->movedFilesList.size();
+}
+
 int FSEventCollector::totalEventsCount() const
 {
     Q_D(const FSEventCollector);
 
-    return d->createdFilesList.size() + d->deletedFilesList.size() + d->modifiedFilesList.size();
+    return d->createdFilesList.size() + d->deletedFilesList.size() + d->modifiedFilesList.size() + d->movedFilesList.size();
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

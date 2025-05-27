@@ -21,6 +21,7 @@ struct TaskQueueItem
     QString path;
     QStringList pathList;   // 当传入多个路径时使用
     QStringList fileList;   // 仅在文件列表类型任务中使用
+    QHash<QString, QString> movedFiles;  // 仅在移动任务中使用 (fromPath -> toPath)
     bool silent { false };
 };
 
@@ -35,6 +36,8 @@ public:
     bool startTask(IndexTask::Type type, const QString &path, bool silent = false);
 
     bool startFileListTask(IndexTask::Type type, const QStringList &fileList, bool silent = false);
+
+    bool startFileMoveTask(const QHash<QString, QString> &movedFiles, bool silent = false);
 
     bool hasRunningTask() const;
     void stopCurrentTask();

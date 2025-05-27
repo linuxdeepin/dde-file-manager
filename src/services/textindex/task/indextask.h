@@ -23,7 +23,8 @@ public:
         Update,   // 更新索引
         CreateFileList,   // 基于文件列表创建索引
         UpdateFileList,   // 基于文件列表更新索引
-        RemoveFileList   // 基于文件列表删除索引
+        RemoveFileList,   // 基于文件列表删除索引
+        MoveFileList   // 基于文件移动列表更新索引路径
     };
     Q_ENUM(Type)
 
