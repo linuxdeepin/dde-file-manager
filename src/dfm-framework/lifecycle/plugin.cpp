@@ -12,6 +12,7 @@ DPF_USE_NAMESPACE
  */
 void Plugin::initialize()
 {
+    qCDebug(logDPF) << "Plugin::initialize: default implementation called";
 }
 
 /*!
@@ -19,4 +20,5 @@ void Plugin::initialize()
  */
 void Plugin::stop()
 {
+    qCDebug(logDPF) << "Plugin::stop: default implementation called";
 }

@@ -25,8 +25,10 @@ namespace backtrace {
  */
 static std::string demangle(void *value)
 {
-    if (!value)
+    if (!value) {
+        qCDebug(logDPF) << "Demangle: null pointer provided";
         return "";
+    }
 
     std::ostringstream ostream;
     ostream.imbue(std::locale::classic());
@@ -34,6 +36,7 @@ static std::string demangle(void *value)
     Dl_info info = { nullptr, nullptr, nullptr, nullptr };
     if (dladdr(value, &info) == 0) {
         ostream << "???";
+        qCDebug(logDPF) << "Demangle: failed to get symbol info for address" << value;
     } else {
         if (info.dli_sname) {
             int status = 0;
@@ -43,6 +46,7 @@ static std::string demangle(void *value)
                 free(demangledName);
             } else {
                 ostream << info.dli_sname;
+                qCDebug(logDPF) << "Demangle: failed to demangle symbol" << info.dli_sname << "status:" << status;
             }
         } else {
             ostream << "???";
@@ -59,6 +63,7 @@ static std::string demangle(void *value)
 
 static void printStack(void *frames[], int numFrames)
 {
+    qCInfo(logDPF) << "Printing stack trace with" << numFrames << "frames";
     for (int i = 0; i < numFrames; ++i) {
         const std::string &stackInfo = demangle(frames[i]);
         qCCritical(logDPF, "* %d>  %s", i, stackInfo.data());
@@ -71,6 +76,7 @@ static void printStack(int firstFramesToSkip)
     void *frames[kMaxFrames];
 
     auto numFrames = ::backtrace(frames, kMaxFrames);
+    qCDebug(logDPF) << "Captured" << numFrames << "frames, skipping first" << firstFramesToSkip;
     printStack(&frames[firstFramesToSkip], numFrames - firstFramesToSkip);
 }
 
@@ -109,6 +115,7 @@ static void stackTraceHandler(int sig)
             "==> by TSAN output.)\n");
 #endif
 
+    qCInfo(logDPF) << "Re-raising signal" << sig << "to default handler";
     // re-signal to default handler (so we still get core dump if needed...)
     raise(sig);
 }
@@ -121,14 +128,18 @@ void installStackTraceHandler()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
+        qCInfo(logDPF) << "Installing stack trace signal handlers";
         // just use the plain old signal as it's simple and sufficient
         // for this use case
         signal(SIGSEGV, stackTraceHandler);
+        qCDebug(logDPF) << "Registered SIGSEGV handler";
 #ifdef DPF_FULLSIG_STRACE_ENABLE
         signal(SIGINT, stackTraceHandler);
         signal(SIGBUS, stackTraceHandler);
         signal(SIGABRT, stackTraceHandler);
+        qCDebug(logDPF) << "Registered additional signal handlers: SIGINT, SIGBUS, SIGABRT";
 #endif
+        qCInfo(logDPF) << "Stack trace signal handlers installation completed";
     });
 }
 }   // namespace backtrace

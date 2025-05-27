@@ -11,51 +11,74 @@ DPF_USE_NAMESPACE
 PluginManager::PluginManager()
     : d(new PluginManagerPrivate(this))
 {
+    qCDebug(logDPF) << "PluginManager: instance created";
 }
 
 void PluginManager::addPluginIID(const QString &pluginIID)
 {
-    if (d->pluginLoadIIDs.contains(pluginIID))
+    if (d->pluginLoadIIDs.contains(pluginIID)) {
+        qCDebug(logDPF) << "PluginManager: IID already exists:" << pluginIID;
         return;
+    }
     d->pluginLoadIIDs.push_back(pluginIID);
+    qCDebug(logDPF) << "PluginManager: added IID:" << pluginIID;
 }
 
 void PluginManager::addBlackPluginName(const QString &name)
 {
-    if (!d->blackPluginNames.contains(name))
+    if (!d->blackPluginNames.contains(name)) {
         d->blackPluginNames.push_back(name);
+        qCDebug(logDPF) << "PluginManager: added to blacklist:" << name;
+    } else {
+        qCDebug(logDPF) << "PluginManager: plugin already in blacklist:" << name;
+    }
 }
 
 void PluginManager::addLazyLoadPluginName(const QString &name)
 {
-    if (!d->lazyLoadPluginNames.contains(name))
+    if (!d->lazyLoadPluginNames.contains(name)) {
         d->lazyLoadPluginNames.push_back(name);
+        qCDebug(logDPF) << "PluginManager: added to lazy load list:" << name;
+    } else {
+        qCDebug(logDPF) << "PluginManager: plugin already in lazy load list:" << name;
+    }
 }
 
 void PluginManager::setQtVersionInsensitivePluginNames(const QStringList &names)
 {
     d->qtVersionInsensitivePluginNames = names;
+    qCInfo(logDPF) << "PluginManager: set" << names.size() << "Qt version insensitive plugins";
 }
 
 void PluginManager::setPluginPaths(const QStringList &pluginPaths)
 {
     d->pluginLoadPaths = pluginPaths;
+    qCInfo(logDPF) << "PluginManager: set" << pluginPaths.size() << "plugin paths";
+    qCDebug(logDPF) << "PluginManager: plugin paths:" << pluginPaths;
 }
 
 void PluginManager::setLazyLoadFilter(std::function<bool(const QString &)> filter)
 {
     d->lazyPluginFilter = filter;
+    qCDebug(logDPF) << "PluginManager: lazy load filter set";
 }
 
 void PluginManager::setBlackListFilter(std::function<bool(const QString &)> filter)
 {
     d->blackListFilter = filter;
+    qCDebug(logDPF) << "PluginManager: blacklist filter set";
 }
 
 PluginMetaObjectPointer PluginManager::pluginMetaObj(const QString &pluginName, const QString version) const
 {
     Q_UNUSED(version)
-    return d->pluginMetaObj(pluginName);
+    PluginMetaObjectPointer result = d->pluginMetaObj(pluginName);
+    if (result) {
+        qCDebug(logDPF) << "PluginManager: found plugin meta object:" << pluginName;
+    } else {
+        qCDebug(logDPF) << "PluginManager: plugin meta object not found:" << pluginName;
+    }
+    return result;
 }
 
 bool PluginManager::loadPlugin(PluginMetaObjectPointer &pointer)
