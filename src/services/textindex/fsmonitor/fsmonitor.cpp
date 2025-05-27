@@ -511,8 +511,10 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
         watchedDirectories.remove(fullPath);
     } else {
         // Regular file deleted
-        logDebug(QString("File deleted: %1/%2").arg(path, name));
-        Q_EMIT q_ptr->fileDeleted(path, name);
+        if (!name.isEmpty()) {
+            logDebug(QString("File deleted: %1/%2").arg(path, name));
+            Q_EMIT q_ptr->fileDeleted(path, name);
+        }
     }
 }
 
