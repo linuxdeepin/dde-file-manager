@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -28,7 +28,7 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
         if (!searchResult || searchResult->totalHits == 0) {
             fmDebug() << "File not found in index, skipping:" << fromPath;
-            return true; // Not an error, file might not be indexed
+            return true;   // Not an error, file might not be indexed
         }
 
         DocumentPtr doc = m_searcher->doc(searchResult->scoreDocs[0]->doc);
@@ -65,9 +65,9 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
 }
 
 // DirectoryMoveProcessor implementation
-DirectoryMoveProcessor::DirectoryMoveProcessor(const SearcherPtr &searcher, 
-                                             const IndexWriterPtr &writer, 
-                                             const IndexReaderPtr &reader)
+DirectoryMoveProcessor::DirectoryMoveProcessor(const SearcherPtr &searcher,
+                                               const IndexWriterPtr &writer,
+                                               const IndexReaderPtr &reader)
     : m_searcher(searcher), m_writer(writer), m_reader(reader)
 {
 }
@@ -86,7 +86,7 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
         TopDocsPtr allDocs = m_searcher->search(prefixQuery, m_reader->maxDoc());
         if (!allDocs || allDocs->totalHits == 0) {
             fmDebug() << "No documents found for directory move:" << fromPath;
-            return true; // Not an error, directory might be empty or not indexed
+            return true;   // Not an error, directory might be empty or not indexed
         }
 
         fmInfo() << "Found" << allDocs->totalHits << "documents to update for directory move:" << fromPath;
@@ -94,7 +94,7 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
         // Batch update all matching documents
         for (int32_t i = 0; i < allDocs->totalHits; ++i) {
             if (!running.isRunning()) {
-                return false; // Interrupted
+                return false;   // Interrupted
             }
 
             if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
@@ -123,9 +123,9 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
     }
 }
 
-bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc, 
-                                                     const QString &normalizedFromPath, 
-                                                     const QString &toPath)
+bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
+                                                      const QString &normalizedFromPath,
+                                                      const QString &toPath)
 {
     try {
         String oldPathValue = doc->get(L"path");
@@ -133,9 +133,9 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
 
         // Calculate new path
         QString newPath = PathCalculator::calculateNewPathForDirectoryMove(oldPath, normalizedFromPath, toPath);
-        
+
         if (newPath == oldPath) {
-            return true; // No change needed
+            return true;   // No change needed
         }
 
         // Create new document with updated path
@@ -158,4 +158,4 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
         fmWarning() << "Failed to update single document path:" << e.what();
         return false;
     }
-} 
+}

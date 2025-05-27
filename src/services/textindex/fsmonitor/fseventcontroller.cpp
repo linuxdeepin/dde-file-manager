@@ -192,7 +192,7 @@ void FSEventController::onFilesMoved(const QHash<QString, QString> &movedPaths)
     }
 
     fmInfo() << "FS event: Files moved -" << movedPaths.size() << "items";
-    
+
     // Merge the moved paths into our collection
     for (auto it = movedPaths.constBegin(); it != movedPaths.constEnd(); ++it) {
         m_collectedMovedFiles.insert(it.key(), it.value());
@@ -208,8 +208,8 @@ void FSEventController::onFlushFinished()
     fmInfo() << "FS event: Flush finished, processing events";
 
     // Check if we have any events to process
-    if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty() && 
-        m_collectedDeletedFiles.isEmpty() && m_collectedMovedFiles.isEmpty()) {
+    if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty()
+        && m_collectedDeletedFiles.isEmpty() && m_collectedMovedFiles.isEmpty()) {
         fmInfo() << "No file system events to process";
         return;
     }
@@ -219,14 +219,14 @@ void FSEventController::onFlushFinished()
              << "Deleted:" << m_collectedDeletedFiles.size()
              << "Moved:" << m_collectedMovedFiles.size();
 
-    // Process regular file changes (create, modify, delete)
-    if (!m_collectedCreatedFiles.isEmpty() || !m_collectedModifiedFiles.isEmpty() || !m_collectedDeletedFiles.isEmpty()) {
-        emit requestProcessFileChanges(m_collectedCreatedFiles, m_collectedModifiedFiles, m_collectedDeletedFiles);
-    }
-    
     // Process file moves separately for optimization
     if (!m_collectedMovedFiles.isEmpty()) {
         emit requestProcessFileMoves(m_collectedMovedFiles);
+    }
+
+    // Process regular file changes (create, modify, delete)
+    if (!m_collectedCreatedFiles.isEmpty() || !m_collectedModifiedFiles.isEmpty() || !m_collectedDeletedFiles.isEmpty()) {
+        emit requestProcessFileChanges(m_collectedCreatedFiles, m_collectedModifiedFiles, m_collectedDeletedFiles);
     }
 
     clearCollections();
@@ -243,17 +243,17 @@ void FSEventController::clearCollections()
 void FSEventController::onConfigChanged()
 {
     const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
-    
+
     if (newIntervalSecs != m_collectorIntervalSecs) {
-        fmInfo() << "FSEventController: Collection interval changed from" 
+        fmInfo() << "FSEventController: Collection interval changed from"
                  << m_collectorIntervalSecs << "to" << newIntervalSecs << "seconds";
-        
+
         m_collectorIntervalSecs = newIntervalSecs;
-        
+
         // Update the collector's interval if it exists
         if (m_fsEventCollector) {
             m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
-            fmInfo() << "FSEventController: Updated FSEventCollector collection interval to" 
+            fmInfo() << "FSEventController: Updated FSEventCollector collection interval to"
                      << m_collectorIntervalSecs << "seconds";
         }
     }
