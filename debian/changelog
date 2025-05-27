@@ -1,3 +1,9 @@
+dde-file-manager (6.5.55) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 27 May 2025 20:43:59 +0800
+
 dde-file-manager (6.5.54) unstable; urgency=medium
 
   * remove libutpm2
