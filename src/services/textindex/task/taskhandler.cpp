@@ -5,6 +5,7 @@
 #include "taskhandler.h"
 #include "fileprovider.h"
 #include "progressnotifier.h"
+#include "moveprocessor.h"
 #include "utils/scopeguard.h"
 #include "utils/docutils.h"
 #include "utils/indexutility.h"
@@ -882,6 +883,11 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
 
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
 
+            // Create processors for different move types using the new separate classes
+            FileMoveProcessor fileMoveProcessor(searcher, writer);
+            DirectoryMoveProcessor directoryMoveProcessor(searcher, writer, reader);
+
+            // Process each move operation
             for (auto it = movedFiles.constBegin(); it != movedFiles.constEnd(); ++it) {
                 if (!running.isRunning()) {
                     result.interrupted = true;
@@ -891,128 +897,16 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
                 const QString &fromPath = it.key();
                 const QString &toPath = it.value();
 
-                // 检查是否是目录移动（通过检查是否存在子路径）
-                bool isDirectoryMove = false;
-                QFileInfo toFileInfo(toPath);
-                if (toFileInfo.exists() && toFileInfo.isDir()) {
-                    isDirectoryMove = true;
+                bool success = false;
+                if (PathCalculator::isDirectoryMove(toPath)) {
+                    success = directoryMoveProcessor.processDirectoryMove(fromPath, toPath, running);
+                } else {
+                    success = fileMoveProcessor.processFileMove(fromPath, toPath);
                 }
 
-                if (isDirectoryMove) {
-                    // 目录移动：使用前缀查询找到所有子文件并批量更新
-                    fmDebug() << "Processing directory move:" << fromPath << "->" << toPath;
-
-                    QString normalizedFromPath = fromPath;
-                    if (!normalizedFromPath.endsWith('/')) {
-                        normalizedFromPath += '/';
-                    }
-
-                    // 创建前缀查询，查找所有以该目录路径开头的文档
-                    PrefixQueryPtr prefixQuery = newLucene<PrefixQuery>(
-                            newLucene<Term>(L"path", normalizedFromPath.toStdWString()));
-
-                    TopDocsPtr allDocs = searcher->search(prefixQuery, reader->maxDoc());
-                    if (allDocs && allDocs->totalHits > 0) {
-                        fmInfo() << "Found" << allDocs->totalHits << "documents to update for directory move:" << fromPath;
-
-                        // 批量更新所有匹配的文档
-                        for (int32_t i = 0; i < allDocs->totalHits; ++i) {
-                            if (!running.isRunning()) {
-                                result.interrupted = true;
-                                break;
-                            }
-
-                            if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
-                                continue;
-                            }
-
-                            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
-                            if (!doc) {
-                                continue;
-                            }
-
-                            String oldPathValue = doc->get(L"path");
-                            QString oldPath = QString::fromStdWString(oldPathValue);
-
-                            // 计算新路径
-                            QString newPath = oldPath;
-                            if (oldPath.startsWith(normalizedFromPath)) {
-                                newPath = toPath + "/" + oldPath.mid(normalizedFromPath.length());
-                            } else if (oldPath == fromPath) {
-                                newPath = toPath;
-                            }
-
-                            if (newPath != oldPath) {
-                                // 创建新文档，复制所有字段但更新路径
-                                DocumentPtr newDoc = newLucene<Document>();
-                                
-                                // 复制除路径外的所有字段
-                                Collection<FieldablePtr> fields = doc->getFields();
-                                for (Collection<FieldablePtr>::iterator fieldIt = fields.begin(); fieldIt != fields.end(); ++fieldIt) {
-                                    FieldablePtr fieldable = *fieldIt;
-                                    String fieldName = fieldable->name();
-                                    
-                                    if (fieldName != L"path") {
-                                        // 复制其他字段
-                                        newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
-                                                                   fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
-                                                                   fieldable->isIndexed() ? (fieldable->isTokenized() ? Field::INDEX_ANALYZED : Field::INDEX_NOT_ANALYZED) : Field::INDEX_NO));
-                                    }
-                                }
-
-                                // 添加新的路径字段
-                                newDoc->add(newLucene<Field>(L"path", newPath.toStdWString(),
-                                                             Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-                                // 删除旧文档并添加新文档
-                                TermPtr oldTerm = newLucene<Term>(L"path", oldPathValue);
-                                writer->updateDocument(oldTerm, newDoc);
-
-                                fmDebug() << "Updated document path:" << oldPath << "->" << newPath;
-                            }
-                        }
-                    }
-                } else {
-                    // 文件移动：直接更新单个文档
-                    fmDebug() << "Processing file move:" << fromPath << "->" << toPath;
-
-                    TermQueryPtr pathQuery = newLucene<TermQuery>(
-                            newLucene<Term>(L"path", fromPath.toStdWString()));
-
-                    TopDocsPtr result = searcher->search(pathQuery, 1);
-                    if (result && result->totalHits > 0) {
-                        DocumentPtr doc = searcher->doc(result->scoreDocs[0]->doc);
-                        if (doc) {
-                            // 创建新文档，复制所有字段但更新路径
-                            DocumentPtr newDoc = newLucene<Document>();
-                            
-                            // 复制除路径外的所有字段
-                            Collection<FieldablePtr> fields = doc->getFields();
-                            for (Collection<FieldablePtr>::iterator fieldIt = fields.begin(); fieldIt != fields.end(); ++fieldIt) {
-                                FieldablePtr fieldable = *fieldIt;
-                                String fieldName = fieldable->name();
-                                
-                                if (fieldName != L"path") {
-                                    // 复制其他字段
-                                    newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
-                                                               fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
-                                                               fieldable->isIndexed() ? (fieldable->isTokenized() ? Field::INDEX_ANALYZED : Field::INDEX_NOT_ANALYZED) : Field::INDEX_NO));
-                                }
-                            }
-
-                            // 添加新的路径字段
-                            newDoc->add(newLucene<Field>(L"path", toPath.toStdWString(),
-                                                         Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-                            // 更新文档
-                            TermPtr oldTerm = newLucene<Term>(L"path", fromPath.toStdWString());
-                            writer->updateDocument(oldTerm, newDoc);
-
-                            fmDebug() << "Updated file document path:" << fromPath << "->" << toPath;
-                        }
-                    } else {
-                        fmDebug() << "File not found in index, skipping:" << fromPath;
-                    }
+                if (!success && !running.isRunning()) {
+                    result.interrupted = true;
+                    break;
                 }
 
                 reporter.increment();

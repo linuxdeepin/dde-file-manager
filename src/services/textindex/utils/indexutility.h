@@ -25,6 +25,35 @@ void saveIndexStatus(const QDateTime &lastUpdateTime, int version);
 
 }   // namespace IndexUtility
 
+namespace PathCalculator {
+
+/**
+ * @brief Calculate new path for directory move operation
+ * @param oldPath Original file path
+ * @param fromDirPath Source directory path (normalized with trailing slash)
+ * @param toDirPath Target directory path
+ * @return New calculated path
+ */
+QString calculateNewPathForDirectoryMove(const QString &oldPath, 
+                                       const QString &fromDirPath, 
+                                       const QString &toDirPath);
+
+/**
+ * @brief Normalize directory path by ensuring it ends with '/'
+ * @param dirPath Directory path to normalize
+ * @return Normalized directory path
+ */
+QString normalizeDirectoryPath(const QString &dirPath);
+
+/**
+ * @brief Detect if the move operation is a directory move
+ * @param toPath Target path to check
+ * @return true if it's a directory move, false for file move
+ */
+bool isDirectoryMove(const QString &toPath);
+
+}   // namespace PathCalculator
+
 SERVICETEXTINDEX_END_NAMESPACE
 
 #endif   // INDEXUTILITY_H
