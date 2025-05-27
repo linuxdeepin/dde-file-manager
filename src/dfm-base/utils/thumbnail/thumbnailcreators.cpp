@@ -194,8 +194,8 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
 
     const QSize &imageSize = reader.size();
 
-    //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
-    //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
+    // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
+    // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
     if (!imageSize.isValid()) {
         qCWarning(logDFMBase) << "thumbnail: fail to read image file attribute data." << filePath;
         return {};
@@ -368,4 +368,70 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
         qCWarning(logDFMBase) << "Failed to find icon in AppImage:" << filePath;
 
     return icon;
+}
+
+QImage ThumbnailCreators::pptxThumbnailCreator(const QString &filePath, ThumbnailSize size)
+{
+    qCInfo(logDFMBase) << "Creating PPTX thumbnail for:" << filePath;
+
+    // 1. 验证文件存在
+    if (!QFile::exists(filePath)) {
+        qCWarning(logDFMBase) << "PPTX file not found:" << filePath;
+        return QImage();
+    }
+
+    // 2. 验证文件类型
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
+                                              Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppPptx) {
+        qCWarning(logDFMBase) << "File is not a valid PPTX file:" << filePath
+                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null");
+        return QImage();
+    }
+
+    // 3. 创建临时目录用于解压 PPTX 文件
+    QTemporaryDir tempDir;
+    if (!tempDir.isValid()) {
+        qCWarning(logDFMBase) << "Cannot create temporary directory for PPTX extraction. Error:" << tempDir.errorString()
+                              << "File:" << filePath;
+        return QImage();
+    }
+
+    const QString extractPath = tempDir.path();
+    qCDebug(logDFMBase) << "Extracting PPTX to temporary directory:" << extractPath;
+
+    // 4. 使用 unzip 命令解压 PPTX 文件
+    QProcess unzipProcess;
+    QStringList arguments;
+    arguments << "-q"
+              << "-o" << filePath << "-d" << extractPath;
+    unzipProcess.start("unzip", arguments);
+
+    if (!unzipProcess.waitForFinished(10000) || unzipProcess.exitCode() != 0) {
+        qCWarning(logDFMBase) << "Failed to extract PPTX file:" << filePath
+                              << "Error:" << unzipProcess.errorString()
+                              << "Exit code:" << unzipProcess.exitCode();
+        return QImage();
+    }
+
+    qCInfo(logDFMBase) << "Successfully extracted PPTX file:" << filePath;
+
+    // 5. 查找内置缩略图 docProps/thumbnail.jpeg
+    QString thumbnailPath = extractPath + "/docProps/thumbnail.jpeg";
+    if (QFile::exists(thumbnailPath)) {
+        qCDebug(logDFMBase) << "Found thumbnail.jpeg in docProps:" << thumbnailPath;
+        QImage thumbnail;
+        if (thumbnail.load(thumbnailPath)) {
+            qCDebug(logDFMBase) << "Successfully loaded thumbnail from docProps/thumbnail.jpeg";
+            return thumbnail.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        } else {
+            qCWarning(logDFMBase) << "Failed to load thumbnail image:" << thumbnailPath;
+        }
+    } else {
+        qCDebug(logDFMBase) << "No built-in thumbnail found in docProps/thumbnail.jpeg";
+    }
+
+    // 6. 如果没有找到内置缩略图，返回空图像
+    qCDebug(logDFMBase) << "No thumbnail available for PPTX file:" << filePath;
+    return QImage();
 }
