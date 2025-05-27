@@ -35,10 +35,12 @@ QSqlDatabase SqliteConnectionPoolPrivate::createConnection(const QString &databa
     db.setDatabaseName(databaseName);
 
     if (db.open()) {
-        qCInfo(logDFMBase).noquote() << QString("Connection created: %1, sn: %2").arg(connectionName).arg(++sn);
+        qCInfo(logDFMBase) << "SQLite connection created successfully - name:" << connectionName 
+                           << "database:" << databaseName << "serial number:" << (++sn);
         return db;
     } else {
-        qCWarning(logDFMBase).noquote() << "Create connection error:" << db.lastError().text();
+        qCCritical(logDFMBase) << "Failed to create SQLite connection - name:" << connectionName 
+                               << "database:" << databaseName << "error:" << db.lastError().text();
         return QSqlDatabase();
     }
 }
@@ -68,25 +70,27 @@ QSqlDatabase SqliteConnectionPool::openConnection(const QString &databaseName)
 
     if (QSqlDatabase::contains(fullConnectionName)) {
         QSqlDatabase existingDb = QSqlDatabase::database(fullConnectionName);
-        qCDebug(logDFMBase).noquote() << QString("Test connection on borrow, execute: %1, for connection %2")
-                                                 .arg(kTestSql)
-                                                 .arg(fullConnectionName);
+        qCDebug(logDFMBase) << "Testing existing SQLite connection - connection:" << fullConnectionName 
+                            << "test query:" << kTestSql;
         QSqlQuery query(kTestSql, existingDb);
         if (query.lastError().type() != QSqlError::NoError && !existingDb.open()) {
-            qCCritical(logDFMBase).noquote() << "Open datatabase error:" << existingDb.lastError().text();
+            qCCritical(logDFMBase) << "Failed to open existing SQLite database connection - connection:" 
+                                   << fullConnectionName << "error:" << existingDb.lastError().text();
             return QSqlDatabase();
         }
+        qCDebug(logDFMBase) << "Reusing existing SQLite connection:" << fullConnectionName;
         return existingDb;
     } else {
         if (qApp != nullptr) {
             QObject::connect(QThread::currentThread(), &QThread::finished, qApp, [fullConnectionName] {
                 if (QSqlDatabase::contains(fullConnectionName)) {
                     QSqlDatabase::removeDatabase(fullConnectionName);
-                    qCInfo(logDFMBase).noquote() << QString("Connection deleted: %1").arg(fullConnectionName);
+                    qCInfo(logDFMBase) << "SQLite connection removed on thread cleanup:" << fullConnectionName;
                 }
             });
         }
 
+        qCDebug(logDFMBase) << "Creating new SQLite connection - name:" << fullConnectionName << "database:" << databaseName;
         return d->createConnection(databaseName, fullConnectionName);
     }
 }

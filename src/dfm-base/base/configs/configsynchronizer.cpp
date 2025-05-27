@@ -28,12 +28,14 @@ ConfigSynchronizer *ConfigSynchronizer::instance()
 
 bool ConfigSynchronizer::watchChange(const SyncPair &pair)
 {
-    if (!pair.isValid())
+    if (!pair.isValid()) {
+        qCWarning(logDFMBase) << "Invalid sync pair provided for watching";
         return false;
+    }
 
     const auto &&uniKey = pair.serialize();
     if (d->syncPairs.contains(uniKey)) {
-        qCInfo(logDFMBase) << QString("%1 already watched").arg(uniKey);
+        qCInfo(logDFMBase) << "Sync pair already being watched:" << uniKey;
         return false;
     }
 
@@ -43,6 +45,7 @@ bool ConfigSynchronizer::watchChange(const SyncPair &pair)
     else if (pair.set.type == kGenAttr)
         SettingBackend::instance()->addSettingAccessor(static_cast<Application::GenericAttribute>(pair.set.val), pair.saver);
 
+    qCDebug(logDFMBase) << "Config sync pair registered successfully:" << uniKey;
     return true;
 }
 
@@ -68,8 +71,10 @@ void ConfigSynchronizerPrivate::onDConfChanged(const QString &cfgPath, const QSt
 void ConfigSynchronizerPrivate::syncToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
 {
     const auto &confKey = SyncPair::serialize({}, { cfgPath, cfgKey });
-    if (confKey.isEmpty())
+    if (confKey.isEmpty()) {
+        qCWarning(logDFMBase) << "Failed to serialize config key - path:" << cfgPath << "key:" << cfgKey;
         return;
+    }
 
     for (auto iter = syncPairs.cbegin(); iter != syncPairs.cend(); ++iter) {
         if (iter.key().endsWith(confKey)) {
@@ -83,30 +88,37 @@ void ConfigSynchronizerPrivate::syncToAppSet(const QString &cfgPath, const QStri
                     continue;
 
                 if (auto isEqual = iter.value().isEqual) {
-                    if (isEqual(var, appSetVal))
+                    if (isEqual(var, appSetVal)) {
+                        qCDebug(logDFMBase) << "Config values are equal, sync skipped - path:" << cfgPath << "key:" << cfgKey;
                         continue;
+                    }
                 }
 
                 syncFunc(cfgPath, cfgKey, var);
-                qCDebug(logDFMBase) << QString("%1:%2 is synced to DSetting by custom sync func.").arg(cfgPath).arg(cfgKey);
+                qCDebug(logDFMBase) << "Config synced to application setting using custom function - path:" << cfgPath << "key:" << cfgKey;
             } else {
                 const auto &val = iter.value().set.val;
                 switch (iter.value().set.type) {
                 case kAppAttr: {
                     auto key = static_cast<Application::ApplicationAttribute>(val);
                     const auto &&appSetVal = Application::instance()->appAttribute(key);
-                    if (appSetVal != var)
+                    if (appSetVal != var) {
                         Application::instance()->setAppAttribute(key, var);
+                        qCDebug(logDFMBase) << "Application attribute synced - path:" << cfgPath << "key:" << cfgKey << "attribute:" << val;
+                    }
                     break;
                 }
                 case kGenAttr: {
                     auto key = static_cast<Application::GenericAttribute>(val);
                     const auto &&appSetVal = Application::instance()->genericAttribute(key);
-                    if (appSetVal != var)
+                    if (appSetVal != var) {
                         Application::instance()->setGenericAttribute(key, var);
+                        qCDebug(logDFMBase) << "Generic attribute synced - path:" << cfgPath << "key:" << cfgKey << "attribute:" << val;
+                    }
                     break;
                 }
                 default:
+                    qCWarning(logDFMBase) << "Unknown setting type for sync - path:" << cfgPath << "key:" << cfgKey;
                     break;
                 }
             }
