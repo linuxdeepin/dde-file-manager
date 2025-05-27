@@ -25,7 +25,8 @@ public:
         Update,
         CreateFileList,
         UpdateFileList,
-        RemoveFileList
+        RemoveFileList,
+        MoveFileList,
     };
     Q_ENUM(TaskType)
 
@@ -81,10 +82,10 @@ private:
     void handleIndexExistsReply(QDBusPendingCallWatcher *watcher);
     void handleServiceTestReply(QDBusPendingCallWatcher *watcher);
     void handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher);
-    
+
     // 工具方法：将字符串转换为TaskType
     TaskType stringToTaskType(const QString &type);
-    
+
     // 工具方法：检查任务类型是否支持
     bool isSupportedTaskType(const QString &type);
 
