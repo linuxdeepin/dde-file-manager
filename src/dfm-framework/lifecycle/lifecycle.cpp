@@ -21,13 +21,22 @@ Q_GLOBAL_STATIC(PluginManager, pluginManager);
  */
 void initialize(const QStringList &IIDs, const QStringList &paths)
 {
+    qCInfo(logDPF) << "LifeCycle: initializing with" << IIDs.size() << "IIDs and" << paths.size() << "paths";
+    qCDebug(logDPF) << "LifeCycle: IIDs:" << IIDs;
+    qCDebug(logDPF) << "LifeCycle: paths:" << paths;
+    
     for (const QString &id : IIDs)
         pluginManager->addPluginIID(id);
     pluginManager->setPluginPaths(paths);
+    
+    qCInfo(logDPF) << "LifeCycle: initialization completed";
 }
 
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames)
 {
+    qCInfo(logDPF) << "LifeCycle: initializing with blacklist," << blackNames.size() << "blacklisted plugins";
+    qCDebug(logDPF) << "LifeCycle: blacklisted plugins:" << blackNames;
+    
     for (const QString &name : blackNames)
         pluginManager->addBlackPluginName(name);
     initialize(IIDs, paths);
@@ -35,6 +44,9 @@ void initialize(const QStringList &IIDs, const QStringList &paths, const QString
 
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames, const QStringList &lazyNames)
 {
+    qCInfo(logDPF) << "LifeCycle: initializing with lazy loading," << lazyNames.size() << "lazy plugins";
+    qCDebug(logDPF) << "LifeCycle: lazy plugins:" << lazyNames;
+    
     for (const QString &name : lazyNames)
         pluginManager->addLazyLoadPluginName(name);
     initialize(IIDs, paths, blackNames);
@@ -42,6 +54,8 @@ void initialize(const QStringList &IIDs, const QStringList &paths, const QString
 
 void registerQtVersionInsensitivePlugins(const QStringList &names)
 {
+    qCInfo(logDPF) << "LifeCycle: registering" << names.size() << "Qt version insensitive plugins";
+    qCDebug(logDPF) << "LifeCycle: Qt version insensitive plugins:" << names;
     pluginManager->setQtVersionInsensitivePluginNames(names);
 }
 
@@ -120,7 +134,10 @@ QList<PluginMetaObjectPointer> pluginSortedMetaObjs(const std::function<bool(Plu
  */
 bool readPlugins()
 {
-    return pluginManager->readPlugins();
+    qCInfo(logDPF) << "LifeCycle: starting to read plugins";
+    bool result = pluginManager->readPlugins();
+    qCInfo(logDPF) << "LifeCycle: read plugins completed, success:" << result;
+    return result;
 }
 
 /*!
@@ -141,10 +158,16 @@ bool readPlugins()
  */
 bool loadPlugins()
 {
+    qCInfo(logDPF) << "LifeCycle: starting plugin loading sequence";
+    
     bool result { pluginManager->loadPlugins() };
+    qCInfo(logDPF) << "LifeCycle: plugin loading phase completed, success:" << result;
 
     pluginManager->initPlugins();
+    qCInfo(logDPF) << "LifeCycle: plugin initialization phase completed";
+    
     pluginManager->startPlugins();
+    qCInfo(logDPF) << "LifeCycle: plugin startup phase completed";
 
     return result;
 }
@@ -161,43 +184,72 @@ bool loadPlugins()
  */
 void shutdownPlugins()
 {
+    qCInfo(logDPF) << "LifeCycle: starting plugin shutdown";
     pluginManager->stopPlugins();
+    qCInfo(logDPF) << "LifeCycle: plugin shutdown completed";
 }
 
 bool loadPlugin(PluginMetaObjectPointer &pointer)
 {
-    if (!pluginManager->loadPlugin(pointer))
+    if (!pointer) {
+        qCWarning(logDPF) << "LifeCycle: attempted to load null plugin pointer";
         return false;
-    if (!pluginManager->initPlugin(pointer))
+    }
+    
+    qCInfo(logDPF) << "LifeCycle: loading single plugin:" << pointer->name();
+    
+    if (!pluginManager->loadPlugin(pointer)) {
+        qCWarning(logDPF) << "LifeCycle: failed to load plugin:" << pointer->name();
         return false;
-    if (!pluginManager->startPlugin(pointer))
+    }
+    if (!pluginManager->initPlugin(pointer)) {
+        qCWarning(logDPF) << "LifeCycle: failed to initialize plugin:" << pointer->name();
         return false;
+    }
+    if (!pluginManager->startPlugin(pointer)) {
+        qCWarning(logDPF) << "LifeCycle: failed to start plugin:" << pointer->name();
+        return false;
+    }
 
+    qCInfo(logDPF) << "LifeCycle: successfully loaded plugin:" << pointer->name();
     return true;
 }
 
 void shutdownPlugin(PluginMetaObjectPointer &pointer)
 {
+    if (!pointer) {
+        qCWarning(logDPF) << "LifeCycle: attempted to shutdown null plugin pointer";
+        return;
+    }
+    
+    qCInfo(logDPF) << "LifeCycle: shutting down plugin:" << pointer->name();
     pluginManager->stopPlugin(pointer);
+    qCInfo(logDPF) << "LifeCycle: plugin shutdown completed:" << pointer->name();
 }
 
 bool isAllPluginsInitialized()
 {
-    return pluginManager->isAllPluginsInitialized();
+    bool result = pluginManager->isAllPluginsInitialized();
+    qCDebug(logDPF) << "LifeCycle: all plugins initialized:" << result;
+    return result;
 }
 
 bool isAllPluginsStarted()
 {
-    return pluginManager->isAllPluginsStarted();
+    bool result = pluginManager->isAllPluginsStarted();
+    qCDebug(logDPF) << "LifeCycle: all plugins started:" << result;
+    return result;
 }
 
 void setLazyloadFilter(std::function<bool(const QString &)> filter)
 {
+    qCInfo(logDPF) << "LifeCycle: setting lazy load filter";
     pluginManager->setLazyLoadFilter(filter);
 }
 
 void setBlackListFilter(std::function<bool(const QString &)> filter)
 {
+    qCInfo(logDPF) << "LifeCycle: setting blacklist filter";
     pluginManager->setBlackListFilter(filter);
 }
 

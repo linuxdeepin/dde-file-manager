@@ -60,8 +60,10 @@ QVariant EventChannel::send()
 
 QVariant EventChannel::send(const QVariantList &params)
 {
-    if (!conn)
+    if (!conn) {
+        qCWarning(logDPF) << "EventChannel: no connection available for send operation";
         return QVariant();
+    }
 
     return conn(params);
 }
