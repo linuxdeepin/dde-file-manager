@@ -42,6 +42,10 @@ private:
     bool isEngineReady() const;
     bool isValidSearchParameters() const;
     DFMSEARCH::SearchOptions configureSearchOptions(const QString &transformedPath) const;
+    void configureHiddenFilesOption(DFMSEARCH::SearchOptions &options, const QString &transformedPath) const;
+    void configureRealtimeSearchOptions(DFMSEARCH::SearchOptions &options, const QString &transformedPath) const;
+    bool shouldExcludeIndexedPaths(const QString &transformedPath) const;
+    void setExcludedPathsForRealtime(DFMSEARCH::SearchOptions &options) const;
     bool validateSearchType(const QString &transformedPath, DFMSEARCH::SearchOptions &options);
     void executeSearch();
 

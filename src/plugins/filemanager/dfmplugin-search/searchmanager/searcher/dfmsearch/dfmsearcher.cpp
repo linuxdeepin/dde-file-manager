@@ -178,6 +178,17 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
     options.setSearchPath(transformedPath);
     options.setCaseSensitive(false);
 
+    configureHiddenFilesOption(options, transformedPath);
+    
+    if (options.method() == SearchMethod::Realtime) {
+        configureRealtimeSearchOptions(options, transformedPath);
+    }
+
+    return options;
+}
+
+void DFMSearcher::configureHiddenFilesOption(SearchOptions &options, const QString &transformedPath) const
+{
     // Always include hidden files when searching in hidden directories
     bool includeHidden = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     bool inHiddenDir = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(transformedPath);
@@ -185,33 +196,56 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
         includeHidden = true;
     }
     options.setIncludeHidden(includeHidden);
+}
 
-    if (options.method() == SearchMethod::Realtime) {
-        options.setResultFoundEnabled(true);
-        auto excludedPaths = DFMSEARCH::Global::defaultIndexedDirectory();
-        QStringList transPaths;
+void DFMSearcher::configureRealtimeSearchOptions(SearchOptions &options, const QString &transformedPath) const
+{
+    options.setResultFoundEnabled(true);
+    
+    // 判断是否需要排除索引路径
+    if (shouldExcludeIndexedPaths(transformedPath)) {
+        setExcludedPathsForRealtime(options);
+    }
+}
 
-        std::transform(excludedPaths.begin(), excludedPaths.end(), std::back_inserter(transPaths),
-                       [](const QString &path) {
-                           return FileUtils::bindPathTransform(path, true);
-                       });
+bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) const
+{
+    // 在隐藏目录中搜索时，不排除索引路径
+    if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(transformedPath)) {
+        return false;
+    }
+    
+    // 当索引目录不可用时，不排除索引路径
+    if (engine->searchType() == SearchType::FileName && 
+        !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+        return false;
+    }
+    
+    // 其他情况下，排除索引路径以避免重复搜索
+    return true;
+}
 
-        transPaths.erase(std::remove_if(transPaths.begin(), transPaths.end(),
-                                        [&excludedPaths](const QString &transPath) {
-                                            return excludedPaths.contains(transPath);
-                                        }),
-                         transPaths.end());
+void DFMSearcher::setExcludedPathsForRealtime(SearchOptions &options) const
+{
+    auto excludedPaths = DFMSEARCH::Global::defaultIndexedDirectory();
+    QStringList transPaths;
 
-        if (!transPaths.isEmpty()) {
-            excludedPaths.append(transPaths);
-        }
+    std::transform(excludedPaths.begin(), excludedPaths.end(), std::back_inserter(transPaths),
+                   [](const QString &path) {
+                       return FileUtils::bindPathTransform(path, true);
+                   });
 
-        if (!inHiddenDir) {
-            options.setSearchExcludedPaths(excludedPaths);
-        }
+    transPaths.erase(std::remove_if(transPaths.begin(), transPaths.end(),
+                                    [&excludedPaths](const QString &transPath) {
+                                        return excludedPaths.contains(transPath);
+                                    }),
+                     transPaths.end());
+
+    if (!transPaths.isEmpty()) {
+        excludedPaths.append(transPaths);
     }
 
-    return options;
+    options.setSearchExcludedPaths(excludedPaths);
 }
 
 void DFMSearcher::handleRemainingResults(const QList<SearchResult> &results)
@@ -230,6 +264,12 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     // 不使用索引的情况：文件名搜索 且 (路径不在索引目录中 或 路径在隐藏目录中)
     if (engine->searchType() != SearchType::FileName)
         return SearchMethod::Indexed;
+
+    // 对于文件名搜索，首先检查文件名索引目录是否可用
+    if (!DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+        fmWarning() << "File name index directory is not available, falling back to realtime search for path:" << path;
+        return SearchMethod::Realtime;
+    }
 
     // 对于文件名搜索，检查是否需要使用实时搜索
     const bool notInIndexDir = !DFMSEARCH::Global::isPathInFileNameIndexDirectory(path);
