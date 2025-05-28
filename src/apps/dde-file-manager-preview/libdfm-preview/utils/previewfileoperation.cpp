@@ -18,28 +18,46 @@ Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_LOGGING_CATEGORY(logLibFilePreview)
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
+
 PreviewFileOperation::PreviewFileOperation(QObject *parent)
     : QObject(parent)
 {
+    qCDebug(logLibFilePreview) << "PreviewFileOperation: initialized";
 }
 
 bool PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
 {
+    qCInfo(logLibFilePreview) << "PreviewFileOperation: attempting to open file:" << url.toString() << "from window ID:" << winID;
+    
+    if (!url.isValid()) {
+        qCWarning(logLibFilePreview) << "PreviewFileOperation: invalid URL provided:" << url.toString();
+        return false;
+    }
+    
     QList<QUrl> urls { url };
     LocalFileHandler fileHandler;
     bool ok = fileHandler.openFiles(urls);
+    
     if (!ok) {
         GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != GlobalEventType::kUnknowType) {
-            qCWarning(logLibFilePreview) << "Open file failed with unknown event type";
+            qCWarning(logLibFilePreview) << "PreviewFileOperation: failed to open file with event type:" << static_cast<int>(lastEvent) << "URL:" << url.toString();
         } else {
+            qCInfo(logLibFilePreview) << "PreviewFileOperation: using fallback method - launching file manager for URL:" << url.toString();
             // deal open file with custom dialog
             QStringList args;
             args << "-o" << url.path();
             QString cmd("dde-file-manager");
-            QProcess::startDetached(cmd, args);
-            ok = true;
+            bool started = QProcess::startDetached(cmd, args);
+            if (started) {
+                qCInfo(logLibFilePreview) << "PreviewFileOperation: successfully launched file manager with arguments:" << args;
+                ok = true;
+            } else {
+                qCCritical(logLibFilePreview) << "PreviewFileOperation: failed to start file manager process for URL:" << url.toString();
+            }
         }
+    } else {
+        qCInfo(logLibFilePreview) << "PreviewFileOperation: successfully opened file:" << url.toString();
     }
 
     return ok;

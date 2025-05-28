@@ -28,17 +28,25 @@ extern "C" {
 
 int initFilePreview()
 {
+    qCInfo(logLibFilePreview) << "FilePreview: initializing file preview service";
     filePreviewIns = new FilePreview;
     filePreviewIns->initialize();
-    filePreviewIns->start();
+    bool started = filePreviewIns->start();
+    qCInfo(logLibFilePreview) << "FilePreview: initialization completed, service started:" << started;
 
     return 0;
 }
 
 int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
 {
-    if (filePreviewIns)
+    qCInfo(logLibFilePreview) << "FilePreview: received preview request for window ID:" << windowId 
+                              << "with" << selecturls.size() << "selected files and" << dirUrl.size() << "directory files";
+    
+    if (filePreviewIns) {
         filePreviewIns->showFilePreview(windowId, selecturls, dirUrl);
+    } else {
+        qCCritical(logLibFilePreview) << "FilePreview: service instance is null, cannot show preview dialog";
+    }
     return 0;
 }
 
@@ -49,15 +57,24 @@ int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const
 DFM_LOG_REISGER_CATEGORY(DPFILEPREVIEW_NAMESPACE)
 void FilePreview::initialize()
 {
+    qCInfo(logLibFilePreview) << "FilePreview: starting initialization process";
+    
     // Under the wayland protocol, set the rendering mode to OpenGLES
     if (WindowUtils::isWayLand()) {
+        qCInfo(logLibFilePreview) << "FilePreview: detected Wayland environment";
 #ifndef __x86_64__
+        qCInfo(logLibFilePreview) << "FilePreview: setting OpenGLES rendering format for non-x86_64 architecture";
         QSurfaceFormat format;
         format.setRenderableType(QSurfaceFormat::OpenGLES);
         format.setDefaultFormat(format);
+#else
+        qCDebug(logLibFilePreview) << "FilePreview: x86_64 architecture detected, using default rendering format";
 #endif
+    } else {
+        qCDebug(logLibFilePreview) << "FilePreview: detected X11 environment";
     }
 
+    qCDebug(logLibFilePreview) << "FilePreview: registering URL schemes and factories";
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     InfoFactory::regInfoTransFunc<FileInfo>(Global::Scheme::kFile, DesktopFileInfo::convert);
     UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/", QIcon(), false, QObject::tr("System Disk"));
@@ -66,23 +83,39 @@ void FilePreview::initialize()
     InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
+    
+    qCInfo(logLibFilePreview) << "FilePreview: initialization process completed";
 }
 
 bool FilePreview::start()
 {
+    qCInfo(logLibFilePreview) << "FilePreview: starting service";
+    
     QString err;
     auto ret = DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err);
-    if (!ret)
-        // fmWarning() << "File Preview: create dconfig failed: " << err;
-        qCWarning(logLibFilePreview()) << "File Preview: create dconfig failed: " << err;
+    if (!ret) {
+        qCWarning(logLibFilePreview) << "FilePreview: failed to create dconfig:" << err;
+        return false;
+    } else {
+        qCInfo(logLibFilePreview) << "FilePreview: dconfig created successfully";
+    }
 
+    bool previewEnabled = isPreviewEnabled();
+    qCInfo(logLibFilePreview) << "FilePreview: preview feature enabled:" << previewEnabled;
+    
     return true;
 }
 
 void FilePreview::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
 {
-    if (isPreviewEnabled())
+    qCDebug(logLibFilePreview) << "FilePreview: checking if preview is enabled before showing dialog";
+    
+    if (isPreviewEnabled()) {
+        qCInfo(logLibFilePreview) << "FilePreview: preview enabled, delegating to PreviewDialogManager";
         PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl);
+    } else {
+        qCWarning(logLibFilePreview) << "FilePreview: preview is disabled, ignoring preview request";
+    }
 }
 
 bool FilePreview::isPreviewEnabled()

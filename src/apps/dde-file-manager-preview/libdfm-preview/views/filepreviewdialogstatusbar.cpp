@@ -7,9 +7,13 @@
 
 using namespace dfmplugin_filepreview;
 
+Q_DECLARE_LOGGING_CATEGORY(logLibFilePreview)
+
 FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     : QFrame(parent)
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialogStatusBar: initializing status bar";
+    
     QSize iconSize(16, 16);
     preBtn = new QPushButton(this);
     preBtn->setObjectName("PreButton");
@@ -49,6 +53,8 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     layout->addWidget(openBtn, 0, Qt::AlignRight);
 
     setLayout(layout);
+    
+    qCDebug(logLibFilePreview) << "FilePreviewDialogStatusBar: status bar initialization completed";
 }
 
 QLabel *FilePreviewDialogStatusBar::title() const
