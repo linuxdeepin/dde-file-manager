@@ -10,6 +10,7 @@
 #include "utils/crumbmanager.h"
 
 #include <dfm-io/denumerator.h>
+#include <dfm-io/dfmio_utils.h>
 #include <dfm-base/utils/protocolutils.h>
 
 #include <DStyle>
@@ -257,7 +258,13 @@ void UrlPushButtonPrivate::onCompletionCompleted()
     for (int i = 0; i < completionStringList.size(); ++i) {
         CrumbData data;
         data.displayText = completionStringList[i];
-        data.url = QUrl(crumbDatas.last().url.url() + '/' + completionStringList[i]);
+        // 使用 DFMIO::DFMUtils::buildFilePath 正确构造路径，然后使用 QUrl::fromLocalFile 创建 URL
+        // Why? 一个例子是“！殊字符#$%$............{【.,”，直接拼接会出错
+        const QString parentPath = crumbDatas.last().url.toLocalFile();
+        const QString childPath = DFMIO::DFMUtils::buildFilePath(parentPath.toStdString().c_str(), 
+                                                                 completionStringList[i].toStdString().c_str(), 
+                                                                 nullptr);
+        data.url = QUrl::fromLocalFile(childPath);
         datas.append(data);
     }
     const bool leftToRight = (q->layoutDirection() == Qt::LeftToRight);
