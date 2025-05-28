@@ -90,7 +90,13 @@ bool SysInfoUtils::isDeveloperModeEnabled()
 
         QString func("IsDeveloperMode");
         QDBusReply<bool> reply = interface.call(func);
-        developerModel = reply.value();
+        if (reply.isValid()) {
+            developerModel = reply.value();
+            qCDebug(logDFMBase) << "Developer mode status retrieved:" << developerModel;
+        } else {
+            qCWarning(logDFMBase) << "Failed to query developer mode status via DBus:" << reply.error().message();
+            developerModel = false;
+        }
     }
 
     return developerModel;

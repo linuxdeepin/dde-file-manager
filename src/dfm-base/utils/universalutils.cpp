@@ -163,9 +163,9 @@ bool UniversalUtils::inMainThread()
  */
 void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
 {
-    qCInfo(logDFMBase) << " create dbus to block computer shut down!!!";
+    qCInfo(logDFMBase) << "Creating DBus inhibitor to block system shutdown";
     if (replay.value().isValid()) {
-        qCWarning(logDFMBase) << "current qt dbus replyBlokShutDown is using!";
+        qCWarning(logDFMBase) << "Shutdown block already active, skipping new request";
         return;
     }
 
@@ -181,7 +181,7 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
         << QString("block");   // mode
 
     replay = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
-    qCInfo(logDFMBase) << " create over dbus to block computer shut down!!!";
+    qCInfo(logDFMBase) << "System shutdown block created successfully";
 }
 
 qint64 UniversalUtils::computerMemory()
@@ -256,11 +256,11 @@ QString UniversalUtils::sizeFormat(qint64 size, int percision)
 bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
 #ifdef COMPILE_ON_V2X
-    qCDebug(logDFMBase) << "new AM wouldn't provide any method to run Command, so launch cmd by qt:" << cmd << args;
+    qCDebug(logDFMBase) << "Running command via Qt process (V2X mode):" << cmd << args;
     return QProcess::startDetached(cmd, args, wd);
 #else
     if (checkLaunchAppInterface()) {
-        qCDebug(logDFMBase) << "launch cmd by dbus:" << cmd << args;
+        qCDebug(logDFMBase) << "Running command via DBus application manager:" << cmd << args;
         QDBusInterface appManager(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   APP_MANAGER_INTERFACE,
@@ -279,7 +279,7 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 
         return true;
     } else {
-        qCDebug(logDFMBase) << "launch cmd by qt:" << cmd << args;
+        qCDebug(logDFMBase) << "Running command via Qt process (fallback):" << cmd << args;
         return QProcess::startDetached(cmd, args, wd);
     }
 

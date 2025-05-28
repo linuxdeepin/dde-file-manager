@@ -82,7 +82,7 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
     });
     watcher->setFuture(QtConcurrent::run([host, ports, msecs]() {
         if (ports.isEmpty()) {
-            qCInfo(logDFMBase) << "port not specified, skip network check. " << host;
+            qCInfo(logDFMBase) << "Network check skipped: no ports specified for host:" << host;
             return true; // skip check if ports are empty.
         }
 
@@ -176,7 +176,7 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
 
     auto busy = !checkNetConnection(host, ports);
     if (busy)
-        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << ports;
+        qCWarning(logDFMBase) << "Network connection failed for URL:" << url << "host:" << host << "ports:" << ports;
 
     return busy;
 }
@@ -205,7 +205,7 @@ QMap<QString, QString> NetworkUtils::cifsMountHostInfo()
         if (ret != 0) {
             mnt_free_table(tab);
             mnt_free_iter(iter);
-            qWarning() << "device: cannot parse mtab" << ret;
+            qCWarning(logDFMBase) << "Failed to parse mount table, error code:" << ret;
             return table;
         }
 

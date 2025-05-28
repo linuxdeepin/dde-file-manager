@@ -54,24 +54,24 @@ void onClipboardDataChanged(const QStringList &formats)
     clipboardFileUrls.clear();
 
     if (formats.isEmpty()) {
-        qCWarning(logDFMBase) << "get empty mimeData formats from QClipBoard!";
+        qCWarning(logDFMBase) << "Clipboard data changed with empty mime formats";
         return;
     }
 
     if (formats.contains(kRemoteCopyKey) || hasUosRemote) {
-        qCInfo(logDFMBase) << "clipboard use other !";
+        qCInfo(logDFMBase) << "Clipboard action set to remote copy mode";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
     }
     // 远程协助功能
     if (formats.contains(kRemoteAssistanceCopyKey)) {
-        qCInfo(logDFMBase) << "Remote copy: set remote copy action";
+        qCInfo(logDFMBase) << "Remote assistance copy action detected";
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
     if (!formats.contains(kGnomeCopyKey)) {
-        qCWarning(logDFMBase) << "no kGnomeCopyKey target in mimedata formats!";
+        qCWarning(logDFMBase) << "Missing required gnome copy key in clipboard formats:" << formats;
         clipboardAction = ClipBoard::kUnknownAction;
         return;
     }
@@ -83,7 +83,7 @@ void onClipboardDataChanged(const QStringList &formats)
     } else if (data.contains(regCopy)) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
-        qCWarning(logDFMBase) << "wrong kGnomeCopyKey data = " << data << mimeData->formats();
+        qCWarning(logDFMBase) << "Invalid gnome copy key data format:" << data << "available formats:" << mimeData->formats();
         clipboardAction = ClipBoard::kUnknownAction;
     }
 
@@ -103,7 +103,7 @@ ClipBoard::ClipBoard(QObject *parent)
 void ClipBoard::init()
 {
     QLibrary library("libdisplayjack-clipboard.so");
-    qCritical() << library.fileName();
+    qCDebug(logDFMBase) << "Initializing clipboard with library:" << library.fileName();
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
         onClipboardDataChanged(qApp->clipboard()->mimeData()->formats());
         emit clipboardDataChanged();
@@ -121,11 +121,11 @@ void ClipBoard::init()
         return;
 
     library.unload();
-    qCWarning(logDFMBase()) << "connect x11 clipboard changed single!!!!";
+    qCInfo(logDFMBase) << "X11 clipboard monitor initialized successfully";
     GlobalData::isX11 = true;
     GlobalData::clipMonitor = new ClipboardMonitor;
     connect(GlobalData::clipMonitor, &ClipboardMonitor::clipboardChanged, this, [](const QStringList &formats) {
-        qInfo() << " * Clipboard formats changed: " << formats;
+        qCDebug(logDFMBase) << "X11 clipboard formats changed:" << formats;
         GlobalData::hasUosRemote = formats.contains(GlobalData::kRemoteCopyKey);
     });
 
@@ -174,7 +174,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
 
             if (!info) {
-                qCWarning(logDFMBase) << QString("create file info error, case : %1").arg(error);
+                qCWarning(logDFMBase) << "Failed to create file info for URL:" << qurl << "error:" << error;
                 continue;
             }
             QStringList iconList;
@@ -232,7 +232,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     if (curUrl.isLocalFile()) {
         localPath = curUrl.toString().toLocal8Bit();
     } else {
-        qCInfo(logDFMBase) << "Remote Assistance copy: current url not local file";
+        qCWarning(logDFMBase) << "Remote assistance copy failed: URL is not a local file:" << curUrl;
         return;
     }
 
@@ -242,6 +242,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     mimeData->setData(GlobalData::kRemoteAssistanceCopyKey, localPath);
     mimeData->setText(curUrl.toString());
     qApp->clipboard()->setMimeData(mimeData);
+    qCInfo(logDFMBase) << "Remote assistance clipboard data set for URL:" << curUrl;
 }
 /*!
  * \brief ClipBoard::setDataToClopboard Set user data to clipboard
@@ -250,11 +251,12 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
 void ClipBoard::setDataToClipboard(QMimeData *mimeData)
 {
     if (!mimeData) {
-        qCWarning(logDFMBase) << "set data to clipboard failed, mimeData is null!";
+        qCWarning(logDFMBase) << "Failed to set clipboard data: mimeData is null";
         return;
     }
 
     qApp->clipboard()->setMimeData(mimeData);
+    qCDebug(logDFMBase) << "Custom mime data set to clipboard successfully";
 }
 
 /*!
@@ -363,11 +365,11 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     QAtomicInt currentCount = GlobalData::remoteCurrentCount;
     const QMimeData *mimedata = qApp->clipboard()->mimeData();
     if (!mimedata) {
-        qCWarning(logDFMBase) << "the clipboard mimedata is invalid!";
+        qCWarning(logDFMBase) << "X11 clipboard access failed: invalid mime data";
         return QList<QUrl>();
     }
     if (GlobalData::clipboardAction != kRemoteAction) {
-        qCWarning(logDFMBase) << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
+        qCWarning(logDFMBase) << "X11 clipboard read failed: current action is not remote action, got:" << GlobalData::clipboardAction;
         return QList<QUrl>();
     }
     // 使用x11创建一个窗口去阻塞获取URl
@@ -460,7 +462,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     XCloseDisplay(display);
 
     if (isCanceled) {
-        qCWarning(logDFMBase) << "user cancel remote download !";
+        qCWarning(logDFMBase) << "X11 remote download cancelled by user";
         return QList<QUrl>();
     }
 
@@ -523,7 +525,7 @@ QStringList ClipBoard::getFirstMimeTypesByX11()
         for (int i = 0; i < static_cast<int>(ressize); i++) {
             formats.append(XGetAtomName(display, atoms[i]));
         }
-        qCWarning(logDFMBase) << "first x11 read formats = " << formats;
+        qCWarning(logDFMBase) << "X11 clipboard first read formats:" << formats;
     }
     XFree(result);
     XDestroyWindow(display, window);
