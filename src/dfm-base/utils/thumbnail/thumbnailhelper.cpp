@@ -56,7 +56,7 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
 
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppAppimage), INT64_MAX);
-    
+
     qCInfo(logDFMBase) << "thumbnail: initialized size limits for" << sizeLimitHash.size() << "mime types";
 }
 
@@ -107,27 +107,23 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 
     if (mimeName.startsWith("image")) {
         bool supported = checkStatus(Application::kPreviewImage);
-        qCDebug(logDFMBase) << "thumbnail: image mime type support check:" << mimeName << "supported:" << supported;
         return supported;
     }
 
     if (mimeName.startsWith("audio")
         || MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName)) {
         bool supported = checkStatus(Application::kPreviewAudio);
-        qCDebug(logDFMBase) << "thumbnail: audio mime type support check:" << mimeName << "supported:" << supported;
         return supported;
     }
 
     if (mimeName.startsWith("video")
         || MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName)) {
         bool supported = checkStatus(Application::kPreviewVideo);
-        qCDebug(logDFMBase) << "thumbnail: video mime type support check:" << mimeName << "supported:" << supported;
         return supported;
     }
 
     if (mimeName == Mime::kTypeTextPlain) {
         bool supported = checkStatus(Application::kPreviewTextFile);
-        qCDebug(logDFMBase) << "thumbnail: text mime type support check:" << mimeName << "supported:" << supported;
         return supported;
     }
 
@@ -136,17 +132,14 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
                  || mimeName == Mime::kTypeAppMxf)
         || mimeName == Mime::kTypeAppPptx) {
         bool supported = checkStatus(Application::kPreviewDocumentFile);
-        qCDebug(logDFMBase) << "thumbnail: document mime type support check:" << mimeName << "supported:" << supported;
         return supported;
     }
 
     // appimage is executable package, should display icon
     if (mimeName == Mime::kTypeAppAppimage) {
-        qCDebug(logDFMBase) << "thumbnail: appimage mime type always supported:" << mimeName;
         return true;
     }
 
-    qCDebug(logDFMBase) << "thumbnail: unsupported mime type:" << mimeName;
     return false;
 }
 
@@ -250,9 +243,8 @@ QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size)
 
     if (!image.isNull()) {
         image.setText(QT_STRINGIFY(Thumb::Path), thumbnail);
-        qCDebug(logDFMBase) << "thumbnail: loaded cached thumbnail:" << thumbnail;
     }
-    
+
     return image;
 }
 
@@ -319,6 +311,5 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
 
     const QMimeType &mime = mimeDatabase.mimeTypeForFile(fileUrl);
     bool supported = checkMimeTypeSupport(mime);
-    qCDebug(logDFMBase) << "thumbnail: final enable check result:" << supported << "for mime type:" << mime.name() << "file:" << fileUrl;
     return supported;
 }

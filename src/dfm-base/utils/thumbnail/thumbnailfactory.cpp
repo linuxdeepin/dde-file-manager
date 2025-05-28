@@ -119,17 +119,14 @@ void ThumbnailFactory::doJoinThumbnailJob(const QUrl &url, ThumbnailSize size)
     }
 
     if (taskMap.contains(url)) {
-        qCDebug(logDFMBase) << "thumbnail: task already queued for:" << url;
         return;
     }
 
     if (taskMap.isEmpty()) {
-        qCDebug(logDFMBase) << "thumbnail: starting task push timer";
         taskPushTimer.start();
     }
 
     taskMap.insert(url, size);
-    qCDebug(logDFMBase) << "thumbnail: added task for:" << url << "queue size:" << taskMap.size();
 
     if (taskMap.size() < kMaxCountLimit)
         return;
