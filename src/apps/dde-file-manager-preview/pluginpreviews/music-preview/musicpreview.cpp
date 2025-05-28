@@ -42,10 +42,13 @@ using namespace plugin_filepreview;
 MusicPreview::MusicPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
+    fmInfo() << "Music preview: MusicPreview instance created";
 }
 
 MusicPreview::~MusicPreview()
 {
+    fmInfo() << "Music preview: MusicPreview instance destroyed";
+    
     if (musicView)
         musicView->deleteLater();
 
@@ -55,25 +58,37 @@ MusicPreview::~MusicPreview()
 
 bool MusicPreview::setFileUrl(const QUrl &url)
 {
-    if (currentUrl == url)
+    fmInfo() << "Music preview: setting file URL:" << url;
+    
+    if (currentUrl == url) {
+        fmDebug() << "Music preview: URL unchanged, skipping:" << url;
         return true;
+    }
 
-    if (!url.isLocalFile())
+    if (!url.isLocalFile()) {
+        fmWarning() << "Music preview: URL is not a local file:" << url;
         return false;
+    }
 
-    if (musicView || statusBarFrame)
+    if (musicView || statusBarFrame) {
+        fmWarning() << "Music preview: widgets already exist, cannot set new URL:" << url;
         return false;
+    }
 
-    if (!canPreview(url))
+    if (!canPreview(url)) {
+        fmWarning() << "Music preview: cannot preview file:" << url;
         return false;
+    }
 
     currentUrl = url;
 
+    fmDebug() << "Music preview: creating music view and toolbar for:" << url;
     musicView = new MusicMessageView(url.toString());
     statusBarFrame = new ToolBarFrame(url.toString());
     musicView->setFixedSize(600, 336);
     statusBarFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    fmInfo() << "Music preview: file URL set successfully:" << url;
     return true;
 }
 
@@ -99,31 +114,42 @@ Qt::Alignment MusicPreview::statusBarWidgetAlignment() const
 
 void MusicPreview::play()
 {
+    fmDebug() << "Music preview: starting playback";
     statusBarFrame->play();
 }
 
 void MusicPreview::pause()
 {
+    fmDebug() << "Music preview: pausing playback";
     statusBarFrame->pause();
 }
 
 void MusicPreview::stop()
 {
+    fmDebug() << "Music preview: stopping playback";
     statusBarFrame->stop();
 }
 
 void MusicPreview::handleBeforDestroy()
 {
+    fmDebug() << "Music preview: handling before destroy, stopping playback";
     emit CusMediaPlayer::instance()->sigStop();
 }
 
 bool MusicPreview::canPreview(const QUrl &url) const
 {
+    fmDebug() << "Music preview: checking if can preview:" << url;
+    
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
 
-    if (!info)
+    if (!info) {
+        fmWarning() << "Music preview: failed to create FileInfo for:" << url;
         return false;
+    }
+    
     QMimeType mimeType = DMimeDatabase().mimeTypeForUrl(url);
-
-    return mimeType.name().startsWith("audio/");
+    bool canPreview = mimeType.name().startsWith("audio/");
+    
+    fmDebug() << "Music preview: mime type:" << mimeType.name() << "can preview:" << canPreview;
+    return canPreview;
 }

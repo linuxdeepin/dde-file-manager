@@ -234,10 +234,12 @@ private:
 DDciIconPreview::DDciIconPreview(QObject *parent)
     : AbstractBasePreview(parent), view(nullptr), scene(nullptr), mainWidget(nullptr), controlWidget(nullptr), availableSizeCombo(nullptr), devicePixelRatioLabel(nullptr), paletteNosupportedText(nullptr), foregroundPaletteEdit(nullptr), backgroundPaletteEdit(nullptr), hightlightPaletteEdit(nullptr), hFPaletteEdit(nullptr), paletteWidget(nullptr), themeCom(nullptr), modeCom(nullptr), customSizeEdit(nullptr), dciIcon(nullptr), dciIconMatched(nullptr)
 {
+    fmInfo() << "DCI icon preview: DDciIconPreview instance created";
 }
 
 DDciIconPreview::~DDciIconPreview()
 {
+    fmInfo() << "DCI icon preview: DDciIconPreview instance destroyed";
     delete dciIcon;
 }
 
@@ -245,6 +247,8 @@ void DDciIconPreview::initialize(QWidget *window, QWidget *statusBar)
 {
     Q_UNUSED(window);
     Q_UNUSED(statusBar);
+
+    fmDebug() << "DCI icon preview: initializing preview widget";
 
     this->mainWidget = new QWidget;
     this->mainWidget->setFixedSize(1200, 800);
@@ -259,6 +263,8 @@ void DDciIconPreview::initialize(QWidget *window, QWidget *statusBar)
     splitter->addWidget(this->view);
     splitter->setSizes({ 80, 920 });
     mainLayout->addWidget(splitter);
+    
+    fmDebug() << "DCI icon preview: initialization completed";
 }
 
 void DDciIconPreview::initControlWidgets()
@@ -480,22 +486,31 @@ void DDciIconPreview::initPreviewWidgets()
 
 void DDciIconPreview::initializeSettings(const QString &localUrl)
 {
-    if (localUrl.isEmpty())
+    fmDebug() << "DCI icon preview: initializing settings for file:" << localUrl;
+    
+    if (localUrl.isEmpty()) {
+        fmWarning() << "DCI icon preview: empty file path provided";
         return;
+    }
 
     if (this->dciIcon)
         delete this->dciIcon;
     this->dciIcon = new DDciIcon(localUrl);
     if (this->dciIcon->isNull()) {
+        fmWarning() << "DCI icon preview: failed to load DCI icon from:" << localUrl;
         delete this->dciIcon;
         return;
     }
 
     auto availableSizes = this->dciIcon->availableSizes(DDciIcon::Light);
+    fmDebug() << "DCI icon preview: found" << availableSizes.size() << "available sizes for:" << localUrl;
+    
     for (int i = 0; i < availableSizes.size(); ++i)
         this->availableSizeCombo->insertItem(i, QString::number(availableSizes[i]));
     this->availableSizeCombo->setCurrentIndex(0);
     this->updatePixmap();
+    
+    fmInfo() << "DCI icon preview: settings initialized successfully for:" << localUrl;
 }
 
 DDciIconPalette DDciIconPreview::generateDciIconPalette()
@@ -510,11 +525,14 @@ DDciIconPalette DDciIconPreview::generateDciIconPalette()
 
 void DDciIconPreview::updateIconMatchedResult()
 {
-    if (!this->dciIcon)
+    if (!this->dciIcon) {
+        fmWarning() << "DCI icon preview: no DCI icon loaded for matching";
         return;
+    }
 
     int iconSize = this->getIconSize();
     if (!iconSize) {
+        fmDebug() << "DCI icon preview: invalid icon size for matching";
         this->dciIconMatched = nullptr;
         return;
     }
@@ -522,6 +540,8 @@ void DDciIconPreview::updateIconMatchedResult()
     DDciIcon::Theme theme = this->themeCom->currentIndex() == 0 ? DDciIcon::Light : DDciIcon::Dark;
     DDciIcon::Mode mode = DDciIcon::Mode(this->modeCom->currentIndex());
     this->dciIconMatched = this->dciIcon->matchIcon(iconSize, theme, mode, DDciIcon::DontFallbackMode);
+    
+    fmDebug() << "DCI icon preview: icon matched with size:" << iconSize << "theme:" << theme << "mode:" << mode;
 }
 
 static QPixmap invaildPixmap()
@@ -623,27 +643,41 @@ QWidget *DDciIconPreview::statusBarWidget() const
 
 bool DDciIconPreview::setFileUrl(const QUrl &url)
 {
-    if (this->url == url)
+    fmInfo() << "DCI icon preview: setting file URL:" << url;
+    
+    if (this->url == url) {
+        fmDebug() << "DCI icon preview: URL unchanged, skipping:" << url;
         return true;
+    }
 
-    if (!url.fileName().endsWith(QLatin1String(".dci")))
+    if (!url.fileName().endsWith(QLatin1String(".dci"))) {
+        fmWarning() << "DCI icon preview: file does not have .dci extension:" << url;
         return false;
+    }
 
     QUrl tmpUrl = UrlRoute::fromLocalFile(url.path());
-    if (!url.isLocalFile())
+    if (!url.isLocalFile()) {
+        fmWarning() << "DCI icon preview: URL is not a local file:" << url;
         return false;
+    }
 
     QByteArray format;
     QMimeDatabase mimeDatabase;
     const QMimeType &mt = mimeDatabase.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent);
-    if (!mt.isValid())
+    if (!mt.isValid()) {
+        fmWarning() << "DCI icon preview: invalid MIME type for file:" << url;
         return false;
-    if (!mt.preferredSuffix().toLatin1().endsWith("dci"))
+    }
+    if (!mt.preferredSuffix().toLatin1().endsWith("dci")) {
+        fmWarning() << "DCI icon preview: MIME type does not match DCI format:" << mt.preferredSuffix() << "for file:" << url;
         return false;
+    }
 
     this->url = tmpUrl;
     this->initializeSettings(this->url.toLocalFile());
     this->titleText = QFileInfo(tmpUrl.toLocalFile()).fileName();
+    
+    fmInfo() << "DCI icon preview: file URL set successfully:" << url << "title:" << titleText;
     return true;
 }
 

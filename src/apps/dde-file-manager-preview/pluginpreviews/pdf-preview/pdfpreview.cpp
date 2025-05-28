@@ -16,10 +16,12 @@ using namespace plugin_filepreview;
 PDFPreview::PDFPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
+    fmInfo() << "PDF preview: PDFPreview instance created";
 }
 
 PDFPreview::~PDFPreview()
 {
+    fmInfo() << "PDF preview: PDFPreview instance destroyed";
     if (pdfWidget) {
         pdfWidget->deleteLater();
     }
@@ -27,17 +29,35 @@ PDFPreview::~PDFPreview()
 
 bool PDFPreview::setFileUrl(const QUrl &url)
 {
-    if (selectFileUrl == url)
+    fmInfo() << "PDF preview: setting file URL:" << url;
+    
+    if (selectFileUrl == url) {
+        fmDebug() << "PDF preview: URL unchanged, skipping:" << url;
         return true;
+    }
 
-    if (!url.isLocalFile())
+    if (!url.isLocalFile()) {
+        fmWarning() << "PDF preview: URL is not a local file:" << url;
         return false;
+    }
 
-    if (pdfWidget == nullptr)
+    const QString filePath = url.toLocalFile();
+    if (!QFileInfo::exists(filePath)) {
+        fmWarning() << "PDF preview: file does not exist:" << filePath;
+        return false;
+    }
+
+    if (pdfWidget == nullptr) {
+        fmDebug() << "PDF preview: creating new PdfWidget";
         pdfWidget = new PdfWidget();
+    }
+    
     pdfWidget->setFixedSize(kPdfWidgetWidth, kPdfWidgetHeight);
-    pdfWidget->addFileAsync(url.toLocalFile());
-    pageTitle = QFileInfo(url.toLocalFile()).fileName();
+    pdfWidget->addFileAsync(filePath);
+    pageTitle = QFileInfo(filePath).fileName();
+
+    selectFileUrl = url;
+    fmInfo() << "PDF preview: file URL set successfully:" << url << "title:" << pageTitle;
 
     Q_EMIT titleChanged();
 
@@ -67,5 +87,6 @@ bool PDFPreview::showStatusBarSeparator() const
 void PDFPreview::initialize(QWidget *window, QWidget *statusBar)
 {
     Q_UNUSED(statusBar);
+    fmDebug() << "PDF preview: initializing with main window";
     setMainWidget(window);
 }

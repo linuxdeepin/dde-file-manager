@@ -24,6 +24,8 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
       thread(new QThread),
       worker(new ThumbnailWorker)
 {
+    qCInfo(logDFMBase) << "thumbnail: ThumbnailFactory initializing with" << QThread::idealThreadCount() << "ideal thread count";
+
     registerThumbnailCreator(Mime::kTypeImageVDjvu, ThumbnailCreators::djvuThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeImageVDMultipage, ThumbnailCreators::djvuThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeTextPlain, ThumbnailCreators::textThumbnailCreator);
@@ -40,6 +42,7 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
 
 ThumbnailFactory::~ThumbnailFactory()
 {
+    qCInfo(logDFMBase) << "thumbnail: ThumbnailFactory destructor called";
     if (thread->isRunning())
         onAboutToQuit();
 }
@@ -60,11 +63,14 @@ void ThumbnailFactory::init()
 
     worker->moveToThread(thread.data());
     thread->start();
+
+    qCInfo(logDFMBase) << "thumbnail: ThumbnailFactory initialized, worker thread started";
 }
 
 void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
     if (QThread::currentThread() != qApp->thread()) {
+        qCDebug(logDFMBase) << "thumbnail: cross-thread job request, queuing for:" << url;
         emit thumbnailJob(url, size);
         return;
     }
@@ -74,37 +80,60 @@ void ThumbnailFactory::joinThumbnailJob(const QUrl &url, ThumbnailSize size)
 bool ThumbnailFactory::registerThumbnailCreator(const QString &mimeType, ThumbnailCreator creator)
 {
     Q_ASSERT(creator);
-    return worker->registerCreator(mimeType, creator);
+    bool success = worker->registerCreator(mimeType, creator);
+    if (success) {
+        qCDebug(logDFMBase) << "thumbnail: registered creator for mime type:" << mimeType;
+    } else {
+        qCWarning(logDFMBase) << "thumbnail: failed to register creator for mime type:" << mimeType;
+    }
+    return success;
 }
 
 void ThumbnailFactory::onAboutToQuit()
 {
+    qCInfo(logDFMBase) << "thumbnail: application about to quit, stopping worker and thread";
     worker->stop();
     thread->quit();
-    thread->wait(3000);
+    bool finished = thread->wait(3000);
+    if (!finished) {
+        qCWarning(logDFMBase) << "thumbnail: worker thread did not finish within 3 seconds, forcing termination";
+        thread->terminate();
+        thread->wait(1000);
+    } else {
+        qCInfo(logDFMBase) << "thumbnail: worker thread stopped gracefully";
+    }
 }
 
 void ThumbnailFactory::pushTask()
 {
     auto map = std::move(taskMap);
+    qCDebug(logDFMBase) << "thumbnail: pushing" << map.size() << "tasks to worker thread";
     emit addTask(map);
 }
 
 void ThumbnailFactory::doJoinThumbnailJob(const QUrl &url, ThumbnailSize size)
 {
-    if (FileUtils::containsCopyingFileUrl(url))
+    if (FileUtils::containsCopyingFileUrl(url)) {
+        qCDebug(logDFMBase) << "thumbnail: skipping file being copied:" << url;
         return;
+    }
 
-    if (taskMap.contains(url))
+    if (taskMap.contains(url)) {
+        qCDebug(logDFMBase) << "thumbnail: task already queued for:" << url;
         return;
+    }
 
-    if (taskMap.isEmpty())
+    if (taskMap.isEmpty()) {
+        qCDebug(logDFMBase) << "thumbnail: starting task push timer";
         taskPushTimer.start();
-
+    }
 
     taskMap.insert(url, size);
+    qCDebug(logDFMBase) << "thumbnail: added task for:" << url << "queue size:" << taskMap.size();
+
     if (taskMap.size() < kMaxCountLimit)
         return;
 
+    qCDebug(logDFMBase) << "thumbnail: task queue reached limit" << kMaxCountLimit << ", pushing immediately";
     pushTask();
 }

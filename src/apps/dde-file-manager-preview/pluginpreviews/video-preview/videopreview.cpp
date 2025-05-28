@@ -18,6 +18,8 @@ using namespace plugin_filepreview;
 VideoPreview::VideoPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
+    fmInfo() << "Video preview: VideoPreview instance created";
+    
     setlocale(LC_NUMERIC, "C");
 
     playerWidget = new VideoWidget(this);
@@ -26,10 +28,14 @@ VideoPreview::VideoPreview(QObject *parent)
 
     connect(&playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, &VideoPreview::sigPlayState);
     connect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
+    
+    fmDebug() << "Video preview: VideoPreview initialization completed";
 }
 
 VideoPreview::~VideoPreview()
 {
+    fmInfo() << "Video preview: VideoPreview instance destroyed";
+    
     if (statusBar) {
         statusBar->hide();
         statusBar->deleteLater();
@@ -41,25 +47,46 @@ VideoPreview::~VideoPreview()
         disconnect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
         playerWidget.data()->deleteLater();
     }
+    
+    fmDebug() << "Video preview: VideoPreview cleanup completed";
 }
 
 bool VideoPreview::setFileUrl(const QUrl &url)
 {
-    if (!playerWidget->engine().isPlayableFile(url))
+    fmInfo() << "Video preview: setting file URL:" << url;
+    
+    if (!url.isLocalFile()) {
+        fmWarning() << "Video preview: URL is not a local file:" << url;
         return false;
-
-    bool ok = false;
-    info = dmr::MovieInfo::parseFromFile(QFileInfo(url.toLocalFile()), &ok);
-
-    if (!ok) {
+    }
+    
+    const QString filePath = url.toLocalFile();
+    if (!QFileInfo::exists(filePath)) {
+        fmWarning() << "Video preview: file does not exist:" << filePath;
         return false;
     }
 
+    if (!playerWidget->engine().isPlayableFile(url)) {
+        fmWarning() << "Video preview: file is not playable:" << url;
+        return false;
+    }
+
+    bool ok = false;
+    info = dmr::MovieInfo::parseFromFile(QFileInfo(filePath), &ok);
+
+    if (!ok) {
+        fmWarning() << "Video preview: failed to parse movie info from file:" << filePath;
+        return false;
+    }
+
+    fmDebug() << "Video preview: movie info parsed successfully - title:" << info.title << "duration:" << info.duration;
+    
     playerWidget->title->setText(info.title);
     playerWidget->title->adjustSize();
     statusBar->slider->setMaximum(static_cast<int>(info.duration));
-    videoUrl = QUrl::fromLocalFile(url.toLocalFile());
+    videoUrl = QUrl::fromLocalFile(filePath);
 
+    fmInfo() << "Video preview: file URL set successfully:" << url;
     return true;
 }
 
@@ -91,16 +118,21 @@ Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
 void VideoPreview::play()
 {
     if (playerWidget && videoUrl.isValid()) {
+        fmDebug() << "Video preview: starting playback for:" << videoUrl;
         playerWidget->playFile(videoUrl);
+    } else {
+        fmWarning() << "Video preview: cannot play - invalid player widget or URL:" << videoUrl;
     }
 }
 
 void VideoPreview::pause()
 {
+    fmDebug() << "Video preview: pausing/resuming playback";
     playerWidget->engine().pauseResume();
 }
 
 void VideoPreview::stop()
 {
+    fmDebug() << "Video preview: stopping playback";
     playerWidget->engine().stop();
 }
