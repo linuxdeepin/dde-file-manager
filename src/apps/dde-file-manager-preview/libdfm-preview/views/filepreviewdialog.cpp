@@ -29,17 +29,21 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
 
+Q_DECLARE_LOGGING_CATEGORY(logLibFilePreview)
+
 FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget *parent)
     : DAbstractDialog(parent),
       fileList(previewUrllist),
       dialogManager(DialogManagerInstance)
 {
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: initializing with" << previewUrllist.size() << "files";
     initUI();
 
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FilePreviewDialog::handleFileInfoRefreshFinished, Qt::QueuedConnection);
 
     if (previewUrllist.count() < 2) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: single file mode - hiding navigation buttons";
         statusBar->preButton()->hide();
         statusBar->nextButton()->hide();
     }
@@ -51,6 +55,7 @@ FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget 
 
 FilePreviewDialog::~FilePreviewDialog()
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: destructor called";
     if (preview) {
         preview->deleteLater();
         preview = nullptr;
@@ -60,8 +65,11 @@ FilePreviewDialog::~FilePreviewDialog()
 
 void FilePreviewDialog::updatePreviewList(const QList<QUrl> &previewUrllist)
 {
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: updating preview list with" << previewUrllist.size() << "files";
+    
     // 视频预览的前一秒禁止再次播放
     if (playingVideo) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: video is playing, ignoring preview list update";
         return;
     }
 
@@ -69,9 +77,11 @@ void FilePreviewDialog::updatePreviewList(const QList<QUrl> &previewUrllist)
     currentPageIndex = -1;
 
     if (previewUrllist.count() < 2) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: single file mode - hiding navigation buttons";
         statusBar->preButton()->hide();
         statusBar->nextButton()->hide();
     } else {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: multiple files mode - showing navigation buttons";
         statusBar->preButton()->show();
         statusBar->nextButton()->show();
     }
@@ -81,18 +91,26 @@ void FilePreviewDialog::updatePreviewList(const QList<QUrl> &previewUrllist)
 
 void FilePreviewDialog::setEntryUrlList(const QList<QUrl> &urlList)
 {
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: empty URL list provided for entry list";
         return;
+    }
+    
     QUrl currentUrl = fileList.at(currentPageIndex);
     if (urlList.contains(currentUrl)) {
+        qCInfo(logLibFilePreview) << "FilePreviewDialog: setting directory preview mode with" << urlList.size() << "files";
         previewDir = true;
         fileList = urlList;
         currentPageIndex = fileList.indexOf(currentUrl);
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: current file index in directory:" << currentPageIndex;
+    } else {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: current file not found in provided URL list";
     }
 }
 
 void FilePreviewDialog::done(int r)
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: dialog done with result:" << r;
     DAbstractDialog::done(r);
 
     if (preview) {
@@ -104,6 +122,7 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::setCurrentWinID(quint64 winID)
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: setting current window ID:" << winID;
     currentWinID = winID;
 }
 
@@ -111,10 +130,12 @@ void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (preview) {
         if (preview->metaObject()->className() == QStringLiteral("VideoPreview")) {
+            qCDebug(logLibFilePreview) << "FilePreviewDialog: starting video preview playback";
             playingVideo = true;
             // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
             QTimer::singleShot(1000, [this]() {
                 playingVideo = false;
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: video preview cooldown period ended";
             });
         }
         preview->play();
@@ -123,14 +144,23 @@ void FilePreviewDialog::playCurrentPreviewFile()
 
 void FilePreviewDialog::openFile()
 {
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: opening current file:" << fileList.at(currentPageIndex).toString();
     bool succ = PreviewFileOperation::openFileHandle(currentWinID, fileList.at(currentPageIndex));
-    if (succ)
+    if (succ) {
+        qCInfo(logLibFilePreview) << "FilePreviewDialog: file opened successfully, closing preview dialog";
         close();
+    } else {
+        qCWarning(logLibFilePreview) << "FilePreviewDialog: failed to open file:" << fileList.at(currentPageIndex).toString();
+    }
 }
 
 void FilePreviewDialog::handleFileInfoRefreshFinished(const QUrl url, const QString &infoPtr, const bool isLinkOrg)
 {
+    Q_UNUSED(infoPtr)
+    Q_UNUSED(isLinkOrg)
+    
     if (UniversalUtils::urlEquals(url, fileList.at(currentPageIndex))) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: file info refreshed for current file, updating preview:" << url.toString();
         switchToPage(currentPageIndex);
     }
 }
@@ -151,6 +181,7 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: close event triggered";
     emit signalCloseEvent();
     if (preview) {
         preview->stop();
@@ -163,6 +194,7 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: resize event - old size:" << event->oldSize() << "new size:" << event->size();
     DAbstractDialog::resizeEvent(event);
     QTimer::singleShot(50, this, [=]() {   //! 50ms这个时间视机器性能而定
         repaint();   // 通过重绘来解决调整大小前的窗口残留的问题
@@ -176,19 +208,25 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
         switch (e->key()) {
         case Qt::Key_Left:
         case Qt::Key_Up:
-            if (!e->isAutoRepeat())
+            if (!e->isAutoRepeat()) {
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: previous page key pressed";
                 previousPage();
+            }
             break;
         case Qt::Key_Right:
         case Qt::Key_Down:
-            if (!e->isAutoRepeat())
+            if (!e->isAutoRepeat()) {
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: next page key pressed";
                 nextPage();
+            }
             break;
         case Qt::Key_Escape:
         case Qt::Key_Space: {
             if (!e->isAutoRepeat()) {
+                qCInfo(logLibFilePreview) << "FilePreviewDialog: close key pressed (Escape/Space)";
                 // 视频预览的前一秒禁止再次播放
                 if (playingVideo) {
+                    qCDebug(logLibFilePreview) << "FilePreviewDialog: video is playing, ignoring close request";
                     break;
                 }
                 if (preview) {
@@ -208,6 +246,8 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 
 void FilePreviewDialog::initUI()
 {
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: initializing UI components";
+    
     closeBtn = new DFloatingButton(DStyle::SP_CloseButton, this);
     closeBtn->setStyleSheet("background-color: transparent;");
     closeBtn->setFixedSize(46, 46);
@@ -246,23 +286,37 @@ void FilePreviewDialog::initUI()
     connect(statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(statusBar->openButton(), &QPushButton::clicked, this, &FilePreviewDialog::openFile);
+    
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: UI initialization completed";
 }
 
 void FilePreviewDialog::switchToPage(int index)
 {
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: switching to page" << index << "of" << fileList.count() << "files";
+    
+    if (index < 0 || index >= fileList.count()) {
+        qCWarning(logLibFilePreview) << "FilePreviewDialog: invalid page index:" << index << "valid range: 0 -" << (fileList.count() - 1);
+        return;
+    }
+    
     currentPageIndex = index;
     statusBar->preButton()->setEnabled(index > 0);
     statusBar->nextButton()->setEnabled(index < fileList.count() - 1);
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(fileList.at(index));
-    if (info.isNull())
+    if (info.isNull()) {
+        qCWarning(logLibFilePreview) << "FilePreviewDialog: failed to create file info for:" << fileList.at(index).toString();
         return;
+    }
 
     if (!info) {
+        qCWarning(logLibFilePreview) << "FilePreviewDialog: file info is null, removing from list:" << fileList.at(index).toString();
         fileList.removeAt(index);
 
-        if (fileList.isEmpty())
+        if (fileList.isEmpty()) {
+            qCWarning(logLibFilePreview) << "FilePreviewDialog: no more files to preview";
             return;
+        }
 
         return switchToPage(index);
     }
@@ -273,9 +327,10 @@ void FilePreviewDialog::switchToPage(int index)
     const QMimeType &mimeType = DMimeDatabase().mimeTypeForUrl(fileList.at(index));
 
     QStringList keyList(mimeType.name());
-
     keyList.append(mimeType.aliases());
     keyList.append(mimeType.allAncestors());
+
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: searching preview for MIME type:" << mimeType.name() << "with keys:" << keyList;
 
     // TODO: change view select item
     // if (previewDir) {
@@ -291,6 +346,7 @@ void FilePreviewDialog::switchToPage(int index)
         const QString &gKey = generalKey(key);
 
         if (preview && (FilePreviewFactory::isSuitedWithKey(preview, key) || FilePreviewFactory::isSuitedWithKey(preview, gKey)) && !FileUtils::isDesktopFile(fileList.at(index))) {
+            qCDebug(logLibFilePreview) << "FilePreviewDialog: reusing existing preview for key:" << key;
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();
                 updateTitle();
@@ -301,6 +357,7 @@ void FilePreviewDialog::switchToPage(int index)
                 setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
                 moveToCenter();
+                qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully reused preview for file:" << fileList.at(index).toString();
                 return;
             }
         }
@@ -312,23 +369,30 @@ void FilePreviewDialog::switchToPage(int index)
         }
 
         if (view) {
+            qCDebug(logLibFilePreview) << "FilePreviewDialog: created new preview for key:" << key;
             view->initialize(this, statusBar);
 
-            if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl) && view->setFileUrl(info->urlOf(UrlInfoType::kRedirectedFileUrl)))
+            if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl) && view->setFileUrl(info->urlOf(UrlInfoType::kRedirectedFileUrl))) {
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: using redirected URL for preview";
                 break;
-            else if (view->setFileUrl(fileList.at(index)))
+            } else if (view->setFileUrl(fileList.at(index))) {
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: successfully set file URL for preview";
                 break;
-            else
+            } else {
+                qCDebug(logLibFilePreview) << "FilePreviewDialog: preview failed to handle file, trying next option";
                 view->deleteLater();
+            }
         }
     }
 
     if (!view) {
         if (preview && qobject_cast<UnknowFilePreview *>(preview)) {
+            qCDebug(logLibFilePreview) << "FilePreviewDialog: reusing unknown file preview";
             preview->setFileUrl(fileList.at(index));
             // statusBar->openButton()->setFocus();
             return;
         } else {
+            qCInfo(logLibFilePreview) << "FilePreviewDialog: no suitable preview found, using unknown file preview";
             view = new UnknowFilePreview(this);
             view->initialize(this, statusBar);
             view->setFileUrl(fileList.at(index));
@@ -365,24 +429,36 @@ void FilePreviewDialog::switchToPage(int index)
     setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
     updateTitle();
     moveToCenter();
+    
+    qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully switched to page" << index << "for file:" << fileList.at(index).toString();
 }
 
 void FilePreviewDialog::previousPage()
 {
-    if (currentPageIndex < 1)
+    if (currentPageIndex < 1) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: already at first page, cannot go to previous";
         return;
-    if (playingVideo)
+    }
+    if (playingVideo) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: video is playing, ignoring previous page request";
         return;
+    }
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: navigating to previous page:" << (currentPageIndex - 1);
     firstEnterSwitchToPage = false;
     switchToPage(currentPageIndex - 1);
 }
 
 void FilePreviewDialog::nextPage()
 {
-    if (currentPageIndex > fileList.count() - 2)
+    if (currentPageIndex > fileList.count() - 2) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: already at last page, cannot go to next";
         return;
-    if (playingVideo)
+    }
+    if (playingVideo) {
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: video is playing, ignoring next page request";
         return;
+    }
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: navigating to next page:" << (currentPageIndex + 1);
     firstEnterSwitchToPage = false;
     switchToPage(currentPageIndex + 1);
 }
@@ -390,8 +466,10 @@ void FilePreviewDialog::nextPage()
 void FilePreviewDialog::updateTitle()
 {
     // 在频繁启动关闭的场景下，preview可能会意外释放，引起空指针造成的崩溃
-    if (!preview)
+    if (!preview) {
+        qCWarning(logLibFilePreview) << "FilePreviewDialog: preview is null during title update";
         return;
+    }
 
     QFont font = statusBar->title()->font();
     QFontMetrics fm(font);
@@ -400,6 +478,7 @@ void FilePreviewDialog::updateTitle()
     if (!statusBar->preButton()->isVisible()) {
         /*smb 中一直按着空格预览，preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
         if (!preview) {
+            qCWarning(logLibFilePreview) << "FilePreviewDialog: preview became null during title update";
             return;
         }
         elidedText = fm.elidedText(preview->title(), Qt::ElideMiddle, width() / 2 - statusBar->contentsMargins().left() - statusBar->layout()->spacing() - 30);
@@ -408,6 +487,8 @@ void FilePreviewDialog::updateTitle()
     }
     statusBar->title()->setText(elidedText);
     statusBar->title()->setHidden(statusBar->title()->text().isEmpty());
+    
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: updated title to:" << elidedText;
 }
 
 QString FilePreviewDialog::generalKey(const QString &key)

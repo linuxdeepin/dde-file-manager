@@ -154,7 +154,7 @@ void PreviewPluginLoader::update()
 {
 
 #ifdef QT_SHARED
-    qCInfo(logLibFilePreview) << "File Preview: checking directory path";
+    qCInfo(logLibFilePreview) << "PreviewPluginLoader: starting plugin directory scan";
     const QStringList &paths = dptr->pluginPaths;
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
@@ -164,13 +164,17 @@ void PreviewPluginLoader::update()
 
         QString path = pluginDir;
 
-        qCInfo(logLibFilePreview) << "File Preview: checking directory path" << path << "...";
+        qCDebug(logLibFilePreview) << "PreviewPluginLoader: scanning plugin directory:" << path;
 
-        if (!QDir(path).exists(QLatin1String(".")))
+        if (!QDir(path).exists(QLatin1String("."))) {
+            qCDebug(logLibFilePreview) << "PreviewPluginLoader: directory does not exist, skipping:" << path;
             continue;
+        }
 
         QStringList plugins = QDir(path).entryList(QDir::Files);
         QPluginLoader *loader = nullptr;
+
+        qCDebug(logLibFilePreview) << "PreviewPluginLoader: found" << plugins.count() << "files in directory:" << path;
 
 #    ifdef Q_OS_MAC
         // Loading both the debug and release version of the cocoa plugins causes the objective-c runtime
@@ -197,12 +201,12 @@ void PreviewPluginLoader::update()
             }
 #    endif
             if (dfm_debug_component()) {
-                qCInfo(logLibFilePreview) << "File Preview: looking at" << fileName;
+                qCDebug(logLibFilePreview) << "PreviewPluginLoader: examining plugin file:" << fileName;
             }
             loader = new QPluginLoader(fileName, this);
             if (!loader->load()) {
                 if (dfm_debug_component()) {
-                    qCWarning(logLibFilePreview) << "load failed:" << loader->errorString();
+                    qCWarning(logLibFilePreview) << "PreviewPluginLoader: failed to load plugin:" << fileName << "error:" << loader->errorString();
                 }
                 loader->deleteLater();
                 continue;
@@ -221,9 +225,10 @@ void PreviewPluginLoader::update()
                     keys += dptr->cs ? k.at(m).toString() : k.at(m).toString().toLower();
             }
             if (dfm_debug_component())
-                qCInfo(logLibFilePreview) << "File Preview: Got keys from plugin meta data" << keys;
+                qCDebug(logLibFilePreview) << "PreviewPluginLoader: extracted keys from plugin metadata:" << keys << "for file:" << fileName;
 
             if (!metaDataOk) {
+                qCDebug(logLibFilePreview) << "PreviewPluginLoader: plugin metadata validation failed, skipping:" << fileName;
                 loader->deleteLater();
                 continue;
             }
@@ -250,19 +255,27 @@ void PreviewPluginLoader::update()
                     if (!previous || (prev_dfm_version > QString(VERSION).toDouble() && dfm_version <= QString(VERSION).toDouble())) {
                         dptr->keyMap.insertMulti(key, loader);
                         ++keyUsageCount;
+                        if (previous) {
+                            qCDebug(logLibFilePreview) << "PreviewPluginLoader: replaced plugin for key:" << key << "old version:" << prev_dfm_version << "new version:" << dfm_version;
+                        }
+                    } else {
+                        qCDebug(logLibFilePreview) << "PreviewPluginLoader: keeping existing plugin for key:" << key << "existing version:" << prev_dfm_version << "candidate version:" << dfm_version;
                     }
                 }
             }
-            if (keyUsageCount || keys.isEmpty())
+            if (keyUsageCount || keys.isEmpty()) {
                 dptr->pluginLoaderList += loader;
-            else
+                qCInfo(logLibFilePreview) << "PreviewPluginLoader: successfully loaded plugin:" << fileName << "with" << keyUsageCount << "keys";
+            } else {
+                qCDebug(logLibFilePreview) << "PreviewPluginLoader: plugin not used, no keys registered:" << fileName;
                 loader->deleteLater();
+            }
         }
     }
+    qCInfo(logLibFilePreview) << "PreviewPluginLoader: plugin directory scan completed, total plugins loaded:" << dptr->pluginLoaderList.size();
 #else
     if (dfm_debug_component()) {
-        fmDebug() << "PreviewPluginLoader::PreviewPluginLoader() ignoring" << dptr->iid
-                  << "since plugins are disabled in static builds";
+        qCWarning(logLibFilePreview) << "PreviewPluginLoader: static build detected, plugin loading disabled for IID:" << dptr->iid;
     }
 #endif
 }
