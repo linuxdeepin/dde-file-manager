@@ -67,47 +67,56 @@ QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, Thumbna
 QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: using ffmpeg for video:" << filePath << "size:" << size;
-    
+
+    // Probe for duration
+    QProcess probe;
+    QStringList probeArgs {
+        "-v", "error",
+        "-show_entries", "format=duration",
+        "-of", "default=noprint_wrappers=1:nokey=1",
+        filePath
+    };
+    probe.start("ffprobe", probeArgs);
+    if (!probe.waitForFinished(5000)) {
+        probe.kill();
+        return QImage();
+    }
+
+    bool ok = false;
+    double duration = probe.readAllStandardOutput().trimmed().toDouble(&ok);
+    if (!ok || duration <= 0.0)
+        return QImage();
+
+    double midpoint = duration / 2.0;
+    QString midpointStr = QString::number(midpoint, 'f', 2);
+    QString scaleFilter = QString("scale='min(%1,iw)':-1").arg(size);
+
     QProcess ffmpeg;
-    QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
-                       "-vf", QString("scale='min(%1, iw)':-1").arg(size), "-f",
-                       "image2pipe", "-vcodec", "png", "-fs", "9000", "-" };
+    QStringList args {
+        "-ss", midpointStr,
+        "-i", filePath,
+        "-vf", scaleFilter,
+        "-frames:v", "1",
+        "-f", "image2pipe",
+        "-vcodec", "png",
+        "-"
+    };
+
     ffmpeg.start("ffmpeg", args, QIODevice::ReadOnly);
-
-    QImage img;
     if (!ffmpeg.waitForFinished()) {
-        qCWarning(logDFMBase) << "thumbnail: ffmpeg execution failed for:" << filePath 
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg execution failed for:" << filePath
                               << "error:" << ffmpeg.errorString();
-        return img;
+        return QImage();
     }
 
-    const auto &data = ffmpeg.readAllStandardOutput();
-    if (data.isEmpty()) {
-        qCWarning(logDFMBase) << "thumbnail: ffmpeg produced no output for:" << filePath;
-        return img;
-    }
-
-    QString outputs(data);
-    if (!img.loadFromData(data)) {   // filter the outputs outputed by video tool.
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-        QStringList data = outputs.split(QRegularExpression("[\n]"), Qt::SkipEmptyParts);
-#else
-        QStringList data = outputs.split(QRegularExpression("[\n]"), QString::SkipEmptyParts);
-#endif
-        if (data.isEmpty()) {
-            qCWarning(logDFMBase) << "thumbnail: ffmpeg output parsing failed for:" << filePath;
-            return img;
-        }
-
-        outputs = data.last();
-    }
-
-    if (!img.loadFromData(outputs.toLocal8Bit(), "png")) {
+    QByteArray data = ffmpeg.readAllStandardOutput();
+    QImage img;
+    if (!img.loadFromData(data, "PNG")) {
         qCWarning(logDFMBase) << "thumbnail: failed to load image from ffmpeg output for:" << filePath;
     } else {
         qCDebug(logDFMBase) << "thumbnail: ffmpeg video thumbnail created successfully for:" << filePath;
     }
-    
+
     return img;
 }
 
