@@ -104,7 +104,7 @@ QString sizeString(const QString &str)
 QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, int forceUnit, QStringList unitList)
 {
     if (num < 0) {
-        qCWarning(logDFMBase) << "Negative number passed to formatSize():" << num;
+        qCWarning(logDFMBase) << "Invalid negative size value passed to formatSize:" << num;
         num = 0;
     }
 
@@ -457,7 +457,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         fileBaseName.replace(pair.first, pair.second);
 
         if (fileBaseName.trimmed().isEmpty()) {
-            qCWarning(logDFMBase) << "replace fileBaseName(not include suffix) trimmed is empty string";
+            qCWarning(logDFMBase) << "File batch replace text failed: resulting basename is empty for URL:" << url;
             continue;
         }
 
@@ -471,6 +471,10 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
 
         if (changedUrl != url)
             result.insert(url, changedUrl);
+
+        if (isDesktopApp) {
+            qCDebug(logDFMBase) << "Desktop app batch rename:" << fileBaseName << "for path:" << info->urlOf(UrlInfoType::kUrl);
+        }
     }
 
     return result;
@@ -576,8 +580,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
             needRecombination = true;
 
         if (isDesktopApp) {
-            qCDebug(logDFMBase) << "this is desktop app case,file name will be changed as { "
-                                << fileBaseName << " } for path:" << info->urlOf(UrlInfoType::kUrl);
+            qCDebug(logDFMBase) << "Desktop app custom rename:" << fileBaseName << "for path:" << info->urlOf(UrlInfoType::kUrl);
         }
 
         ++index;
@@ -659,12 +662,12 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         if (codec->toUnicode(data) != fullChar) {
-            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << codec->name() << "coding";
+            qCWarning(logDFMBase) << "Character encoding conversion failed for character:" << fullChar << "to codec:" << codec->name();
             continue;
         }
 #else
         if (decoder.decode(data) != fullChar) {
-            qCWarning(logDFMBase) << "Failed convert" << fullChar << "to" << data << "coding";
+            qCWarning(logDFMBase) << "Character encoding conversion failed for character:" << fullChar << "to data:" << data;
             continue;
         }
 #endif
@@ -1328,7 +1331,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                          QString("dde-file-manager"),   // icon
                          QObject::tr("This system wallpaper is locked. Please contact your admin."),
                          QString(), QStringList(), QVariantMap(), 5000);
-        qCInfo(logDFMBase) << "wallpaper is locked..";
+        qCInfo(logDFMBase) << "Wallpaper change blocked: system wallpaper is locked";
         return false;
     }
 
@@ -1338,7 +1341,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                           "Set");
     message.setArguments({ "greeterbackground", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(message);
-    qCInfo(logDFMBase) << "setgreeterbackground calls Appearance Set";
+    qCInfo(logDFMBase) << "Setting greeter background via Appearance service:" << pictureFilePath;
 
     QDBusMessage msgIntrospect = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
                                                                 APPEARANCE_PATH,
@@ -1358,7 +1361,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
             const QString screen = qApp->primaryScreen()->name();
             msg.setArguments({ screen, pictureFilePath });
             QDBusConnection::sessionBus().asyncCall(msg);
-            qCInfo(logDFMBase) << "setBackground calls Appearance SetMonitorBackground" << screen;
+            qCInfo(logDFMBase) << "Setting monitor background via Appearance service for screen:" << screen << "path:" << pictureFilePath;
             return true;
         }
     }
@@ -1369,7 +1372,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                       "Set");
     msg.setArguments({ "Background", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(msg);
-    qCInfo(logDFMBase) << "setBackground calls Appearance Set";
+    qCInfo(logDFMBase) << "Setting background via Appearance service:" << pictureFilePath;
 
     return true;
 }

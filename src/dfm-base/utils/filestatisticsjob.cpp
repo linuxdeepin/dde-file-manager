@@ -57,12 +57,13 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
     state = s;
 
     if (notifyDataTimer->thread() && notifyDataTimer->thread()->loopLevel() <= 0) {
-        qCWarning(logDFMBase) << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
+        qCWarning(logDFMBase) << "File statistics timer thread has no event loop, thread:" << notifyDataTimer->thread();
     }
 
     if (s == FileStatisticsJob::kRunningState) {
         QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 500));
         elapsedTimer.start();
+        qCInfo(logDFMBase) << "File statistics job started";
     } else {
         QMetaObject::invokeMethod(notifyDataTimer, "stop");
 
@@ -71,7 +72,8 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
             Q_EMIT q->sizeChanged(totalSize);
         }
 
-        qCDebug(logDFMBase) << "statistic finished(may stop), result: " << totalSize << filesCount << directoryCount;
+        qCInfo(logDFMBase) << "File statistics job finished - total size:" << totalSize 
+                          << "files:" << filesCount << "directories:" << directoryCount;
     }
 
     Q_EMIT q->stateChanged(s);
@@ -118,7 +120,7 @@ void FileStatisticsJobPrivate::processFile(const FileInfoPointer &fileInfo, cons
     auto url = fileInfo->fileUrl();
 
     if (!info) {
-        qCWarning(logDFMBase) << "Url not yet supported: " << url;
+        qCWarning(logDFMBase) << "File statistics failed: unsupported URL scheme:" << url;
         return;
     }
 
@@ -412,7 +414,7 @@ FileStatisticsJob::FileStatisticsJob(QObject *parent)
         stop();   // Signal the thread to stop
 
         if (!wait(3000)) {   // Wait for 3 seconds
-            qWarning() << "FileStatisticsJob thread did not exit within 3 seconds. Terminating forcefully.";
+            qCWarning(logDFMBase) << "File statistics job thread did not exit within 3 seconds, terminating forcefully";
             quit();   // Ensure the event loop is stopped
             terminate();   // Forcefully terminate the thread (use with caution!)
             wait();   // Wait for the thread to terminate (no timeout this time)
@@ -472,18 +474,20 @@ SizeInfoPointer FileStatisticsJob::getFileSizeInfo()
 void FileStatisticsJob::start(const QList<QUrl> &sourceUrls)
 {
     if (isRunning()) {
-        qCWarning(logDFMBase) << "current thread is running... reject to start.";
+        qCWarning(logDFMBase) << "File statistics job already running, rejecting new start request";
         return;
     }
     d->sourceUrlList = sourceUrls;
 
     if (d->sourceUrlList.count() <= 0) {
+        qCWarning(logDFMBase) << "File statistics job start failed: empty source URL list";
         return;
     }
 
     if (d->fileHints.testFlag(kDontSizeInfoPointer))
         d->sizeInfo.reset(nullptr);
 
+    qCInfo(logDFMBase) << "Starting file statistics job for" << sourceUrls.count() << "URLs";
     QThread::start();
 }
 
@@ -572,7 +576,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
             if (!info) {
-                qCWarning(logDFMBase) << "Url not yet supported: " << url;
+                qCWarning(logDFMBase) << "File statistics skipped unsupported URL:" << url;
                 continue;
             }
 
@@ -640,7 +644,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                                                                       QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
         if (!d->iterator) {
-            qCWarning(logDFMBase) << "Failed on create dir iterator, for url:" << directory_url;
+            qCWarning(logDFMBase) << "File statistics failed to create directory iterator for URL:" << directory_url;
             continue;
         }
         d->iterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,\

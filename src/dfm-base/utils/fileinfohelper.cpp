@@ -148,6 +148,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
             if (ProtocolUtils::isSMBFile(asyncInfo->fileUrl())
                 && asyncInfo->errorCodeFromDfmio() == DFMIOErrorCode::DFM_IO_ERROR_HOST_IS_DOWN
                 && !NetworkUtils::instance()->checkFtpOrSmbBusy(asyncInfo->fileUrl())) {
+                qCWarning(logDFMBase) << "SMB server connection lost for URL:" << asyncInfo->fileUrl();
                 emit this->smbSeverMayModifyPassword(asyncInfo->fileUrl());
             }
             return;
@@ -163,6 +164,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
         return;
     }
     qureingInfo.appendByLock(asyncInfo);
+    qCDebug(logDFMBase) << "Starting async file info query for URL:" << asyncInfo->fileUrl();
     asyncInfo->asyncQueryDfmFileInfo(0, callback);
 }
 
