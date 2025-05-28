@@ -80,7 +80,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
     if (!thumbnailPath.isEmpty()) {
         qCInfo(logDFMBase) << "thumbnail: successfully created thumbnail for:" << url << "saved to:" << thumbnailPath;
     }
-    
+
     return thumbnailPath;
 }
 
@@ -111,7 +111,8 @@ void ThumbnailWorkerPrivate::startDelayWork()
         delayTimer = new QTimer(q);
         delayTimer->setInterval(2 * 1000);
         delayTimer->setSingleShot(true);
-        q->connect(delayTimer, &QTimer::timeout, q, [this] { q->onTaskAdded(delayTaskMap); }, Qt::QueuedConnection);
+        q->connect(
+                delayTimer, &QTimer::timeout, q, [this] { q->onTaskAdded(delayTaskMap); }, Qt::QueuedConnection);
         qCDebug(logDFMBase) << "thumbnail: delay timer initialized with 2 second interval";
     }
 
@@ -190,19 +191,17 @@ void ThumbnailWorker::onTaskAdded(const ThumbnailTaskMap &taskMap)
     }
 
     qCInfo(logDFMBase) << "thumbnail: processing" << taskMap.size() << "thumbnail tasks";
-    
+
     QMapIterator<QUrl, Global::ThumbnailSize> iter(taskMap);
     while (iter.hasNext()) {
         iter.next();
         QUrl fileUrl = d->originalUrl = iter.key();
         if (!d->thumbHelper.checkThumbEnable(fileUrl)) {
-            qCDebug(logDFMBase) << "thumbnail: thumbnail generation disabled for:" << fileUrl;
             continue;
         }
 
         const auto &img = d->thumbHelper.thumbnailImage(fileUrl, iter.value());
         if (!img.isNull()) {
-            qCDebug(logDFMBase) << "thumbnail: existing thumbnail found for:" << fileUrl;
             Q_EMIT thumbnailCreateFinished(iter.key(), img.text(QT_STRINGIFY(Thumb::Path)));
             continue;
         }
