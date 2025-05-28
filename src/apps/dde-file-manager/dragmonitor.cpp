@@ -4,6 +4,8 @@
 
 #include "dragmonitor.h"
 
+#include <dfm-base/utils/loggerrules.h>
+
 #include <QCoreApplication>
 #include <QDragEnterEvent>
 #include <QMimeData>
@@ -11,6 +13,7 @@
 #include <QDebug>
 
 using namespace dfm_drag;
+Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
 
 DragMoniter::DragMoniter(QObject *parent)
     : QObject { parent }, QDBusContext()
@@ -21,27 +24,29 @@ void DragMoniter::registerDBus()
 {
     QDBusConnection con = QDBusConnection::sessionBus();
     if (!con.isConnected()) {
-        qWarning() << "Cannot connect to the D-Bus session bus";
+        qCCritical(logAppFileManager) << "DragMoniter::registerDBus: Cannot connect to D-Bus session bus";
         return;
     }
 
     if (!con.registerService("org.deepin.filemanager.drag")) {
-        qWarning() << "Cannot register D-Bus service:" << con.lastError().message();
+        qCCritical(logAppFileManager) << "DragMoniter::registerDBus: Cannot register D-Bus service:" << con.lastError().message();
         return;
     }
 
     if (!con.registerObject("/org/deepin/filemanager/drag",
                             this,
                             QDBusConnection::ExportScriptableSignals)) {
-        qWarning() << "Cannot register D-Bus object:" << con.lastError().message();
+        qCCritical(logAppFileManager) << "DragMoniter::registerDBus: Cannot register D-Bus object:" << con.lastError().message();
         return;
     }
 
+    qCInfo(logAppFileManager) << "DragMoniter::registerDBus: D-Bus service registered successfully";
     qApp->installEventFilter(this);
 }
 
 void DragMoniter::unRegisterDBus()
 {
+    qCInfo(logAppFileManager) << "DragMoniter::unRegisterDBus: Unregistering D-Bus service";
     qApp->removeEventFilter(this);
     QDBusConnection con = QDBusConnection::sessionBus();
     con.unregisterObject("/org/deepin/filemanager/drag");
@@ -64,9 +69,10 @@ bool DragMoniter::eventFilter(QObject *watched, QEvent *event)
                 }
             }
 
-            if (!str.isEmpty())
+            if (!str.isEmpty()) {
+                qCDebug(logAppFileManager) << "DragMoniter::eventFilter: Drag enter event with" << str.size() << "URLs";
                 QMetaObject::invokeMethod(this, "DragEnter", Qt::QueuedConnection, Q_ARG(QStringList, str));
-
+            }
         }
     }
 

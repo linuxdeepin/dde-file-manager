@@ -32,9 +32,13 @@ int main(int argc, char *argv[])
     bool isSinglentanApp = app.setSingleInstance(uniqueKey);
 
     if (isSinglentanApp) {
+        fmInfo() << "main: File preview application started as primary instance, version:" << app.applicationVersion();
         PreviewSingleApplication::processArgs(app.arguments());
-        return app.exec();
+        int ret = app.exec();
+        fmInfo() << "main: File preview application exiting with code:" << ret;
+        return ret;
     } else {
+        fmDebug() << "main: Detected existing preview instance, forwarding to primary instance";
         app.handleNewClient(uniqueKey);
         return 0;
     }

@@ -23,7 +23,7 @@ UsmSessionAPI::~UsmSessionAPI()
 {
     if (disconnectSM) {
         disconnectSM();
-        qCInfo(logAppFileManager) << "disconnect SM";
+        qCInfo(logAppFileManager) << "UsmSessionAPI::~UsmSessionAPI: Disconnected from session manager";
     }
 
     libUsm.unload();
@@ -43,7 +43,7 @@ bool UsmSessionAPI::init()
         return true;
     libUsm.setFileName("usm");
     if (!libUsm.load()) {
-        qCWarning(logAppFileManager) << "cannot load libusm.so";
+        qCCritical(logAppFileManager) << "UsmSessionAPI::init: Cannot load libusm.so";
         return false;
     }
 
@@ -56,7 +56,7 @@ bool UsmSessionAPI::init()
 
     initialized = (connectSM && disconnectSM && requestSaveYourself && parseArguments && setWindowProperty && filename);
 
-    qCInfo(logAppFileManager) << "usm session api initialized: " << initialized;
+    qCInfo(logAppFileManager) << "UsmSessionAPI::init: Session API initialized:" << initialized;
     return initialized;
 }
 
@@ -115,7 +115,7 @@ void SessionBusiness::releaseArguments(int argc, char **argv_new)
 void SessionBusiness::savePath(quint64 wid, const QString &path)
 {
     if (!sessionAPI.isInitialized()) {
-        qCWarning(logAppFileManager) << "failed to save path caused no usm session api init, current pid = " << qApp->applicationPid();
+        qCWarning(logAppFileManager) << "SessionBusiness::savePath: Failed to save path, session API not initialized, PID:" << qApp->applicationPid();
         return;
     }
     QString filePath = QString("%1/.config/%2").arg(QDir::homePath()).arg(sessionAPI.filename(wid));
@@ -125,20 +125,22 @@ void SessionBusiness::savePath(quint64 wid, const QString &path)
     QJsonDocument doc(jsonObj);
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qCWarning(logAppFileManager) << "Failed to write data:" << path << " to file:" << filePath << ",for window:" << wid;
+        qCCritical(logAppFileManager) << "SessionBusiness::savePath: Failed to write session data to file:" << filePath 
+                                      << "for window:" << wid << "path:" << path;
         return;
     }
 
     file.write(doc.toJson());
     file.close();
 
-    qCInfo(logAppFileManager) << "done to write data:" << path << " to file:" << filePath << ",for window:" << wid;
+    qCInfo(logAppFileManager) << "SessionBusiness::savePath: Successfully saved session data for window:" << wid 
+                              << "to file:" << filePath;
 }
 
 bool SessionBusiness::readPath(const QString &fileName, QString *data)
 {
     if (!data) {
-        qCWarning(logAppFileManager) << "path is null";
+        qCCritical(logAppFileManager) << "SessionBusiness::readPath: Output data pointer is null";
         return false;
     }
 
@@ -146,7 +148,7 @@ bool SessionBusiness::readPath(const QString &fileName, QString *data)
     QString &path = *data;
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qCWarning(logAppFileManager) << "can't not read data from:" << filePath;
+        qCWarning(logAppFileManager) << "SessionBusiness::readPath: Cannot read session data from file:" << filePath;
         return false;
     }
 
@@ -155,13 +157,14 @@ bool SessionBusiness::readPath(const QString &fileName, QString *data)
 
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     if (doc.isNull()) {
-        qCWarning(logAppFileManager) << "can't get the doc from:" << filePath;
+        qCWarning(logAppFileManager) << "SessionBusiness::readPath: Invalid JSON data in session file:" << filePath;
         return false;
     }
 
     QJsonObject jsonObj = doc.object();
     path = jsonObj["path"].toString();
-    qCInfo(logAppFileManager) << "get the data:" << path << " from:" << filePath;
+    qCInfo(logAppFileManager) << "SessionBusiness::readPath: Successfully read session data from file:" << filePath 
+                              << "path:" << path;
 
     return !path.isEmpty();
 }
@@ -189,31 +192,36 @@ void SessionBusiness::connectToUsmSever(quint64 wid)
         getAPI()->connectSM(wid);
         getAPI()->setWindowProperty(wid);
         windowStatus[wid] = windowInit;
-        qCInfo(logAppFileManager) << "update the arguments:" << arguments << ",for window:" << wid;
+        qCInfo(logAppFileManager) << "SessionBusiness::connectToUsmSever: Connected to session manager for window:" << wid 
+                                  << "with arguments:" << arguments;
     }
 }
 
 void SessionBusiness::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);
-    Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
+    Q_ASSERT_X(window, "SessionBusiness::onWindowOpened", "Cannot find window by id");
 
     if (!window->isHidden()) {
+        qCDebug(logAppFileManager) << "SessionBusiness::onWindowOpened: Window opened, connecting to session manager, window ID:" << windId;
         connectToUsmSever(window->winId());
     }
 }
 
 void SessionBusiness::onWindowClosed(quint64 windId)
 {
+    qCDebug(logAppFileManager) << "SessionBusiness::onWindowClosed: Window closed, removing from status, window ID:" << windId;
     windowStatus.remove(windId);
 }
 
 void SessionBusiness::onCurrentUrlChanged(quint64 windId, const QUrl &url)
 {
     auto window = FMWindowsIns.findWindowById(windId);
-    Q_ASSERT_X(window, "WindowMonitor", "Cannot find window by id");
+    Q_ASSERT_X(window, "SessionBusiness::onCurrentUrlChanged", "Cannot find window by id");
 
     if (!window->isHidden()) {
+        qCDebug(logAppFileManager) << "SessionBusiness::onCurrentUrlChanged: URL changed for window:" << windId 
+                                   << "new URL:" << url.toString();
         connectToUsmSever(window->winId());
         savePath(window->winId(), url.toString());
     }
