@@ -56,13 +56,15 @@ void PreviewSingleApplication::handleNewClient(const QString &uniqueKey)
 void PreviewSingleApplication::processArgs(const QStringList &list)
 {
     // parse args
-    if (list.count() < 2)
+    if (list.count() < 2) {
+        fmWarning() << "PreviewSingleApplication::processArgs: Insufficient arguments, expected at least 2, got:" << list.count();
         return;
+    }
 
     // Read data from temporary file
     QFile file(list[1]);
     if (!file.open(QIODevice::ReadOnly)) {
-        fmWarning() << "Failed to open temporary file for preview data";
+        fmCritical() << "PreviewSingleApplication::processArgs: Failed to open temporary file:" << list[1];
         return;
     }
 
@@ -71,7 +73,7 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
     file.close();
 
     if (doc.isNull() || !doc.isObject()) {
-        fmWarning() << "Invalid JSON data in temporary file";
+        fmCritical() << "PreviewSingleApplication::processArgs: Invalid JSON data in temporary file:" << list[1];
         return;
     }
 
@@ -93,12 +95,19 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
     }
     QList<QUrl> dirUrls = QUrl::fromStringList(dirUrlStrs);
 
+    fmInfo() << "PreviewSingleApplication::processArgs: Processing preview request for window:" << winId 
+             << "with" << selectUrls.size() << "selected URLs and" << dirUrls.size() << "directory URLs";
+
     // Delete temporary file
-    QFile::remove(list[1]);
+    if (!QFile::remove(list[1])) {
+        fmWarning() << "PreviewSingleApplication::processArgs: Failed to remove temporary file:" << list[1];
+    }
 
     static PreviewLibrary lib;
-    if (!lib.load())
+    if (!lib.load()) {
+        fmCritical() << "PreviewSingleApplication::processArgs: Failed to load preview library";
         return;
+    }
 
     lib.showPreview(winId, selectUrls, dirUrls);
 }
@@ -120,7 +129,7 @@ QLocalSocket *PreviewSingleApplication::getNewClientConnect(const QString &key, 
             }
         }
     } else {
-        fmDebug() << localSocket->errorString();
+        fmWarning() << "PreviewSingleApplication::getNewClientConnect: Failed to connect to server:" << localSocket->errorString();
     }
 
     return localSocket;
@@ -157,7 +166,7 @@ bool PreviewSingleApplication::setSingleInstance(const QString &key)
 
 void PreviewSingleApplication::handleConnection()
 {
-    fmDebug() << "New connection is coming";
+    fmDebug() << "PreviewSingleApplication::handleConnection: New client connection received";
     QLocalSocket *nextPendingConnection = localServer->nextPendingConnection();
     connect(nextPendingConnection, SIGNAL(readyRead()), this, SLOT(readData()));
 }
@@ -165,6 +174,7 @@ void PreviewSingleApplication::handleConnection()
 void PreviewSingleApplication::closeServer()
 {
     if (localServer) {
+        fmDebug() << "PreviewSingleApplication::closeServer: Closing local server";
         localServer->removeServer(localServer->serverName());
         localServer->close();
         delete localServer;
@@ -176,8 +186,10 @@ void PreviewSingleApplication::readData()
 {
     QLocalSocket *socket = qobject_cast<QLocalSocket *>(sender());
 
-    if (!socket)
+    if (!socket) {
+        fmWarning() << "PreviewSingleApplication::readData: Invalid socket sender";
         return;
+    }
 
     QStringList arguments;
     for (const QByteArray &arg_base64 : socket->readAll().split(' ')) {
@@ -190,5 +202,6 @@ void PreviewSingleApplication::readData()
         arguments << argstr;
     }
 
+    fmDebug() << "PreviewSingleApplication::readData: Processing" << arguments.size() << "arguments from client";
     processArgs(arguments);
 }

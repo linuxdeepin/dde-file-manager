@@ -92,34 +92,40 @@ QString CommandParser::value(const QString &name) const
 void CommandParser::processCommand()
 {
     if (isSet("d")) {
-        qCInfo(logAppFileManager) << "Start headless";
+        qCInfo(logAppFileManager) << "Starting file manager in headless mode";
         dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
         // whether to add setQuitOnLastWindowClosed
         return;
     }
 
     if (isSet("e")) {
+        qCDebug(logAppFileManager) << "Processing event command";
         processEvent();
         return;
     }
 
     if (isSet("p")) {
+        qCDebug(logAppFileManager) << "Showing property dialog";
         showPropertyDialog();
         return;
     }
     if (isSet("o")) {
+        qCDebug(logAppFileManager) << "Opening with dialog";
         openWithDialog();
         return;
     }
     if (isSet("O")) {
+        qCDebug(logAppFileManager) << "Opening home directory";
         openInHomeDirectory();
         return;
     }
     if (isSet("s") || isSet("sessionfile")) {
+        qCDebug(logAppFileManager) << "Opening session file";
         openSession();
         return;
     }
 
+    qCDebug(logAppFileManager) << "Opening URLs from command line arguments";
     openInUrls();
 }
 
@@ -130,7 +136,7 @@ void CommandParser::process()
 
 void CommandParser::process(const QStringList &arguments)
 {
-    qCInfo(logAppFileManager) << "App start args: " << arguments;
+    qCInfo(logAppFileManager) << "Processing command line arguments:" << arguments.size() << "args";
     QStringList args;
     for (const auto &arg : arguments) {
         if (!arg.startsWith("-")) {
@@ -227,7 +233,7 @@ void CommandParser::showPropertyDialog()
         QUrl url = QUrl::fromUserInput(path);
         const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
         if (!fileInfo || !fileInfo->exists()) {
-            qCWarning(logAppFileManager) << "Input path is invalid or file not exists, can not show property dialog! path: " << path;
+            qCWarning(logAppFileManager) << "Failed to show property dialog: invalid path or file not exists -" << path;
             continue;
         }
 
@@ -241,9 +247,12 @@ void CommandParser::showPropertyDialog()
             continue;
         urlList << url;
     }
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        qCWarning(logAppFileManager) << "No valid files found for property dialog";
         return;
+    }
 
+    qCInfo(logAppFileManager) << "Showing property dialog for" << urlList.size() << "files";
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urlList, QVariantHash());
 }
 
@@ -264,8 +273,12 @@ void CommandParser::openWithDialog()
             continue;
         urlList << url;
     }
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        qCWarning(logAppFileManager) << "No valid files found for open with dialog";
         return;
+    }
+    
+    qCInfo(logAppFileManager) << "Opening 'Open With' dialog for" << urlList.size() << "files";
     dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", 0, urlList);
 }
 
@@ -276,6 +289,7 @@ void CommandParser::openInHomeDirectory()
     auto flag = DConfigManager::instance()->value(kViewDConfName,
                                                   kOpenFolderWindowsInASeparateProcess, true)
                         .toBool();
+    qCInfo(logAppFileManager) << "Opening home directory:" << homePath << "in separate process:" << flag;
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
@@ -364,9 +378,12 @@ void CommandParser::openSession()
 {
     for (QString filename : positionalArguments()) {
         QString sessionFile = "";
-        if (!SessionBusiness::instance()->readPath(filename, &sessionFile))
-            qCWarning(logAppFileManager) << "no session path get";
-        openWindowWithUrl(QUrl(sessionFile));
+        if (!SessionBusiness::instance()->readPath(filename, &sessionFile)) {
+            qCWarning(logAppFileManager) << "Failed to read session path from file:" << filename;
+        } else {
+            qCInfo(logAppFileManager) << "Opening session file:" << sessionFile;
+            openWindowWithUrl(QUrl(sessionFile));
+        }
         break;   // current time only support one file.
     }
 }
@@ -374,13 +391,18 @@ void CommandParser::openSession()
 void CommandParser::processEvent()
 {
     const QStringList &argumets = positionalArguments();
-    if (argumets.isEmpty())
+    if (argumets.isEmpty()) {
+        qCWarning(logAppFileManager) << "No event arguments provided";
         return;
+    }
 
     const auto &&argsInfo = d->parseEventArgs(argumets.first().toLocal8Bit());
     const auto &srcUrls = UrlRoute::fromStringList(argsInfo.params.value("sources").toStringList());
 
+    qCDebug(logAppFileManager) << "Processing event:" << argsInfo.action << "with" << srcUrls.size() << "source URLs";
+
     if (argsInfo.action == "refresh") {
+        qCInfo(logAppFileManager) << "Refreshing directories for" << srcUrls.size() << "URLs";
         dpfSlotChannel->push("dfmplugin_workspace", "slot_RefreshDir", srcUrls);
         return;
     }
@@ -393,38 +415,51 @@ void CommandParser::processEvent()
         { "cleantrash", GlobalEventType::kCleanTrash },
     };
 
-    if (!eventMap.contains(argsInfo.action))
+    if (!eventMap.contains(argsInfo.action)) {
+        qCWarning(logAppFileManager) << "Unknown event action:" << argsInfo.action;
         return;
+    }
 
     switch (eventMap[argsInfo.action]) {
     case GlobalEventType::kCopy: {
         const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        qCInfo(logAppFileManager) << "Copying" << srcUrls.size() << "files to:" << targetUrl.toString();
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, srcUrls, targetUrl,
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kCutFile: {
-        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)) {
+            qCWarning(logAppFileManager) << "Cannot move system files";
             return;
+        }
         const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        qCInfo(logAppFileManager) << "Moving" << srcUrls.size() << "files to:" << targetUrl.toString();
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, srcUrls, targetUrl,
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kDeleteFiles: {
-        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)) {
+            qCWarning(logAppFileManager) << "Cannot delete system files";
             return;
+        }
+        qCInfo(logAppFileManager) << "Deleting" << srcUrls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kMoveToTrash: {
         if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)
-            || FileUtils::isTrashFile(srcUrls.first()))
+            || FileUtils::isTrashFile(srcUrls.first())) {
+            qCWarning(logAppFileManager) << "Cannot move system files or trash files to trash";
             return;
+        }
+        qCInfo(logAppFileManager) << "Moving" << srcUrls.size() << "files to trash";
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kCleanTrash: {
+        qCInfo(logAppFileManager) << "Cleaning trash";
         dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
                                      0,
                                      QList<QUrl>(),
@@ -432,6 +467,7 @@ void CommandParser::processEvent()
         break;
     }
     default:
+        qCWarning(logAppFileManager) << "Unhandled event type for action:" << argsInfo.action;
         break;
     }
 }

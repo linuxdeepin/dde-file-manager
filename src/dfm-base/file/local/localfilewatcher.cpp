@@ -46,7 +46,7 @@ bool LocalFileWatcherPrivate::start()
     qCDebug(logDFMBase) << "LocalFileWatcher::start: Starting file watcher for:" << url;
     started = watcher->start();
     if (!started) {
-        qCWarning(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher for:" << url 
+        qCWarning(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher for:" << url
                               << "Error:" << watcher->lastError().errorMsg();
     } else {
         qCInfo(logDFMBase) << "LocalFileWatcher::start: Successfully started file watcher for:" << url;
@@ -66,15 +66,10 @@ bool LocalFileWatcherPrivate::stop()
         qCWarning(logDFMBase) << "LocalFileWatcher::stop: Cannot stop watcher, watcher instance is null";
         return false;
     }
-    
+
     qCDebug(logDFMBase) << "LocalFileWatcher::stop: Stopping file watcher for:" << url;
-    started = !watcher->stop();
-    if (!started) {
-        qCInfo(logDFMBase) << "LocalFileWatcher::stop: Successfully stopped file watcher for:" << url;
-    } else {
-        qCWarning(logDFMBase) << "LocalFileWatcher::stop: Failed to stop file watcher for:" << url;
-    }
-    return !started;
+    started = watcher->stop();
+    return started;
 }
 
 LocalFileWatcher::~LocalFileWatcher()

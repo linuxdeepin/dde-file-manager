@@ -53,50 +53,63 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qCWarning(logAppDaemon) << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDaemon) << "pluginsLoad: Failed to load plugins dconfig:" << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qCInfo(logAppDaemon) << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDaemon) << "pluginsLoad: Using debug plugins path:" << pluginsDir;
     pluginsDirs.push_back(pluginsDir + "/daemon");
     pluginsDirs.push_back(pluginsDir);
 #else
     pluginsDirs << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
                 << QString(DFM_PLUGIN_DAEMON_EDGE_DIR);
 #endif
-    qCInfo(logAppDaemon) << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDaemon) << "pluginsLoad: Using plugins directories:" << pluginsDirs;
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "daemon.blackList").toStringList() };
+    qCDebug(logAppDaemon) << "pluginsLoad: Blacklisted plugins:" << blackNames;
     DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs, blackNames);
 
-    qCInfo(logAppDaemon) << "Depend library paths:" << QCoreApplication::libraryPaths();
-    qCInfo(logAppDaemon) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDaemon) << "pluginsLoad: Library paths:" << QCoreApplication::libraryPaths();
+    qCInfo(logAppDaemon) << "pluginsLoad: Plugin paths:" << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins()) {
+        qCCritical(logAppDaemon) << "pluginsLoad: Failed to read plugins";
         return false;
+    }
 
     // We should make sure that the core plugin is loaded first
     auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
-    if (corePlugin.isNull())
-        return false;
-    if (!corePlugin->fileName().contains(kLibCore)) {
-        qCWarning(logAppDaemon) << corePlugin->fileName() << "is not" << kLibCore;
+    if (corePlugin.isNull()) {
+        qCCritical(logAppDaemon) << "pluginsLoad: Core plugin not found:" << kPluginCore;
         return false;
     }
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
+    if (!corePlugin->fileName().contains(kLibCore)) {
+        qCCritical(logAppDaemon) << "pluginsLoad: Core plugin library mismatch, expected:" << kLibCore 
+                                 << "actual:" << corePlugin->fileName();
         return false;
+    }
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin)) {
+        qCCritical(logAppDaemon) << "pluginsLoad: Failed to load core plugin:" << kPluginCore;
+        return false;
+    }
+
+    qCInfo(logAppDaemon) << "pluginsLoad: Core plugin loaded successfully";
 
     // load plugins without core
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins()) {
+        qCCritical(logAppDaemon) << "pluginsLoad: Failed to load remaining plugins";
         return false;
+    }
 
+    qCInfo(logAppDaemon) << "pluginsLoad: All plugins loaded successfully";
     return true;
 }
 
 static void handleSIGTERM(int sig)
 {
-    qCCritical(logAppDaemon) << "break with !SIGTERM! " << sig;
+    qCWarning(logAppDaemon) << "handleSIGTERM: Received SIGTERM signal:" << sig;
 
     if (qApp) {
         qApp->quit();
@@ -105,7 +118,7 @@ static void handleSIGTERM(int sig)
 
 [[noreturn]] static void handleSIGABRT(int sig)
 {
-    qCCritical(logAppDaemon) << "break with !SIGABRT! " << sig;
+    qCCritical(logAppDaemon) << "handleSIGABRT: Received SIGABRT signal:" << sig;
     // WORKAROUND: cannot receive SIGTERM when shutdown or reboot
     // see: bug-228373
     ::_exit(1);
@@ -130,17 +143,23 @@ int main(int argc, char *argv[])
         a.setApplicationName(appName);
     }
 
+    qCInfo(logAppDaemon) << "main: File manager daemon started, version:" << a.applicationVersion();
+
     signal(SIGTERM, handleSIGTERM);
     signal(SIGABRT, handleSIGABRT);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
     if (!pluginsLoad()) {
-        qCCritical(logAppDaemon) << "Load pugin failed!";
+        qCCritical(logAppDaemon) << "main: Failed to load plugins, terminating daemon";
         Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
     }
 
+    qCInfo(logAppDaemon) << "main: Daemon initialization completed successfully";
     int ret { a.exec() };
+    
+    qCInfo(logAppDaemon) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    
     return ret;
 }

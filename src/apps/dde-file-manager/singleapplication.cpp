@@ -51,7 +51,7 @@ QLocalSocket *SingleApplication::getNewClientConnect(const QString &key, const Q
             }
         }
     } else {
-        qCDebug(logAppFileManager) << localSocket->errorString();
+        qCWarning(logAppFileManager) << "SingleApplication::getNewClientConnect: Failed to connect to server:" << localSocket->errorString();
     }
 
     return localSocket;
@@ -139,7 +139,7 @@ bool SingleApplication::setSingleInstance(const QString &key)
 
 void SingleApplication::handleConnection()
 {
-    qCDebug(logAppFileManager) << "new connection is coming";
+    qCDebug(logAppFileManager) << "SingleApplication::handleConnection: New client connection received";
     QLocalSocket *nextPendingConnection = localServer->nextPendingConnection();
     connect(nextPendingConnection, SIGNAL(readyRead()), this, SLOT(readData()));
 }
@@ -148,8 +148,10 @@ void SingleApplication::readData()
 {
     QLocalSocket *socket = qobject_cast<QLocalSocket *>(sender());
 
-    if (!socket)
+    if (!socket) {
+        qCWarning(logAppFileManager) << "SingleApplication::readData: Invalid socket sender";
         return;
+    }
 
     QStringList arguments;
     for (const QByteArray &arg_base64 : socket->readAll().split(' ')) {
@@ -162,6 +164,7 @@ void SingleApplication::readData()
         arguments << argstr;
     }
 
+    qCDebug(logAppFileManager) << "SingleApplication::readData: Processing" << arguments.size() << "arguments from client";
     CommandParser::instance().process(arguments);
 
     FinallyUtil release([&] {
@@ -172,6 +175,7 @@ void SingleApplication::readData()
     });
 
     if (CommandParser::instance().isSet("get-monitor-files")) {
+        qCDebug(logAppFileManager) << "SingleApplication::readData: Processing get-monitor-files request";
         //Todo(yanghao&lxs): get-monitor-files
         return;
     }
@@ -182,6 +186,7 @@ void SingleApplication::readData()
 void SingleApplication::closeServer()
 {
     if (localServer) {
+        qCDebug(logAppFileManager) << "SingleApplication::closeServer: Closing local server";
         localServer->removeServer(localServer->serverName());
         localServer->close();
         delete localServer;
@@ -196,5 +201,6 @@ void SingleApplication::handleQuitAction()
     // this task will block the main thread, causing the UI to be unresponsive.
     // So here is a rewrite of the exit implementation that closes all the windows
     // of the filemanager
+    qCInfo(logAppFileManager) << "SingleApplication::handleQuitAction: Closing all file manager windows";
     WindowUtils::closeAllFileManagerWindows();
 }

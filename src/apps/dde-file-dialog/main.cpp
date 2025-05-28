@@ -114,12 +114,12 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qCWarning(logAppDialog) << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDialog) << "pluginsLoad: Failed to load plugins dconfig:" << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qCInfo(logAppDialog) << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDialog) << "pluginsLoad: Using debug plugins path:" << pluginsDir;
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir + "/filedialog");
@@ -130,7 +130,7 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
 #endif
 
-    qCInfo(logAppDialog) << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDialog) << "pluginsLoad: Using plugins directories:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
@@ -139,33 +139,38 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
     DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::filemanagerAllPlugins());
 
-    qCInfo(logAppDialog) << "Depend library paths:" << DApplication::libraryPaths();
-    qCInfo(logAppDialog) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDialog) << "pluginsLoad: Library paths:" << DApplication::libraryPaths();
+    qCInfo(logAppDialog) << "pluginsLoad: Plugin paths:" << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins()) {
+        qCCritical(logAppDialog) << "pluginsLoad: Failed to read plugins";
         return false;
+    }
 
     // We should make sure that the core plugin is loaded first
     if (!singlePluginLoad(kDialogCorePluginName, kDialogCoreLibName)) {
-        qCWarning(logAppDialog) << "Load" << kDialogCorePluginName << "failed";
+        qCCritical(logAppDialog) << "pluginsLoad: Failed to load dialog core plugin:" << kDialogCorePluginName;
         return false;
     }
     if (!singlePluginLoad(kDFMCorePluginName, kDFMCoreLibName)) {
-        qCWarning(logAppDialog) << "Load" << kDFMCorePluginName << "failed";
+        qCCritical(logAppDialog) << "pluginsLoad: Failed to load DFM core plugin:" << kDFMCorePluginName;
         return false;
     }
 
     // load plugins without core
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins()) {
+        qCCritical(logAppDialog) << "pluginsLoad: Failed to load remaining plugins";
         return false;
+    }
 
+    qCInfo(logAppDialog) << "pluginsLoad: All plugins loaded successfully";
     return true;
 }
 
 static void handleSIGTERM(int sig)
 {
-    qCCritical(logAppDialog) << "break with !SIGTERM! " << sig;
+    qCWarning(logAppDialog) << "handleSIGTERM: Received SIGTERM signal:" << sig;
 
     if (qApp) {
         qApp->setProperty("SIGTERM", true);
@@ -195,21 +200,28 @@ int main(int argc, char *argv[])
         a.setApplicationName(appName);
     }
 
+    qCInfo(logAppDialog) << "main: File dialog application started, version:" << a.applicationVersion();
+
     signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
     if (!pluginsLoad()) {
-        qCCritical(logAppDialog) << "Load pugin failed!";
+        qCCritical(logAppDialog) << "main: Failed to load plugins, terminating application";
         Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
     }
 
+    qCInfo(logAppDialog) << "main: Application initialization completed successfully";
     int ret { a.exec() };
+    
+    qCInfo(logAppDialog) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    
     if (qApp->property("SIGTERM").toBool()) {
-        qWarning() << "Exit app by SIGTERM, reuturn: " << ret;
+        qCWarning(logAppDialog) << "main: Application terminated by SIGTERM, exit code:" << ret;
         _Exit(ret);
     }
 
+    qCInfo(logAppDialog) << "main: Application exiting normally with code:" << ret;
     return ret;
 }
