@@ -34,24 +34,31 @@ DFMGLOBAL_USE_NAMESPACE
 
 QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: using default creator for:" << filePath << "size:" << size;
+    
     QFileInfo qInf(filePath);
     auto sz = static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size);
     QString thumbPath = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(qInf, sz);
     if (thumbPath.isEmpty()) {
-        qCWarning(logDFMBase) << "thumbnail: cannot generate thumbnail by default creator for" << filePath;
-        qCWarning(logDFMBase) << "thumbnail:" << DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
+        qCWarning(logDFMBase) << "thumbnail: default creator failed for:" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: DThumbnailProvider error:" << DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
         return {};
     }
 
+    qCDebug(logDFMBase) << "thumbnail: default creator succeeded, thumbnail path:" << thumbPath;
     return QImage(thumbPath);
 }
 
 QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: creating video thumbnail for:" << filePath;
+    
     QImage img = videoThumbnailCreatorLib(filePath, size);
     if (img.isNull()) {
-        qCWarning(logDFMBase) << "thumbnail: create video's thumbnail by lib failed, try ffmpeg" << filePath;
+        qCDebug(logDFMBase) << "thumbnail: video library creator failed, trying ffmpeg for:" << filePath;
         img = videoThumbnailCreatorFfmpeg(filePath, size);
+    } else {
+        qCDebug(logDFMBase) << "thumbnail: video library creator succeeded for:" << filePath;
     }
 
     return img;
@@ -59,6 +66,8 @@ QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, Thumbna
 
 QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: using ffmpeg for video:" << filePath << "size:" << size;
+    
     QProcess ffmpeg;
     QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
                        "-vf", QString("scale='min(%1, iw)':-1").arg(size), "-f",
@@ -67,15 +76,16 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
 
     QImage img;
     if (!ffmpeg.waitForFinished()) {
-        qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
-                              << ffmpeg.errorString()
-                              << filePath;
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg execution failed for:" << filePath 
+                              << "error:" << ffmpeg.errorString();
         return img;
     }
 
     const auto &data = ffmpeg.readAllStandardOutput();
-    if (data.isEmpty())
+    if (data.isEmpty()) {
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg produced no output for:" << filePath;
         return img;
+    }
 
     QString outputs(data);
     if (!img.loadFromData(data)) {   // filter the outputs outputed by video tool.
@@ -84,20 +94,28 @@ QImage ThumbnailCreators::videoThumbnailCreatorFfmpeg(const QString &filePath, T
 #else
         QStringList data = outputs.split(QRegularExpression("[\n]"), QString::SkipEmptyParts);
 #endif
-        if (data.isEmpty())
+        if (data.isEmpty()) {
+            qCWarning(logDFMBase) << "thumbnail: ffmpeg output parsing failed for:" << filePath;
             return img;
+        }
 
         outputs = data.last();
     }
 
-    if (!img.loadFromData(outputs.toLocal8Bit(), "png"))
-        qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
+    if (!img.loadFromData(outputs.toLocal8Bit(), "png")) {
+        qCWarning(logDFMBase) << "thumbnail: failed to load image from ffmpeg output for:" << filePath;
+    } else {
+        qCDebug(logDFMBase) << "thumbnail: ffmpeg video thumbnail created successfully for:" << filePath;
+    }
+    
     return img;
 }
 
 QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, ThumbnailSize size)
 {
     Q_UNUSED(size)
+
+    qCDebug(logDFMBase) << "thumbnail: using video library for:" << filePath;
 
     QImage img;
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -110,10 +128,17 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
         typedef void (*GetMovieCover)(const QUrl &, const QString &, QImage *);
         GetMovieCover func = reinterpret_cast<GetMovieCover>(lib.resolve("getMovieCover"));
 
-        if (func)
+        if (func) {
+            qCDebug(logDFMBase) << "thumbnail: calling getMovieCover function for:" << filePath;
             func(QUrl::fromLocalFile(filePath), filePath, &img);
+            if (!img.isNull()) {
+                qCDebug(logDFMBase) << "thumbnail: video library thumbnail created successfully for:" << filePath;
+            }
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: failed to resolve getMovieCover function from:" << lib.fileName();
+        }
     } else {
-        qCWarning(logDFMBase) << "thumbnail: cannot load " << lib.fileName() << "error: " << lib.errorString();
+        qCWarning(logDFMBase) << "thumbnail: failed to load video library:" << lib.fileName() << "error:" << lib.errorString();
     }
 
     return img;
@@ -121,18 +146,24 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
 
 QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: creating text thumbnail for:" << filePath << "size:" << size;
+    
     QImage img;
     DFMIO::DFile dfile(filePath);
     if (!dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-        qCWarning(logDFMBase) << "thumbnail: can not open this file." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: failed to open text file:" << filePath;
         return img;
     }
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
-    if (!info)
+    if (!info) {
+        qCWarning(logDFMBase) << "thumbnail: failed to create FileInfo for text file:" << filePath;
         return img;
+    }
 
     QString text { FileUtils::toUnicode(dfile.read(2000), info->nameOf(NameInfoType::kFileName)) };
+    qCDebug(logDFMBase) << "thumbnail: read" << text.length() << "characters from text file:" << filePath;
+    
     QFont font;
     font.setPixelSize(12);
 
@@ -150,11 +181,14 @@ QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, Thumbnai
     option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     painter.drawText(img.rect(), text, option);
 
+    qCDebug(logDFMBase) << "thumbnail: text thumbnail created successfully for:" << filePath;
     return img;
 }
 
 QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: creating audio thumbnail for:" << filePath << "size:" << size;
+    
     QProcess ffmpeg;
     QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
                        "-an", "-vf", QString("scale='min(%1, iw)':-1").arg(size), "-f", "image2pipe", "-fs", "9000", "-" };
@@ -162,15 +196,22 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
 
     QImage img;
     if (!ffmpeg.waitForFinished()) {
-        qCWarning(logDFMBase) << "thumbnail: ffmpeg execute failed: "
-                              << ffmpeg.errorString()
-                              << filePath;
+        qCWarning(logDFMBase) << "thumbnail: ffmpeg execution failed for audio file:" << filePath
+                              << "error:" << ffmpeg.errorString();
         return img;
     }
 
     const QByteArray &output = ffmpeg.readAllStandardOutput();
-    if (!img.loadFromData(output))
-        qCWarning(logDFMBase) << "thumbnail: cannot load image from ffmpeg outputs." << filePath;
+    if (output.isEmpty()) {
+        qCDebug(logDFMBase) << "thumbnail: no embedded artwork found in audio file:" << filePath;
+        return img;
+    }
+    
+    if (!img.loadFromData(output)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to load embedded artwork from audio file:" << filePath;
+    } else {
+        qCDebug(logDFMBase) << "thumbnail: audio thumbnail created successfully for:" << filePath;
+    }
 
     return img;
 }
@@ -186,9 +227,8 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
 
     QImageReader reader(filePath, suffix.toLatin1());
     if (!reader.canRead()) {
-        qCWarning(logDFMBase) << "thumbnail: can not read this file:"
-                              << reader.errorString()
-                              << filePath;
+        qCWarning(logDFMBase) << "thumbnail: cannot read image file:" << filePath
+                              << "error:" << reader.errorString();
         return {};
     }
 
@@ -197,39 +237,52 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
     // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
     if (!imageSize.isValid()) {
-        qCWarning(logDFMBase) << "thumbnail: fail to read image file attribute data." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: image file has invalid size attributes:" << filePath;
         return {};
     }
 
+    qCDebug(logDFMBase) << "thumbnail: image file size:" << imageSize << "for:" << filePath;
+
     const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
-    if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml)
+    if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
+        qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
         reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
+    }
 
     reader.setAutoTransform(true);
     QImage image;
     if (!reader.read(&image)) {
-        qCWarning(logDFMBase) << "thumbnail: read failed."
-                              << reader.errorString()
-                              << filePath;
+        qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
+                              << "error:" << reader.errorString();
         return image;
     }
 
+    qCDebug(logDFMBase) << "thumbnail: image thumbnail created successfully for:" << filePath;
     return image;
 }
 
 QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: creating djvu thumbnail for:" << filePath << "size:" << size;
+    
     QImage img = defaultThumbnailCreator(filePath, size);
-    if (!img.isNull())
+    if (!img.isNull()) {
+        qCDebug(logDFMBase) << "thumbnail: djvu thumbnail created by default creator for:" << filePath;
         return img;
+    }
 
     const QString &readerBinary = QStandardPaths::findExecutable("deepin-reader");
-    if (readerBinary.isEmpty())
+    if (readerBinary.isEmpty()) {
+        qCWarning(logDFMBase) << "thumbnail: deepin-reader not found, cannot create djvu thumbnail for:" << filePath;
         return img;
-    //! 使用子进程来调用deepin-reader程序生成djvu格式文件缩略图
+    }
+    
+    qCDebug(logDFMBase) << "thumbnail: using deepin-reader to create djvu thumbnail for:" << filePath;
+    
+    // Use subprocess to call deepin-reader program to generate djvu format file thumbnail
     QProcess process;
     QStringList arguments;
-    //! 生成缩略图缓存地址
+    // Generate thumbnail cache address
     const QString &fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
     const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
     const QString &saveImage = DFMIO::DFMUtils::buildFilePath(ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(),
@@ -239,24 +292,31 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
     process.start(readerBinary, arguments);
 
     if (!process.waitForFinished() || process.exitCode() != 0) {
-        qCWarning(logDFMBase) << "thumbnail: deepin-reader execute failed:"
-                              << process.errorString()
-                              << filePath;
-
+        qCWarning(logDFMBase) << "thumbnail: deepin-reader execution failed for:" << filePath
+                              << "error:" << process.errorString()
+                              << "exit code:" << process.exitCode();
         return img;
     }
+
+    qCDebug(logDFMBase) << "thumbnail: deepin-reader completed successfully, reading thumbnail from:" << saveImage;
 
     DFMIO::DFile dfile(saveImage);
     if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
         const QByteArray &output = dfile.readAll();
         if (output.isEmpty()) {
-            qCWarning(logDFMBase) << "thumbnail: read failed:" << filePath;
+            qCWarning(logDFMBase) << "thumbnail: generated thumbnail file is empty:" << saveImage;
             dfile.close();
             return img;
         }
 
-        img.loadFromData(output, "png");
+        if (img.loadFromData(output, "png")) {
+            qCDebug(logDFMBase) << "thumbnail: djvu thumbnail created successfully for:" << filePath;
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: failed to load thumbnail data from:" << saveImage;
+        }
         dfile.close();
+    } else {
+        qCWarning(logDFMBase) << "thumbnail: failed to open generated thumbnail file:" << saveImage;
     }
 
     return img;
@@ -264,21 +324,25 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
 
 QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
+    qCDebug(logDFMBase) << "thumbnail: creating PDF thumbnail for:" << filePath << "size:" << size;
+    
     QImage img;
     QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
     if (!doc || doc->is_locked()) {
-        qCWarning(logDFMBase) << "thumbnail: can not read this pdf file." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: cannot read PDF file (file not found or locked):" << filePath;
         return img;
     }
 
     if (doc->pages() < 1) {
-        qCWarning(logDFMBase) << "thumbnail: this stream is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: PDF file has no pages:" << filePath;
         return img;
     }
 
+    qCDebug(logDFMBase) << "thumbnail: PDF file has" << doc->pages() << "pages, rendering first page for:" << filePath;
+
     QScopedPointer<const poppler::page> page(doc->create_page(0));
     if (!page) {
-        qCWarning(logDFMBase) << "thumbnail: can not get this page at index 0." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: failed to create page 0 from PDF:" << filePath;
         return img;
     }
 
@@ -288,73 +352,89 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
 
     poppler::image imageData = pr.render_page(page.data(), 72, 72, -1, -1, -1, size);
     if (!imageData.is_valid()) {
-        qCWarning(logDFMBase) << "thumbnail: the render page is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: PDF page rendering failed:" << filePath;
         return img;
     }
 
     poppler::image::format_enum format = imageData.format();
     switch (format) {
     case poppler::image::format_invalid:
-        qCWarning(logDFMBase) << "thumbnail: image format is invalid." << filePath;
+        qCWarning(logDFMBase) << "thumbnail: PDF rendered image has invalid format:" << filePath;
         break;
     case poppler::image::format_mono:
         img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_Mono);
+        qCDebug(logDFMBase) << "thumbnail: PDF rendered as mono format:" << filePath;
         break;
     case poppler::image::format_rgb24:
         img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_ARGB6666_Premultiplied);
+        qCDebug(logDFMBase) << "thumbnail: PDF rendered as RGB24 format:" << filePath;
         break;
     case poppler::image::format_argb32:
         img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_ARGB32);
+        qCDebug(logDFMBase) << "thumbnail: PDF rendered as ARGB32 format:" << filePath;
         break;
     default:
+        qCWarning(logDFMBase) << "thumbnail: PDF rendered with unknown format:" << format << "for:" << filePath;
         break;
     }
 
-    if (!img.isNull())
+    if (!img.isNull()) {
         img = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        qCDebug(logDFMBase) << "thumbnail: PDF thumbnail created successfully for:" << filePath;
+    }
 
     return img;
 }
 
 QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
-    // 1. 确认 appimage 存在
+    qCDebug(logDFMBase) << "thumbnail: creating AppImage thumbnail for:" << filePath << "size:" << size;
+    
+    // 1. Check if AppImage exists
     if (!QFile::exists(filePath)) {
-        qCWarning(logDFMBase) << "File not found:" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: AppImage file not found:" << filePath;
         return QImage();
     }
 
-    // 2. 检查文件是否为 appimage 类型，且有可执行权限
+    // 2. Check if file is AppImage type and has executable permission
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
                                               Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info
         || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
         || !info->isAttributes(FileInfo::FileIsType::kIsExecutable)) {
-        qCWarning(logDFMBase) << "File is not a valid AppImage or has no executable permission:" << filePath
+        qCWarning(logDFMBase) << "thumbnail: file is not a valid AppImage or lacks executable permission:" << filePath
                               << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null")
                               << "isExecutable:" << (info ? info->isAttributes(FileInfo::FileIsType::kIsExecutable) : false);
         return QImage();
     }
 
-    // 3. 创建临时目录，用于解压 appimage
+    // 3. Create temporary directory for AppImage extraction
     QTemporaryDir tempDir;
     if (!tempDir.isValid()) {
-        qCWarning(logDFMBase) << "Cannot create temporary directory for extraction. Error:" << tempDir.errorString()
-                              << "File:" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: failed to create temporary directory for AppImage extraction:" << tempDir.errorString()
+                              << "file:" << filePath;
         return QImage();
     }
     auto extractTo = tempDir.path();
 
-    // 4. 解压 appimage 到临时目录
+    qCDebug(logDFMBase) << "thumbnail: extracting AppImage to temporary directory:" << extractTo;
+
+    // 4. Extract AppImage to temporary directory
     QProcess proc;
     proc.setWorkingDirectory(extractTo);
     proc.start(filePath, { "--appimage-extract" });
     auto done = proc.waitForFinished();
-    qCInfo(logDFMBase) << "AppImage extraction completed for" << filePath
-                       << "to" << extractTo
-                       << "with status:" << (done ? "success" : "failed");
+    
+    if (!done || proc.exitCode() != 0) {
+        qCWarning(logDFMBase) << "thumbnail: AppImage extraction failed for:" << filePath
+                              << "exit code:" << proc.exitCode()
+                              << "error:" << proc.errorString();
+        return QImage();
+    }
+    
+    qCDebug(logDFMBase) << "thumbnail: AppImage extraction completed successfully for:" << filePath;
 
-    // 5. 遍历临时目录下的 png/svg 文件
+    // 5. Search for PNG/SVG files in temporary directory
     QString iconPath;
     QDir extractDir(extractTo + "/squashfs-root");
     auto files = extractDir.entryInfoList(QStringList { "*.png", "*.svg" },
@@ -362,45 +442,52 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
     iconPath = files.isEmpty() ? "" : files.first().filePath();
 
     QImage icon;
-    if (!iconPath.isEmpty())
+    if (!iconPath.isEmpty()) {
+        qCDebug(logDFMBase) << "thumbnail: found AppImage icon:" << iconPath;
         icon = QImage(iconPath).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    else
-        qCWarning(logDFMBase) << "Failed to find icon in AppImage:" << filePath;
+        if (!icon.isNull()) {
+            qCDebug(logDFMBase) << "thumbnail: AppImage thumbnail created successfully for:" << filePath;
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: failed to load AppImage icon:" << iconPath;
+        }
+    } else {
+        qCWarning(logDFMBase) << "thumbnail: no icon found in AppImage:" << filePath;
+    }
 
     return icon;
 }
 
 QImage ThumbnailCreators::pptxThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
-    qCInfo(logDFMBase) << "Creating PPTX thumbnail for:" << filePath;
+    qCInfo(logDFMBase) << "thumbnail: creating PPTX thumbnail for:" << filePath << "size:" << size;
 
-    // 1. 验证文件存在
+    // 1. Verify file exists
     if (!QFile::exists(filePath)) {
-        qCWarning(logDFMBase) << "PPTX file not found:" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: PPTX file not found:" << filePath;
         return QImage();
     }
 
-    // 2. 验证文件类型
+    // 2. Verify file type
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
                                               Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppPptx) {
-        qCWarning(logDFMBase) << "File is not a valid PPTX file:" << filePath
+        qCWarning(logDFMBase) << "thumbnail: file is not a valid PPTX file:" << filePath
                               << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null");
         return QImage();
     }
 
-    // 3. 创建临时目录用于解压 PPTX 文件
+    // 3. Create temporary directory for PPTX extraction
     QTemporaryDir tempDir;
     if (!tempDir.isValid()) {
-        qCWarning(logDFMBase) << "Cannot create temporary directory for PPTX extraction. Error:" << tempDir.errorString()
-                              << "File:" << filePath;
+        qCWarning(logDFMBase) << "thumbnail: failed to create temporary directory for PPTX extraction:" << tempDir.errorString()
+                              << "file:" << filePath;
         return QImage();
     }
 
     const QString extractPath = tempDir.path();
-    qCDebug(logDFMBase) << "Extracting PPTX to temporary directory:" << extractPath;
+    qCDebug(logDFMBase) << "thumbnail: extracting PPTX to temporary directory:" << extractPath;
 
-    // 4. 使用 unzip 命令解压 PPTX 文件
+    // 4. Extract PPTX file using unzip command
     QProcess unzipProcess;
     QStringList arguments;
     arguments << "-q"
@@ -408,30 +495,30 @@ QImage ThumbnailCreators::pptxThumbnailCreator(const QString &filePath, Thumbnai
     unzipProcess.start("unzip", arguments);
 
     if (!unzipProcess.waitForFinished(10000) || unzipProcess.exitCode() != 0) {
-        qCWarning(logDFMBase) << "Failed to extract PPTX file:" << filePath
-                              << "Error:" << unzipProcess.errorString()
-                              << "Exit code:" << unzipProcess.exitCode();
+        qCWarning(logDFMBase) << "thumbnail: failed to extract PPTX file:" << filePath
+                              << "error:" << unzipProcess.errorString()
+                              << "exit code:" << unzipProcess.exitCode();
         return QImage();
     }
 
-    qCInfo(logDFMBase) << "Successfully extracted PPTX file:" << filePath;
+    qCDebug(logDFMBase) << "thumbnail: PPTX extraction completed successfully for:" << filePath;
 
-    // 5. 查找内置缩略图 docProps/thumbnail.jpeg
+    // 5. Look for built-in thumbnail docProps/thumbnail.jpeg
     QString thumbnailPath = extractPath + "/docProps/thumbnail.jpeg";
     if (QFile::exists(thumbnailPath)) {
-        qCDebug(logDFMBase) << "Found thumbnail.jpeg in docProps:" << thumbnailPath;
+        qCDebug(logDFMBase) << "thumbnail: found built-in thumbnail in docProps:" << thumbnailPath;
         QImage thumbnail;
         if (thumbnail.load(thumbnailPath)) {
-            qCDebug(logDFMBase) << "Successfully loaded thumbnail from docProps/thumbnail.jpeg";
+            qCDebug(logDFMBase) << "thumbnail: PPTX thumbnail loaded successfully from docProps/thumbnail.jpeg";
             return thumbnail.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         } else {
-            qCWarning(logDFMBase) << "Failed to load thumbnail image:" << thumbnailPath;
+            qCWarning(logDFMBase) << "thumbnail: failed to load built-in thumbnail:" << thumbnailPath;
         }
     } else {
-        qCDebug(logDFMBase) << "No built-in thumbnail found in docProps/thumbnail.jpeg";
+        qCDebug(logDFMBase) << "thumbnail: no built-in thumbnail found in docProps/thumbnail.jpeg for:" << filePath;
     }
 
-    // 6. 如果没有找到内置缩略图，返回空图像
-    qCDebug(logDFMBase) << "No thumbnail available for PPTX file:" << filePath;
+    // 6. If no built-in thumbnail found, return empty image
+    qCDebug(logDFMBase) << "thumbnail: no thumbnail available for PPTX file:" << filePath;
     return QImage();
 }

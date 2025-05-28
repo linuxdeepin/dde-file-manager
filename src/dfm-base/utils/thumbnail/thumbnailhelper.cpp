@@ -56,6 +56,8 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
 
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppAppimage), INT64_MAX);
+    
+    qCInfo(logDFMBase) << "thumbnail: initialized size limits for" << sizeLimitHash.size() << "mime types";
 }
 
 const QStringList &ThumbnailHelper::defaultThumbnailDirs()
@@ -72,16 +74,23 @@ const QStringList &ThumbnailHelper::defaultThumbnailDirs()
 bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
 {
     const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info || !info->isAttributes(FileInfo::FileIsType::kIsReadable) || !info->isAttributes(FileInfo::FileIsType::kIsFile))
+    if (!info || !info->isAttributes(FileInfo::FileIsType::kIsReadable) || !info->isAttributes(FileInfo::FileIsType::kIsFile)) {
+        qCDebug(logDFMBase) << "thumbnail: file is not readable or not a regular file:" << url;
         return false;
+    }
 
     qint64 fileSize = info->size();
-    if (fileSize <= 0)
+    if (fileSize <= 0) {
+        qCDebug(logDFMBase) << "thumbnail: file size is invalid:" << fileSize << "for:" << url;
         return false;
+    }
 
     const QMimeType &mime = mimeDatabase.mimeTypeForFile(url);
-    if (fileSize > sizeLimit(mime) && !mime.name().startsWith("video/"))
+    qint64 limit = sizeLimit(mime);
+    if (fileSize > limit && !mime.name().startsWith("video/")) {
+        qCDebug(logDFMBase) << "thumbnail: file size" << fileSize << "exceeds limit" << limit << "for mime type:" << mime.name() << "file:" << url;
         return false;
+    }
 
     return true;
 }
@@ -96,48 +105,76 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
         return Application::instance()->genericAttribute(attr).toBool();
     };
 
-    if (mimeName.startsWith("image"))
-        return checkStatus(Application::kPreviewImage);
+    if (mimeName.startsWith("image")) {
+        bool supported = checkStatus(Application::kPreviewImage);
+        qCDebug(logDFMBase) << "thumbnail: image mime type support check:" << mimeName << "supported:" << supported;
+        return supported;
+    }
 
     if (mimeName.startsWith("audio")
-        || MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName))
-        return checkStatus(Application::kPreviewAudio);
+        || MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName)) {
+        bool supported = checkStatus(Application::kPreviewAudio);
+        qCDebug(logDFMBase) << "thumbnail: audio mime type support check:" << mimeName << "supported:" << supported;
+        return supported;
+    }
 
     if (mimeName.startsWith("video")
-        || MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName))
-        return checkStatus(Application::kPreviewVideo);
+        || MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName)) {
+        bool supported = checkStatus(Application::kPreviewVideo);
+        qCDebug(logDFMBase) << "thumbnail: video mime type support check:" << mimeName << "supported:" << supported;
+        return supported;
+    }
 
-    if (mimeName == Mime::kTypeTextPlain)
-        return checkStatus(Application::kPreviewTextFile);
+    if (mimeName == Mime::kTypeTextPlain) {
+        bool supported = checkStatus(Application::kPreviewTextFile);
+        qCDebug(logDFMBase) << "thumbnail: text mime type support check:" << mimeName << "supported:" << supported;
+        return supported;
+    }
 
     if (Q_LIKELY(mimeList.contains(Mime::kTypeAppPdf)
                  || mimeName == Mime::kTypeAppCRRMedia
                  || mimeName == Mime::kTypeAppMxf)
-        || mimeName == Mime::kTypeAppPptx)
-        return checkStatus(Application::kPreviewDocumentFile);
+        || mimeName == Mime::kTypeAppPptx) {
+        bool supported = checkStatus(Application::kPreviewDocumentFile);
+        qCDebug(logDFMBase) << "thumbnail: document mime type support check:" << mimeName << "supported:" << supported;
+        return supported;
+    }
 
-    // appimage 是可执行程序包，应该显示图标
-    if (mimeName == Mime::kTypeAppAppimage)
+    // appimage is executable package, should display icon
+    if (mimeName == Mime::kTypeAppAppimage) {
+        qCDebug(logDFMBase) << "thumbnail: appimage mime type always supported:" << mimeName;
         return true;
+    }
 
+    qCDebug(logDFMBase) << "thumbnail: unsupported mime type:" << mimeName;
     return false;
 }
 
 void ThumbnailHelper::makePath(const QString &path)
 {
     QDir dir(path);
-    if (!dir.exists())
-        dir.mkpath(".");
+    if (!dir.exists()) {
+        bool success = dir.mkpath(".");
+        if (success) {
+            qCDebug(logDFMBase) << "thumbnail: created directory:" << path;
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: failed to create directory:" << path;
+        }
+    }
 }
 
 QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, ThumbnailSize size)
 {
-    if (img.isNull())
+    if (img.isNull()) {
+        qCWarning(logDFMBase) << "thumbnail: cannot save null image for:" << url;
         return "";
+    }
 
     auto info = InfoFactory::create<FileInfo>(url);
-    if (!info)
+    if (!info) {
+        qCWarning(logDFMBase) << "thumbnail: failed to create FileInfo for saving thumbnail:" << url;
         return "";
+    }
 
     const QString &fileUrl = url.toString(QUrl::FullyEncoded);
     const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
@@ -147,6 +184,8 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
 
     makePath(thumbnailPath);
 
+    qCDebug(logDFMBase) << "thumbnail: saving thumbnail to:" << thumbnailFilePath << "for file:" << url;
+
     QMetaObject::invokeMethod(
             QCoreApplication::instance(), [img, thumbnailFilePath, fileUrl, fileModify]() {
                 Q_ASSERT(QThread::currentThread() == qApp->thread());
@@ -154,7 +193,9 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
                 tmpImg.setText(QT_STRINGIFY(Thumb::URL), fileUrl);
                 tmpImg.setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
                 if (!tmpImg.save(thumbnailFilePath, Q_NULLPTR, 50)) {
-                    qCWarning(logDFMBase) << "thumbnail: save failed." << fileUrl;
+                    qCWarning(logDFMBase) << "thumbnail: failed to save thumbnail file:" << thumbnailFilePath << "for:" << fileUrl;
+                } else {
+                    qCDebug(logDFMBase) << "thumbnail: successfully saved thumbnail:" << thumbnailFilePath;
                 }
             },
             Qt::QueuedConnection);
@@ -165,27 +206,35 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
 QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size)
 {
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
-    if (!fileInfo)
+    if (!fileInfo) {
+        qCWarning(logDFMBase) << "thumbnail: failed to create FileInfo for loading thumbnail:" << fileUrl;
         return {};
+    }
 
     const QString &dirPath = fileInfo->pathOf(PathInfoType::kPath);
     const QString &filePath = fileInfo->pathOf(PathInfoType::kFilePath);
-    if (dirPath.isEmpty() || filePath.isEmpty())
+    if (dirPath.isEmpty() || filePath.isEmpty()) {
+        qCWarning(logDFMBase) << "thumbnail: invalid file paths for:" << fileUrl;
         return {};
+    }
 
     if (defaultThumbnailDirs().contains(dirPath)) {
         QImage img(filePath);
         img.setText(QT_STRINGIFY(Thumb::Path), filePath);
+        qCDebug(logDFMBase) << "thumbnail: loaded image from thumbnail directory:" << filePath;
         return img;
     }
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
-    if (!DFMIO::DFile(thumbnail).exists())
+    if (!DFMIO::DFile(thumbnail).exists()) {
+        qCDebug(logDFMBase) << "thumbnail: cached thumbnail not found:" << thumbnail;
         return {};
+    }
 
     QImageReader ir(thumbnail, QByteArray(kFormat).mid(1));
     if (!ir.canRead()) {
+        qCWarning(logDFMBase) << "thumbnail: cannot read cached thumbnail, deleting:" << thumbnail;
         LocalFileHandler().deleteFileRecursive(QUrl::fromLocalFile(thumbnail));
         return {};
     }
@@ -194,11 +243,16 @@ QImage ThumbnailHelper::thumbnailImage(const QUrl &fileUrl, ThumbnailSize size)
     QImage image = ir.read();
     const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
+        qCDebug(logDFMBase) << "thumbnail: cached thumbnail is outdated, deleting:" << thumbnail;
         LocalFileHandler().deleteFileRecursive(QUrl::fromLocalFile(thumbnail));
         return {};
     }
 
-    image.setText(QT_STRINGIFY(Thumb::Path), thumbnail);
+    if (!image.isNull()) {
+        image.setText(QT_STRINGIFY(Thumb::Path), thumbnail);
+        qCDebug(logDFMBase) << "thumbnail: loaded cached thumbnail:" << thumbnail;
+    }
+    
     return image;
 }
 
@@ -237,24 +291,34 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     QUrl fileUrl { url };
     if (UrlRoute::isVirtual(fileUrl)) {
         auto info { InfoFactory::create<FileInfo>(fileUrl) };
-        if (!info || !info->exists())
+        if (!info || !info->exists()) {
+            qCDebug(logDFMBase) << "thumbnail: virtual file does not exist:" << fileUrl;
             return false;
+        }
 
         fileUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kAbsoluteFilePath));
-        if (!fileUrl.isLocalFile())
+        if (!fileUrl.isLocalFile()) {
+            qCDebug(logDFMBase) << "thumbnail: virtual file is not local:" << fileUrl;
             return false;
+        }
     }
 
     bool enable { true };
-    if (ProtocolUtils::isMTPFile(fileUrl)) {   // 是否是mtpfile
+    if (ProtocolUtils::isMTPFile(fileUrl)) {   // Check if it's MTP file
         enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // 是否是协议设备
+        qCDebug(logDFMBase) << "thumbnail: MTP file thumbnail enable status:" << enable << "for:" << fileUrl;
+    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // Check if it's protocol device
         enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
+        qCDebug(logDFMBase) << "thumbnail: remote file thumbnail enable status:" << enable << "for:" << fileUrl;
     }
 
-    if (!enable)
+    if (!enable) {
+        qCDebug(logDFMBase) << "thumbnail: thumbnail generation disabled for:" << fileUrl;
         return false;
+    }
 
     const QMimeType &mime = mimeDatabase.mimeTypeForFile(fileUrl);
-    return checkMimeTypeSupport(mime);
+    bool supported = checkMimeTypeSupport(mime);
+    qCDebug(logDFMBase) << "thumbnail: final enable check result:" << supported << "for mime type:" << mime.name() << "file:" << fileUrl;
+    return supported;
 }

@@ -26,10 +26,13 @@ using namespace plugin_filepreview;
 ImagePreview::ImagePreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
+    fmInfo() << "Image preview: ImagePreview instance created";
 }
 
 ImagePreview::~ImagePreview()
 {
+    fmInfo() << "Image preview: ImagePreview instance destroyed";
+    
     if (imageView)
         imageView->deleteLater();
 
@@ -39,9 +42,12 @@ ImagePreview::~ImagePreview()
 
 bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
 {
+    fmDebug() << "Image preview: checking if can preview:" << url;
+    
     QByteArray f = QImageReader::imageFormat(url.toLocalFile());
 
     if (f.isEmpty()) {
+        fmDebug() << "Image preview: QImageReader could not detect format, trying MIME database";
         DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
 
         const QMimeType &mt = mimeDatabase.mimeTypeForFile(url, QMimeDatabase::MatchContent);
@@ -49,10 +55,10 @@ bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
         f = mt.preferredSuffix().toLatin1();
 
         if (f.isEmpty()) {
+            fmWarning() << "Image preview: no format detected for file:" << url;
             if (format) {
                 *format = f;
             }
-
             return false;
         }
     }
@@ -61,57 +67,78 @@ bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
         *format = f;
     }
 
-    return QImageReader::supportedImageFormats().contains(f);
+    bool supported = QImageReader::supportedImageFormats().contains(f);
+    fmDebug() << "Image preview: format" << f << "supported:" << supported << "for file:" << url;
+    return supported;
 }
 
 void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
 {
     Q_UNUSED(window)
 
+    fmDebug() << "Image preview: initializing with status bar";
+    
     messageStatusBar = new QLabel(statusBar);
     messageStatusBar->setStyleSheet("QLabel{font-family: Helvetica;\
                                    font-size: 12px;\
                                    font-weight: 300;}");
 
     DAnchorsBase(messageStatusBar).setCenterIn(statusBar);
+    
+    fmDebug() << "Image preview: status bar initialized";
 }
 
 bool ImagePreview::setFileUrl(const QUrl &url)
 {
-    if (currentFileUrl == url)
+    fmInfo() << "Image preview: setting file URL:" << url;
+    
+    if (currentFileUrl == url) {
+        fmDebug() << "Image preview: URL unchanged, skipping:" << url;
         return true;
+    }
 
     QUrl tmpUrl = UrlRoute::fromLocalFile(url.path());
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info.isNull())
+    if (info.isNull()) {
+        fmWarning() << "Image preview: failed to create FileInfo for:" << url;
         return false;
+    }
 
     if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
         tmpUrl = info->urlOf(UrlInfoType::kRedirectedFileUrl);
+        fmDebug() << "Image preview: using redirected URL:" << tmpUrl;
     }
 
-    if (!tmpUrl.isLocalFile())
+    if (!tmpUrl.isLocalFile()) {
+        fmWarning() << "Image preview: URL is not a local file:" << tmpUrl;
         return false;
+    }
 
     QByteArray format;
-
-    if (!canPreview(tmpUrl, &format))
+    if (!canPreview(tmpUrl, &format)) {
+        fmWarning() << "Image preview: cannot preview file:" << tmpUrl << "format:" << format;
         return false;
+    }
 
     currentFileUrl = tmpUrl;
 
-    if (!imageView)
+    if (!imageView) {
+        fmDebug() << "Image preview: creating new ImageView for:" << tmpUrl.toLocalFile() << "format:" << format;
         imageView = new ImageView(tmpUrl.toLocalFile(), format);
-    else
+    } else {
+        fmDebug() << "Image preview: updating existing ImageView with:" << tmpUrl.toLocalFile() << "format:" << format;
         imageView->setFile(tmpUrl.toLocalFile(), format);
+    }
 
     const QSize &image_size = imageView->sourceSize();
+    fmDebug() << "Image preview: image size:" << image_size;
 
     messageStatusBar->setText(QString("%1x%2").arg(image_size.width()).arg(image_size.height()));
     messageStatusBar->adjustSize();
 
     imageTitle = QFileInfo(tmpUrl.toLocalFile()).fileName();
 
+    fmInfo() << "Image preview: file URL set successfully:" << url << "title:" << imageTitle;
     Q_EMIT titleChanged();
 
     return true;
