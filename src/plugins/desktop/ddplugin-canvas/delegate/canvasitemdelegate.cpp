@@ -801,6 +801,7 @@ QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const
 
     // 使用QRectF和drawPixmap的重载版本来正确处理缩放
     QRectF targetRect(x, y, w, h);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter->drawPixmap(targetRect, px, px.rect());
     
     return targetRect;
