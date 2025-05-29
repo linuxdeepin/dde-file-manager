@@ -231,7 +231,7 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
 {
     d->predicateName[ActionID::kOrganizeEnable] = tr("Enable desktop organization");
     d->predicateName[ActionID::kOrganizeTrigger] = tr("Organize desktop");
-    d->predicateName[ActionID::kOrganizeOptions] = tr("View options");
+    d->predicateName[ActionID::kOrganizeOptions] = tr("Desktop Settings");
     d->predicateName[ActionID::kOrganizeBy] = tr("Organize by");
 
     // organize by subactions
