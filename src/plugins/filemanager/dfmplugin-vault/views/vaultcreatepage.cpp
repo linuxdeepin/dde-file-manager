@@ -179,6 +179,12 @@ Result VaultActiveView::createVault()
 
 bool VaultActiveView::handleKeyModeEncryption()
 {
+    {
+        // save configure
+        VaultConfig config;
+        config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
+        config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
+    }
     auto ret = OperatorCenter::getInstance()->savePasswordAndPasswordHint(encryptInfo.password, encryptInfo.hint);
     if (!ret.result) {
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
@@ -190,9 +196,6 @@ bool VaultActiveView::handleKeyModeEncryption()
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return false;
     }
-    VaultConfig config;
-    config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
-    config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
     activeVaultFinishedWidget->setProgressValue(20);
 
     //! 获取密钥字符串
