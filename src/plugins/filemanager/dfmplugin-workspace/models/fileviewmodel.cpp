@@ -61,6 +61,21 @@ FileViewModel::~FileViewModel()
     closeCursorTimer();
     quitFilterSortWork();
 
+    // 清理废弃的对象，确保没有资源泄漏
+    for (auto obj : discardedObjects) {
+        if (auto thread = qobject_cast<QThread*>(obj.data())) {
+            if (thread->isRunning()) {
+                thread->quit();
+                if (!thread->wait(1000)) {
+                    fmWarning() << "Force terminating discarded thread in destructor";
+                    thread->terminate();
+                    thread->wait(500);
+                }
+            }
+        }
+    }
+    discardedObjects.clear();
+
     if (itemRootData) {
         delete itemRootData;
         itemRootData = nullptr;
@@ -1069,8 +1084,20 @@ void FileViewModel::quitFilterSortWork()
     }
     if (!filterSortThread.isNull()) {
         filterSortThread->quit();
-        filterSortThread->wait();
+        
+        // 等待线程优雅退出，增加超时处理
+        if (!filterSortThread->wait(3000)) {
+            fmWarning() << "FilterSortThread did not exit within 3 seconds, forcing termination";
+            filterSortThread->terminate();
+            if (!filterSortThread->wait(1000)) {
+                fmWarning() << "FilterSortThread termination failed, potential resource leak";
+            }
+        }
     }
+    
+    // 确保智能指针被重置
+    filterSortWorker.reset();
+    filterSortThread.reset();
 }
 
 void FileViewModel::discardFilterSortObjects()
