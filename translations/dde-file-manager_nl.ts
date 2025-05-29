@@ -7599,17 +7599,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="62"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>De bestandskluis kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="154"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"/>
+        <translation>De bestandskluis kan niet worden aangemaakt: de versleutelmethode is mislukt.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="217"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"/>
+        <translation>Het wachtwoord kan niet worden gegenereerd!</translation>
     </message>
 </context>
 <context>
