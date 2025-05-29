@@ -2001,57 +2001,57 @@
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="149"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation>Bevoegdheidsfout</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="150"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>De actie is niet toegestaan</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="166"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation>Onvoldoende vrije ruimte op de doelschijf</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="167"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>Het doelapparaat is alleen-lezen</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="168"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>De doelmap staat in de bronmap</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="169"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Deze actie wordt niet ondersteund</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>Het herstellen is mislukt, omdat de oorspronkelijke locatie ontbreekt</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>De prullenbaklocatie is niet aangetroffen</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>Het oorspronkelijke bestand is niet aangetroffen</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
         <source>Copy or Cut File failed!</source>
-        <translation type="unfinished"/>
+        <translation>Kopiëren of knippen mislukt!</translation>
     </message>
 </context>
 <context>
@@ -2376,7 +2376,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Bureaubladinstellingen</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
@@ -2463,7 +2463,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Bureaubladinstellingen</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -6297,12 +6297,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="285"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>De index is bijgewerkt. Recentste keer: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="286"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Nu bijwerken</translation>
     </message>
 </context>
 <context>
@@ -6350,22 +6350,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="166"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Het bijwerken is mislukt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="167"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>Probeer het opnieuw</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="177"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Schakel in om bestandsinhoud te doorzoeken. Let op: het indexeren kan enige minuten duren.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="190"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met opbouwen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="196"/>
@@ -6375,7 +6375,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="201"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met indexeren… - %1/%2 items geïndexeerd</translation>
     </message>
 </context>
 <context>
@@ -7143,52 +7143,52 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="162"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"/>
+        <translation>De sleutel kan niet worden gemaakt: lengte ervan is te lang.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="170"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Het vercijferde rsa-bestand kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="182"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"/>
+        <translation>De openbare sleutel kan niet worden opgeslagen, want deze is blanco.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="189"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>De openbare sleutel kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="256"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"/>
+        <translation>De instellingenmap kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="278"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Het persoonlijke rsa-bestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="288"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Het vercijferde rsa-bestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="298"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Het hintbestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>De hintinformatie kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="649"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Het wachtwoord kan niet worden opgeslagen: %1</translation>
     </message>
 </context>
 <context>
@@ -7433,7 +7433,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
