@@ -50,14 +50,20 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 FileSortWorker::~FileSortWorker()
 {
     isCanceled = true;
+    
+    // 停止定时器（Qt会自动删除有parent的QTimer）
+    if (updateRefresh) {
+        updateRefresh->stop();
+        updateRefresh = nullptr;
+    }
+    
+    // 清理数据结构
     childrenDataMap.clear();
     visibleChildren.clear();
     children.clear();
-    if (updateRefresh) {
-        updateRefresh->stop();
-        updateRefresh->deleteLater();
-        updateRefresh = nullptr;
-    }
+    visibleTreeChildren.clear();
+    fileInfoRefresh.clear();
+    waitUpdatedFiles.clear();
 }
 
 FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
@@ -683,7 +689,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
         return;
 
     if (!updateRefresh) {
-        updateRefresh = new QTimer;
+        updateRefresh = new QTimer(this); // 设置parent，确保在对象销毁时自动清理
         connect(updateRefresh, &QTimer::timeout, this, &FileSortWorker::handleUpdateRefreshFiles, Qt::QueuedConnection);
     }
     updateRefresh->setSingleShot(true);

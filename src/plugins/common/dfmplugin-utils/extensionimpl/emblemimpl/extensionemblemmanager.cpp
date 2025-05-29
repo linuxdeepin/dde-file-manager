@@ -372,8 +372,18 @@ ExtensionEmblemManager::~ExtensionEmblemManager()
 {
     Q_D(ExtensionEmblemManager);
 
-    d->workerThread.quit();
-    d->workerThread.wait();
+    // 停止定时器
+    d->readyTimer.stop();
+    
+    // 确保工作线程正确退出
+    if (d->workerThread.isRunning()) {
+        d->workerThread.quit();
+        if (!d->workerThread.wait(3000)) {
+            qWarning() << "ExtensionEmblemManager: Worker thread did not exit within 3 seconds, forcing termination";
+            d->workerThread.terminate();
+            d->workerThread.wait(1000);
+        }
+    }
 }
 
 DPUTILS_END_NAMESPACE
