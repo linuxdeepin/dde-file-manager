@@ -17,6 +17,7 @@ class CommonEntryFileEntity final : public DFMBASE_NAMESPACE::AbstractEntryFileE
 
 public:
     explicit CommonEntryFileEntity(const QUrl &url);
+    ~CommonEntryFileEntity() override;
 
     QString displayName() const override;
     QIcon icon() const override;

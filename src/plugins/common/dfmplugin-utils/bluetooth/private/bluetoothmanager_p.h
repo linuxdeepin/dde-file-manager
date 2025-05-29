@@ -22,6 +22,7 @@ class BluetoothManagerPrivate : public QObject
     Q_OBJECT
 public:
     explicit BluetoothManagerPrivate(BluetoothManager *qq);
+    ~BluetoothManagerPrivate();
     BluetoothManagerPrivate(BluetoothManagerPrivate &) = delete;
     BluetoothManagerPrivate &operator=(BluetoothManagerPrivate &) = delete;
 

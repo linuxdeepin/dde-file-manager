@@ -660,6 +660,16 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
     }
+
+    // 添加对 updateProgressThread 的清理
+    if (updateProgressThread) {
+        if (updateProgressThread->isRunning()) {
+            updateProgressThread->quit();
+            updateProgressThread->wait();
+        }
+        updateProgressThread.reset();  // 或者显式清理智能指针
+    }
+
     if (speedtimer) {
         delete speedtimer;
         speedtimer = nullptr;
