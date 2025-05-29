@@ -65,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <translation>Het bestand is ontoegankelijk.</translation>
     </message>
 </context>
 <context>
@@ -123,22 +123,22 @@
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Naam</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Gewijzigd</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Grootte</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Type</translation>
     </message>
 </context>
 <context>
@@ -162,47 +162,47 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
         <source>Check TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM controleren</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
         <source>Get Random</source>
-        <translation type="unfinished"/>
+        <translation>Willekeurig</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
         <source>Check Algo</source>
-        <translation type="unfinished"/>
+        <translation>Algoritme controleren</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
         <source>Encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Versleutelen</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
         <source>Decrypt</source>
-        <translation type="unfinished"/>
+        <translation>Ontgrendelen</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
         <source>EncryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met versleutelen</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
         <source>DecryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met ontgrendelen</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
         <source>EncryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>Versleutelen met opdracht</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
         <source>DecryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>Ontgrendelen met opdracht</translation>
     </message>
 </context>
 <context>
