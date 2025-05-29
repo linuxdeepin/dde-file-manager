@@ -88,7 +88,7 @@ bool OptionsWindow::initialize()
     titleBar->setMenuVisible(false);
     titleBar->setBackgroundTransparent(true);
     mainLayout->addWidget(titleBar, 0, Qt::AlignTop);
-    DLabel *titleLabel = new DLabel(tr("Desktop options"), this);
+    DLabel *titleLabel = new DLabel(tr("Desktop Settings"), this);
     auto font = titleLabel->font();
     font.setWeight(QFont::Medium);
     titleLabel->setFont(font);
