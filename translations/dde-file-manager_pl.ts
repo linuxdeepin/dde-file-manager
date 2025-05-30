@@ -123,22 +123,22 @@
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Data modyfikacji</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Typ</translation>
     </message>
 </context>
 <context>
@@ -162,47 +162,47 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
         <source>Check TPM</source>
-        <translation type="unfinished"/>
+        <translation>Sprawdź TPM</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
         <source>Get Random</source>
-        <translation type="unfinished"/>
+        <translation>Losuj</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
         <source>Check Algo</source>
-        <translation type="unfinished"/>
+        <translation>Sprawdź Algo</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
         <source>Encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Szyfruj</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
         <source>Decrypt</source>
-        <translation type="unfinished"/>
+        <translation>Rozszyfruj</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
         <source>EncryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>Szyfruję</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
         <source>DecryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>Rozszyfrowuję</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
         <source>EncryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>Szyfruję poleceniem</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
         <source>DecryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>Rozszyfrowuję poleceniem</translation>
     </message>
 </context>
 <context>
@@ -2001,57 +2001,57 @@
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="149"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation>Błąd uprawnień</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="150"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>Działanie jest zabronione</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="166"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation>Za mało wolnego miejsca na dysku docelowym</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="167"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie docelowe jest tylko do odczytu</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="168"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>Folder docelowy znajduje się wewnątrz foldera źródłowego</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="169"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>To działanie nie jest wspierane</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>Przywracanie nie powiodło się, nie udało się znaleźć ścieżki oryginalnej</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się przetworzyć adresu URL kosza</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się uzyskać pliku oryginalnego z kosza</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
         <source>Copy or Cut File failed!</source>
-        <translation type="unfinished"/>
+        <translation>Błąd kopiowania lub wklejania!</translation>
     </message>
 </context>
 <context>
@@ -2376,7 +2376,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Ustawienia pulpitu</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
@@ -2463,7 +2463,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Ustawienia pulpitu</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
