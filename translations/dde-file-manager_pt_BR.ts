@@ -123,22 +123,22 @@
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Hora modificada</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo</translation>
     </message>
 </context>
 <context>
@@ -162,12 +162,12 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
         <source>Check TPM</source>
-        <translation type="unfinished"/>
+        <translation>Verificar TPM</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
         <source>Get Random</source>
-        <translation type="unfinished"/>
+        <translation>Obter Randomicamente</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
@@ -177,12 +177,12 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
         <source>Encrypt</source>
-        <translation type="unfinished"/>
+        <translation>Criptografar</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
         <source>Decrypt</source>
-        <translation type="unfinished"/>
+        <translation>Descriptografar</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
