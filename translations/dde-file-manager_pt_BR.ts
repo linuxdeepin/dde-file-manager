@@ -2051,7 +2051,7 @@
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
         <source>Copy or Cut File failed!</source>
-        <translation type="unfinished"/>
+        <translation>Copiar ou Recortar o arquivo falhou!</translation>
     </message>
 </context>
 <context>
@@ -2376,7 +2376,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Configurações da Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
@@ -2463,7 +2463,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Configurações da Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
