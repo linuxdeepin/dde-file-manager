@@ -187,22 +187,22 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
         <source>EncryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>CriptografiaEmAndamento</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
         <source>DecryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>DescriptografiaEmAndamento</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
         <source>EncryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>CriptografiaPorComando</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
         <source>DecryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>DescriptografiaPorComando</translation>
     </message>
 </context>
 <context>
@@ -2001,52 +2001,52 @@
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="149"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation>Erro de permissão</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="150"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>A ação é negada</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="166"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation>Não há espaço livre suficiente no disco de destino</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="167"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo de destino é somente leitura</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="168"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>A pasta de destino está dentro da pasta de origem</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="169"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Está ação não é suportada</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>A restauração falhou, o caminho original não pôde ser encontrado</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao analisar a URL da lixeira</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao obter o arquivo original da lixeira</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
