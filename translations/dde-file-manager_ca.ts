@@ -2036,22 +2036,22 @@
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation>La restauració ha fallat, no s&apos;ha pogut trobar el camí original.</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut analitzar l&apos;URL de la paperera.</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut obtenir el fitxer original de la paperera.</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
         <source>Copy or Cut File failed!</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat copiar o enganxar el fitxer!</translation>
     </message>
 </context>
 <context>
@@ -2376,7 +2376,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Paràmetres de l&apos;escriptori</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
@@ -2463,7 +2463,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Paràmetres de l&apos;escriptori</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
