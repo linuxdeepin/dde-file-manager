@@ -2439,7 +2439,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>No more prompts</source>
-        <translation>Nie ma więcej komunikatów</translation>
+        <translation>Nie pokazuj</translation>
     </message>
 </context>
 <context>
@@ -2496,7 +2496,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation>Ukryj/Pokaż skróty kolekcji</translation>
+        <translation>Skrót Pokaż/Ukryj kolekcje</translation>
     </message>
 </context>
 <context>
