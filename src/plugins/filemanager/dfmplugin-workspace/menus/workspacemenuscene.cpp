@@ -114,6 +114,10 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
             currentScene.append(shareScene);
     }
 
+    // the scene added by binding must be initializeed after 'defalut scene'.
+    currentScene.append(subScene);
+
+    // 为了能在扩展菜单中获得所有actions, 扩展菜单场景必须在其他场景之后
     if (!d->isDDEDesktopFileIncluded) {
         // oem menu
         if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
@@ -130,8 +134,6 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
         currentScene.append(actionIconManagerScene);
 
-    // the scene added by binding must be initializeed after 'defalut scene'.
-    currentScene.append(subScene);
     setSubscene(currentScene);
 
     // 初始化所有子场景
