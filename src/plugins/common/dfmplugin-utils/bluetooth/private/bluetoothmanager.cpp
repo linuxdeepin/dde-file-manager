@@ -37,6 +37,22 @@ BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
     initConnects();
 }
 
+BluetoothManagerPrivate::~BluetoothManagerPrivate()
+{
+    if (bluetoothInter) {
+        delete bluetoothInter;
+        bluetoothInter = nullptr;
+    }
+    
+    if (watcher) {
+        if (watcher->isRunning()) {
+            watcher->future().cancel();
+        }
+        delete watcher;
+        watcher = nullptr;
+    }
+}
+
 /**
  * @brief 解析蓝牙设备, 获取适配器和设备信息
  * @param req
@@ -424,7 +440,7 @@ QMap<QString, const BluetoothAdapter *> BluetoothManager::getAdapters() const
 }
 
 /**
- * @brief 打开控制中心的‘蓝牙’界面
+ * @brief 打开控制中心的'蓝牙'界面
  */
 void BluetoothManager::showBluetoothSettings()
 {

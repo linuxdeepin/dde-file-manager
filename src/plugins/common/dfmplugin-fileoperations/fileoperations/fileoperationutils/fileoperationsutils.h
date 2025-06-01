@@ -40,16 +40,9 @@ private slots:
     void doStartTime()
     {
         if (!timer)
-            timer = new QTimer;
+            timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &UpdateProgressTimer::handleTimeOut, Qt::ConnectionType(Qt::DirectConnection | Qt::UniqueConnection));
         timer->start(500);
-    }
-
-public:
-    ~UpdateProgressTimer()
-    {
-        if (timer)
-            timer->deleteLater();
     }
 
 private:

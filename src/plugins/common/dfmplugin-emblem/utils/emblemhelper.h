@@ -13,6 +13,7 @@
 
 #include <QIcon>
 #include <QThread>
+#include <QSet>
 
 DPEMBLEM_BEGIN_NAMESPACE
 using Product = QList<QIcon>;   // for a url
@@ -75,6 +76,7 @@ private:
     GioEmblemWorker *worker { new GioEmblemWorker };
     ProductQueue productQueue;
     QThread workerThread;
+    QSet<QUrl> pendingUrls;  // 添加pending请求缓存
 };
 
 DPEMBLEM_END_NAMESPACE

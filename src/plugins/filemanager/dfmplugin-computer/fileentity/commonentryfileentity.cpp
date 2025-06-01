@@ -26,6 +26,14 @@ CommonEntryFileEntity::CommonEntryFileEntity(const QUrl &url)
     }
 }
 
+CommonEntryFileEntity::~CommonEntryFileEntity()
+{
+    if (reflectionObj) {
+        delete reflectionObj;
+        reflectionObj = nullptr;
+    }
+}
+
 QString CommonEntryFileEntity::displayName() const
 {
     if (!defaultName.isEmpty())

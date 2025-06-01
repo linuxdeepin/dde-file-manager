@@ -28,6 +28,10 @@ public:
     void setReadable(const bool readable);
     void setWriteable(const bool writeable);
     void setExecutable(const bool executable);
+    void setLastReadTime(const qint64 time);
+    void setLastModifedTime(const qint64 time);
+    void setCreateTime(const qint64 time);
+    void setDisplayType(const QString &displayType);
 
     QUrl fileUrl() const;
     qint64 fileSize() const;
@@ -38,7 +42,11 @@ public:
     bool isReadable() const;
     bool isWriteable() const;
     bool isExecutable() const;
-
+    qint64 lastReadTime() const;
+    qint64 lastModifedTime() const;
+    qint64 createTime() const;
+    QString displayType() const;
+    
     void setHighlightContent(const QString &content);
     QString highlightContent() const;
 
