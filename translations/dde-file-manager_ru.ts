@@ -1574,7 +1574,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="105"/>
         <source>Change disk password</source>
-        <translation type="unfinished"/>
+        <translation>Изменить пароль диска</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="110"/>
@@ -6500,7 +6500,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="200"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>Добавить метку &quot;%1&quot;</translation>
+        <translation>Добавить метку «%1»</translation>
     </message>
 </context>
 <context>
