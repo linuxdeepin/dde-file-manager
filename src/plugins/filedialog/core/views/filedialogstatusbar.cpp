@@ -295,6 +295,14 @@ void FileDialogStatusBar::initializeUi()
 void FileDialogStatusBar::initializeConnect()
 {
     connect(fileNameEdit, &DLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
+    
+    // INFO: [FileDialogStatusBar::initializeConnect] Connect Enter key in filename edit to trigger accept button.
+    connect(fileNameEdit, &DLineEdit::returnPressed, this, [this]() {
+        // 当在文件名编辑框中按下Enter键时，触发接受按钮的点击事件
+        if (curAcceptButton && curAcceptButton->isVisible() && curAcceptButton->isEnabled()) {
+            curAcceptButton->animateClick();
+        }
+    });
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -431,6 +439,16 @@ void FileDialogStatusBar::updateComboxViewWidth()
     }
 }
 
+void FileDialogStatusBar::setAppropriateWidgetFocus()
+{
+    // INFO: [FileDialogStatusBar::setAppropriateWidgetFocus] Setting focus to filename edit for better input experience.
+    if (fileNameEdit && fileNameEdit->isVisible()) {
+        // 无论是保存模式还是打开模式，都将焦点设置到文件名编辑框
+        // 这样用户可以直接输入修改文件名，同时Enter键会触发相应的操作
+        fileNameEdit->setFocus();
+    }
+}
+
 void FileDialogStatusBar::showEvent(QShowEvent *event)
 {
     const QString &title = window()->windowTitle();
@@ -442,8 +460,7 @@ void FileDialogStatusBar::showEvent(QShowEvent *event)
     }
     connect(window(), &QWidget::windowTitleChanged, this, &FileDialogStatusBar::onWindowTitleChanged);
 
-    if (fileNameEdit->isVisible())
-        fileNameEdit->setFocus();
+    setAppropriateWidgetFocus();
 
     updateComboxViewWidth();
 
@@ -475,7 +492,7 @@ bool FileDialogStatusBar::eventFilter(QObject *watched, QEvent *event)
         });
     } else if (event->type() == QEvent::Show) {
         QTimer::singleShot(500, this, [this]() {
-            fileNameEdit->setFocus();
+            setAppropriateWidgetFocus();
         });
     }
 
