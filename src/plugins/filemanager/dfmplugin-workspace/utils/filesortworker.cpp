@@ -1110,6 +1110,10 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
     sortInfo->setReadable(fileInfo->isAttributes(OptInfoType::kIsReadable));
     sortInfo->setWriteable(fileInfo->isAttributes(OptInfoType::kIsWritable));
     sortInfo->setExecutable(fileInfo->isAttributes(OptInfoType::kIsExecutable));
+    sortInfo->setLastReadTime(fileInfo->timeOf(TimeInfoType::kLastRead).toLongLong());
+    sortInfo->setLastModifedTime(fileInfo->timeOf(TimeInfoType::kLastModified).toLongLong());
+    sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).toLongLong());
+    sortInfo->setDisplayType(fileInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     fileInfo->fileMimeType();
 
     return true;

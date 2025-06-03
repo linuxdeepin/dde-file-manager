@@ -22,6 +22,16 @@
 
 #include <DDialog>
 
+#ifdef COMPILE_ON_V2X
+#    define APP_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
+#    define APP_MANAGER_PATH "/org/deepin/dde/SessionManager1"
+#    define APP_MANAGER_INTERFACE "org.deepin.dde.SessionManager1"
+#else
+#    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
+#    define APP_MANAGER_PATH "/com/deepin/SessionManager"
+#    define APP_MANAGER_INTERFACE "com.deepin.SessionManager"
+#endif
+
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(bool *)
 
@@ -554,9 +564,9 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
 void EventsHandler::requestReboot()
 {
     qWarning() << "reboot is confirmed...";
-    QDBusInterface sessMng("com.deepin.SessionManager",
-                           "/com/deepin/SessionManager",
-                           "com.deepin.SessionManager");
+    QDBusInterface sessMng(APP_MANAGER_SERVICE,
+                           APP_MANAGER_PATH,
+                           APP_MANAGER_INTERFACE);
     sessMng.asyncCall("RequestReboot");
 }
 
@@ -587,9 +597,9 @@ bool EventsHandler::canUnlock(const QString &device)
 void EventsHandler::autoStartDFM()
 {
     qInfo() << "autostart is going to added...";
-    QDBusInterface sessMng("com.deepin.SessionManager",
-                           "/com/deepin/StartManager",
-                           "com.deepin.StartManager");
+    QDBusInterface sessMng(APP_MANAGER_SERVICE,
+                           APP_MANAGER_PATH,
+                           APP_MANAGER_INTERFACE);
     sessMng.asyncCall("AddAutostart", QString(kReencryptDesktopFile));
 }
 

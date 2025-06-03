@@ -15,16 +15,19 @@
 #    define BluetoothService "com.deepin.daemon.Bluetooth"
 #    define BluetoothPath "/com/deepin/daemon/Bluetooth"
 #    define BluetoothInterface "com.deepin.daemon.Bluetooth"
+#    define ControlcenterService "com.deepin.dde.ControlCenter"
+#    define ControlcenterPath "/com/deepin/dde/ControlCenter"
+#    define ControlcenterInterface "com.deepin.dde.ControlCenter"
 #else
 #    define BluetoothService "org.deepin.dde.Bluetooth1"
 #    define BluetoothPath "/org/deepin/dde/Bluetooth1"
 #    define BluetoothInterface "org.deepin.dde.Bluetooth1"
+#    define ControlcenterService "org.deepin.dde.ControlCenter1"
+#    define ControlcenterPath "/org/deepin/dde/ControlCenter1"
+#    define ControlcenterInterface "org.deepin.dde.ControlCenter1"
 #endif
 
 #define BluetoothPage "bluetooth"
-#define ControlcenterService "com.deepin.dde.ControlCenter"
-#define ControlcenterPath "/com/deepin/dde/ControlCenter"
-#define ControlcenterInterface "com.deepin.dde.ControlCenter"
 
 using namespace dfmplugin_utils;
 
