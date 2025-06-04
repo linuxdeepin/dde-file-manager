@@ -509,7 +509,7 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     auto typeAll = types;
     if (typeAll.isEmpty()) {
         if (isAttributes(OptInfoType::kIsSymLink)) {
-            auto target = pathOf(PathInfoType::kSymLinkTarget);
+            auto target = FileUtils::resolveSymlink(fileUrl());
             if (!target.isEmpty() && target != filePath()) {
                 FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(target));
                 if (info)
