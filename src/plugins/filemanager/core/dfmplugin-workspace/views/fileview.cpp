@@ -1217,6 +1217,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
             && indexAt(event->pos()).isValid()) {
         d->isTouchDrag = true;
         d->mousePressPosForTouch = event->pos();
+    } else {
+        d->isTouchDrag = false;
     }
 
     if (event->buttons().testFlag(Qt::LeftButton)) {
@@ -1325,6 +1327,7 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->pressedStartWithExpand = false;
+    d->isTouchDrag = false;
 
     if (event->buttons() & Qt::LeftButton) {
         d->mouseMoveRect = QRect(-1, -1, 1, 1);
