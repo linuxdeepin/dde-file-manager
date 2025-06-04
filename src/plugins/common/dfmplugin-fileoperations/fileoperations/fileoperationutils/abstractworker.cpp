@@ -357,9 +357,7 @@ void AbstractWorker::emitStateChangedNotify()
  */
 void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
 {
-    auto fromUrl = from;
-    fromUrl.setPath(QUrl::fromPercentEncoding(QByteArray(from.path().toStdString().data())));
-    JobInfoPointer info = createCopyJobInfo(fromUrl, to);
+    JobInfoPointer info = createCopyJobInfo(from, to);
 
     emit currentTaskNotify(info);
 }
@@ -403,16 +401,14 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
 void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const bool isTo,
                                      const quint64 id, const QString &errorMsg, const bool allUsErrorMsg)
 {
-    auto fromUrl = from;
-    fromUrl.setPath(QUrl::fromPercentEncoding(QByteArray(from.path().toStdString().data())));
-    JobInfoPointer info = createCopyJobInfo(fromUrl, to, error);
+    JobInfoPointer info = createCopyJobInfo(from, to, error);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey,
-                 QVariant::fromValue(ErrorMessageAndAction::errorMsg(fromUrl, to, error, isTo, errorMsg, allUsErrorMsg)));
+                 QVariant::fromValue(ErrorMessageAndAction::errorMsg(from, to, error, isTo, errorMsg, allUsErrorMsg)));
     info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey,
                  QVariant::fromValue(ErrorMessageAndAction::supportActions(error)));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(fromUrl));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
     quint64 emitId = id == 0 ? quintptr(this) : id;
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
     emit errorNotify(info);
