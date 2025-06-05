@@ -44,8 +44,10 @@ bool SmbVirtualEntryUpgradeUnit::initialize(const QMap<QString, QString> &)
 
 bool SmbVirtualEntryUpgradeUnit::upgrade()
 {
-    if (!createDB())
+    if (!createDB()) {
+        qCCritical(logToolUpgrade) << "Failed to create database for SMB virtual entries";
         return false;
+    }
 
     const QList<VirtualEntryData> &&old = readOldItems();
     saveToDb(old);
@@ -59,8 +61,10 @@ bool SmbVirtualEntryUpgradeUnit::createDB()
     const QString &dbPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/deepin/dde-file-manager/database";
 
     QDir dir(dbPath);
-    if (!dir.exists())
+    if (!dir.exists()) {
+        qCDebug(logToolUpgrade) << "Database directory does not exist, creating:" << dbPath;
         dir.mkpath(dbPath);
+    }
 
     const QString &dbFilePath = dbPath + "/" + DFMBASE_NAMESPACE::Global::DataBase::kDfmDBName;
     handler = new SqliteHandle(dbFilePath);
@@ -84,9 +88,12 @@ bool SmbVirtualEntryUpgradeUnit::createTable()
 
 QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
 {
-    QFile config(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + kConfigFile);
-    if (!config.open(QIODevice::ReadOnly))
+    const QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + kConfigFile;
+    QFile config(configPath);
+    if (!config.open(QIODevice::ReadOnly)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file for reading:" << configPath;
         return {};
+    }
 
     const auto &configs = config.readAll();
     config.close();
@@ -103,10 +110,16 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
     if (rootObj.contains("RemoteMounts")) {
         const QJsonObject &remoteMountsObj = rootObj.value("RemoteMounts").toObject();
         std::for_each(remoteMountsObj.constBegin(), remoteMountsObj.constEnd(), [&](const QJsonValue &val) {
-            if (!val.isObject()) return;
+            if (!val.isObject()) {
+                qCDebug(logToolUpgrade) << "Skipping non-object value in RemoteMounts";
+                return;
+            }
 
             const auto &data = convertFromMap(val.toObject().toVariantMap());
-            if (data.getHost().isEmpty()) return;
+            if (data.getHost().isEmpty()) {
+                qCDebug(logToolUpgrade) << "Skipping remote mount entry with empty host";
+                return;
+            }
             rets.append(data);
         });
     }
@@ -117,7 +130,10 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
             const QJsonArray &aggregatedList = stashedEntry.value("SmbIntegrations").toArray();
             std::for_each(aggregatedList.begin(), aggregatedList.end(), [&](const QJsonValue &val) {
                 VirtualEntryData data(val.toString());
-                if (data.getKey().isEmpty()) return;
+                if (data.getKey().isEmpty()) {
+                    qCDebug(logToolUpgrade) << "Skipping SMB integration entry with empty key";
+                    return;
+                }
                 rets.append(data);
             });
         }
@@ -129,8 +145,10 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
 void SmbVirtualEntryUpgradeUnit::clearOldItems()
 {
     QFile config(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + kConfigFile);
-    if (!config.open(QIODevice::ReadOnly))
+    if (!config.open(QIODevice::ReadOnly)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file for reading during cleanup";
         return;
+    }
 
     const auto &configs = config.readAll();
     config.close();
@@ -147,8 +165,10 @@ void SmbVirtualEntryUpgradeUnit::clearOldItems()
     rootNode.remove("StashedSmbDevices");
     doc.setObject(rootNode);
 
-    if (!config.open(QIODevice::ReadWrite | QIODevice::Truncate))
+    if (!config.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file for writing during cleanup";
         return;
+    }
 
     config.write(doc.toJson());
     config.close();
@@ -161,8 +181,10 @@ VirtualEntryData SmbVirtualEntryUpgradeUnit::convertFromMap(const QVariantMap &m
     const QString &host = map.value("host", "").toString();
     const QString &share = map.value("share", "").toString();
     const QString &name = map.value("name", "").toString();
-    if (protocol.isEmpty() || host.isEmpty() || share.isEmpty())
+    if (protocol.isEmpty() || host.isEmpty() || share.isEmpty()) {
+        qCWarning(logToolUpgrade) << "Invalid SMB entry data - missing required fields";
         return data;
+    }
 
     qCDebug(logToolUpgrade) << "upgrade: smb entry: " << protocol << host
                             << share << name;

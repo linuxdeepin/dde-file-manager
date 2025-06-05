@@ -35,8 +35,10 @@ void DeviceList::showEvent(QShowEvent *e)
 
 void DeviceList::addDevice(const DockItemData &item)
 {
-    if (deviceItems.contains(item.id))
+    if (deviceItems.contains(item.id)) {
+        qCDebug(logAppDock) << "Device already exists, removing before re-adding:" << item.id;
         removeDevice(item.id);
+    }
 
     auto devItem = new DeviceItem(item, this);
     connect(devItem, &DeviceItem::requestEject,
@@ -49,27 +51,30 @@ void DeviceList::addDevice(const DockItemData &item)
 
     deviceLay->insertWidget(order.indexOf(item.sortKey), devItem);
 
-    qCInfo(logAppDock) << "added item:" << item.id << devItem;
+    qCInfo(logAppDock) << "Added device item:" << item.id << devItem;
     updateHeight();
 }
 
 void DeviceList::removeDevice(const QString &id)
 {
     auto wgt = deviceItems.value(id, nullptr);
-    if (wgt) {
-        qCInfo(logAppDock) << "removed item:" << id << wgt;
-        deviceLay->removeWidget(wgt);
-        delete wgt;
-        wgt = nullptr;
-        deviceItems.remove(id);
-        sortKeys.remove(id);
-        updateHeight();
+    if (!wgt) {
+        qCDebug(logAppDock) << "Device not found for removal:" << id;
+        return;
     }
+
+    qCInfo(logAppDock) << "Removing device item:" << id << wgt;
+    deviceLay->removeWidget(wgt);
+    delete wgt;
+    wgt = nullptr;
+    deviceItems.remove(id);
+    sortKeys.remove(id);
+    updateHeight();
 }
 
 void DeviceList::ejectDevice(const QString &id)
 {
-    qCInfo(logAppDock) << "about to eject" << id;
+    qCInfo(logAppDock) << "Ejecting device:" << id;
     DockItemDataManager::instance()->ejectDevice(id);
 }
 

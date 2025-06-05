@@ -38,11 +38,15 @@ bool AppAttributeUpgradeUnit::initialize(const QMap<QString, QString> &args)
     Q_UNUSED(args)
 
     QFile file(kConfigurationPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << kConfigurationPath;
         return false;
+    }
 
-    if (!backupAppAttribute())
+    if (!backupAppAttribute()) {
+        qCWarning(logToolUpgrade) << "Failed to backup application attribute configuration";
         return false;
+    }
 
     QByteArray data = file.readAll();
     file.close();
@@ -78,12 +82,16 @@ bool AppAttributeUpgradeUnit::initialize(const QMap<QString, QString> &args)
 bool AppAttributeUpgradeUnit::upgrade()
 {
     int newIconSizeLevel = transIconSizeLevel(oldIconSizeLevel);
-    if (!configObject.contains(kConfigGroupAppAttribute))
+    if (!configObject.contains(kConfigGroupAppAttribute)) {
+        qCCritical(logToolUpgrade) << "ApplicationAttribute section missing from config object";
         return false;
+    }
 
     auto appAttr = configObject[kConfigGroupAppAttribute].toObject();
-    if (!appAttr.contains(kConfigKeyIconSizeLevel))
+    if (!appAttr.contains(kConfigKeyIconSizeLevel)) {
+        qCCritical(logToolUpgrade) << "IconSizeLevel key missing from ApplicationAttribute section";
         return false;
+    }
 
     appAttr[kConfigKeyIconSizeLevel] = newIconSizeLevel;
     configObject[kConfigGroupAppAttribute] = appAttr;

@@ -50,8 +50,11 @@ void DockItemDataManager::onBlockMounted(const QString &id)
 
 void DockItemDataManager::onBlockUnmounted(const QString &id)
 {
-    if (!blocks.contains(id))
+    if (!blocks.contains(id)) {
+        qCDebug(logAppDock) << "Block device not in blocks list, ignoring unmount:" << id;
         return;
+    }
+
     blocks.remove(id);
     Q_EMIT mountRemoved(id);
     updateDockVisible();
@@ -71,6 +74,7 @@ void DockItemDataManager::onBlockPropertyChanged(const QString &id, const QStrin
     if (id.contains(QRegularExpression("/sr[0-9]*$"))
         && property == GlobalServerDefines::DeviceProperty::kMediaAvailable
         && !value.variant().toBool()) {
+        qCInfo(logAppDock) << "Optical disc physically ejected:" << id;
         onBlockUnmounted(id);
     }
 }
@@ -123,9 +127,15 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
 
 bool DockItemDataManager::protoDeviceFilter(const QVariantMap &data)
 {
+    const QString deviceId = data.value(GlobalServerDefines::DeviceProperty::kId).toString();
+    const QString mountPoint = data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+
     // dlnfs mounts will be captured by gvfs, ignore them.
-    if (device_utils::isDlnfsMount(data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString()))
+    if (device_utils::isDlnfsMount(mountPoint)) {
+        qCDebug(logAppDock) << "DLNFS mount detected, ignoring:" << deviceId;
         return kIgnore;
+    }
+
     return kDisplay;
 }
 
@@ -156,8 +166,11 @@ void DockItemDataManager::playSoundOnDevPlugInOut(bool in)
 void DockItemDataManager::sendNotification(const QString &id, const QString &operation)
 {
     qCInfo(logAppDock) << "eject failed: " << id << operation;
-    if (!blocks.contains(id) && !protocols.contains(id))
+    if (!blocks.contains(id) && !protocols.contains(id)) {
+        qCWarning(logAppDock) << "Device not found in blocks or protocols for notification:" << id;
         return;
+    }
+
     QString devName = blocks.contains(id)
             ? blocks.value(id).displayName
             : protocols.value(id).displayName;
@@ -277,7 +290,7 @@ void DockItemDataManager::initialize()
     auto reply = devMng->GetBlockDevicesIdList(GlobalServerDefines::DeviceQueryOption::kMounted);
     reply.waitForFinished();
     if (reply.isError()) {
-        qCritical() << "cannot obtain block devices from dbus!" << reply.error().message();
+        qCCritical(logAppDock) << "cannot obtain block devices from dbus!" << reply.error().message();
         return;
     }
 
@@ -292,7 +305,7 @@ void DockItemDataManager::initialize()
     reply = devMng->GetProtocolDevicesIdList();
     reply.waitForFinished();
     if (reply.isError()) {
-        qCritical() << "cannot obtain block devices from dbus!" << reply.error().message();
+        qCCritical(logAppDock) << "cannot obtain protocol devices from dbus!" << reply.error().message();
         return;
     }
     qCInfo(logAppDock) << "start query protocol info";
@@ -312,10 +325,13 @@ void DockItemDataManager::ejectAll()
 
 void DockItemDataManager::ejectDevice(const QString &id)
 {
-    if (id.startsWith("/org/freedesktop/"))
+    if (id.startsWith("/org/freedesktop/")) {
+        qCDebug(logAppDock) << "Ejecting block device:" << id;
         devMng->DetachBlockDevice(id);
-    else
+    } else {
+        qCDebug(logAppDock) << "Ejecting protocol device:" << id;
         devMng->DetachProtocolDevice(id);
+    }
 }
 
 void DockItemDataManager::connectDeviceManger()
