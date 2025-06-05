@@ -626,10 +626,10 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
 
             displayName = textList.join('\n');
 
-            auto tmpFileName = fileName;
+            auto tmpFileName = displayName;
             // get error suffix, so show the file displayname
             if (tmpFileName.append(suffix) != itemFileDisplayName.toString()) {
-                fileName = itemFileDisplayName.toString();
+                displayName = itemFileDisplayName.toString();
                 break;
             }
 
