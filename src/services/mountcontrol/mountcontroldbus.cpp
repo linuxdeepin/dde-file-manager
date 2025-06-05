@@ -5,7 +5,6 @@
 #include "mountcontroldbus.h"
 #include "private/mountcontroldbus_p.h"
 #include "mounthelpers/cifsmounthelper.h"
-#include "mounthelpers/dlnfsmounthelper.h"
 #include "polkit/policykithelper.h"
 
 #include <QFile>
@@ -33,7 +32,7 @@ MountControlDBus::MountControlDBus(const char *name, QObject *parent)
 
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
-
+    
     QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kMountControlObjPath, this, opts);
 }
 
@@ -112,11 +111,8 @@ MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
     : q(qq), adapter(new MountControlAdaptor(qq))
 {
     CifsMountHelper *cifsHelper = new CifsMountHelper(qq);
-    DlnfsMountHelper *dlnfsHelper = new DlnfsMountHelper(qq);
 
     cifsHelper->cleanMountPoint();
-    mountHelpers.insert(MountFstypeSupportedField::kDlnFs, dlnfsHelper);
-    supportedFS.append(MountFstypeSupportedField::kDlnFs);
 
     auto config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
                                              "org.deepin.dde.file-manager.mount");
