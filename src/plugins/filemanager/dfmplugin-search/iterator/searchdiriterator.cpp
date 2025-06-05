@@ -13,6 +13,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <QUuid>
 
@@ -178,6 +179,7 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
+        sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(it.key().path()));
         result.append(sortInfo);
     }
     d->childrens.clear();
