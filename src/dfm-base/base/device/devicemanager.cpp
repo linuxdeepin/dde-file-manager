@@ -48,6 +48,11 @@ static constexpr char kDaemonMountIface[] { "org.deepin.Filemanager.MountControl
 static constexpr char kDaemonIntroIface[] { "org.freedesktop.DBus.Introspectable" };
 static constexpr char kDaemonIntroMethod[] { "Introspect" };
 
+// DLNFS service constants
+static constexpr char kDlnfsService[] { "org.deepin.dlnfs.Control" };
+static constexpr char kDlnfsPath[] { "/org/deepin/dlnfs/Control" };
+static constexpr char kDlnfsIface[] { "org.deepin.dlnfs.Control" };
+
 DeviceManager *DeviceManager::instance()
 {
     static DeviceManager ins;
@@ -1064,8 +1069,10 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
         }
     }
 
-    if (!isDaemonMountRunning()) {
-        qCWarning(logDFMBase) << "DLNFS daemon mount service is not available";
+    // Check if DLNFS service is available
+    QDBusConnectionInterface *systemBusIFace = QDBusConnection::systemBus().interface();
+    if (!systemBusIFace->isServiceRegistered(kDlnfsService)) {
+        qCWarning(logDFMBase) << "DLNFS service is not available:" << kDlnfsService;
         return;
     }
 
@@ -1073,7 +1080,7 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
 
     qCInfo(logDFMBase) << "Starting DLNFS" << method.toLower() << "operation for mount point:" << mpt;
 
-    QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
+    QDBusInterface iface(kDlnfsService, kDlnfsPath, kDlnfsIface, QDBusConnection::systemBus());
     QDBusReply<QVariantMap> reply = iface.call(method, mpt, QVariantMap { { "fsType", "dlnfs" } });
     const auto &ret = reply.value();
 
