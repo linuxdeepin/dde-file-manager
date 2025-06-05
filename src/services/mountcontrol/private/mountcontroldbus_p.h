@@ -30,11 +30,6 @@ private:
     MountControlDBusPrivate(const MountControlDBusPrivate &other) { }
     MountControlDBusPrivate &operator=(const MountControlDBusPrivate &other) { return *this; }
 
-    QVariantMap mountDlnfs(const QString &path, const QVariantMap &opts);
-    QVariantMap unmountDlnfs(const QString &path, const QVariantMap &opts);
-
-    bool checkDlnfsExist(const QString &path);
-
 private:
     QMap<QString, AbstractMountHelper *> mountHelpers;
     MountControlDBus *q { nullptr };
