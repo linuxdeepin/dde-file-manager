@@ -5,7 +5,9 @@
 #include "mountcontroldbus.h"
 #include "private/mountcontroldbus_p.h"
 #include "mounthelpers/cifsmounthelper.h"
+#include "mounthelpers/commonmounthelper.h"
 #include "polkit/policykithelper.h"
+#include "service_mountcontrol_global.h"
 
 #include <QFile>
 
@@ -32,7 +34,7 @@ MountControlDBus::MountControlDBus(const char *name, QObject *parent)
 
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
-    
+
     QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kMountControlObjPath, this, opts);
 }
 
@@ -42,14 +44,14 @@ QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts
 {
     using namespace MountOptionsField;
     using namespace MountReturnField;
-    
+
     if (!checkAuthentication()) {
         fmWarning() << "Mount: Authentication failed for path:" << path;
         return { { kResult, false },
                  { kErrorCode, -kAuthenticationFailed },
                  { kErrorMessage, "Authentication failed: insufficient privileges to mount" } };
     }
-    
+
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
@@ -69,14 +71,14 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
 {
     using namespace MountOptionsField;
     using namespace MountReturnField;
-    
+
     if (!checkAuthentication()) {
         fmWarning() << "Unmount: Authentication failed for path:" << path;
         return { { kResult, false },
                  { kErrorCode, -kAuthenticationFailed },
                  { kErrorMessage, "Authentication failed: insufficient privileges to unmount" } };
     }
-    
+
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
@@ -111,18 +113,20 @@ MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
     : q(qq), adapter(new MountControlAdaptor(qq))
 {
     CifsMountHelper *cifsHelper = new CifsMountHelper(qq);
+    CommonMountHelper *commonHelper = new CommonMountHelper(qq);
 
     cifsHelper->cleanMountPoint();
 
     auto config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
-                                             "org.deepin.dde.file-manager.mount");
+                                             "org.deepin.dde.file-manager.mount", "", q);
     if (!config || !config->value("enableCifsMount").toBool()) {
         fmInfo() << "cannot create config object or cifs mount disabled." << config;
         return;
     }
+
     mountHelpers.insert(MountFstypeSupportedField::kCifs, cifsHelper);
     supportedFS.append(MountFstypeSupportedField::kCifs);
-    config->deleteLater();
+    mountHelpers.insert(MountFstypeSupportedField::kCommon, commonHelper);
 }
 
 MountControlDBusPrivate::~MountControlDBusPrivate()

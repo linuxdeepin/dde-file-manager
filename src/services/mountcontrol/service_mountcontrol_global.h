@@ -38,6 +38,7 @@ inline constexpr char kErrorMessage[] { "errMsg" };
 
 namespace MountFstypeSupportedField {
 inline constexpr char kCifs[] { "cifs" };
+inline constexpr char kCommon[] { "common" };
 }
 
 enum MountErrorCode {   // NOTE(xust): use NAGATIVE value when return, avoid confusing with errno
