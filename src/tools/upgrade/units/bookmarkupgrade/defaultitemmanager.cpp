@@ -53,9 +53,10 @@ void DefaultItemManager::initPreDefineItems()
     static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
     static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
     QStringList pluginsDirs;
+
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qCInfo(logToolUpgrade) << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logToolUpgrade) << QString("Load plugins path (Debug mode): %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
     pluginsDirs.push_back(pluginsDir);

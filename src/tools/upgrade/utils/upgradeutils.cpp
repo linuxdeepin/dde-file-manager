@@ -46,14 +46,19 @@ QVariant genericAttribute(const QString &key)
 void addOldGenericAttribute(const QJsonArray &array)
 {
     auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
-    if (paths.isEmpty())
+    if (paths.isEmpty()) {
+        qCWarning(logToolUpgrade) << "No config location paths available for adding old generic attributes";
         return;
+    }
 
     auto genCfgPath = paths.first() + "/deepin/dde-file-manager.json";
     QFile cfgFile(genCfgPath);
 
-    if (!cfgFile.open(QIODevice::ReadOnly))
+    if (!cfgFile.open(QIODevice::ReadOnly)) {
+        qCWarning(logToolUpgrade) << "Failed to open config file for reading during old attribute addition:" << genCfgPath;
         return;
+    }
+
     auto datas = cfgFile.readAll();
     cfgFile.close();
 
@@ -70,8 +75,11 @@ void addOldGenericAttribute(const QJsonArray &array)
     QByteArray data = newDoc.toJson();
 
     QFile file(genCfgPath);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCCritical(logToolUpgrade) << "Failed to open config file for writing old attributes:" << genCfgPath;
         return;
+    }
+
     file.write(data);
     file.close();
 }
@@ -108,8 +116,10 @@ bool backupFile(const QString &sourceFile, const QString &backupDirPath)
     // 创建备份目录
     QDir backupDir(backupDirPath);
     if (!backupDir.exists()) {
-        if (!backupDir.mkpath("."))
+        if (!backupDir.mkpath(".")) {
+            qCCritical(logToolUpgrade) << "Failed to create backup directory:" << backupDirPath;
             return false;
+        }
     }
 
     // 获取源文件名
@@ -120,8 +130,11 @@ bool backupFile(const QString &sourceFile, const QString &backupDirPath)
     QString backupFilePath { backupDirPath + "/" + sourceFileName + "." + timestamp };
 
     // 备份文件
-    if (!QFile::copy(sourceFile, backupFilePath))
+    if (!QFile::copy(sourceFile, backupFilePath)) {
+        qCCritical(logToolUpgrade) << "Failed to copy file from" << sourceFile << "to" << backupFilePath;
         return false;
+    }
+
     return true;
 }
 

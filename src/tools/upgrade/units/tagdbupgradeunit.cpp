@@ -67,14 +67,20 @@ bool dfm_upgrade::TagDbUpgradeUnit::initialize(const QMap<QString, QString> &arg
 
 bool dfm_upgrade::TagDbUpgradeUnit::upgrade()
 {
+    qCInfo(logToolUpgrade) << "Starting tag database upgrade process";
+
     // check db
     // if checkNewDatabase return false, it's mean that we unable to upgrade
-    if (!checkNewDatabase())
+    if (!checkNewDatabase()) {
+        qCCritical(logToolUpgrade) << "Failed to check or create new tag database";
         return false;
+    }
 
     // if checkOldDatabase return false mean that we don't need upgrade
-    if (!checkOldDatabase())
+    if (!checkOldDatabase()) {
+        qCInfo(logToolUpgrade) << "No old tag databases found or no upgrade needed";
         return false;
+    }
 
     return upgradeTagDb();
 }
@@ -82,12 +88,16 @@ bool dfm_upgrade::TagDbUpgradeUnit::upgrade()
 bool TagDbUpgradeUnit::upgradeTagDb()
 {
     // upgrade tag_property
-    if (!upgradeTagProperty())
+    if (!upgradeTagProperty()) {
+        qCCritical(logToolUpgrade) << "Failed to upgrade tag properties";
         return false;
+    }
 
     // upgrade file_tags
-    if (!upgradeFileTag())
+    if (!upgradeFileTag()) {
+        qCCritical(logToolUpgrade) << "Failed to upgrade file tags";
         return false;
+    }
 
     return true;
 }
@@ -128,11 +138,15 @@ bool TagDbUpgradeUnit::createTableForNewDb(const QString &tableName)
 bool TagDbUpgradeUnit::upgradeData()
 {
     // upgrade db
-    if (!upgradeTagProperty())
+    if (!upgradeTagProperty()) {
+        qCCritical(logToolUpgrade) << "Failed to upgrade tag properties in upgradeData";
         return false;
+    }
 
-    if (!upgradeFileTag())
+    if (!upgradeFileTag()) {
+        qCCritical(logToolUpgrade) << "Failed to upgrade file tags in upgradeData";
         return false;
+    }
 
     return true;
 }
@@ -141,8 +155,10 @@ bool TagDbUpgradeUnit::upgradeTagProperty()
 {
     // read old table
     const auto &tagPropertyBean = mainDbHandle->query<OldTagProperty>().toBeans();
-    if (tagPropertyBean.isEmpty())
+    if (tagPropertyBean.isEmpty()) {
+        qCInfo(logToolUpgrade) << "No old tag properties found to migrate";
         return true;
+    }
 
     for (auto &bean : tagPropertyBean) {
         TagProperty temp;
@@ -177,8 +193,10 @@ bool TagDbUpgradeUnit::upgradeFileTag()
 {
     // read old table
     const auto &filePropertyBean = deepinDbHandle->query<OldFileProperty>().toBeans();
-    if (filePropertyBean.isEmpty())
+    if (filePropertyBean.isEmpty()) {
+        qCInfo(logToolUpgrade) << "No old file properties found to migrate";
         return true;
+    }
 
     for (auto &bean : filePropertyBean) {
         QString curpath = checkFileUrl(bean->getFilePath());
@@ -207,14 +225,18 @@ bool TagDbUpgradeUnit::checkOldDatabase()
                                                   nullptr);
 
     QSqlDatabase db1 { SqliteConnectionPool::instance().openConnection(dbPath1) };
-    if (!db1.isValid() || db1.isOpenError())
+    if (!db1.isValid() || db1.isOpenError()) {
+        qCDebug(logToolUpgrade) << "Main database not accessible:" << dbPath1;
         return false;
+    }
     db1.close();
 
     // check ".__main.db" database table
     mainDbHandle = new SqliteHandle(dbPath1);
-    if (!chechTable(mainDbHandle, kTagOldDb1TableTagProperty))
+    if (!chechTable(mainDbHandle, kTagOldDb1TableTagProperty)) {
+        qCWarning(logToolUpgrade) << "Main database table validation failed:" << kTagOldDb1TableTagProperty;
         return false;
+    }
 
     const auto &dbPath2 = DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kApplicationSharePath).toLocal8Bit(),
                                                   "/database",
@@ -222,14 +244,18 @@ bool TagDbUpgradeUnit::checkOldDatabase()
                                                   nullptr);
 
     QSqlDatabase db2 { SqliteConnectionPool::instance().openConnection(dbPath2) };
-    if (!db2.isValid() || db2.isOpenError())
+    if (!db2.isValid() || db2.isOpenError()) {
+        qCDebug(logToolUpgrade) << "Deepin database not accessible:" << dbPath2;
         return false;
+    }
     db2.close();
 
     // check ".__deepin.db" database table
     deepinDbHandle = new SqliteHandle(dbPath2);
-    if (!chechTable(deepinDbHandle, kTagOldDb2TableFileProperty))
+    if (!chechTable(deepinDbHandle, kTagOldDb2TableFileProperty)) {
+        qCWarning(logToolUpgrade) << "Deepin database table validation failed:" << kTagOldDb2TableFileProperty;
         return false;
+    }
 
     return true;
 }
@@ -242,25 +268,33 @@ bool TagDbUpgradeUnit::checkNewDatabase()
                                                  nullptr);
 
     QDir dir(dbPath);
-    if (!dir.exists())
+    if (!dir.exists()) {
+        qCDebug(logToolUpgrade) << "Database directory does not exist, creating:" << dbPath;
         dir.mkpath(dbPath);
+    }
 
     const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
                                                      kTagNewDbName,
                                                      nullptr);
 
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
-    if (!db.isValid() || db.isOpenError())
+    if (!db.isValid() || db.isOpenError()) {
+        qCCritical(logToolUpgrade) << "Failed to create or open new tag database:" << dbFilePath;
         return false;
+    }
     db.close();
 
     // check ".__tag.db" database table
     newTagDbhandle = new SqliteHandle(dbFilePath);
-    if (!chechTable(newTagDbhandle, kTagNewTableTagProperty, true))
+    if (!chechTable(newTagDbhandle, kTagNewTableTagProperty, true)) {
+        qCCritical(logToolUpgrade) << "Failed to validate or create tag property table";
         return false;
+    }
 
-    if (!chechTable(newTagDbhandle, kTagNewTableFileTags, true))
+    if (!chechTable(newTagDbhandle, kTagNewTableFileTags, true)) {
+        qCCritical(logToolUpgrade) << "Failed to validate or create file tags table";
         return false;
+    }
 
     return true;
 }
@@ -268,16 +302,21 @@ bool TagDbUpgradeUnit::checkNewDatabase()
 QString TagDbUpgradeUnit::checkFileUrl(const QString &filerUrl)
 {
     QStringList paths = filerUrl.split("/");
-    if (paths.count() < 3)
+    if (paths.count() < 3) {
+        qCDebug(logToolUpgrade) << "Invalid file URL format, insufficient path components:" << filerUrl;
         return QString();
+    }
     paths.removeFirst();
     paths.removeFirst();
     QString curpath = QDir::homePath();
     for (QString p : paths)
         curpath += "/" + p;
     QFileInfo info(curpath);
-    if (info.exists())
+    if (info.exists()) {
+        qCDebug(logToolUpgrade) << "File exists, path validated:" << curpath;
         return curpath;
-    else
+    } else {
+        qCDebug(logToolUpgrade) << "File does not exist, path invalid:" << curpath;
         return QString();
+    }
 }

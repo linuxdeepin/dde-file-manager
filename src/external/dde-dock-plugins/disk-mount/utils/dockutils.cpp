@@ -27,8 +27,10 @@ bool common_utils::isIntegratedByFilemanager()
     std::unique_ptr<DConfig> cfg {
         DConfig::create("org.deepin.dde.dock", "org.deepin.dde.dock.plugin.diskmount", "")
     };
-    if (!cfg || !cfg->isValid())
+    if (!cfg || !cfg->isValid()) {
+        qCWarning(logAppDock) << "Failed to create or validate DConfig, using default integration";
         return true;
+    }
 
     return cfg->value("filemanager-integration").toBool();
 }
@@ -79,8 +81,10 @@ bool smb_utils::parseSmbInfo(const QString &smbPath, QString *host, QString *sha
     Q_ASSERT(host && share && port);
     static const QRegularExpression regx(R"(([:,]port=(?<port>\d*))?[,:]server=(?<host>[^/:,]+)(,share=(?<share>[^/:,]+))?)");
     auto match = regx.match(smbPath);
-    if (!match.hasMatch())
+    if (!match.hasMatch()) {
+        qCWarning(logAppDock) << "Failed to parse SMB info from path:" << smbPath;
         return false;
+    }
 
     *host = match.captured("host");
     *share = match.captured("share");
@@ -92,8 +96,11 @@ bool smb_utils::parseSmbInfo(const QString &smbPath, QString *host, QString *sha
 QString device_utils::blockDeviceName(const QVariantMap &data)
 {
     QString idLabel = data.value(GlobalServerDefines::DeviceProperty::kIdLabel).toString();
-    if (!idLabel.isEmpty())
+    if (!idLabel.isEmpty()) {
+        qCDebug(logAppDock) << "Using ID label as device name:" << idLabel;
         return idLabel;
+    }
+
     quint64 size = data.value(GlobalServerDefines::DeviceProperty::kSizeTotal).toULongLong();
     return QObject::tr("%1 Volume").arg(size_format::formatDiskSize(size));
 }
@@ -103,8 +110,11 @@ QString device_utils::protocolDeviceName(const QVariantMap &data)
     QString devName = data.value(GlobalServerDefines::DeviceProperty::kDisplayName).toString();
     QString host, share;
     int port;
-    if (smb_utils::parseSmbInfo(devName, &host, &share, &port))
+    if (smb_utils::parseSmbInfo(devName, &host, &share, &port)) {
         devName = QObject::tr("%1 on %2").arg(share).arg(host);
+        qCDebug(logAppDock) << "Updated SMB device name:" << devName;
+    }
+
     return devName;
 }
 
@@ -170,7 +180,7 @@ bool device_utils::isDlnfsMount(const QString &mpt)
 
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
-        qCWarning(logAppDock) << "device: cannot parse mtab" << ret;
+        qCWarning(logAppDock) << "Failed to parse mtab for DLNFS check, error code:" << ret;
         mnt_free_table(tab);
         mnt_free_iter(iter);
         return false;
@@ -209,7 +219,7 @@ QString device_utils::queryDevice(const QString &mpt)
 
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
-        qCWarning(logAppDock) << "device: cannot parse mtab" << ret;
+        qCWarning(logAppDock) << "Failed to parse mtab for device query, error code:" << ret << "mount point:" << _mpt;
         mnt_free_table(tab);
         mnt_free_iter(iter);
         return "";
