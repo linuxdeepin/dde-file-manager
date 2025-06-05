@@ -799,9 +799,9 @@ void DeviceManager::doAutoMountAtStart()
     }
 
     static std::once_flag flg;
-    std::call_once(flg, [this] { 
+    std::call_once(flg, [this] {
         qCInfo(logDFMBase) << "Starting auto mount process at application startup";
-        d->mountAllBlockDev(); 
+        d->mountAllBlockDev();
     });
 }
 
@@ -1093,11 +1093,14 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
 
 void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
 {
+    // TODO: Not sure what this code does, will look at it when something goes wrong
+#if 0
     QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
     QDBusReply<QVariantMap> reply = iface.call("Unmount", mpt,
                                                QVariantMap { { "fsType", "common" }, { "unmountAllStacked", true } });
     const auto &ret = reply.value();
     qCDebug(logDFMBase) << "unmount all stacked mount of: " << mpt << ret;
+#endif
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
