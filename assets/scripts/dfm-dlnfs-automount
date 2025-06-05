@@ -46,9 +46,9 @@ if [ "$dlnfs_enable" == "true" ]; then
 
         # do dlnfs mount for $abs_path.
         gdbus call -y \
-            -d org.deepin.Filemanager.MountControl \
-            -o /org/deepin/Filemanager/MountControl \
-            -m org.deepin.Filemanager.MountControl.Mount \
+            -d org.deepin.dlnfs.Control \
+            -o /org/deepin/dlnfs/Control \
+            -m org.deepin.dlnfs.Control.Mount \
             "${abs_path}" \
             "{'fsType': <'dlnfs'>}" \
             -t 1
