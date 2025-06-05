@@ -1111,7 +1111,7 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
     sortInfo->setWriteable(fileInfo->isAttributes(OptInfoType::kIsWritable));
     sortInfo->setExecutable(fileInfo->isAttributes(OptInfoType::kIsExecutable));
     sortInfo->setLastReadTime(fileInfo->timeOf(TimeInfoType::kLastRead).toLongLong());
-    sortInfo->setLastModifedTime(fileInfo->timeOf(TimeInfoType::kLastModified).toLongLong());
+    sortInfo->setLastModifiedTime(fileInfo->timeOf(TimeInfoType::kLastModified).toLongLong());
     sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).toLongLong());
     sortInfo->setDisplayType(fileInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     fileInfo->fileMimeType();
@@ -1596,7 +1596,7 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
 
     switch (role) {
     case kItemFileLastModifiedRole: {
-        auto lastModified = QDateTime::fromSecsSinceEpoch(info->lastModifedTime());
+        auto lastModified = QDateTime::fromSecsSinceEpoch(info->lastModifiedTime());
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemFileCreatedRole: {

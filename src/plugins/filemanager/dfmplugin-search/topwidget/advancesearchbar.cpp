@@ -349,7 +349,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
     }
 
     if (filter.comboValid[kDateRange]) {
-        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastModifedTime());
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastModifiedTime());
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
