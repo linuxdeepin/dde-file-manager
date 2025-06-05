@@ -209,8 +209,11 @@ void crypttab_helper::updateInitramfs()
     // QtConcurrent::run([]{
     auto fd = inhibit_helper::inhibit("Updating initramfs...");
     qInfo() << "start update initramfs...";
-    system("update-initramfs -u");
-    qInfo() << "initramfs updated.";
+    int ret = std::system("sudo -E /sbin/update-initramfs -u");
+    if (ret != 0)
+        qCritical() << "sudo -E /sbin/update-initramfs -u failed! error code : " << ret ;
+    else
+        qInfo() << "initramfs updated.";
     // });
 }
 
