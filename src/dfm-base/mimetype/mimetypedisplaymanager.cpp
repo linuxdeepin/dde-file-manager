@@ -82,7 +82,7 @@ void MimeTypeDisplayManager::initData()
         "tgz", "tbz2", "txz", "ace", "apk", "arc", "arj", "cab", "lzh", "lha", "lz", "lz4", "lzma", "lzo", "rz", "z", "zst",
         "dmg", "img", "pk3", "pk4", "udf", "wim", "zap", "zpaq", "cpio", "pea", "sit", "sitx", "zoo", "zipx", "tlz", "uue",
         "xar", "alz", "egg", "ar", "par", "par2", "xpi", "crx", "taz", "tar.lzma", "tar.zst", "tar.lz", "tar.lz4", "shar", "vhd", "vmdk",
-        "pkg", "hfs", "ipsw", "dar", "bz", "tbz", "qcow", "qcow2", "pacman", "msi", "ova", "gem", "whl", "nupkg", "cab"
+        "pkg", "hfs", "ipsw", "dar", "bz", "tbz", "qcow", "qcow2", "pacman", "ova", "gem", "whl", "nupkg", "cab"
     };
     for (const QString &ext : archiveExts) extensionMap[ext.toLower()] = FileInfo::FileType::kArchives;
     
@@ -99,6 +99,8 @@ void MimeTypeDisplayManager::initData()
         "jsx", "tsx", "clj", "cljs", "cljc", "coffee", "elm", "f", "f90", "fs", "fsx", "lisp", "ml", "mli", "nim", "pas", "pp", "prolog", "rs", "sass", "scss", "vb", "asm", "s",
         "d", "jl", "rkt", "scm", "zig", "m", "mm", "v", "ada", "adb", "bb", "bmx", "cgis", "class", "cls", "cob", "cobol", "gd", "bat", "ps1", "psm1", "vbs", "wsf", "ahk", "au3",
         "apex", "cfc", "cfm", "e", "elm", "gml", "hx", "ino", "jade", "litcoffee", "mak", "monkey", "mq4", "mq5", "nsi", "nsh", "pde", "sol", "tcl", "xqy", "zsh", "vue", "svelte",
+        // Shell scripts and related
+        "pyw", "ksh", "csh", "tcsh",
         // Config and system files
         "ini", "conf", "cfg", "yaml", "yml", "toml", "sh", "bash", "zsh", "fish", "plist", "po", "pot",
         "bashrc", "profile", "zshrc", "gitconfig", "editorconfig", "vimrc", "gitignore", "env", "properties", "config",
@@ -109,12 +111,11 @@ void MimeTypeDisplayManager::initData()
     };
     for (const QString &ext : docExts) extensionMap[ext.toLower()] = FileInfo::FileType::kDocuments;
     
-    // Executables (scripts and specific executable formats)
+    // Executables (specific binary executable formats only, not scripts)
     QStringList execExts = {
-        "appimage", "run", "exe", "com", "bat", "cmd", "msi", "pyc", "pyo", "ps1", "flatpakref", "snap",
-        "app", "bin", "deb", "rpm", "apk", "out", "elf", "so", "o", "a", "dll", "sys", "scr", "ocx", "pyd", "dylib", "bundle",
-        "jar", "war", "ear", "vbs", "msc", "cpl", "gadget", "msp", "action", "workflow", "xbe", "nexe", "wasm", "pex",
-        "pyw", "pl", "rb", "php", "sh", "bash", "zsh", "fish", "ksh", "csh", "tcsh", "js", "ts", "py"
+        "appimage", "run", "exe", "com", "msi", "pyc", "pyo", "flatpakref", "snap",
+        "app", "bin", "out", "elf", "so", "o", "a", "dll", "sys", "scr", "ocx", "pyd", "dylib", "bundle",
+        "msc", "cpl", "gadget", "msp", "action", "workflow", "xbe", "nexe", "wasm", "pex"
     };
     for (const QString &ext : execExts) extensionMap[ext.toLower()] = FileInfo::FileType::kExecutable;
 

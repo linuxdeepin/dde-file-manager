@@ -64,7 +64,7 @@ void SortFileInfo::setLastReadTime(const qint64 time)
     d->lastRead = time;
 }
 
-void SortFileInfo::setLastModifedTime(const qint64 time)
+void SortFileInfo::setLastModifiedTime(const qint64 time)
 {
     d->lastModifed = time;
 }
@@ -139,7 +139,7 @@ qint64 SortFileInfo::lastReadTime() const
     return d->lastRead;
 }
 
-qint64 SortFileInfo::lastModifedTime() const
+qint64 SortFileInfo::lastModifiedTime() const
 {
     return d->lastModifed;
 }
