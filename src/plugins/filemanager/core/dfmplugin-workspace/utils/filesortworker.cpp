@@ -1502,7 +1502,11 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
         for (int i = 0; i < nameFilters.size(); ++i) {
-            re.setPattern(nameFilters.at(i));
+            QString realFilter = nameFilters.at(i);
+            realFilter.replace(".", "\\.");
+            realFilter.replace("*", ".*");
+            realFilter.append('$');
+            re.setPattern(realFilter);
             if (re.match(item->data(kItemNameRole).toString()).hasMatch()) {
                 item->setAvailableState(true);
             }
