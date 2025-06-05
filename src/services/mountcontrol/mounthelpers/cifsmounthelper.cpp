@@ -30,8 +30,6 @@
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
-static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
-
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
     : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
 
@@ -159,8 +157,8 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
                  { kErrorCode, -kMountNotExist },
                  { kErrorMessage, path + " is not mounted" } };
     }
-    if (ret == kNotOwner && !checkAuth()) {
-        fmInfo() << "check auth failed: " << path;
+    if (ret == kNotOwner) {
+        fmInfo() << "invoker is not the owner of mount: " << path;
         return { { kResult, false },
                  { kErrorCode, -kNotOwnerOfMount },
                  { kErrorMessage, "invoker is not the owner of mount" } };
@@ -363,21 +361,7 @@ QString CifsMountHelper::option(const QString &key, const QVariantMap &override,
     return QString("%1=%2").arg(key).arg(val);
 }
 
-bool CifsMountHelper::checkAuth()
-{
-    Q_ASSERT(context);
-    QString appBusName = context->message().service();
 
-    if (!appBusName.isEmpty()) {
-        using namespace PolkitQt1;
-        Authority::Result result = Authority::instance()->checkAuthorizationSync(
-                kPolicyKitActionId,
-                SystemBusNameSubject(appBusName),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
-                Authority::AllowUserInteraction);
-        return result == Authority::Yes;
-    }
-    return false;
-}
 
 bool CifsMountHelper::mkdir(const QString &path)
 {
