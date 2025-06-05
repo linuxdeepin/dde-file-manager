@@ -606,9 +606,9 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
             if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                 break;
 
+            const auto itemFileDisplayName = index.data(kItemFileDisplayNameRole);
             if (role == kItemFileDisplayNameRole) {
                 const auto itemFileName = index.data(kItemNameRole);
-                const auto itemFileDisplayName = index.data(kItemFileDisplayNameRole);
 
                 if (itemFileName != itemFileDisplayName)
                     break;
@@ -625,6 +625,13 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
             layout->layout(baseNameRect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
 
             displayName = textList.join('\n');
+
+            auto tmpFileName = fileName;
+            // get error suffix, so show the file displayname
+            if (tmpFileName.append(suffix) != itemFileDisplayName.toString()) {
+                fileName = itemFileDisplayName.toString();
+                break;
+            }
 
             bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
             if (showSuffix)

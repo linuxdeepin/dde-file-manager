@@ -801,6 +801,8 @@ void ComputerItemWatcher::startQueryItems(bool async)
     if (async) {
         fw = new QFutureWatcher<ComputerDataList>();
         connect(fw, &QFutureWatcher<void>::finished, this, [afterQueryFunc, this]() {
+            if (!fw)
+                return;
             initedDatas = fw->result();
             afterQueryFunc();
             fw->deleteLater();
