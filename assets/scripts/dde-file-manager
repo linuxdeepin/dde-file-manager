@@ -4,89 +4,141 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# qurl::toPercentEncoding的加密规则
-# When Chinese special characters are mixed, only the ascall character set is used for encoding. 
-# When Chinese characters and special characters are mixed, encoding errors occur, 
-# resulting in the inability to open some directories with special characters. 
-# Here, utf-8 multi-byte encoding is used.
-urlencode() {
-    local input="${1}"
-    local output=""
-    local char
-
-   
-    while IFS= read -r -n1 char; do
-        # Convert the character into bytes
-        if [[ "$char" =~ [a-zA-Z0-9\-\_\.\~] ]]; then
-            # If the character is unreserved, append as is
-            output+="$char"
-        else
-            # Handle multi-byte characters
-            local bytes
-            bytes=$(printf "%s" "$char" | od -An -tx1 | tr -d ' \n')
-            while [[ "$bytes" != "" ]]; do
-                output+="%${bytes:0:2}"  # Take the first byte
-                bytes="${bytes:2}"      # Remove the first byte
-            done
-        fi
-    done < <(printf "%s" "$input")
-
-    echo "$output"
+# 检测是否为特殊选项（需要转发给 file-manager.sh）
+is_special_option() {
+    local arg="$1"
+    case "$arg" in
+        "-h"|"--help"|"--help-all"|"-v"|"--version")
+            return 0 ;;
+        *)
+            return 1 ;;
+    esac
 }
 
-args=""
-argsOrigin=""
-current_path=$(pwd)
-isDbus="true"
-for arg in "$@"; do
-    # .\ ./ \ .. \ ../ 这几个符号在传入dbus后丢失路径，在这里进行转换
-    if [[ $arg == "." ]] || [[ $arg == ".." ]] || [[ $arg == *"/." ]] || [[ $arg == *"/.." ]] || [[ $arg =~ "./" ]] || [[ $arg =~ "../" ]] || [[ $arg =~ "~/" ]]; then
-        name=${arg##*/}
-        path=${arg%/*}"/"
-        if [[ $name == "." ]] || [[ $name == ".." ]]; then
-            name=""
-            path=$path$name
-        fi
-        if [[ $path =~ "~/" ]]; then
-            cd ~/
-            home_path=$(pwd)
-            path=$(echo "$path" | sed "s|~/|$home_path/|g")
-            cd $current_path
-        fi
-        cd "$path"
-        path=$(pwd)"/"
-        cd $current_path
-        absolute_path=$path$name
-        arg=$absolute_path
+# 检测参数是否需要 Base64 编码
+needs_base64_encoding() {
+    local arg="$1"
+    # 检测问题字符：逗号、百分号、双引号、美元符号、&、#、?、!、{}、[]、()、空格、单引号
+    if [[ "$arg" == *","* ]] || [[ "$arg" == *"%"* ]] || \
+       [[ "$arg" == *"\""* ]] || [[ "$arg" == *"$"* ]] || \
+       [[ "$arg" == *"&"* ]] || [[ "$arg" == *"#"* ]] || \
+       [[ "$arg" == *"?"* ]] || [[ "$arg" == *"!"* ]] || \
+       [[ "$arg" == *"{"* ]] || [[ "$arg" == *"}"* ]] || \
+       [[ "$arg" == *"["* ]] || [[ "$arg" == *"]"* ]] || \
+       [[ "$arg" == *"("* ]] || [[ "$arg" == *")"* ]] || \
+       [[ "$arg" == *" "* ]] || [[ "$arg" == *"'"* ]]; then
+        return 0
     fi
+    return 1
+}
 
-    # 对不是-开头的参数进行qurl::toPercentEncoding加密
-    if [[ "$arg:0:1" =~ "-" ]]; then
-        tmpArg=$(urlencode "$arg")
-        # 对于\n加密为了%5cn，替换为正确的%0A
-        tmpArg=$(echo "$tmpArg" | sed 's/%5cn/%0A/g')
-        argsOrigin+="$tmpArg "
+# 将路径转换为规范路径
+get_canonical_path() {
+    local path="$1"
+    local current_path=$(pwd)
+    
+    # 处理 ~ 扩展
+    if [[ "$path" =~ ^~/ ]] || [[ "$path" == "~" ]]; then
+        path="${path/#\~/$HOME}"
+    fi
+    
+    # 处理相对路径 . .. ./ ../
+    if [[ "$path" == "." ]] || [[ "$path" == ".." ]] || \
+       [[ "$path" == *"/." ]] || [[ "$path" == *"/.." ]] || \
+       [[ "$path" =~ "./" ]] || [[ "$path" =~ "../" ]]; then
+        
+        local dir_part=""
+        local file_part=""
+        
+        if [[ "$path" == "." ]] || [[ "$path" == ".." ]]; then
+            dir_part="$path"
+        else
+            dir_part=$(dirname "$path")
+            file_part=$(basename "$path")
+        fi
+        
+        # 尝试 cd 到目录获取绝对路径
+        if cd "$dir_part" 2>/dev/null; then
+            local abs_dir=$(pwd)
+            cd "$current_path"
+            if [[ -n "$file_part" ]] && [[ "$file_part" != "." ]]; then
+                path="$abs_dir/$file_part"
+            else
+                path="$abs_dir"
+            fi
+        fi
+    elif [[ ! "$path" =~ ^/ ]]; then
+        # 其他相对路径转为绝对路径
+        path="$current_path/$path"
+    fi
+    
+    echo "$path"
+}
+
+# 修正后的构建函数
+build_dbus_args() {
+    local args_array=()
+    
+    for arg in "$@"; do
+        local processed_arg="$arg"
+        
+        if [[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]]; then
+            processed_arg=$(get_canonical_path "$arg")
+        fi
+        
+        if needs_base64_encoding "$processed_arg"; then
+            local encoded=$(echo -n "$processed_arg" | base64 -w 0)
+            args_array+=("B64:$encoded")
+        else
+            args_array+=("$processed_arg")
+        fi
+    done
+    
+    # 直接返回数组元素，不添加引号
+    printf '%s\n' "${args_array[@]}"
+}
+
+# 主逻辑
+main() {
+    # 检查是否包含特殊选项
+    local has_special_option=false
+    for arg in "$@"; do
+        if is_special_option "$arg"; then
+            has_special_option=true
+            break
+        fi
+    done
+    
+    # 路由处理
+    if [[ "$has_special_option" == "true" ]]; then
+        # 转发给 file-manager.sh
+        exec file-manager.sh "$@"
     else
-        argsOrigin+="$arg "
+        # 通过 DBus 调用
+        local dbus_args_array=()
+        readarray -t dbus_args_array < <(build_dbus_args "$@")
+        local dbus_args_str=""
+        for ((i=0; i<${#dbus_args_array[@]}; i++)); do
+            if [[ $i -eq 0 ]]; then
+                dbus_args_str="${dbus_args_array[i]}"
+            else
+                dbus_args_str="$dbus_args_str,${dbus_args_array[i]}"
+            fi
+        done
+        
+        # 执行 DBus 调用
+        dbus-send --print-reply --dest=org.freedesktop.FileManager1 \
+            /org/freedesktop/FileManager1 \
+            org.freedesktop.FileManager1.Open \
+            array:string:"$dbus_args_str"
+        
+        # 失败回退
+        if [[ $? -ne 0 ]]; then
+            echo "DBus call failed, falling back to file-manager.sh" >&2
+            exec file-manager.sh "$@"
+        fi
     fi
+}
 
-    # array:string:"$args"中','是切分符号，所以传入dbus是要被切分
-    if [[ $arg == "-h" ]] || [[ $arg == "--help" ]] || [[ $arg == "--help-all" ]] || [[ $arg == "-v" ]] || [[ $arg == "--version" ]] || [[ $arg == *","* ]]; then
-        isDbus="false"
-    fi
-
-    args+="$arg,"
-done
-args=${args%,}
-
-if [[ $isDbus == "false" ]]; then
-    exec file-manager.sh "$argsOrigin"
-    return;
-fi
-
-dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.Open array:string:"$args"
-
-if [ $? -ne 0 ]; then
-    echo "dbus call failed"
-    exec file-manager.sh "$argsOrigin"
-fi
+# 执行主逻辑
+main "$@"

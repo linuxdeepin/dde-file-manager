@@ -114,8 +114,25 @@ void FileManager1DBus::Trash(const QStringList &URIs)
 
 void FileManager1DBus::Open(const QStringList &Args)
 {
+    QStringList processedArgs;
+    
+    // 处理 Base64 编码的参数
+    for (const QString &arg : Args) {
+        if (arg.startsWith("B64:")) {
+            // 解码 Base64 参数
+            QString encodedPart = arg.mid(4);  // 移除 "B64:" 前缀
+            QByteArray decoded = QByteArray::fromBase64(encodedPart.toUtf8());
+            QString decodedArg = QString::fromUtf8(decoded);
+            processedArgs.append(decodedArg);
+        } else {
+            // 普通参数直接使用
+            processedArgs.append(arg);
+        }
+    }
+    
+    // 后续处理逻辑保持不变，但使用 processedArgs
     QStringList ArgsTmp;
-    for (const auto &arg : Args) {
+    for (const auto &arg : processedArgs) {
         if (!arg.startsWith("-")) {
             ArgsTmp.append(QUrl::toPercentEncoding(arg));
         } else {
