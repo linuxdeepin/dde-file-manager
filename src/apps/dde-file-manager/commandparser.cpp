@@ -137,16 +137,9 @@ void CommandParser::process()
 void CommandParser::process(const QStringList &arguments)
 {
     qCInfo(logAppFileManager) << "Processing command line arguments:" << arguments.size() << "args";
-    QStringList args;
-    for (const auto &arg : arguments) {
-        if (!arg.startsWith("-")) {
-            args.append(QUrl::fromPercentEncoding(arg.toStdString().c_str()));
-        } else {
-            args.append(arg);
-        }
-    }
-    SessionBusiness::instance()->process(args);
-    commandParser->process(args);
+    // 直接使用参数，不再进行 percent 解码，因为 FileManager1DBus 已经处理了 Base64 解码
+    SessionBusiness::instance()->process(arguments);
+    commandParser->process(arguments);
 }
 
 void CommandParser::initialize()
