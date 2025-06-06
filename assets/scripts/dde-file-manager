@@ -75,6 +75,16 @@ get_canonical_path() {
     echo "$path"
 }
 
+# 检测是否为URL（包含协议前缀）
+is_url() {
+    local arg="$1"
+    # 检测常见的URL协议前缀
+    if [[ "$arg" == *"://"* ]]; then
+        return 0  # 是URL
+    fi
+    return 1  # 不是URL
+}
+
 # 修正后的构建函数
 build_dbus_args() {
     local args_array=()
@@ -82,7 +92,8 @@ build_dbus_args() {
     for arg in "$@"; do
         local processed_arg="$arg"
         
-        if [[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]]; then
+        # 如果不是选项，且不是URL，且看起来像本地路径，则规范化
+        if [[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]] && ! is_url "$arg"; then
             processed_arg=$(get_canonical_path "$arg")
         fi
         
