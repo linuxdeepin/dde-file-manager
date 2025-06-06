@@ -47,8 +47,14 @@ int Utils::accessMode(const QString &mps)
 int Utils::setFileMode(const QString &mountPoint, uint mode)
 {
     QByteArray bytes { mountPoint.toLocal8Bit() };
-    fmInfo() << "chmod ==>" << bytes << "to" << mode;
-    return chmod(bytes.data(), mode);
+    fmInfo() << "[Utils::setFileMode] Changing file mode for path:" << bytes << "to mode:" << QString::number(mode, 8);
+    int result = chmod(bytes.data(), mode);
+    if (result != 0) {
+        fmCritical() << "[Utils::setFileMode] Failed to change file mode for path:" << bytes << "error:" << strerror(errno);
+    } else {
+        fmInfo() << "[Utils::setFileMode] Successfully changed file mode for path:" << bytes;
+    }
+    return result;
 }
 
 bool Utils::isValidDevPolicy(const QVariantMap &policy, const QString &realInvoker)
@@ -75,7 +81,7 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
     // 1. if file does not exist then create it
     QFile config(devConfigPath());
     if (!config.open(QIODevice::ReadWrite)) {
-        fmDebug() << "config open failed";
+        fmCritical() << "[Utils::saveDevPolicy] Failed to open device policy config file:" << devConfigPath();
         return;
     }
     config.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
@@ -87,6 +93,8 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
     int inPolicy = policy.value(kKeyPolicy).toInt();
     QString inDevice = inGlobal ? "" : policy.value(kKeyDevice).toString();
     QString inInvoker = policy.value(kKeyInvoker).toString();
+
+    fmInfo() << "[Utils::saveDevPolicy] Saving device policy - type:" << inType << "policy:" << inPolicy << "invoker:" << inInvoker << "global:" << inGlobal;
 
     // 2. append/replace config to configFile
     bool foundExist = false;
@@ -110,7 +118,7 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
                 foundExist = true;
                 objInfo.insert(kKeyPolicy, inPolicy);
                 objInfo.insert(kKeyTstamp, QString::number(QDateTime::currentSecsSinceEpoch()));
-                fmDebug() << "found exist policy, just updtae it";
+                fmInfo() << "[Utils::saveDevPolicy] Found existing policy, updating it for type:" << type;
             }
 
             newArr.append(objInfo);
@@ -126,13 +134,14 @@ void Utils::saveDevPolicy(const QVariantMap &policy)
         if (inGlobal == 0)
             obj.insert(kKeyDevice, inDevice);
         newArr.append(obj);
-        fmDebug() << "append new policy";
+        fmInfo() << "[Utils::saveDevPolicy] Adding new policy for type:" << inType;
     }
     doc.setArray(newArr);
     config.close();
     config.open(QIODevice::Truncate | QIODevice::ReadWrite);   // overwrite the config file
     config.write(doc.toJson());
     config.close();
+    fmInfo() << "[Utils::saveDevPolicy] Device policy saved successfully";
 }
 
 void Utils::loadDevPolicy(DevPolicyType *devPolicies)
@@ -140,11 +149,21 @@ void Utils::loadDevPolicy(DevPolicyType *devPolicies)
     Q_ASSERT(devPolicies);
 
     QFile config(devConfigPath());
-    if (!config.open(QIODevice::ReadOnly))
+    if (!config.open(QIODevice::ReadOnly)) {
+        fmWarning() << "[Utils::loadDevPolicy] Cannot open device policy config file:" << devConfigPath();
         return;
+    }
+    
+    fmInfo() << "[Utils::loadDevPolicy] Loading device policies from:" << devConfigPath();
+    
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
     config.close();
+
+    if (err.error != QJsonParseError::NoError) {
+        fmCritical() << "[Utils::loadDevPolicy] Failed to parse device policy JSON:" << err.errorString();
+        return;
+    }
 
     if (doc.isArray()) {
         devPolicies->clear();
@@ -169,7 +188,7 @@ void Utils::loadDevPolicy(DevPolicyType *devPolicies)
         }
     }
 
-    fmDebug() << "loaded policy: " << *devPolicies;
+    fmInfo() << "[Utils::loadDevPolicy] Loaded device policies:" << *devPolicies;
 }
 
 void Utils::saveVaultPolicy(const QVariantMap &policy)
@@ -177,11 +196,15 @@ void Utils::saveVaultPolicy(const QVariantMap &policy)
     // 1. if file does not exist then create it
     QFile config(valultConfigPath());
     if (!config.open(QIODevice::ReadWrite)) {
-        fmDebug() << "config open failed";
+        fmCritical() << "[Utils::saveVaultPolicy] Failed to open vault policy config file:" << valultConfigPath();
         config.close();
         return;
     }
     config.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+
+    fmInfo() << "[Utils::saveVaultPolicy] Saving vault policy - type:" << policy.value(kPolicyType).toInt() 
+             << "hide state:" << policy.value(kVaultHideState).toInt() 
+             << "policy state:" << policy.value(kPolicyState).toInt();
 
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
@@ -194,11 +217,12 @@ void Utils::saveVaultPolicy(const QVariantMap &policy)
     obj.insert(kVaultHideState, policy.value(kVaultHideState).toInt());
     obj.insert(kPolicyState, policy.value(kPolicyState).toInt());
     newArr.append(obj);
-    fmDebug() << "append new policy";
+    fmInfo() << "[Utils::saveVaultPolicy] Adding new vault policy";
     doc.setArray(newArr);
     config.open(QIODevice::Truncate | QIODevice::ReadWrite);   // overwrite the config file
     config.write(doc.toJson());
     config.close();
+    fmInfo() << "[Utils::saveVaultPolicy] Vault policy saved successfully";
 }
 
 void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
@@ -206,11 +230,21 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
     Q_ASSERT(vaultPolicies);
 
     QFile config(valultConfigPath());
-    if (!config.open(QIODevice::ReadOnly))
+    if (!config.open(QIODevice::ReadOnly)) {
+        fmWarning() << "[Utils::loadVaultPolicy] Cannot open vault policy config file:" << valultConfigPath();
         return;
+    }
+    
+    fmInfo() << "[Utils::loadVaultPolicy] Loading vault policies from:" << valultConfigPath();
+    
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
     config.close();
+
+    if (err.error != QJsonParseError::NoError) {
+        fmCritical() << "[Utils::loadVaultPolicy] Failed to parse vault policy JSON:" << err.errorString();
+        return;
+    }
 
     if (doc.isArray()) {
         vaultPolicies->clear();
@@ -231,14 +265,16 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
         }
     }
 
-    fmDebug() << "loaded policy: " << *vaultPolicies;
+    fmInfo() << "[Utils::loadVaultPolicy] Loaded vault policies:" << *vaultPolicies;
 }
 
 DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const char *device)
 {
+    fmInfo() << "[Utils::checkDiskPassword] Checking disk password for device:" << device;
+    
     int r = crypt_init(cd, device);
     if (r < 0) {
-        fmInfo("crypt_init failed,code is:%d", r);
+        fmCritical() << "[Utils::checkDiskPassword] crypt_init failed for device:" << device << "error code:" << r;
         return kInitFailed;
     }
 
@@ -247,7 +283,7 @@ DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const 
                    nullptr); /* additional parameters (not used) */
 
     if (r < 0) {
-        fmInfo("crypt_load failed on device %s.\n", crypt_get_device_name(*cd));
+        fmCritical() << "[Utils::checkDiskPassword] crypt_load failed for device:" << crypt_get_device_name(*cd) << "error code:" << r;
         crypt_free(*cd);
         return kDeviceLoadFailed;
     }
@@ -255,11 +291,12 @@ DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const 
     r = crypt_activate_by_passphrase(*cd, nullptr, CRYPT_ANY_SLOT,
                                      pwd, strlen(pwd), CRYPT_ACTIVATE_ALLOW_UNBOUND_KEY);
     if (r < 0) {
-        fmInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(*cd));
+        fmWarning() << "[Utils::checkDiskPassword] Password verification failed for device:" << crypt_get_device_name(*cd) << "error code:" << r;
         crypt_free(*cd);
         return kPasswordWrong;
     }
 
+    fmInfo() << "[Utils::checkDiskPassword] Password verification successful for device:" << crypt_get_device_name(*cd);
     return kNoError;
 }
 
@@ -267,14 +304,18 @@ DPCErrorCode Utils::changeDiskPassword(crypt_device *cd, const char *oldPwd, con
 {
     Q_ASSERT(cd);
 
+    const char *deviceName = crypt_get_device_name(cd);
+    fmInfo() << "[Utils::changeDiskPassword] Changing password for device:" << deviceName;
+
     int r = crypt_keyslot_change_by_passphrase(cd, CRYPT_ANY_SLOT,
                                                CRYPT_ANY_SLOT, oldPwd,
                                                strlen(oldPwd), newPwd, strlen(newPwd));
     crypt_free(cd);
     if (r < 0) {
-        fmInfo("crypt_keyslot_change_by_passphrase failed,code is:%d", r);
+        fmCritical() << "[Utils::changeDiskPassword] Failed to change password for device:" << deviceName << "error code:" << r;
         return kPasswordChangeFailed;
     }
 
+    fmInfo() << "[Utils::changeDiskPassword] Password changed successfully for device:" << deviceName;
     return kNoError;
 }
