@@ -171,59 +171,12 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
     }
 }
 
-bool checkFileSize(const QFileInfo &fileInfo)
-{
-    try {
-        static const qint64 kMaxFileSizeInBytes = [] {
-            qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
-            // 在这里进行上述的健全性检查
-            if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
-                sizeMBFromConfig = 50LL;   // Default fallback
-            }
-            return sizeMBFromConfig * 1024LL * 1024LL;
-        }();
 
-        if (fileInfo.size() > kMaxFileSizeInBytes) {
-            fmDebug() << "File" << fileInfo.fileName() << "size" << fileInfo.size()
-                      << "exceeds max allowed size" << kMaxFileSizeInBytes;
-            return false;
-        }
-        return true;
-    } catch (const std::exception &e) {
-        fmWarning() << "Failed to check file size:" << fileInfo.filePath() << e.what();
-        return false;
-    } catch (...) {
-        fmWarning() << "Failed to check file size with unknown exception:" << fileInfo.filePath();
-        return false;
-    }
-}
-
-bool isSupportedFile(const QString &path)
-{
-    try {
-        QFileInfo fileInfo(path);
-        if (!fileInfo.exists() || !fileInfo.isFile())
-            return false;
-
-        // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
-        if (!checkFileSize(fileInfo))
-            return false;
-
-        const QString &suffix = fileInfo.suffix().toLower();
-        return TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
-    } catch (const std::exception &e) {
-        fmWarning() << "Failed to check if file is supported:" << path << e.what();
-        return false;
-    } catch (...) {
-        fmWarning() << "Failed to check if file is supported with unknown exception:" << path;
-        return false;
-    }
-}
 
 void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
-        if (!isSupportedFile(path))
+        if (!IndexUtility::isSupportedFile(path))
             return;
 #ifdef QT_DEBUG
         fmDebug() << "Adding [" << path << "]";
@@ -251,7 +204,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
-        if (!isSupportedFile(path))
+        if (!IndexUtility::isSupportedFile(path))
             return;
 
         bool needAdd = false;

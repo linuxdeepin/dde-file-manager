@@ -7,6 +7,7 @@
 #include "utils/indexutility.h"
 
 #include <QFileInfo>
+#include <QDateTime>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
@@ -27,7 +28,17 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
 
         TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
         if (!searchResult || searchResult->totalHits == 0) {
-            fmDebug() << "File not found in index, skipping:" << fromPath;
+            fmDebug() << "Source file not found in index:" << fromPath;
+
+            // Smart detection: Check if this is an editor save pattern
+            // (temporary file renamed to target file that should be indexed)
+            if (IndexUtility::isSupportedFile(toPath) && isFileInIndex(toPath)) {
+                fmInfo() << "Detected editor save pattern: temporary file" << fromPath
+                         << "renamed to indexed file" << toPath << "- updating content";
+                return processContentUpdate(toPath);
+            }
+
+            fmDebug() << "Target file not in index or not supported, skipping move operation";
             return true;   // Not an error, file might not be indexed
         }
 
@@ -60,6 +71,83 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         return false;
     } catch (const std::exception &e) {
         fmWarning() << "File move processing failed:" << fromPath << e.what();
+        return false;
+    }
+}
+
+bool FileMoveProcessor::isFileInIndex(const QString &path)
+{
+    try {
+        TermQueryPtr pathQuery = newLucene<TermQuery>(
+                newLucene<Term>(L"path", path.toStdWString()));
+
+        TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
+        return searchResult && searchResult->totalHits > 0;
+    } catch (const LuceneException &e) {
+        fmWarning() << "Failed to check if file exists in index:" << path
+                    << QString::fromStdWString(e.getError());
+        return false;
+    } catch (const std::exception &e) {
+        fmWarning() << "Failed to check if file exists in index:" << path << e.what();
+        return false;
+    }
+}
+
+bool FileMoveProcessor::processContentUpdate(const QString &filePath)
+{
+    try {
+        fmInfo() << "Processing content update for file:" << filePath;
+
+        // Create updated document with new content (similar to createFileDocument in taskhandler.cpp)
+        DocumentPtr newDoc = newLucene<Document>();
+
+        // file path
+        newDoc->add(newLucene<Field>(L"path", filePath.toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+        // file last modified time
+        QFileInfo fileInfo(filePath);
+        const QDateTime modifyTime = fileInfo.lastModified();
+        const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
+        newDoc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+        // file name
+        newDoc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_ANALYZED));
+
+        // hidden tag
+        QString hiddenTag = "N";
+        if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
+            hiddenTag = "Y";
+        newDoc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+        // file contents
+        const auto &contentOpt = DocUtils::extractFileContent(filePath);
+        if (contentOpt) {
+            const QString &contents = contentOpt.value().trimmed();
+            newDoc->add(newLucene<Field>(L"contents", contents.toStdWString(),
+                                         Field::STORE_YES, Field::INDEX_ANALYZED));
+        } else {
+            fmWarning() << "Failed to extract content from file:" << filePath;
+        }
+
+        // Update the document in index
+        TermPtr pathTerm = newLucene<Term>(L"path", filePath.toStdWString());
+        m_writer->updateDocument(pathTerm, newDoc);
+
+        fmInfo() << "Successfully updated file content in index:" << filePath;
+        return true;
+    } catch (const LuceneException &e) {
+        fmWarning() << "Content update failed with Lucene exception:" << filePath
+                    << QString::fromStdWString(e.getError());
+        return false;
+    } catch (const std::exception &e) {
+        fmWarning() << "Content update failed:" << filePath << e.what();
+        return false;
+    } catch (...) {
+        fmWarning() << "Content update failed with unknown exception:" << filePath;
         return false;
     }
 }
