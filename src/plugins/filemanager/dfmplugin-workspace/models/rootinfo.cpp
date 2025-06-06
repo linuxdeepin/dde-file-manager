@@ -589,6 +589,7 @@ SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
     sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).toLongLong());
     sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).toLongLong());
     sortInfo->setDisplayType(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
+    sortInfo->setInfoCompleted(true);
     return sortInfo;
 }
 

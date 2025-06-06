@@ -8,6 +8,7 @@
 #include <dfm-base/interfaces/sortfileinfo.h>
 
 #include <QPointer>
+#include <QMutex>
 
 namespace dfmbase {
 class SortFileInfoPrivate
@@ -15,6 +16,9 @@ class SortFileInfoPrivate
 public:
     explicit SortFileInfoPrivate(SortFileInfo *qq);
     ~SortFileInfoPrivate();
+
+    // 内部补全方法
+    bool doCompleteFileInfo();
 
 public:
     SortFileInfo *const q;   // SortFileInfo实例对象
@@ -35,6 +39,12 @@ public:
 
     QString displayType { "" };  // 文件类型
     QString highlightContent { "" };   // 存储文件的高亮内容
+    
+    // 信息完整性标记
+    bool infoCompleted { false };   // 标记详细信息是否已获取
+    
+    // 线程安全
+    mutable QMutex mutex;
 };
 
 }

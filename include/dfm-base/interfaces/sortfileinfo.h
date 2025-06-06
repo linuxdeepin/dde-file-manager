@@ -10,11 +10,17 @@
 #include <QScopedPointer>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QFuture>
+#include <functional>
 
 namespace dfmbase {
 class SortFileInfoPrivate;
 class SortFileInfo
 {
+public:
+    // 补全完成的回调函数类型
+    using CompletionCallback = std::function<void(bool success)>;
+
 public:
     SortFileInfo();
     ~SortFileInfo();
@@ -32,6 +38,11 @@ public:
     void setLastModifiedTime(const qint64 time);
     void setCreateTime(const qint64 time);
     void setDisplayType(const QString &displayType);
+    void setHighlightContent(const QString &content);
+    
+    // 信息完整性相关方法
+    void setInfoCompleted(const bool completed);
+    void markAsCompleted();
 
     QUrl fileUrl() const;
     qint64 fileSize() const;
@@ -46,13 +57,21 @@ public:
     qint64 lastModifiedTime() const;
     qint64 createTime() const;
     QString displayType() const;
-    
-    void setHighlightContent(const QString &content);
     QString highlightContent() const;
+    
+    // 信息完整性查询方法
+    bool isInfoCompleted() const;
+    bool needsCompletion() const;
+
+    // 新增：文件信息补全接口（一次性获取所有信息）
+    bool completeFileInfo();  // 同步补全
+    QFuture<bool> completeFileInfoAsync();  // 异步补全
+    QFuture<bool> completeFileInfoAsync(CompletionCallback callback);  // 异步补全带回调
 
 private:
     QScopedPointer<SortFileInfoPrivate> d;
 };
+
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo> SortInfoPointer;
 Q_DECLARE_METATYPE(SortInfoPointer)

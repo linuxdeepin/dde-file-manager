@@ -179,7 +179,7 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
-        sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(it.key().path()));
+        sortInfo->completeFileInfoAsync();
         result.append(sortInfo);
     }
     d->childrens.clear();
