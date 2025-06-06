@@ -49,4 +49,8 @@ target_link_libraries(${PROJECT_NAME}
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-service-manager/)
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/system/)
 install(FILES org.deepin.filemanager.mountcontrol.conf DESTINATION share/dbus-1/system.d/)
+
+set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")
+install(FILES org.deepin.filemanager.mountcontrol.policy DESTINATION ${PolicyDir})
+
 INSTALL_DBUS_SERVICE(org.deepin.Filemanager.MountControl root)

@@ -37,7 +37,6 @@ private:
     std::string convertArgs(const QVariantMap &opts);
     QVariantMap overrideOptions();
     QString option(const QString &key, const QVariantMap &override, const QString &def = QString());
-    bool checkAuth();
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
     bool mkdirMountRootPath();
