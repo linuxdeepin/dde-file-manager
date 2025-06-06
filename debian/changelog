@@ -1,8 +1,14 @@
+dde-file-manager (6.5.60) unstable; urgency=medium
+
+  * fix a full-text index update problem
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 14:50:50 +0800
+
 dde-file-manager (6.5.59) unstable; urgency=medium
 
   * fix bugs
 
- -- Liuyangming <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 12:23:30 +0800
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 12:23:30 +0800
 
 dde-file-manager (6.5.58) unstable; urgency=medium
 
