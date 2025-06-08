@@ -19,6 +19,7 @@
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 #include <QDBusReply>
+#include <QDBusUnixFileDescriptor>
 #include <QDebug>
 #include <QProcess>
 #include <QStandardPaths>
@@ -28,9 +29,11 @@
 #include <QtConcurrent>
 #include <QNetworkInterface>
 #include <QSettings>
+#include <QTemporaryFile>
 
 #include <pwd.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_dirshare {
@@ -144,12 +147,48 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    QString encPass = FileUtils::encryptString(passwd);
-    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, encPass);
+    // Create anonymous pipe for secure credential transmission
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        fmInfo() << "Failed to create anonymous pipe for credentials";
+        Q_EMIT sambaPasswordSet(false);
+        return;
+    }
+
+    // Prepare credentials data using QDataStream for reliable serialization
+    QByteArray credentials;
+    QDataStream stream(&credentials, QIODevice::WriteOnly);
+    stream << userName << FileUtils::encryptString(passwd);
+
+    // Write credentials to pipe and close write end immediately
+    ssize_t written = write(pipefd[1], credentials.constData(), credentials.size());
+    close(pipefd[1]);  // Close write end immediately after writing
+    
+    if (written != credentials.size()) {
+        fmInfo() << "Failed to write credentials to pipe, written:" << written << "expected:" << credentials.size();
+        close(pipefd[0]);
+        Q_EMIT sambaPasswordSet(false);
+        return;
+    }
+
+    // Create file descriptor for D-Bus transmission
+    QDBusUnixFileDescriptor fd(pipefd[0]);
+    if (!fd.isValid()) {
+        fmInfo() << "Failed to create valid file descriptor from pipe";
+        close(pipefd[0]);
+        Q_EMIT sambaPasswordSet(false);
+        return;
+    }
+
+    // Call D-Bus interface with pipe file descriptor
+    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, QVariant::fromValue(fd));
     bool success = reply.isValid() && reply.value();
     fmInfo() << "Samba password set result:" << success
              << ", error msg:" << (reply.isValid() ? "none" : reply.error().message());
 
+    // Close read end (D-Bus service will have its own copy)
+    close(pipefd[0]);
+    
     Q_EMIT sambaPasswordSet(success);
 }
 

@@ -5,14 +5,16 @@
 #include "mountcontroldbus.h"
 #include "private/mountcontroldbus_p.h"
 #include "mounthelpers/cifsmounthelper.h"
-#include "mounthelpers/dlnfsmounthelper.h"
 #include "mounthelpers/commonmounthelper.h"
+#include "polkit/policykithelper.h"
+#include "service_mountcontrol_global.h"
 
 #include <QFile>
 
 #include <DConfig>
 
 static constexpr char kMountControlObjPath[] { "/org/deepin/Filemanager/MountControl" };
+static constexpr char kPolicyKitActionId[] { "org.deepin.Filemanager.MountController" };
 
 namespace service_mountcontrol {
 DFM_LOG_REISGER_CATEGORY(SERVICEMOUNTCONTROL_NAMESPACE)
@@ -42,6 +44,14 @@ QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts
 {
     using namespace MountOptionsField;
     using namespace MountReturnField;
+
+    if (!checkAuthentication()) {
+        fmWarning() << "Mount: Authentication failed for path:" << path;
+        return { { kResult, false },
+                 { kErrorCode, -kAuthenticationFailed },
+                 { kErrorMessage, "Authentication failed: insufficient privileges to mount" } };
+    }
+
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
@@ -61,6 +71,14 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
 {
     using namespace MountOptionsField;
     using namespace MountReturnField;
+
+    if (!checkAuthentication()) {
+        fmWarning() << "Unmount: Authentication failed for path:" << path;
+        return { { kResult, false },
+                 { kErrorCode, -kAuthenticationFailed },
+                 { kErrorMessage, "Authentication failed: insufficient privileges to unmount" } };
+    }
+
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
@@ -82,27 +100,33 @@ QStringList MountControlDBus::SupportedFileSystems()
     return d->supportedFS;
 }
 
+bool MountControlDBus::checkAuthentication()
+{
+    if (!SERVICEMOUNTCONTROL_NAMESPACE::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
+        fmInfo() << "Authentication failed !!";
+        return false;
+    }
+    return true;
+}
+
 MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)
     : q(qq), adapter(new MountControlAdaptor(qq))
 {
     CifsMountHelper *cifsHelper = new CifsMountHelper(qq);
-    DlnfsMountHelper *dlnfsHelper = new DlnfsMountHelper(qq);
     CommonMountHelper *commonHelper = new CommonMountHelper(qq);
 
     cifsHelper->cleanMountPoint();
-    mountHelpers.insert(MountFstypeSupportedField::kDlnFs, dlnfsHelper);
-    supportedFS.append(MountFstypeSupportedField::kDlnFs);
-    mountHelpers.insert(MountFstypeSupportedField::kCommon, commonHelper);
 
     auto config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
-                                             "org.deepin.dde.file-manager.mount");
+                                             "org.deepin.dde.file-manager.mount", "", q);
     if (!config || !config->value("enableCifsMount").toBool()) {
         fmInfo() << "cannot create config object or cifs mount disabled." << config;
         return;
     }
+
     mountHelpers.insert(MountFstypeSupportedField::kCifs, cifsHelper);
     supportedFS.append(MountFstypeSupportedField::kCifs);
-    config->deleteLater();
+    mountHelpers.insert(MountFstypeSupportedField::kCommon, commonHelper);
 }
 
 MountControlDBusPrivate::~MountControlDBusPrivate()
