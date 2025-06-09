@@ -31,6 +31,7 @@ DiskEncryptSetup::DiskEncryptSetup(QObject *parent)
       QDBusContext(),
       m_dptr(new DiskEncryptSetupPrivate(this))
 {
+    qInfo() << "[DiskEncryptSetup] Initializing disk encryption service";
     initPolicy(QDBusConnection::SystemBus,
                QString(SERVICE_CONFIG_DIR) + "other/deepin-diskencrypt-service.json");
     dfmmount::DDeviceManager::instance();
@@ -40,117 +41,165 @@ DiskEncryptSetup::DiskEncryptSetup(QObject *parent)
             this, &DiskEncryptSetup::EncryptProgress);
     connect(NotificationHelper::instance(), &NotificationHelper::notifyDecryptProgress,
             this, &DiskEncryptSetup::DecryptProgress);
+    qInfo() << "[DiskEncryptSetup] Disk encryption service initialized successfully";
 }
 
 bool DiskEncryptSetup::InitEncryption(const QVariantMap &args)
 {
+    qInfo() << "[DiskEncryptSetup::InitEncryption] Encryption initialization request received";
+    
     if (m_dptr->jobRunning) {
-        qInfo() << "has processing job. cannot create a new job yet.";
+        qWarning() << "[DiskEncryptSetup::InitEncryption] Job already running, cannot create new job";
         return false;
     }
 
-    if (!m_dptr->checkAuth(kActionEncrypt))
+    if (!m_dptr->checkAuth(kActionEncrypt)) {
+        qWarning() << "[DiskEncryptSetup::InitEncryption] Authentication failed for encryption action";
         return false;
+    }
 
     if (!m_dptr->validateInitArgs(args)) {
-        qWarning() << "the initialize args is not valid!";
+        qCritical() << "[DiskEncryptSetup::InitEncryption] Invalid initialization arguments provided:" << args;
         return false;
     }
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
+    qInfo() << "[DiskEncryptSetup::InitEncryption] Creating encryption worker for job type:" << type;
+    
     auto worker = m_dptr->createInitWorker(type, args);
-    if (!worker) return false;
+    if (!worker) {
+        qCritical() << "[DiskEncryptSetup::InitEncryption] Failed to create encryption worker for type:" << type;
+        return false;
+    }
+    
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onInitEncryptFinished);
     worker->start();
+    qInfo() << "[DiskEncryptSetup::InitEncryption] Encryption worker started successfully for type:" << type;
     return true;
 }
 
 bool DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
 {
+    qInfo() << "[DiskEncryptSetup::ResumeEncryption] Encryption resume request received";
+    
     if (m_dptr->jobRunning) {
-        qInfo() << "has processing job. cannot create a new job yet.";
+        qWarning() << "[DiskEncryptSetup::ResumeEncryption] Job already running, cannot resume encryption";
         return false;
     }
 
     if (!m_dptr->validateResumeArgs(args)) {
-        qWarning() << "the resume args is not valid!";
+        qCritical() << "[DiskEncryptSetup::ResumeEncryption] Invalid resume arguments provided:" << args;
         return false;
     }
+    
+    qInfo() << "[DiskEncryptSetup::ResumeEncryption] Resuming encryption with validated arguments";
     m_dptr->resumeEncryption(args);
     return true;
 }
 
 bool DiskEncryptSetup::Decryption(const QVariantMap &args)
 {
+    qInfo() << "[DiskEncryptSetup::Decryption] Decryption request received";
+    
     if (m_dptr->jobRunning) {
-        qInfo() << "has processing job. cannot create a new job yet.";
+        qWarning() << "[DiskEncryptSetup::Decryption] Job already running, cannot start decryption";
         return false;
     }
 
-    if (!m_dptr->checkAuth(kActionDecrypt))
+    if (!m_dptr->checkAuth(kActionDecrypt)) {
+        qWarning() << "[DiskEncryptSetup::Decryption] Authentication failed for decryption action";
         return false;
+    }
 
     if (!m_dptr->validateDecryptArgs(args)) {
-        qWarning() << "the decrytion args is not valid!";
+        qCritical() << "[DiskEncryptSetup::Decryption] Invalid decryption arguments provided:" << args;
         return false;
     }
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
+    qInfo() << "[DiskEncryptSetup::Decryption] Creating decryption worker for job type:" << type;
+    
     auto worker = m_dptr->createDecryptWorker(type, args);
-    if (!worker) return false;
+    if (!worker) {
+        qCritical() << "[DiskEncryptSetup::Decryption] Failed to create decryption worker for type:" << type;
+        return false;
+    }
+    
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onDecryptFinished);
     worker->start();
+    qInfo() << "[DiskEncryptSetup::Decryption] Decryption worker started successfully for type:" << type;
     return true;
 }
 
 bool DiskEncryptSetup::ChangePassphrase(const QVariantMap &args)
 {
-    if (!m_dptr->checkAuth(kActionChgPwd))
-        return false;
-
-    if (!m_dptr->validateChgPwdArgs(args)) {
-        qWarning() << "the change password args is not valid!";
+    qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change request received";
+    
+    if (!m_dptr->checkAuth(kActionChgPwd)) {
+        qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
         return false;
     }
 
+    if (!m_dptr->validateChgPwdArgs(args)) {
+        qCritical() << "[DiskEncryptSetup::ChangePassphrase] Invalid passphrase change arguments provided:" << args;
+        return false;
+    }
+
+    qInfo() << "[DiskEncryptSetup::ChangePassphrase] Creating passphrase change worker";
     auto worker = new PassphraseChangeWorker(args);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onPassphraseChanged);
     worker->start();
+    qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change worker started successfully";
     return true;
 }
 
 void DiskEncryptSetup::SetupAuthArgs(const QVariantMap &args)
 {
+    qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Setting up authentication arguments";
     Q_EMIT NotificationHelper::instance()->replyAuthArgs(args);
 }
 
 void DiskEncryptSetup::IgnoreAuthSetup()
 {
+    qInfo() << "[DiskEncryptSetup::IgnoreAuthSetup] Ignoring authentication setup";
     Q_EMIT NotificationHelper::instance()->ignoreAuthSetup();
 }
 
 QString DiskEncryptSetup::TpmToken(const QString &dev)
 {
+    qInfo() << "[DiskEncryptSetup::TpmToken] Retrieving TPM token for device:" << dev;
+    
     QString token;
     crypt_setup_helper::getToken(dev, &token);
     if (token.isEmpty()) {
+        qInfo() << "[DiskEncryptSetup::TpmToken] No token found for device, checking holder device:" << dev;
         QString phyDev = dm_setup_helper::findHolderDev(dev);
-        crypt_setup_helper::getToken(phyDev, &token);
+        if (!phyDev.isEmpty()) {
+            crypt_setup_helper::getToken(phyDev, &token);
+            qInfo() << "[DiskEncryptSetup::TpmToken] Checked holder device:" << phyDev << "token found:" << !token.isEmpty();
+        }
+    } else {
+        qInfo() << "[DiskEncryptSetup::TpmToken] TPM token found for device:" << dev;
     }
+    
     return token;
 }
 
 int DiskEncryptSetup::DeviceStatus(const QString &dev)
 {
+    qInfo() << "[DiskEncryptSetup::DeviceStatus] Checking encryption status for device:" << dev;
+    
     // check status of device itself.
     auto status = crypt_setup_helper::encryptStatus(dev);
-    if (status != disk_encrypt::kStatusNotEncrypted)
+    if (status != disk_encrypt::kStatusNotEncrypted) {
+        qInfo() << "[DiskEncryptSetup::DeviceStatus] Device encryption status:" << status << "for device:" << dev;
         return status;
+    }
 
     auto phyDev = dm_setup_helper::findHolderDev(dev);
     return crypt_setup_helper::encryptStatus(phyDev);
@@ -181,23 +230,30 @@ bool DiskEncryptSetup::IsTaskRunning()
 
 QString DiskEncryptSetup::PendingDecryptionDevice()
 {
+    qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Checking for pending decryption devices";
+    
     QDir d(kUSecBootRoot);
     auto files = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (auto f : files) {
         auto name = m_dptr->resolveDeviceByDetachHeaderName(f);
-        if (!name.isEmpty())
+        if (!name.isEmpty()) {
+            qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Found pending decryption device:" << name << "from header file:" << f;
             return name;
+        }
     }
-    qInfo() << "no unfinished decrypt header exists.";
+    qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] No pending decryption devices found";
     return "";
 }
 
 DiskEncryptSetupPrivate::DiskEncryptSetupPrivate(DiskEncryptSetup *parent)
     : QObject(parent),
-      qptr(parent) { }
+      qptr(parent) { 
+    qInfo() << "[DiskEncryptSetupPrivate] Initializing private implementation";
+}
 
 void DiskEncryptSetupPrivate::initialize()
 {
+    qInfo() << "[DiskEncryptSetupPrivate::initialize] Starting initialization process";
     QtConcurrent::run([] {
         filesystem_helper::remountBoot();
         common_helper::createDFMDesktopEntry();
