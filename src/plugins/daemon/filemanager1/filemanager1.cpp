@@ -16,24 +16,26 @@ void FileManager1DBusWorker::launchService()
     Q_ASSERT(QThread::currentThread() != qApp->thread());
     auto conn { QDBusConnection::sessionBus() };
     if (!conn.registerService("org.freedesktop.FileManager1")) {
-        fmWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
+        fmCritical() << "[FileManager1DBusWorker] Failed to register DBus service 'org.freedesktop.FileManager1'";
         return;
     }
 
-    fmInfo() << "Init DBus FileManager1 start";
+    fmInfo() << "[FileManager1DBusWorker] Initializing FileManager1 DBus service";
     filemanager1.reset(new FileManager1DBus);
     Q_UNUSED(new FileManager1Adaptor(filemanager1.data()));
     if (!conn.registerObject("/org/freedesktop/FileManager1",
                              filemanager1.data())) {
-        fmWarning("Cannot register the \"/org/freedesktop/FileManager1\" object.\n");
+        fmCritical() << "[FileManager1DBusWorker] Failed to register DBus object '/org/freedesktop/FileManager1'";
         filemanager1.reset(nullptr);
+        return;
     }
 
-    fmInfo() << "Init DBus FileManager1 end";
+    fmInfo() << "[FileManager1DBusWorker] FileManager1 DBus service initialized successfully";
 }
 
 void FileManager1::initialize()
 {
+    fmInfo() << "[FileManager1] Initializing FileManager1 plugin";
     FileManager1DBusWorker *worker { new FileManager1DBusWorker };
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
@@ -43,12 +45,14 @@ void FileManager1::initialize()
 
 bool FileManager1::start()
 {
+    fmInfo() << "[FileManager1] Starting FileManager1 service";
     emit requestLaunch();
     return true;
 }
 
 void FileManager1::stop()
 {
+    fmInfo() << "[FileManager1] Stopping FileManager1 service";
     workerThread.quit();
     workerThread.wait();
 }

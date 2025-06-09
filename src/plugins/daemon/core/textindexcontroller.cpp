@@ -20,28 +20,28 @@ TextIndexController::TextIndexController(QObject *parent)
 {
     // 初始化状态处理器
     stateHandlers[State::Disabled] = [this](bool enable) {
-        fmInfo() << "[TextIndex] Disabled state handler called with enable:" << enable;
+        fmDebug() << "[TextIndexController] Processing Disabled state with enable flag:" << enable;
         if (enable) {
             updateState(State::Idle);
-            fmInfo() << "[TextIndex] Transitioning from Disabled to Idle, triggering Idle handler";
+            fmInfo() << "[TextIndexController] State transition: Disabled -> Idle, triggering Idle handler";
             stateHandlers[State::Idle](true);
         }
     };
 
     stateHandlers[State::Idle] = [this](bool enable) {
-        fmInfo() << "[TextIndex] Idle state handler called with enable:" << enable;
+        fmDebug() << "[TextIndexController] Processing Idle state with enable flag:" << enable;
         if (!enable) {
-            fmInfo() << "[TextIndex] Service disabled, transitioning to Disabled state";
+            fmInfo() << "[TextIndexController] Service disabled, transitioning to Disabled state";
             updateState(State::Disabled);
             return;
         }
 
         if (!isBackendAvaliable()) {
-            fmInfo() << "[TextIndex] Setting up DBus connections in Idle state";
+            fmDebug() << "[TextIndexController] Setting up DBus connections in Idle state";
             setupDBusConnections();
         }
 
-        fmInfo() << "[TextIndex] Checking index database existence";
+        fmDebug() << "[TextIndexController] Checking index database existence";
         QDBusPendingCall pendingCall = interface->IndexDatabaseExists();
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pendingCall, this);
 
@@ -49,10 +49,10 @@ TextIndexController::TextIndexController(QObject *parent)
             QDBusPendingReply<bool> reply = *watcher;
 
             if (reply.isError()) {
-                fmWarning() << "[TextIndex] Failed to check index existence:" << reply.error().message();
+                fmWarning() << "[TextIndexController] Failed to check index database existence:" << reply.error().message();
             } else {
                 bool needCreate = !reply.value();
-                fmInfo() << "[TextIndex] Index check result - Need create:" << needCreate;
+                fmDebug() << "[TextIndexController] Index database check completed, need create:" << needCreate;
                 startIndexTask(needCreate);
             }
 
@@ -61,10 +61,10 @@ TextIndexController::TextIndexController(QObject *parent)
     };
 
     stateHandlers[State::Running] = [this](bool enable) {
-        fmInfo() << "[TextIndex] Running state handler called with enable:" << enable;
+        fmDebug() << "[TextIndexController] Processing Running state with enable flag:" << enable;
         if (!enable) {
             if (interface) {
-                fmInfo() << "[TextIndex] Stopping current task due to disable request";
+                fmInfo() << "[TextIndexController] Stopping current task due to service disable request";
                 interface->StopCurrentTask();
             }
             updateState(State::Disabled);
@@ -72,15 +72,14 @@ TextIndexController::TextIndexController(QObject *parent)
     };
 
     taskFinishHandlers[State::Running] = [this](bool success) {
-        fmInfo() << "[TextIndex] Task finished handler called with success:" << success;
+        fmDebug() << "[TextIndexController] Task finished with success:" << success;
         if (success) {
-            fmInfo() << "[TextIndex] Task completed successfully, transitioning to Idle state";
+            fmInfo() << "[TextIndexController] Index task completed successfully, transitioning to Idle state";
             updateState(State::Idle);
         } else {
-            fmWarning() << "[TextIndex] Task failed, transitioning to Disabled state";
+            fmWarning() << "[TextIndexController] Index task failed, disabling service";
             updateState(State::Disabled);
             isConfigEnabled = false;
-            fmWarning() << "[TextIndex] Service disabled due to task failure";
         }
     };
 }
@@ -89,15 +88,17 @@ TextIndexController::~TextIndexController() = default;
 
 void TextIndexController::initialize()
 {
-    fmInfo() << "[TextIndex] Initializing controller";
+    fmInfo() << "[TextIndexController] Initializing text index controller";
     QString err;
     auto ret = DConfigManager::instance()->addConfig(kSearchCfgPath, &err);
     if (!ret) {
-        fmWarning() << "[TextIndex] Failed to register search config:" << err;
+        fmWarning() << "[TextIndexController] Failed to register search config:" << err;
         return;
     }
-    fmInfo() << "[TextIndex] Successfully registered search config";
+    
     isConfigEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
+    fmInfo() << "[TextIndexController] Search config registered successfully, full text search enabled:" << isConfigEnabled;
+    
     keepAliveTimer->setInterval(5 * 60 * 1000);   // 5 min
     updateKeepAliveTimer();
 
@@ -115,16 +116,16 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
 {
     if (config == kSearchCfgPath && key == kEnableFullTextSearch) {
         bool newEnabled = DConfigManager::instance()->value(config, key).toBool();
-        fmInfo() << "[TextIndex] Full text search enable changed:" << isConfigEnabled << "->" << newEnabled;
+        fmInfo() << "[TextIndexController] Full text search configuration changed from" << isConfigEnabled << "to" << newEnabled;
         isConfigEnabled = newEnabled;
         activeBackend();
         updateKeepAliveTimer();
 
         if (auto handler = stateHandlers.find(currentState); handler != stateHandlers.end()) {
-            fmInfo() << "[TextIndex] Triggering state handler for current state:" << static_cast<int>(currentState);
+            fmDebug() << "[TextIndexController] Triggering state handler for current state:" << static_cast<int>(currentState);
             handler->second(isConfigEnabled);
         } else {
-            fmWarning() << "[TextIndex] No handler found for current state:" << static_cast<int>(currentState);
+            fmWarning() << "[TextIndexController] No handler found for current state:" << static_cast<int>(currentState);
         }
     }
 }
@@ -132,32 +133,34 @@ void TextIndexController::handleConfigChanged(const QString &config, const QStri
 void TextIndexController::activeBackend(bool isInit)
 {
     if (!isBackendAvaliable()) {
-        fmWarning() << "activeBackend failed, DBus interface not initialized";
+        fmWarning() << "[TextIndexController] Cannot activate backend, DBus interface not available";
         return;
     }
 
     if (isInit) {
-        fmInfo() << "Init backend";
+        fmInfo() << "[TextIndexController] Initializing text index backend";
         interface->Init();
     }
-    fmInfo() << "Active backend: " << isConfigEnabled;
+    fmDebug() << "[TextIndexController] Setting backend enabled state to:" << isConfigEnabled;
     interface->SetEnabled(isConfigEnabled);
 }
 
 void TextIndexController::keepBackendAlive()
 {
     if (!isBackendAvaliable()) {
-        fmWarning() << "keepBackend failed, DBus interface not initialized";
+        fmWarning() << "[TextIndexController] Cannot check backend status, DBus interface not available";
         return;
     }
 
     bool backendEnabled = interface->IsEnabled();
-    fmInfo() << "Textindex backend status: " << backendEnabled;
+    fmDebug() << "[TextIndexController] Backend status check - enabled:" << backendEnabled << "config enabled:" << isConfigEnabled;
 
     // 配置启动全文索引时，backendEnabled 一定要 true，
     // 若不满足说明 backend 出现了崩溃等异常，需要重新激活
-    if (!backendEnabled && isConfigEnabled)
+    if (!backendEnabled && isConfigEnabled) {
+        fmWarning() << "[TextIndexController] Backend is disabled but config requires it enabled, reactivating backend";
         activeBackend();
+    }
 }
 
 bool TextIndexController::isBackendAvaliable()
@@ -173,18 +176,24 @@ bool TextIndexController::isBackendAvaliable()
 
 void TextIndexController::updateKeepAliveTimer()
 {
-    if (isConfigEnabled && !keepAliveTimer->isActive())
+    if (isConfigEnabled && !keepAliveTimer->isActive()) {
         keepAliveTimer->start();
-    else if (!isConfigEnabled && keepAliveTimer->isActive())
+        fmDebug() << "[TextIndexController] Keep-alive timer started";
+    } else if (!isConfigEnabled && keepAliveTimer->isActive()) {
         keepAliveTimer->stop();
+        fmDebug() << "[TextIndexController] Keep-alive timer stopped";
+    }
 }
 
 void TextIndexController::setupDBusConnections()
 {
+    fmDebug() << "[TextIndexController] Setting up DBus connections to text index service";
+    
     // 先确保服务已启动
     QDBusConnectionInterface *sessionBusIface = QDBusConnection::sessionBus().interface();
     if (sessionBusIface)
         sessionBusIface->startService("org.deepin.Filemanager.TextIndex");
+    
     interface.reset(new OrgDeepinFilemanagerTextIndexInterface(
             "org.deepin.Filemanager.TextIndex",
             "/org/deepin/Filemanager/TextIndex",
@@ -195,6 +204,7 @@ void TextIndexController::setupDBusConnections()
             this, [this](const QString &type, const QString &path, bool success) {
                 if (path != QDir::homePath())
                     return;
+                fmDebug() << "[TextIndexController] Received TaskFinished signal - type:" << type << "path:" << path << "success:" << success;
                 if (auto handler = taskFinishHandlers.find(currentState); handler != taskFinishHandlers.end()) {
                     handler->second(success);
                 }
@@ -203,25 +213,30 @@ void TextIndexController::setupDBusConnections()
             this, [this]() {
                 if (currentState == State::Running)
                     return;
+                fmDebug() << "[TextIndexController] Task progress changed, transitioning to Running state";
                 updateState(State::Running);
-                if (!isConfigEnabled)
+                if (!isConfigEnabled) {
+                    fmInfo() << "[TextIndexController] Service disabled during task execution, stopping task";
                     interface->StopCurrentTask();
+                }
             });
+    
+    fmInfo() << "[TextIndexController] DBus connections established successfully";
 }
 
 void TextIndexController::startIndexTask(bool isCreate)
 {
     if (!interface) {
-        fmWarning() << "[TextIndex] Cannot start task: DBus interface not initialized";
+        fmWarning() << "[TextIndexController] Cannot start index task, DBus interface not available";
         return;
     }
 
     QDBusPendingReply<bool> pendingTask;
     if (isCreate) {
-        fmInfo() << "[TextIndex] Starting CREATE task for root directory";
+        fmInfo() << "[TextIndexController] Starting CREATE index task for directory:" << DFMSEARCH::Global::defaultIndexedDirectory();
         pendingTask = interface->CreateIndexTask(DFMSEARCH::Global::defaultIndexedDirectory());
     } else {
-        fmInfo() << "[TextIndex] Starting UPDATE task for root directory";
+        fmInfo() << "[TextIndexController] Starting UPDATE index task for directory:" << DFMSEARCH::Global::defaultIndexedDirectory();
         pendingTask = interface->UpdateIndexTask(DFMSEARCH::Global::defaultIndexedDirectory());
     }
 
@@ -229,12 +244,12 @@ void TextIndexController::startIndexTask(bool isCreate)
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *call) {
         QDBusPendingReply<bool> reply = *watcher;
         if (reply.isError()) {
-            fmWarning() << "[TextIndex] Failed to start task:" << reply.error().message();
+            fmWarning() << "[TextIndexController] Failed to start index task:" << reply.error().message();
         } else if (reply.value()) {
-            fmInfo() << "[TextIndex] Task started successfully, transitioning to Running state";
+            fmInfo() << "[TextIndexController] Index task started successfully, transitioning to Running state";
             updateState(State::Running);
         } else {
-            fmWarning() << "[TextIndex] Task start returned false";
+            fmWarning() << "[TextIndexController] Index task start request returned false";
         }
         watcher->deleteLater();   // 清理 watcher
     });
@@ -242,12 +257,14 @@ void TextIndexController::startIndexTask(bool isCreate)
 
 void TextIndexController::updateState(State newState)
 {
-    fmInfo() << "[TextIndex] State transition:"
-             << "Disabled(" << static_cast<int>(State::Disabled) << ")"
-             << "Idle(" << static_cast<int>(State::Idle) << ")"
-             << "Running(" << static_cast<int>(State::Running) << ")"
-             << static_cast<int>(currentState) << "->" << static_cast<int>(newState);
-    currentState = newState;
+    if (currentState != newState) {
+        fmInfo() << "[TextIndexController] State transition:"
+                 << "Disabled(" << static_cast<int>(State::Disabled) << ")"
+                 << "Idle(" << static_cast<int>(State::Idle) << ")"
+                 << "Running(" << static_cast<int>(State::Running) << ")"
+                 << static_cast<int>(currentState) << "->" << static_cast<int>(newState);
+        currentState = newState;
+    }
 }
 
 DAEMONPCORE_END_NAMESPACE
