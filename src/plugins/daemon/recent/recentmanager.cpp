@@ -71,7 +71,7 @@ void RecentManager::finalize()
     std::call_once(finalizeFlag, [this]() {
         stopWatch();
 
-        fmDebug() << "Recent work fnishing..";
+        fmDebug() << "[RecentManager::finalize] Recent work finishing...";
         workerThread.quit();
         workerThread.wait(5000);
     });
@@ -86,26 +86,29 @@ void RecentManager::startWatch()
         // Create empty xbel file if not exists
         QFile file(localPath);
         if (file.open(QIODevice::WriteOnly)) {
-            fmInfo() << "Created empty recent file:" << localPath;
+            fmInfo() << "[RecentManager::startWatch] Created empty recent file:" << localPath;
             file.close();
         } else {
-            fmWarning() << "Failed to create recent file:" << localPath;
+            fmCritical() << "[RecentManager::startWatch] Failed to create recent file:" << localPath;
             return;
         }
     }
 
     watcher = WatcherFactory::create<AbstractFileWatcher>(uri);
-    fmDebug() << "Start watch recent file: " << uri;
+    fmInfo() << "[RecentManager::startWatch] Starting file watcher for recent file:" << uri;
     // fileAttributeChanged 可能被高频率发送
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::reload, Qt::DirectConnection);
     watcher->startWatcher();
+    fmInfo() << "[RecentManager::startWatch] File watcher started successfully";
 }
 
 void RecentManager::stopWatch()
 {
     if (watcher) {
+        fmInfo() << "[RecentManager::stopWatch] Stopping file watcher";
         watcher->stopWatcher();
         watcher->disconnect(this);
+        fmInfo() << "[RecentManager::stopWatch] File watcher stopped successfully";
     }
 }
 
@@ -116,38 +119,42 @@ void RecentManager::reload()
         return;
     }
 
-    fmWarning() << "Reject reload, because it's too often";
+    fmWarning() << "[RecentManager::reload] Rejecting reload request due to rate limiting";
 }
 
 void RecentManager::doReload(qint64 timestamp)
 {
-    fmInfo() << "Reaload recent file, timestamp:" << timestamp;
+    fmInfo() << "[RecentManager::doReload] Reloading recent file, timestamp:" << timestamp;
     emit requestReload(xbelPath(), timestamp);
 }
 
 void RecentManager::forceReload(qint64 timestamp)
 {
-    fmWarning() << "Force reaload recent file!" << timestamp;
+    fmWarning() << "[RecentManager::forceReload] Force reloading recent file, timestamp:" << timestamp;
     doReload(timestamp);
 }
 
 void RecentManager::addRecentItem(const QVariantMap &item)
 {
     if (itemsInfo.size() >= kRecentItemLimit) {
-        fmWarning() << "Recent Item exceeded the limit: " << kRecentItemLimit;
+        fmWarning() << "[RecentManager::addRecentItem] Recent items exceeded limit:" << kRecentItemLimit 
+                    << "current count:" << itemsInfo.size();
         return;
     }
 
+    fmDebug() << "[RecentManager::addRecentItem] Adding recent item:" << item.value("path").toString();
     emit requestAddRecentItem(item);
 }
 
 void RecentManager::removeItems(const QStringList &hrefs)
 {
+    fmInfo() << "[RecentManager::removeItems] Removing items:" << hrefs.size() << "items";
     emit requestRemoveItems(hrefs);
 }
 
 void RecentManager::purgeItems()
 {
+    fmInfo() << "[RecentManager::purgeItems] Purging all recent items";
     emit requestPurgeItems(xbelPath());
 }
 
@@ -167,7 +174,8 @@ QVariantMap RecentManager::getItemInfo(const QString &path)
 {
     QVariantMap map;
     if (path.isEmpty() || !itemsInfo.contains(path)) {
-        fmWarning() << "Cannot get item info: " << path;
+        fmWarning() << "[RecentManager::getItemInfo] Cannot get item info for path:" << path 
+                    << "empty:" << path.isEmpty() << "exists:" << itemsInfo.contains(path);
         return map;
     }
 
@@ -181,16 +189,19 @@ QVariantMap RecentManager::getItemInfo(const QString &path)
 void RecentManager::onItemAdded(const QString &path, const RecentItem &item)
 {
     if (itemsInfo.size() >= kRecentItemLimit) {
-        fmWarning() << "Recent Item exceeded the limit: " << kRecentItemLimit;
+        fmWarning() << "[RecentManager::onItemAdded] Recent items exceeded limit:" << kRecentItemLimit 
+                    << "current count:" << itemsInfo.size() << "path:" << path;
         return;
     }
 
+    fmDebug() << "[RecentManager::onItemAdded] Item added:" << path << "href:" << item.href;
     itemsInfo.insert(path, item);
     emit itemAdded(path, item.href, item.modified);
 }
 
 void RecentManager::onItemsRemoved(const QStringList &paths)
 {
+    fmInfo() << "[RecentManager::onItemsRemoved] Removing items:" << paths.size() << "items";
     for (const QString &path : paths) {
         itemsInfo.remove(path);
     }
@@ -199,6 +210,7 @@ void RecentManager::onItemsRemoved(const QStringList &paths)
 
 void RecentManager::onItemChanged(const QString &path, const RecentItem &item)
 {
+    fmDebug() << "[RecentManager::onItemChanged] Item changed:" << path << "modified:" << item.modified;
     itemsInfo[path] = item;
     emit itemChanged(path, item.modified);
 }

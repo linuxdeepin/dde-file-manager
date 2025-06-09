@@ -30,6 +30,7 @@ void RecentManagerDBus::initConnect()
 qint64 RecentManagerDBus::Reload()
 {
     auto timestamp { QDateTime::currentMSecsSinceEpoch() };
+    fmInfo() << "[RecentManagerDBus::Reload] Force reloading recent items, timestamp:" << timestamp;
     // 强制重新解析 recent 文件，如果频繁调用此接口，将导致极大的性能开销
     RecentManager::instance().forceReload(timestamp);
     return timestamp;
@@ -37,18 +38,21 @@ qint64 RecentManagerDBus::Reload()
 
 void RecentManagerDBus::AddItem(const QVariantMap &item)
 {
+    fmDebug() << "[RecentManagerDBus::AddItem] Adding recent item via DBus:" << item.value("path").toString();
     RecentManager::instance().addRecentItem(item);
 }
 
 // Remove specified items from the recent list
 void RecentManagerDBus::RemoveItems(const QStringList &hrefs)
 {
+    fmInfo() << "[RecentManagerDBus::RemoveItems] Removing items via DBus:" << hrefs.size() << "items";
     RecentManager::instance().removeItems(hrefs);
 }
 
 // Clear all items from the recent list
 void RecentManagerDBus::PurgeItems()
 {
+    fmInfo() << "[RecentManagerDBus::PurgeItems] Purging all items via DBus";
     RecentManager::instance().purgeItems();
 }
 
