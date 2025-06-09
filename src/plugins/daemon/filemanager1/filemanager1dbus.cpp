@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "daemonplugin_filemanager1_global.h"
 #include "filemanager1dbus.h"
 
 #include <dfm-base/dfm_event_defines.h>
@@ -14,6 +15,8 @@
 #include <QProcess>
 #include <QJsonDocument>
 #include <QJsonArray>
+
+DAEMONPFILEMANAGER1_USE_NAMESPACE
 
 FileManager1DBus::FileManager1DBus(QObject *parent)
     : QObject(parent)
@@ -31,7 +34,7 @@ void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &Start
 {
     Q_UNUSED(StartupId)
     fmInfo() << "[FileManager1DBus] ShowFolders request - URIs:" << URIs;
-    
+
     if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIs)) {
         fmDebug() << "[FileManager1DBus] ShowFolders launched via file-manager.sh";
         return;
@@ -52,7 +55,7 @@ void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString
 {
     Q_UNUSED(StartupId)
     fmInfo() << "[FileManager1DBus] ShowItemProperties request - URIs:" << URIs;
-    
+
     if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw"
                                                                  << "-p" << URIs)) {
         fmDebug() << "[FileManager1DBus] ShowItemProperties launched via file-manager.sh";
@@ -78,7 +81,7 @@ void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &Startup
 {
     Q_UNUSED(StartupId)
     fmInfo() << "[FileManager1DBus] ShowItems request - URIs:" << URIs;
-    
+
     if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << URIs << "--raw")) {
         fmDebug() << "[FileManager1DBus] ShowItems launched via file-manager.sh";
         return;
@@ -94,7 +97,7 @@ void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &Startup
 void FileManager1DBus::Trash(const QStringList &URIs)
 {
     fmInfo() << "[FileManager1DBus] Trash request - URIs count:" << URIs.size();
-    
+
     QJsonArray srcArray = QJsonArray::fromStringList(URIs);
 
     QJsonObject paramObj;
@@ -111,7 +114,7 @@ void FileManager1DBus::Trash(const QStringList &URIs)
         fmDebug() << "[FileManager1DBus] Trash operation launched via file-manager.sh";
         return;
     }
-    
+
     if (QProcess::startDetached("dde-file-manager",
                                 QStringList() << "--event"
                                               << doc.toJson())) {
@@ -124,7 +127,7 @@ void FileManager1DBus::Trash(const QStringList &URIs)
 void FileManager1DBus::Open(const QStringList &URIs)
 {
     fmInfo() << "[FileManager1DBus] Open request - URIs count:" << URIs.size();
-    
+
     QStringList processedArgs;
 
     // 处理 Base64 编码的参数
