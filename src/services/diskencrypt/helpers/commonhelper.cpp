@@ -18,16 +18,20 @@ FILE_ENCRYPT_USE_NS
 
 void common_helper::createDFMDesktopEntry()
 {
+    qInfo() << "[common_helper::createDFMDesktopEntry] Creating DFM desktop entry for reencryption";
+    
     const QString &kLocalShareApps  = "/usr/local/share/applications";
     QDir d(kLocalShareApps);
     if (!d.exists()) {
         auto ok = d.mkpath(kLocalShareApps);
-        qInfo() << kLocalShareApps << "dir created?" << ok;
+        qInfo() << "[common_helper::createDFMDesktopEntry] Applications directory created:" << kLocalShareApps << "success:" << ok;
     }
 
     QFile f(disk_encrypt::kReencryptDesktopFile);
-    if (f.exists())
+    if (f.exists()) {
+        qInfo() << "[common_helper::createDFMDesktopEntry] Desktop file already exists, skipping creation:" << disk_encrypt::kReencryptDesktopFile;
         return;
+    }
 
     QByteArray desktop {
         "[Desktop Entry]\n"
@@ -46,55 +50,69 @@ void common_helper::createDFMDesktopEntry()
     };
 
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qWarning() << "cannot open desktop file to write!";
+        qCritical() << "[common_helper::createDFMDesktopEntry] Failed to open desktop file for writing:" << disk_encrypt::kReencryptDesktopFile;
         return;
     }
     f.write(desktop);
     f.close();
 
-    qInfo() << "desktop file created.";
+    qInfo() << "[common_helper::createDFMDesktopEntry] Desktop file created successfully:" << disk_encrypt::kReencryptDesktopFile;
 }
 
 QString common_helper::encryptCipher()
 {
+    qInfo() << "[common_helper::encryptCipher] Getting encryption cipher configuration";
+    
     auto cfg = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
                                           "org.deepin.dde.file-manager.diskencrypt");
     cfg->deleteLater();
     auto cipher = cfg->value("encryptAlgorithm", "sm4").toString();
+    
     QStringList supportedCipher { "sm4", "aes" };
-    if (!supportedCipher.contains(cipher))
+    if (!supportedCipher.contains(cipher)) {
+        qWarning() << "[common_helper::encryptCipher] Unsupported cipher algorithm, using default:" << cipher << "-> sm4";
         return "sm4";
+    }
+    
+    qInfo() << "[common_helper::encryptCipher] Using encryption cipher:" << cipher;
     return cipher;
 }
 
 void common_helper::createRebootFlagFile(const QString &dev)
 {
+    qInfo() << "[common_helper::createRebootFlagFile] Creating reboot flag file for device:" << dev;
+    
     QString fileName = disk_encrypt::kRebootFlagFilePrefix + dev.mid(5);
     QFile f(fileName);
     if (!f.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
-        qWarning() << "cannot create reboot flag file";
+        qCritical() << "[common_helper::createRebootFlagFile] Failed to create reboot flag file:" << fileName;
         return;
     }
     f.close();
-    qInfo() << "reboot flag created." << fileName;
+    qInfo() << "[common_helper::createRebootFlagFile] Reboot flag file created successfully:" << fileName;
 }
 
 QString common_helper::genRecoveryKey()
 {
+    qInfo() << "[common_helper::genRecoveryKey] Generating recovery key";
+    
     QString recKey;
     QLibrary lib("usec-recoverykey");
     dfmbase::FinallyUtil finalClear([&] { if (lib.isLoaded()) lib.unload(); });
 
     if (!lib.load()) {
-        qWarning() << "libusec-recoverykey load failed. use default generator";
+        qWarning() << "[common_helper::genRecoveryKey] Failed to load libusec-recoverykey, using default generator";
         recKey = genRandomString();
+        qInfo() << "[common_helper::genRecoveryKey] Recovery key generated using default method, length:" << recKey.length();
         return recKey;
     }
 
     typedef int (*FnGenKey)(char *, const size_t, const size_t);
     FnGenKey fn = (FnGenKey)(lib.resolve("usec_get_recovery_key"));
     if (!fn) {
-        qWarning() << "libusec-recoverykey resolve failed. use uuid as recovery key";
+        qWarning() << "[common_helper::genRecoveryKey] Failed to resolve libusec-recoverykey function, using random string";
+        recKey = genRandomString();
+        qInfo() << "[common_helper::genRecoveryKey] Recovery key generated using random method, length:" << recKey.length();
         return recKey;
     }
 
@@ -102,16 +120,21 @@ QString common_helper::genRecoveryKey()
     char genKey[kRecoveryKeySize + 1];
     int ret = fn(genKey, kRecoveryKeySize, 1);
     if (ret != 0) {
-        qWarning() << "libusec-recoverykey generate failed. use uuid as recovery key";
+        qWarning() << "[common_helper::genRecoveryKey] Failed to generate recovery key via library, error code:" << ret << "using random string";
+        recKey = genRandomString();
+        qInfo() << "[common_helper::genRecoveryKey] Recovery key generated using fallback method, length:" << recKey.length();
         return recKey;
     }
 
     recKey = genKey;
+    qInfo() << "[common_helper::genRecoveryKey] Recovery key generated successfully via library, length:" << recKey.length();
     return recKey;
 }
 
 QString common_helper::genRandomString(int len)
 {
+    qDebug() << "[common_helper::genRandomString] Generating random string with length:" << len;
+    
     // 定义字符集
     const QString charset = QString("0123456789"
                                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -129,5 +152,6 @@ QString common_helper::genRandomString(int len)
         result.append(charset.at(index));
     }
 
+    qDebug() << "[common_helper::genRandomString] Random string generated successfully, length:" << result.length();
     return result;
 }

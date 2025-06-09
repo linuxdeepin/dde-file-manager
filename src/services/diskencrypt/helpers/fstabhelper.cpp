@@ -23,9 +23,11 @@ FILE_ENCRYPT_USE_NS
 
 bool fstab_helper::setFstabPassno(const QString &devUUID, int passno)
 {
+    qInfo() << "[fstab_helper::setFstabPassno] Setting fstab passno for device UUID:" << devUUID << "passno:" << passno;
+    
     QFile f(kFstabPath);
     if (!f.open(QIODevice::ReadOnly)) {
-        qWarning() << "cannot open file!" << kFstabPath;
+        qCritical() << "[fstab_helper::setFstabPassno] Failed to open fstab file for reading:" << kFstabPath;
         return false;
     }
 
@@ -47,15 +49,18 @@ bool fstab_helper::setFstabPassno(const QString &devUUID, int passno)
 
             fields[Pass] = QString::number(passno);
             item = fields.join("\t").toLocal8Bit();
+            qInfo() << "[fstab_helper::setFstabPassno] Updated fstab entry for device:" << devUUID << "old passno:" << pass << "new passno:" << passno;
             break;
         }
     }
 
-    if (!needUpdate)
+    if (!needUpdate) {
+        qInfo() << "[fstab_helper::setFstabPassno] No update needed for device:" << devUUID << "passno already set to:" << passno;
         return true;
+    }
 
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qWarning() << "cannot open file for write!" << kFstabPath;
+        qCritical() << "[fstab_helper::setFstabPassno] Failed to open fstab file for writing:" << kFstabPath;
         return false;
     }
 
@@ -63,15 +68,18 @@ bool fstab_helper::setFstabPassno(const QString &devUUID, int passno)
     f.flush();
     f.close();
 
+    qInfo() << "[fstab_helper::setFstabPassno] Fstab file updated successfully for device:" << devUUID;
     return true;
 }
 
 bool fstab_helper::setFstabTimeout(const QString &devPath, const QString &devUUID)
 {
+    qInfo() << "[fstab_helper::setFstabTimeout] Setting fstab timeout for device - path:" << devPath << "UUID:" << devUUID;
+    
     const QString kArg = "x-systemd.device-timeout=0";
     QFile f(kFstabPath);
     if (!f.open(QIODevice::ReadOnly)) {
-        qWarning() << "cannot open file!" << kFstabPath;
+        qCritical() << "[fstab_helper::setFstabTimeout] Failed to open fstab file for reading:" << kFstabPath;
         return false;
     }
 
@@ -93,15 +101,18 @@ bool fstab_helper::setFstabTimeout(const QString &devPath, const QString &devUUI
 
             fields[Options] += { "," + kArg };
             item = fields.join("\t").toLocal8Bit();
+            qInfo() << "[fstab_helper::setFstabTimeout] Added timeout option to fstab entry for device:" << source << "new options:" << fields[Options];
             break;
         }
     }
 
-    if (!needUpdate)
+    if (!needUpdate) {
+        qInfo() << "[fstab_helper::setFstabTimeout] No update needed, timeout option already exists for device - path:" << devPath << "UUID:" << devUUID;
         return true;
+    }
 
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qWarning() << "cannot open file for write!" << kFstabPath;
+        qCritical() << "[fstab_helper::setFstabTimeout] Failed to open fstab file for writing:" << kFstabPath;
         return false;
     }
 
@@ -109,5 +120,6 @@ bool fstab_helper::setFstabTimeout(const QString &devPath, const QString &devUUI
     f.flush();
     f.close();
 
+    qInfo() << "[fstab_helper::setFstabTimeout] Fstab file updated successfully with timeout option for device - path:" << devPath << "UUID:" << devUUID;
     return true;
 }

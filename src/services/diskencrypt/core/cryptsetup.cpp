@@ -30,51 +30,73 @@ FILE_ENCRYPT_USE_NS
 
 int crypt_setup::csInitEncrypt(const QString &dev, const QString &displayName, CryptPreProcessor *processor)
 {
+    qInfo() << "[crypt_setup::csInitEncrypt] Starting encryption initialization for device:" << dev << "display name:" << displayName;
+    
     int r = crypt_setup_helper::initiable(dev);
-    if (r < 0) return r;
+    if (r < 0) {
+        qCritical() << "[crypt_setup::csInitEncrypt] Device is not suitable for encryption:" << dev << "error code:" << r;
+        return r;
+    }
 
     QString fileHeader;
     r = crypt_setup_helper::initEncryptHeaderFile(dev, displayName, processor, &fileHeader);
-    if (r < 0) return r;
+    if (r < 0) {
+        qCritical() << "[crypt_setup::csInitEncrypt] Failed to initialize encryption header file for device:" << dev << "error code:" << r;
+        return r;
+    }
 
+    qInfo() << "[crypt_setup::csInitEncrypt] Encryption header file created successfully:" << fileHeader;
     r = crypt_setup_helper::initDeviceHeader(dev, fileHeader);
+    if (r < 0) {
+        qCritical() << "[crypt_setup::csInitEncrypt] Failed to initialize device header for device:" << dev << "error code:" << r;
+    } else {
+        qInfo() << "[crypt_setup::csInitEncrypt] Encryption initialization completed successfully for device:" << dev;
+    }
     return r;
 }
 
 int crypt_setup_helper::createHeaderFile(const QString &dev, QString *headerPath)
 {
+    qInfo() << "[crypt_setup_helper::createHeaderFile] Creating header file for device:" << dev;
+    
     auto headerName = QString("%1_dfm_encrypt_header_%2.bin").arg(dev.mid(5)).arg(QDateTime::currentMSecsSinceEpoch());
     int fd = shm_open(headerName.toStdString().c_str(),
                       O_CREAT | O_EXCL | O_RDWR,
                       S_IRUSR | S_IWUSR);
     if (fd < 0) {
-        qWarning() << "cannot create header file at" << headerName << strerror(errno);
+        qCritical() << "[crypt_setup_helper::createHeaderFile] Failed to create header file:" << headerName << "error:" << strerror(errno);
         return -1;
     }
+    
     int r = ftruncate(fd, 32 * 1024 * 1024);   // allocate 32M space
     close(fd);
     if (r != 0) {
-        qWarning() << "cannot allocate header file space!" << headerName;
+        qCritical() << "[crypt_setup_helper::createHeaderFile] Failed to allocate header file space:" << headerName << "error:" << strerror(errno);
         return -1;
     }
 
     if (headerPath) *headerPath = "/dev/shm/" + headerName;
+    qInfo() << "[crypt_setup_helper::createHeaderFile] Header file created successfully:" << (*headerPath);
     return disk_encrypt::kSuccess;
 }
 
 int crypt_setup_helper::initiable(const QString &dev)
 {
+    qInfo() << "[crypt_setup_helper::initiable] Checking if device can be initialized for encryption:" << dev;
+    
     auto ver = blockdev_helper::devCryptVersion(dev);
     if (ver != blockdev_helper::kNotEncrypted) {
-        qWarning() << "device is already inited!" << dev;
+        qWarning() << "[crypt_setup_helper::initiable] Device is already encrypted:" << dev << "version:" << ver;
         return -disk_encrypt::kErrorDeviceEncrypted;
     }
 
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (ptr && !ptr->mountPoints().isEmpty()) {
-        qWarning() << "device is mounted!" << dev;
+        qWarning() << "[crypt_setup_helper::initiable] Device is currently mounted:" << dev << "mount points:" << ptr->mountPoints();
         return -disk_encrypt::kErrorDeviceMounted;
     }
+    
+    qInfo() << "[crypt_setup_helper::initiable] Device is suitable for encryption:" << dev;
     return disk_encrypt::kSuccess;
 }
 
@@ -82,11 +104,13 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                                               crypt_setup::CryptPreProcessor *processor,
                                               QString *fileHeader)
 {
+    qInfo() << "[crypt_setup_helper::initEncryptHeaderFile] Initializing encryption header file for device:" << dev;
+    
     int r = 0;
     QString headerPath;
     r = crypt_setup_helper::createHeaderFile(dev, &headerPath);
     if (r < 0) {
-        qWarning() << "cannot allocate header file!" << dev;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to create header file for device:" << dev;
         return -disk_encrypt::kErrorCreateHeader;
     }
 
@@ -94,9 +118,11 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
     // the normal initialize process passes a null processor and the usec-overlay mode passes a valid one.
     // so only normal process need to adjust fs.
     bool adjustFs = (processor == nullptr);
+    qInfo() << "[crypt_setup_helper::initEncryptHeaderFile] Filesystem adjustment required:" << adjustFs << "for device:" << dev;
+    
     // shrink file system leave space to hold crypt header.
     if (adjustFs && !filesystem_helper::shrinkFileSystem_ext(dev)) {
-        qWarning() << "cannot resize filesytem!" << dev;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to shrink filesystem for device:" << dev;
         return -disk_encrypt::kErrorResizeFs;
     }
 
@@ -106,6 +132,7 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
         if (cdev)
             crypt_free(cdev);
         if (r < 0) {
+            qWarning() << "[crypt_setup_helper::initEncryptHeaderFile] Cleaning up due to error, removing header file:" << headerPath;
             ::remove(headerPath.toStdString().c_str());
             // filesystem_helper::expandFileSystem_ext(dev);
         }
@@ -114,14 +141,14 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
     r = crypt_init(&cdev,
                    headerPath.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "init cdev failed!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to initialize crypt device for:" << dev << "error code:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
     crypt_set_rng_type(cdev, CRYPT_RNG_RANDOM);
     r = crypt_set_data_offset(cdev, 32 * 1024);
     if (r < 0) {
-        qWarning() << "set cdev offset failed!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to set data offset for device:" << dev << "error code:" << r;
         return -disk_encrypt::kErrorSetOffset;
     }
 
@@ -136,6 +163,8 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
     };
     auto cipher = common_helper::encryptCipher().toStdString();
     const char *mode = "xts-plain64";
+    qInfo() << "[crypt_setup_helper::initEncryptHeaderFile] Formatting device with LUKS2, cipher:" << cipher.c_str() << "mode:" << mode;
+    
     r = crypt_format(cdev,
                      CRYPT_LUKS2,
                      cipher.c_str(),
@@ -145,7 +174,7 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                      256 / 8,
                      &fmtArgs);
     if (r < 0) {
-        qWarning() << "format device failed!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to format device with LUKS2:" << dev << "error code:" << r;
         return -disk_encrypt::kErrorFormatLuks;
     }
 
@@ -156,14 +185,17 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                                         kDefaultPassphrase,
                                         kDefaultPassphraseLen);
     if (r < 0) {
-        qWarning() << "cannot add empty keyslot!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to add empty keyslot for device:" << dev << "error code:" << r;
         return -disk_encrypt::kErrorAddKeyslot;
     }
 
     if (!displayName.isEmpty()) {
         r = crypt_set_label(cdev, displayName.toStdString().c_str(), nullptr);
-        if (r < 0)
-            qWarning() << "cannot set label on" << dev << displayName << r;
+        if (r < 0) {
+            qWarning() << "[crypt_setup_helper::initEncryptHeaderFile] Failed to set label for device:" << dev << "label:" << displayName << "error code:" << r;
+        } else {
+            qInfo() << "[crypt_setup_helper::initEncryptHeaderFile] Label set successfully for device:" << dev << "label:" << displayName;
+        }
     }
 
     struct crypt_params_luks2 luksArgs
@@ -187,6 +219,9 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
     auto argc = processor ? processor->argc : 0;
     auto argv = processor ? processor->argv : nullptr;
     auto init_by_passphrase = CryptSetupCompabilityHelper::instance()->initWithPreProcess();
+    
+    qInfo() << "[crypt_setup_helper::initEncryptHeaderFile] Initializing reencryption for device:" << dev << "with processor:" << (processor ? "enabled" : "disabled");
+    
     if (init_by_passphrase) {
         r = init_by_passphrase(cdev,
                                nullptr,
@@ -201,6 +236,7 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                                argc,
                                argv);
     } else {
+        qWarning() << "[crypt_setup_helper::initEncryptHeaderFile] Compatibility helper not available, using fallback method for device:" << dev;
         r = crypt_reencrypt_init_by_passphrase(cdev,
                                                nullptr,
                                                "",

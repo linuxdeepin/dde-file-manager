@@ -15,7 +15,7 @@ public:
     {
         m_task = dm_task_create(taskType);
         if (!m_task)
-            qWarning() << "cannot create task!" << taskType;
+            qCritical() << "[DMTaskHelper] Failed to create DM task for type:" << taskType;
     }
     ~DMTaskHelper()
     {
@@ -34,14 +34,18 @@ private:
 
 int dm_setup::dmSetDeviceTable(const QString &dmDev, const DMTable &table, int taskType)
 {
+    qInfo() << "[dm_setup::dmSetDeviceTable] Setting device table for:" << dmDev << "task type:" << taskType;
+    
     auto h = DMTaskHelper(taskType);
-    if (!h.task())
+    if (!h.task()) {
+        qCritical() << "[dm_setup::dmSetDeviceTable] Failed to create DM task helper for device:" << dmDev;
         return -1;
+    }
 
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name!" << err << dmDev;
+        qCritical() << "[dm_setup::dmSetDeviceTable] Failed to set DM device name:" << dmDev << "error:" << err;
         return -err;
     }
 
@@ -52,18 +56,19 @@ int dm_setup::dmSetDeviceTable(const QString &dmDev, const DMTable &table, int t
                            table.targetArgs.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot add target for device!" << dmDev << err;
+        qCritical() << "[dm_setup::dmSetDeviceTable] Failed to add target for device:" << dmDev << "error:" << err << "target type:" << table.targetType;
         return -err;
     }
 
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run task!" << dmDev << err;
+        qCritical() << "[dm_setup::dmSetDeviceTable] Failed to run DM task for device:" << dmDev << "error:" << err;
         return -err;
     }
 
     dm_task_update_nodes();
+    qInfo() << "[dm_setup::dmSetDeviceTable] Successfully set device table for:" << dmDev;
     return 0;
 }
 
@@ -74,36 +79,46 @@ int dm_setup::dmCreateDevice(const QString &dmDev, const DMTable &table)
 
 int dm_setup::dmSuspendDevice(const QString &dmDev)
 {
+    qInfo() << "[dm_setup::dmSuspendDevice] Suspending DM device:" << dmDev;
+    
     auto h = DMTaskHelper(DM_DEVICE_SUSPEND);
-    if (!h.task())
+    if (!h.task()) {
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to create DM task helper for device:" << dmDev;
         return -1;
+    }
 
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name for suspend!" << err << dmDev;
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to set DM device name for suspend:" << dmDev << "error:" << err;
         return -err;
     }
 
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run suspend task!" << err << dmDev;
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to run suspend task for device:" << dmDev << "error:" << err;
         return -err;
     }
+    
+    qInfo() << "[dm_setup::dmSuspendDevice] Successfully suspended DM device:" << dmDev;
     return 0;
 }
 
 int dm_setup::dmResumeDevice(const QString &dmDev)
 {
+    qInfo() << "[dm_setup::dmResumeDevice] Resuming DM device:" << dmDev;
+    
     auto h = DMTaskHelper(DM_DEVICE_RESUME);
-    if (!h.task())
+    if (!h.task()) {
+        qCritical() << "[dm_setup::dmResumeDevice] Failed to create DM task helper for device:" << dmDev;
         return -1;
+    }
 
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name for resume!" << err << dmDev;
+        qCritical() << "[dm_setup::dmResumeDevice] Failed to set DM device name for resume:" << dmDev << "error:" << err;
         return -err;
     }
 
@@ -113,7 +128,7 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
         r = dm_task_set_cookie(h.task(), &cookie, udevFlags);
         if (r == 0) {
             auto err = dm_task_get_errno(h.task());
-            qWarning() << "cannot set cookie for resuming!" << err << r << dmDev;
+            qWarning() << "[dm_setup::dmResumeDevice] Failed to set cookie for resuming device:" << dmDev << "error:" << err;
             return -r;
         }
     }
@@ -121,7 +136,7 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run resume task!" << err << dmDev;
+        qCritical() << "[dm_setup::dmResumeDevice] Failed to run resume task for device:" << dmDev << "error:" << err;
         return -err;
     }
 
@@ -129,6 +144,7 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
         dm_udev_wait(cookie);
 
     dm_task_update_nodes();
+    qInfo() << "[dm_setup::dmResumeDevice] Successfully resumed DM device:" << dmDev;
     return 0;
 }
 
@@ -139,8 +155,12 @@ int dm_setup::dmReloadDevice(const QString &dmDev, const DMTable &table)
 
 QString dm_setup_helper::findHolderDev(const QString &dev)
 {
-    if (!dev.startsWith("/dev/dm-"))
+    qInfo() << "[dm_setup_helper::findHolderDev] Finding holder device for:" << dev;
+    
+    if (!dev.startsWith("/dev/dm-")) {
+        qInfo() << "[dm_setup_helper::findHolderDev] Device is not a DM device, returning as-is:" << dev;
         return dev;
+    }
 
     QString name = dev.mid(5);
     const auto partitions = procPartitions();
@@ -152,20 +172,29 @@ QString dm_setup_helper::findHolderDev(const QString &dev)
         auto devs = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
         if (!devs.contains(name))
             continue;
-        if (p.name.startsWith("dm-"))
+        if (p.name.startsWith("dm-")) {
+            qInfo() << "[dm_setup_helper::findHolderDev] Found nested DM device, recursing for:" << p.name;
             return findHolderDev("/dev/" + p.name);
-        else
+        } else {
+            qInfo() << "[dm_setup_helper::findHolderDev] Found holder device:" << p.name << "for device:" << dev;
             return "/dev/" + p.name;
+        }
     }
 
+    qWarning() << "[dm_setup_helper::findHolderDev] No holder device found for:" << dev;
     return "";
 }
 
 QList<dm_setup_helper::ProcPartition> dm_setup_helper::procPartitions()
 {
+    qDebug() << "[dm_setup_helper::procPartitions] Reading partition information from /proc/partitions";
+    
     QFile f("/proc/partitions");
-    if (!f.open(QIODevice::ReadOnly))
+    if (!f.open(QIODevice::ReadOnly)) {
+        qCritical() << "[dm_setup_helper::procPartitions] Failed to open /proc/partitions";
         return {};
+    }
+    
     QList<ProcPartition> partitions;
     auto contents = f.readAll();
     auto lines = contents.split('\n');
@@ -182,26 +211,31 @@ QList<dm_setup_helper::ProcPartition> dm_setup_helper::procPartitions()
                             fields[3] });
     }
     f.close();
+    qDebug() << "[dm_setup_helper::procPartitions] Found" << partitions.size() << "partitions";
     return partitions;
 }
 
 int dm_setup::dmRemoveDevice(const QString &dmDev)
 {
+    qInfo() << "[dm_setup::dmRemoveDevice] Removing DM device:" << dmDev;
+    
     auto h = DMTaskHelper(DM_DEVICE_REMOVE);
-    if (!h.task())
+    if (!h.task()) {
+        qCritical() << "[dm_setup::dmRemoveDevice] Failed to create DM task helper for device:" << dmDev;
         return -1;
+    }
 
     int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot set dm name for remove!" << err << dmDev;
+        qCritical() << "[dm_setup::dmRemoveDevice] Failed to set DM device name for removal:" << dmDev << "error:" << err;
         return -err;
     }
 
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
-        qWarning() << "cannot run remove task!" << err << dmDev;
+        qCritical() << "[dm_setup::dmRemoveDevice] Failed to run remove task for device:" << dmDev << "error:" << err;
         return -err;
     }
 

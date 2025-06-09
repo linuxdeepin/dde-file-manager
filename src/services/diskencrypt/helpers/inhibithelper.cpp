@@ -11,6 +11,8 @@ FILE_ENCRYPT_USE_NS
 
 QDBusReply<QDBusUnixFileDescriptor> inhibit_helper::inhibit(const QString &message)
 {
+    qInfo() << "[inhibit_helper::inhibit] Creating system inhibit lock with message:" << message;
+    
     QDBusInterface iface("org.freedesktop.login1",
                          "/org/freedesktop/login1",
                          "org.freedesktop.login1.Manager",
@@ -22,6 +24,12 @@ QDBusReply<QDBusUnixFileDescriptor> inhibit_helper::inhibit(const QString &messa
          << QString("block");
 
     QDBusReply<QDBusUnixFileDescriptor> ret = iface.callWithArgumentList(QDBus::Block, "Inhibit", args);
-    qInfo() << message << "inhibited:" << ret.value().fileDescriptor();
+    
+    if (ret.isValid()) {
+        qInfo() << "[inhibit_helper::inhibit] System inhibit lock created successfully - message:" << message << "fd:" << ret.value().fileDescriptor();
+    } else {
+        qWarning() << "[inhibit_helper::inhibit] Failed to create system inhibit lock - message:" << message << "error:" << ret.error().message();
+    }
+    
     return ret;
 }
