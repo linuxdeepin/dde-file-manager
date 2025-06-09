@@ -296,14 +296,6 @@ void FileDialogStatusBar::initializeConnect()
 {
     connect(fileNameEdit, &DLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
     
-    // INFO: [FileDialogStatusBar::initializeConnect] Connect Enter key in filename edit to trigger accept button.
-    connect(fileNameEdit, &DLineEdit::returnPressed, this, [this]() {
-        // 当在文件名编辑框中按下Enter键时，触发接受按钮的点击事件
-        if (curAcceptButton && curAcceptButton->isVisible() && curAcceptButton->isEnabled()) {
-            curAcceptButton->animateClick();
-        }
-    });
-
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         updateLayout();

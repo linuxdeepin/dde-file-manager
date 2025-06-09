@@ -913,19 +913,81 @@ void FileDialog::handleEnterPressed()
     if (!statusBar()->acceptButton()->isEnabled() || !d->isFileView)
         return;
 
-    // TODO(zhangs): titlebar edit status
-    bool exit { false };
+    // INFO: [FileDialog::handleEnterPressed] Processing Enter key based on accept mode.
+    
+    if (d->acceptMode == QFileDialog::AcceptSave) {
+        handleEnterInSaveMode();
+    } else {
+        handleEnterInOpenMode();
+    }
+}
+
+bool FileDialog::isFileNameEditFocused() const
+{
+    if (!statusBar() || !statusBar()->lineEdit())
+        return false;
+    
+    // INFO: [FileDialog::isFileNameEditFocused] Checking focus state of filename edit.
+    return statusBar()->lineEdit()->hasFocus() || 
+           statusBar()->lineEdit()->lineEdit()->hasFocus();
+}
+
+void FileDialog::handleEnterInSaveMode()
+{
+    // INFO: [FileDialog::handleEnterInSaveMode] Processing Enter key in save mode.
+    
+    // 保存模式下的逻辑：
+    // 1. 如果焦点在文件名编辑框，直接触发保存
+    // 2. 如果焦点在文件视图且选中目录，让文件视图处理（进入目录）
+    // 3. 如果焦点在文件视图且选中文件，触发保存操作
+    // 4. 如果焦点在文件视图且没有选中任何内容，触发保存操作
+    
+    if (isFileNameEditFocused()) {
+        // INFO: [FileDialog::handleEnterInSaveMode] Enter pressed in filename edit, triggering save.
+        statusBar()->acceptButton()->animateClick();
+        return;
+    }
+    
+    // 检查选中的内容
+    auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
+    if (urls.size() == 1) {
+        auto info = InfoFactory::create<FileInfo>(urls.first());
+        if (info && info->isAttributes(OptInfoType::kIsDir)) {
+            // INFO: [FileDialog::handleEnterInSaveMode] Enter pressed on directory, let file view handle navigation.
+            // 选中目录时，不做任何操作，让文件视图的默认处理逻辑处理（进入目录）
+            return;
+        }
+    }
+    
+    // 选中文件或没有选中任何内容时，触发保存操作
+    // INFO: [FileDialog::handleEnterInSaveMode] Enter pressed on file or empty selection, triggering save.
+    statusBar()->acceptButton()->animateClick();
+}
+
+void FileDialog::handleEnterInOpenMode()
+{
+    // INFO: [FileDialog::handleEnterInOpenMode] Processing Enter key in open mode.
+    
+    // 打开模式下的逻辑：
+    // 1. 如果选中目录，进入目录
+    // 2. 如果选中文件，触发打开操作
+    
+    // 检查选中的文件/目录
+    bool shouldEnterDirectory = false;
     auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
     for (const QUrl &url : urls) {
         auto info = InfoFactory::create<FileInfo>(url);
         if (!info || info->isAttributes(OptInfoType::kIsDir)) {
-            exit = true;
+            shouldEnterDirectory = true;
             break;
         }
     }
 
-    if (!exit && d->acceptMode == QFileDialog::AcceptOpen)
+    if (!shouldEnterDirectory) {
+        // INFO: [FileDialog::handleEnterInOpenMode] Enter pressed on files, triggering open.
         statusBar()->acceptButton()->animateClick();
+    }
+    // 如果选中目录，不做任何操作，让默认的文件视图处理逻辑处理
 }
 
 void FileDialog::handleUrlChanged(const QUrl &url)
