@@ -15,7 +15,6 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusArgument>
-#include <QDebug>
 #include <QStandardPaths>
 #include <QProcess>
 #include <QFile>
@@ -42,18 +41,20 @@ void VaultControl::connectLockScreenDBus()
 {
     QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
-        fmWarning() << "Vault Daemon: Cannot connect to the D-Bus session bus.";
+        fmCritical() << "[VaultControl::connectLockScreenDBus] Failed to connect to D-Bus session bus";
         return;
     }
 
     if (!connection.interface()->isServiceRegistered(kAppSessionService)) {
-        fmCritical("Vault Daemon: Cannot register the \"org.deepin.Filemanager.Daemon\" service!!!\n");
+        fmCritical() << "[VaultControl::connectLockScreenDBus] DBus service not registered:" << kAppSessionService;
         return;
     }
 
     if (!QDBusConnection::sessionBus().connect(kAppSessionService, kAppSessionPath, "org.freedesktop.DBus.Properties",
                                                "PropertiesChanged", "sa{sv}as", this, SLOT(responseLockScreenDBus(QDBusMessage)))) {
-        fmCritical() << "Vault Daemon: Vault Server Error: connect lock screen dbus error!";
+        fmCritical() << "[VaultControl::connectLockScreenDBus] Failed to connect to lock screen DBus signal";
+    } else {
+        fmInfo() << "[VaultControl::connectLockScreenDBus] Successfully connected to lock screen DBus";
     }
 }
 
@@ -61,7 +62,7 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
 {
     const QList<QVariant> &arguments = msg.arguments();
     if (kArgumentsNum != arguments.count()) {
-        fmCritical() << "Vault Daemon: Vault Server Error: arguments of lock screen dbus error!";
+        fmWarning() << "[VaultControl::responseLockScreenDBus] Invalid DBus message arguments count:" << arguments.count() << "expected:" << kArgumentsNum;
         return;
     }
 
@@ -75,13 +76,16 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
         if (prop == "Locked") {
             bool isLocked = changedProps[prop].toBool();
             if (!isLocked) {
+                fmInfo() << "[VaultControl::responseLockScreenDBus] Screen unlocked, attempting transparent vault unlock";
                 transparentUnlockVault();
             } else {
+                fmInfo() << "[VaultControl::responseLockScreenDBus] Screen locked, locking vault";
                 lockVault(VaultHelper::instance()->vaultMountDirLocalPath(), false);
 
                 QString filePath { QDir::homePath() + QString("/.config/%1/dde-file-manager/").arg(qApp->organizationName()) + kVaultTimeConfigFileName };
                 DFMBASE_NAMESPACE::Settings setting("", "", filePath);
                 setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+                fmInfo() << "[VaultControl::responseLockScreenDBus] Vault lock time recorded";
             }
         }
     }
@@ -91,39 +95,43 @@ bool VaultControl::transparentUnlockVault()
 {
     VaultState st = state(VaultHelper::instance()->vaultBaseDirLocalPath());
     if (st != kEncrypted) {
-        fmWarning() << "Vault Daemon: Unlock vault failed, current state is " << st;
+        fmInfo() << "[VaultControl::transparentUnlockVault] Vault not in encrypted state, current state:" << static_cast<int>(st);
         return false;
     }
 
     VaultConfigOperator config;
     QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
     if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
+        fmInfo() << "[VaultControl::transparentUnlockVault] Attempting transparent unlock";
         const QString &passwd = passwordFromKeyring();
         if (passwd.isEmpty()) {
-            fmWarning() << "Vault Daemon: Get password is empty, can not unlock vault!";
+            fmWarning() << "[VaultControl::transparentUnlockVault] Failed to retrieve password from keyring";
             return false;
         }
 
         const QString &mountdirPath = VaultHelper::instance()->vaultMountDirLocalPath();
         if (!QFile::exists(mountdirPath)) {
             QDir().mkpath(mountdirPath);
+            fmInfo() << "[VaultControl::transparentUnlockVault] Created mount directory:" << mountdirPath;
         }
         int result = unlockVault(VaultHelper::instance()->vaultBaseDirLocalPath(), mountdirPath, passwd);
         if (!result) {
-            fmInfo() << "Vault Daemon: Unlock vault success!";
+            fmInfo() << "[VaultControl::transparentUnlockVault] Vault unlocked successfully";
             syncGroupPolicyAlgoName();
             return true;
         } else {
             if (result == 1) {
                 int re = lockVault(mountdirPath, false);
                 if (!re) {
-                    fmInfo() << "Vault Daemon: fusermount success!";
+                    fmInfo() << "[VaultControl::transparentUnlockVault] Cleanup: fusermount successful";
                 } else {
-                    fmWarning() << "Vault Daemon: fusemount failed!";
+                    fmWarning() << "[VaultControl::transparentUnlockVault] Cleanup: fusermount failed with code:" << re;
                 }
             }
-            fmWarning() << "Vault Daemon: Unlock vault failed, error code: " << result;
+            fmWarning() << "[VaultControl::transparentUnlockVault] Failed to unlock vault, error code:" << result;
         }
+    } else {
+        fmInfo() << "[VaultControl::transparentUnlockVault] Vault not configured for transparent unlock, method:" << encryptionMethod;
     }
     return false;
 }
@@ -132,40 +140,51 @@ void VaultControl::MonitorNetworkStatus()
 {
     QDBusConnection connection = QDBusConnection::systemBus();
     if (!connection.isConnected()) {
-        fmWarning() << "Cannot connect to the D-Bus system bus.";
+        fmCritical() << "[VaultControl::MonitorNetworkStatus] Failed to connect to D-Bus system bus";
         return;
     }
 
     if (!connection.interface()->isServiceRegistered(kNetWorkDBusServiceName)) {
-        fmCritical() << "Not register the service !" << kNetWorkDBusServiceName;
+        fmCritical() << "[VaultControl::MonitorNetworkStatus] Network DBus service not registered:" << kNetWorkDBusServiceName;
         return;
     }
 
     if (!QDBusConnection::systemBus().connect(kNetWorkDBusServiceName, kNetWorkDBusPath, kNetWorkDBusInterfaces,
                                               "ConnectivityChanged", this, SLOT(responseNetworkStateChaneDBus(int)))) {
-        fmCritical() << "Connect network dbus error!";
+        fmCritical() << "[VaultControl::MonitorNetworkStatus] Failed to connect to network connectivity signal";
+    } else {
+        fmInfo() << "[VaultControl::MonitorNetworkStatus] Successfully connected to network monitoring";
     }
 }
 
 void VaultControl::responseNetworkStateChaneDBus(int st)
 {
     Connectivity enState = static_cast<Connectivity>(st);
+    fmInfo() << "[VaultControl::responseNetworkStateChaneDBus] Network connectivity changed to:" << static_cast<int>(enState);
+    
     if (enState == Connectivity::Full) {
         VaultConfigOperator config;
         QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
         if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
+            fmInfo() << "[VaultControl::responseNetworkStateChaneDBus] Transparent method detected, no action needed";
             return;
         } else if (encryptionMethod == QString(kConfigValueMethodKey) || encryptionMethod == QString(kConfigKeyNotExist)) {
             VaultState st = state(VaultHelper::instance()->vaultBaseDirLocalPath());
-            if (st != kUnlocked)
+            if (st != kUnlocked) {
+                fmInfo() << "[VaultControl::responseNetworkStateChaneDBus] Vault not unlocked, current state:" << static_cast<int>(st);
                 return;
+            }
 
+            fmInfo() << "[VaultControl::responseNetworkStateChaneDBus] Network connected, locking vault for security";
             const QString mountPath = VaultHelper::instance()->vaultMountDirLocalPath();
             int re = lockVault(mountPath, false);
             if (re == 0) {
                 QVariantMap map;
                 map.insert(mountPath, QVariant::fromValue(static_cast<int>(VaultState::kEncrypted)));
                 Q_EMIT changedVaultState(map);
+                fmInfo() << "[VaultControl::responseNetworkStateChaneDBus] Vault locked successfully due to network connection";
+            } else {
+                fmWarning() << "[VaultControl::responseNetworkStateChaneDBus] Failed to lock vault, error code:" << re;
             }
         }
     }
@@ -173,9 +192,12 @@ void VaultControl::responseNetworkStateChaneDBus(int st)
 
 VaultControl::CryfsVersionInfo VaultControl::versionString()
 {
-    if (cryfsVersion.isVaild())
+    if (cryfsVersion.isVaild()) {
+        fmDebug() << "[VaultControl::versionString] Using cached version:" << cryfsVersion.majorVersion << "." << cryfsVersion.minorVersion << "." << cryfsVersion.hotfixVersion;
         return cryfsVersion;
+    }
 
+    fmDebug() << "[VaultControl::versionString] Retrieving cryfs version information";
     QString standardError { "" };
     QString standardOutput { "" };
 
@@ -204,10 +226,13 @@ VaultControl::CryfsVersionInfo VaultControl::versionString()
                     cryfsVersion.majorVersion = versions.at(kMajorIndex).toInt();
                     cryfsVersion.minorVersion = versions.at(kMinorIndex).toInt();
                     cryfsVersion.hotfixVersion = versions.at(kHotFixIndex).toInt();
+                    fmInfo() << "[VaultControl::versionString] Detected cryfs version:" << cryfsVersion.majorVersion << "." << cryfsVersion.minorVersion << "." << cryfsVersion.hotfixVersion;
                     break;
                 }
             }
         }
+    } else {
+        fmWarning() << "[VaultControl::versionString] Failed to get cryfs version, stderr:" << standardError;
     }
 
     return cryfsVersion;
@@ -217,10 +242,11 @@ void VaultControl::runVaultProcessAndGetOutput(const QStringList &arguments, QSt
 {
     const QString &cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
-        fmWarning() << "Vault Daemon: cryfs is not exist!";
+        fmCritical() << "[VaultControl::runVaultProcessAndGetOutput] cryfs executable not found in PATH";
         return;
     }
 
+    fmDebug() << "[VaultControl::runVaultProcessAndGetOutput] Executing cryfs with arguments:" << arguments;
     QProcess process;
     process.setEnvironment({ "CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=true" });
     process.start(cryfsProgram, arguments);
@@ -234,6 +260,7 @@ VaultState VaultControl::state(const QString &encryptDir)
 {
     const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
+        fmWarning() << "[VaultControl::state] cryfs binary not found, vault not available";
         return VaultState::kNotAvailable;
     }
 
@@ -249,14 +276,19 @@ VaultState VaultControl::state(const QString &encryptDir)
                                                              nullptr);
     }
 
+    fmDebug() << "[VaultControl::state] Checking vault state, config file:" << cryfsConfigFilePath;
+
     if (QFile::exists(cryfsConfigFilePath)) {
         QUrl mountPonitUrl = QUrl::fromLocalFile(VaultHelper::instance()->vaultMountDirLocalPath());
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(mountPonitUrl);
         if (fsType == QString(kCryfsType)) {
+            fmDebug() << "[VaultControl::state] Vault is unlocked, filesystem type:" << fsType;
             return VaultState::kUnlocked;
         }
+        fmDebug() << "[VaultControl::state] Vault is encrypted, filesystem type:" << fsType;
         return VaultState::kEncrypted;
     } else {
+        fmDebug() << "[VaultControl::state] Vault does not exist, config file not found";
         return VaultState::kNotExisted;
     }
 }
@@ -267,22 +299,25 @@ void VaultControl::syncGroupPolicyAlgoName()
     const QString &algoName = config.get(kConfigNodeName, kConfigKeyAlgoName, QVariant(kConfigKeyNotExist)).toString();
     if (algoName == QString(kConfigKeyNotExist)) {
         dfmbase::DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant("aes-256-gcm"));
+        fmInfo() << "[VaultControl::syncGroupPolicyAlgoName] Set default algorithm: aes-256-gcm";
     } else {
-        if (!algoName.isEmpty())
+        if (!algoName.isEmpty()) {
             dfmbase::DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+            fmInfo() << "[VaultControl::syncGroupPolicyAlgoName] Synced algorithm from config:" << algoName;
+        }
     }
 }
 
 QString VaultControl::passwordFromKeyring()
 {
-    fmInfo() << "Vault Daemon: Read password start!";
+    fmDebug() << "[VaultControl::passwordFromKeyring] Retrieving password from keyring";
 
     QString result { "" };
 
     GError *error = NULL;
     SecretService *service = NULL;
     char *userName = getlogin();
-    fmInfo() << "Vault: Get user name : " << QString(userName);
+    fmDebug() << "[VaultControl::passwordFromKeyring] Current user:" << QString(userName);
     GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
     g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
@@ -293,14 +328,14 @@ QString VaultControl::passwordFromKeyring()
     gsize length;
     const gchar *passwd = secret_value_get(value_read, &length);
     if (length > 0) {
-        fmInfo() << "Vault Daemon: Read password not empty!";
+        fmDebug() << "[VaultControl::passwordFromKeyring] Password retrieved successfully";
         result = QString(passwd);
+    } else {
+        fmWarning() << "[VaultControl::passwordFromKeyring] No password found in keyring";
     }
 
     secret_value_unref(value_read);
     g_hash_table_destroy(attributes);
-
-    fmWarning() << "Vault Daemon: Read password end!";
 
     return result;
 }
@@ -308,12 +343,18 @@ QString VaultControl::passwordFromKeyring()
 int VaultControl::unlockVault(const QString &basedir, const QString &mountdir, const QString &passwd)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
-    if (cryfsBinary.isEmpty()) return -1;
+    if (cryfsBinary.isEmpty()) {
+        fmCritical() << "[VaultControl::unlockVault] cryfs binary not found";
+        return -1;
+    }
+
+    fmInfo() << "[VaultControl::unlockVault] Attempting to unlock vault from:" << basedir << "to:" << mountdir;
 
     QStringList arguments;
     CryfsVersionInfo version = versionString();
     if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
         arguments << QString("--allow-replaced-filesystem");
+        fmDebug() << "[VaultControl::unlockVault] Using --allow-replaced-filesystem flag for cryfs version >= 0.10.0";
     }
     arguments << basedir << mountdir;
 
@@ -327,10 +368,19 @@ int VaultControl::unlockVault(const QString &basedir, const QString &mountdir, c
     process.waitForFinished();
     process.terminate();
 
-    if (process.exitStatus() == QProcess::NormalExit)
-        return process.exitCode();
-    else
-        return -1;
+    int exitCode = -1;
+    if (process.exitStatus() == QProcess::NormalExit) {
+        exitCode = process.exitCode();
+        if (exitCode == 0) {
+            fmInfo() << "[VaultControl::unlockVault] Vault unlocked successfully";
+        } else {
+            fmWarning() << "[VaultControl::unlockVault] Vault unlock failed with exit code:" << exitCode;
+        }
+    } else {
+        fmCritical() << "[VaultControl::unlockVault] cryfs process crashed or was terminated abnormally";
+    }
+
+    return exitCode;
 }
 
 int VaultControl::lockVault(const QString &unlockFileDir, bool isForced)
@@ -349,10 +399,15 @@ int VaultControl::lockVault(const QString &unlockFileDir, bool isForced)
     fusermountBinary = QStandardPaths::findExecutable("fusermount");
     if (isForced) {
         arguments << "-zu" << unlockFileDir;
+        fmInfo() << "[VaultControl::lockVault] Force unmounting vault at:" << unlockFileDir;
     } else {
         arguments << "-u" << unlockFileDir;
+        fmInfo() << "[VaultControl::lockVault] Unmounting vault at:" << unlockFileDir;
     }
-    if (fusermountBinary.isEmpty()) return -1;
+    if (fusermountBinary.isEmpty()) {
+        fmCritical() << "[VaultControl::lockVault] fusermount binary not found";
+        return -1;
+    }
 
     QProcess process;
     process.start(fusermountBinary, arguments);
@@ -360,10 +415,19 @@ int VaultControl::lockVault(const QString &unlockFileDir, bool isForced)
     process.waitForFinished();
     process.terminate();
 
-    if (process.exitStatus() == QProcess::NormalExit)
-        return process.exitCode();
-    else
-        return -1;
+    int exitCode = -1;
+    if (process.exitStatus() == QProcess::NormalExit) {
+        exitCode = process.exitCode();
+        if (exitCode == 0) {
+            fmInfo() << "[VaultControl::lockVault] Vault locked successfully";
+        } else {
+            fmWarning() << "[VaultControl::lockVault] Vault lock failed with exit code:" << exitCode;
+        }
+    } else {
+        fmCritical() << "[VaultControl::lockVault] fusermount process crashed or was terminated abnormally";
+    }
+
+    return exitCode;
 }
 
 VaultControl::VaultControl(QObject *parent)
