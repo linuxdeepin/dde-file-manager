@@ -7,7 +7,6 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
-#include <QDebug>
 
 DAEMONPVAULT_USE_NAMESPACE
 
@@ -19,12 +18,14 @@ VaultHelper *VaultHelper::instance()
 
 bool VaultHelper::isVaultFile(const QUrl &url)
 {
+    bool isVault = false;
     if (url.scheme() == scheme()
             || url.path().startsWith(vaultMountDirLocalPath())) {
-        return true;
+        isVault = true;
     }
 
-    return false;
+    fmDebug() << "[VaultHelper::isVaultFile] URL:" << url.toString() << "is vault file:" << isVault;
+    return isVault;
 }
 
 QString VaultHelper::vaultBaseDirLocalPath()
@@ -50,14 +51,19 @@ QString VaultHelper::buildVaultLocalPath(const QString &path, const QString &bas
 QUrl VaultHelper::vaultUrlToLocalUrl(const QUrl &url)
 {
     if (url.scheme() != scheme()) {
+        fmDebug() << "[VaultHelper::vaultUrlToLocalUrl] URL not vault scheme, returning as-is:" << url.toString();
         return url;
     }
 
+    QUrl localUrl;
     if (url.path().startsWith(vaultMountDirLocalPath())) {
-        return QUrl::fromLocalFile(url.path());
+        localUrl = QUrl::fromLocalFile(url.path());
     } else {
-        return QUrl::fromLocalFile(vaultMountDirLocalPath() + url.path());
+        localUrl = QUrl::fromLocalFile(vaultMountDirLocalPath() + url.path());
     }
+    
+    fmDebug() << "[VaultHelper::vaultUrlToLocalUrl] Converted vault URL:" << url.toString() << "to local URL:" << localUrl.toString();
+    return localUrl;
 }
 
 QList<QUrl> VaultHelper::transUrlsToLocal(const QList<QUrl> &urls)
@@ -65,6 +71,8 @@ QList<QUrl> VaultHelper::transUrlsToLocal(const QList<QUrl> &urls)
     QList<QUrl> urlsTrans {};
 
     int size = urls.size();
+    fmDebug() << "[VaultHelper::transUrlsToLocal] Converting" << size << "URLs to local format";
+    
     for (int i = 0; i < size; ++i) {
         const QUrl &url = urls.at(i);
         if (url.scheme() == scheme()) {
@@ -74,6 +82,7 @@ QList<QUrl> VaultHelper::transUrlsToLocal(const QList<QUrl> &urls)
         }
     }
 
+    fmDebug() << "[VaultHelper::transUrlsToLocal] Converted" << urlsTrans.size() << "URLs successfully";
     return urlsTrans;
 }
 

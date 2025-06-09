@@ -18,26 +18,38 @@ VaultConfigOperator::VaultConfigOperator(const QString &filePath)
                                                          kVaultConfigFileName, nullptr);
     }
     setting = new QSettings(currentFilePath, QSettings::IniFormat);
+    
+    fmDebug() << "[VaultConfigOperator::VaultConfigOperator] Initialized with config file:" << currentFilePath;
 }
 
 VaultConfigOperator::~VaultConfigOperator()
 {
-    if (setting)
+    if (setting) {
+        fmDebug() << "[VaultConfigOperator::~VaultConfigOperator] Destroying config operator for:" << currentFilePath;
         delete setting;
+    }
     setting = nullptr;
 }
 
 void VaultConfigOperator::set(const QString &nodeName, const QString &keyName, QVariant value)
 {
-    setting->setValue(QString("/%1/%2").arg(nodeName).arg(keyName), value);
+    QString fullKey = QString("/%1/%2").arg(nodeName).arg(keyName);
+    setting->setValue(fullKey, value);
+    fmDebug() << "[VaultConfigOperator::set] Set config value - key:" << fullKey << "value:" << value.toString();
 }
 
 QVariant VaultConfigOperator::get(const QString &nodeName, const QString &keyName)
 {
-    return setting->value(QString("/%1/%2").arg(nodeName).arg(keyName));
+    QString fullKey = QString("/%1/%2").arg(nodeName).arg(keyName);
+    QVariant value = setting->value(fullKey);
+    fmDebug() << "[VaultConfigOperator::get] Retrieved config value - key:" << fullKey << "value:" << value.toString();
+    return value;
 }
 
 QVariant VaultConfigOperator::get(const QString &nodeName, const QString &keyName, const QVariant &defaultValue)
 {
-    return setting->value(QString("/%1/%2").arg(nodeName).arg(keyName), defaultValue);
+    QString fullKey = QString("/%1/%2").arg(nodeName).arg(keyName);
+    QVariant value = setting->value(fullKey, defaultValue);
+    fmDebug() << "[VaultConfigOperator::get] Retrieved config value with default - key:" << fullKey << "value:" << value.toString() << "default:" << defaultValue.toString();
+    return value;
 }
