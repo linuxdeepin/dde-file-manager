@@ -83,11 +83,11 @@ void FSMonitorWorker::tryFastDirectoryScan()
 {
     // Only allow one fast scan at a time
     if (fastScanInProgress) {
-        fmWarning() << "Fast directory scan already in progress, ignoring request";
+        fmWarning() << "FSMonitorWorker: Fast directory scan already in progress, ignoring request";
         return;
     }
 
-    fmInfo() << "Starting fast directory scan using SearchEngine";
+    fmInfo() << "FSMonitorWorker: Starting fast directory scan using SearchEngine";
     fastScanInProgress = true;
 
     // Create a lambda for the async operation
@@ -101,7 +101,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
 
         const QString currentStatus = status.value();
         if (currentStatus != "monitoring" && currentStatus != "closed") {
-            fmWarning() << "Cannot use fast dir scan, anything status is" << currentStatus;
+            fmWarning() << "FSMonitorWorker: Cannot use fast directory scan, index status is:" << currentStatus;
             return {};
         }
 
@@ -145,7 +145,7 @@ void FSMonitorWorker::handleFastScanResult()
 
     if (success) {
         // Fast scan succeeded
-        fmInfo() << "Fast directory scan succeeded, found" << directories.size() << "directories";
+        fmInfo() << "FSMonitorWorker: Fast directory scan succeeded, found" << directories.size() << "directories";
 
         // Emit directories in batches to avoid overwhelming the main thread
         const int kBatchSize = 200;
@@ -156,7 +156,7 @@ void FSMonitorWorker::handleFastScanResult()
         }
     } else {
         // Fast scan failed
-        fmInfo() << "Fast directory scan failed, system will fall back to traditional scanning";
+        fmInfo() << "FSMonitorWorker: Fast directory scan failed, system will fall back to traditional scanning";
     }
 
     // Reset flag and signal completion

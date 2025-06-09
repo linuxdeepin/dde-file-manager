@@ -54,7 +54,7 @@ std::optional<QString> convertToUtf8(const QByteArray &content, const QString &f
         if (convertTextEncoding(content, out, "utf-8", fromEncoding)) {
             return QString::fromUtf8(out);
         } else {
-            fmWarning() << "Failed to convert encoding from" << fromEncoding << "to UTF-8";
+            fmWarning() << "DocUtils: Failed to convert encoding from" << fromEncoding << "to UTF-8";
             return std::nullopt;
         }
     }
@@ -73,7 +73,7 @@ std::optional<QString> extractHtmlContent(const QString &filePath)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        fmWarning() << "Failed to open file for HTML extraction:" << filePath;
+        fmWarning() << "DocUtils: Failed to open file for HTML extraction:" << filePath;
         return std::nullopt;
     }
 
@@ -121,7 +121,7 @@ std::optional<QString> extractFileContent(const QString &filePath)
         QByteArray contentBytes(stdContents.c_str(), stdContents.length());
         return convertToUtf8(contentBytes, fromEncoding);
     } catch (const std::exception &e) {
-        fmWarning() << "Exception while extracting file content:" << filePath << e.what();
+        fmWarning() << "DocUtils: Exception while extracting file content from" << filePath << ":" << e.what();
         return std::nullopt;
     }
 
