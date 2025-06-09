@@ -40,6 +40,7 @@ QVariantMap TagDbHandler::getAllTags()
 
     const auto &tagPropertyBean = handle->query<TagProperty>().toBeans();
     if (tagPropertyBean.isEmpty()) {
+        fmDebug() << "TagDbHandler::getAllTags: No tags found in database";
         return {};
     }
 
@@ -47,6 +48,7 @@ QVariantMap TagDbHandler::getAllTags()
     for (auto &bean : tagPropertyBean)
         tagPropertyMap.insert(bean->getTagName(), QVariant { bean->getTagColor() });
 
+    fmDebug() << "TagDbHandler::getAllTags: Retrieved" << tagPropertyMap.size() << "tags from database";
     return tagPropertyMap;
 }
 
@@ -56,6 +58,7 @@ QVariantMap TagDbHandler::getTagsColor(const QStringList &tags)
 
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::getTagsColor: Empty tag list provided";
         return {};
     }
 
@@ -69,6 +72,7 @@ QVariantMap TagDbHandler::getTagsColor(const QStringList &tags)
             tagColorsMap.insert(tag, QVariant { QVariant { color } });
     }
 
+    fmDebug() << "TagDbHandler::getTagsColor: Retrieved colors for" << tagColorsMap.size() << "out of" << tags.size() << "requested tags";
     finally.dismiss();
     return tagColorsMap;
 }
@@ -78,6 +82,7 @@ QVariantMap TagDbHandler::getTagsByUrls(const QStringList &urlList)
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
     if (urlList.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::getTagsByUrls: Empty URL list provided";
         return {};
     }
 
@@ -95,6 +100,7 @@ QVariantMap TagDbHandler::getTagsByUrls(const QStringList &urlList)
             allFileTags.insert(path, fileTags);
     }
 
+    fmDebug() << "TagDbHandler::getTagsByUrls: Retrieved tags for" << allFileTags.size() << "out of" << urlList.size() << "requested files";
     finally.dismiss();
     return allFileTags;
 }
@@ -105,6 +111,7 @@ QVariant TagDbHandler::getSameTagsOfDiffUrls(const QStringList &urlList)
 
     if (urlList.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::getSameTagsOfDiffUrls: Empty URL list provided";
         return {};
     }
 
@@ -125,6 +132,7 @@ QVariant TagDbHandler::getSameTagsOfDiffUrls(const QStringList &urlList)
             sameTags.append(ct.key());
     }
 
+    fmDebug() << "TagDbHandler::getSameTagsOfDiffUrls: Found" << sameTags.size() << "common tags among" << urlList.size() << "files";
     finally.dismiss();
     return sameTags;
 }
@@ -135,6 +143,7 @@ QVariantMap TagDbHandler::getFilesByTag(const QStringList &tags)
 
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::getFilesByTag: Empty tag list provided";
         return {};
     }
 
@@ -150,6 +159,7 @@ QVariantMap TagDbHandler::getFilesByTag(const QStringList &tags)
         allTagFiles.insert(tag, QVariant { files });
     }
 
+    fmDebug() << "TagDbHandler::getFilesByTag: Retrieved files for" << tags.size() << "tags";
     finally.dismiss();
     return allTagFiles;
 }
@@ -177,6 +187,7 @@ QVariantHash TagDbHandler::getAllFileWithTags()
         }
     }
 
+    fmDebug() << "TagDbHandler::getAllFileWithTags: Retrieved" << fileTagsMap.size() << "files with tags";
     return fileTagsMap;
 }
 
@@ -186,19 +197,27 @@ bool TagDbHandler::addTagProperty(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::addTagProperty: Empty data provided";
         return false;
     }
+
+    fmInfo() << "TagDbHandler::addTagProperty: Adding" << data.size() << "tag properties";
 
     // insert tagProPerty
     auto it = data.begin();
     for (; it != data.end(); ++it) {
         if (!checkTag(it.key())) {
-            if (!insertTagProperty(it.key(), it.value()))
+            if (!insertTagProperty(it.key(), it.value())) {
+                fmCritical() << "TagDbHandler::addTagProperty: Failed to insert tag property for tag:" << it.key();
                 return false;
+            }
+        } else {
+            fmDebug() << "TagDbHandler::addTagProperty: Tag already exists, skipping:" << it.key();
         }
     }
 
     emit newTagsAdded(data);
+    fmInfo() << "TagDbHandler::addTagProperty: Successfully added tag properties";
     finally.dismiss();
     return true;
 }
@@ -209,8 +228,12 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::addTagsForFiles: Empty data provided";
         return false;
     }
+
+    fmInfo() << "TagDbHandler::addTagsForFiles: Adding tags for" << data.size() << "files";
+
     //Remove duplicate data from the database
     const QVariantMap &dbData = getTagsByUrls(data.keys());
     QVariantMap tmpData = data;
@@ -238,11 +261,19 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
     bool ret = handle->transaction([tmpData, this]() -> bool {
         for (auto dataIt = tmpData.begin(); dataIt != tmpData.end(); ++dataIt) {
             bool ret = tagFile(dataIt.key(), dataIt.value());
-            if (!ret)
+            if (!ret) {
+                fmCritical() << "TagDbHandler::addTagsForFiles: Failed to tag file:" << dataIt.key();
                 return ret;
+            }
         }
         return true;
     });
+
+    if (!ret) {
+        fmCritical() << "TagDbHandler::addTagsForFiles: Transaction failed while adding tags for files";
+    } else {
+        fmInfo() << "TagDbHandler::addTagsForFiles: Successfully added tags for files";
+    }
 
     emit filesWereTagged(data);
     finally.dismiss();
@@ -255,17 +286,28 @@ bool TagDbHandler::removeTagsOfFiles(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::removeTagsOfFiles: Empty data provided";
         return false;
     }
 
-    // remove file--tags
+    fmInfo() << "TagDbHandler::removeTagsOfFiles: Removing tags from" << data.size() << "files";
 
+    // remove file--tags
     bool ret = handle->transaction([data, this]() -> bool {
-        for (auto it = data.begin(); it != data.end(); ++it)
-            if (!removeSpecifiedTagOfFile(it.key(), it.value()))
+        for (auto it = data.begin(); it != data.end(); ++it) {
+            if (!removeSpecifiedTagOfFile(it.key(), it.value())) {
+                fmCritical() << "TagDbHandler::removeTagsOfFiles: Failed to remove tags from file:" << it.key();
                 return false;
+            }
+        }
         return true;
     });
+
+    if (!ret) {
+        fmCritical() << "TagDbHandler::removeTagsOfFiles: Transaction failed while removing tags from files";
+    } else {
+        fmInfo() << "TagDbHandler::removeTagsOfFiles: Successfully removed tags from files";
+    }
 
     emit filesUntagged(data);
     finally.dismiss();
@@ -278,8 +320,11 @@ bool TagDbHandler::deleteTags(const QStringList &tags)
 
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::deleteTags: Empty tag list provided";
         return false;
     }
+
+    fmInfo() << "TagDbHandler::deleteTags: Deleting" << tags.size() << "tags";
 
     const auto &fieldOne = Expression::Field<TagProperty>;
     const auto &fieldTwo = Expression::Field<FileTagInfo>;
@@ -287,14 +332,19 @@ bool TagDbHandler::deleteTags(const QStringList &tags)
     bool ret = true;
     for (const auto &tag : tags) {
         ret = handle->remove<TagProperty>(fieldOne("tagName") == tag);
-        if (!ret)
+        if (!ret) {
+            fmCritical() << "TagDbHandler::deleteTags: Failed to remove tag property for tag:" << tag;
             return ret;
+        }
         ret = handle->remove<FileTagInfo>(fieldTwo("tagName") == tag);
-        if (!ret)
+        if (!ret) {
+            fmCritical() << "TagDbHandler::deleteTags: Failed to remove file tag info for tag:" << tag;
             return ret;
+        }
     }
 
     emit tagsDeleted(tags);
+    fmInfo() << "TagDbHandler::deleteTags: Successfully deleted" << tags.size() << "tags";
     finally.dismiss();
     return ret;
 }
@@ -305,15 +355,21 @@ bool TagDbHandler::deleteFiles(const QStringList &urls)
 
     if (urls.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::deleteFiles: Empty URL list provided";
         return false;
     }
 
+    fmInfo() << "TagDbHandler::deleteFiles: Deleting tag information for" << urls.size() << "files";
+
     auto field = Expression::Field<FileTagInfo>;
     for (const auto &url : urls) {
-        if (!handle->remove<FileTagInfo>(field("filePath") == url))
+        if (!handle->remove<FileTagInfo>(field("filePath") == url)) {
+            fmCritical() << "TagDbHandler::deleteFiles: Failed to delete tag information for file:" << url;
             return false;
+        }
     }
 
+    fmInfo() << "TagDbHandler::deleteFiles: Successfully deleted tag information for" << urls.size() << "files";
     finally.dismiss();
     return true;
 }
@@ -324,19 +380,24 @@ bool TagDbHandler::changeTagColors(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeTagColors: Empty data provided";
         return false;
     }
+
+    fmInfo() << "TagDbHandler::changeTagColors: Changing colors for" << data.size() << "tags";
 
     auto it = data.begin();
     bool ret = true;
     for (; it != data.end(); ++it) {
         ret = changeTagColor(it.key(), it.value().toString());
-        if (!ret)
+        if (!ret) {
+            fmCritical() << "TagDbHandler::changeTagColors: Failed to change color for tag:" << it.key();
             return ret;
+        }
     }
 
     emit tagsColorChanged(data);
-
+    fmInfo() << "TagDbHandler::changeTagColors: Successfully changed colors for" << data.size() << "tags";
     finally.dismiss();
     return ret;
 }
@@ -347,21 +408,28 @@ bool TagDbHandler::changeTagNamesWithFiles(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeTagNamesWithFiles: Empty data provided";
         return false;
     }
+
+    fmInfo() << "TagDbHandler::changeTagNamesWithFiles: Changing names for" << data.size() << "tags";
 
     auto it = data.begin();
     QVariantMap updatedData;
     bool ret = true;
     for (; it != data.end(); ++it) {
-        if (changeTagNameWithFile(it.key(), it.value().toString()))
+        if (changeTagNameWithFile(it.key(), it.value().toString())) {
             updatedData.insert(it.key(), it.value());
-        else
+        } else {
+            fmCritical() << "TagDbHandler::changeTagNamesWithFiles: Failed to change name for tag:" << it.key();
             ret = false;
+        }
     }
 
-    if (!updatedData.isEmpty())
+    if (!updatedData.isEmpty()) {
         emit tagsNameChanged(updatedData);
+        fmInfo() << "TagDbHandler::changeTagNamesWithFiles: Successfully changed names for" << updatedData.size() << "tags";
+    }
 
     if (ret)
         finally.dismiss();
@@ -375,14 +443,21 @@ bool TagDbHandler::changeFilePaths(const QVariantMap &data)
 
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeFilePaths: Empty data provided";
         return false;
     }
 
-    auto it = data.begin();
-    for (; it != data.end(); ++it)
-        if (!changeFilePath(it.key(), it.value().toString()))
-            return false;
+    fmInfo() << "TagDbHandler::changeFilePaths: Changing paths for" << data.size() << "files";
 
+    auto it = data.begin();
+    for (; it != data.end(); ++it) {
+        if (!changeFilePath(it.key(), it.value().toString())) {
+            fmCritical() << "TagDbHandler::changeFilePaths: Failed to change path for file:" << it.key();
+            return false;
+        }
+    }
+
+    fmInfo() << "TagDbHandler::changeFilePaths: Successfully changed paths for" << data.size() << "files";
     finally.dismiss();
     return true;
 }
@@ -395,6 +470,7 @@ QString TagDbHandler::lastError() const
 TagDbHandler::TagDbHandler(QObject *parent)
     : QObject(parent)
 {
+    fmInfo() << "TagDbHandler: Initializing tag database handler";
     initialize();
 }
 
@@ -406,8 +482,13 @@ void TagDbHandler::initialize()
                                                  nullptr);
 
     QDir dir(dbPath);
-    if (!dir.exists())
-        dir.mkpath(dbPath);
+    if (!dir.exists()) {
+        if (!dir.mkpath(dbPath)) {
+            fmCritical() << "TagDbHandler::initialize: Failed to create database directory:" << dbPath;
+            return;
+        }
+        fmInfo() << "TagDbHandler::initialize: Created database directory:" << dbPath;
+    }
 
     const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
                                                      Global::DataBase::kDfmDBName,
@@ -415,16 +496,24 @@ void TagDbHandler::initialize()
     handle.reset(new SqliteHandle(dbFilePath));
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        fmWarning() << "The tag database is invalid! open error";
+        fmCritical() << "TagDbHandler::initialize: Failed to open tag database:" << dbFilePath;
         return;
     }
     db.close();
 
-    if (!createTable(kTagTableFileTags))
-        fmWarning() << "Create table failed:" << kTagTableFileTags;
+    if (!createTable(kTagTableFileTags)) {
+        fmCritical() << "TagDbHandler::initialize: Failed to create table:" << kTagTableFileTags;
+    } else {
+        fmDebug() << "TagDbHandler::initialize: Table created or verified:" << kTagTableFileTags;
+    }
 
-    if (!createTable(kTagTableTagProperty))
-        fmWarning() << "Create table failed:" << kTagTableFileTags;
+    if (!createTable(kTagTableTagProperty)) {
+        fmCritical() << "TagDbHandler::initialize: Failed to create table:" << kTagTableTagProperty;
+    } else {
+        fmDebug() << "TagDbHandler::initialize: Table created or verified:" << kTagTableTagProperty;
+    }
+
+    fmInfo() << "TagDbHandler::initialize: Tag database handler initialized successfully";
 }
 
 bool TagDbHandler::createTable(const QString &tableName)
@@ -460,6 +549,7 @@ bool TagDbHandler::insertTagProperty(const QString &name, const QVariant &value)
 
     if (name.isEmpty() || value.isNull()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::insertTagProperty: Empty parameters provided - name:" << name << "value:" << value;
         return false;
     }
 
@@ -472,9 +562,11 @@ bool TagDbHandler::insertTagProperty(const QString &name, const QVariant &value)
 
     if (-1 == handle->insert<TagProperty>(temp)) {
         lastErr = QString("insert TagProperty failed! tagName: %1, tagValue: %2").arg(name).arg(value.toString());
+        fmCritical() << "TagDbHandler::insertTagProperty: Failed to insert tag property - name:" << name << "color:" << value.toString();
         return false;
     }
 
+    fmDebug() << "TagDbHandler::insertTagProperty: Successfully inserted tag property - name:" << name << "color:" << value.toString();
     finally.dismiss();
     return true;
 }
@@ -485,6 +577,7 @@ bool TagDbHandler::tagFile(const QString &file, const QVariant &tags)
 
     if (file.isEmpty() || tags.isNull()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::tagFile: Empty parameters provided - file:" << file << "tags:" << tags;
         return false;
     }
 
@@ -497,8 +590,10 @@ bool TagDbHandler::tagFile(const QString &file, const QVariant &tags)
         temp.setTagName(tag);
         temp.setTagOrder(0);
         temp.setFuture("null");
-        if (-1 == handle->insert<FileTagInfo>(temp))
+        if (-1 == handle->insert<FileTagInfo>(temp)) {
+            fmCritical() << "TagDbHandler::tagFile: Failed to insert file tag - file:" << file << "tag:" << tag;
             break;
+        }
         suc--;
     }
 
@@ -507,6 +602,7 @@ bool TagDbHandler::tagFile(const QString &file, const QVariant &tags)
         return false;
     }
 
+    fmDebug() << "TagDbHandler::tagFile: Successfully tagged file:" << file << "with" << tempTags.size() << "tags";
     finally.dismiss();
     return true;
 }
@@ -517,6 +613,7 @@ bool TagDbHandler::removeSpecifiedTagOfFile(const QString &url, const QVariant &
 
     if (url.isEmpty() || val.isNull()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::removeSpecifiedTagOfFile: Empty parameters provided - url:" << url << "tags:" << val;
         return false;
     }
 
@@ -524,8 +621,10 @@ bool TagDbHandler::removeSpecifiedTagOfFile(const QString &url, const QVariant &
     const auto tempTags = val.toStringList();
     int suc = tempTags.count();
     for (const auto &tag : tempTags) {
-        if (!handle->remove<FileTagInfo>((field("filePath") == url) && (field("tagName") == tag)))
+        if (!handle->remove<FileTagInfo>((field("filePath") == url) && (field("tagName") == tag))) {
+            fmCritical() << "TagDbHandler::removeSpecifiedTagOfFile: Failed to remove tag from file - file:" << url << "tag:" << tag;
             break;
+        }
         suc--;
     }
 
@@ -534,6 +633,7 @@ bool TagDbHandler::removeSpecifiedTagOfFile(const QString &url, const QVariant &
         return false;
     }
 
+    fmDebug() << "TagDbHandler::removeSpecifiedTagOfFile: Successfully removed" << tempTags.size() << "tags from file:" << url;
     finally.dismiss();
     return true;
 }
@@ -544,15 +644,18 @@ bool TagDbHandler::changeTagColor(const QString &tagName, const QString &newTagC
 
     if (tagName.isEmpty() || newTagColor.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeTagColor: Empty parameters provided - tagName:" << tagName << "newColor:" << newTagColor;
         return false;
     }
 
     const auto &field = Expression::Field<TagProperty>;
     if (!handle->update<TagProperty>(field("tagColor") = newTagColor, field("tagName") == tagName)) {
         lastErr = QString("Change tag Color failed! tagName: %1, newTagColor: %2").arg(tagName).arg(newTagColor);
+        fmCritical() << "TagDbHandler::changeTagColor: Failed to update tag color - tagName:" << tagName << "newColor:" << newTagColor;
         return false;
     }
 
+    fmDebug() << "TagDbHandler::changeTagColor: Successfully changed tag color - tagName:" << tagName << "newColor:" << newTagColor;
     finally.dismiss();
     return true;
 }
@@ -563,6 +666,7 @@ bool TagDbHandler::changeTagNameWithFile(const QString &tagName, const QString &
 
     if (tagName.isEmpty() || newName.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeTagNameWithFile: Empty parameters provided - oldName:" << tagName << "newName:" << newName;
         return false;
     }
 
@@ -571,19 +675,23 @@ bool TagDbHandler::changeTagNameWithFile(const QString &tagName, const QString &
         if (!handle->update<TagProperty>(Expression::Field<TagProperty>("tagName") = newName,
                                          Expression::Field<TagProperty>("tagName") == tagName)) {
             lastErr = QString("Change tag name failed! tagName: %1, newName: %2").arg(tagName).arg(newName);
+            fmCritical() << "TagDbHandler::changeTagNameWithFile: Failed to update tag property - oldName:" << tagName << "newName:" << newName;
             return false;
         }
         if (!handle->update<FileTagInfo>(Expression::Field<FileTagInfo>("tagName") = newName,
                                          Expression::Field<FileTagInfo>("tagName") == tagName)) {
             lastErr = QString("Change file tag name failed! tagName: %1, newName: %2").arg(tagName).arg(newName);
+            fmCritical() << "TagDbHandler::changeTagNameWithFile: Failed to update file tag info - oldName:" << tagName << "newName:" << newName;
             return false;
         }
 
         return true;
     });
 
-    if (ret)
+    if (ret) {
+        fmDebug() << "TagDbHandler::changeTagNameWithFile: Successfully changed tag name - oldName:" << tagName << "newName:" << newName;
         finally.dismiss();
+    }
 
     return ret;
 }
@@ -594,15 +702,18 @@ bool TagDbHandler::changeFilePath(const QString &oldPath, const QString &newPath
 
     if (oldPath.isEmpty() || newPath.isEmpty()) {
         lastErr = "input parameter is empty!";
+        fmWarning() << "TagDbHandler::changeFilePath: Empty parameters provided - oldPath:" << oldPath << "newPath:" << newPath;
         return false;
     }
 
     const auto &field = Expression::Field<FileTagInfo>;
-    if (!handle->update<TagProperty>(field("filePath") = newPath, field("filePath") == oldPath)) {
-        lastErr = QString("Change file path failed! oldPath: %1, newPath: %2").arg(oldPath).arg(oldPath);
+    if (!handle->update<FileTagInfo>(field("filePath") = newPath, field("filePath") == oldPath)) {
+        lastErr = QString("Change file path failed! oldPath: %1, newPath: %2").arg(oldPath).arg(newPath);
+        fmCritical() << "TagDbHandler::changeFilePath: Failed to update file path - oldPath:" << oldPath << "newPath:" << newPath;
         return false;
     }
 
+    fmDebug() << "TagDbHandler::changeFilePath: Successfully changed file path - oldPath:" << oldPath << "newPath:" << newPath;
     finally.dismiss();
     return true;
 }

@@ -18,38 +18,51 @@ void TagDBusWorker::launchService()
     Q_ASSERT(QThread::currentThread() != qApp->thread());
     auto conn { QDBusConnection::sessionBus() };
 
-    fmInfo() << "Init DBus TagManager start";
+    fmInfo() << "TagDBusWorker::launchService: Initializing DBus TagManager service";
+    
     tagManager.reset(new TagManagerDBus);
     Q_UNUSED(new TagManagerAdaptor(tagManager.data()));
-    if (!conn.registerObject(kTagManagerObjPath,
-                             tagManager.data())) {
-        fmWarning() << QString("Cannot register the \"%1\" object.\n").arg(kTagManagerObjPath);
+    
+    if (!conn.registerObject(kTagManagerObjPath, tagManager.data())) {
+        fmCritical() << "TagDBusWorker::launchService: Failed to register DBus object at path:" << kTagManagerObjPath;
         tagManager.reset(nullptr);
-    } else {
-        tagManager->TagsServiceReady();
+        return;
     }
-    fmInfo() << "Init DBus TagManager end";
+
+    fmInfo() << "TagDBusWorker::launchService: DBus object registered successfully at path:" << kTagManagerObjPath;
+    
+    // Emit service ready signal
+    tagManager->TagsServiceReady();
+    fmInfo() << "TagDBusWorker::launchService: TagManager service initialized and ready";
 }
 
 void TagDaemon::initialize()
 {
+    fmInfo() << "TagDaemon::initialize: Initializing tag daemon service";
+    
     TagDBusWorker *worker { new TagDBusWorker };
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &TagDaemon::requestLaunch, worker, &TagDBusWorker::launchService);
     workerThread.start();
+    
+    fmInfo() << "TagDaemon::initialize: Tag daemon service initialized successfully";
 }
 
 bool TagDaemon::start()
 {
+    fmInfo() << "TagDaemon::start: Starting tag daemon service";
     emit requestLaunch();
+    fmInfo() << "TagDaemon::start: Tag daemon service start request sent";
     return true;
 }
 
 void TagDaemon::stop()
 {
+    fmInfo() << "TagDaemon::stop: Stopping tag daemon service";
     workerThread.quit();
     workerThread.wait();
+    fmInfo() << "TagDaemon::stop: Tag daemon service stopped successfully";
 }
 
 DAEMONPTAG_END_NAMESPACE
