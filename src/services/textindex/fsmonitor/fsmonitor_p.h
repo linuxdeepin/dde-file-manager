@@ -95,11 +95,6 @@ public:
     // Detect if a path is a directory
     bool isDirectory(const QString &path, const QString &name) const;
 
-    // Debug and error logging helpers
-    void logDebug(const QString &message) const;
-    void logInfo(const QString &message) const;
-    void logError(const QString &message) const;
-
     // Fast scan control
     bool useFastScan { true };   // Whether to try fast scan first
 

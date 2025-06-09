@@ -44,32 +44,32 @@ bool FSEventCollectorPrivate::init(const QStringList &rootPaths)
         if (QDir(absPath).exists()) {
             this->rootPaths.append(absPath);
         } else {
-            logError(QString("Root path does not exist: %1").arg(absPath));
+            fmWarning() << "FSEventCollector: Root path does not exist:" << absPath;
         }
     }
 
     if (this->rootPaths.isEmpty()) {
-        logError("No valid root paths provided");
+        fmWarning() << "FSEventCollector: No valid root paths provided for initialization";
         return false;
     }
 
     // Initialize the underlying FSMonitor with the first root path
     // FSMonitor will handle multiple paths internally
     if (!fsMonitor.initialize(this->rootPaths)) {
-        logError(QString("Failed to initialize FSMonitor with root paths"));
+        fmWarning() << "FSEventCollector: Failed to initialize FSMonitor with root paths";
         return false;
     }
 
     fsMonitor.setMaxResourceUsage(TextIndexConfig::instance().inotifyWatchesCoefficient());
 
-    logDebug(QString("FSEventCollector initialized with %1 root paths").arg(this->rootPaths.size()));
+    fmInfo() << "FSEventCollector: Initialized successfully with" << this->rootPaths.size() << "root paths";
     return true;
 }
 
 bool FSEventCollectorPrivate::startCollecting()
 {
     if (active) {
-        logDebug("Event collection already active, ignoring start request");
+        fmInfo() << "FSEventCollector: Event collection already active, ignoring start request";
         return true;
     }
 
@@ -117,7 +117,7 @@ bool FSEventCollectorPrivate::startCollecting()
 
     // Start the FSMonitor
     if (!fsMonitor.start()) {
-        logError("Failed to start FSMonitor");
+        fmWarning() << "FSEventCollector: Failed to start FSMonitor";
         return false;
     }
 
@@ -125,8 +125,7 @@ bool FSEventCollectorPrivate::startCollecting()
     active = true;
     collectionTimer.start(collectionIntervalMs);
 
-    logDebug(QString("Started event collection with interval: %1 seconds")
-                     .arg(collectionIntervalMs / 1000));
+    fmInfo() << "FSEventCollector: Started event collection with interval:" << (collectionIntervalMs / 1000) << "seconds";
 
     return true;
 }
@@ -149,13 +148,12 @@ void FSEventCollectorPrivate::stopCollecting()
     fsMonitor.stop();
 
     // Clear collected events
-
     createdFilesList.clear();
     deletedFilesList.clear();
     modifiedFilesList.clear();
     movedFilesList.clear();
 
-    logDebug("Stopped event collection");
+    fmInfo() << "FSEventCollector: Stopped event collection";
 }
 
 bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
@@ -181,8 +179,9 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
 
     // Check if extension is supported for content search
     bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
-    if (!supported)
-        logDebug(QString("Skipping file with unsupported extension: %1 (suffix: %2)").arg(path, suffix));
+    if (!supported) {
+        fmDebug() << "FSEventCollector: Skipping file with unsupported extension:" << path << "suffix:" << suffix;
+    }
 
     return supported;
 }
@@ -206,7 +205,7 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
         // Add to created list to ensure reindexing
         if (shouldIndexFile(fullPath)) {
             createdFilesList.insert(fullPath);
-            logDebug(QString("File was deleted and recreated, adding to created list: %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: File recreated after deletion, adding to created list:" << fullPath;
         }
     } else {
         // Check if this file is under a directory that's already in the created list
@@ -214,7 +213,7 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
             // Only insert if file has supported extension or is a directory
             if (shouldIndexFile(fullPath)) {
                 createdFilesList.insert(fullPath);
-                logDebug(QString("Added to created list: %1").arg(fullPath));
+                fmDebug() << "FSEventCollector: Added to created list:" << fullPath;
 
                 // If this is a directory, remove any files in the list that are under this directory
                 if (isDirectory(fullPath)) {
@@ -222,7 +221,7 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
                 }
             }
         } else {
-            logDebug(QString("Skipped adding to created list (parent directory already added): %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Skipped adding to created list, parent directory already added:" << fullPath;
         }
     }
 
@@ -248,22 +247,22 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
     // 3. Otherwise, add to deleted list
     if (createdFilesList.contains(fullPath)) {
         createdFilesList.remove(fullPath);
-        logDebug(QString("Removed from created list due to deletion: %1").arg(fullPath));
+        fmDebug() << "FSEventCollector: Removed from created list due to deletion:" << fullPath;
         if (shouldIndexFile(fullPath)) {
             deletedFilesList.insert(fullPath);
-            logDebug(QString("Added to deleted list: %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Added to deleted list:" << fullPath;
         }
     } else {
         if (modifiedFilesList.contains(fullPath)) {
             modifiedFilesList.remove(fullPath);
-            logDebug(QString("Removed from modified list due to deletion: %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Removed from modified list due to deletion:" << fullPath;
         }
 
         if (shouldIndexFile(fullPath)) {
             deletedFilesList.insert(fullPath);
-            logDebug(QString("Added to deleted list: %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Added to deleted list:" << fullPath;
         } else {
-            logDebug(QString("Skipped adding to deleted list (parent directory already added): %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Skipped adding to deleted list, parent directory already added:" << fullPath;
         }
     }
 
@@ -289,7 +288,7 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
     // 3. Otherwise, add to modified list
     if (createdFilesList.contains(fullPath) || deletedFilesList.contains(fullPath)) {
         // No need to track modifications for newly created or deleted files
-        logDebug(QString("Ignored modification for created/deleted file: %1").arg(fullPath));
+        fmDebug() << "FSEventCollector: Ignored modification for created/deleted file:" << fullPath;
     } else {
         // For modified files, we only care about actual files, not directories
         // So we don't need to check for parent directories or redundant entries
@@ -297,10 +296,10 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
             // Only insert if file has supported extension
             if (shouldIndexFile(fullPath)) {
                 modifiedFilesList.insert(fullPath);
-                logDebug(QString("Added to modified list: %1").arg(fullPath));
+                fmDebug() << "FSEventCollector: Added to modified list:" << fullPath;
             }
         } else {
-            logDebug(QString("Skipped adding to modified list (directory or parent directory already in lists): %1").arg(fullPath));
+            fmDebug() << "FSEventCollector: Skipped adding to modified list, directory or parent directory already in lists:" << fullPath;
         }
     }
 
@@ -339,7 +338,7 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
 
     // Only track moves for files that should be indexed
     if (!shouldIndexFile(fullFromPath) && !shouldIndexFile(fullToPath)) {
-        logError(QString("Skipped move tracking for unsupported file types: %1 -> %2").arg(fullFromPath, fullToPath));
+        fmDebug() << "FSEventCollector: Skipped move tracking for unsupported file types:" << fullFromPath << "->" << fullToPath;
         return;
     }
 
@@ -351,7 +350,7 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
         createdFilesList.remove(fullFromPath);
         if (shouldIndexFile(fullToPath)) {
             createdFilesList.insert(fullToPath);
-            logDebug(QString("Converted move to creation (source was newly created): %1 -> %2").arg(fullFromPath, fullToPath));
+            fmDebug() << "FSEventCollector: Converted move to creation, source was newly created:" << fullFromPath << "->" << fullToPath;
         }
         hasConflict = true;
     }
@@ -359,12 +358,12 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
     // If the source was in modified list, remove it since it's being moved
     if (modifiedFilesList.contains(fullFromPath)) {
         modifiedFilesList.remove(fullFromPath);
-        logDebug(QString("Removed from modified list due to move: %1").arg(fullFromPath));
+        fmDebug() << "FSEventCollector: Removed from modified list due to move:" << fullFromPath;
     }
 
     // If destination already exists in any list, we have a conflict - fall back to delete+create
     if (createdFilesList.contains(fullToPath) || deletedFilesList.contains(fullToPath) || modifiedFilesList.contains(fullToPath) || movedFilesList.contains(fullToPath)) {
-        logError(QString("Move conflict detected, falling back to delete+create: %1 -> %2").arg(fullFromPath, fullToPath));
+        fmWarning() << "FSEventCollector: Move conflict detected, falling back to delete+create:" << fullFromPath << "->" << fullToPath;
         handleFileDeleted(fromPath, fromName);
         handleFileCreated(toPath, toName);
         return;
@@ -373,7 +372,7 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
     // If no conflicts, track as a move operation for efficient index update
     if (!hasConflict) {
         movedFilesList.insert(fullFromPath, fullToPath);
-        logDebug(QString("Added to moved list: %1 -> %2").arg(fullFromPath, fullToPath));
+        fmDebug() << "FSEventCollector: Added to moved list:" << fullFromPath << "->" << fullToPath;
 
         // Check if max event count exceeded after adding
         if (isMaxEventCountExceeded()) {
@@ -417,11 +416,10 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     movedFilesList.clear();
 
     // Log statistics
-    logDebug(QString("Flushing events - Created: %1, Deleted: %2, Modified: %3, Moved: %4")
-                     .arg(created.size())
-                     .arg(deleted.size())
-                     .arg(modified.size())
-                     .arg(moved.size()));
+    fmInfo() << "FSEventCollector: Flushing events - Created:" << created.size()
+             << "Deleted:" << deleted.size()
+             << "Modified:" << modified.size()
+             << "Moved:" << moved.size();
 
     // Emit signals with collected events (only if not empty)
     if (!created.isEmpty()) {
@@ -468,7 +466,7 @@ void FSEventCollectorPrivate::removeRedundantEntries(QSet<QString> &filesList)
     // Remove redundant paths from the original list
     for (const QString &path : redundantPaths) {
         filesList.remove(path);
-        logDebug(QString("Removed redundant entry (parent directory exists in list): %1").arg(path));
+        fmDebug() << "FSEventCollector: Removed redundant entry, parent directory exists in list:" << path;
     }
 }
 
@@ -539,7 +537,7 @@ void FSEventCollectorPrivate::cleanupRedundantEntries()
     for (const QString &modifiedPath : std::as_const(modifiedFilesList)) {
         if (isChildOfAnyPath(modifiedPath, allDirectories)) {
             redundantModified.insert(modifiedPath);
-            logDebug(QString("Removed redundant modified entry (parent directory in created/deleted lists): %1").arg(modifiedPath));
+            fmDebug() << "FSEventCollector: Removed redundant modified entry, parent directory in created/deleted lists:" << modifiedPath;
         }
     }
 
@@ -553,17 +551,6 @@ bool FSEventCollectorPrivate::isMaxEventCountExceeded() const
 {
     int total = createdFilesList.size() + deletedFilesList.size() + modifiedFilesList.size() + movedFilesList.size();
     return total >= maxEvents;
-}
-
-void FSEventCollectorPrivate::logDebug(const QString &message) const
-{
-    fmDebug() << "FSEventCollector:" << message;
-}
-
-void FSEventCollectorPrivate::logError(const QString &message) const
-{
-    fmWarning() << "FSEventCollector ERROR:" << message;
-    Q_EMIT q_ptr->errorOccurred(message);
 }
 
 QString FSEventCollectorPrivate::normalizePath(const QString &dirPath, const QString &fileName) const
@@ -632,7 +619,7 @@ void FSEventCollector::setCollectionInterval(int seconds)
 
     // Validate input
     if (seconds <= 0) {
-        d->logError(QString("Invalid collection interval: %1 seconds. Must be positive.").arg(seconds));
+        fmWarning() << "FSEventCollector: Invalid collection interval:" << seconds << "seconds, must be positive";
         return;
     }
 
@@ -645,7 +632,7 @@ void FSEventCollector::setCollectionInterval(int seconds)
         d->collectionTimer.start(d->collectionIntervalMs);
     }
 
-    d->logDebug(QString("Collection interval set to %1 seconds").arg(seconds));
+    fmInfo() << "FSEventCollector: Collection interval set to" << seconds << "seconds";
 }
 
 int FSEventCollector::collectionInterval() const
@@ -660,12 +647,12 @@ void FSEventCollector::setMaxEventCount(int count)
 
     // Validate input
     if (count <= 0) {
-        d->logError(QString("Invalid max event count: %1. Must be positive.").arg(count));
+        fmWarning() << "FSEventCollector: Invalid max event count:" << count << ", must be positive";
         return;
     }
 
     d->maxEvents = count;
-    d->logDebug(QString("Max event count set to %1").arg(count));
+    fmInfo() << "FSEventCollector: Max event count set to" << count;
 
     // Check if current count exceeds new max
     if (d->isMaxEventCountExceeded()) {
@@ -695,7 +682,7 @@ void FSEventCollector::clearEvents()
     d->modifiedFilesList.clear();
     d->movedFilesList.clear();
 
-    d->logDebug("Cleared all collected events");
+    fmInfo() << "FSEventCollector: Cleared all collected events";
 }
 
 QStringList FSEventCollector::createdFiles() const

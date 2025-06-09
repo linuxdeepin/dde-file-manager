@@ -99,12 +99,12 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
         if (QDir(absPath).exists()) {
             this->rootPaths.append(absPath);
         } else {
-            logError(QString("Root path does not exist: %1").arg(absPath));
+            fmWarning() << "FSMonitor: Root path does not exist:" << absPath;
         }
     }
 
     if (this->rootPaths.isEmpty()) {
-        logError("No valid root paths provided");
+        fmWarning() << "FSMonitor: No valid root paths provided for initialization";
         return false;
     }
 
@@ -125,21 +125,21 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     });
     worker->setMaxFastScanResults(getMaxUserWatches());
 
-    logDebug(QString("FSMonitor initialized with %1 root paths").arg(this->rootPaths.size()));
+    fmInfo() << "FSMonitor: Initialized successfully with" << this->rootPaths.size() << "root paths";
     return true;
 }
 
 bool FSMonitorPrivate::startMonitoring()
 {
     if (active) {
-        logDebug("Monitoring already active, ignoring start request");
+        fmInfo() << "FSMonitor: Monitoring already active, ignoring start request";
         return true;
     }
 
     // Determine system limits for inotify watches
     maxWatches = getMaxUserWatches();
     if (maxWatches <= 0) {
-        logError("Failed to determine system max watches, using default of 8192");
+        fmWarning() << "FSMonitor: Failed to determine system max watches, using default of 8192";
         maxWatches = 8192;
     }
 
@@ -154,16 +154,15 @@ bool FSMonitorPrivate::startMonitoring()
 
     // Try fast directory scan first if enabled
     if (useFastScan) {
-        logDebug("Attempting fast directory scan...");
+        fmInfo() << "FSMonitor: Attempting fast directory scan";
         QMetaObject::invokeMethod(worker, "tryFastDirectoryScan",
                                   Qt::QueuedConnection);
     } else {
         travelRootDirectories();
     }
 
-    logDebug(QString("Started monitoring with max watches: %1, usage limit: %2%")
-                     .arg(maxWatches)
-                     .arg(maxUsagePercentage * 100));
+    fmInfo() << "FSMonitor: Started monitoring with max watches:" << maxWatches
+             << "usage limit:" << (maxUsagePercentage * 100) << "%";
 
     return true;
 }
@@ -182,7 +181,7 @@ void FSMonitorPrivate::stopMonitoring()
         watchedDirectories.clear();
     }
 
-    logDebug("Stopped all monitoring");
+    fmInfo() << "FSMonitor: Stopped all monitoring";
 }
 
 void FSMonitorPrivate::travelRootDirectories()
@@ -285,7 +284,7 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
 
     // Check if path is a symlink
     if (isSymbolicLink(path)) {
-        logDebug(QString("Excluding symbolic link: %1").arg(path));
+        fmDebug() << "FSMonitor: Excluding symbolic link:" << path;
         return true;
     }
 
@@ -293,13 +292,13 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
     if (!showHidden()) {
         QFileInfo fileInfo(path);
         if (fileInfo.fileName().startsWith('.')) {
-            logDebug(QString("Excluding hidden file/directory: %1").arg(path));
+            fmDebug() << "FSMonitor: Excluding hidden file/directory:" << path;
             return true;
         }
 
         // Check if any parent directory is hidden
         if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath())) {
-            logDebug(QString("Excluding file in hidden directory: %1").arg(path));
+            fmDebug() << "FSMonitor: Excluding file in hidden directory:" << path;
             return true;
         }
     }
@@ -324,7 +323,7 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
 
     // Check if path is on external mount
     if (isExternalMount(path)) {
-        logDebug(QString("Excluding external mount: %1").arg(path));
+        fmDebug() << "FSMonitor: Excluding external mount:" << path;
         return true;
     }
 
@@ -391,10 +390,8 @@ bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
 
     // Check if we're within watch limits
     if (!isWithinWatchLimit()) {
-        logError(QString("Watch limit reached (%1/%2), skipping: %3")
-                         .arg(watchedDirectories.size())
-                         .arg(maxWatches)
-                         .arg(path));
+        fmWarning() << "FSMonitor: Watch limit reached (" << watchedDirectories.size()
+                    << "/" << maxWatches << "), skipping:" << path;
 
         // Notify about the resource limit
         Q_EMIT q_ptr->resourceLimitReached(watchedDirectories.size(), maxWatches);
@@ -404,11 +401,11 @@ bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
     // Add to watcher
     if (watcher->addPath(path)) {
         watchedDirectories.insert(path);
-        //   logDebug(QString("Added watch for directory: %1").arg(path));
+        //   fmDebug() << "FSMonitor: Added watch for directory:" << path;
         return true;
     }
 
-    logError(QString("Failed to add watch for directory: %1").arg(path));
+    fmWarning() << "FSMonitor: Failed to add watch for directory:" << path;
     return false;
 }
 
@@ -421,7 +418,7 @@ void FSMonitorPrivate::removeWatchForDirectory(const QString &path)
     if (watchedDirectories.contains(path)) {
         watcher->removePath(path);
         watchedDirectories.remove(path);
-        logDebug(QString("Removed watch for directory: %1").arg(path));
+        fmDebug() << "FSMonitor: Removed watch for directory:" << path;
     }
 }
 
@@ -474,7 +471,7 @@ void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &nam
 
     if (isDirectory(path, name)) {
         // It's a directory, add to watch and emit signal
-        logDebug(QString("Directory created: %1/%2").arg(path, name));
+        fmDebug() << "FSMonitor: Directory created:" << path << "/" << name;
         Q_EMIT q_ptr->directoryCreated(path, name);
 
         // Add new directory to watch recursively
@@ -483,7 +480,7 @@ void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &nam
         }
     } else {
         // It's a file, emit signal
-        logDebug(QString("File created: %1/%2").arg(path, name));
+        fmDebug() << "FSMonitor: File created:" << path << "/" << name;
         Q_EMIT q_ptr->fileCreated(path, name);
     }
 }
@@ -503,7 +500,7 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
 
     if (watchedDirectories.contains(fullPath)) {
         // It was a watched directory
-        logDebug(QString("Directory deleted: %1/%2").arg(path, name));
+        fmDebug() << "FSMonitor: Directory deleted:" << path << "/" << name;
         Q_EMIT q_ptr->directoryDeleted(path, name);
 
         // Remove from watch
@@ -512,7 +509,7 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
     } else {
         // Regular file deleted
         if (!name.isEmpty()) {
-            logDebug(QString("File deleted: %1/%2").arg(path, name));
+            fmDebug() << "FSMonitor: File deleted:" << path << "/" << name;
             Q_EMIT q_ptr->fileDeleted(path, name);
         }
     }
@@ -529,7 +526,7 @@ void FSMonitorPrivate::handleFileModified(const QString &path, const QString &na
         return;
     }
 
-    logDebug(QString("File modified: %1/%2").arg(path, name));
+    fmDebug() << "FSMonitor: File modified:" << path << "/" << name;
     Q_EMIT q_ptr->fileModified(path, name);
 }
 
@@ -550,8 +547,8 @@ void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &f
 
     if (watchedDirectories.contains(fromFullPath)) {
         // It was a watched directory that was moved
-        logDebug(QString("Directory moved: %1/%2 -> %3/%4")
-                         .arg(fromPath, fromName, toPath, toName));
+        fmDebug() << "FSMonitor: Directory moved:" << fromPath << "/" << fromName
+                  << "->" << toPath << "/" << toName;
 
         Q_EMIT q_ptr->directoryMoved(fromPath, fromName, toPath, toName);
 
@@ -565,8 +562,8 @@ void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &f
         }
     } else {
         // Regular file moved
-        logDebug(QString("File moved: %1/%2 -> %3/%4")
-                         .arg(fromPath, fromName, toPath, toName));
+        fmDebug() << "FSMonitor: File moved:" << fromPath << "/" << fromName
+                  << "->" << toPath << "/" << toName;
 
         Q_EMIT q_ptr->fileMoved(fromPath, fromName, toPath, toName);
     }
@@ -581,28 +578,12 @@ bool FSMonitorPrivate::isDirectory(const QString &path, const QString &name) con
     return QFileInfo(QDir(path).absoluteFilePath(name)).isDir();
 }
 
-void FSMonitorPrivate::logDebug(const QString &message) const
-{
-    fmDebug() << "[FSMonitor]" << message;
-}
-
-void FSMonitorPrivate::logInfo(const QString &message) const
-{
-    fmInfo() << "[FSMonitor]" << message;
-}
-
-void FSMonitorPrivate::logError(const QString &message) const
-{
-    fmWarning() << "[FSMonitor]" << message;
-    Q_EMIT q_ptr->errorOccurred(message);
-}
-
 void FSMonitorPrivate::handleFastScanCompleted(bool success)
 {
     if (success) {
-        logDebug("Fast directory scan completed successfully");
+        fmInfo() << "FSMonitor: Fast directory scan completed successfully";
     } else {
-        logError("Fast directory scan failed, continuing with traditional scan");
+        fmWarning() << "FSMonitor: Fast directory scan failed, continuing with traditional scan";
         travelRootDirectories();
     }
 }
@@ -613,7 +594,7 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         return;
     }
 
-    logDebug(QString("Received batch of %1 directories to watch").arg(paths.size()));
+    fmInfo() << "FSMonitor: Received batch of" << paths.size() << "directories to watch";
 
     int addedCount = 0;
     int skipCount = 0;
@@ -623,9 +604,8 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
     for (const QString &path : paths) {
         // 检查资源限制
         if (!isWithinWatchLimit()) {
-            logError(QString("Watch limit reached (%1/%2), stopping batch processing")
-                             .arg(watchedDirectories.size())
-                             .arg(maxWatches));
+            fmWarning() << "FSMonitor: Watch limit reached (" << watchedDirectories.size()
+                        << "/" << maxWatches << "), stopping batch processing";
             Q_EMIT q_ptr->resourceLimitReached(watchedDirectories.size(), maxWatches);
             break;
         }
@@ -637,7 +617,7 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
                 watchedDirectories.insert(path);
                 addedCount++;
             } else {
-                logError(QString("Failed to add directory watch: %1").arg(path));
+                fmWarning() << "FSMonitor: Failed to add directory watch:" << path;
                 failCount++;
             }
         } else {
@@ -645,11 +625,10 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         }
     }
 
-    logInfo(QString("Batch processing complete: added %1, skipped %2, failed %3, total watching %4")
-                    .arg(addedCount)
-                    .arg(skipCount)
-                    .arg(failCount)
-                    .arg(watchedDirectories.size()));
+    fmInfo() << "FSMonitor: Batch processing complete - added:" << addedCount
+             << "skipped:" << skipCount
+             << "failed:" << failCount
+             << "total watching:" << watchedDirectories.size();
 }
 
 // ========== FSMonitor implementation ==========
@@ -750,7 +729,7 @@ void FSMonitor::setUseFastScan(bool enable)
     Q_D(FSMonitor);
 
     if (d->active) {
-        fmWarning() << "Cannot change fast scan setting while monitor is active";
+        fmWarning() << "FSMonitor: Cannot change fast scan setting while monitor is active";
         return;
     }
 

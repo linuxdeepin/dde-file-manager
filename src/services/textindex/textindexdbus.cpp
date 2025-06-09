@@ -30,9 +30,9 @@ void TextIndexDBusPrivate::initConnect()
     QObject::connect(taskManager, &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
                          QString msg;
-                         fmInfo() << "Reset cpu limit";
+                         fmInfo() << "TextIndexDBus: Resetting CPU limit after task completion";
                          if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
-                             fmWarning() << "Reset CpuQuota failed: " << msg;
+                             fmWarning() << "TextIndexDBus: Failed to reset CPU quota:" << msg;
                          }
                          emit q->TaskFinished(type, path, success);
                      });
@@ -64,7 +64,7 @@ void TextIndexDBusPrivate::initConnect()
 
 void TextIndexDBusPrivate::handleMonitoring(bool start)
 {
-    fmInfo() << "FS event monitoring: " << start;
+    fmInfo() << "TextIndexDBus: FS event monitoring state changed to:" << start;
     if (!start) {
         fsEventController->stopFSMonitoring();
         return;
@@ -89,11 +89,11 @@ void TextIndexDBusPrivate::handleSlientStart()
         }
 
         if (!canSilentlyRefreshIndex(pathsToProcess.first())) {
-            fmWarning() << "Unable to refresh the index because there is already a current task for: " << pathsToProcess.first();
+            fmWarning() << "TextIndexDBus: Unable to refresh index, task already running for:" << pathsToProcess.first();
             return;
         }
 
-        fmInfo() << "Start a task silently for: " << pathsToProcess;
+        fmInfo() << "TextIndexDBus: Starting silent index task for:" << pathsToProcess;
 
         if (q->IndexDatabaseExists()) {   // update
             taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
@@ -185,15 +185,15 @@ bool TextIndexDBus::IndexDatabaseExists()
 
     // Then check if the version is compatible
     if (!IndexUtility::isCompatibleVersion()) {
-        fmWarning() << "Index database exists but version is incompatible or missing."
+        fmWarning() << "TextIndexDBus: Index database exists but version is incompatible."
                     << "Current version:" << Defines::kIndexVersion
                     << "Stored version:" << IndexUtility::getIndexVersion()
-                    << "[Index considered invalid due to version mismatch]";
+                    << "Index considered invalid due to version mismatch";
         return false;
     }
 
     if (IndexUtility::getLastUpdateTime().isEmpty()) {
-        fmWarning() << "Last update time is empty";
+        fmWarning() << "TextIndexDBus: Last update time is empty, index may be corrupted";
         return false;
     }
 
@@ -213,19 +213,19 @@ bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
 
     // 处理删除的文件（优先处理，因为这些文件可能已经不存在）
     if (!deletedFiles.isEmpty()) {
-        fmInfo() << "Processing" << deletedFiles.size() << "deleted files";
+        fmInfo() << "TextIndexDBus: Processing" << deletedFiles.size() << "deleted files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::RemoveFileList, deletedFiles, true) || tasksQueued;
     }
 
     // 处理新增的文件
     if (!createdFiles.isEmpty()) {
-        fmInfo() << "Processing" << createdFiles.size() << "created files";
+        fmInfo() << "TextIndexDBus: Processing" << createdFiles.size() << "created files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::CreateFileList, createdFiles, true) || tasksQueued;
     }
 
     // 处理修改的文件
     if (!modifiedFiles.isEmpty()) {
-        fmInfo() << "Processing" << modifiedFiles.size() << "modified files";
+        fmInfo() << "TextIndexDBus: Processing" << modifiedFiles.size() << "modified files";
         tasksQueued = d->taskManager->startFileListTask(IndexTask::Type::UpdateFileList, modifiedFiles, true) || tasksQueued;
     }
 
@@ -235,11 +235,11 @@ bool TextIndexDBus::ProcessFileChanges(const QStringList &createdFiles,
 bool TextIndexDBus::ProcessFileMoves(const QHash<QString, QString> &movedFiles)
 {
     if (movedFiles.isEmpty()) {
-        fmInfo() << "No file moves to process";
+        fmDebug() << "TextIndexDBus: No file moves to process";
         return false;
     }
 
-    fmInfo() << "Processing" << movedFiles.size() << "moved files";
+    fmInfo() << "TextIndexDBus: Processing" << movedFiles.size() << "moved files";
     
     // 启动文件移动任务
     bool taskQueued = d->taskManager->startFileMoveTask(movedFiles, true);
@@ -250,7 +250,7 @@ bool TextIndexDBus::ProcessFileMoves(const QHash<QString, QString> &movedFiles)
 void TextIndexDBusPrivate::initializeSupportedExtensions()
 {
     m_currentSupportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
-    fmInfo() << "Initialized supported file extensions (" << m_currentSupportedExtensions.size() << "):"
+    fmInfo() << "TextIndexDBus: Initialized supported file extensions (" << m_currentSupportedExtensions.size() << "):"
              << m_currentSupportedExtensions;
 }
 
@@ -264,7 +264,7 @@ void TextIndexDBusPrivate::handleConfigChanged()
 
     // Check if supported file extensions have changed (order-insensitive)
     if (currentExtensionsSet != newExtensionsSet) {
-        fmInfo() << "Supported file extensions changed from" << m_currentSupportedExtensions.size()
+        fmInfo() << "TextIndexDBus: Supported file extensions changed from" << m_currentSupportedExtensions.size()
                  << "to" << newSupportedExtensions.size() << "extensions";
 
         // Update stored extensions
@@ -282,10 +282,10 @@ void TextIndexDBusPrivate::handleConfigChanged()
 
         // Only start update task if index database exists
         if (q->IndexDatabaseExists()) {
-            fmInfo() << "Starting index update task due to supported file extensions change for paths:" << pathsToProcess;
+            fmInfo() << "TextIndexDBus: Starting index update task due to supported file extensions change for paths:" << pathsToProcess;
             taskManager->startTask(IndexTask::Type::Update, pathsToProcess);
         } else {
-            fmWarning() << "Cannot start index update task: index database does not exist";
+            fmWarning() << "TextIndexDBus: Cannot start index update task, index database does not exist";
         }
     }
 }
