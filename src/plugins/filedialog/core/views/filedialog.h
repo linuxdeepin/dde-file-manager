@@ -131,6 +131,10 @@ private:
     void updateViewState();
     void adjustPosition(QWidget *w);
     QString modelCurrentNameFilter() const;
+    
+    bool isFileNameEditFocused() const;
+    void handleEnterInSaveMode();
+    void handleEnterInOpenMode();
 
 private:
     QScopedPointer<FileDialogPrivate> d;
