@@ -30,6 +30,7 @@ public:
     bool decrypt(const QString &keyPin, const QString &dirPath, QString *psw);
 
     int checkTPMAvailbableByTools();
+    static int checkTPMLockoutStatusByTools();
     int getRandomByTools(int size, QString *output);
     int isSupportAlgoByTools(const QString &algoName, bool *support);
     int encryptByTools(const TpmEncryptArgs &params);

@@ -56,6 +56,11 @@ int tpm_utils::checkTPM()
     return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_TPMIsAvailablePro").toInt();
 }
 
+int tpm_utils::checkTPMLockoutStatus()
+{
+    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_CheckTPMLockoutPro").toInt();
+}
+
 int tpm_utils::getRandomByTPM(int size, QString *output)
 {
     return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_GetRandomByTPMPro", size, output).toInt();
