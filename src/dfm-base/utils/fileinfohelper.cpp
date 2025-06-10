@@ -35,6 +35,7 @@ void FileInfoHelper::init()
     connect(this, &FileInfoHelper::fileInfoRefresh, worker.data(), &FileInfoAsycWorker::fileRefresh, Qt::QueuedConnection);
     connect(worker.data(), &FileInfoAsycWorker::fileMimeTypeFinished, this, &FileInfoHelper::fileMimeTypeFinished, Qt::QueuedConnection);
     connect(this, &FileInfoHelper::fileRefreshRequest, this, &FileInfoHelper::handleFileRefresh, Qt::QueuedConnection);
+    connect(this, &FileInfoHelper::requestCheckInfoRefresh, this, &FileInfoHelper::handleCheckInfoRefresh, Qt::QueuedConnection);
 
     worker->moveToThread(thread.data());
     thread->start();
@@ -144,7 +145,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
     auto callback = [asyncInfo, this](bool success, void *data) {
         Q_UNUSED(data);
         if (!success) {
-            FileInfoHelper::instance().checkInfoRefresh(asyncInfo);
+            emit this->requestCheckInfoRefresh(asyncInfo);
             if (ProtocolUtils::isSMBFile(asyncInfo->fileUrl())
                 && asyncInfo->errorCodeFromDfmio() == DFMIOErrorCode::DFM_IO_ERROR_HOST_IS_DOWN
                 && !NetworkUtils::instance()->checkFtpOrSmbBusy(asyncInfo->fileUrl())) {
@@ -163,6 +164,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
         needQureingInfo.appendByLock(asyncInfo);
         return;
     }
+    
     qureingInfo.appendByLock(asyncInfo);
     qCDebug(logDFMBase) << "Starting async file info query for URL:" << asyncInfo->fileUrl();
     asyncInfo->asyncQueryDfmFileInfo(0, callback);
@@ -170,6 +172,18 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
 
 void FileInfoHelper::checkInfoRefresh(QSharedPointer<FileInfo> dfileInfo)
 {
+    // 从工作线程安全地发出信号，避免跨线程操作列表
+    emit requestCheckInfoRefresh(dfileInfo);
+}
+
+void FileInfoHelper::handleCheckInfoRefresh(QSharedPointer<FileInfo> dfileInfo)
+{
+    // 确保在主线程中执行，避免跨线程竞态条件
+    assert(qApp->thread() == QThread::currentThread());
+    
+    if (stoped)
+        return;
+    
     qureingInfo.removeOneByLock(dfileInfo);
     if (needQureingInfo.containsByLock(dfileInfo)) {
         needQureingInfo.removeOneByLock(dfileInfo);
