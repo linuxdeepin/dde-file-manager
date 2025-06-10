@@ -24,8 +24,10 @@ ViewPainter::ViewPainter(CanvasViewPrivate *dd)
 void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
 {
     // all item paint in drawMove
-    if (d->sortAnimOper->getMoveAnimationing())
+    if (d->sortAnimOper->getMoveAnimationing()) {
+        fmDebug() << "Skipping normal file painting - move animation in progress";
         return;
+    }
 
     QRect repaintRect = event->rect();
     QVector<QRect> region;
@@ -314,8 +316,10 @@ void ViewPainter::drawSelectRect()
 
 QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
 {
-    if (indexs.isEmpty() || !d)
+    if (indexs.isEmpty() || !d) {
+        fmWarning() << "Cannot create drag pixmap - invalid parameters:" << indexs.isEmpty() << (!d);
         return QPixmap();
+    }
 
     auto viewPtr = d->q;
     // get foucs item to set it on top.

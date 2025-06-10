@@ -41,14 +41,14 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
     BaseWindowPointer win(new BaseWindow);
     win->init();
     win->setGeometry(sp->geometry());   // 经过缩放的区域
-    fmDebug() << "screen name" << sp->name() << "geometry" << sp->geometry() << win.get();
+    fmDebug() << "Window created for screen:" << sp->name() << "geometry:" << sp->geometry() << "window pointer:" << win.get();
 
     ddplugin_desktop_util::setDesktopWindow(win.get());
     // the Desktop Window is opaque though it has been setted Qt::WA_TranslucentBackground
     // uing setOpacity to set opacity for Desktop Window to be transparent.
     auto handle = win->windowHandle();
     handle->setOpacity(0.99);
-    fmInfo() << "set desktop flag for window" << sp->name() << win->winId() << "handle" << handle;
+    fmInfo() << "Desktop window configured for screen:" << sp->name() << "winId:" << win->winId() << "handle:" << handle;
 
     traceWindow(handle);
 
@@ -57,8 +57,10 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
 
 void WindowFramePrivate::traceWindow(QWindow *win) const
 {
-    if (!win)
+    if (!win) {
+        fmWarning() << "Null window provided for tracing";
         return;
+    }
 
     connect(win, &QWindow::xChanged, this, &WindowFramePrivate::xChanged);
     connect(win, &QWindow::yChanged, this, &WindowFramePrivate::yChanged);
@@ -68,22 +70,22 @@ void WindowFramePrivate::traceWindow(QWindow *win) const
 
 void WindowFramePrivate::xChanged(int arg) const
 {
-    fmInfo() << "root window" << sender() << "x change to" << arg;
+    fmDebug() << "Root window" << sender() << "x position changed to:" << arg;
 }
 
 void WindowFramePrivate::yChanged(int arg) const
 {
-    fmInfo() << "root window" << sender() << "y change to" << arg;
+    fmDebug() << "Root window" << sender() << "y position changed to:" << arg;
 }
 
 void WindowFramePrivate::widthChanged(int arg) const
 {
-    fmInfo() << "root window" << sender() << "width change to" << arg;
+    fmDebug() << "Root window" << sender() << "width changed to:" << arg;
 }
 
 void WindowFramePrivate::heightChanged(int arg) const
 {
-    fmInfo() << "root window" << sender() << "height change to" << arg;
+    fmDebug() << "Root window" << sender() << "height changed to:" << arg;
 }
 
 WindowFrame::WindowFrame(QObject *parent)
@@ -118,16 +120,19 @@ QList<QWidget *> WindowFrame::rootWindows() const
     QReadLocker lk(&d->locker);
     for (ScreenPointer s : scs) {
         if (appended.contains(s->name())) {
-            fmCritical() << "Duplicate name screen" << s->name()
-                         << s->geometry() << "appended" << appended;
+            fmCritical() << "Duplicate screen name detected:" << s->name()
+                         << "geometry:" << s->geometry() << "already appended:" << appended;
             continue;
         }
         if (auto win = d->windows.value(s->name())) {
             ret << win.get();
             appended << s->name();
+        } else {
+            fmDebug() << "No window found for screen:" << s->name();
         }
     }
 
+    fmDebug() << "Returning" << ret.size() << "root windows for" << scs.size() << "screens";
     return ret;
 }
 
@@ -142,9 +147,11 @@ void WindowFrame::layoutChildren()
                 auto var = wid->property(DesktopFrameProperty::kPropWidgetLevel);
                 if (var.isValid()) {
                     subWidgets.append(wid);
-                    fmDebug() << screen << "subwidget" << wid->property(DesktopFrameProperty::kPropWidgetName).toString() << "level" << var.toDouble();
+                    fmDebug() << "Found subwidget on screen:" << screen
+                              << "name:" << wid->property(DesktopFrameProperty::kPropWidgetName).toString()
+                              << "level:" << var.toDouble();
                 } else {
-                    fmWarning() << screen << "subwidget" << wid << "no WidgetLevel property ";
+                    fmWarning() << "Subwidget on screen:" << screen << "widget:" << wid << "missing WidgetLevel property";
                 }
             }
         }
@@ -177,7 +184,7 @@ void WindowFrame::buildBaseWindow()
 
     DisplayMode mode = ddplugin_desktop_util::screenProxyLastChangedMode();
     auto screens = ddplugin_desktop_util::screenProxyLogicScreens();
-    fmInfo() << "screen mode:" << mode << "screen count:" << screens.size();
+    fmInfo() << "Display mode:" << mode << "screen count:" << screens.size();
 
     QWriteLocker lk(&d->locker);
     // 实际是单屏
@@ -186,7 +193,7 @@ void WindowFrame::buildBaseWindow()
 
         ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
-            fmCritical() << "get primary screen failed return";
+            fmCritical() << "Failed to get primary screen, aborting window build";
             //清空并通知重建
             d->windows.clear();
             lk.unlock();
@@ -197,12 +204,15 @@ void WindowFrame::buildBaseWindow()
         BaseWindowPointer winPtr = d->windows.value(primary->name());
         d->windows.clear();
         if (!winPtr.isNull()) {
-            if (winPtr->geometry() != primary->geometry())
+            if (winPtr->geometry() != primary->geometry()) {
                 winPtr->setGeometry(primary->geometry());
+                fmDebug() << "Updated existing primary window geometry to:" << primary->geometry();
+            }
         } else {
             winPtr = d->createWindow(primary);
+            fmDebug() << "Created new primary window";
         }
-        fmInfo() << "primary frame" << primary->name() << primary->geometry();
+        fmInfo() << "Primary window configured for screen:" << primary->name() << "geometry:" << primary->geometry();
         d->updateProperty(winPtr, primary, true);
         d->windows.insert(primary->name(), winPtr);
 
@@ -210,10 +220,11 @@ void WindowFrame::buildBaseWindow()
         winPtr->hide();
     } else {
         //多屏
+        fmInfo() << "Configuring multiple screens";
         for (auto screenName : d->windows.keys()) {
             // 删除实际不存在的数据
             if (!ddplugin_desktop_util::screenProxyScreen(screenName)) {
-                fmInfo() << "screen:" << screenName << "is invalid, delete frame.";
+                fmInfo() << "Screen:" << screenName << "no longer exists, removing window";
                 d->windows.remove(screenName);
             }
         }
@@ -224,12 +235,12 @@ void WindowFrame::buildBaseWindow()
             if (!winPtr.isNull()) {
                 if (winPtr->geometry() != s->geometry())
                     winPtr->setGeometry(s->geometry());
-                fmInfo() << "update frame" << s->name() << "win" << winPtr->geometry() << "screen" << s->geometry();
+                fmInfo() << "Updated window for screen:" << s->name() << "window geometry:" << winPtr->geometry() << "screen geometry:" << s->geometry();
             } else {
                 // 添加缺少的数据
                 winPtr = d->createWindow(s);
                 d->windows.insert(s->name(), winPtr);
-                fmInfo() << "screen:" << s->name() << s->geometry() << " added, create frame." << winPtr->geometry();
+                fmInfo() << "Created new window for screen:" << s->name() << "geometry:" << s->geometry();
             }
 
             d->updateProperty(winPtr, s, (s == primary));
@@ -259,20 +270,20 @@ void WindowFrame::onGeometryChanged()
     auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
     for (ScreenPointer sp : ddplugin_desktop_util::screenProxyLogicScreens()) {
         auto win = d->windows.value(sp->name());
-        fmDebug() << "screen geometry change:" << sp.get() << win.get();
+        fmDebug() << "Checking geometry change for screen:" << sp->name() << "screen pointer:" << sp.get() << "window pointer:" << win.get();
         if (win.get() != nullptr) {
             // Don't continue! dde-shell change the window geometry,
             // always send geometryChanged in the scene
             if (win->geometry() == sp->geometry())
-                fmDebug() << "Window geometry is equal to logic geomertry" << win->geometry() << sp->geometry();
+                fmDebug() << "Window geometry unchanged for screen:" << sp->name() << "geometry:" << win->geometry();
 
-            fmInfo() << "root geometry change from" << win->geometry() << "to" << sp->geometry()
-                     << "screen name" << sp->name();
+            fmInfo() << "Geometry changed for screen:" << sp->name()
+                     << "from:" << win->geometry() << "to:" << sp->geometry();
             win->setGeometry(sp->geometry());
             d->updateProperty(win, sp, (sp == primary));
             changed = true;
         } else {
-            fmWarning() << "no window for" << sp->name();
+            fmWarning() << "No window found for screen:" << sp->name();
         }
     }
 
@@ -286,14 +297,17 @@ void WindowFrame::onAvailableGeometryChanged()
     auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
     for (ScreenPointer sp : ddplugin_desktop_util::screenProxyLogicScreens()) {
         auto win = d->windows.value(sp->name());
-        fmDebug() << "screen available geometry change:" << sp.get() << win.get();
+        fmDebug() << "Checking available geometry change for screen:" << sp->name() << "screen pointer:" << sp.get() << "window pointer:" << win.get();
         if (win.get() != nullptr) {
-            if (win->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect() == sp->availableGeometry())
+            QRect currentAvailableGeometry = win->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect();
+            if (currentAvailableGeometry == sp->availableGeometry()) {
+                fmDebug() << "Available geometry unchanged for screen:" << sp->name();
                 continue;
+            }
             d->updateProperty(win, sp, (sp == primary));
             changed = true;
         } else {
-            fmWarning() << "no window for" << sp->name();
+            fmWarning() << "No window found for screen:" << sp->name();
         }
     }
 

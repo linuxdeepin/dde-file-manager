@@ -24,26 +24,33 @@ CanvasModelFilter::CanvasModelFilter(CanvasProxyModel *m)
 
 bool CanvasModelFilter::insertFilter(const QUrl &url)
 {
+    Q_UNUSED(url)
     return false;
 }
 
 bool CanvasModelFilter::resetFilter(QList<QUrl> &urls)
 {
+    Q_UNUSED(urls)
     return false;
 }
 
 bool CanvasModelFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
 {
+    Q_UNUSED(url)
+    Q_UNUSED(roles)
     return false;
 }
 
 bool CanvasModelFilter::removeFilter(const QUrl &url)
 {
+    Q_UNUSED(url)
     return false;
 }
 
 bool CanvasModelFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
+    Q_UNUSED(oldUrl)
+    Q_UNUSED(newUrl)
     return false;
 }
 
@@ -82,7 +89,7 @@ bool HiddenFileFilter::updateFilter(const QUrl &url, const QVector<int> &roles)
     if (roles.contains(Global::kItemCreateFileInfoRole)) {
         // get file that removed form .hidden if do not show hidden file.
         if (!model->showHiddenFiles() && url.fileName() == ".hidden") {
-            fmDebug() << "refresh by hidden changed.";
+            fmDebug() << "Hidden file .hidden changed, refreshing model to update visibility";
             // do not refresh file info and wait 100ms to let the file atrr changed signal to refresh file
             model->refresh(model->rootIndex(), false, 100, false);
         }
@@ -190,7 +197,7 @@ bool HookFilter::insertFilter(const QUrl &url)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataInserted(url)) {
-        fmDebug() << "filter by extend module:" << url;
+        fmDebug() << "File filtered by extension module:" << url;
         return true;
     }
 
@@ -228,7 +235,7 @@ bool HookFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
     ModelHookInterface *hookIfs = model->modelHook();
     if (hookIfs && hookIfs->dataRenamed(oldUrl, newUrl)) {
-        fmDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
+        fmDebug() << "File rename filtered by extension module - old:" << oldUrl << "new:" << newUrl;
         return true;
     }
 

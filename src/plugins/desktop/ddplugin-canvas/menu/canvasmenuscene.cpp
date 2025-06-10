@@ -178,64 +178,92 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     d->view = reinterpret_cast<CanvasView *>(params.value(CanvasMenuParams::kDesktopCanvasView).toLongLong());
-    if (d->currentDir.isEmpty())
+    if (d->currentDir.isEmpty()) {
+        fmCritical() << "Current directory is empty, cannot initialize menu";
         return false;
+    }
 
     QList<AbstractMenuScene *> currentScene;
     // sort
-    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kCanvasBaseSortMenuSceneName))
+    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kCanvasBaseSortMenuSceneName)) {
         currentScene.append(sortScene);
+        fmDebug() << "Added sort menu scene";
+    }
 
     if (d->isEmptyArea) {
         // new (new doc, new dir)
-        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName)) {
             currentScene.append(newCreateScene);
+            fmDebug() << "Added new create menu scene";
+        }
 
         // file operation
-        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
+        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName)) {
             currentScene.append(operationScene);
+            fmDebug() << "Added clipboard menu scene";
+        }
 
     } else {
 
         // open with
-        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName))
+        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName)) {
             currentScene.append(openWithScene);
+            fmDebug() << "Added open with menu scene";
+        }
 
         // file operation
-        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
+        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName)) {
             currentScene.append(operationScene);
+            fmDebug() << "Added clipboard menu scene";
+        }
 
         // file (open, rename, delete)
-        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName)) {
             currentScene.append(fileScene);
+            fmDebug() << "Added file operator menu scene";
+        }
 
         // send to
-        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName)) {
             currentScene.append(fileScene);
+            fmDebug() << "Added send to menu scene";
+        }
 
-        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
+        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName)) {
             currentScene.append(shareScene);
+            fmDebug() << "Added share menu scene";
+        }
     }
 
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
+    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName)) {
         currentScene.append(dirScene);
+        fmDebug() << "Added open dir menu scene";
+    }
 
     if (!d->isDDEDesktopFileIncluded) {
         // oem menu
-        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
+        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName)) {
             currentScene.append(oemScene);
+            fmDebug() << "Added OEM menu scene";
+        }
 
         // extend menu.must last
-        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
+        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName)) {
             currentScene.append(extendScene);
+            fmDebug() << "Added extend menu scene";
+        }
     }
 
-    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
+    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName)) {
         currentScene.append(dconfigFilterScene);
+        fmDebug() << "Added DConfig filter scene";
+    }
 
-    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName)) {
         currentScene.append(actionIconManagerScene);
+        fmDebug() << "Added action icon manager scene";
+    }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
@@ -260,8 +288,10 @@ AbstractMenuScene *CanvasMenuScene::scene(QAction *action) const
 
 bool CanvasMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmCritical() << "Null parent menu provided for menu creation";
         return false;
+    }
 
     if (d->isEmptyArea) {
         this->emptyMenu(parent);
@@ -304,7 +334,7 @@ bool CanvasMenuScene::triggered(QAction *action)
                 Qt::SortOrder order = d->view->model()->sortOrder();
                 if (role == d->view->model()->sortRole())
                     order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
-                fmInfo() << "sort items by" << actionId << "order" << order;
+                fmInfo() << "Sorting items by role:" << static_cast<int>(role) << "order:" << order;
                 d->view->model()->setSortRole(role, order);
                 d->view->model()->sort();
 
@@ -323,7 +353,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
-            fmDebug() << "call ControlCenter serivce by dbus.";
+            fmDebug() << "Opening display settings via ControlCenter";
 #ifdef COMPILE_ON_V2X
             QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
                                                               "org.deepin.dde.ControlCenter1", "ShowPage");
@@ -334,7 +364,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 #endif
             msg.setArguments({ QVariant::fromValue(QString("display")) });
             QDBusConnection::sessionBus().asyncCall(msg, 5);
-            fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
+            fmInfo() << "ControlCenter service called - service:" << msg.service() << "arguments:" << msg.arguments();
             return true;
         }
 
@@ -354,17 +384,17 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Auto arrange
         if (actionId == ActionID::kAutoArrange) {
             bool align = action->isChecked();
-            fmInfo() << "enable auto arrange" << align;
+            fmInfo() << "Setting auto arrange to:" << align;
             CanvasIns->setAutoArrange(align);
             return true;
         }
 
-        fmWarning() << "Note:" << actionId << " is belong to screen scene,but not handled.";
+        fmWarning() << "Action" << actionId << "belongs to canvas scene but not handled";
 
     } else {
         auto actionScene = scene(action);
         if (!actionScene) {
-            fmWarning() << actionId << " doesn't belong to any scene.";
+            fmWarning() << "Action" << actionId << "does not belong to any scene";
             return false;
         }
 
@@ -443,8 +473,10 @@ bool CanvasMenuScene::triggered(QAction *action)
             if (actionId == dfmplugin_menu::ActionID::kRename) {
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
-                    if (Q_UNLIKELY(!index.isValid()))
+                    if (Q_UNLIKELY(!index.isValid())) {
+                        fmWarning() << "Invalid model index for focus file:" << d->focusFile;
                         return false;
+                    }
                     QPointer<ddplugin_canvas::CanvasView> view = d->view;
                     QTimer::singleShot(80, [view, index]() {
                         if (!view.isNull())
@@ -518,6 +550,7 @@ void CanvasMenuScene::normalMenu(QMenu *parent)
 {
     Q_UNUSED(parent)
 }
+
 QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
 {
     int mininum = d->view->itemDelegate()->minimumIconLevel();

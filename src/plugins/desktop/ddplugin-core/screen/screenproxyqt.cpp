@@ -79,10 +79,12 @@ QList<ScreenPointer> ScreenProxyQt::screens() const
     for (QScreen *sc : qApp->screens()) {
         if (screenMap.contains(sc)) {
             if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
-                fmCritical() << "screen error. does it is closed?" << sc->name();
+                fmCritical() << "Invalid screen detected - name:" << sc->name() << "geometry:" << sc->geometry();
                 continue;
             }
             order.append(screenMap.value(sc));
+        } else {
+            fmDebug() << "Screen not found in map:" << sc->name();
         }
     }
     return order;
@@ -98,15 +100,20 @@ QList<ScreenPointer> ScreenProxyQt::logicScreens() const
     allScreen.removeOne(primary);
     allScreen.push_front(primary);
 
+    fmDebug() << "Building logic screens list with primary screen first:" << (primary ? primary->name() : "null");
+
     for (QScreen *sc : allScreen) {
         if (screenMap.contains(sc)) {
             if (sc->name().isEmpty() || sc->geometry().size() == QSize(0, 0)) {
-                fmCritical() << "screen error. does it is closed?" << sc->name();
+                fmCritical() << "Invalid screen in logic list - name:" << sc->name() << "geometry:" << sc->geometry();
                 continue;
             }
             order.append(screenMap.value(sc));
+        } else {
+            fmDebug() << "Screen not found in map for logic screens:" << sc->name();
         }
     }
+    fmDebug() << "Returning" << order.size() << "logic screens";
     return order;
 }
 
@@ -120,6 +127,9 @@ ScreenPointer ScreenProxyQt::screen(const QString &name) const
 
     if (iter != allScreen.end()) {
         ret = *iter;
+        fmDebug() << "Screen found by name:" << name;
+    } else {
+        fmDebug() << "Screen not found by name:" << name;
     }
 
     return ret;
@@ -134,15 +144,19 @@ DisplayMode ScreenProxyQt::displayMode() const
 {
 #ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
+        fmDebug() << "Wayland environment detected, using show-only mode";
         return DisplayMode::kShowonly;
     }
 #endif
 
     QList<ScreenPointer> allScreen = screens();
-    if (allScreen.isEmpty())
+    if (allScreen.isEmpty()) {
+        fmWarning() << "No screens available, using custom mode";
         return DisplayMode::kCustom;
+    }
 
     if (allScreen.size() == 1) {
+        fmDebug() << "Single screen detected, using show-only mode";
         return DisplayMode::kShowonly;
     } else {
         // 存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
@@ -150,11 +164,13 @@ DisplayMode ScreenProxyQt::displayMode() const
         for (int i = 1; i < allScreen.size(); ++i) {
             const ScreenPointer &screen2 = allScreen.at(i);
             if (screen1->geometry().topLeft() != screen2->geometry().topLeft()) {
+                fmDebug() << "Multiple screens with different positions detected, using extend mode";
                 return DisplayMode::kExtend;
             }
         }
 
         // 所有屏幕的都重叠，则视为复制
+        fmDebug() << "Multiple screens with same position detected, using duplicate mode";
         return DisplayMode::kDuplicate;
     }
 }
@@ -182,10 +198,12 @@ void ScreenProxyQt::reset()
     connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenProxyQt::onDockChanged);
 
     screenMap.clear();
+    fmInfo() << "Initializing" << qApp->screens().size() << "screens";
     for (QScreen *sc : qApp->screens()) {
         ScreenPointer psc(new ScreenQt(sc));
         screenMap.insert(sc, psc);
         connectScreen(psc);
+        fmDebug() << "Screen initialized:" << sc->name() << "geometry:" << sc->geometry();
     }
 
     // 依赖现有屏幕数据，必须在屏幕对象初始化后调用
@@ -200,14 +218,22 @@ void ScreenProxyQt::onPrimaryChanged()
 
 void ScreenProxyQt::onScreenAdded(QScreen *screen)
 {
-    if (screen == nullptr || screenMap.contains(screen))
+    if (screen == nullptr) {
+        fmWarning() << "Null screen pointer in onScreenAdded";
         return;
+    }
 
+    if (screenMap.contains(screen)) {
+        fmDebug() << "Screen already exists in map:" << screen->name();
+        return;
+    }
+
+    fmInfo() << "Adding new screen:" << screen->name() << "geometry:" << screen->geometry();
     ScreenPointer psc(new ScreenQt(screen));
     screenMap.insert(screen, psc);
     connectScreen(psc);
 
-    fmInfo() << "add screen:" << screen->name();
+    fmInfo() << "Screen added successfully:" << screen->name() << "total screens:" << screenMap.size();
     appendEvent(kScreen);
 }
 
@@ -216,8 +242,10 @@ void ScreenProxyQt::onScreenRemoved(QScreen *screen)
     auto psc = screenMap.take(screen);
     if (psc.get() != nullptr) {
         disconnectScreen(psc);
-        fmInfo() << "del screen:" << screen->name();
+        fmInfo() << "Screen removed:" << screen->name() << "remaining screens:" << screenMap.size();
         appendEvent(kScreen);
+    } else {
+        fmDebug() << "Attempted to remove non-existent screen:" << screen->name();
     }
 }
 
@@ -241,9 +269,10 @@ void ScreenProxyQt::onDockChanged()
 void ScreenProxyQt::processEvent()
 {
     DisplayMode mode = displayMode();
-    fmInfo() << "current mode" << mode << "lastmode" << lastMode;
+    fmDebug() << "Processing events - current mode:" << mode << "last mode:" << lastMode;
 
     if (mode != lastMode) {
+        fmInfo() << "Display mode changed from" << lastMode << "to" << mode;
         lastMode = mode;
         events.insert(AbstractScreenProxy::kMode, 0);
     }
@@ -253,8 +282,10 @@ void ScreenProxyQt::processEvent()
     // then it just emits geometry changed signal and using name of the screen(hdmi) changed from :0.0 to find window relate to :0.0
     // is invalid.
     if (!events.contains(AbstractScreenProxy::kMode) && !events.contains(AbstractScreenProxy::kScreen)) {
-        if (!checkUsedScreens())
+        if (!checkUsedScreens()) {
+            fmWarning() << "Used screen check failed, adding screen event";
             events.insert(AbstractScreenProxy::kScreen, 0);
+        }
     }
 
     // 事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
@@ -278,18 +309,18 @@ bool ScreenProxyQt::checkUsedScreens()
     QStringList scs;
     dpfHookSequence->run("ddplugin_core", "hook_ScreenProxy_ScreensInUse", &scs);
     QSet<QString> inuse(scs.begin(), scs.end());
-    fmInfo() << "current screens" << cur << "used" << inuse;
+    fmDebug() << "Checking used screens - current:" << cur << "in use:" << inuse;
 
-    bool invaild = false;
+    bool invalid = false;
     for (const QString &sc : inuse) {
         if (cur.contains(sc))
             continue;
-        invaild = true;
-        fmWarning() << "screen" << sc << "was losted";
+        invalid = true;
+        fmWarning() << "Screen was lost:" << sc;
         break;
     }
 
-    return !invaild;
+    return !invalid;
 }
 
 void ScreenProxyQt::connectScreen(ScreenPointer sp)

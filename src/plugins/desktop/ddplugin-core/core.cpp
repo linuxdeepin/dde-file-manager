@@ -76,7 +76,11 @@ void Core::initialize()
 
     QString err;
     DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.desktop", &err);
-    fmInfo() << "register desktop dconfig:" << err;
+    if (err.isEmpty()) {
+        fmInfo() << "Desktop DConfig registered successfully";
+    } else {
+        fmWarning() << "Desktop DConfig registration failed:" << err;
+    }
 }
 
 bool Core::start()
@@ -122,14 +126,17 @@ void Core::handleLoadPlugins(const QStringList &names)
 {
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
-        fmInfo() << "About to load plugin:" << name;
+        fmDebug() << "Loading plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
         if (plugin) {
             bool ret = DPF_NAMESPACE::LifeCycle::loadPlugin(plugin);
-            if (ret)
-                fmInfo() << "lazy load State: " << plugin->pluginState();
-            else
-                fmCritical() << "fail to load plugin: " << plugin->pluginState();
+            if (ret) {
+                fmInfo() << "Plugin loaded successfully:" << name << "state:" << plugin->pluginState();
+            } else {
+                fmCritical() << "Failed to load plugin:" << name << "state:" << plugin->pluginState();
+            }
+        } else {
+            fmWarning() << "Plugin meta object not found for:" << name;
         }
     });
 }
@@ -139,7 +146,7 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
     static bool paintHandled = false;
     // windows paint
     if (!paintHandled && event->type() == QEvent::Paint) {
-        fmInfo() << "one window painting" << watched;
+        fmInfo() << "First paint event received, triggering post-paint initialization - target:" << watched;
         paintHandled = true;
         QMetaObject::invokeMethod(this, "initializeAfterPainted", Qt::QueuedConnection);
     }
@@ -163,11 +170,13 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
 void Core::connectToServer()
 {
     if (!DevProxyMng->initService()) {
-        fmCritical() << "device manager cannot connect to server!";
+        fmCritical() << "Device manager cannot connect to server, starting local monitor";
         DevMngIns->startMonitor();
+    } else {
+        fmInfo() << "Device manager connected to server successfully";
     }
 
-    fmInfo() << "connectToServer finished";
+    fmInfo() << "Server connection process completed";
 }
 
 void Core::initializeAfterPainted()
@@ -175,7 +184,7 @@ void Core::initializeAfterPainted()
     std::call_once(lazyFlag, []() {
         // init all lazy plguis call once
         const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
-        fmInfo() << "load lazy plugins" << list;
+        fmInfo() << "Loading lazy plugins, count:" << list.size() << "plugins:" << list;
         dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
         // init clipboard
         ClipBoard::instance()->readFirstClipboard();

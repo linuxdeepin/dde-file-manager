@@ -68,10 +68,15 @@ QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, c
         }
     }
 
-    if (pos.x() >= 0 && pos.y() >= 0)
+    if (pos.x() >= 0 && pos.y() >= 0) {
+        fmDebug() << "Found valid position:" << pos << "on surface" << currentIndex;
         return pos;
-    if (currentIndex == q->surfaces.count())
+    }
+
+    if (currentIndex == q->surfaces.count()) {
+        fmDebug() << "No space found, using bottom position";
         return { 0, gridSize.height() - height };
+    }
 
     currentIndex += 1;
     return findValidPos(currentIndex, width, height);
@@ -89,6 +94,8 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
 {
     QString name = classifier->className(id);
     Q_ASSERT(!name.isEmpty());
+
+    fmInfo() << "Creating new collection:" << name << "with id:" << id;
 
     CollectionHolderPointer holder;
     holder.reset(new CollectionHolder(id, classifier));
@@ -148,12 +155,16 @@ void NormalizedModePrivate::switchCollection()
 void NormalizedModePrivate::openEditor(const QUrl &url)
 {
     auto key = classifier->key(url);
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmDebug() << "Cannot open editor: file not in any collection:" << url.toString();
         return;
+    }
 
     auto holder = holders.value(key);
-    if (Q_UNLIKELY(!holder))
+    if (Q_UNLIKELY(!holder)) {
+        fmWarning() << "Cannot open editor: collection holder not found for key:" << key;
         return;
+    }
 
     holder->openEditor(url);
 }
@@ -387,12 +398,16 @@ bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QList<QUrl> &
         files << url.toString();
     }
 
-    if (collectionItems.isEmpty())
+    if (collectionItems.isEmpty()) {
+        fmDebug() << "No collection items found in move request";
         return false;
+    }
 
     QPoint gridPos = q->canvasViewShell->gridPos(viewIndex, viewPoint);
-    if (!q->canvasGridShell->item(viewIndex, gridPos).isEmpty())
+    if (!q->canvasGridShell->item(viewIndex, gridPos).isEmpty()) {
+        fmDebug() << "Canvas position is not empty, cannot move files";
         return false;
+    }
 
     q->canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
 
@@ -499,8 +514,10 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(CfgPresenter, &ConfigPresenter::releaseCollection, this, &NormalizedMode::releaseCollection, Qt::QueuedConnection);
 
     // creating if there already are files.
-    if (!model->files().isEmpty())
+    if (!model->files().isEmpty()) {
+        fmDebug() << "Found existing files, triggering rebuild";
         rebuild();
+    }
 
     return true;
 }
@@ -743,8 +760,10 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (CfgPresenter->organizeOnTriggered()) {
         QString oldType = d->classifier->key(oldUrl);
-        if (oldType.isEmpty())   // old item is not in collection
+        if (oldType.isEmpty()) {  // old item is not in collection
+            fmDebug() << "Renamed file was not in any collection";
             return;
+        }
         QString newType = d->classifier->classify(newUrl);
         if (newType == oldType) {
             auto idx = d->classifier->baseData(oldType)->items.indexOf(oldUrl);
@@ -781,8 +800,10 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
-    if (ConfigPresenter::instance()->organizeOnTriggered())
+    if (ConfigPresenter::instance()->organizeOnTriggered()) {
+        fmDebug() << "File insertion skipped due to organize-on-trigger mode";
         return;
+    }
 
     QList<QUrl> urls;
     for (int i = first; i <= last; i++) {
@@ -989,15 +1010,20 @@ bool NormalizedMode::setClassifier(Classifier id)
         }
 
         // remove old classifier.
+        fmInfo() << "Removing old classifier and setting new one:" << id;
         removeClassifier();
+    } else {
+        fmInfo() << "Setting initial classifier:" << id;
     }
 
     // clear all collections
     d->holders.clear();
 
     d->classifier = ClassifierCreator::createClassifier(id);
-    if (!d->classifier)
+    if (!d->classifier) {
+        fmWarning() << "Failed to create classifier:" << id;
         return false;
+    }
 
     model->setHandler(d->classifier->dataHandler());
     model->refresh(model->rootIndex(), false, 0);

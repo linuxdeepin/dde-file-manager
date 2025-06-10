@@ -41,27 +41,30 @@ CanvasViewMenuProxy::~CanvasViewMenuProxy()
 
 bool CanvasViewMenuProxy::disableMenu()
 {
+    fmDebug() << "Checking if menu is disabled";
+
     QVariantHash params;
     //use qApp->applicationName by defalut;
     //params.insert("ApplicationName", "dde-desktop");
     auto ret = dpfSlotChannel->push("dfmplugin_menu", "slot_Menu_IsDisable", params);
-
-    if (ret.isValid())
-        return ret.toBool();
-    return false;
+    bool disabled = ret.isValid() ? ret.toBool() : false;
+    fmDebug() << "Menu disabled status:" << disabled;
+    return disabled;
 }
 
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     // extend menu
-    if (view->d->hookIfs && view->d->hookIfs->contextMenu(view->screenNum(), view->model()->rootUrl(), QList<QUrl>(), QCursor::pos()))
+    if (view->d->hookIfs && view->d->hookIfs->contextMenu(view->screenNum(), view->model()->rootUrl(), QList<QUrl>(), QCursor::pos())) {
+        fmInfo() << "Context menu handled by extension module";
         return;
+    }
 
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
-        fmWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        fmWarning() << "Failed to create canvas menu scene:" << CanvasMenuCreator::name();
         return;
     }
 
@@ -74,20 +77,26 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     params[CanvasMenuParams::kDesktopCanvasView] = QVariant::fromValue((qlonglong)view);
 
     if (!canvasScene->initialize(params)) {
+        fmWarning() << "Failed to initialize canvas menu scene";
         delete canvasScene;
         return;
     }
 
-    if (menuPtr)
+    if (menuPtr) {
+        fmDebug() << "Deleting existing menu pointer";
         delete menuPtr;
+    }
 
     menuPtr = new DMenu(view);
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
     if (QAction *act = menuPtr->exec(QCursor::pos())) {
         QList<QUrl> urls { view->model()->rootUrl() };
+        fmInfo() << "Empty area menu action triggered:" << act->text();
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
+    } else {
+        fmDebug() << "Empty area menu cancelled by user";
     }
 
     delete canvasScene;
@@ -112,7 +121,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
 
     auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
-        fmWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        fmWarning() << "Failed to create canvas menu scene:" << CanvasMenuCreator::name();
         return;
     }
 
@@ -130,12 +139,15 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     params = dfmplugin_menu_util::menuPerfectParams(params);
 
     if (!canvasScene->initialize(params)) {
+        fmWarning() << "Failed to initialize canvas menu scene for selected files";
         delete canvasScene;
         return;
     }
 
-    if (menuPtr)
+    if (menuPtr) {
+        fmDebug() << "Deleting existing menu pointer";
         delete menuPtr;
+    }
 
     menuPtr = new DMenu(view);
     canvasScene->create(menuPtr);
@@ -144,7 +156,10 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     if (QAction *act = menuPtr->exec(QCursor::pos())) {
         dpfSignalDispatcher->publish("ddplugin_canvas", "signal_CanvasView_ReportMenuData", act->text(), selectUrls);
         canvasScene->triggered(act);
+    } else {
+        fmDebug() << "File context menu cancelled by user";
     }
+
     delete canvasScene;
 }
 
