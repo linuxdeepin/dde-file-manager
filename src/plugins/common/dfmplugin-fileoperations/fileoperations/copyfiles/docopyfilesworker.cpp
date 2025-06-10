@@ -11,7 +11,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
-#include <QDebug>
+
 #include <QApplication>
 #include <QTime>
 #include <QRegularExpression>
@@ -89,27 +89,27 @@ bool DoCopyFilesWorker::initArgs()
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
-        fmCritical() << "sorce file count = 0!!!";
+        fmCritical() << "Copy operation failed: source file count is 0";
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        fmCritical() << "target url is Valid !!!";
+        fmCritical() << "Copy operation failed: target URL is invalid";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo.reset(new DFileInfo(targetUrl));
     if (!targetInfo) {
         // pause and emit error msg
-        fmCritical() << "create target info error, url = " << targetUrl;
+        fmCritical() << "Copy operation failed: cannot create target file info for URL:" << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo->initQuerier();
     if (!targetInfo->exists()) {
         // pause and emit error msg
-        fmCritical() << "target dir is not exists, url = " << targetUrl;
+        fmCritical() << "Copy operation failed: target directory does not exist, URL:" << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
@@ -157,7 +157,7 @@ bool DoCopyFilesWorker::copyFiles()
         DFileInfoPointer fileInfo(new DFileInfo(url));
         if (!targetInfo) {
             // pause and emit error msg
-            fmCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
+            fmCritical() << "Copy operation failed: file info is null - sourceInfo=" << (fileInfo == nullptr) << "targetInfo=" << (targetInfo == nullptr);
             const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                 return false;

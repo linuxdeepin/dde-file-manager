@@ -5,7 +5,6 @@
 #include "abstractjob.h"
 #include "abstractworker.h"
 
-#include <QDebug>
 #include <QUrl>
 #include <QCoreApplication>
 
@@ -21,9 +20,12 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
-        fmWarning() << "JobHandlePointer is a nullptr, setJobArgs failed!";
+        fmCritical() << "Job handle pointer is null, cannot set job arguments";
         return;
     }
+    
+    fmInfo() << "Setting job arguments - sources count:" << sources.count() << "target:" << target << "flags:" << static_cast<int>(flags);
+    
     connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateAation);
     connect(this, &AbstractJob::requestShowTipsDialog, handle.get(), &AbstractJobHandler::requestShowTipsDialog);
 
@@ -40,6 +42,7 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
  */
 void AbstractJob::start()
 {
+    fmInfo() << "Starting job thread";
     thread.start();
 }
 
@@ -55,6 +58,7 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         connect(doWorker, &AbstractWorker::fileDeleted, this, &AbstractJob::handleFileDeleted, Qt::QueuedConnection);
         connect(doWorker, &AbstractWorker::fileRenamed, this, &AbstractJob::handleFileRenamed, Qt::QueuedConnection);
         connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
+            fmInfo() << "Application quitting, stopping job thread";
             thread.quit();
             // When manipulating a file,
             // if the TaskDialog has not been popped up yet,
@@ -64,9 +68,13 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
             // and then can not open the new dde-file-manage process,
             // so here to add a timeout time.
             // see: bug-272373
-            thread.wait(3000);
+            if (!thread.wait(3000)) {
+                fmWarning() << "Job thread did not finish within timeout, forcing termination";
+            }
         });
         start();
+    } else {
+        fmCritical() << "Worker is null, cannot create job";
     }
 }
 
@@ -77,9 +85,11 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
 void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
 {
     if (actions.testFlag(AbstractJobHandler::SupportAction::kStartAction)) {
+        fmInfo() << "Starting work operation";
         emit doWorker->startWork();
     } else {
         if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction) || actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
+            fmInfo() << "Stopping/cancelling operation, clearing error queue";
             errorQueue.clear();
             return doWorker->stopAllThread();
         }
@@ -89,6 +99,9 @@ void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
             auto isRetry = actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction);
             auto error = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
             auto id = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>();
+            
+            fmDebug() << "Processing error - type:" << static_cast<int>(error) << "worker ID:" << id << "retry:" << isRetry;
+            
             if (!isRetry)
                 errorQueue.dequeue();
             doWorker->doOperateWork(actions, error, id);
@@ -129,9 +142,12 @@ void AbstractJob::handleError(const JobInfoPointer jobInfo)
     }
     // new error
     errorQueue.enqueue(jobInfo);
-    if (errorQueue.size() > 1)
+    if (errorQueue.size() > 1) {
+        fmDebug() << "Error queued, total errors in queue:" << errorQueue.size();
         return;
+    }
     // 进行错误处理
+    fmWarning() << "Handling new error, error type:" << jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).toInt();
     emit errorNotify(jobInfo);
 }
 
@@ -140,34 +156,44 @@ void AbstractJob::handleRetryErrorSuccess(const quint64 Id)
     // retry error dealing success and dealing next error
     if (errorQueue.size() <= 0 || errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id) {
         if (errorQueue.size() > 0 && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id)
-            fmCritical() << "error current error thread id = " << Id << " error Queue error id = " << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer);
+            fmWarning() << "Error handling mismatch - current thread ID:" << Id << "expected ID:" << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>();
         return;
     }
+    
+    fmDebug() << "Retry error handling successful for worker ID:" << Id;
     errorQueue.dequeue();
     if (errorQueue.size() > 0) {
+        fmDebug() << "Processing next error in queue, remaining errors:" << errorQueue.size();
         emit errorNotify(errorQueue.head());
     } else {
+        fmDebug() << "All errors processed, resuming all threads";
         doWorker->resumeAllThread();
     }
 }
 
 void AbstractJob::handleFileRenamed(const QUrl &old, const QUrl &cur)
 {
+    fmDebug() << "File renamed from:" << old << "to:" << cur;
     dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename", old, cur);
 }
 
 void AbstractJob::handleFileDeleted(const QUrl &url)
 {
+    fmDebug() << "File deleted:" << url;
     dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete", url);
 }
 
 void AbstractJob::handleFileAdded(const QUrl &url)
 {
+    fmDebug() << "File added:" << url;
     dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Add", url);
 }
 
 AbstractJob::~AbstractJob()
 {
+    fmDebug() << "Destroying job, stopping thread";
     thread.quit();
-    thread.wait();
+    if (!thread.wait(5000)) {
+        fmWarning() << "Job thread did not finish within timeout during destruction";
+    }
 }

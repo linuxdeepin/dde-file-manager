@@ -25,8 +25,6 @@
 
 #include <dfm-io/dfmio_utils.h>
 
-#include <QDebug>
-
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_METATYPE(QString *)
@@ -40,6 +38,7 @@ namespace dfmplugin_fileoperations {
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     : QObject(parent), dialogManager(DialogManagerInstance)
 {
+    fmInfo() << "FileOperationsEventReceiver initialized";
 }
 
 QString FileOperationsEventReceiver::newDocmentName(const QUrl &url,
@@ -92,7 +91,7 @@ QString FileOperationsEventReceiver::newDocmentName(const QUrl &url, const QStri
     if (!url.isLocalFile()) {
         auto &&parentFileInfo { InfoFactory::create<FileInfo>(url) };
         if (!parentFileInfo) {
-            fmCritical() << "create parent file info failed!";
+            fmCritical() << "Failed to create parent file info for URL:" << url;
             return QString();
         }
         localTargetDir = parentFileInfo->pathOf(FileInfo::FilePathInfoType::kFilePath);
@@ -120,8 +119,12 @@ QString FileOperationsEventReceiver::newDocmentName(const QUrl &url, const QStri
 bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVariantMap &ret,
                                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback handle)
 {
-    if (!ret.contains("undoevent") || !ret.contains("undosources") || !ret.contains("undotargets"))
+    if (!ret.contains("undoevent") || !ret.contains("undosources") || !ret.contains("undotargets")) {
+        fmWarning() << "Revocation operation failed: missing required keys in operation data";
         return false;
+    }
+    
+    fmInfo() << "Processing revocation operation for window ID:" << windowId;
     GlobalEventType eventType = static_cast<GlobalEventType>(ret.value("undoevent").value<uint16_t>());
     QList<QUrl> sources = QUrl::fromStringList(ret.value("undosources").toStringList());
     QList<QUrl> targets = QUrl::fromStringList(ret.value("undotargets").toStringList());
@@ -139,8 +142,12 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         }
     }
 
-    if (sources.isEmpty())
+    if (sources.isEmpty()) {
+        fmInfo() << "Revocation operation completed: no valid sources to process";
         return true;
+    }
+    
+    fmInfo() << "Revocation operation: type=" << static_cast<int>(eventType) << "sources=" << sources.count() << "targets=" << targets.count();
 
     switch (eventType) {
     case kCutFile:
@@ -187,8 +194,12 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
 
 bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap &ret, AbstractJobHandler::OperatorHandleCallback handle)
 {
-    if (!ret.contains("undoevent") || !ret.contains("undosources") || !ret.contains("undotargets"))
+    if (!ret.contains("undoevent") || !ret.contains("undosources") || !ret.contains("undotargets")) {
+        fmWarning() << "Redo operation failed: missing required keys in operation data";
         return false;
+    }
+    
+    fmInfo() << "Processing redo operation for window ID:" << windowId;
     GlobalEventType eventType = static_cast<GlobalEventType>(ret.value("undoevent").value<uint16_t>());
     QList<QUrl> sources = QUrl::fromStringList(ret.value("undosources").toStringList());
     QList<QUrl> targets = QUrl::fromStringList(ret.value("undotargets").toStringList());
@@ -206,8 +217,12 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
         }
     }
 
-    if (sources.isEmpty())
+    if (sources.isEmpty()) {
+        fmInfo() << "Redo operation completed: no valid sources to process";
         return true;
+    }
+    
+    fmInfo() << "Redo operation: type=" << static_cast<int>(eventType) << "sources=" << sources.count() << "targets=" << targets.count();
 
     switch (eventType) {
     case kCopy:
@@ -490,7 +505,7 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 
     // cut file to file current dir
     if (FileUtils::isSameFile(UrlRoute::urlParent(sources[0]), target)) {
-        fmWarning() << "cut file to same dir!!!!!!!!!";
+        fmWarning() << "Cut operation aborted: source and target are in the same directory";
         return nullptr;
     }
 
@@ -956,11 +971,14 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         app = apps.at(0);
     }
     ok = fileHandler.openFilesByApp(urls, app);
-    if (!ok)
-        fmWarning() << "open file by app error: "
-                    << fileHandler.errorString()
-                    << " app name: "
-                    << app;
+    if (!ok) {
+        fmWarning() << "Failed to open files with application:" 
+                    << "error=" << fileHandler.errorString()
+                    << "app=" << app
+                    << "fileCount=" << urls.count();
+    } else {
+        fmInfo() << "Successfully opened" << urls.count() << "files with application:" << app;
+    }
 
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
@@ -1277,9 +1295,10 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         dialogManager->showErrorDialog(tr("Failed to modify file permissions"), error);
     }
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    info->refresh();
-    fmInfo("set file permissions successed, file : %s, permissions : %d !", url.path().toStdString().c_str(),
-           static_cast<int>(permissions));
+    if (info) {
+        info->refresh();
+    }
+    fmInfo() << "File permissions set successfully: file=" << url.path() << "permissions=" << static_cast<int>(permissions);
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                  windowId, QList<QUrl>() << url, ok, error);
@@ -1320,7 +1339,7 @@ bool FileOperationsEventReceiver::handleOperationWriteDataToClipboard(const quin
 {
     Q_UNUSED(windowId);
     if (!data) {
-        fmWarning() << " write to clipboard data is nullptr!!!!!!!";
+        fmWarning() << "Write to clipboard failed: data is null";
         return false;
     }
 
@@ -1454,15 +1473,20 @@ void FileOperationsEventReceiver::handleOperationSaveRedoOperations(const QVaria
 void FileOperationsEventReceiver::handleOperationCleanByUrls(const QList<QUrl> &urls)
 {
     if (urls.isEmpty()) {
-        qCWarning(logDFMBase) << "error : urls is empty!!";
+        fmWarning() << "Clean operations by URLs aborted: URL list is empty";
         return;
     }
+    
+    fmInfo() << "Cleaning operations by URLs, count:" << urls.count();
+    
     QStringList strs;
     for (const auto &url : urls) {
         if (url.isValid())
             strs.append(url.toString());
     }
     OperationsStackProxy::instance().CleanOperationsByUrl(strs);
+    
+    fmInfo() << "Operations cleaned successfully for" << strs.count() << "valid URLs";
 }
 
 void FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery(const quint64 windowId, AbstractJobHandler::OperatorHandleCallback handle)
@@ -1474,15 +1498,22 @@ void FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery(const quin
 // ctrl + z 执行后保存当前的redo操作
 void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const qint64 fileSize)
 {
+    fmInfo() << "Processing save redo operation for token:" << token << "fileSize:" << fileSize;
+    
     QVariantMap ret;
     {
         QMutexLocker lk(&undoLock);
-        if (!undoOpts.contains(token))
+        if (!undoOpts.contains(token)) {
+            fmWarning() << "Token not found in undo operations:" << token;
             return;
+        }
         ret = undoOpts.take(token);
     }
-    if (ret.isEmpty())
+    if (ret.isEmpty()) {
+        fmWarning() << "Empty undo operation data for token:" << token;
         return;
+    }
+    
     GlobalEventType undoEventType = static_cast<GlobalEventType>(ret.value("undoevent").value<uint16_t>());
     QList<QUrl> undoSources = QUrl::fromStringList(ret.value("undosources").toStringList());
     QList<QUrl> undoTargets = QUrl::fromStringList(ret.value("undotargets").toStringList());
@@ -1490,14 +1521,24 @@ void FileOperationsEventReceiver::handleSaveRedoOpt(const QString &token, const 
     QList<QUrl> redoSources = QUrl::fromStringList(ret.value("redosources").toStringList());
     QList<QUrl> redoTargets = QUrl::fromStringList(ret.value("redotargets").toStringList());
     QUrl templateUrl = ret.value("templateurl", QUrl()).toUrl();
+    
     qint64 compare = 0;
     if (templateUrl.isValid()) {
         auto info = InfoFactory::create<FileInfo>(templateUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (info)
             compare = info->size();
     }
-    if (redoEventType != GlobalEventType::kTouchFile || fileSize == compare)
+    
+    if (redoEventType != GlobalEventType::kTouchFile || fileSize == compare) {
+        fmInfo() << "Saving file operation: undoType=" << static_cast<int>(undoEventType) 
+                 << "redoType=" << static_cast<int>(redoEventType)
+                 << "undoSources=" << undoSources.count() 
+                 << "redoSources=" << redoSources.count();
         saveFileOperation(redoSources, redoTargets, redoEventType, undoSources, undoTargets, undoEventType, true, templateUrl);
+        fmInfo() << "File operation saved successfully";
+    } else {
+        fmInfo() << "Skipping file operation save due to size constraint";
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationUndoDeletes(const quint64 windowId, const QList<QUrl> &sources, const AbstractJobHandler::JobFlag flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
@@ -1553,6 +1594,8 @@ void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 wind
         fmWarning() << "Failed to create temporary file for preview data";
         return;
     }
+    
+    fmInfo() << "Processing files preview request: selectUrls=" << selectUrls.count() << "dirUrls=" << dirUrls.count();
 
     // Write data to temporary file in JSON format
     QJsonObject data;

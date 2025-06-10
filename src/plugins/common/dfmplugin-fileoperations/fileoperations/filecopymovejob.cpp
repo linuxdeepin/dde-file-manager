@@ -41,7 +41,7 @@ void FileCopyMoveJob::onHandleAddTask()
     JobHandlePointer jobHandler = send->property("jobPointer").value<JobHandlePointer>();
     send->setProperty("jobPointer", QVariant());
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return;
     }
     dialogManager->addTask(jobHandler);
@@ -54,7 +54,7 @@ void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
 
     JobHandlePointer jobHandler = info->value(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer).value<JobHandlePointer>();
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return;
     }
 
@@ -118,7 +118,7 @@ JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &t
                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -131,7 +131,7 @@ JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &t
 JobHandlePointer FileCopyMoveJob::copyFromTrash(const QList<QUrl> &sources, const QUrl &target, const AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -151,7 +151,7 @@ JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -171,7 +171,7 @@ JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources, c
                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -191,7 +191,7 @@ JobHandlePointer FileCopyMoveJob::deletes(const QList<QUrl> &sources,
                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags, const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -215,7 +215,7 @@ JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &ta
                                       const bool isInit)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
@@ -234,7 +234,7 @@ JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &ta
 JobHandlePointer FileCopyMoveJob::cleanTrash(const QList<QUrl> &sources)
 {
     if (!getOperationsAndDialogService()) {
-        fmCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        fmCritical() << "Failed to get operations service or dialog manager";
         return nullptr;
     }
 
