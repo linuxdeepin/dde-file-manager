@@ -73,6 +73,11 @@ int EventReceiver::tpmIsAvailableProcess()
     return tpm.checkTPMAvailbableByTools();
 }
 
+int EventReceiver::tpmCheckLockoutStatusProcess()
+{
+    return TPMWork::checkTPMLockoutStatusByTools();
+}
+
 int EventReceiver::getRandomByTpmProcess(int size, QString *output)
 {
     TPMWork tpm;
@@ -227,6 +232,7 @@ void EventReceiver::initConnection()
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_DecryptByTPM", this, &EventReceiver::decryptByTpm);
 
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_TPMIsAvailablePro", this, &EventReceiver::tpmIsAvailableProcess);
+    dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_CheckTPMLockoutPro", this, &EventReceiver::tpmCheckLockoutStatusProcess);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_GetRandomByTPMPro", this, &EventReceiver::getRandomByTpmProcess);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_IsTPMSupportAlgoPro", this, &EventReceiver::isTpmSupportAlgoProcess);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_EncryptByTPMPro", this, &EventReceiver::encryptByTpmProcess);

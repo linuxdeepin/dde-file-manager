@@ -233,6 +233,52 @@ int TPMWork::checkTPMAvailbableByTools()
     return utpm2_check_tpm_by_tools();
 }
 
+int TPMWork::checkTPMLockoutStatusByTools()
+{
+    const char* tempFile = "dde_diskencrypt_tpm_output.txt";
+    std::string command = "tpm2_getcap properties-variable > ";
+    command += tempFile;
+    int ret = system(command.c_str());
+    if (ret != 0) {
+        remove(tempFile);
+        qCritical() << "Exec " << command << " failed!";
+        return -1;
+    }
+
+    FILE* fp = fopen(tempFile, "r");
+    if (!fp) {
+        remove(tempFile);
+        qCritical() << "Open " << tempFile << " failed!";
+        return -1;
+    }
+
+    char line[256];
+    int lockoutStatus = -2; // not find "inLockout:"
+    while (fgets(line, sizeof(line), fp)) {
+        if (strstr(line, "inLockout:")) {
+            char* colon = strchr(line, ':');
+            if (colon) {
+                char* value = colon + 1;
+                while (*value && (*value == ' ' || *value == '\t')) {
+                    value++;
+                }
+                int num;
+                if (sscanf(value, "%d", &num) == 1) {
+                    lockoutStatus = num;
+                }
+            }
+            break;
+        }
+    }
+
+    if (lockoutStatus == -2)
+        qCritical() << "Not find inLockout:";
+
+    fclose(fp);
+    remove(tempFile);
+    return lockoutStatus;
+}
+
 int TPMWork::getRandomByTools(int size, QString *output)
 {
     if (!tpmLib->isLoaded())
