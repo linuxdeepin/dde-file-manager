@@ -12,7 +12,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
-#include <QDebug>
+
 #include <QMutex>
 #include <QSettings>
 #include <QStorageInfo>
@@ -47,7 +47,7 @@ bool DoCopyFromTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
     if (sourceUrls.count() == 0) {
-        fmWarning() << "sources files list is empty!";
+        fmWarning() << "Copy from trash operation failed: source files list is empty";
         return false;
     }
 

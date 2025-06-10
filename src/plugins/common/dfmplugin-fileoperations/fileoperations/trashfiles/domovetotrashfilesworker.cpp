@@ -13,7 +13,7 @@
 #include <dfm-io/trashhelper.h>
 
 #include <QUrl>
-#include <QDebug>
+
 #include <QtGlobal>
 #include <QCryptographicHash>
 #include <QStorageInfo>

@@ -39,9 +39,12 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
                                  const AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
-        fmWarning() << "JobHandlePointer is a nullptr, setWorkArgs failed!";
+        fmCritical() << "Job handle pointer is null, cannot set work arguments";
         return;
     }
+    
+    fmInfo() << "Setting work arguments - sources count:" << sources.count() << "target:" << target;
+    
     connect(this, &AbstractWorker::startWork, this, &AbstractWorker::doWork);
     workData.reset(new WorkerData);
     workData->dirSize = FileUtils::getMemoryPageSize();
@@ -226,11 +229,12 @@ void AbstractWorker::startCountProccess()
 bool AbstractWorker::statisticsFilesSize()
 {
     if (sourceUrls.isEmpty()) {
-        fmWarning() << "sources files list is empty!";
+        fmWarning() << "Source files list is empty, cannot calculate statistics";
         return false;
     }
 
     const QUrl &firstUrl = sourceUrls.first();
+    fmInfo() << "Starting file size statistics for" << sourceUrls.count() << "items";
 
     if (this->targetUrl.isValid()) {
         supportDfmioCopy = DeviceUtils::supportDfmioCopyDevice(this->targetUrl)
@@ -246,12 +250,15 @@ bool AbstractWorker::statisticsFilesSize()
     }
 
     if (isSourceFileLocal) {
+        fmDebug() << "Using synchronous file size calculation for local files";
         const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         workData->dirSize = fileSizeInfo->dirSize;
         sourceFilesCount = fileSizeInfo->fileCount;
+        fmInfo() << "File statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
     } else {
+        fmDebug() << "Using asynchronous file size calculation for remote files";
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished,
                 this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
@@ -325,13 +332,10 @@ void AbstractWorker::endWork()
 
     emit finishedNotify(info);
 
-    fmInfo() << "\n work end, job: " << jobType
-             << "\n sources parent: " << (sourceUrls.count() <= 0 ? QUrl() : parentUrl(sourceUrls.first()))
-             << "\n sources count: " << sourceUrls.count()
-             << "\n target: " << targetUrl
-             << "\n time elapsed: " << timeElapsed.elapsed()
-             << "\n";
-    fmDebug() << "\n sources urls: " << sourceUrls;
+    fmInfo() << "Work completed - job type:" << static_cast<int>(jobType)
+             << "completed files:" << completeSourceFiles.count()
+             << "time elapsed:" << timeElapsed.elapsed() << "ms";
+             
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
@@ -413,8 +417,11 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
     emit errorNotify(info);
 
-    fmDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
-              << " error msg: " << errorMsg << id;
+    fmWarning() << "Work error occurred - job type:" << static_cast<int>(jobType) 
+                << "error type:" << static_cast<int>(error) 
+                << "source:" << from 
+                << "target:" << to 
+                << "message:" << errorMsg;
 }
 
 /*!
@@ -498,15 +505,19 @@ void AbstractWorker::checkRetry()
 bool AbstractWorker::doWork()
 {
     timeElapsed.start();
-    fmDebug() << "\n=========================\nwork begin, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << "\n";
+    fmInfo() << "Starting work - job type:" << static_cast<int>(jobType) 
+             << "sources count:" << sourceUrls.count() 
+             << "target:" << targetUrl;
 
     // 执行拷贝的业务逻辑
     if (!initArgs()) {
+        fmWarning() << "Failed to initialize work arguments";
         endWork();
         return false;
     }
     // 统计文件总大小
     if (!statisticsFilesSize()) {
+        fmWarning() << "Failed to calculate file statistics";
         endWork();
         return false;
     }
@@ -525,11 +536,12 @@ bool AbstractWorker::stateCheck()
         return true;
     }
     if (currentState == AbstractJobHandler::JobState::kPauseState) {
-        fmInfo() << "Will be suspended";
+        fmDebug() << "Work paused, waiting for resume";
         if (!workerWait()) {
             return currentState != AbstractJobHandler::JobState::kStopState;
         }
     } else if (currentState == AbstractJobHandler::JobState::kStopState) {
+        fmInfo() << "Work stopped";
         return false;
     }
 
@@ -548,6 +560,8 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
     workData->dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
     allFilesList = sizeInfo->allFiles;
+    
+    fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
 }
 
 void AbstractWorker::onStatisticsFilesSizeUpdate(qint64 size)
@@ -634,6 +648,8 @@ void AbstractWorker::saveOperations()
             values.insert("redosources", QUrl::toStringList(completeSourceFiles));
             values.insert("redotargets", QUrl::toStringList(redoTargets));
             dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
+            
+            fmDebug() << "Saved operation for undo/redo - job type:" << static_cast<int>(jobType);
         }
     }
 
@@ -645,12 +661,12 @@ void AbstractWorker::saveOperations()
         || FileOperationsUtils::canBroadcastPaste()) {
         QUrl sourceUrl = sourceUrls.isEmpty() ? QUrl() : sourceUrls.first();
         if (!sourceUrl.isValid() || !targetUrl.isValid()) {
-            fmWarning(logDFMBase()) << "broadcast paste error, cast invalid source or target url!!!"
-                                    << sourceUrl << targetUrl;
+            fmWarning() << "Cannot broadcast paste data - invalid source or target URL";
             return;
         }
         sourceUrl = parentUrl(sourceUrl);
         UniversalUtils::boardCastPastData(sourceUrl, targetUrl, completeSourceFiles);
+        fmDebug() << "Broadcasted paste data";
     }
 }
 
@@ -683,7 +699,7 @@ AbstractWorker::~AbstractWorker()
 void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
 {
     if (!handle) {
-        fmWarning() << "JobHandlePointer is a nullptr,so connects failed!";
+        fmCritical() << "Job handle pointer is null, cannot initialize connections";
         return;
     }
     connect(this, &AbstractWorker::progressChangedNotify, handle.get(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
@@ -693,4 +709,6 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
     connect(this, &AbstractWorker::speedUpdatedNotify, handle.get(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
     connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
     connect(this, &AbstractWorker::requestTaskDailog, handle.get(), &AbstractJobHandler::requestTaskDailog, Qt::QueuedConnection);
+    
+    fmDebug() << "Initialized handle connections";
 }
