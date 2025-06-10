@@ -34,29 +34,35 @@ FileProvider::~FileProvider()
 bool FileProvider::setRoot(const QUrl &url)
 {
     if (!url.isValid()) {
-        fmWarning() << "invaild url:" << url;
+        fmWarning() << "Invalid root URL provided:" << url;
         return false;
     }
 
-    fmInfo() << "set root url" << url;
+    fmInfo() << "Setting file provider root URL to:" << url;
     rootUrl = url;
-    if (watcher)
+
+    if (watcher) {
+        fmDebug() << "Disconnecting existing file watcher";
         watcher->disconnect(this);
+    }
 
     watcher = WatcherFactory::create<AbstractFileWatcher>(rootUrl);
 
     if (Q_LIKELY(!watcher.isNull())) {
+        fmDebug() << "File watcher created successfully for:" << url;
+
         // using Qt::QueuedConnection to reduce UI jamming.
         connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &FileProvider::remove, Qt::QueuedConnection);
         connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &FileProvider::insert, Qt::QueuedConnection);
         connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &FileProvider::rename, Qt::QueuedConnection);
         connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &FileProvider::update, Qt::QueuedConnection);
+
         watcher->startWatcher();
-        fmInfo() << "file watcher is started.";
+        fmInfo() << "File watcher started successfully for:" << url;
         return true;
     }
 
-    fmWarning() << "fail to create watcher for" << url;
+    fmWarning() << "Failed to create file watcher for:" << url;
     return false;
 }
 
@@ -72,14 +78,19 @@ bool FileProvider::isUpdating() const
 
 void FileProvider::refresh(QDir::Filters filters)
 {
+    fmInfo() << "Starting file provider refresh with filters:" << static_cast<int>(filters);
+
     updateing = false;
     if (traversalThread) {
+        fmDebug() << "Stopping existing traversal thread";
         traversalThread->disconnect(this);
         traversalThread->stopAndDeleteLater();
     }
 
+    fmDebug() << "Creating new traversal thread for:" << rootUrl;
     traversalThread = new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags);
     traversalThread->setQueryAttributes("standard::standard::name");
+
     connect(traversalThread, &TraversalDirThread::updateChildren, this, &FileProvider::reset);
     connect(traversalThread, &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
 
@@ -88,13 +99,15 @@ void FileProvider::refresh(QDir::Filters filters)
 
     updateing = true;
     traversalThread->start();
-    fmDebug() << "start file traversal";
+    fmInfo() << "File traversal started for:" << rootUrl;
 }
 
 void FileProvider::installFileFilter(QSharedPointer<FileFilter> filter)
 {
-    if (fileFilters.contains(filter))
+    if (fileFilters.contains(filter)) {
+        fmDebug() << "File filter already installed, skipping:" << filter.get();
         return;
+    }
 
     fileFilters.append(filter);
 }
@@ -125,20 +138,29 @@ void FileProvider::traversalFinished()
 
 void FileProvider::insert(const QUrl &url)
 {
+    fmDebug() << "Processing file insertion:" << url;
+
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
                               [&url](const QSharedPointer<FileFilter> &filter) {
                                   return filter->fileCreatedFilter(url);
                               });
 
-    if (!ignore)
+    if (!ignore) {
+        fmDebug() << "File insertion allowed:" << url;
         emit fileInserted(url);
+    } else {
+        fmDebug() << "File insertion filtered:" << url;
+    }
 }
 
 void FileProvider::remove(const QUrl &url)
 {
+    fmDebug() << "Processing file removal:" << url;
+
     for (const auto &filter : fileFilters) {
-        if (filter->fileDeletedFilter(url))
-            fmWarning() << "DeletedFilter returns true: it is invalid";
+        if (filter->fileDeletedFilter(url)) {
+            fmWarning() << "DeletedFilter returned true - this should not happen for:" << url;
+        }
     }
 
     emit fileRemoved(url);
@@ -146,31 +168,47 @@ void FileProvider::remove(const QUrl &url)
 
 void FileProvider::rename(const QUrl &oldUrl, const QUrl &newUrl)
 {
+    fmInfo() << "Processing file rename from" << oldUrl << "to" << newUrl;
+
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
                               [&oldUrl, &newUrl](const QSharedPointer<FileFilter> &filter) {
                                   return filter->fileRenameFilter(oldUrl, newUrl);
                               });
+
+    if (ignore) {
+        fmDebug() << "File rename filtered, emitting with empty target URL";
+    }
 
     emit fileRenamed(oldUrl, ignore ? QUrl() : newUrl);
 }
 
 void FileProvider::update(const QUrl &url)
 {
-    if (UrlRoute::urlParent(url) != rootUrl)
+    if (UrlRoute::urlParent(url) != rootUrl) {
+        fmDebug() << "File update ignored - not in root directory:" << url;
         return;
+    }
+
+    fmDebug() << "Processing file update:" << url;
+
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
                               [&url](const QSharedPointer<FileFilter> &filter) {
                                   return filter->fileUpdatedFilter(url);
                               });
 
-    if (!ignore)
+    if (!ignore) {
         emit fileUpdated(url);
+    } else {
+        fmDebug() << "File update filtered:" << url;
+    }
 }
 
 void FileProvider::preupdateData(const QUrl &url)
 {
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Invalid URL in preupdate data:" << url;
         return;
+    }
 
     // check if there is cache
     auto cachedInfo = InfoCacheController::instance().getCacheInfo(url);
@@ -180,18 +218,27 @@ void FileProvider::preupdateData(const QUrl &url)
     if (updateing && info) {
 
         // cached file need to refresh.
-        if (info == cachedInfo)
+        if (info == cachedInfo) {
+            fmDebug() << "Refreshing cached file info during traversal:" << url;
             info->updateAttributes();
+        }
 
         // get file mime type for sorting.
         info->fileMimeType();
+    } else if (!info) {
+        fmWarning() << "Failed to create file info for preupdate:" << url;
     }
 }
 
 void FileProvider::onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
     Q_UNUSED(infoPtr);
-    if (UrlRoute::urlParent(url) != rootUrl)
+
+    if (UrlRoute::urlParent(url) != rootUrl) {
+        fmDebug() << "File info update ignored - not in root directory:" << url;
         return;
+    }
+
+    fmDebug() << "File info updated - URL:" << url << "isLinkOrg:" << isLinkOrg;
     emit fileInfoUpdated(url, isLinkOrg);
 }

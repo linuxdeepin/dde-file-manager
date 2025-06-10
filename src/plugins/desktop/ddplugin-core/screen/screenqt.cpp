@@ -26,6 +26,9 @@ ScreenQt::ScreenQt(QScreen *screen, QObject *parent)
     : DFMBASE_NAMESPACE::AbstractScreen(parent), qscreen(screen)
 {
     Q_ASSERT(qscreen);
+
+    fmDebug() << "ScreenQt created for screen:" << screen->name() << "geometry:" << screen->geometry();
+
     connect(qscreen, SIGNAL(geometryChanged(const QRect &)), this, SIGNAL(geometryChanged(const QRect &)));
     connect(qscreen, SIGNAL(availableGeometryChanged(const QRect &)), this, SIGNAL(availableGeometryChanged(const QRect &)));
 }
@@ -49,13 +52,13 @@ QRect ScreenQt::availableGeometry() const
     QRect ret = geometry();   //已经缩放过
 
     if (!DBusHelper::isDockEnable()) {
-        fmWarning() << "dde dock is not registered";
+        fmWarning() << "DDE dock is not registered, using full screen geometry";
         return ret;
     }
 
     int dockHideMode = DockInfoIns->hideMode();
     if (1 == dockHideMode) {   //隐藏
-        fmInfo() << "dock is Hidden";
+        fmDebug() << "Dock is hidden, using full screen geometry";
         return ret;
     }
 
@@ -67,53 +70,59 @@ QRect ScreenQt::availableGeometry() const
 
     if (!hRect.contains(dockrectI) && !ret.contains(dockrect)) {
         QRect orgDockRect(dockrectI);
-        fmDebug() << "screen:" << name() << " handleGeometry:" << hRect
-                  << " dockrectI:" << orgDockRect << " dockrect: " << dockrect
-                  << " ratio" << ratio;
+        fmDebug() << "Dock not contained in screen geometry, using full screen - screen:" << name()
+                  << "handleGeometry:" << hRect << "originalDockRect:" << orgDockRect
+                  << "scaledDockRect:" << dockrect << "ratio:" << ratio;
         return ret;
     }
 
-    fmDebug() << "ScreenQt ret " << ret << name();
     const int dockPos = DockInfoIns->position();
+    fmDebug() << "Adjusting available geometry for dock position:" << dockPos << "on screen:" << name();
+
     switch (dockPos) {
     case 0:   //上
         ret.setY(dockrect.bottom());
-        fmDebug() << "dock on top, availableGeometry" << ret;
+        fmDebug() << "Dock on top, adjusted available geometry:" << ret;
         break;
     case 1:   //右
     {
         int w = dockrect.left() - ret.left();
-        if (w >= 0)
+        if (w >= 0) {
             ret.setWidth(w);
-        else {
-            fmCritical() << "dockrect.left() - ret.left() is invaild" << w;
+        } else {
+            fmCritical() << "Invalid width calculation for right dock:" << w
+                         << "dockLeft:" << dockrect.left() << "screenLeft:" << ret.left();
         }
-        fmDebug() << "dock on right,availableGeometry" << ret;
+        fmDebug() << "Dock on right, adjusted available geometry:" << ret;
     } break;
     case 2:   //下
     {
         int h = dockrect.top() - ret.top();
-        if (h >= 0)
+        if (h >= 0) {
             ret.setHeight(h);
-        else {
-            fmCritical() << "dockrect.top() - ret.top() is invaild" << h;
+        } else {
+            fmCritical() << "Invalid height calculation for bottom dock:" << h
+                         << "dockTop:" << dockrect.top() << "screenTop:" << ret.top();
         }
-        fmDebug() << "dock on bottom,availableGeometry" << ret;
+        fmDebug() << "Dock on bottom, adjusted available geometry:" << ret;
         break;
     }
     case 3:   //左
         ret.setX(dockrect.right());
-        fmDebug() << "dock on left,availableGeometry" << ret;
+        fmDebug() << "Dock on left, adjusted available geometry:" << ret;
         break;
     default:
-        fmCritical() << "dock postion error!"
-                     << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
+        fmCritical() << "Invalid dock position:" << dockPos
+                     << "handleGeometry:" << hRect << "dockRect:" << dockrectI;
         break;
     }
 
     if (!checkAvailableGeometry(ret, geometry())) {
-        fmCritical() << "available geometry may be wrong" << ret << "dock pos" << dockPos << dockrect
-                     << "screen" << geometry() << hRect;
+        fmCritical() << "Available geometry validation failed - calculated:" << ret
+                     << "dockPosition:" << dockPos << "dockRect:" << dockrect
+                     << "screenGeometry:" << geometry() << "handleGeometry:" << hRect;
+    } else {
+        fmDebug() << "Available geometry calculated successfully:" << ret << "for screen:" << name();
     }
     return ret;
 }
@@ -131,8 +140,22 @@ QScreen *ScreenQt::screen() const
 bool ScreenQt::checkAvailableGeometry(const QRect &ava, const QRect &scr) const
 {
     const qreal min = 0.8;
-    if (((scr.height() * min) > ava.height())
-        || ((scr.width() * min) > ava.width()))
-        return false;
-    return true;
+    bool valid = true;
+    if ((scr.height() * min) > ava.height()) {
+        fmWarning() << "Available height too small - screen height:" << scr.height()
+                    << "available height:" << ava.height() << "minimum ratio:" << min;
+        valid = false;
+    }
+
+    if ((scr.width() * min) > ava.width()) {
+        fmWarning() << "Available width too small - screen width:" << scr.width()
+                    << "available width:" << ava.width() << "minimum ratio:" << min;
+        valid = false;
+    }
+
+    if (valid) {
+        fmDebug() << "Available geometry validation passed for screen:" << qscreen->name();
+    }
+
+    return valid;
 }

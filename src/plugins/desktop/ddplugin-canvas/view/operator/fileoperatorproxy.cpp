@@ -37,21 +37,29 @@ FileOperatorProxyPrivate::FileOperatorProxyPrivate(FileOperatorProxy *q_ptr)
 
 void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
 {
+    fmInfo() << "Touch file callback initiated for:" << target;
+
     q->clearTouchFileData();
 
     QString path = target.toString();
     int screenNum = customData.value(KEY_SCREENNUMBER).toInt();
     QPoint pos = customData.value(KEY_POINT).value<QPoint>();
 
+    fmDebug() << "Touch file parameters - screen:" << screenNum << "position:" << pos << "path:" << path;
+
     // befor call back,recive file created signal
     QPair<int, QPoint> oriPoint;
     if (GridIns->point(path, oriPoint)) {
         fmInfo() << "note:file existed!must check code!" << path << oriPoint << pos;
-        if (CanvasGrid::Mode::Align == GridIns->mode())
+        if (CanvasGrid::Mode::Align == GridIns->mode()) {
+            fmDebug() << "Canvas in align mode - skipping position adjustment";
             return;
+        }
 
-        if (oriPoint.first == screenNum && oriPoint.second == pos)
+        if (oriPoint.first == screenNum && oriPoint.second == pos) {
+            fmDebug() << "File already at target position - no move needed";
             return;
+        }
 
         // move it
         bool moved = GridIns->move(screenNum, pos, path, { path });
@@ -60,52 +68,74 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
         fmDebug() << "item:" << path << " is overload";
     } else {
         // record the location and move the file after the real file is created
+        fmDebug() << "Recording touch file data for later positioning:" << path << "at" << screenNum << pos;
         touchFileData = qMakePair(path, qMakePair(screenNum, pos));
     }
 
     emit q->fileTouchedCallback();
+    fmDebug() << "Touch file callback completed";
 }
 
 void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
 {
+    fmInfo() << "Paste files callback initiated";
+
     if (info->keys().contains(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey)) {
         QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
+
+        fmInfo() << "Paste operation completed with" << files.size() << "files";
 
         q->clearPasteFileData();
 
         // clear all selection.
         auto sel = CanvasIns->selectionModel();
-        if (sel)
+        if (sel) {
+            fmDebug() << "Clearing current selection before selecting pasted files";
             sel->clear();
+        }
 
         auto model = CanvasIns->model();
         if (model && sel) {
+            int existingCount = 0;
+            int pendingCount = 0;
+
             for (const QUrl &url : files) {
                 auto idx = model->index(url);
                 if (idx.isValid()) {
                     // selecting this file that is existed in model.
                     sel->select(idx, QItemSelectionModel::Select);
+                    existingCount++;
                 } else {
                     // record the file is not existed and selecting it when it is inserted.
                     pasteFileData.insert(url);
+                    pendingCount++;
                 }
             }
+
+            fmDebug() << "File selection status - existing:" << existingCount << "pending:" << pendingCount;
         } else {
             fmWarning() << "there were no model and selection model.";
             pasteFileData = QSet<QUrl>(files.begin(), files.end());
         }
         emit q->filePastedCallback();
+        fmDebug() << "Paste files callback completed";
+    } else {
+        fmWarning() << "Paste callback received without complete target files key";
     }
 }
 
 void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets)
 {
+    fmInfo() << "Rename files callback initiated - processing" << sources.size() << "files";
+
     q->clearRenameFileData();
 
     // clear selected and current
     auto view = CanvasIns->views().first();
-    if (Q_UNLIKELY(nullptr == view))
+    if (Q_UNLIKELY(nullptr == view)) {
+        fmWarning() << "No canvas view available for rename operation";
         return;
+    }
     view->selectionModel()->clear();
 
     Q_ASSERT(sources.count() == targets.count());
@@ -114,6 +144,7 @@ void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, c
         renameFileData.insert(sources.at(i), targets.at(i));
     }
     emit q->fileRenamedCallback();
+    fmInfo() << "Rename files callback completed successfully";
 }
 
 void FileOperatorProxyPrivate::filterDesktopFile(QList<QUrl> &urls)
@@ -172,20 +203,30 @@ void FileOperatorProxy::touchFolder(const CanvasView *view, const QPoint pos)
 void FileOperatorProxy::copyFiles(const CanvasView *view)
 {
     auto urls = view->selectionModel()->selectedUrls();
-    d->filterDesktopFile(urls);
-    if (urls.isEmpty())
-        return;
+    fmInfo() << "Copy files request - initial selection:" << urls.size() << "files on screen:" << view->screenNum();
 
+    d->filterDesktopFile(urls);
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to copy after filtering";
+        return;
+    }
+
+    fmInfo() << "Copying" << urls.size() << "files to clipboard";
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
 void FileOperatorProxy::cutFiles(const CanvasView *view)
 {
     auto urls = view->selectionModel()->selectedUrls();
-    d->filterDesktopFile(urls);
-    if (urls.isEmpty())
-        return;
+    fmInfo() << "Cut files request - initial selection:" << urls.size() << "files on screen:" << view->screenNum();
 
+    d->filterDesktopFile(urls);
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to cut after filtering";
+        return;
+    }
+
+    fmInfo() << "Cutting" << urls.size() << "files to clipboard";
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
 
@@ -196,6 +237,9 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
 
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
+
+    fmInfo() << "Paste files request - clipboard action:" << static_cast<int>(action) << "URLs:" << urls.size() << "on screen:" << view->screenNum();
+
     // 深信服和云桌面的远程拷贝获取的clipboardFileUrlList都是空
     if (ClipBoard::kRemoteCopiedAction == action) {   // 远程协助
         fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
@@ -204,26 +248,32 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     }
 
     if (ClipBoard::kRemoteAction == action) {
+        fmDebug() << "Remote clipboard action detected - initiating remote copy with" << urls.size() << "URLs";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
                                      AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
         return;
     }
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No URLs in clipboard to paste";
         return;
+    }
 
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackPasteFiles, QVariant());
     QVariant custom = QVariant::fromValue(funcData);
 
     if (ClipBoard::kCopyAction == action) {
+        fmDebug() << "Executing copy paste operation for" << urls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else if (ClipBoard::kCutAction == action) {
+        fmDebug() << "Executing cut paste operation for" << urls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(),
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
         //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
         // clear clipboard after cutting files from clipboard
+        fmDebug() << "Clearing clipboard after cut operation";
         ClipBoard::instance()->clearClipboard();
     } else {
         fmWarning() << "clipboard action:" << action << "    urls:" << urls;
@@ -235,20 +285,26 @@ void FileOperatorProxy::openFiles(const CanvasView *view)
     auto urls = view->selectionModel()->selectedUrls();
     if (!urls.isEmpty())
         openFiles(view, urls);
+    else
+        fmDebug() << "No files selected to open";
 }
 
 void FileOperatorProxy::openFiles(const CanvasView *view, const QList<QUrl> &urls)
 {
+    fmInfo() << "Opening" << urls.size() << "files from screen:" << view->screenNum();
     dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, view->winId(), urls);
 }
 
 void FileOperatorProxy::renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl)
 {
+    fmInfo() << "Single file rename request - from:" << oldUrl << "to:" << newUrl << "window ID:" << wid;
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, wid, oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperatorProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)
 {
+    fmInfo() << "Batch rename files request -" << urls.size() << "files, pattern:" << pair.first << "->" << pair.second << "replace:" << replace;
+
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackRenameFiles, QVariant());
     QVariant custom = QVariant::fromValue(funcData);
 
@@ -257,6 +313,8 @@ void FileOperatorProxy::renameFiles(const CanvasView *view, const QList<QUrl> &u
 
 void FileOperatorProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
+    fmInfo() << "Batch rename files with flag request -" << urls.size() << "files, pattern:" << pair.first << "flag:" << static_cast<int>(pair.second);
+
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackRenameFiles, QVariant());
     QVariant custom = QVariant::fromValue(funcData);
 
@@ -287,11 +345,16 @@ void FileOperatorProxy::showFilesProperty(const CanvasView *view)
 void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)
 {
     QList<QUrl> urls = view->selectionModel()->selectedUrls();
+    fmInfo() << "Send to Bluetooth request -" << urls.size() << "files from screen:" << view->screenNum();
+
     if (!urls.isEmpty()) {
         QStringList paths;
         for (const auto &u : urls)
             paths << u.path();
+        fmDebug() << "Converting" << urls.size() << "URLs to paths for Bluetooth transfer";
         dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", paths, "");
+    } else {
+        fmDebug() << "No files selected for Bluetooth transfer";
     }
 }
 
@@ -314,13 +377,17 @@ void FileOperatorProxy::dropFiles(const Qt::DropAction &action, const QUrl &targ
 
     // drop files from other app will auto append,independent of the view
     auto view = CanvasIns->views().first();
-    if (Q_UNLIKELY(nullptr == view))
+    if (Q_UNLIKELY(nullptr == view)) {
+        fmWarning() << "No canvas view available for drop operation";
         return;
+    }
 
     if (action == Qt::MoveAction) {
+        fmInfo() << "Executing drop move operation for" << urls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else {
         // default is copy file
+        fmInfo() << "Executing drop copy operation for" << urls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     }
 }
@@ -333,6 +400,8 @@ void FileOperatorProxy::dropToTrash(const QList<QUrl> &urls)
 
 void FileOperatorProxy::dropToApp(const QList<QUrl> &urls, const QString &app)
 {
+    fmInfo() << "Drop to app operation -" << urls.size() << "files to app:" << app;
+
     auto view = CanvasIns->views().first();
     QList<QString> apps { app };
     dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, view->winId(), urls, apps);

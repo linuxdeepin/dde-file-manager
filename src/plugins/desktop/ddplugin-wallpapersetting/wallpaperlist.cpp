@@ -29,8 +29,10 @@ WallpaperList::~WallpaperList()
 
 void WallpaperList::setMaskWidget(QWidget *w)
 {
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot set mask widget: null widget provided";
         return;
+    }
 
     takeWidget();
     setWidget(w);
@@ -95,13 +97,18 @@ QSize WallpaperList::gridSize() const
 
 void WallpaperList::setGridSize(const QSize &size)
 {
-    if (grid == size)
+    if (grid == size) {
+        fmDebug() << "Grid size unchanged, skipping update:" << size;
         return;
+    }
+
     int c = 0;
-    if (width() == 0 || size.width() == 0)
+    if (width() == 0 || size.width() == 0) {
+        fmWarning() << "Invalid dimensions for grid calculation, width:" << width() << "grid width:" << size.width();
         c = 0;
-    else
+    } else {
         c = width() / size.width();
+    }
 
     grid = size;
     contentLayout->setSpacing(qRound((width() - c * kItemWidth) / qreal(c + 1) - 0.500001) + 1);
@@ -135,8 +142,10 @@ void WallpaperList::clear()
 
 void WallpaperList::setCurrentIndex(int index)
 {
-    if (index < 0 || index >= count())
+    if (index < 0 || index >= count()) {
+        fmWarning() << "Invalid index for setCurrentIndex:" << index << "valid range: 0 -" << (count() - 1);
         return;
+    }
 
     WallpaperItem *item = items.at(index);
     for (int i = 0; i < count(); i++) {

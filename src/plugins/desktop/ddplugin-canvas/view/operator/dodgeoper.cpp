@@ -39,7 +39,7 @@ void DodgeOper::updatePrepareDodgeValue(QEvent *event)
                     && !isCtrlPressed()
                     && CanvasGrid::Mode::Custom == GridIns->mode()) {
                     prepareDodge = true;
-                    fmDebug() << "prepare dodge:" << prepareDodge;
+                    fmInfo() << "Dodge preparation enabled - from view:" << fromView->screenNum() << "to view:" << view->screenNum();
                     return;
                 }
             }
@@ -52,27 +52,37 @@ void DodgeOper::updatePrepareDodgeValue(QEvent *event)
 void DodgeOper::tryDodge(QDragMoveEvent *event)
 {
     // check dodging
-    if (dodgeAnimationing)
+    if (dodgeAnimationing) {
+        fmDebug() << "Dodge operation skipped - animation already in progress";
         return;
+    }
 
     // check data
-    if (!event->mimeData())
+    if (!event->mimeData()) {
+        fmWarning() << "No mime data in drag move event";
         return;
+    }
 
     // check copy file
-    if (isCtrlPressed())
+    if (isCtrlPressed()) {
+        fmDebug() << "Dodge operation skipped - Ctrl key pressed (copy mode)";
         return;
+    }
 
     // check from view
     CanvasView *fromView = qobject_cast<CanvasView *>(event->source());
-    if (!fromView)
+    if (!fromView) {
+        fmDebug() << "Dodge operation skipped - invalid source view";
         return;
+    }
 
     // check origin file
     auto urls = event->mimeData()->urls();
     QPair<int, QPoint> originPos;
-    if (urls.isEmpty() || !GridIns->point(urls.first().toString(), originPos))
+    if (urls.isEmpty() || !GridIns->point(urls.first().toString(), originPos)) {
+        fmDebug() << "Dodge operation skipped - no valid origin file position";
         return;
+    }
 
     // check target has file
     auto gridPos = view->d->gridAt(event->pos());
@@ -99,8 +109,10 @@ void DodgeOper::tryDodge(QDragMoveEvent *event)
 
 bool DodgeOper::getDodgeItemGridPos(const QString &item, GridPos &gridPos)
 {
-    if (!oper.get())
+    if (!oper.get()) {
+        fmDebug() << "No dodge operation available for item position query:" << item;
         return false;
+    }
 
     return oper->position(item, gridPos);
 }
@@ -118,12 +130,15 @@ void DodgeOper::startDodgeAnimation()
 {
     dodgeAnimationing = true;
     if (!calcDodgeTargetGrid()) {
+        fmWarning() << "Failed to calculate dodge target grid - animation cancelled";
         dodgeAnimationing = false;
         return;
     }
 
-    if (animation.get())
+    if (animation.get()) {
+        fmDebug() << "Disconnecting existing animation";
         animation->disconnect();
+    }
 
     animation.reset(new QPropertyAnimation(this, "dodgeDuration"));
     animation->setDuration(300);
@@ -144,11 +159,14 @@ void DodgeOper::dodgeAnimationUpdate()
 
 void DodgeOper::dodgeAnimationFinished()
 {
+    fmInfo() << "Dodge animation finished";
     dodgeAnimationing = false;
     CanvasIns->update();
 
-    if (!oper.get())
+    if (!oper.get()) {
+        fmWarning() << "No dodge operation to apply after animation";
         return;
+    }
 
     GridIns->core().applay(oper.get());
     GridIns->requestSync();
@@ -215,7 +233,7 @@ bool DodgeItemsOper::tryDodge(const QStringList &orgItems, const GridPos &ref, Q
                 if (!emptyindexes.isEmpty()) {
                     itemIndex = emptyindexes.takeFirst();
                 } else {
-                    fmWarning() << "Warning:drag file count greater than current screen empty count.It should not be do dodge!!!";
+                    fmCritical() << "Insufficient empty positions for cross-screen drag operation";
                     return false;
                 }
             }
@@ -293,8 +311,10 @@ QStringList DodgeItemsOper::reloach(int screenNumber, int targetIndex, int targe
 
 int DodgeItemsOper::findEmptyBackward(int screenNum, int index, int targetAfterNeedEmptyCount)
 {
-    if (!surfaces.contains(screenNum) || 0 == targetAfterNeedEmptyCount)
+    if (!surfaces.contains(screenNum) || 0 == targetAfterNeedEmptyCount) {
+        fmDebug() << "No backward empty search needed for screen" << screenNum;
         return index;
+    }
 
     // find all empty indexes
     auto posList = voidPos(screenNum);
@@ -315,7 +335,7 @@ int DodgeItemsOper::findEmptyBackward(int screenNum, int index, int targetAfterN
 
         const int nextPosition = emptyindexes.indexOf(endIndex) + 1;
         if (Q_UNLIKELY(nextPosition >= emptyindexes.count())) {
-            fmWarning() << "Backward vacancy search error, insufficient empty!!!";
+            fmWarning() << "Backward empty search failed - insufficient empty positions";
             break;
         }
 
@@ -330,8 +350,10 @@ int DodgeItemsOper::findEmptyBackward(int screenNum, int index, int targetAfterN
 QStringList DodgeItemsOper::reloachBackward(int screenNum, int start, int end)
 {
     QStringList dodgeItems;
-    if (Q_UNLIKELY(!surfaces.contains(screenNum)))
+    if (Q_UNLIKELY(!surfaces.contains(screenNum))) {
+        fmWarning() << "Invalid screen number for backward relocation:" << screenNum;
         return dodgeItems;
+    }
 
     for (int index = end; index >= start; --index) {
         auto pos = toPos(screenNum, index);
@@ -356,8 +378,10 @@ QStringList DodgeItemsOper::reloachBackward(int screenNum, int start, int end)
 
 int DodgeItemsOper::findEmptyForward(int screenNum, int index, int targetBeforNeedEmptyCount)
 {
-    if (!surfaces.contains(screenNum) || 0 == targetBeforNeedEmptyCount)
+    if (!surfaces.contains(screenNum) || 0 == targetBeforNeedEmptyCount) {
+        fmDebug() << "No forward empty search needed for screen" << screenNum;
         return index;
+    }
 
     // find all empty indexes
     auto posList = voidPos(screenNum);
@@ -372,25 +396,29 @@ int DodgeItemsOper::findEmptyForward(int screenNum, int index, int targetBeforNe
 
         --targetBeforNeedEmptyCount;
         if (0 == targetBeforNeedEmptyCount) {
+            fmDebug() << "Found forward empty position at index" << startIndex;
             return startIndex;
         }
 
         int arrayPosition = emptyindexes.indexOf(startIndex);
         if (Q_UNLIKELY(arrayPosition == 0)) {
-            fmWarning() << "Forward vacancy search error, insufficient empty!!!";
+            fmWarning() << "Forward empty search failed - insufficient empty positions";
             break;
         }
         startIndex = emptyindexes.at(--arrayPosition);
     }
 
+    fmDebug() << "Using start position as fallback: 0";
     return 0;
 }
 
 QStringList DodgeItemsOper::reloachForward(int screenNum, int start, int end)
 {
     QStringList dodgeItems;
-    if (Q_UNLIKELY(!surfaces.contains(screenNum)))
+    if (Q_UNLIKELY(!surfaces.contains(screenNum))) {
+        fmWarning() << "Invalid screen number for forward relocation:" << screenNum;
         return dodgeItems;
+    }
 
     for (int index = start; index <= end; ++index) {
         auto pos = toPos(screenNum, index);

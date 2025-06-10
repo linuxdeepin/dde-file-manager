@@ -133,8 +133,10 @@ void FileOperator::copyFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
     d->filterDesktopFile(urls);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to copy";
         return;
+    }
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
@@ -143,8 +145,10 @@ void FileOperator::cutFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
     d->filterDesktopFile(urls);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to cut";
         return;
+    }
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
@@ -161,13 +165,16 @@ void FileOperator::pasteFiles(const CollectionView *view, const QString &targetC
     }
 
     if (ClipBoard::kRemoteAction == action) {
+        fmInfo() << "Processing remote clipboard action";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
                                      AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
         return;
     }
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files in clipboard to paste";
         return;
+    }
 
     QVariantMap data;
     // the taget collection that pasted file will be move to.
@@ -230,18 +237,24 @@ void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &ur
 void FileOperator::moveToTrash(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to move to trash";
         return;
+    }
 
+    fmInfo() << "Moving" << urls.size() << "files to trash";
     dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperator::deleteFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to delete";
         return;
+    }
 
+    fmWarning() << "Permanently deleting" << urls.size() << "files";
     dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
@@ -254,19 +267,25 @@ void FileOperator::undoFiles(const CollectionView *view)
 void FileOperator::previewFiles(const CollectionView *view)
 {
     auto selectUrls = d->getSelectedUrls(view);
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "No files selected for preview";
         return;
+    }
 
     QList<QUrl> currentDirUrls = view->dataProvider()->items(view->id());
+    fmInfo() << "Previewing" << selectUrls.size() << "files";
     dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
 
 void FileOperator::showFilesProperty(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to show properties";
         return;
+    }
 
+    fmInfo() << "Showing properties for" << urls.size() << "files";
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 

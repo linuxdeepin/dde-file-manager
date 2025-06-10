@@ -43,8 +43,10 @@ void ClickSelector::click(const QModelIndex &index)
 
 void ClickSelector::release(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmDebug() << "Mouse release on empty area";
         return;
+    }
 
     bool isSeleted = view->selectionModel()->isSelected(index);
     if (isSeleted && index == lastPressedIndex) {
@@ -169,25 +171,25 @@ void ClickSelector::traverseSelect(const QModelIndex &from, const QModelIndex &t
     auto item1 = model->fileUrl(from).toString();
     auto item2 = model->fileUrl(to).toString();
     if (item1.isEmpty() || item2.isEmpty()) {
-        fmWarning() << "invalid item" << "from:" << item1 << "to:" << item2;
+        fmWarning() << "Invalid file URLs in traverse selection - from:" << item1 << "to:" << item2;
         return ;
     }
 
     QPair<int, QPoint> pos1;
     if (!GridIns->point(item1, pos1)) {
-        fmWarning() << "from" << item1 << "has no pos";
+        fmWarning() << "Source file has no grid position:" << item1;
         return;
     }
 
     QPair<int, QPoint> pos2;
     if (!GridIns->point(item2, pos2)) {
-        fmWarning() << "to" << item2 << "has no pos";
+        fmWarning() << "Target file has no grid position:" << item2;
         return;
     }
 
     int num = view->screenNum();
     if (pos1.first != num || pos2.first != num) {
-        fmWarning() << "item pos is not in view" << num;
+        fmWarning() << "File positions not on current screen" << num << "- pos1 screen:" << pos1.first << "pos2 screen:" << pos2.first;
         return;
     }
 

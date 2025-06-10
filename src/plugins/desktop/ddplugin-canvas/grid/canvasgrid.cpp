@@ -28,6 +28,7 @@ CanvasGrid::CanvasGrid(QObject *parent)
 
 CanvasGrid::~CanvasGrid()
 {
+    fmInfo() << "CanvasGrid destroyed";
 }
 
 void CanvasGrid::initSurface(int count)
@@ -43,17 +44,21 @@ void CanvasGrid::initSurface(int count)
 void CanvasGrid::updateSize(int index, const QSize &size)
 {
     auto itor = d->surfaces.find(index);
-    if (Q_UNLIKELY(itor == d->surfaces.end()))
+    if (Q_UNLIKELY(itor == d->surfaces.end())) {
+        fmWarning() << "Failed to update size: surface index" << index << "not found";
         return;
+    }
 
     if (Q_UNLIKELY(size.width() < 0 || size.height() < 0)) {
-        fmWarning() << "index" << index << "invaild size" << size;
+        fmWarning() << "Invalid size for surface index" << index << ":" << size;
         return;
     }
 
     if (itor.value().width() == size.width() &&
-            itor.value().height() == size.height())
+            itor.value().height() == size.height()) {
+        fmDebug() << "Surface" << index << "size unchanged:" << size;
         return;
+    }
 
     // need to rearrange items if surface /a index isn't empty.
     bool rearrange = !d->itemPos.value(index).isEmpty();
@@ -144,8 +149,10 @@ QHash<QString, QPoint> CanvasGrid::points(int index) const
 
 bool CanvasGrid::point(const QString &item, QPair<int, QPoint> &pos) const
 {
-    if (item.isEmpty())
+    if (item.isEmpty()) {
+        fmWarning() << "Empty item provided for point lookup";
         return false;
+    }
 
     for (auto itor = d->itemPos.begin(); itor != d->itemPos.end(); ++itor) {
         if (itor->contains(item)) {
@@ -187,16 +194,22 @@ bool CanvasGrid::drop(int index, const QPoint &pos, const QString &item)
 bool CanvasGrid::move(int toIndex, const QPoint &toPos, const QString &focus, const QStringList &items)
 {
     // first check whether focus pos is valid.
-    if (!CanvasGridSpecialist::isValid(toPos, d->surfaceSize(toIndex)))
+    if (!CanvasGridSpecialist::isValid(toPos, d->surfaceSize(toIndex))) {
+        fmWarning() << "Invalid target position" << toPos << "for surface" << toIndex;
         return false;
+    }
 
     // it's unmovable if target pos is not void and the item on the pos is not in \a items.
-    if (!d->isVoid(toIndex, toPos) && !items.contains(d->item(GridPos(toIndex, toPos))))
+    if (!d->isVoid(toIndex, toPos) && !items.contains(d->item(GridPos(toIndex, toPos)))) {
+        fmWarning() << "Target position" << toPos << "is occupied by item not in move list";
         return false;
+    }
 
     GridPos centerPos;
-    if (!d->position(focus, centerPos))
+    if (!d->position(focus, centerPos)) {
+        fmWarning() << "Cannot find position for focus item:" << focus;
         return false;
+    }
 
     MoveGridOper oper(d);
     if (oper.move(GridPos(toIndex, toPos), centerPos, items)) {
@@ -210,8 +223,10 @@ bool CanvasGrid::move(int toIndex, const QPoint &toPos, const QString &focus, co
 
 bool CanvasGrid::remove(int index, const QString &item)
 {
-    if (Q_UNLIKELY(item.isEmpty()))
+    if (Q_UNLIKELY(item.isEmpty())) {
+        fmWarning() << "Empty item provided for remove operation";
         return false;
+    }
 
     if (d->itemPos.value(index).contains(item)) {
         d->remove(index, item);
@@ -224,6 +239,7 @@ bool CanvasGrid::remove(int index, const QString &item)
         return true;
     }
 
+    fmWarning() << "Item" << item << "not found for removal";
     return false;
 }
 
@@ -239,17 +255,21 @@ bool CanvasGrid::replace(const QString &oldItem, const QString &newItem)
 
     int idx = d->overload.indexOf(oldItem);
     if (idx > -1) {
+        fmInfo() << "Replacing overload item" << oldItem << "with" << newItem;
         d->overload.replace(idx, newItem);
         return true;
     }
 
+    fmWarning() << "Item" << oldItem << "not found for replacement";
     return false;
 }
 
 void CanvasGrid::append(const QString &item)
 {
-    if (Q_UNLIKELY(item.isEmpty()))
+    if (Q_UNLIKELY(item.isEmpty())) {
+        fmWarning() << "Empty item provided for append operation";
         return;
+    }
 
     GridPos pos;
     if (d->findVoidPos(pos)) {
@@ -266,8 +286,10 @@ void CanvasGrid::append(const QString &item)
 
 void CanvasGrid::append(const QStringList &items)
 {
-    if (Q_UNLIKELY(items.isEmpty()))
+    if (Q_UNLIKELY(items.isEmpty())) {
+        fmWarning() << "Empty items list provided for append operation";
         return;
+    }
 
     AppendOper oper(d);
     oper.append(items);
@@ -278,8 +300,10 @@ void CanvasGrid::append(const QStringList &items)
 
 void CanvasGrid::tryAppendAfter(const QStringList &items, int index, const QPoint &begin)
 {
-    if (Q_UNLIKELY(items.isEmpty()))
+    if (Q_UNLIKELY(items.isEmpty())) {
+        fmWarning() << "Empty items list provided for tryAppendAfter operation";
         return;
+    }
 
     AppendOper oper(d);
     oper.tryAppendAfter(items, index, begin);
@@ -338,7 +362,7 @@ void CanvasGridPrivate::sequence(QStringList sortedItems)
     clean();
 
     for (int idx : surfaceIndex()) {
-        fmDebug() << "surface id:" << idx << "remaining items " << sortedItems.size();
+        fmDebug() << "Processing surface" << idx << "with" << sortedItems.size() << "remaining items";
         QHash<QPoint, QString> allPos;
         QHash<QString, QPoint> allItem;
         if (!sortedItems.isEmpty()) {
@@ -351,13 +375,14 @@ void CanvasGridPrivate::sequence(QStringList sortedItems)
                 allPos.insert(pos, item);
                 allItem.insert(item, pos);
             }
-            fmDebug() << "surface" << idx << "puts items count:" << cur << "max" << max;
+            fmInfo() << "Surface" << idx << "placed" << cur << "items out of" << max << "available positions";
         }
 
         itemPos.insert(idx, allItem);
         posItem.insert(idx, allPos);
     }
-    fmDebug() << "overload items " << sortedItems.size();
+
+    fmInfo() << "Added" << sortedItems.size() << "items to overload";
     overload = sortedItems;
 
     q->requestSync();
@@ -369,13 +394,13 @@ void CanvasGridPrivate::restore(QStringList currentItems)
 
     auto idxs = surfaceIndex();
     if (idxs.isEmpty()) {
-        fmWarning() << "no surface to drop items.";
+        fmWarning() << "No surfaces available to place items";
         return;
     }
 
     // get item pos from record.
     QHash<int, QHash<QString, QPoint> > profile = profiles();
-    fmInfo() << "profile keys" << profile.keys();
+    fmInfo() << "Loaded profiles for surfaces:" << profile.keys();
 
     // the item's pos in record is invalid to current grid.
     QStringList invalidPos;
@@ -383,7 +408,7 @@ void CanvasGridPrivate::restore(QStringList currentItems)
     // restore each surface.
     for (int idx : idxs) {
         const QHash<QString, QPoint> &oldPos = profile.value(idx);
-        fmInfo() << "profile" << idx << "has items" << oldPos.size();
+        fmInfo() << "Restoring surface" << idx << "with" << oldPos.size() << "recorded items";
         const QSize surfaceSize = surfaces.value(idx);
 
         // restore item always existed to recored pos.
@@ -449,8 +474,10 @@ QHash<int, QHash<QString, QPoint> > CanvasGridPrivate::profiles() const
 void CanvasGridPrivate::sync()
 {
     const int count = surfaces.count();
-    if (q->items().isEmpty() || count < 1)
+    if (q->items().isEmpty() || count < 1) {
+        fmDebug() << "Skipping sync: no items or no surfaces";
         return;
+    }
 
     auto idxs = surfaceIndex();
 

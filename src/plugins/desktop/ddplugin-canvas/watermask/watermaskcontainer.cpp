@@ -21,7 +21,7 @@ WatermaskContainer::WatermaskContainer(QWidget *parent) : QObject(parent)
 {
     custom = new CustomWaterMaskLabel(parent);
     if (WatermaskSystem::isEnable()) {
-        fmInfo() << "use WatermaskSystem.";
+        fmInfo() << "Using WatermaskSystem for water mask display";
         control = new WatermaskSystem(parent);
 
         custom->lower();
@@ -29,7 +29,7 @@ WatermaskContainer::WatermaskContainer(QWidget *parent) : QObject(parent)
 
         connect(control, &WatermaskSystem::showedOn, custom, &CustomWaterMaskLabel::onSystemMaskShow);
     } else {
-        fmInfo() << "use WaterMaskFrame.";
+        fmInfo() << "Using WaterMaskFrame for water mask display";
         frame = new WaterMaskFrame(kConfFile, parent);
 
         custom->lower();
@@ -46,9 +46,10 @@ bool WatermaskContainer::isEnable()
         return on > 0;
     }
 
+    fmDebug() << "Checking water mask configuration from:" << kConfFile;
     QFile file(kConfFile);
     if (!file.open(QFile::ReadOnly)) {
-        fmWarning() << "WaterMask config file doesn't exist!";
+        fmWarning() << "Water mask config file doesn't exist:" << kConfFile;
         on = 0;
         return on;
     }
@@ -57,12 +58,16 @@ bool WatermaskContainer::isEnable()
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if (error.error == QJsonParseError::NoError) {
         auto json = doc.toVariant().toMap();
-        if (json.contains("isMaskAlwaysOn"))
-            on = json.value("isMaskAlwaysOn", false).toBool() ? 1 : 0;
-        else
+        if (json.contains("isMaskAlwaysOn")) {
+            bool enabled = json.value("isMaskAlwaysOn", false).toBool();
+            on = enabled ? 1 : 0;
+            fmInfo() << "Water mask configuration loaded - isMaskAlwaysOn:" << enabled;
+        } else {
+            fmWarning() << "Water mask config missing 'isMaskAlwaysOn' property";
             on = 0;
+        }
     } else {
-        fmCritical() << "config file is invailid" << kConfFile << error.errorString();
+        fmCritical() << "Invalid water mask config file" << kConfFile << "- error:" << error.errorString();
         on = 0;
     }
 

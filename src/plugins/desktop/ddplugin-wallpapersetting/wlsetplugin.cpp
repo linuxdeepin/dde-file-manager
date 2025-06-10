@@ -94,7 +94,10 @@ bool EventHandle::init()
 
 bool EventHandle::wallpaperSetting(const QString &name)
 {
+    fmInfo() << "Wallpaper setting requested for screen:" << name;
+
     if (DFMBASE_NAMESPACE::SysInfoUtils::isDeepin23()) {
+        fmDebug() << "Using built-in wallpaper settings for Deepin 23";
         show(name, (int)WallpaperSettings::Mode::WallpaperMode);
     } else {
         fmDebug() << "call ControlCenter serivce by dbus.";
@@ -110,6 +113,7 @@ bool EventHandle::wallpaperSetting(const QString &name)
 
 bool EventHandle::screenSaverSetting(const QString &name)
 {
+    fmInfo() << "Screensaver setting requested for screen:" << name;
     show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
     return true;
 }
@@ -124,10 +128,13 @@ void EventHandle::onQuit()
 
 void EventHandle::onChanged()
 {
-    if (!wallpaperSettings)
+    if (!wallpaperSettings) {
+        fmWarning() << "Wallpaper changed signal received but no active settings instance";
         return;
+    }
 
     auto wallpaper = wallpaperSettings->currentWallpaper();
+    fmInfo() << "Wallpaper changed - screen:" << wallpaper.first << "path:" << wallpaper.second;
     // screen name and picture path.
     dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE),
                                  "signal_WallpaperSettings_WallpaperChanged", wallpaper.first, wallpaper.second);
@@ -135,6 +142,8 @@ void EventHandle::onChanged()
 
 void EventHandle::show(QString name, int mode)
 {
+    fmInfo() << "Showing wallpaper settings - screen:" << name << "mode:" << mode;
+
     if (name.isNull() || name.isEmpty()
         || ddplugin_desktop_util::screenProxyScreen(name).isNull()) {
         fmWarning() << "invalid screen" << name;
@@ -145,6 +154,7 @@ void EventHandle::show(QString name, int mode)
         }
 
         name = primary->name();
+        fmInfo() << "Using primary screen instead:" << name;
     }
 
     if (wallpaperSettings) {
@@ -193,6 +203,7 @@ bool EventHandle::screenSaverSetting(const QString &name)
 
 bool EventHandle::hookCanvasRequest(const QString &screen)
 {
+    fmDebug() << "Canvas wallpaper request hook triggered for screen:" << screen;
     wallpaperSetting(screen);
     return true;
 }

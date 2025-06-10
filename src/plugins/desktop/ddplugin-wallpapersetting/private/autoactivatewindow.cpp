@@ -61,13 +61,17 @@ AutoActivateWindowPrivate::~AutoActivateWindowPrivate()
 void AutoActivateWindowPrivate::watchOnWayland(bool on)
 {
     Q_ASSERT(watchedWidget);
-    if (watchedWidget == nullptr)
+    if (watchedWidget == nullptr) {
+        fmWarning() << "Cannot watch on Wayland: watchedWidget is null";
         return;
+    }
 
     QWindow *window = watchedWidget->windowHandle();
     Q_ASSERT(window);
-    if (window == nullptr)
+    if (window == nullptr) {
+        fmWarning() << "Cannot watch on Wayland: window handle is null";
         return;
+    }
 
     if (on) {
         q->connect(window, &QWindow::activeChanged, this, [=]() {
@@ -89,23 +93,30 @@ void AutoActivateWindowPrivate::watchOnWayland(bool on)
 void AutoActivateWindowPrivate::watchOnX11(bool on)
 {
     Q_ASSERT(watchedWidget);
-    if (watchedWidget == nullptr)
+    if (watchedWidget == nullptr) {
+        fmWarning() << "Cannot watch on X11: watchedWidget is null";
         return;
+    }
 
     QWindow *window = watchedWidget->windowHandle();
     Q_ASSERT(window);
-    if (window == nullptr)
+    if (window == nullptr) {
+        fmWarning() << "Cannot watch on X11: window handle is null";
         return;
+    }
 
     if (on) {
         if (initConnect()) {
+            fmInfo() << "Starting X11 window activation monitoring";
             q->connect(window, &QWindow::activeChanged, this, [=]() {
                 if (!watchedWidget)
                     return;
 
-                if (watchedWidget->isActiveWindow())
+                if (watchedWidget->isActiveWindow()) {
+                    fmDebug() << "Window is active on X11, stopping check timer";
                     checkTimer.stop();
-                else {
+                } else {
+                    fmDebug() << "Window lost focus on X11, starting check timer (300ms interval)";
                     //300ms检测一次
                     checkTimer.setInterval(300);
                     checkTimer.start();
@@ -115,6 +126,7 @@ void AutoActivateWindowPrivate::watchOnX11(bool on)
             watchedWin = getRootWindow(x11Con, watchedWidget->winId());
         }
     } else {
+        fmInfo() << "Stopping X11 window activation monitoring";
         q->disconnect(window, &QWindow::activeChanged, this, nullptr);
         checkTimer.stop();
     }
@@ -122,10 +134,13 @@ void AutoActivateWindowPrivate::watchOnX11(bool on)
 
 void AutoActivateWindowPrivate::checkWindowOnX11()
 {
-    if (!watchedWidget || !x11Con)
+    if (!watchedWidget || !x11Con) {
+        fmDebug() << "X11 check aborted: widget or connection is null";
         return;
+    }
 
     if (watchedWidget->isActiveWindow()) {
+        fmDebug() << "X11 check: window is already active";
         return;
     }
 
@@ -172,6 +187,7 @@ void AutoActivateWindowPrivate::checkWindowOnX11()
 bool AutoActivateWindowPrivate::initConnect()
 {
     if (!x11Con) {
+        fmDebug() << "Initializing X11 connection";
         int nbr;
         x11Con = xcb_connect(nullptr, &nbr);
         Q_ASSERT(x11Con);
@@ -187,6 +203,8 @@ bool AutoActivateWindowPrivate::initConnect()
         Q_ASSERT(screen);
         rootWin = screen->root;
 
+        fmDebug() << "X11 connection established, screen number:" << nbr << "root window:" << rootWin;
+
         connect(&checkTimer, &QTimer::timeout, this, &AutoActivateWindowPrivate::checkWindowOnX11);
     }
 
@@ -200,21 +218,28 @@ AutoActivateWindow::AutoActivateWindow(QObject *parent)
 
 void AutoActivateWindow::setWatched(QWidget *win)
 {
-    if (d->run)
+    if (d->run) {
+        fmWarning() << "Cannot set watched widget while auto-activate is running";
         return;
+    }
 
     d->watchedWidget = win;
 }
 
 bool AutoActivateWindow::start()
 {
-    if (d->run || !d->watchedWidget)
+    if (d->run) {
+        fmWarning() << "AutoActivateWindow already started";
         return false;
+    }
+    fmInfo() << "Starting auto-activate window monitoring";
 
     //监控窗口状态
     if (WindowUtils::isWayLand()) {
+        fmDebug() << "Using Wayland window monitoring";
         d->watchOnWayland(true);
     } else {
+        fmDebug() << "Using X11 window monitoring";
         d->watchOnX11(true);
     }
 
@@ -224,6 +249,8 @@ bool AutoActivateWindow::start()
 
 void AutoActivateWindow::stop()
 {
+    fmInfo() << "Stopping auto-activate window monitoring";
+
     d->run = false;
     if (WindowUtils::isWayLand()) {
         d->watchOnWayland(false);

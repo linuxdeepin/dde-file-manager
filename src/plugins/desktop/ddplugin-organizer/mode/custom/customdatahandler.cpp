@@ -37,8 +37,15 @@ QList<CollectionBaseDataPtr> CustomDataHandler::baseDatas() const
 
 bool CustomDataHandler::addBaseData(const CollectionBaseDataPtr &base)
 {
-    if (!base || collections.contains(base->key))
+    if (!base) {
+        fmWarning() << "Cannot add null collection base data";
         return false;
+    }
+
+    if (collections.contains(base->key)) {
+        fmWarning() << "Collection with key already exists:" << base->key;
+        return false;
+    }
 
     collections.insert(base->key, base);
     return true;
@@ -96,12 +103,12 @@ QString CustomDataHandler::replace(const QUrl &oldUrl, const QUrl &newUrl)
     }
 
     if (oldIdx < 0) {
-        fmWarning() << "replace: no old url:" << oldUrl;
+        fmWarning() << "Replace failed - old URL not found:" << oldUrl;
         return "";
     }
 
     if (newIdx >= 0) {
-        fmWarning() << "replace: new url is existed:" << newUrl;
+        fmWarning() << "Replace failed - new URL already exists:" << newUrl;
         return "";
     }
 
@@ -126,6 +133,7 @@ void CustomDataHandler::insert(const QUrl &url, const QString &key, const int in
 {
     auto it = collections.find(key);
     if (Q_UNLIKELY(it == collections.end())) {
+        fmInfo() << "Creating new collection" << key << "for URL:" << url;
         CollectionBaseDataPtr base(new CollectionBaseData);
         base->key = key;
         base->items << url;

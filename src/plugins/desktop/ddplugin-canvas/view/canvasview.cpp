@@ -407,6 +407,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
 
     QModelIndexList validIndexes = selectionModel()->selectedIndexesCache();
     if (validIndexes.count() > 1) {
+        fmDebug() << "Starting multi-item drag operation with" << validIndexes.count() << "items";
         QMimeData *data = model()->mimeData(validIndexes);
         if (!data)
             return;
@@ -518,8 +519,10 @@ CanvasSelectionModel *CanvasView::selectionModel() const
 void CanvasView::setGeometry(const QRect &rect)
 {
     if (rect.size().width() < 1 || rect.size().height() < 1) {
+        fmWarning() << "Invalid geometry size - width:" << rect.size().width() << "height:" << rect.size().height();
         return;
     } else {
+        fmDebug() << "Setting geometry for screen" << d->screenNum << "size:" << rect.size();
         QAbstractItemView::setGeometry(rect);
         updateGrid();
 
@@ -578,6 +581,8 @@ void CanvasView::filesResorted()
 
 void CanvasView::refresh(bool silent)
 {
+    fmDebug() << "Refreshing canvas view - silent:" << silent;
+
     model()->refresh(rootIndex(), true);
 
     // flicker

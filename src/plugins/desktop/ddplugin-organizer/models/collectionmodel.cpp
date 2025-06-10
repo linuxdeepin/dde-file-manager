@@ -145,8 +145,10 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
         return;
     }
 
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid insertion range:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -170,8 +172,10 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
 void CollectionModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
 {
     Q_UNUSED(sourceParent)
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid removal range:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -213,6 +217,7 @@ void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &n
             fileList.append(newUrl);
             fileMap.insert(newUrl, newInfo);
             q->endInsertRows();
+            fmDebug() << "Inserted renamed file as new item";
             return;
         }
     } else {
@@ -502,8 +507,10 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     Q_UNUSED(column);
 
     QList<QUrl> urlList = data->urls();
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        fmDebug() << "No URLs in drop data";
         return false;
+    }
 
     QUrl targetFileUrl;
     if (!parent.isValid() || parent == rootIndex()) {
@@ -540,12 +547,15 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
         FileOperatorIns->dropToTrash(treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
+        fmInfo() << "Files dropped to trash";
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
+        fmDebug() << "Drop to computer desktop file, no action needed";
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFileSuffix(targetFileUrl)) {
         FileOperatorIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        fmInfo() << "Files dropped to application:" << targetFileUrl.toString();
         return true;
     }
 

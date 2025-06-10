@@ -229,8 +229,10 @@ QString FileClassifier::remove(const QUrl &url)
 QString FileClassifier::change(const QUrl &url)
 {
     QString cur = key(url);
-    if (cur.isEmpty())
+    if (cur.isEmpty()) {
+        fmDebug() << "URL not found in any collection:" << url;
         return "";
+    }
 
     QString ret = classify(url);
     if (ret != cur) {
