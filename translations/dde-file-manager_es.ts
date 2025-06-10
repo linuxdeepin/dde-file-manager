@@ -187,12 +187,12 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
         <source>EncryptInProcess</source>
-        <translation>Cifrar en proceso</translation>
+        <translation>Cifrado en proceso</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
         <source>DecryptInProcess</source>
-        <translation>Descifrar en proceso</translation>
+        <translation>Descifrado en proceso</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
