@@ -81,6 +81,7 @@ public slots:
     void handleTabChanged(const quint64 windowId, const QString &uniqueId);
 
     void handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
+    void handleRegisterFocusFileViewDisabled(const QString &scheme);
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };

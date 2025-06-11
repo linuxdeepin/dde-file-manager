@@ -30,6 +30,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
 
     // slot events
+    DPF_EVENT_REG_SLOT(slot_RegisterFocusFileViewDisabled)
     DPF_EVENT_REG_SLOT(slot_RegisterFileView)
     DPF_EVENT_REG_SLOT(slot_RegisterMenuScene)
     DPF_EVENT_REG_SLOT(slot_FindMenuScene)

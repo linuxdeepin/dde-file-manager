@@ -433,6 +433,16 @@ void WorkspaceHelper::aboutToChangeViewWidth(const quint64 windowID, int deltaWi
         view->aboutToChangeWidth(deltaWidth);
 }
 
+void WorkspaceHelper::registerFocusFileViewDisabled(const QString &scheme)
+{
+    focusFileViewDisabledScheme.append(scheme);
+}
+
+bool WorkspaceHelper::isFocusFileViewDisabled(const QString &scheme) const
+{
+    return focusFileViewDisabledScheme.contains(scheme);
+}
+
 void WorkspaceHelper::registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
 {
     loadStrategyMap[scheme] = strategy;

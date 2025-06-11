@@ -65,7 +65,7 @@ using namespace GlobalDConfDefines::BaseConfig;
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
-    Q_UNUSED(url);
+    d->url = url;
     setMinimumHeight(10);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDropIndicatorShown(false);
@@ -210,6 +210,8 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 
 bool FileView::setRootUrl(const QUrl &url)
 {
+    d->url = url;
+
     clearSelection();
     selectionModel()->clear();
     d->statusBar->itemCounted(0);
@@ -2057,6 +2059,12 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
     DListView::rowsAboutToBeRemoved(parent, start, end);
 }
 
+void FileView::showEvent(QShowEvent *event)
+{
+    DListView::showEvent(event);
+    focusOnView();
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *viewModel = new FileViewModel(this);
@@ -2466,4 +2474,13 @@ void FileView::saveViewModeState()
 
     setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
     setFileViewStateValue(url, "viewMode", static_cast<int>(d->currentViewMode));
+}
+
+void FileView::focusOnView()
+{
+    if (WorkspaceHelper::instance()->isFocusFileViewDisabled(d->url.scheme()))
+        return;
+
+    if (isVisible())
+        setFocus();
 }
