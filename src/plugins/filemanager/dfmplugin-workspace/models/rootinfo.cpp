@@ -585,9 +585,9 @@ SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
     sortInfo->setReadable(info->isAttributes(OptInfoType::kIsReadable));
     sortInfo->setWriteable(info->isAttributes(OptInfoType::kIsWritable));
     sortInfo->setExecutable(info->isAttributes(OptInfoType::kIsExecutable));
-    sortInfo->setLastReadTime(info->timeOf(TimeInfoType::kLastRead).toLongLong());
-    sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).toLongLong());
-    sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).toLongLong());
+    sortInfo->setLastReadTime(info->timeOf(TimeInfoType::kLastRead).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setDisplayType(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     sortInfo->setInfoCompleted(true);
     return sortInfo;

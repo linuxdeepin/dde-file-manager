@@ -1110,9 +1110,9 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
     sortInfo->setReadable(fileInfo->isAttributes(OptInfoType::kIsReadable));
     sortInfo->setWriteable(fileInfo->isAttributes(OptInfoType::kIsWritable));
     sortInfo->setExecutable(fileInfo->isAttributes(OptInfoType::kIsExecutable));
-    sortInfo->setLastReadTime(fileInfo->timeOf(TimeInfoType::kLastRead).toLongLong());
-    sortInfo->setLastModifiedTime(fileInfo->timeOf(TimeInfoType::kLastModified).toLongLong());
-    sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).toLongLong());
+    sortInfo->setLastReadTime(fileInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setLastModifiedTime(fileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setDisplayType(fileInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     fileInfo->fileMimeType();
 
@@ -1595,6 +1595,10 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
         return QVariant();
 
     switch (role) {
+    case kItemFileLastReadRole: {
+        auto lastRead = QDateTime::fromSecsSinceEpoch(info->lastReadTime());
+        return lastRead.isValid() ? lastRead.toString(FileUtils::dateTimeFormat()) : "-";
+    }
     case kItemFileLastModifiedRole: {
         auto lastModified = QDateTime::fromSecsSinceEpoch(info->lastModifiedTime());
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
