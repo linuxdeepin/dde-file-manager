@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "config.h"   //cmake
 #include "daemonplugin_filemanager1_global.h"
 #include "filemanager1dbus.h"
 
@@ -40,8 +41,8 @@ void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &Start
         return;
     }
 
-    if (QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << URIs)) {
-        fmDebug() << "[FileManager1DBus] ShowFolders launched via dde-file-manager";
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--raw" << URIs)) {
+        fmDebug() << "[FileManager1DBus] ShowFolders launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowFolders request";
     }
@@ -62,9 +63,9 @@ void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString
         return;
     }
 
-    if (QProcess::startDetached("dde-file-manager", QStringList() << "--raw"
-                                                                  << "-p" << URIs)) {
-        fmDebug() << "[FileManager1DBus] ShowItemProperties launched via dde-file-manager";
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--raw"
+                                                                       << "-p" << URIs)) {
+        fmDebug() << "[FileManager1DBus] ShowItemProperties launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowItemProperties request";
     }
@@ -87,8 +88,8 @@ void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &Startup
         return;
     }
 
-    if (QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << URIs << "--raw")) {
-        fmDebug() << "[FileManager1DBus] ShowItems launched via dde-file-manager";
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--show-item" << URIs << "--raw")) {
+        fmDebug() << "[FileManager1DBus] ShowItems launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowItems request";
     }
@@ -115,10 +116,10 @@ void FileManager1DBus::Trash(const QStringList &URIs)
         return;
     }
 
-    if (QProcess::startDetached("dde-file-manager",
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY,
                                 QStringList() << "--event"
                                               << doc.toJson())) {
-        fmDebug() << "[FileManager1DBus] Trash operation launched via dde-file-manager";
+        fmDebug() << "[FileManager1DBus] Trash operation launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for Trash request";
     }
@@ -150,8 +151,8 @@ void FileManager1DBus::Open(const QStringList &URIs)
         return;
     }
 
-    if (QProcess::startDetached("dde-file-manager", processedArgs)) {
-        fmDebug() << "[FileManager1DBus] Open operation launched via dde-file-manager";
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, processedArgs)) {
+        fmDebug() << "[FileManager1DBus] Open operation launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for Open request";
     }

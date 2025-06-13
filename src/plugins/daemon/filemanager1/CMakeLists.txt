@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(dfmdaemon-filemanager1-plugin)
 
+configure_file(
+    "${APP_SOURCE_DIR}/config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(FILEMANGER1_XML ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml)
 
@@ -26,6 +31,11 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
 
 target_link_libraries(${PROJECT_NAME}
     DFM6::base
