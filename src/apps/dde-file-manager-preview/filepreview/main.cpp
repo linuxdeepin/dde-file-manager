@@ -3,7 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "previewsingleapplication.h"
+
+#include <dfm-base/utils/windowutils.h>
+
 #include <QProcessEnvironment>
+
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
 #else
@@ -12,6 +16,11 @@
 
 int main(int argc, char *argv[])
 {
+    // 管理员模式可能丢失 QT_QPA_PLATFORM
+    if (DFMBASE_NAMESPACE::WindowUtils::isX11() && qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+        qputenv("QT_QPA_PLATFORM", "dxcb");
+    }
+
     // singlentan process
     PreviewSingleApplication app(argc, argv);
 

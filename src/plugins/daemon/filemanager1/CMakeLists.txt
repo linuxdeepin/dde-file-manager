@@ -8,20 +8,20 @@ configure_file(
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(FILEMANGER1_XML ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml)
+set(FILEMANAGER1_XML ${DFM_DBUS_XML_DIR}/org.freedesktop.FileManager1.xml)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${FILEMANGER1_XML}"
+    "${FILEMANAGER1_XML}"
     )
 
 find_package(Qt6 COMPONENTS
     DBus
     REQUIRED)
 
-qt6_add_dbus_adaptor(SRC_FILES ${FILEMANGER1_XML}
+qt6_add_dbus_adaptor(SRC_FILES ${FILEMANAGER1_XML}
     filemanager1dbus.h FileManager1DBus)
 
 add_library(${PROJECT_NAME}

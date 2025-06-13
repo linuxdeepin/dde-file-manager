@@ -18,6 +18,8 @@ namespace dfmbase {
 class WindowUtils
 {
 public:
+    static bool isX11();
+
     static bool isWayLand();
 
     static bool keyShiftIsPressed();

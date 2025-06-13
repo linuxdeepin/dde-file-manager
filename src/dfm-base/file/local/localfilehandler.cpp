@@ -85,7 +85,7 @@ QUrl LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
 
     bool success = oper->touchFile();
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::touchFile: Failed to create file:" << url 
+        qCWarning(logDFMBase) << "LocalFileHandler::touchFile: Failed to create file:" << url
                               << "Error:" << oper->lastError().errorMsg();
         d->setError(oper->lastError());
         return QUrl();
@@ -99,7 +99,7 @@ QUrl LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
     }
 
     auto templateUrl = d->loadTemplateInfo(url, tempUrl);
-    qCInfo(logDFMBase) << "LocalFileHandler::touchFile: Successfully created file:" << url 
+    qCInfo(logDFMBase) << "LocalFileHandler::touchFile: Successfully created file:" << url
                        << "Template:" << (tempUrl.isValid() ? tempUrl.toString() : "none");
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
@@ -122,7 +122,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
 
     bool success = oper->makeDirectory();
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::mkdir: Failed to create directory:" << dir 
+        qCWarning(logDFMBase) << "LocalFileHandler::mkdir: Failed to create directory:" << dir
                               << "Error:" << oper->lastError().errorMsg();
         d->setError(oper->lastError());
         return false;
@@ -154,13 +154,13 @@ bool LocalFileHandler::rmdir(const QUrl &url)
 
     QString targetTrash = oper->trashFile();
     if (targetTrash.isEmpty()) {
-        qCWarning(logDFMBase) << "LocalFileHandler::rmdir: Failed to move directory to trash:" << url 
+        qCWarning(logDFMBase) << "LocalFileHandler::rmdir: Failed to move directory to trash:" << url
                               << "Error:" << oper->lastError().errorMsg();
         d->setError(oper->lastError());
         return false;
     }
 
-    qCInfo(logDFMBase) << "LocalFileHandler::rmdir: Successfully moved directory to trash:" << url 
+    qCInfo(logDFMBase) << "LocalFileHandler::rmdir: Successfully moved directory to trash:" << url
                        << "Trash location:" << targetTrash;
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
@@ -205,11 +205,11 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
             bool success = oper->renameFile(newName);
             if (success) {
-                qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed MTP file:" << url 
+                qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed MTP file:" << url
                                    << "to:" << newUrl;
                 return true;
             } else {
-                qCWarning(logDFMBase) << "LocalFileHandler::renameFile: Failed to rename MTP file:" << url 
+                qCWarning(logDFMBase) << "LocalFileHandler::renameFile: Failed to rename MTP file:" << url
                                       << "to:" << newUrl << "Error:" << oper->lastError().errorMsg();
             }
         }
@@ -235,7 +235,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(newUrl);
         fileInfo->refresh();
-        qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed file using system API:" 
+        qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed file using system API:"
                            << sourceFile << "to:" << targetFile;
         return true;
     }
@@ -250,7 +250,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
     bool success = oper->renameFile(newUrl);
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::renameFile: Failed to rename file:" << url 
+        qCWarning(logDFMBase) << "LocalFileHandler::renameFile: Failed to rename file:" << url
                               << "to:" << newUrl << "Error:" << oper->lastError().errorMsg();
         d->setError(oper->lastError());
         return false;
@@ -262,7 +262,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
 
-    qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed file using dfmio:" 
+    qCInfo(logDFMBase) << "LocalFileHandler::renameFile: Successfully renamed file using dfmio:"
                        << url << "to:" << newUrl;
 
     return true;
@@ -306,7 +306,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
         // 1. Handle symlinks
         auto resolvedUrl = d->resolveSymlink(fileUrl);
-        if (!resolvedUrl) {  // If resolution fails, continue to next file
+        if (!resolvedUrl) {   // If resolution fails, continue to next file
             qCDebug(logDFMBase) << "LocalFileHandler::openFiles: Failed to resolve symlink for:" << fileUrl;
             continue;
         }
@@ -369,12 +369,12 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         return ok;
     }
 
-    qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Opening" << fileUrls.size() 
+    qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Opening" << fileUrls.size()
                         << "files with app:" << desktopFile;
 
     GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
-        qCWarning(logDFMBase) << "LocalFileHandler::openFilesByApp: Failed to create GDesktopAppInfo from:" 
+        qCWarning(logDFMBase) << "LocalFileHandler::openFilesByApp: Failed to create GDesktopAppInfo from:"
                               << desktopFile << "Check if file exists and PATH is correct";
         return false;
     }
@@ -400,7 +400,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
     g_object_unref(appInfo);
 
     if (ok) {
-        qCInfo(logDFMBase) << "LocalFileHandler::openFilesByApp: Successfully opened files with app:" 
+        qCInfo(logDFMBase) << "LocalFileHandler::openFilesByApp: Successfully opened files with app:"
                            << desktopFile << "Files count:" << fileUrls.size();
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
@@ -409,7 +409,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         QString mimetype = d->getFileMimetype(fileUrls.first());
         d->addRecentFile(desktopFile, fileUrls, mimetype);
     } else {
-        qCWarning(logDFMBase) << "LocalFileHandler::openFilesByApp: Failed to open files with app:" 
+        qCWarning(logDFMBase) << "LocalFileHandler::openFilesByApp: Failed to open files with app:"
                               << desktopFile;
     }
 
@@ -435,13 +435,13 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
 
     bool success = oper->createLink(link);
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::createSystemLink: Failed to create link from:" << sourcefile 
+        qCWarning(logDFMBase) << "LocalFileHandler::createSystemLink: Failed to create link from:" << sourcefile
                               << "to:" << link << "Error:" << oper->lastError().errorMsg();
         d->setError(oper->lastError());
         return false;
     }
 
-    qCInfo(logDFMBase) << "LocalFileHandler::createSystemLink: Successfully created system link from:" 
+    qCInfo(logDFMBase) << "LocalFileHandler::createSystemLink: Successfully created system link from:"
                        << sourcefile << "to:" << link;
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, link);
 
@@ -455,7 +455,7 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
  */
 bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Setting permissions for:" << url 
+    qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Setting permissions for:" << url
                         << "Permissions:" << QString::number(static_cast<uint16_t>(permissions), 8);
 
     QSharedPointer<DFMIO::DFile> dfile { new DFMIO::DFile(url) };
@@ -468,21 +468,21 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
     // eg. bug-199607: Copy MTP folder to local, folder permissions wrong
     // reason: `dfm-io` uses gio to query the `unix::mode` field to get file permissions, but this field is not available in MTP file
     if (0 == permissions) {
-        qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Skipping permission setting for:" << url 
+        qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Skipping permission setting for:" << url
                             << "Permissions value is 0 (likely from MTP or unsupported filesystem)";
         return true;
     }
 
     bool success = dfile->setPermissions(DFMIO::DFile::Permissions(uint16_t(permissions)));
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::setPermissions: Failed to set permissions for:" << url 
+        qCWarning(logDFMBase) << "LocalFileHandler::setPermissions: Failed to set permissions for:" << url
                               << "Permissions:" << QString::number(static_cast<uint16_t>(permissions), 8)
                               << "Error:" << dfile->lastError().errorMsg();
         d->setError(dfile->lastError());
         return false;
     }
 
-    qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Successfully set permissions for:" << url 
+    qCDebug(logDFMBase) << "LocalFileHandler::setPermissions: Successfully set permissions for:" << url
                         << "Permissions:" << QString::number(static_cast<uint16_t>(permissions), 8);
     return true;
 }
@@ -590,14 +590,14 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
 
     bool success = dOperator->deleteFile();
     if (!success) {
-        qCWarning(logDFMBase) << "LocalFileHandler::deleteFile: Failed to delete file:" << url 
+        qCWarning(logDFMBase) << "LocalFileHandler::deleteFile: Failed to delete file:" << url
                               << "Error:" << dOperator->lastError().errorMsg();
         d->setError(dOperator->lastError());
         return false;
     }
-    
+
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
-    qCInfo(logDFMBase) << "LocalFileHandler::deleteFile: Successfully deleted file:" << url;
+    qCWarning(logDFMBase) << "LocalFileHandler::deleteFile: Successfully deleted file:" << url;
 
     return true;
 }
@@ -612,7 +612,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
     }
 
     if (SystemPathUtil::instance()->isSystemPath(url.toLocalFile())) {
-        qCCritical(logDFMBase) << "LocalFileHandler::deleteFileRecursive: CRITICAL - Attempted to delete system path:" 
+        qCCritical(logDFMBase) << "LocalFileHandler::deleteFileRecursive: CRITICAL - Attempted to delete system path:"
                                << url << "Operation aborted for safety";
         abort();
     }
@@ -659,7 +659,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
         } else {
             itemSuccess = deleteFile(urlNext);
         }
-        
+
         if (itemSuccess) {
             deletedCount++;
         } else {
@@ -667,7 +667,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
         }
     }
 
-    qCDebug(logDFMBase) << "LocalFileHandler::deleteFileRecursive: Deleted" << deletedCount 
+    qCDebug(logDFMBase) << "LocalFileHandler::deleteFileRecursive: Deleted" << deletedCount
                         << "items from directory:" << url;
 
     bool dirDeleted = deleteFile(url);
@@ -676,7 +676,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
     } else {
         qCWarning(logDFMBase) << "LocalFileHandler::deleteFileRecursive: Failed to delete directory after clearing contents:" << url;
     }
-    
+
     return succ && dirDeleted;
 }
 /*!
