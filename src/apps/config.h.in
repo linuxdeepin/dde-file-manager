@@ -80,6 +80,12 @@
 #    warning "cmake unseting definition DFM_PREVIEW_TOOL"
 #endif
 
+#ifndef DFM_FILE_MANAGER_BINARY
+#    define DFM_FILE_MANAGER_BINARY "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager"
+#elif
+#    warning "cmake unseting definition DFM_FILE_MANAGER_BINARY"
+#endif
+
 #ifndef VERSION
 #    define VERSION "@VERSION@"
 #endif
