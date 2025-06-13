@@ -30,12 +30,21 @@ function run_app() {
         uid=$(id -u "$user_name")
         echo "runner uid: $uid"
         export XDG_RUNTIME_DIR=/run/user/$uid
-        export WAYLAND_DISPLAY=wayland-0
-        export DISPLAY=:0
-        export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
-        export XDG_SESSION_TYPE=wayland
-        export QT_QPA_PLATFORM=
-        export GDK_BACKEND=x11
+        
+        # Set environment variables based on session type
+        if [ "$XDG_SESSION_TYPE" == "x11" ]; then
+            export DISPLAY=:0
+            export QT_QPA_PLATFORM=xcb
+            export GDK_BACKEND=x11
+        else
+            export WAYLAND_DISPLAY=wayland-0
+            export DISPLAY=:0
+            export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
+            export XDG_SESSION_TYPE=wayland
+            export QT_QPA_PLATFORM=
+            export GDK_BACKEND=x11
+        fi
+        
         export $(dbus-launch)
 
         scale_factor=$(get_scale_factor)
@@ -44,19 +53,15 @@ function run_app() {
             export QT_SCALE_FACTOR=$scale_factor
         fi
 
-        dde-file-manager "$1" -w "$(pwd)"
+        file-manager.sh "$1" -w "$(pwd)"
 }
 
 echo "run dde-file-manager in $XDG_SESSION_TYPE"
-if [ "$XDG_SESSION_TYPE" == "x11" ];then
-        pkexec dde-file-manager "$@" -w `pwd`
-else
-        echo "current file: $0"
-        if [ x$(id -u) != "x0" ];then
-                run_pkexec "$0" "$@"
-                exit 0
-        fi
-
-        echo "run app: $@"
-        run_app "$@"
+echo "current file: $0"
+if [ x$(id -u) != "x0" ];then
+        run_pkexec "$0" "$@"
+        exit 0
 fi
+
+echo "run app: $@"
+run_app "$@"
