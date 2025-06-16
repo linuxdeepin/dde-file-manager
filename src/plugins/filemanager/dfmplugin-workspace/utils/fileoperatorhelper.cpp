@@ -36,6 +36,8 @@ FileOperatorHelper *FileOperatorHelper::instance()
 void FileOperatorHelper::touchFolder(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    fmDebug() << "Creating new folder in directory:" << view->rootUrl().toString() << "window ID:" << windowId;
+
     dpfSignalDispatcher->publish(GlobalEventType::kMkdir,
                                  windowId,
                                  view->rootUrl(),
@@ -47,6 +49,9 @@ void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType t
 {
     const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
     const QUrl &url = view->rootUrl();
+
+    fmDebug() << "Creating new file - type:" << static_cast<int>(type) << "suffix:" << suffix
+              << "in directory:" << url.toString() << "window ID:" << windowId;
 
     dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
                                  windowId,
@@ -62,6 +67,9 @@ void FileOperatorHelper::touchFiles(const FileView *view, const QUrl &source)
     const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
     const QUrl &url = view->rootUrl();
 
+    fmDebug() << "Creating new file from source:" << source.toString()
+              << "in directory:" << url.toString() << "window ID:" << windowId;
+
     dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
                                  windowId,
                                  url,
@@ -73,19 +81,22 @@ void FileOperatorHelper::touchFiles(const FileView *view, const QUrl &source)
 
 void FileOperatorHelper::openFiles(const FileView *view)
 {
-    openFiles(view, view->selectedUrlList());
+    const QList<QUrl> &selectedUrls = view->selectedUrlList();
+    fmDebug() << "Opening selected files - count:" << selectedUrls.size() << "from directory:" << view->rootUrl().toString();
+    openFiles(view, selectedUrls);
 }
 
 void FileOperatorHelper::openFiles(const FileView *view, const QList<QUrl> &urls)
 {
+    fmDebug() << "Opening files with current dir open mode - files count:" << urls.size();
     DirOpenMode openMode = view->currentDirOpenMode();
-
     openFilesByMode(view, urls, openMode);
 }
 
 void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    fmDebug() << "Opening files by mode:" << static_cast<int>(mode) << "files count:" << urls.size() << "window ID:" << windowId;
 
     auto flag = !DConfigManager::instance()->value(kViewDConfName,
                                                    kOpenFolderWindowsInASeparateProcess, true)
@@ -102,6 +113,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 QFontMetrics fm(f);
                 fileName = fm.elidedText(fileName, Qt::ElideMiddle, 200);
 
+                fmWarning() << "Failed to open file - file not found:" << url.toString();
                 UniversalUtils::notifyMessage(QObject::tr("dde-file-manager"),
                                               tr("Failed to open %1, which may be moved or renamed").arg(fileName));
                 continue;
@@ -131,7 +143,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
         return;
 
     if (dirListOpenInNewWindow.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
-        qWarning() << "Too much dir to open is not supported!";
+        fmWarning() << "Too many directories to open in new windows - count:" << dirListOpenInNewWindow.count() << "max allowed:" << DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount;
         return;
     }
 
@@ -141,6 +153,8 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
 void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    fmDebug() << "Opening files with specific applications - files count:" << urls.size() << "apps count:" << apps.size() << "window ID:" << windowId;
+
     dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp,
                                  windowId,
                                  urls,
@@ -150,6 +164,8 @@ void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> 
 void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    fmDebug() << "Renaming file from:" << oldUrl.toString() << "to:" << newUrl.toString() << "window ID:" << windowId;
+
     dpfSignalDispatcher->publish(GlobalEventType::kRenameFile,
                                  windowId,
                                  oldUrl,
@@ -160,6 +176,8 @@ void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, co
 void FileOperatorHelper::copyFiles(const FileView *view)
 {
     QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
+    fmDebug() << "Copy operation started - initial selected count:" << selectedUrls.size();
+
     // trans url to local
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
@@ -168,12 +186,16 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 
     if (selectedUrls.size() == 1) {
         const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
-        if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable))
+        if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable)) {
+            fmWarning() << "Cannot copy file - not readable:" << selectedUrls.first().toString();
             return;
+        }
     }
 
-    if (selectedUrls.isEmpty())
+    if (selectedUrls.isEmpty()) {
+        fmDebug() << "Copy operation aborted - no files selected";
         return;
+    }
 
     fmInfo() << "Copy shortcut key to clipboard, selected urls: " << selectedUrls.first()
              << ", selected count: " << selectedUrls.size()
@@ -190,16 +212,21 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 void FileOperatorHelper::cutFiles(const FileView *view)
 {
     const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(view->rootUrl());
-    if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
+    if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable)) {
+        fmWarning() << "Cannot cut files - root directory not writable:" << view->rootUrl().toString();
         return;
+    }
+
     QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 
-    if (selectedUrls.isEmpty())
+    if (selectedUrls.isEmpty()) {
+        fmDebug() << "Cut operation aborted - no files selected";
         return;
+    }
 
     fmInfo() << "Cut shortcut key to clipboard, selected urls: " << selectedUrls.first()
              << ", selected count: " << selectedUrls.size()
@@ -217,12 +244,16 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     fmInfo() << "Paste file by clipboard and current dir: " << view->rootUrl();
     auto action = ClipBoard::instance()->clipboardAction();
     // trash dir can't paste files for copy
-    if (FileUtils::isTrashFile(view->rootUrl()))
+    if (FileUtils::isTrashFile(view->rootUrl())) {
+        fmDebug() << "Paste operation blocked - target is trash directory";
         return;
+    }
+
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     if (ClipBoard::kCopyAction == action) {
+        fmDebug() << "Executing copy action";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy,
                                      windowId,
                                      sourceUrls,
@@ -231,17 +262,21 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     } else if (ClipBoard::kCutAction == action) {
 
         if (ClipBoard::supportCut()) {
+            fmDebug() << "Executing cut action and clearing clipboard";
             dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
                                          windowId,
                                          sourceUrls,
                                          view->rootUrl(),
                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
             ClipBoard::clearClipboard();
+        } else {
+            fmWarning() << "Cut operation not supported";
         }
     } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
         fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
         ClipBoard::setCurUrlToClipboardForRemote(view->rootUrl());
     } else if (ClipBoard::kRemoteAction == action) {
+        fmDebug() << "Executing remote copy action";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy,
                                      windowId,
                                      sourceUrls,
@@ -316,8 +351,11 @@ void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
         targetParent = view->rootUrl();
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    QList<QUrl> selectedUrls = view->selectedUrlList();
 
-    for (const QUrl &fileUrl : view->selectedUrlList()) {
+    fmInfo() << "Creating symbolic links for" << selectedUrls.size() << "files in target:" << targetParent.toString();
+
+    for (const QUrl &fileUrl : selectedUrls) {
         QString linkName = FileUtils::nonExistSymlinkFileName(fileUrl, targetParent);
         QUrl linkUrl;
         linkUrl.setScheme(targetParent.scheme());
@@ -338,6 +376,8 @@ void FileOperatorHelper::openInTerminal(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
+
+    fmInfo() << "Opening terminal for URLs - count:" << urls.size() << "window ID:" << windowId;
     dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal,
                                  windowId,
                                  urls);
@@ -348,6 +388,8 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
+
+    fmInfo() << "Showing file properties for URLs - count:" << urls.size();
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
@@ -369,13 +411,20 @@ void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
+    fmInfo() << "Starting file preview - selected files:" << selectUrls.size()
+             << "current dir files:" << currentDirUrls.size() << "window ID:" << winID;
+
     dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", winID, selectUrls, currentDirUrls);
 }
 
 void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    fmInfo() << "Drop files operation - action:" << action << "target:" << targetUrl.toString()
+             << "files count:" << urls.size() << "window ID:" << windowId;
+
     if (action == Qt::MoveAction) {
+        fmDebug() << "Executing move action via cut";
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
                                      windowId,
                                      urls,
@@ -383,6 +432,7 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else {
         // default is copy file
+        fmDebug() << "Executing copy action (default)";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy,
                                      windowId,
                                      urls,
@@ -441,6 +491,7 @@ void FileOperatorHelper::redoFiles(const FileView *view)
 FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {
+    fmDebug() << "FileOperatorHelper initialized";
     callBack = std::bind(&FileOperatorHelper::callBackFunction, this, std::placeholders::_1);
     undoCallBack = std::bind(&FileOperatorHelper::undoCallBackFunction, this, std::placeholders::_1);
 }
@@ -450,34 +501,46 @@ void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgu
     const QVariant &customValue = args->value(AbstractJobHandler::CallbackKey::kCustom);
     GlobalEventType type = static_cast<GlobalEventType>(customValue.toInt());
 
+    fmDebug() << "Callback function triggered for event type:" << static_cast<int>(type);
+
     switch (type) {
     case kMkdir: {
         quint64 windowID = args->value(AbstractJobHandler::CallbackKey::kWindowId).toULongLong();
         QList<QUrl> sourceUrlList = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
-        if (sourceUrlList.isEmpty())
+        if (sourceUrlList.isEmpty()) {
+            fmWarning() << "Mkdir callback - empty source URL list";
             break;
+        }
 
         QList<QUrl> targetUrlList = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
-        if (targetUrlList.isEmpty())
+        if (targetUrlList.isEmpty()) {
+            fmWarning() << "Mkdir callback - empty target URL list";
             break;
+        }
 
         QUrl rootUrl = sourceUrlList.first();
         QUrl newFolder = targetUrlList.first();
+        fmInfo() << "Mkdir completed - root:" << rootUrl.toString() << "new folder:" << newFolder.toString() << "window:" << windowID;
         WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFolder);
         break;
     }
     case kTouchFile: {
         quint64 windowID = args->value(AbstractJobHandler::CallbackKey::kWindowId).toULongLong();
         QList<QUrl> sourceUrlList = args->value(AbstractJobHandler::CallbackKey::kSourceUrls).value<QList<QUrl>>();
-        if (sourceUrlList.isEmpty())
+        if (sourceUrlList.isEmpty()) {
+            fmWarning() << "TouchFile callback - empty source URL list";
             break;
+        }
 
         QList<QUrl> targetUrlList = args->value(AbstractJobHandler::CallbackKey::kTargets).value<QList<QUrl>>();
-        if (targetUrlList.isEmpty())
+        if (targetUrlList.isEmpty()) {
+            fmWarning() << "TouchFile callback - empty target URL list";
             break;
+        }
 
         QUrl rootUrl = sourceUrlList.first();
         QUrl newFile = targetUrlList.first();
+        fmInfo() << "TouchFile completed - root:" << rootUrl.toString() << "new file:" << newFile.toString() << "window:" << windowID;
         WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFile);
         break;
     }
@@ -488,15 +551,21 @@ void FileOperatorHelper::callBackFunction(const AbstractJobHandler::CallbackArgu
 
 void FileOperatorHelper::undoCallBackFunction(QSharedPointer<AbstractJobHandler> handler)
 {
+    fmDebug() << "Setting up undo callback handlers";
+
     connect(handler.data(), &AbstractJobHandler::finishedNotify, this, [=](const JobInfoPointer jobInfo) {
         AbstractJobHandler::JobType type = static_cast<AbstractJobHandler::JobType>(jobInfo->value(AbstractJobHandler::kJobtypeKey).toInt());
+        fmDebug() << "Undo operation finished notification - job type:" << static_cast<int>(type);
+
         if (type == AbstractJobHandler::JobType::kCutType) {
             QList<QUrl> targetUrls(jobInfo->value(AbstractJobHandler::kCompleteTargetFilesKey).value<QList<QUrl>>());
+            fmInfo() << "Cut operation completed in undo - setting undo files, count:" << targetUrls.size();
             WorkspaceHelper::instance()->setUndoFiles(targetUrls);
         }
     });
 
     connect(handler.data(), &AbstractJobHandler::workerFinish, this, [=]() {
+        fmDebug() << "Undo operation worker finished - clearing undo files";
         WorkspaceHelper::instance()->setUndoFiles({});
     });
 }

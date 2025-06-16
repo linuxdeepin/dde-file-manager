@@ -34,29 +34,39 @@ void insertToList(QList<T> &list, int index, const T &t)
 FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
     : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags), filterCallback(callfun), currentKey(key)
 {
+    fmDebug() << "FileSortWorker created for URL:" << url.toString() << "key:" << key;
+
     auto dirPath = url.path();
     if (!dirPath.isEmpty() && dirPath != QDir::separator() && url.path().endsWith(QDir::separator()))
         dirPath.chop(1);
     current.setPath(dirPath);
     sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(current);
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
+
+    fmDebug() << "Mixed dir and file sorting enabled:" << isMixDirAndFile;
+
     connect(&FileInfoHelper::instance(), &FileInfoHelper::fileRefreshFinished, this,
             &FileSortWorker::handleFileInfoUpdated, Qt::QueuedConnection);
     currentSupportTreeView = WorkspaceHelper::instance()->isViewModeSupported(current.scheme(), ViewMode::kTreeMode);
+
+    fmDebug() << "Tree view supported:" << currentSupportTreeView;
+
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
 }
 
 FileSortWorker::~FileSortWorker()
 {
+    fmDebug() << "FileSortWorker destructor called, canceling operations";
+
     isCanceled = true;
-    
+
     // 停止定时器（Qt会自动删除有parent的QTimer）
     if (updateRefresh) {
         updateRefresh->stop();
         updateRefresh = nullptr;
     }
-    
+
     // 清理数据结构
     childrenDataMap.clear();
     visibleChildren.clear();
@@ -76,6 +86,9 @@ FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder ord
     } else {
         opt = FileSortWorker::SortOpt::kSortOptOnlyOrderChanged;
     }
+
+    fmInfo() << "Setting sort arguments - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+             << "role:" << static_cast<int>(sortRole) << "mix dir and file:" << isMixDirAndFile;
 
     sortOrder = order;
     orgSortRole = sortRole;
@@ -180,8 +193,10 @@ Qt::SortOrder FileSortWorker::getSortOrder() const
 
 void FileSortWorker::setTreeView(const bool isTree)
 {
+    fmInfo() << "Setting tree view mode:" << isTree << "current mode:" << istree;
     istree = isTree;
     isMixDirAndFile = istree ? false : isMixDirAndFile;
+    fmDebug() << "Mixed dir and file sorting now:" << isMixDirAndFile;
 }
 
 void FileSortWorker::handleIteratorLocalChildren(const QString &key,
@@ -191,6 +206,7 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
                                                  const bool isMixDirAndFile,
                                                  bool isFirstBatch)
 {
+    fmDebug() << "Handling iterator local children - key:" << key << "children count:" << children.size() << "first batch:" << isFirstBatch;
     // This is where we handle the first batch flag for kPreserve mode
     handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, false, false, true, isFirstBatch);
 }
@@ -221,7 +237,7 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
     for (const auto &sortInfo : children) {
         if (!sortInfo)
             continue;
-            
+
         QUrl fileUrl = sortInfo->fileUrl();
 
         // 现在加写锁
@@ -242,19 +258,24 @@ void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QLis
 
 void FileSortWorker::handleTraversalFinish(const QString &key, bool noDataProduced)
 {
-    if (currentKey != key)
+    if (currentKey != key) {
+        fmDebug() << "Ignoring traversal finish for different key - current:" << currentKey << "received:" << key;
         return;
+    }
+
+    fmInfo() << "Traversal finished - no data produced:" << noDataProduced << "visible count:" << visibleChildren.count() << "total count:" << childrenDataMap.count();
 
     // If no data was produced during traversal, clear the existing data
     if (noDataProduced) {
+        fmDebug() << "Clearing data due to no data produced during traversal";
         visibleTreeChildren.clear();
 
         QWriteLocker childLock(&childrenDataLocker);
         childrenDataMap.clear();
-        
+
         QWriteLocker visLock(&locker);
         visibleChildren.clear();
-        
+
         children.clear();
     }
 
@@ -282,22 +303,33 @@ void FileSortWorker::handleFilters(QDir::Filters filters)
 
 void FileSortWorker::HandleNameFilters(const QStringList &filters)
 {
+    fmInfo() << "Handling name filters - count:" << filters.size();
     nameFilters = filters;
     QHash<QUrl, FileItemDataPointer>::iterator itr = childrenDataMap.begin();
+    int processedCount = 0;
     for (; itr != childrenDataMap.end(); ++itr) {
         checkNameFilters(itr.value());
+        processedCount++;
     }
+
+    fmDebug() << "Name filters applied to" << processedCount << "items";
     Q_EMIT requestUpdateView();
 }
 
 void FileSortWorker::handleFilterData(const QVariant &data)
 {
-    if (isCanceled)
+    if (isCanceled) {
+        fmDebug() << "Ignoring filter data change - operation canceled";
         return;
+    }
+
+    fmInfo() << "Handling filter data change - valid data:" << data.isValid();
 
     filterData = data;
-    if (!filterCallback || !data.isValid())
+    if (!filterCallback || !data.isValid()) {
+        fmDebug() << "No filter callback or invalid data - skipping filter operation";
         return;
+    }
 
     filterAllFilesOrdered();
 }
@@ -337,16 +369,22 @@ void FileSortWorker::onShowHiddenFileChanged(bool isShow)
 
 void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &children)
 {
+    fmDebug() << "Handling watcher add children - count:" << children.size();
+
     bool added = false;
     for (const auto &sortInfo : children) {
-        if (isCanceled)
+        if (isCanceled) {
+            fmDebug() << "Operation canceled during watcher add children";
             return;
+        }
+
         if (this->children.value(parantUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl())) {
             auto data = childData(sortInfo->fileUrl());
             if (data && data->fileInfo())
                 data->fileInfo()->updateAttributes();
             continue;
         }
+
         auto suc = addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
         if (!added)
             added = suc;
@@ -358,18 +396,26 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
 
 void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &children)
 {
-    if (children.isEmpty())
+    if (children.isEmpty()) {
+        fmDebug() << "No children to remove from watcher";
         return;
+    }
+
+    fmDebug() << "Handling watcher remove children - count:" << children.size();
+
     auto parentUrl = parantUrl(children.first()->fileUrl());
 
     for (const auto &sortInfo : children) {
-        if (isCanceled)
+        if (isCanceled) {
+            fmDebug() << "Operation canceled during watcher remove children";
             return;
+        }
 
         if (sortInfo.isNull())
             continue;
 
         if (sortInfo->isDir() && visibleTreeChildren.keys().contains(sortInfo->fileUrl())) {
+            fmDebug() << "Removing subdirectory:" << sortInfo->fileUrl().toString();
             removeSubDir(sortInfo->fileUrl());
             continue;
         }
@@ -489,13 +535,19 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
 
 void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sortRole, const bool isMixDirAndFile)
 {
-    if (isCanceled)
+    if (isCanceled) {
+        fmDebug() << "Ignoring resort request - operation canceled";
         return;
+    }
+
+    fmInfo() << "Handling resort - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+             << "role:" << static_cast<int>(sortRole) << "mix dir and file:" << isMixDirAndFile;
 
     auto opt = setSortAgruments(order, sortRole, /*istree ? false :*/ isMixDirAndFile);
 
     switch (opt) {
     case FileSortWorker::SortOpt::kSortOptOtherChanged:
+        fmDebug() << "Performing major resort - checking and updating file info";
         emit requestCursorWait();
         mimeSorting = this->sortRole == DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault;
         waitUpdatedFiles.clear();
@@ -503,9 +555,11 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
             return;
         return resortCurrent(false);
     case FileSortWorker::SortOpt::kSortOptOnlyOrderChanged:
+        fmDebug() << "Performing simple reorder";
         emit requestCursorWait();
         return resortCurrent(true);
     default:
+        fmDebug() << "No resort needed";
         return;
     }
 }
@@ -624,6 +678,8 @@ void FileSortWorker::handleUpdateFiles(const QList<QUrl> &urls)
 
 void FileSortWorker::handleRefresh()
 {
+    fmInfo() << "Handling refresh operation";
+
     int childrenCount = this->childrenCount();
     if (childrenCount > 0)
         Q_EMIT removeRows(0, childrenCount);
@@ -723,12 +779,19 @@ void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)
 
 void FileSortWorker::handleSwitchTreeView(const bool isTree)
 {
-    if (isTree == istree)
+    if (isTree == istree) {
+        fmDebug() << "Tree view mode unchanged - current:" << istree;
         return;
+    }
+
+    fmInfo() << "Switching view mode from" << (istree ? "tree" : "list") << "to" << (isTree ? "tree" : "list");
+
     istree = isTree;
     if (istree) {
+        fmDebug() << "Switching to tree view mode";
         switchTreeView();
     } else {
+        fmDebug() << "Switching to list view";
         switchListView();
     }
 }
@@ -1122,8 +1185,10 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
 void FileSortWorker::switchTreeView()
 {
     // 当前只有一层，只需要展开获取每个目录的展开属性,只有父母这一层
-    if (isMixDirAndFile)
+    if (isMixDirAndFile) {
+        fmDebug() << "Disabling mixed dir and file sorting for tree view";
         handleResort(sortOrder, orgSortRole, false);
+    }
     emit requestUpdateView();
 }
 

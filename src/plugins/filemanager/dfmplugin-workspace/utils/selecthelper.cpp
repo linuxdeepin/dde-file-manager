@@ -19,6 +19,7 @@ SelectHelper::SelectHelper(FileView *parent)
     : QObject(parent),
       view(parent)
 {
+    fmDebug() << "SelectHelper created for FileView";
 }
 
 QModelIndex SelectHelper::getCurrentPressedIndex() const
@@ -45,8 +46,10 @@ void SelectHelper::setSelection(const QItemSelection &selection)
 
 void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
 {
-    if (flags == QItemSelectionModel::NoUpdate)
+    if (flags == QItemSelectionModel::NoUpdate) {
+        fmDebug() << "Selection with NoUpdate flag - skipping";
         return;
+    }
 
     // select with shift
     if (WindowUtils::keyShiftIsPressed()) {
@@ -54,18 +57,24 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
             QItemSelection oldSelection = currentSelection;
             caculateSelection(rect, &oldSelection);
             view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+            fmDebug() << "Shift selection completed - using current selection";
             return;
         }
 
         const QModelIndex &index = view->indexAt(rect.bottomRight());
-        if (!index.isValid())
+        if (!index.isValid()) {
+            fmDebug() << "Invalid index at bottomRight for shift selection";
             return;
+        }
 
         const QModelIndex &lastSelectedIndex = view->indexAt(rect.topLeft());
-        if (!lastSelectedIndex.isValid())
+        if (!lastSelectedIndex.isValid()) {
+            fmDebug() << "Invalid index at topLeft for shift selection";
             return;
+        }
 
         view->selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        fmDebug() << "Shift selection from index" << lastSelectedIndex.row() << "to" << index.row();
         return;
     }
 
@@ -79,14 +88,18 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
             caculateSelection(rect, &newSelection);
 
             view->selectionModel()->select(newSelection, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+            fmDebug() << "Ctrl selection completed - toggled" << newSelection.size() << "items";
             return;
         }
 
         const QModelIndex &lastSelectedIndex = view->indexAt(rect.topLeft());
-        if (!lastSelectedIndex.isValid())
+        if (!lastSelectedIndex.isValid()) {
+            fmDebug() << "Invalid index at topLeft for ctrl selection";
             return;
+        }
 
         view->selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+        fmDebug() << "Ctrl selection toggled item at index:" << lastSelectedIndex.row();
         return;
     }
 
@@ -103,8 +116,12 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
 bool SelectHelper::select(const QList<QUrl> &urls)
 {
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No URLs provided for selection";
         return false;
+    }
+
+    fmInfo() << "Selecting files by URLs - count:" << urls.size();
 
     QModelIndex firstIndex;
     QModelIndex lastIndex;
@@ -116,6 +133,7 @@ bool SelectHelper::select(const QList<QUrl> &urls)
         const QModelIndex &index = view->model()->getIndexByUrl(url);
 
         if (!index.isValid() || index == root) {
+            fmDebug() << "Invalid or root index for URL:" << url.toString();
             continue;
         }
 
@@ -127,8 +145,10 @@ bool SelectHelper::select(const QList<QUrl> &urls)
         lastIndex = index;
     }
 
-    if (selection.indexes().isEmpty())
+    if (selection.indexes().isEmpty()) {
+        fmWarning() << "No valid indexes found for file selection";
         return false;
+    }
 
     view->selectionModel()->select(selection, QItemSelectionModel::Select);
 
@@ -143,14 +163,19 @@ bool SelectHelper::select(const QList<QUrl> &urls)
 
 void SelectHelper::saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls)
 {
+    fmDebug() << "Saving selected files list - current:" << current.toString() << "count:" << urls.size();
     currentSelectedFile = current;
     selectedFiles = urls;
 }
 
 void SelectHelper::resortSelectFiles()
 {
-    if (selectedFiles.isEmpty() || !currentSelectedFile.isValid())
+    if (selectedFiles.isEmpty() || !currentSelectedFile.isValid()) {
+        fmDebug() << "No files to resort or invalid current file";
         return;
+    }
+
+    fmInfo() << "Resorting selected files - count:" << selectedFiles.size() << "current:" << currentSelectedFile.toString();
 
     select(selectedFiles);
     view->selectionModel()->setCurrentIndex(view->model()->getIndexByUrl(currentSelectedFile), QItemSelectionModel::Select);
@@ -158,12 +183,16 @@ void SelectHelper::resortSelectFiles()
     /// Clean
     currentSelectedFile = QUrl();
     selectedFiles.clear();
+
+    fmDebug() << "Selected files resort completed and cleaned";
 }
 
 void SelectHelper::filterSelectedFiles(const QList<QUrl> &urlList)
 {
-    if (selectedFiles.isEmpty() || urlList.isEmpty())
+    if (selectedFiles.isEmpty() || urlList.isEmpty()) {
+        fmDebug() << "No files to filter - selected files empty:" << selectedFiles.isEmpty() << "filter list empty:" << urlList.isEmpty();
         return;
+    }
 
     QList<QUrl> filteredUrls;
 
@@ -183,6 +212,7 @@ void SelectHelper::filterSelectedFiles(const QList<QUrl> &urlList)
         currentSelectedFile = selectedFiles.first();
     } else if (selectedFiles.isEmpty()) {
         currentSelectedFile = QUrl();
+        fmDebug() << "All selected files filtered out - cleared current selection";
     }
 }
 
@@ -198,8 +228,10 @@ void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selectio
 void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *selection)
 {
     int itemCount = view->model()->rowCount(view->rootIndex());
-    if (itemCount <= 0)
+    if (itemCount <= 0) {
+        fmDebug() << "No items available for icon view selection calculation";
         return;
+    }
 
     QRect actualRect(qMin(rect.left(), rect.right()),
                      qMin(rect.top(), rect.bottom()),

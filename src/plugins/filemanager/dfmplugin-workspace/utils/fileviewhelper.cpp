@@ -44,10 +44,12 @@ FileViewHelper::FileViewHelper(FileView *parent)
     : QObject(parent)
 {
     init();
+    fmDebug() << "FileViewHelper initialization completed";
 }
 
 FileViewHelper::~FileViewHelper()
 {
+    fmDebug() << "FileViewHelper destructor called";
 }
 
 FileView *FileViewHelper::parent() const
@@ -58,8 +60,10 @@ FileView *FileViewHelper::parent() const
 bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
     FileInfoPointer file = fileInfo(index);
-    if (!file.get())
+    if (!file.get()) {
+        fmDebug() << "No file info available for transparency check at index:" << index.row();
         return false;
+    }
 
     TransparentStatus status = TransparentStatus::kDefault;
     if (WorkspaceEventSequence::instance()->doCheckTransparent(file->urlOf(UrlInfoType::kUrl), &status)) {
@@ -78,8 +82,10 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         QUrl localUrl = file->urlOf(UrlInfoType::kUrl);
         auto cutUrls = ClipBoard::instance()->clipboardFileUrlList();
-        if (cutUrls.contains(localUrl))
+        if (cutUrls.contains(localUrl)) {
+            fmDebug() << "File is transparent due to cut operation:" << localUrl.toString();
             return true;
+        }
 
         if (file->canAttributes(CanableInfoType::kCanRedirectionFileUrl))
             return cutUrls.contains(QUrl::fromLocalFile(file->pathOf(PathInfoType::kAbsoluteFilePath)));
@@ -175,19 +181,29 @@ void FileViewHelper::updateGeometries()
 
 void FileViewHelper::keyboardSearch(const QString &search)
 {
-    if (search.isEmpty())
+    if (search.isEmpty()) {
+        fmDebug() << "Empty search string provided for keyboard search";
         return;
+    }
+
+    fmDebug() << "Keyboard search initiated with string:" << search;
+
     const QByteArray &key = search.toLocal8Bit();
 
     keyboardSearchKeys.append(key.at(0));
     bool reverseOrder = WindowUtils::keyShiftIsPressed();
     const QModelIndex &currentIndex = parent()->currentIndex();
 
+    fmDebug() << "Search keys:" << keyboardSearchKeys << "reverse order:" << reverseOrder << "current index:" << currentIndex.row();
+
     QModelIndex index = findIndex(keyboardSearchKeys, true, currentIndex.row(), reverseOrder, !keyboardSearchTimer->isActive());
 
     if (index.isValid()) {
+        fmDebug() << "Search found match at index:" << index.row();
         parent()->setCurrentIndex(index);
         parent()->scrollTo(index, reverseOrder ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
+    } else {
+        fmDebug() << "No match found for search keys:" << keyboardSearchKeys;
     }
     keyboardSearchTimer->start();
 }
@@ -196,8 +212,14 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
 {
     int rowCount = parent()->model()->rowCount(parent()->rootIndex());
 
-    if (rowCount == 0)
+    if (rowCount == 0) {
+        fmDebug() << "No rows available for search";
         return QModelIndex();
+    }
+
+    fmDebug() << "Finding index with keys:" << keys << "matchStart:" << matchStart
+              << "current:" << current << "reverseOrder:" << reverseOrder
+              << "excludeCurrent:" << excludeCurrent << "rowCount:" << rowCount;
 
     for (int i = excludeCurrent ? 1 : 0; i <= rowCount; ++i) {
         int row = reverseOrder ? rowCount + current - i : current + i;
@@ -216,6 +238,7 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
         }
     }
 
+    fmDebug() << "No match found for keys:" << keys;
     return QModelIndex();
 }
 
@@ -223,20 +246,27 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
     const QModelIndex &index = parent()->indexAt(pos);
 
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmDebug() << "Position" << pos << "is in empty area - no valid index";
         return true;
+    }
 
     if (isSelected(index)) {
+        fmDebug() << "Position" << pos << "is on selected item at index:" << index.row();
         return false;
     } else {
         const QRect &rect = parent()->visualRect(index);
 
-        if (!rect.contains(pos))
+        if (!rect.contains(pos)) {
+            fmDebug() << "Position" << pos << "is outside item rect" << rect << "at index:" << index.row();
             return true;
+        }
 
         // if the item can not be selected, return true
-        if (!(index.flags() & Qt::ItemIsSelectable))
+        if (!(index.flags() & Qt::ItemIsSelectable)) {
+            fmDebug() << "Item at index" << index.row() << "is not selectable - treating as empty area";
             return true;
+        }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QStyleOptionViewItem option = parent()->viewOptions();
@@ -325,6 +355,7 @@ ViewMode FileViewHelper::customDefaultViewMode()
 void FileViewHelper::handleCommitData(QWidget *editor) const
 {
     if (!editor) {
+        fmWarning() << "No editor provided for commit data operation";
         return;
     }
 
@@ -332,8 +363,11 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     const FileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
     if (!fileInfo) {
+        fmWarning() << "No file info available for commit data at index:" << index.row();
         return;
     }
+
+    fmDebug() << "Handling commit data for file:" << fileInfo->urlOf(UrlInfoType::kUrl).toString();
 
     ListItemEditor *lineEdit = qobject_cast<ListItemEditor *>(editor);
     IconItemEditor *iconEdit = qobject_cast<IconItemEditor *>(editor);
@@ -342,14 +376,18 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
                                                                  : "";
 
     if (newFileName.isEmpty()) {
+        fmWarning() << "Empty filename provided for rename operation";
         return;
     }
+
+    fmDebug() << "New filename from editor:" << newFileName;
 
     QString suffix { editor->property(kEidtorShowSuffix).toString() };
 
     if (!suffix.isEmpty()) {
         newFileName += QStringLiteral(".");
         newFileName += suffix;
+        fmDebug() << "Added suffix to filename:" << newFileName;
     } else if (Application::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
         newFileName = newFileName.trimmed();
         if (newFileName.isEmpty()) {
@@ -357,12 +395,18 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         }
     }
 
-    if (fileInfo->nameOf(NameInfoType::kFileName) == newFileName) {
+    QString originalName = fileInfo->nameOf(NameInfoType::kFileName);
+    if (originalName == newFileName) {
+        fmDebug() << "Filename unchanged - no rename needed:" << originalName;
         return;
     }
 
-    QUrl oldUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileInfo->nameOf(NameInfoType::kFileName));
+    QUrl oldUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, originalName);
     QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newFileName);
+
+    fmDebug() << "Committing file rename from:" << originalName << "to:" << newFileName;
+    fmDebug() << "Old URL:" << oldUrl.toString() << "New URL:" << newUrl.toString();
+
     //Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
@@ -372,11 +416,14 @@ void FileViewHelper::selectFiles(const QList<QUrl> &files)
     QList<QUrl> vitualFiles;
     bool ok = dpfHookSequence->run("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", files, &vitualFiles);
     if (ok && !vitualFiles.isEmpty()) {
+        fmDebug() << "Using virtual files for selection - count:" << vitualFiles.size();
         parent()->selectFiles(vitualFiles);
         return;
     }
-    if (files.count() > 0)
+    if (files.count() > 0) {
+        fmDebug() << "Using original files for selection";
         parent()->selectFiles(files);
+    }
 }
 
 void FileViewHelper::handleTrashStateChanged()
@@ -406,16 +453,21 @@ void FileViewHelper::clearSearchKey()
 
 void FileViewHelper::init()
 {
+    fmDebug() << "Initializing FileViewHelper components";
+
     keyboardSearchTimer = new QTimer(this);
     keyboardSearchTimer->setSingleShot(true);
     keyboardSearchTimer->setInterval(200);
     connect(keyboardSearchTimer, &QTimer::timeout, this, &FileViewHelper::clearSearchKey);
+    fmDebug() << "Keyboard search timer initialized with 200ms interval";
 
     connect(qApp, &DApplication::iconThemeChanged, parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles, this, &FileViewHelper::selectFiles);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged, this, &FileViewHelper::handleTrashStateChanged);
+
+    fmDebug() << "Signal connections established for FileViewHelper";
 }
 
 BaseItemDelegate *FileViewHelper::itemDelegate() const

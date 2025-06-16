@@ -25,15 +25,20 @@ ViewAnimationHelper::ViewAnimationHelper(FileView *parent)
     : QObject(parent),
       view(parent)
 {
+    fmDebug() << "ViewAnimationHelper created for FileView";
 }
 
 void ViewAnimationHelper::initAnimationHelper()
 {
-    if (!DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutEnable, true).toBool())
+    if (!DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutEnable, true).toBool()) {
+        fmDebug() << "Animation disabled in configuration, skipping initialization";
         return;
+    }
 
+    fmDebug() << "Initializing view animation helper";
     currentIndexRectMap = calcIndexRects(view->contentsRect());
     initialized = true;
+    fmDebug() << "View animation helper initialized with" << currentIndexRectMap.size() << "visible items";
 }
 
 void ViewAnimationHelper::reset()
@@ -50,12 +55,17 @@ void ViewAnimationHelper::syncVisiableRect()
 
 void ViewAnimationHelper::aboutToPlay()
 {
-    if (isWaitingToPlaying())
+    if (isWaitingToPlaying()) {
+        fmDebug() << "Animation already waiting to play, skipping preparation";
         return;
+    }
 
-    if (playingAnim)
+    if (playingAnim) {
+        fmDebug() << "Animation already playing, skipping preparation";
         return;
+    }
 
+    fmDebug() << "Preparing animation - capturing current state";
     oldVisiableRect = view->viewport()->rect();
     oldVisiableRect.moveTop(view->verticalOffset());
     indexPixmaps.clear();
@@ -71,17 +81,24 @@ QRect ViewAnimationHelper::getCurrentRectByIndex(const QModelIndex &index) const
 
 void ViewAnimationHelper::playViewAnimation()
 {
-    if (!initialized)
+    if (!initialized) {
+        fmDebug() << "Animation not initialized, skipping play";
         return;
+    }
 
-    if (playingAnim)
+    if (playingAnim) {
+        fmDebug() << "Animation already playing, skipping play request";
         return;
+    }
+
+    fmInfo() << "Starting view animation playback";
 
     if (!delayTimer) {
         delayTimer = new QTimer(this);
         delayTimer->setSingleShot(true);
         delayTimer->setInterval(100);
         connect(delayTimer, &QTimer::timeout, this, &ViewAnimationHelper::onDelayTimerFinish);
+        fmDebug() << "Created delay timer with 100ms interval";
     }
 
     if (!delayTimer->isActive())
@@ -95,6 +112,7 @@ void ViewAnimationHelper::playViewAnimation()
 
     resetExpandItem();
     delayTimer->start();
+    fmDebug() << "Animation delay timer started";
 }
 
 bool ViewAnimationHelper::isAnimationPlaying() const
@@ -120,9 +138,12 @@ bool ViewAnimationHelper::hasInitialized() const
 
 void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)
 {
-    if (!initialized)
+    if (!initialized) {
+        fmDebug() << "Animation not initialized, skipping width change animation";
         return;
+    }
 
+    fmInfo() << "Playing animation with width change:" << deltaWidth;
     playingAnim = true;
 
     syncVisiableRect();
@@ -134,11 +155,15 @@ void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)
     currentVisiableRect.setWidth(currentVisiableRect.width() + deltaWidth);
     newIndexRectMap = calcIndexRects(currentVisiableRect);
 
+    fmDebug() << "Animation setup completed - old items:" << oldIndexRectMap.size()
+              << "new items:" << newIndexRectMap.size();
+
     resetExpandItem();
     paintPixmaps(newIndexRectMap);
 
     resetAnimation();
     animPtr->start();
+    fmDebug() << "Width change animation started";
 }
 
 void ViewAnimationHelper::paintItems() const
@@ -221,16 +246,22 @@ void ViewAnimationHelper::setAnimProcess(double value)
 
 void ViewAnimationHelper::onDelayTimerFinish()
 {
+    fmDebug() << "Delay timer finished, starting actual animation";
+
     oldIndexRectMap = currentIndexRectMap;
 
     syncVisiableRect();
     newIndexRectMap = calcIndexRects(currentVisiableRect);
+
+    fmDebug() << "Animation transition prepared - from" << oldIndexRectMap.size()
+              << "to" << newIndexRectMap.size() << "items";
 
     paintPixmaps(newIndexRectMap);
 
     resetAnimation();
 
     animPtr->start();
+    fmDebug() << "Animation started after delay";
 }
 
 void ViewAnimationHelper::onAnimationValueChanged()
@@ -240,6 +271,7 @@ void ViewAnimationHelper::onAnimationValueChanged()
 
 void ViewAnimationHelper::onAnimationTimerFinish()
 {
+    fmDebug() << "Animation completed, updating viewport";
     view->viewport()->update();
     playingAnim = false;
 }
@@ -309,6 +341,7 @@ void ViewAnimationHelper::createPixmapsForVisiableRect()
 void ViewAnimationHelper::resetAnimation()
 {
     if (!animPtr) {
+        fmDebug() << "Creating new animation with configuration settings";
         animPtr = new QPropertyAnimation(this, "animProcess", this);
 
         int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationLayoutDuration, 366).toInt();
@@ -318,12 +351,16 @@ void ViewAnimationHelper::resetAnimation()
         animPtr->setStartValue(0.0);
         animPtr->setEndValue(1.0);
 
+        fmDebug() << "Animation configured - duration:" << duration << "curve:" << curve;
+
         connect(animPtr, &QPropertyAnimation::valueChanged, this, &ViewAnimationHelper::onAnimationValueChanged);
         connect(animPtr, &QPropertyAnimation::finished, this, &ViewAnimationHelper::onAnimationTimerFinish);
     }
 
-    if (animPtr->state() == QPropertyAnimation::Running)
+    if (animPtr->state() == QPropertyAnimation::Running) {
+        fmDebug() << "Stopping running animation before reset";
         animPtr->stop();
+    }
 }
 
 void ViewAnimationHelper::resetExpandItem()
@@ -331,13 +368,17 @@ void ViewAnimationHelper::resetExpandItem()
     if (view->selectedIndexes().count() != 1) {
         expandItemIndex = QModelIndex();
         expandItemPixmap = QPixmap();
+        fmDebug() << "Reset expand item - no single selection";
         return;
     }
 
     if (view->itemDelegate()->itemExpanded()) {
+        fmDebug() << "Processing expanded item for animation";
         QWidget *expandedItem = view->itemDelegate()->expandedItem();
-        if (!expandedItem)
+        if (!expandedItem) {
+            fmDebug() << "No expanded item widget found";
             return;
+        }
 
         expandItemIndex = view->itemDelegate()->expandedIndex();
         auto itemRect = expandedItem->rect();
@@ -346,6 +387,7 @@ void ViewAnimationHelper::resetExpandItem()
         auto itemLabelRect = itemRect.adjusted(0, itemIconRect.height() + kIconModeTextPadding + kIconModeIconSpacing, 0, 0);
         expandItemOffset = itemLabelRect.topLeft();
         expandItemPixmap = expandedItem->grab(itemLabelRect);
+        fmDebug() << "Captured expanded item pixmap for animation";
     }
 }
 

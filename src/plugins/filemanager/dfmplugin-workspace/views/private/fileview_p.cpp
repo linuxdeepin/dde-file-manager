@@ -18,6 +18,7 @@
 #include "utils/fileviewhelper.h"
 #include "events/workspaceeventcaller.h"
 
+#include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/schemefactory.h>
@@ -42,6 +43,8 @@ DGUI_USE_NAMESPACE
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
 {
+    fmDebug() << "FileViewPrivate initializing for FileView";
+
     dragDropHelper = new DragDropHelper(qq);
     viewDrawHelper = new ViewDrawHelper(qq);
     selectHelper = new SelectHelper(qq);
@@ -54,6 +57,8 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
                           << FileView::ContiguousSelection;
 
     allowedAdjustColumnSize = Application::instance()->appAttribute(Application::kViewSizeAdjustable).toBool();
+
+    fmDebug() << "FileViewPrivate initialization completed - column size adjustable:" << allowedAdjustColumnSize;
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
@@ -81,6 +86,8 @@ QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 
 void FileViewPrivate::initIconModeView()
 {
+    fmDebug() << "Initializing icon mode view";
+
     if (headerWidget) {
         headerWidget->setVisible(false);
 
@@ -90,6 +97,7 @@ void FileViewPrivate::initIconModeView()
             headerLayout->takeAt(0);
             delete headerView;
             headerView = nullptr;
+            fmDebug() << "Header view removed for icon mode";
         }
     }
 
@@ -100,18 +108,24 @@ void FileViewPrivate::initIconModeView()
                              viewDefines.iconSize(currentIconSizeLevel)));
         QSignalBlocker blocker(statusBar->scalingSlider());
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
+        fmDebug() << "Icon size set to level:" << currentIconSizeLevel;
     }
 
     if (q->itemDelegate()) {
         q->itemDelegate()->setIconSizeByIconSizeLevel(currentIconSizeLevel);
         q->itemDelegate()->setItemMinimumWidthByWidthLevel(currentGridDensityLevel);
+        fmDebug() << "Item delegate configured for icon mode - density level:" << currentGridDensityLevel;
     }
 }
 
 void FileViewPrivate::initListModeView()
 {
-    if (q->itemDelegate())
+    fmDebug() << "Initializing list mode view";
+
+    if (q->itemDelegate()) {
         q->itemDelegate()->setItemMinimumHeightByHeightLevel(currentListHeightLevel);
+        fmDebug() << "Item delegate height level set to:" << currentListHeightLevel;
+    }
 
     if (!headerWidget) {
         headerWidget = new QWidget(q);
@@ -120,6 +134,7 @@ void FileViewPrivate::initListModeView()
         headerLayout->setAlignment(Qt::AlignTop);
         headerWidget->installEventFilter(q);
         q->addHeaderWidget(headerWidget);
+        fmDebug() << "Header widget created for list mode";
     }
 
     if (!headerView) {
@@ -149,12 +164,16 @@ void FileViewPrivate::initListModeView()
         QObject::connect(q->horizontalScrollBar(), &QScrollBar::valueChanged, headerView, [=](int value) {
             headerView->move(-value, headerView->y());
         });
+
+        fmDebug() << "Header view created and configured for list mode";
     }
 
     headerWidget->setVisible(true);
 
-    if (statusBar)
+    if (statusBar) {
         statusBar->setScalingVisible(false);
+        fmDebug() << "Status bar scaling disabled for list mode";
+    }
 }
 
 QModelIndexList FileViewPrivate::selectedDraggableIndexes()
@@ -174,6 +193,8 @@ QModelIndexList FileViewPrivate::selectedDraggableIndexes()
 void FileViewPrivate::initContentLabel()
 {
     if (!contentLabel) {
+        fmDebug() << "Creating content label for empty view";
+
         contentLabel = new QLabel(q);
         contentLabel->setMinimumSize(kContentLabelMinWidth, kContentLabelMinHeight);
         contentLabel->setAlignment(Qt::AlignCenter);
@@ -200,6 +221,8 @@ void FileViewPrivate::initContentLabel()
         contentLabel->setStyleSheet(q->styleSheet());
         contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
         contentLabel->show();
+
+        fmDebug() << "Content label created and configured";
     }
 }
 
@@ -225,6 +248,8 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
 
 void FileViewPrivate::loadViewMode(const QUrl &url)
 {
+    fmDebug() << "Loading view mode for URL:" << url.toString();
+
     int defaultViewMode = static_cast<int>(WorkspaceHelper::instance()->findViewMode(url.scheme()));
     int savedViewMode = fileViewStateValue(url, "viewMode", -1).toInt();
     int parentViewMode = -1;
@@ -245,15 +270,21 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
         currentViewMode = static_cast<Global::ViewMode>(parentViewMode);
     } else if (savedViewMode != -1 && WorkspaceHelper::instance()->isViewModeSupported(url.scheme(), static_cast<Global::ViewMode>(savedViewMode))) {  // saved view mode in old version may not be supported
         currentViewMode = static_cast<Global::ViewMode>(savedViewMode);
+        fmDebug() << "Using saved view mode:" << savedViewMode;
     } else {
         currentViewMode = static_cast<Global::ViewMode>(defaultViewMode);
+        fmDebug() << "Using default view mode:" << defaultViewMode;
     }
 
-    if (currentViewMode == Global::ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
+    if (currentViewMode == Global::ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         currentViewMode = Global::ViewMode::kListMode;
+        fmDebug() << "Tree mode disabled, switching to list mode";
+    }
 
     auto winId = WorkspaceHelper::instance()->windowId(q);
     WorkspaceEventCaller::sendViewModeChanged(winId, currentViewMode);
+
+    fmInfo() << "View mode loaded:" << static_cast<int>(currentViewMode) << "for URL:" << url.toString();
 }
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
@@ -270,6 +301,7 @@ void FileViewPrivate::updateHorizontalOffset()
         int itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
         int itemColumn = 0;
         if (itemWidth <= 0) {
+            fmDebug() << "Invalid item width, skipping offset calculation";
             return;
         }
         // 根据qt虚函数去计算当前的itemColumn（每行绘制的个数）
@@ -297,6 +329,7 @@ void FileViewPrivate::updateHorizontalOffset()
             || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
             columnCountByCalc = 1;
             initHorizontalOffset = false;
+            fmDebug() << "Resetting to single column layout";
             return;
         }
         horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;

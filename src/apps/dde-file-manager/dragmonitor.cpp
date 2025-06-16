@@ -70,7 +70,6 @@ bool DragMoniter::eventFilter(QObject *watched, QEvent *event)
             }
 
             if (!str.isEmpty()) {
-                qCDebug(logAppFileManager) << "DragMoniter::eventFilter: Drag enter event with" << str.size() << "URLs";
                 QMetaObject::invokeMethod(this, "DragEnter", Qt::QueuedConnection, Q_ARG(QStringList, str));
             }
         }

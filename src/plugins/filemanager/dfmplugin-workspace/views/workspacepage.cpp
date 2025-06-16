@@ -33,19 +33,26 @@ WorkspacePage::WorkspacePage(QWidget *parent)
 
 void WorkspacePage::setUrl(const QUrl &url)
 {
+    fmInfo() << "WorkspacePage setUrl called with url:" << url;
     auto curView = currentViewPtr();
     if (curView) {
         if (UniversalUtils::urlEquals(url, curView->rootUrl())
-            && !dpfHookSequence->run("dfmplugin_workspace", "hook_Allow_Repeat_Url", url, curView->rootUrl()))
+            && !dpfHookSequence->run("dfmplugin_workspace", "hook_Allow_Repeat_Url", url, curView->rootUrl())) {
+            fmDebug() << "setUrl: url is same as current, skip.";
             return;
+        }
 
         bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationEnterEnable, true).toBool();
-        if (animEnable) 
+        if (animEnable) {
+            fmDebug() << "setUrl: play disappear animation for current view.";
             playDisappearAnimation(curView);
+        }
 
         FileView *view = qobject_cast<FileView *>(curView->widget());
-        if (view)
+        if (view) {
+            fmDebug() << "setUrl: stopWork for FileView.";
             view->stopWork(url);
+        }
     }
 
     auto lastUrl = currentPageUrl;
@@ -53,8 +60,10 @@ void WorkspacePage::setUrl(const QUrl &url)
 
     // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
     // called causing this function to reentrant!!!
-    if (currentPageUrl != url)
+    if (currentPageUrl != url) {
+        fmWarning() << "setUrl: currentPageUrl changed during reentrant, abort.";
         return;
+    }
 
     QString scheme { url.scheme() };
 
@@ -63,9 +72,10 @@ void WorkspacePage::setUrl(const QUrl &url)
 
     if (!views.contains(scheme)) {
         QString error;
+        fmDebug() << "setUrl: create new view for scheme:" << scheme;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
         if (!fileView) {
-            fmWarning() << "Cannot create view for " << url << "Reason: " << error;
+            fmWarning() << "Cannot create view for" << url << "Reason:" << error;
 
             // reset to last view and notify other plugins return to last dir.
             currentPageUrl = lastUrl;
@@ -77,9 +87,11 @@ void WorkspacePage::setUrl(const QUrl &url)
 
         views.insert(scheme, fileView);
         viewStackLayout->addWidget(fileView->widget());
+        fmDebug() << "setUrl: new view created and added to stack for scheme:" << scheme;
     }
 
     setCurrentView(url);
+    fmDebug() << "setUrl: setCurrentView called for url:" << url;
 }
 
 QUrl WorkspacePage::currentUrl() const
@@ -99,6 +111,7 @@ WorkspacePage::ViewPtr WorkspacePage::currentViewPtr()
 
 void WorkspacePage::viewStateChanged()
 {
+    fmDebug() << "viewStateChanged called";
     if (!canPlayAppearAnimation)
         return;
 
@@ -110,6 +123,7 @@ void WorkspacePage::viewStateChanged()
         appearAnimDelayTimer->setInterval(100);
         appearAnimDelayTimer->setSingleShot(true);
         connect(appearAnimDelayTimer, &QTimer::timeout, this, &WorkspacePage::onAnimDelayTimeout);
+        fmDebug() << "viewStateChanged: appearAnimDelayTimer created";
     }
 
     auto view = views[currentViewScheme];
@@ -122,6 +136,7 @@ void WorkspacePage::viewStateChanged()
 
     if (!contentWidget) {
         enterAnim->stopAndHide();
+        fmWarning() << "viewStateChanged: contentWidget is null, animation stopped";
         return;
     }
 
@@ -131,12 +146,15 @@ void WorkspacePage::viewStateChanged()
     enterAnim->resetWidgetSize(contentWidget->size());
 
     appearAnimDelayTimer->start();
+    fmDebug() << "viewStateChanged: animation timer started";
 }
 
 void WorkspacePage::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
+    fmDebug() << "setCustomTopWidgetVisible called for scheme:" << scheme << ", visible:" << visible;
     if (topWidgets.contains(scheme)) {
         topWidgets[scheme]->setVisible(visible);
+        fmDebug() << "setCustomTopWidgetVisible: set visible for existing topWidget";
     } else {
         auto interface = WorkspaceHelper::instance()->createTopWidgetByScheme(scheme);
         if (interface) {
@@ -152,6 +170,7 @@ void WorkspacePage::setCustomTopWidgetVisible(const QString &scheme, bool visibl
                 topLayout->insertWidget(insertIndex, topWidgetPtr.get());
                 topWidgets.insert(scheme, topWidgetPtr);
                 topWidgetPtr->setVisible(visible);
+                fmDebug() << "setCustomTopWidgetVisible: new topWidget created and set visible";
             }
         }
     }
@@ -221,7 +240,7 @@ void WorkspacePage::initUI()
     widgetLayout = new QVBoxLayout;
     widgetLayout->setSpacing(0);
     widgetLayout->setContentsMargins(0, 0, 0, 0);
-    
+
     // 添加顶部和底部容器到主布局
     widgetLayout->addWidget(topContainer, 0);    // 顶部容器不拉伸
     widgetLayout->addWidget(viewContainer, 1);   // 底部容器占用剩余空间
@@ -232,6 +251,7 @@ void WorkspacePage::initUI()
 void WorkspacePage::initCustomTopWidgets(const QUrl &url)
 {
     QString scheme { url.scheme() };
+    fmDebug() << "initCustomTopWidgets called for url:" << url << ", scheme:" << scheme;
 
     // 隐藏其他scheme的topWidget
     for (auto widget : topWidgets.values()) {
@@ -240,8 +260,10 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
     }
 
     auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
-    if (interface == nullptr)
+    if (interface == nullptr) {
+        fmDebug() << "initCustomTopWidgets: no interface for url:" << url;
         return;
+    }
 
     if (!interface->parent())
         interface->setParent(this);
@@ -249,6 +271,7 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
     if (topWidgets.contains(scheme)) {
         bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
         topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
+        fmDebug() << "initCustomTopWidgets: set visible for existing topWidget, visible:" << (interface && (showUrl || interface->isKeepShow()));
     } else {
         TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
         if (topWidgetPtr) {
@@ -263,25 +286,32 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
             topLayout->insertWidget(insertIndex, topWidgetPtr.get());
             topWidgets.insert(scheme, topWidgetPtr);
             topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
+            fmDebug() << "initCustomTopWidgets: new topWidget created and set visible:" << (interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
         }
     }
 }
 
 void WorkspacePage::setCurrentView(const QUrl &url)
 {
+    fmDebug() << "setCurrentView called for url:" << url;
     currentViewScheme = url.scheme();
     auto view = views[currentViewScheme];
-    if (!view)
+    if (!view) {
+        fmWarning() << "setCurrentView: no view found for scheme:" << currentViewScheme;
         return;
+    }
 
     viewStackLayout->setCurrentWidget(view->widget());
+    fmDebug() << "setCurrentView: view set in stack for scheme:" << currentViewScheme;
 
     if (canPlayAppearAnimation && enterAnim)
         enterAnim->raise();
 
     initCustomTopWidgets(url);
+    fmDebug() << "setCurrentView: initCustomTopWidgets called for url:" << url;
 
     view->setRootUrl(url);
+    fmDebug() << "setCurrentView: setRootUrl called for url:" << url;
 
     if (view->viewState() != AbstractBaseView::ViewState::kViewBusy)
         viewStateChanged();
@@ -289,8 +319,11 @@ void WorkspacePage::setCurrentView(const QUrl &url)
 
 void WorkspacePage::playDisappearAnimation(ViewPtr view)
 {
-    if (!view)
+    fmDebug() << "playDisappearAnimation called";
+    if (!view) {
+        fmWarning() << "playDisappearAnimation: view is null";
         return;
+    }
 
     auto contentWidget = view->contentWidget();
     if (!contentWidget)
@@ -311,5 +344,8 @@ void WorkspacePage::playDisappearAnimation(ViewPtr view)
         enterAnim->raise();
 
         enterAnim->playDisappear();
+        fmDebug() << "playDisappearAnimation: disappear animation played";
+    } else {
+        fmWarning() << "playDisappearAnimation: contentWidget is null, cannot play animation";
     }
 }

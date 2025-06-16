@@ -100,11 +100,15 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 
 FileView::~FileView()
 {
+    fmInfo() << "Destroying FileView for URL:" << rootUrl();
+
     disconnect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
+
+    fmDebug() << "FileView destruction completed";
 }
 
 QWidget *FileView::widget() const
@@ -1223,12 +1227,16 @@ QList<QAbstractItemView::SelectionMode> FileView::fetchSupportSelectionModes()
 bool FileView::cdUp()
 {
     const QUrl &oldCurrentUrl = rootUrl();
+    fmInfo() << "Navigating up from URL:" << oldCurrentUrl;
+
     QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
 
     if (parentUrl.isValid()) {
+        fmDebug() << "Parent URL found:" << parentUrl;
         FileOperatorHelperIns->openFilesByMode(this, { parentUrl }, DirOpenMode::kOpenInCurrentWindow);
         return true;
     } else {
+        fmDebug() << "No valid parent URL, navigating to computer root";
         auto windowId = WorkspaceHelper::instance()->windowId(this);
         QUrl computerRoot;
         computerRoot.setScheme(Global::Scheme::kComputer);
@@ -1357,17 +1365,27 @@ void FileView::onRowCountChanged()
 
 void FileView::setFilterData(const QUrl &url, const QVariant &data)
 {
+    fmDebug() << "Setting filter data for URL:" << url << "current URL:" << rootUrl();
+
     if (url == rootUrl() && isVisible()) {
+        fmInfo() << "Applying filter data to current view";
         clearSelection();
         model()->setFilterData(data);
+    } else {
+        fmDebug() << "Filter data not applied - URL mismatch or view not visible";
     }
 }
 
 void FileView::setFilterCallback(const QUrl &url, const FileViewFilterCallback callback)
 {
+    fmDebug() << "Setting filter callback for URL:" << url << "current URL:" << rootUrl();
+
     if (url == rootUrl() && isVisible()) {
+        fmInfo() << "Applying filter callback to current view";
         clearSelection();
         model()->setFilterCallback(callback);
+    } else {
+        fmDebug() << "Filter callback not applied - URL mismatch or view not visible";
     }
 }
 
@@ -1765,22 +1783,31 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
     // if the left btn is pressed and the rect large enough, means the view state is draggingSelectState.
     // and don't show menu in the draggingSelectState.
-    if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght))
+    if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght)) {
+        fmDebug() << "Context menu blocked due to drag selection state";
         return;
+    }
 
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        fmWarning() << "Context menu blocked: FTP or SMB is busy for URL:" << rootUrl();
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
     }
 
-    if (FileViewMenuHelper::disableMenu())
+    if (FileViewMenuHelper::disableMenu()) {
+        fmDebug() << "Context menu disabled by helper";
         return;
+    }
 
     d->viewMenuHelper->setWaitCursor();
     const QModelIndex &index = indexAt(event->pos());
-    if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index)
+    if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index) {
+        fmDebug() << "Setting focus due to editing index";
         setFocus(Qt::FocusReason::OtherFocusReason);
+    }
+
     if (d->fileViewHelper->isEmptyArea(event->pos())) {
+        fmDebug() << "Showing context menu for empty area";
         BaseItemDelegate *de = itemDelegate();
         if (de)
             de->hideNotEditingIndexWidget();
@@ -1789,10 +1816,12 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
         d->viewMenuHelper->showEmptyAreaMenu();
     } else {
         if (!isSelected(index)) {
+            fmDebug() << "Item not selected, clearing selection and selecting clicked item";
             itemDelegate()->hideNotEditingIndexWidget();
             clearSelection();
 
             if (!index.isValid()) {
+                fmDebug() << "Invalid index, showing empty area menu";
                 d->viewMenuHelper->showEmptyAreaMenu();
                 d->viewMenuHelper->reloadCursor();
                 return;
@@ -2067,25 +2096,35 @@ void FileView::showEvent(QShowEvent *event)
 
 void FileView::initializeModel()
 {
+    fmDebug() << "Initializing FileView model and selection model";
+
     FileViewModel *viewModel = new FileViewModel(this);
     setModel(viewModel);
 
     FileSelectionModel *selectionModel = new FileSelectionModel(viewModel, this);
     setSelectionModel(selectionModel);
+
+    fmDebug() << "Model and selection model initialized successfully";
 }
 
 void FileView::initializeDelegate()
 {
+    fmDebug() << "Initializing FileView delegates";
+
     d->fileViewHelper = new FileViewHelper(this);
     setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
     setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
 
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
+
+    fmDebug() << "Delegates initialized, items expandable:" << d->itemsExpandable;
 }
 
 void FileView::initializeStatusBar()
 {
+    fmDebug() << "Initializing FileView status bar";
+
     ViewDefines viewDefines;
     d->statusBar = new FileViewStatusBar(this);
     d->statusBar->resetScalingSlider(viewDefines.iconSizeCount() - 1);
@@ -2095,6 +2134,8 @@ void FileView::initializeStatusBar()
     d->updateStatusBarTimer->setSingleShot(true);
 
     addFooterWidget(d->statusBar);
+
+    fmDebug() << "Status bar initialized with" << viewDefines.iconSizeCount() << "icon size levels";
 }
 
 void FileView::initializeConnect()
@@ -2413,12 +2454,14 @@ void FileView::onModelStateChanged()
     updateSelectedUrl();
 
     if (model()->currentState() == ModelState::kBusy) {
+        fmDebug() << "Model is busy - disabling header interactions";
         if (d->headerView) {
             d->headerView->setSortIndicatorShown(false);
             d->headerView->setSectionsClickable(false);
         }
         d->animationHelper->reset();
     } else {
+        fmDebug() << "Model is idle - enabling header interactions";
         if (d->headerView) {
             d->headerView->setSortIndicatorShown(true);
             d->headerView->setSectionsClickable(true);
@@ -2449,10 +2492,16 @@ void FileView::openIndex(const QModelIndex &index)
 {
     const FileInfoPointer &info = model()->fileInfo(index);
 
-    if (!info)
+    if (!info) {
+        fmWarning() << "Cannot open index: file info is null";
         return;
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(info->urlOf(UrlInfoType::kUrl))) {
-        DialogManager::instance()->showUnableToVistDir(info->urlOf(UrlInfoType::kUrl).path());
+    }
+
+    QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
+    fmInfo() << "Opening file:" << fileUrl;
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
+        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << fileUrl;
+        DialogManager::instance()->showUnableToVistDir(fileUrl.path());
         return;
     }
 

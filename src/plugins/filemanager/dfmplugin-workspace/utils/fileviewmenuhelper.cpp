@@ -41,6 +41,8 @@ bool FileViewMenuHelper::disableMenu()
 
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
+    fmInfo() << "Showing empty area menu for directory:" << view->rootUrl().toString();
+
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     setWaitCursor();
 #ifdef ENABLE_TESTING
@@ -60,6 +62,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
     setWaitCursor();
     if (!scene->initialize(params)) {
+        fmWarning() << "Failed to initialize empty area menu scene";
         delete scene;
         reloadCursor();
         return;
@@ -74,12 +77,14 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     reloadCursor();
 
     QAction *act = menuPtr->exec(QCursor::pos());
-    if (act)
-        if (act) {
-            QList<QUrl> urls { view->rootUrl() };
-            dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
-            scene->triggered(act);
-        }
+    if (act) {
+        fmInfo() << "Empty area menu action triggered:" << act->text();
+        QList<QUrl> urls { view->rootUrl() };
+        dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
+        scene->triggered(act);
+    } else {
+        fmDebug() << "Empty area menu dismissed without selection";
+    }
     delete scene;
 }
 
@@ -118,6 +123,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     setWaitCursor();
 
     if (!scene->initialize(params)) {
+        fmWarning() << "Failed to initialize normal menu scene";
         reloadCursor();
         delete scene;
         return;

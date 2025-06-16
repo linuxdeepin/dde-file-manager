@@ -10,6 +10,7 @@
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventcaller.h"
 
+#include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
@@ -27,12 +28,14 @@ using namespace GlobalDConfDefines::BaseConfig;
 
 AbstractMenuScene *SortAndDisplayMenuCreator::create()
 {
+    fmDebug() << "Creating SortAndDisplayMenuScene instance";
     return new SortAndDisplayMenuScene();
 }
 
 SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new SortAndDisplayMenuScenePrivate(this))
 {
+    fmDebug() << "SortAndDisplayMenuScene initialized";
     d->predicateName[ActionID::kSortBy] = tr("Sort by");
     d->predicateName[ActionID::kDisplayAs] = tr("Display as");
 
@@ -51,6 +54,7 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
 
 SortAndDisplayMenuScene::~SortAndDisplayMenuScene()
 {
+    fmDebug() << "SortAndDisplayMenuScene destroyed";
 }
 
 QString SortAndDisplayMenuScene::name() const
@@ -62,8 +66,16 @@ bool SortAndDisplayMenuScene::initialize(const QVariantHash &params)
 {
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
-    if (d->isEmptyArea)
+
+    fmDebug() << "Initializing SortAndDisplayMenuScene - windowId:" << d->windowId
+              << "isEmptyArea:" << d->isEmptyArea;
+
+    if (d->isEmptyArea) {
+        fmDebug() << "SortAndDisplayMenuScene initialization successful for empty area";
         return AbstractMenuScene::initialize(params);
+    }
+
+    fmDebug() << "SortAndDisplayMenuScene initialization skipped - not empty area";
     return false;
 }
 
@@ -80,6 +92,12 @@ AbstractMenuScene *SortAndDisplayMenuScene::scene(QAction *action) const
 
 bool SortAndDisplayMenuScene::create(QMenu *parent)
 {
+    if (!parent) {
+        fmWarning() << "Cannot create SortAndDisplayMenuScene: parent menu is null";
+        return false;
+    }
+
+    fmDebug() << "Creating sort and display menu";
     d->view = qobject_cast<FileView *>(parent->parent());
     d->createEmptyMenu(parent);
     return AbstractMenuScene::create(parent);
@@ -87,33 +105,46 @@ bool SortAndDisplayMenuScene::create(QMenu *parent)
 
 void SortAndDisplayMenuScene::updateState(QMenu *parent)
 {
+    fmDebug() << "Updating sort and display menu state";
     d->updateEmptyAreaActionState();
     AbstractMenuScene::updateState(parent);
 }
 
 bool SortAndDisplayMenuScene::triggered(QAction *action)
 {
-    if (!d->view)
+    if (!action) {
+        fmWarning() << "Cannot trigger action: action is null";
         return false;
+    }
+
+    if (!d->view) {
+        fmWarning() << "Cannot trigger action: view is null";
+        return false;
+    }
 
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
+    fmDebug() << "Action triggered in SortAndDisplayMenuScene:" << actionId;
+
     if (d->predicateAction.values().contains(action)) {
         // display as
         {
             // display as icon
             if (actionId == ActionID::kDisplayIcon) {
+                fmInfo() << "Switching to icon view mode";
                 WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kIconMode);
                 return true;
             }
 
             // display as list
             if (actionId == ActionID::kDisplayList) {
+                fmInfo() << "Switching to list view mode";
                 WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kListMode);
                 return true;
             }
 
             // display as tree
             if (actionId == ActionID::kDisplayTree) {
+                fmInfo() << "Switching to tree view mode";
                 WorkspaceEventCaller::sendViewModeChanged(d->windowId, DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
                 return true;
             }
@@ -123,30 +154,35 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         {
             // sort by name
             if (actionId == ActionID::kSrtName) {
+                fmInfo() << "Sorting by name";
                 d->sortByRole(Global::ItemRoles::kItemFileDisplayNameRole);
                 return true;
             }
 
             // sort by time modified
             if (actionId == ActionID::kSrtTimeModified) {
+                fmInfo() << "Sorting by time modified";
                 d->sortByRole(Global::ItemRoles::kItemFileLastModifiedRole);
                 return true;
             }
 
             // sort by time created
             if (actionId == ActionID::kSrtTimeCreated) {
+                fmInfo() << "Sorting by time created";
                 d->sortByRole(Global::ItemRoles::kItemFileCreatedRole);
                 return true;
             }
 
             // sort by size
             if (actionId == ActionID::kSrtSize) {
+                fmInfo() << "Sorting by size";
                 d->sortByRole(Global::ItemRoles::kItemFileSizeRole);
                 return true;
             }
 
             // sort by type
             if (actionId == ActionID::kSrtType) {
+                fmInfo() << "Sorting by type";
                 d->sortByRole(Global::ItemRoles::kItemFileMimeTypeRole);
                 return true;
             }
@@ -163,6 +199,13 @@ SortAndDisplayMenuScenePrivate::SortAndDisplayMenuScenePrivate(AbstractMenuScene
 
 void SortAndDisplayMenuScenePrivate::createEmptyMenu(QMenu *parent)
 {
+    if (!parent) {
+        fmWarning() << "Cannot create empty menu: parent is null";
+        return;
+    }
+
+    fmDebug() << "Creating empty area menu with sort and display options";
+
     QAction *tempAction = parent->addAction(predicateName.value(ActionID::kDisplayAs));
     tempAction->setMenu(addDisplayAsActions(parent));
     predicateAction[ActionID::kDisplayAs] = tempAction;
@@ -172,10 +215,13 @@ void SortAndDisplayMenuScenePrivate::createEmptyMenu(QMenu *parent)
     tempAction->setMenu(addSortByActions(parent));
     predicateAction[ActionID::kSortBy] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSortBy));
+
+    fmDebug() << "Empty area menu created with" << predicateAction.size() << "main actions";
 }
 
 QMenu *SortAndDisplayMenuScenePrivate::addSortByActions(QMenu *menu)
 {
+    fmDebug() << "Adding sort by actions to submenu";
     QMenu *subMenu = new QMenu(menu);
 
     // SortBy
@@ -209,6 +255,7 @@ QMenu *SortAndDisplayMenuScenePrivate::addSortByActions(QMenu *menu)
 
 QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
 {
+    fmDebug() << "Adding display as actions to submenu";
     QMenu *subMenu = new QMenu(menu);
 
     // DisplayAs
@@ -242,14 +289,19 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
             : order == Qt::AscendingOrder ? Qt::DescendingOrder
                                           : Qt::AscendingOrder;
 
+    fmDebug() << "Sorting by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+              << "old role:" << oldRole;
+
     view->setSort(itemRole, order);
 }
 
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
 {
+    fmDebug() << "Updating empty area action state";
     using namespace Global;
     // sort  by
     auto role = static_cast<ItemRoles>(view->model()->sortRole());
+    fmDebug() << "Current sort role:" << role;
     switch (role) {
     case kItemFileDisplayNameRole:
         predicateAction[ActionID::kSrtName]->setChecked(true);
@@ -272,6 +324,7 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
 
     // display as
     auto mode = view->currentViewMode();
+    fmDebug() << "Current view mode:" << static_cast<int>(mode);
     switch (mode) {
     case Global::ViewMode::kIconMode:
         predicateAction[ActionID::kDisplayIcon]->setChecked(true);

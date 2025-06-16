@@ -41,6 +41,7 @@ static const char *const kOemMenuSceneName = "OemMenu";
 
 AbstractMenuScene *WorkspaceMenuCreator::create()
 {
+    fmDebug() << "Creating WorkspaceMenuScene instance";
     return new WorkspaceMenuScene();
 }
 
@@ -54,6 +55,7 @@ WorkspaceMenuScene::WorkspaceMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new WorkspaceMenuScenePrivate(this))
 {
+    fmDebug() << "WorkspaceMenuScene initialized";
     d->predicateName[ActionID::kRefresh] = tr("Refresh");
 }
 
@@ -73,11 +75,17 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    fmDebug() << "Initializing WorkspaceMenuScene - currentDir:" << d->currentDir.toString()
+              << "selectFiles count:" << d->selectFiles.size() << "isEmptyArea:" << d->isEmptyArea
+              << "windowId:" << d->windowId;
+
     const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
-    if (d->currentDir.isEmpty())
+    if (d->currentDir.isEmpty()) {
+        fmWarning() << "WorkspaceMenuScene initialization failed: currentDir is empty";
         return false;
+    }
 
     QList<AbstractMenuScene *> currentScene;
     // sort
@@ -93,10 +101,12 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         currentScene.append(dirScene);
 
     if (d->isEmptyArea) {
+        fmDebug() << "Creating empty area menu scenes";
         // new (new doc, new dir)
         if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
             currentScene.append(newCreateScene);
     } else {
+        fmDebug() << "Creating normal menu scenes";
         // open with
         if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
@@ -153,9 +163,12 @@ AbstractMenuScene *WorkspaceMenuScene::scene(QAction *action) const
 
 bool WorkspaceMenuScene::create(DMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot create WorkspaceMenuScene: parent menu is null";
         return false;
+    }
 
+    fmDebug() << "Creating workspace menu";
     d->view = qobject_cast<FileView *>(parent->parent());
     Q_ASSERT(d->view);
 
@@ -171,8 +184,15 @@ bool WorkspaceMenuScene::create(DMenu *parent)
 
 void WorkspaceMenuScene::updateState(DMenu *parent)
 {
+    if (!parent) {
+        fmWarning() << "Cannot update state: parent menu is null";
+        return;
+    }
+
+    fmDebug() << "Updating workspace menu state";
     auto currentWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(d->windowId);
     if (!currentWidget) {
+        fmWarning() << "Cannot find workspace widget for windowId:" << d->windowId;
         AbstractMenuScene::updateState(parent);
         return;
     }
@@ -200,6 +220,14 @@ void WorkspaceMenuScene::updateState(DMenu *parent)
 
 bool WorkspaceMenuScene::triggered(QAction *action)
 {
+    if (!action) {
+        fmWarning() << "Cannot trigger action: action is null";
+        return false;
+    }
+
+    const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
+    fmDebug() << "Action triggered in WorkspaceMenuScene:" << actionId << "isEmptyArea:" << d->isEmptyArea;
+
     if (filterActionBySubscene(this, action))
         return true;
 
@@ -212,6 +240,7 @@ bool WorkspaceMenuScene::triggered(QAction *action)
 bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 {
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
+    fmDebug() << "Processing empty area menu action:" << actionId;
 
     auto actionScene = scene(action);
     if (!actionScene) {
@@ -220,10 +249,13 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
     }
 
     const QString &sceneName = actionScene->name();
+    fmDebug() << "Action belongs to scene:" << sceneName;
+
     // ClipBoardMenu scene
     if (sceneName == kClipBoardMenuSceneName) {
         // paste
         if (actionId == dfmplugin_menu::ActionID::kPaste) {
+            fmDebug() << "Executing paste operation in empty area";
             QPointer<dfmplugin_workspace::FileView> view = d->view;
             QTimer::singleShot(200, [view]() {
                 if (!view.isNull())
@@ -237,30 +269,35 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
     if (sceneName == kNewCreateMenuSceneName) {
         // new folder
         if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
+            fmDebug() << "Creating new folder";
             FileOperatorHelperIns->touchFolder(d->view);
             return true;
         }
 
         // new office text
         if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
+            fmDebug() << "Creating new office text document";
             FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
             return true;
         }
 
         // new spreadsheets
         if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
+            fmDebug() << "Creating new spreadsheet";
             FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
             return true;
         }
 
         // new presentation
         if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
+            fmDebug() << "Creating new presentation";
             FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
             return true;
         }
 
         // new plain text
         if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
+            fmDebug() << "Creating new plain text file";
             FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
             return true;
         }
@@ -268,6 +305,7 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 
     // TemplateMenu scene
     if (sceneName == kTemplateMenuSceneName) {
+        fmDebug() << "Creating file from template:" << action->data().toString();
         FileOperatorHelperIns->touchFiles(d->view, QUrl::fromLocalFile(action->data().toString()));
         return true;
     }
@@ -275,6 +313,7 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
     if (sceneName == WorkspaceMenuCreator::name()) {
         // refresh
         if (actionId == ActionID::kRefresh) {
+            fmDebug() << "Refreshing workspace view";
             d->view->refresh();
             return true;
         }
@@ -286,6 +325,8 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
 {
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
+    fmDebug() << "Processing normal menu action:" << actionId;
+
     auto actionScene = scene(action);
     if (!actionScene) {
         fmWarning() << actionId << " doesn't belong to any scene.";
@@ -293,13 +334,18 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
     }
 
     const QString &sceneName = actionScene->name();
+    fmDebug() << "Action belongs to scene:" << sceneName;
+
     if (sceneName == kFileOperatorMenuSceneName) {
         // rename
         if (actionId == dfmplugin_menu::ActionID::kRename) {
             if (1 == d->selectFiles.count()) {
+                fmDebug() << "Starting rename operation for single file";
                 const QModelIndex &index = d->view->selectionModel()->currentIndex();
-                if (Q_UNLIKELY(!index.isValid()))
+                if (Q_UNLIKELY(!index.isValid())) {
+                    fmWarning() << "Cannot rename: invalid selection index";
                     return false;
+                }
                 QPointer<dfmplugin_workspace::FileView> view = d->view;
                 QTimer::singleShot(80, [view, index]() {
                     if (!view.isNull())
@@ -307,16 +353,19 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 });
                 d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {
+                fmInfo() << "Starting batch rename operation for" << d->selectFiles.count() << "files";
                 WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::Scheme::kFile, true);
             }
             return true;
         }
     } else if (sceneName == kOpenDirMenuSceneName) {
         if (actionId == dfmplugin_menu::ActionID::kOpenInNewTab) {
+            fmDebug() << "Opening in new tab:" << d->focusFile.toString();
             WorkspaceEventCaller::sendOpenNewTab(d->windowId, d->focusFile);
             return true;
         }
         if (actionId == dfmplugin_menu::ActionID::kReverseSelect) {
+            fmDebug() << "Executing reverse select operation";
             WorkspaceHelper::instance()->reverseSelect(d->windowId);
             return true;
         }

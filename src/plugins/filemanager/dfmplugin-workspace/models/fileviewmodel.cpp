@@ -54,10 +54,13 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
     connect(&waitTimer, &QTimer::timeout, this, &FileViewModel::onSetCursorWait);
     waitTimer.setInterval(50);
+
+    fmDebug() << "FileViewModel initialized with key:" << currentKey;
 }
 
 FileViewModel::~FileViewModel()
 {
+    fmDebug() << "FileViewModel destructor started for key:" << currentKey;
     closeCursorTimer();
     quitFilterSortWork();
 
@@ -81,6 +84,7 @@ FileViewModel::~FileViewModel()
         itemRootData = nullptr;
     }
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
+    fmInfo() << "FileViewModel destructor completed for key:" << currentKey;
 }
 
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
@@ -127,8 +131,12 @@ QModelIndex FileViewModel::rootIndex() const
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Attempt to set invalid root URL";
         return QModelIndex();
+    }
+
+    fmInfo() << "Setting root URL:" << url.toString() << "with strategy:" << static_cast<int>(dirLoadStrategy);
 
     QVariantMap data;
     data.insert("action", "Open");
@@ -138,15 +146,17 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     // 检查是否需要使用保留策略处理
     bool usePreserveStrategy = !filterSortWorker.isNull() && dirLoadStrategy == DirectoryLoadStrategy::kPreserve;
-    
+
     if (usePreserveStrategy) {
+        fmDebug() << "Using preserve strategy for URL:" << url.toString();
         // 仅准备URL，而不立即加载，这样可以保留当前视图内容
         prepareUrl(url);
-        
+
         // 如果有预处理器，处理它
         if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
             auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
             if (prehandler) {
+                fmDebug() << "Executing prehandler for scheme:" << url.scheme();
                 quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
                 prehandler(winId, url, [this]() {
                     // 预处理完成后执行加载
@@ -155,17 +165,18 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                 return rootIndex(); // 返回当前索引，保持UI状态
             }
         }
-        
+
         // 执行加载，但保留当前视图状态
         executeLoad();
         return rootIndex();
     }
 
     // 标准的创建新模型流程 - kCreateNew策略
+    fmDebug() << "Using create new strategy for URL:" << url.toString();
     beginResetModel();
     closeCursorTimer();
     discardFilterSortObjects(); // 确保清理旧的资源
-    
+
     // create root by url
     dirRootUrl = url;
     FileDataManager::instance()->fetchRoot(dirRootUrl);
@@ -179,6 +190,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
         auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
         if (prehandler) {
+            fmDebug() << "Executing prehandler for scheme:" << url.scheme();
             quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
             prehandler(winId, url, [this, index, url]() {
                 this->canFetchFiles = true;
@@ -192,13 +204,16 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         fetchMore(index);
     }
 
+    fmInfo() << "Root URL set successfully:" << url.toString();
     return index;
 }
 
 void FileViewModel::doExpand(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmWarning() << "Attempt to expand invalid index";
         return;
+    }
 
     if (!filterSortWorker) {
         fmWarning() << "The model do not stand by, beacuse the sort worker unexist.";
@@ -206,6 +221,8 @@ void FileViewModel::doExpand(const QModelIndex &index)
     }
 
     const QUrl &url = index.data(kItemUrlRole).toUrl();
+    fmInfo() << "Expanding item:" << url.toString();
+
     RootInfo *expandRoot = FileDataManager::instance()->fetchRoot(url);
 
     connect(
@@ -234,10 +251,14 @@ void FileViewModel::doExpand(const QModelIndex &index)
 
 void FileViewModel::doCollapse(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmWarning() << "Attempt to collapse invalid index";
         return;
+    }
 
     const QUrl &collapseUrl = index.data(kItemUrlRole).toUrl();
+    fmInfo() << "Collapsing item:" << collapseUrl.toString();
+
     Q_EMIT requestCollapseItem(currentKey, collapseUrl);
 
     FileItemDataPointer item = filterSortWorker->childData(index.row());
@@ -405,6 +426,7 @@ QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
 
 void FileViewModel::refresh()
 {
+    fmInfo() << "Refreshing view for URL:" << dirRootUrl.toString();
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey, true);
 
     Q_EMIT requestRefreshAllChildren();
@@ -422,6 +444,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     // other fetch: fetch file list from data cache
     if (!canFetchMore(parent)) {
         QApplication::restoreOverrideCursor();
+        fmDebug() << "Cannot fetch more data for URL:" << fetchingUrl.toString();
         return;
     }
     canFetchFiles = false;
@@ -433,6 +456,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
+    fmDebug() << "Starting to fetch files for URL:" << fetchingUrl.toString();
+
     if (filterSortWorker.isNull()) {
         ret = FileDataManager::instance()->fetchFiles(fetchingUrl, currentKey);
     } else {
@@ -443,8 +468,11 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     }
 
     if (ret) {
+        fmDebug() << "File fetch request sent successfully for URL:" << fetchingUrl.toString();
         changeState(ModelState::kBusy);
         startCursorTimer();
+    } else {
+        fmWarning() << "Failed to fetch files for URL:" << fetchingUrl.toString();
     }
 }
 
@@ -591,27 +619,35 @@ Qt::DropActions FileViewModel::supportedDropActions() const
 
 void FileViewModel::sort(int column, Qt::SortOrder order)
 {
-    if (state == ModelState::kBusy)
+    if (state == ModelState::kBusy) {
+        fmWarning() << "Cannot sort while model is busy";
         return;
+    }
 
     ItemRoles role = getRoleByColumn(column);
+    fmInfo() << "Sorting by column:" << column << "role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
+
     Q_EMIT requestSortChildren(order, role,
                                Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
 }
 
 void FileViewModel::stopTraversWork(const QUrl &newUrl)
 {
+    fmInfo() << "Stopping traversal work, current URL:" << dirRootUrl.toString() << "new URL:" << newUrl.toString();
+
     changeState(ModelState::kIdle);
     closeCursorTimer();
 
     bool canUsePreserveStrategy = dirRootUrl.isValid() && (newUrl.scheme() == dirRootUrl.scheme());
     if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve && canUsePreserveStrategy) {
+        fmDebug() << "Using preserve strategy to stop work";
         // stop work but do not clean current data
         FileDataManager::instance()->stopRootWork(dirRootUrl, currentKey);
         FileDataManager::instance()->cleanUnusedRoots(dirRootUrl, currentKey);
         return;
     }
 
+    fmDebug() << "Cleaning all data due to strategy or scheme change";
     discardFilterSortObjects();
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 }
@@ -729,6 +765,7 @@ ItemRoles FileViewModel::sortRole() const
 
 void FileViewModel::setFilters(QDir::Filters filters)
 {
+    fmDebug() << "Setting filters:" << filters;
     currentFilters = filters;
     Q_EMIT requestChangeFilters(filters);
 }
@@ -743,6 +780,7 @@ void FileViewModel::setNameFilters(const QStringList &filters)
     if (nameFilters == filters)
         return;
 
+    fmDebug() << "Setting name filters:" << filters;
     nameFilters = filters;
     Q_EMIT requestChangeNameFilters(filters);
 }
@@ -819,7 +857,7 @@ void FileViewModel::prepareUrl(const QUrl &url)
 {
     if (!url.isValid())
         return;
-    
+
     preparedUrl = url;
 }
 
@@ -834,45 +872,45 @@ void FileViewModel::executeLoad()
         }
         return;
     }
-    
+
     // 使用准备好的URL，如果没有设置则使用当前URL
     QUrl urlToLoad = preparedUrl.isValid() ? preparedUrl : dirRootUrl;
     if (!urlToLoad.isValid())
         return;
-    
+
     // 根据不同策略处理
     switch (dirLoadStrategy) {
     case DirectoryLoadStrategy::kCreateNew:
         // 创建新策略：直接设置新URL，会立即清空旧视图
         setRootUrl(urlToLoad);
         break;
-        
+
     case DirectoryLoadStrategy::kPreserve: {
         // 保留策略：保留当前视图内容直到新数据加载完成
-        
+
         // 更新当前URL（但不影响视图显示）
         dirRootUrl = urlToLoad;
-        
+
         // 获取目标URL的RootInfo，准备数据获取
         RootInfo *newRoot = FileDataManager::instance()->fetchRoot(dirRootUrl);
         newRoot->setFirstBatch(true);
-        
+
         // 连接信号，使当前filterSortWorker监听新RootInfo的数据
         connectRootAndFilterSortWork(newRoot, true);
-        
+
         // 更新状态为获取中
         changeState(ModelState::kBusy);
-        
+
         // 触发数据加载过程
         const QModelIndex &index = rootIndex();
         canFetchFiles = true;
         fetchingUrl = urlToLoad;
         fetchMore(index); // 这是关键 - 触发目录数据迭代逻辑
-        
+
         break;
     }
     }
-    
+
     // 清除准备的URL
     preparedUrl = QUrl();
 }
@@ -979,6 +1017,9 @@ void FileViewModel::onHiddenSettingChanged(bool value)
 
 void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
 {
+    fmInfo() << "Work finished for URL:" << dirRootUrl.toString()
+             << "visible files:" << visiableCount << "total files:" << totalCount;
+
     QVariantMap data;
     data.insert("action", "Finish");
     data.insert("visiable files", visiableCount);
@@ -990,6 +1031,7 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
 
     // 如果是保留策略，在加载完成后清理旧的RootInfo对象
     if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve) {
+        fmDebug() << "Cleaning unused roots after preserve strategy completion";
         // 获取当前URL所有子目录的RootInfo
         FileDataManager::instance()->cleanUnusedRoots(dirRootUrl, currentKey);
     }
@@ -1033,6 +1075,8 @@ void FileViewModel::connectRootAndFilterSortWork(RootInfo *root, const bool refr
 
 void FileViewModel::initFilterSortWork()
 {
+    fmDebug() << "Initializing filter sort work for URL:" << dirRootUrl.toString();
+
     discardFilterSortObjects();
     filterSortThread.reset(new QThread);
 
@@ -1045,12 +1089,15 @@ void FileViewModel::initFilterSortWork()
         } else {
             currentFilters &= ~QDir::Hidden;
         }
+        fmDebug() << "Set default filters:" << currentFilters;
     }
 
     // get sort config
     QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
     Qt::SortOrder order = static_cast<Qt::SortOrder>(valueMap.value("sortOrder", Qt::SortOrder::AscendingOrder).toInt());
     ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
+
+    fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role;
 
     if (filterSortWorker)
         filterSortWorker->disconnect();
@@ -1069,11 +1116,12 @@ void FileViewModel::initFilterSortWork()
 
     // 连接信号
     connectFilterSortWorkSignals();
-    
+
     RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
     connectRootAndFilterSortWork(root);
 
     filterSortThread->start();
+    fmInfo() << "Filter sort work initialized and started for URL:" << dirRootUrl.toString();
 }
 
 void FileViewModel::quitFilterSortWork()
@@ -1084,7 +1132,7 @@ void FileViewModel::quitFilterSortWork()
     }
     if (!filterSortThread.isNull()) {
         filterSortThread->quit();
-        
+
         // 等待线程优雅退出，增加超时处理
         if (!filterSortThread->wait(3000)) {
             fmWarning() << "FilterSortThread did not exit within 3 seconds, forcing termination";
@@ -1094,7 +1142,7 @@ void FileViewModel::quitFilterSortWork()
             }
         }
     }
-    
+
     // 确保智能指针被重置
     filterSortWorker.reset();
     filterSortThread.reset();
@@ -1151,7 +1199,7 @@ void FileViewModel::connectFilterSortWorkSignals()
 {
     if (filterSortWorker.isNull())
         return;
-        
+
     // connect signals
     connect(filterSortWorker.data(), &FileSortWorker::insertRows, this, &FileViewModel::onInsert, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);

@@ -32,10 +32,13 @@ QMap<quint64, QPair<QUrl, QUrl>> WorkspaceHelper::kSelectionFile {};
 
 void WorkspaceHelper::registerTopWidgetCreator(const WorkspaceHelper::KeyType &scheme, const WorkspaceHelper::TopWidgetCreator &creator)
 {
-    if (isRegistedTopWidget(scheme))
+    if (isRegistedTopWidget(scheme)) {
+        fmDebug() << "Top widget creator already registered for scheme:" << scheme;
         return;
+    }
 
     topWidgetCreators.insert(scheme, creator);
+    fmInfo() << "Top widget creator registered for scheme:" << scheme;
 }
 
 bool WorkspaceHelper::isRegistedTopWidget(const WorkspaceHelper::KeyType &scheme) const
@@ -50,6 +53,8 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
         fmWarning() << "Scheme: " << theType << "not registered!";
         return nullptr;
     }
+
+    fmDebug() << "Creating top widget for URL:" << url.toString();
     return topWidgetCreators.value(theType)();
 }
 
@@ -59,6 +64,8 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByScheme(const QString
         fmWarning() << "Scheme: " << scheme << "not registered!";
         return nullptr;
     }
+
+    fmDebug() << "Creating top widget for scheme:" << scheme;
     return topWidgetCreators.value(scheme)();
 }
 
@@ -120,13 +127,18 @@ void WorkspaceHelper::setViewDragDropMode(const quint64 windowID, const QAbstrac
 
 void WorkspaceHelper::registerCustomViewProperty(const QString &scheme, const QVariantMap &propertise)
 {
-    if (scheme.isEmpty())
+    if (scheme.isEmpty()) {
+        fmWarning() << "Cannot register custom view property with empty scheme";
         return;
+    }
 
-    if (customViewPropertyMap.contains(scheme))
+    if (customViewPropertyMap.contains(scheme)) {
         customViewPropertyMap[scheme] = CustomViewProperty(propertise);
-    else
+        fmDebug() << "Updated custom view property for scheme:" << scheme;
+    } else {
         customViewPropertyMap.insert(scheme, CustomViewProperty(propertise));
+        fmInfo() << "Registered custom view property for scheme:" << scheme;
+    }
 }
 
 CustomViewProperty WorkspaceHelper::findCustomViewProperty(const QString &scheme) const
@@ -175,15 +187,23 @@ void WorkspaceHelper::closeTab(const QUrl &url)
 void WorkspaceHelper::addWorkspace(quint64 windowId, WorkspaceWidget *workspace)
 {
     QMutexLocker locker(&WorkspaceHelper::mutex());
-    if (!kWorkspaceMap.contains(windowId))
+    if (!kWorkspaceMap.contains(windowId)) {
         kWorkspaceMap.insert(windowId, workspace);
+        fmDebug() << "Workspace added for window ID:" << windowId;
+    } else {
+        fmDebug() << "Workspace already exists for window ID:" << windowId;
+    }
 }
 
 void WorkspaceHelper::removeWorkspace(quint64 windowId)
 {
     QMutexLocker locker(&WorkspaceHelper::mutex());
-    if (kWorkspaceMap.contains(windowId))
+    if (kWorkspaceMap.contains(windowId)) {
         kWorkspaceMap.remove(windowId);
+        fmDebug() << "Workspace removed for window ID:" << windowId;
+    } else {
+        fmDebug() << "No workspace found for window ID:" << windowId;
+    }
 }
 
 quint64 WorkspaceHelper::windowId(const QWidget *sender)
@@ -194,12 +214,17 @@ quint64 WorkspaceHelper::windowId(const QWidget *sender)
 void WorkspaceHelper::switchViewMode(quint64 windowId, int viewMode)
 {
     FileView *view = findFileViewByWindowID(windowId);
-    if (view)
+    if (view) {
+        fmDebug() << "Switching view mode to" << viewMode << "for window ID:" << windowId;
         view->viewModeChanged(windowId, viewMode);
+    } else {
+        fmWarning() << "No file view found for window ID:" << windowId;
+    }
 }
 
 void WorkspaceHelper::addScheme(const QString &scheme)
 {
+    fmInfo() << "Adding scheme:" << scheme;
     ViewFactory::regClass<FileView>(scheme);
 }
 
@@ -237,15 +262,23 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
 void WorkspaceHelper::selectFiles(quint64 windowId, const QList<QUrl> &files)
 {
     FileView *view = findFileViewByWindowID(windowId);
-    if (view)
+    if (view) {
+        fmDebug() << "Selecting" << files.size() << "files for window ID:" << windowId;
         view->selectFiles(files);
+    } else {
+        fmWarning() << "No file view found for window ID:" << windowId;
+    }
 }
 
 void WorkspaceHelper::selectAll(quint64 windowId)
 {
     FileView *view = findFileViewByWindowID(windowId);
-    if (view)
+    if (view) {
+        fmDebug() << "Selecting all files for window ID:" << windowId;
         view->selectAll();
+    } else {
+        fmWarning() << "No file view found for window ID:" << windowId;
+    }
 }
 
 void WorkspaceHelper::reverseSelect(quint64 windowId)
@@ -284,9 +317,12 @@ QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)
 
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const FileViewRoutePrehaldler prehandler)
 {
-    if (kPrehandlers.contains(scheme))
+    if (kPrehandlers.contains(scheme)) {
+        fmDebug() << "View route prehandler already registered for scheme:" << scheme;
         return false;
+    }
     kPrehandlers.insert(scheme, prehandler);
+    fmInfo() << "View route prehandler registered for scheme:" << scheme;
     return true;
 }
 
@@ -388,10 +424,13 @@ void WorkspaceHelper::updateRootFile(const QList<QUrl> urls)
 
 void WorkspaceHelper::registerFileView(const QString &scheme)
 {
+    fmInfo() << "Registering file view for scheme:" << scheme;
     ViewFactory::regClass<FileView>(scheme);
 
-    if (!registeredFileViewScheme.contains(scheme))
+    if (!registeredFileViewScheme.contains(scheme)) {
         registeredFileViewScheme.append(scheme);
+        fmDebug() << "File view scheme added to registry:" << scheme;
+    }
 }
 
 bool WorkspaceHelper::registeredFileView(const QString &scheme) const
@@ -446,6 +485,7 @@ bool WorkspaceHelper::isFocusFileViewDisabled(const QString &scheme) const
 void WorkspaceHelper::registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
 {
     loadStrategyMap[scheme] = strategy;
+    fmDebug() << "Load strategy registered for scheme:" << scheme << "strategy:" << static_cast<int>(strategy);
 }
 
 DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy WorkspaceHelper::getLoadStrategy(const QString &scheme)
@@ -462,9 +502,12 @@ void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
     }
 
     auto window = FMWindowsIns.findWindowById(windowID);
-    if (!window || !widget)
+    if (!window || !widget) {
+        fmWarning() << "Cannot install workspace widget - window or widget not found for ID:" << windowID;
         return;
+    }
 
+    fmInfo() << "Installing workspace widget to window ID:" << windowID;
     window->installWorkSpace(widget);
 
     connect(window, &FileManagerWindow::reqCreateWindow, widget, &WorkspaceWidget::onCreateNewWindow);
@@ -500,7 +543,11 @@ FileView *WorkspaceHelper::findFileViewByWindowID(const quint64 windowID)
     WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
     if (workspaceWidget) {
         FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (!view) {
+            fmDebug() << "Current view is not a FileView for window ID:" << windowID;
+        }
         return view;
     }
+    fmDebug() << "No workspace widget found for window ID:" << windowID;
     return {};
 }

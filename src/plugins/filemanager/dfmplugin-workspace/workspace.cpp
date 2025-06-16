@@ -44,6 +44,7 @@ inline constexpr char kListHeightLevel[] { "dfm.list.height.level" };
 
 void Workspace::initialize()
 {
+    fmDebug() << "Workspace initialize called";
     WorkspaceHelper::instance()->registerFileView(Global::Scheme::kFile);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
@@ -55,10 +56,12 @@ void Workspace::initialize()
     WorkspaceEventReceiver::instance()->initConnection();
 
     initConfig();
+    fmDebug() << "Workspace initialization completed";
 }
 
 bool Workspace::start()
 {
+    fmDebug() << "Workspace start called";
     DFMBASE_USE_NAMESPACE
 
     dfmplugin_menu_util::menuSceneRegisterScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
@@ -69,7 +72,7 @@ bool Workspace::start()
     const QString &scheme = Global::Scheme::kFile;
 
     if (WorkspaceHelper::instance()->isRegistedTopWidget(scheme)) {
-        fmWarning() << "custom top widget sechme " << scheme << "has been resigtered!";
+        fmWarning() << "Workspace: custom top widget scheme" << scheme << "has been registered!";
         return false;
     }
 
@@ -82,17 +85,22 @@ bool Workspace::start()
         interface->setKeepTop(false);
         return interface;
     });
+    fmDebug() << "Workspace: top widget creator registered for scheme:" << scheme;
 
     QString err;
     auto ret = DConfigManager::instance()->addConfig(DConfigInfo::kConfName, &err);
-    if (!ret)
-        fmWarning() << "File Preview: create dconfig failed: " << err;
+    if (!ret) {
+        fmWarning() << "Workspace: create dconfig failed:" << err;
+    } else {
+        fmDebug() << "Workspace: dconfig created successfully";
+    }
 
     return true;
 }
 
 void Workspace::onWindowOpened(quint64 windId)
 {
+    fmDebug() << "Workspace onWindowOpened called for window ID:" << windId;
     DFMBASE_USE_NAMESPACE
 
     auto window = FMWindowsIns.findWindowById(windId);
@@ -101,15 +109,19 @@ void Workspace::onWindowOpened(quint64 windId)
     WorkspaceHelper::instance()->addWorkspace(windId, workspace);
 
     Q_EMIT readyToInstallWidget(windId);
+    fmDebug() << "Workspace: readyToInstallWidget signal emitted for window:" << windId;
 }
 
 void Workspace::onWindowClosed(quint64 windId)
 {
+    fmDebug() << "Workspace onWindowClosed called for window ID:" << windId;
     WorkspaceHelper::instance()->removeWorkspace(windId);
 }
 
 void Workspace::initConfig()
 {
+    fmDebug() << "Workspace initConfig called";
+
     SyncPair thumbnailPair {
         { SettingType::kGenAttr, Application::kShowThunmbnailInRemote },
         { DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey },
@@ -145,6 +157,7 @@ void Workspace::initConfig()
         isListHeightConfEqual
     };
     ConfigSynchronizer::instance()->watchChange(listHeightPair);
+    fmDebug() << "Workspace: all configuration sync pairs initialized";
 }
 
 void Workspace::saveRemoteThumbnailToConf(const QVariant &var)

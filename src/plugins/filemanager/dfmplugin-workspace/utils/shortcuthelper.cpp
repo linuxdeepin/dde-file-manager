@@ -35,17 +35,24 @@ ShortcutHelper::ShortcutHelper(FileView *parent)
     : QObject(parent),
       view(parent)
 {
-    registerShortcut();
+    fmDebug() << "ShortcutHelper created for FileView";
 
+    registerShortcut();
     initRenameProcessTimer();
+
+    fmDebug() << "ShortcutHelper initialization completed";
 }
 
 void ShortcutHelper::registerShortcut()
 {
+    fmDebug() << "Registering standard shortcuts";
+
     registerAction(QKeySequence::Copy, false);
     registerAction(QKeySequence::Cut, false);
     registerAction(QKeySequence::Paste, false);
     registerAction(QKeySequence::Undo);
+
+    fmDebug() << "Standard shortcuts registration completed";
 }
 
 void ShortcutHelper::registerAction(QKeySequence::StandardKey shortcut, bool autoRepeat)
@@ -143,11 +150,14 @@ void ShortcutHelper::initRenameProcessTimer()
 
 bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
 {
-    if (!event || !view)
+    if (!event || !view) {
+        fmWarning() << "Invalid event or view in key press processing";
         return false;
+    }
     switch (event->modifiers()) {
     case Qt::NoModifier:
         if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            fmDebug() << "Space key pressed - preview files";
             previewFiles();
             return true;
         } else if (normalKeyPressEventHandle(event)) {
@@ -162,26 +172,32 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier:
         switch (event->key()) {
         case Qt::Key_H: {
+            fmDebug() << "Ctrl+H pressed - toggle hidden files";
             toggleHiddenFiles();
             return true;
         }
         case Qt::Key_I: {
+            fmDebug() << "Ctrl+I pressed - show files property";
             showFilesProperty();
             return true;
         }
         case Qt::Key_Up: {
+            fmDebug() << "Ctrl+Up pressed - cd up";
             cdUp();
             return true;
         }
         case Qt::Key_Down: {
+            fmDebug() << "Ctrl+Down pressed - open selected";
             openAction(view->selectedUrlList());
             return true;
         }
         case Qt::Key_D: {
+            fmDebug() << "Ctrl+D pressed - move to trash";
             moveToTrash();
             return true;
         }
         case Qt::Key_Y: {
+            fmDebug() << "Ctrl+Y pressed - redo files";
             // redo
             redoFiles();
             return true;
@@ -192,9 +208,11 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
         break;
     case Qt::ShiftModifier:
         if (event->key() == Qt::Key_Delete) {
+            fmDebug() << "Shift+Delete pressed - delete files permanently";
             deleteFiles();
             return true;
         } else if (event->key() == Qt::Key_T) {
+            fmDebug() << "Shift+T pressed - open in terminal";
             openInTerminal();
             return true;
         }
@@ -202,9 +220,11 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier | Qt::ShiftModifier:
         switch (event->key()) {
         case Qt::Key_N:
+            fmDebug() << "Ctrl+Shift+N pressed - create new folder";
             touchFolder();
             return true;
         case Qt::Key_I:
+            fmDebug() << "Ctrl+Shift+I pressed - reverse selection";
             return reverseSelect();
         }
         break;
@@ -212,13 +232,16 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
     case Qt::AltModifier | Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Up:
+            fmDebug() << "Alt+Up pressed - cd up";
             cdUp();
             return true;
         case Qt::Key_Down: {
+            fmDebug() << "Alt+Down pressed - open selected";
             openAction(view->selectedUrlList());
             return true;
         }
         case Qt::Key_Home:
+            fmDebug() << "Alt+Home pressed - go to home directory";
             openAction({ QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kHomePath)) });
             return true;
         }
@@ -232,10 +255,14 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
 void ShortcutHelper::acitonTriggered()
 {
     QAction *action = qobject_cast<QAction *>(sender());
-    if (!action)
+    if (!action) {
+        fmWarning() << "Action triggered with invalid sender";
         return;
+    }
 
     auto key = action->property(kViewShortcutKey).value<QKeySequence::StandardKey>();
+    fmDebug() << "Standard action triggered - key:" << static_cast<int>(key);
+
     switch (key) {
     case QKeySequence::Copy:
         copyFiles();
@@ -257,48 +284,76 @@ void ShortcutHelper::acitonTriggered()
 void ShortcutHelper::copyFiles()
 {
     const QList<QUrl> &selectUrls = view->selectedUrlList();
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "Copy operation canceled - no files selected";
         return;
+    }
+
+    fmInfo() << "Copy files operation - count:" << selectUrls.size();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CopyFiles", windowId, selectUrls, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CopyFiles", windowId, selectUrls, view->rootUrl())) {
+        fmDebug() << "Copy files handled by hook";
         return;
+    }
     FileOperatorHelperIns->copyFiles(view);
 }
 
 void ShortcutHelper::cutFiles()
 {
     const QList<QUrl> &selectUrls = view->selectedUrlList();
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "Cut operation canceled - no files selected";
         return;
+    }
+
+    fmInfo() << "Cut files operation - count:" << selectUrls.size();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CutFiles", windowId, selectUrls, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CutFiles", windowId, selectUrls, view->rootUrl())) {
+        fmDebug() << "Cut files handled by hook";
         return;
+    }
     FileOperatorHelperIns->cutFiles(view);
 }
 
 void ShortcutHelper::pasteFiles()
 {
+    fmInfo() << "Paste files operation initiated";
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl()))
+
+    fmDebug() << "Paste operation - source files count:" << sourceUrls.size() << "target:" << view->rootUrl().toString();
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl())) {
+        fmDebug() << "Paste files handled by hook";
         return;
+    }
 
     FileOperatorHelperIns->pasteFiles(view);
 }
 
 void ShortcutHelper::undoFiles()
 {
+    fmInfo() << "Undo files operation";
     FileOperatorHelperIns->undoFiles(view);
 }
 
 void ShortcutHelper::deleteFiles()
 {
     const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "Delete operation canceled - no files selected";
         return;
+    }
+
+    fmInfo() << "Delete files permanently - count:" << selectUrls.size();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, selectUrls, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, selectUrls, view->rootUrl())) {
+        fmDebug() << "Delete files handled by hook";
         return;
+    }
 
     // Todo(yanghao):only support trash on root url
     // 共享文件夹不用弹出彻底删除对话框
@@ -310,11 +365,18 @@ void ShortcutHelper::deleteFiles()
 void ShortcutHelper::moveToTrash()
 {
     const QList<QUrl> &selectUrls = view->selectedTreeViewUrlList();
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "Move to trash canceled - no files selected";
         return;
+    }
+
+    fmInfo() << "Move to trash operation - count:" << selectUrls.size();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, selectUrls, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, selectUrls, view->rootUrl())) {
+        fmDebug() << "Move to trash handled by hook";
         return;
+    }
     // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault
     // only support trash on root url
@@ -323,6 +385,7 @@ void ShortcutHelper::moveToTrash()
 
 void ShortcutHelper::touchFolder()
 {
+    fmInfo() << "Creating new folder";
     // Todo(yanghao):editingIndex handle
     view->clearSelection();
     FileOperatorHelperIns->touchFolder(view);
@@ -331,7 +394,9 @@ void ShortcutHelper::touchFolder()
 void ShortcutHelper::toggleHiddenFiles()
 {
     bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
-    Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, !isShowedHiddenFiles);
+    bool newState = !isShowedHiddenFiles;
+    fmInfo() << "Toggling hidden files visibility from" << isShowedHiddenFiles << "to" << newState;
+    Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, newState);
 }
 
 void ShortcutHelper::showFilesProperty()
@@ -344,11 +409,18 @@ void ShortcutHelper::previewFiles()
 {
     QList<QUrl> urls = view->selectedUrlList();
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "Preview canceled - no files selected";
         return;
+    }
+
+    fmInfo() << "Preview files operation - count:" << urls.size();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PreViewFiles", windowId, urls, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PreViewFiles", windowId, urls, view->rootUrl())) {
+        fmDebug() << "Preview files handled by hook";
         return;
+    }
 
     QList<QUrl> selectUrls = urls;
     QList<QUrl> urlsTrans {};
@@ -370,6 +442,7 @@ void ShortcutHelper::previewFiles()
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)
 {
     const auto mode = urls.count() > 1 ? DirOpenMode::kOpenNewWindow : openMode;
+    fmInfo() << "Open action - files count:" << urls.size() << "mode:" << static_cast<int>(mode);
     FileOperatorHelperIns->openFilesByMode(view, urls, mode);
 }
 
@@ -390,22 +463,31 @@ void ShortcutHelper::redoFiles()
 
 bool ShortcutHelper::reverseSelect()
 {
-    if (view->selectionMode() == FileView::SingleSelection)
+    if (view->selectionMode() == FileView::SingleSelection) {
+        fmDebug() << "Reverse selection canceled - single selection mode";
         return false;
+    }
 
     auto urls = view->selectedUrlList();
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "Reverse selection canceled - no files selected";
         return false;
+    }
+
+    fmInfo() << "Reverse selection operation - currently selected:" << urls.size();
 
     QList<QUrl> list = view->model()->getChildrenUrls();
     for (const QUrl &url : urls) {
         list.removeAll(url);
     }
 
-    if (list.isEmpty())
+    if (list.isEmpty()) {
+        fmDebug() << "All files were selected - clearing selection";
         view->selectionModel()->clear();
+    }
 
     view->selectFiles(list);
+    fmInfo() << "Reverse selection completed - new selection count:" << list.size();
     return true;
 }
 
