@@ -11,7 +11,6 @@
 class QMimeData;
 class QUrl;
 namespace dfmbase {
-class ClipboardMonitor;
 class ClipBoard : public QObject
 {
     Q_OBJECT
@@ -41,20 +40,17 @@ public:
     ClipboardAction clipboardAction() const;
     void removeUrls(const QList<QUrl> &urls);
     void replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl);
-    void readFirstClipboard();
 
 private:
     explicit ClipBoard(QObject *parent = nullptr);
-    void init();
     virtual ~ClipBoard() = default;
     static QList<QUrl> getUrlsByX11();
-    QStringList getFirstMimeTypesByX11();
 
 Q_SIGNALS:
     void clipboardDataChanged();
 
 public Q_SLOTS:
-    void onClipboardDataChanged(const QStringList & mimeTypes);
+    void onClipboardDataChanged();
 };
 }   // namespace dfmbase
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::ClipBoard::ClipboardAction)

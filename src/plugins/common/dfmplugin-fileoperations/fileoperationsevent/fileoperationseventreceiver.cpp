@@ -228,7 +228,7 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
     case kCopy:
         if (targets.isEmpty())
             return true;
-        handleOperationCopy(windowId, { sources }, targets.first(), DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, handle);
+        handleOperationCopy(windowId, { sources }, targets.first(), AbstractJobHandler::JobFlag::kNoHint, handle);
         break;
     case kCutFile:
         if (targets.isEmpty())

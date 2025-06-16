@@ -173,8 +173,7 @@ bool ClipBoardMenuScene::triggered(QAction *action)
             fmInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
             ClipBoard::setCurUrlToClipboardForRemote(d->currentDir);
         } else if (ClipBoard::kRemoteAction == action) {
-            dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir,
-                                         AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
         } else {
             fmWarning() << "clipboard action:" << action << "    urls:" << selectedUrlsTemp;
         }

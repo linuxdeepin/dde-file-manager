@@ -7,14 +7,6 @@ find_package(dfm${DTK_VERSION_MAJOR}-burn REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(gio REQUIRED gio-unix-2.0 IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
-pkg_check_modules(PC_XCB REQUIRED xcb)
-
-set(XCB_INCLUDE_DIRS ${PC_XCB_INCLUDE_DIRS})
-set(XCB_LIBRARIES ${PC_XCB_LIBRARIES})
-set(XCB_DEFINITIONS ${PC_XCB_CFLAGS_OTHER})
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(XCB DEFAULT_MSG XCB_LIBRARIES XCB_INCLUDE_DIRS)
 
 pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
 if(${QT_VERSION_MAJOR} EQUAL "6")
@@ -107,8 +99,6 @@ target_link_libraries(${BIN_NAME}
         PkgConfig::gio
         PkgConfig::X11
         poppler-cpp
-        ${XCB_LIBRARIES}
-        xcb-xfixes
         ${DFM_EXTRA_LIBRARIES}
 )
 
