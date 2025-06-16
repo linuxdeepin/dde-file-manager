@@ -448,7 +448,7 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bo
                 ordered.append(org);
             if (reorganized && !org.isEmpty()) {
                 relayoutedFiles.append(org);
-                relayoutedCollectionIDs.append(cfg->key);
+                relayoutedCollectionIDs.insert(cfg->key);
             }
 
             base->items = ordered;
@@ -754,6 +754,15 @@ void NormalizedMode::rebuild(bool reorganize)
                 collectionHolder = d->createCollection(key);
                 d->connectCollectionSignals(collectionHolder);
                 d->holders.insert(key, collectionHolder);
+
+                if (!d->relayoutedCollectionIDs.contains(key)) {
+                    /* 在前序 restore 中进行该变量的填充时，如果此分组不在默认的 profile 中存在
+                     * 则该组中的元素不会在集合后被选择。
+                     * 因此需要将该分组添加到重排列表中，以便桌面整理后能正常选中该分组内文件。
+                     */
+                    d->relayoutedCollectionIDs.insert(key);
+                    d->relayoutedFiles.append(files);
+                }
             }
         }
     }
