@@ -26,13 +26,19 @@ using namespace dfmplugin_workspace;
 RenameBarPrivate::RenameBarPrivate(RenameBar *const qPtr)
     : q_ptr(qPtr)
 {
+    fmDebug() << "RenameBarPrivate initializing";
+
     initUI();
     setUIParameters();
     layoutItems();
+
+    fmDebug() << "RenameBarPrivate initialization completed";
 }
 
 void RenameBarPrivate::initUI()
 {
+    fmDebug() << "Initializing rename bar UI components";
+
     QWidget *widget = new QWidget(q_ptr);
     q_ptr->setWidget(widget);
 
@@ -50,10 +56,14 @@ void RenameBarPrivate::initUI()
     frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
     buttonsArea = std::make_tuple(new QPushButton, new QPushButton, new QHBoxLayout, new QFrame);
+
+    fmDebug() << "UI components created - replace, add, custom areas and buttons";
 }
 
 void RenameBarPrivate::setUIParameters()
 {
+    fmDebug() << "Setting UI parameters for rename bar";
+
     comboBox->addItems(QList<QString> { QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
     comboBox->setFixedWidth(180);
 
@@ -75,6 +85,8 @@ void RenameBarPrivate::setUIParameters()
     lineEdit->setPlaceholderText(QObject::tr("Optional"));
     label->setBuddy(lineEdit);
 
+    fmDebug() << "Replace text area configured";
+
     label = std::get<0>(addOperatorItems);
     label->setObjectName(QString { "RenameBarLabel" });
     lineEdit = std::get<1>(addOperatorItems);
@@ -88,6 +100,8 @@ void RenameBarPrivate::setUIParameters()
     label->setText(QObject::tr("Location"));
     comboBox->addItems(QList<QString> { QObject::tr("Before file name"), QObject::tr("After file name") });
     label->setBuddy(comboBox);
+
+    fmDebug() << "Add text area configured";
 
     label = std::get<0>(customOPeratorItems);
     label->setObjectName(QString { "RenameBarLabel" });
@@ -112,6 +126,8 @@ void RenameBarPrivate::setUIParameters()
     label->setObjectName(QString { "RenameBarLabel" });
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
+    fmDebug() << "Custom text area configured with number validator";
+
     QPushButton *button { std::get<0>(buttonsArea) };
     button->setText(QObject::tr("Cancel", "button"));
     button->setFixedWidth(82);
@@ -119,10 +135,13 @@ void RenameBarPrivate::setUIParameters()
     renameBtn->setText(QObject::tr("Rename", "button"));
     renameBtn->setFixedWidth(82);
     button->setEnabled(true);
+
+    fmDebug() << "Buttons configured - Cancel and Rename";
 }
 
 void RenameBarPrivate::layoutItems() noexcept
 {
+    fmDebug() << "Setting up rename bar layout";
 
     QHBoxLayout *hBoxLayout { nullptr };
     QFrame *frame { nullptr };
@@ -140,6 +159,8 @@ void RenameBarPrivate::layoutItems() noexcept
     frame->setLayout(hBoxLayout);
     stackWidget->addWidget(frame);
 
+    fmDebug() << "Replace area layout configured";
+
     hBoxLayout = frameForLayoutAddArea.first;
     frame = frameForLayoutAddArea.second;
     hBoxLayout->addSpacing(20);
@@ -154,6 +175,8 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout->addStretch();
     frame->setLayout(hBoxLayout);
     stackWidget->addWidget(frame);
+
+    fmDebug() << "Add area layout configured";
 
     hBoxLayout = frameForLayoutCustomArea.first;
     frame = frameForLayoutCustomArea.second;
@@ -171,6 +194,8 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout->addStretch(0);
     frame->setLayout(hBoxLayout);
     stackWidget->addWidget(frame);
+
+    fmDebug() << "Custom area layout configured";
 
     hBoxLayout = std::get<2>(buttonsArea);
     hBoxLayout->setSpacing(0);
@@ -190,19 +215,24 @@ void RenameBarPrivate::layoutItems() noexcept
     mainLayout->addWidget(frame);
     stackWidget->setCurrentIndex(0);
 
+    fmDebug() << "Main layout completed - default to replace mode (index 0)";
+
     // q_ptr->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed));
     // q_ptr->setLayout(mainLayout);
 }
 
 void RenameBarPrivate::setRenameBtnStatus(const bool &value) noexcept
 {
+    fmDebug() << "Setting rename button status to:" << (value ? "enabled" : "disabled");
     renameBtn->setEnabled(value);
 }
 
 QString RenameBarPrivate::filteringText(const QString &text)
 {
-    if (text.isEmpty())
+    if (text.isEmpty()) {
+        fmDebug() << "Text filtering skipped - empty input";
         return text;
+    }
 
     QString readyText = text;
     return readyText.remove(QRegularExpression("[\\\\/:\\*\\?\"<>|%&]"));
@@ -214,8 +244,10 @@ void RenameBarPrivate::updateLineEditText(QLineEdit *lineEdit, const QString &de
     QString text = filteringText(olderText);
     if (olderText != text) {
         lineEdit->setText(text);
+        fmDebug() << "Line edit text updated after filtering";
     }
     if (text.isEmpty()) {
         lineEdit->setText(defaultValue);
+        fmDebug() << "Line edit text set to default value:" << defaultValue;
     }
 }

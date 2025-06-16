@@ -29,6 +29,13 @@ BaseSortMenuScenePrivate::BaseSortMenuScenePrivate(BaseSortMenuScene *qq)
 
 void BaseSortMenuScenePrivate::sortMenuActions(QMenu *menu, const QStringList &sortRule, bool isFuzzy)
 {
+    if (!menu) {
+        fmWarning() << "Cannot sort menu actions: menu is null";
+        return;
+    }
+
+    fmDebug() << "Sorting menu actions with" << sortRule.size() << "rules, fuzzy matching:" << isFuzzy;
+
     auto findIndex = [&isFuzzy, &sortRule](const QString &property) {
         int index1 = -1;
         for (int i = 0, nEnd = sortRule.size(); i < nEnd; ++i) {
@@ -89,18 +96,29 @@ void BaseSortMenuScenePrivate::sortMenuActions(QMenu *menu, const QStringList &s
     }
 
     menu->addActions(actions);
+    fmDebug() << "Menu actions sorted successfully," << actions.size() << "actions added to menu";
 }
 
 void BaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
 {
+    if (!menu) {
+        fmWarning() << "Cannot sort primary menu: menu is null";
+        return;
+    }
+
+    fmDebug() << "Sorting primary menu";
     const QStringList &sortRule = primaryMenuRule();
     sortMenuActions(menu, sortRule, false);
 }
 
 void BaseSortMenuScenePrivate::sortSecondaryMenu(QMenu *menu)
 {
-    const QMap<QString, QStringList> &sortRuleMap = secondaryMenuRule();
+    if (!menu) {
+        fmWarning() << "Cannot sort secondary menu: menu is null";
+        return;
+    }
 
+    const QMap<QString, QStringList> &sortRuleMap = secondaryMenuRule();
     auto actions = menu->actions();
     for (QAction *action : actions) {
         QMenu *secondaryMenu = action->menu();
@@ -145,6 +163,7 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
     static std::once_flag flag;
 
     std::call_once(flag, [&]() {
+        fmDebug() << "Initializing primary menu rules";
         // file
         ret.append("open");   // 打开
         ret.append("open-file-location");   // 打开文件所在位置
@@ -209,6 +228,7 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
         ret.append(ActionID::kSeparatorLine);
 
         ret.append("property");
+        fmDebug() << "Primary menu rules initialized with" << ret.size() << "rules";
     });
 
     return ret;
@@ -220,6 +240,7 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
     static std::once_flag flag;
 
     std::call_once(flag, [&]() {
+        fmDebug() << "Initializing secondary menu rules";
         // file
         ret.insert("open-with",
                    QStringList { "open-with-app",
@@ -261,6 +282,7 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
 
         ret.insert("send-to",
                    sendToList);   // 发送到
+        fmDebug() << "Secondary menu rules initialized with" << ret.size() << "rule groups";
     });
 
     return ret;
@@ -269,10 +291,12 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
 BaseSortMenuScene::BaseSortMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new BaseSortMenuScenePrivate(this))
 {
+    fmDebug() << "BaseSortMenuScene initialized";
 }
 
 BaseSortMenuScene::~BaseSortMenuScene()
 {
+    fmDebug() << "BaseSortMenuScene destroyed";
 }
 
 QString BaseSortMenuScene::name() const
@@ -292,13 +316,25 @@ bool BaseSortMenuScene::create(QMenu *parent)
 
 void BaseSortMenuScene::updateState(QMenu *parent)
 {
+    if (!parent) {
+        fmWarning() << "Cannot update state: parent menu is null";
+        return;
+    }
+
+    fmDebug() << "Updating BaseSortMenuScene state";
     d->sortPrimaryMenu(parent);
     d->sortSecondaryMenu(parent);
     AbstractMenuScene::updateState(parent);
+    fmDebug() << "BaseSortMenuScene state update completed";
 }
 
 bool BaseSortMenuScene::triggered(QAction *action)
 {
+    if (!action) {
+        fmWarning() << "Cannot trigger action: action is null";
+        return false;
+    }
+
     return AbstractMenuScene::triggered(action);
 }
 
