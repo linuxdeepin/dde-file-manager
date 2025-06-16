@@ -23,6 +23,7 @@ using namespace dfmplugin_workspace;
 RenameBar::RenameBar(QWidget *parent)
     : QScrollArea(parent), d(new RenameBarPrivate(this))
 {
+    fmDebug() << "RenameBar constructor called";
     setWidgetResizable(true);
     setFrameShape(QFrame::NoFrame);
     setAutoFillBackground(true);
@@ -30,10 +31,12 @@ RenameBar::RenameBar(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setFixedHeight(52);
     initConnect();
+    fmDebug() << "RenameBar initialization completed";
 }
 
 void RenameBar::reset() noexcept
 {
+    fmDebug() << "RenameBar reset called";
     ///replace
     QLineEdit *lineEdit { std::get<1>(d->replaceOperatorItems) };
     lineEdit->clear();
@@ -57,6 +60,7 @@ void RenameBar::reset() noexcept
     d->comboBox->setCurrentIndex(0);
     d->stackWidget->setCurrentIndex(0);
     std::get<3>(d->addOperatorItems)->setCurrentIndex(0);
+    fmDebug() << "RenameBar reset completed";
 }
 
 void RenameBar::storeUrlList(const QList<QUrl> &list) noexcept
@@ -64,11 +68,13 @@ void RenameBar::storeUrlList(const QList<QUrl> &list) noexcept
     Q_D(RenameBar);
 
     d->urlList = list;
+    fmDebug() << "RenameBar stored URL list with" << list.size() << "items";
 }
 
 void RenameBar::setVisible(bool visible)
 {
     Q_D(RenameBar);
+    fmDebug() << "RenameBar setVisible called with visible:" << visible;
     if (!d->connectInitOnce) {
         auto widget = qobject_cast<WorkspaceWidget *>(parentWidget());
         if (widget) {
@@ -78,6 +84,8 @@ void RenameBar::setVisible(bool visible)
                 d->connectInitOnce = true;
                 QObject::connect(view, &FileView::selectUrlChanged, this, &RenameBar::onSelectUrlChanged);
             }
+        } else {
+            fmWarning() << "Failed to cast parentWidget to WorkspaceWidget in RenameBar";
         }
     }
     if (visible) {
@@ -125,6 +133,7 @@ void RenameBar::onRenamePatternChanged(const int &index) noexcept
     Q_D(RenameBar);
 
     d->currentPattern = static_cast<RenameBarPrivate::RenamePattern>(index);
+    fmDebug() << "RenameBar pattern changed to index:" << index;
 
     bool state { d->renameButtonStates[static_cast<std::size_t>(index)] };   //###: we get the value of state of button in current mode.
     d->stackWidget->setCurrentIndex(index);
@@ -143,13 +152,13 @@ void RenameBar::onReplaceOperatorFileNameChanged(const QString &text) noexcept
 
     if (text.isEmpty()) {
         d->renameButtonStates[0] = false;   //###: record the states of rename button
-
+        fmDebug() << "RenameBar replace filename changed to empty, disabling rename button";
         d->setRenameBtnStatus(false);
         return;
     }
 
     d->renameButtonStates[0] = true;   //###: record the states of rename button
-
+    fmDebug() << "RenameBar replace filename changed to:" << text << ", enabling rename button";
     d->setRenameBtnStatus(true);
 }
 
@@ -171,13 +180,13 @@ void RenameBar::onAddOperatorAddedContentChanged(const QString &text) noexcept
 
     if (text.isEmpty()) {
         d->renameButtonStates[1] = false;
-
+        fmDebug() << "RenameBar add content changed to empty, disabling rename button";
         d->setRenameBtnStatus(false);
         return;
     }
 
     d->renameButtonStates[1] = true;
-
+    fmDebug() << "RenameBar add content changed to:" << text << ", enabling rename button";
     d->setRenameBtnStatus(true);
 }
 
@@ -204,6 +213,7 @@ void RenameBar::onCustomOperatorFileNameChanged() noexcept
 
     if (lineEditForFileName->text().isEmpty()) {   //###: must be input filename.
         d->renameButtonStates[2] = false;
+        fmDebug() << "RenameBar custom filename changed to empty, disabling rename button";
         d->setRenameBtnStatus(false);
 
     } else {
@@ -212,10 +222,12 @@ void RenameBar::onCustomOperatorFileNameChanged() noexcept
 
         if (lineEditForSNNumber->text().isEmpty()) {
             d->renameButtonStates[2] = false;
+            fmDebug() << "RenameBar custom filename changed to:" << lineEditForFileName->text() << "but number is empty, disabling rename button";
             d->setRenameBtnStatus(false);
 
         } else {
             d->renameButtonStates[2] = true;
+            fmDebug() << "RenameBar custom filename changed to:" << lineEditForFileName->text() << "with number:" << lineEditForSNNumber->text() << ", enabling rename button";
             d->setRenameBtnStatus(true);
         }
     }
@@ -228,6 +240,7 @@ void RenameBar::onCustomOperatorSNNumberChanged()
     QLineEdit *lineEditForSNNumber { std::get<3>(d->customOPeratorItems) };
     if (lineEditForSNNumber->text().isEmpty()) {   //###: must be input filename.
         d->renameButtonStates[2] = false;
+        fmDebug() << "RenameBar custom number changed to empty, disabling rename button";
         d->setRenameBtnStatus(false);
 
     } else {
@@ -236,10 +249,12 @@ void RenameBar::onCustomOperatorSNNumberChanged()
 
         if (lineEditForFileName->text().isEmpty()) {
             d->renameButtonStates[2] = false;
+            fmDebug() << "RenameBar custom number changed to:" << lineEditForSNNumber->text() << "but filename is empty, disabling rename button";
             d->setRenameBtnStatus(false);
 
         } else {
             d->renameButtonStates[2] = true;
+            fmDebug() << "RenameBar custom number changed to:" << lineEditForSNNumber->text() << "with filename:" << lineEditForFileName->text() << ", enabling rename button";
             d->setRenameBtnStatus(true);
         }
 
@@ -249,9 +264,11 @@ void RenameBar::onCustomOperatorSNNumberChanged()
             Q_UNUSED(std::stoull(content));
         } catch (const std::out_of_range &err) {
             (void)err;
+            fmWarning() << "RenameBar custom number out of range:" << lineEditForSNNumber->text() << ", resetting to 1";
             lineEditForSNNumber->setText(QString { "1" });
 
         } catch (...) {
+            fmWarning() << "RenameBar custom number invalid format:" << lineEditForSNNumber->text() << ", resetting to 1";
             lineEditForSNNumber->setText(QString { "1" });
         }
     }
@@ -262,6 +279,7 @@ void RenameBar::eventDispatcher()
     Q_D(RenameBar);
 
     QList<QUrl> urls = getSelectFiles();
+    fmInfo() << "RenameBar starting rename operation for" << urls.size() << "files";
 
     using RenamePattern = RenameBarPrivate::RenamePattern;
 
@@ -269,17 +287,20 @@ void RenameBar::eventDispatcher()
         QString forFindingStr { std::get<1>(d->replaceOperatorItems)->text() };
         QString forReplaceStr { std::get<3>(d->replaceOperatorItems)->text() };
         QPair<QString, QString> pair { forFindingStr, forReplaceStr };
+        fmInfo() << "RenameBar using replace pattern - find:" << forFindingStr << "replace:" << forReplaceStr;
 
         FileOperatorHelperIns->renameFilesByReplace(parentWidget(), urls, pair);
     } else if (d->currentPattern == RenamePattern::kAdd) {
         QString forAddingStr { std::get<1>(d->addOperatorItems)->text() };
         QPair<QString, AbstractJobHandler::FileNameAddFlag> pair { forAddingStr, static_cast<AbstractJobHandler::FileNameAddFlag>(d->flag) };
+        fmInfo() << "RenameBar using add pattern - text:" << forAddingStr << "flag:" << (d->flag == RenameBarPrivate::AddTextFlags::kBefore ? "Before" : "After");
 
         FileOperatorHelperIns->renameFilesByAdd(parentWidget(), urls, pair);
     } else if (d->currentPattern == RenamePattern::kCustom) {
         QString forCustomStr { std::get<1>(d->customOPeratorItems)->text() };
         QString numberStr { std::get<3>(d->customOPeratorItems)->text() };
         QPair<QString, QString> pair { forCustomStr, numberStr };
+        fmInfo() << "RenameBar using custom pattern - name:" << forCustomStr << "number:" << numberStr;
 
         FileOperatorHelperIns->renameFilesByCustom(parentWidget(), urls, pair);
     }
@@ -289,10 +310,12 @@ void RenameBar::eventDispatcher()
 
     if (parentWidget())
         parentWidget()->setFocus();
+    fmDebug() << "RenameBar operation completed and hidden";
 }
 
 void RenameBar::hideRenameBar()
 {
+    fmDebug() << "RenameBar hideRenameBar called";
     setVisible(false);
     reset();
     if (parentWidget())
@@ -304,8 +327,12 @@ void RenameBar::onSelectUrlChanged(const QList<QUrl> &urls)
     if (!isVisible())
         return;
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "RenameBar selection changed to empty, emitting cancel button";
         emit clickCancelButton();
+    } else {
+        fmDebug() << "RenameBar selection changed to" << urls.size() << "items";
+    }
 }
 
 void RenameBar::initConnect()
@@ -335,15 +362,18 @@ void RenameBar::initConnect()
 QList<QUrl> RenameBar::getSelectFiles()
 {
     WorkspacePage* page = findPage();
-    if (!page)
+    if (!page) {
+        fmWarning() << "RenameBar getSelectFiles: Failed to find WorkspacePage";
         return {};
+    }
 
     FileView* view = dynamic_cast<FileView *>(page->currentViewPtr());
-    if (!view)
+    if (!view) {
+        fmWarning() << "RenameBar getSelectFiles: Failed to cast to FileView";
         return {};
+    }
 
     return view->selectedUrlList();
-
 }
 
 WorkspacePage *RenameBar::findPage()
@@ -356,6 +386,7 @@ WorkspacePage *RenameBar::findPage()
         parent = parent->parentWidget();
     }
 
+    fmWarning() << "RenameBar findPage: Failed to find WorkspacePage in parent hierarchy";
     return nullptr;
 }
 

@@ -57,28 +57,30 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
 
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
+    fmInfo() << "WorkspaceWidget setCurrentUrl called with url:" << url;
     if (currentPageId.isEmpty()) {
-        qDebug() << "currentPageId is empty";
+        fmWarning() << "setCurrentUrl: currentPageId is empty";
         return;
     }
 
     if (!pages[currentPageId]) {
-        qDebug() << "current page is not initialized" << currentPageId;
+        fmWarning() << "setCurrentUrl: current page is not initialized, currentPageId:" << currentPageId;
         return;
     }
 
     pages[currentPageId]->setUrl(url);
+    fmDebug() << "setCurrentUrl: URL set for page:" << currentPageId;
 }
 
 QUrl WorkspaceWidget::currentUrl() const
 {
     if (currentPageId.isEmpty()) {
-        qDebug() << "currentPageId is empty";
+        fmWarning() << "currentUrl: currentPageId is empty";
         return {};
     }
 
     if (!pages[currentPageId]) {
-        qDebug() << "current page is not initialized" << currentPageId;
+        fmWarning() << "currentUrl: current page is not initialized, currentPageId:" << currentPageId;
         return {};
     }
 
@@ -88,7 +90,7 @@ QUrl WorkspaceWidget::currentUrl() const
 AbstractBaseView *WorkspaceWidget::currentView() const
 {
     if (!pages.contains(currentPageId) || !pages[currentPageId]) {
-        qDebug() << "can not find current page" << currentPageId;
+        fmWarning() << "currentView: cannot find current page, currentPageId:" << currentPageId;
         return nullptr;
     }
 
@@ -97,28 +99,31 @@ AbstractBaseView *WorkspaceWidget::currentView() const
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
+    fmDebug() << "setCustomTopWidgetVisible called for scheme:" << scheme << ", visible:" << visible;
     if (currentPageId.isEmpty()) {
-        qDebug() << "Cannot find current page, currentPageId is empty";
+        fmWarning() << "setCustomTopWidgetVisible: Cannot find current page, currentPageId is empty";
         return;
     }
 
     if (!pages[currentPageId]) {
-        qDebug() << "Cannot find current page, currentPageId is empty";
+        fmWarning() << "setCustomTopWidgetVisible: Cannot find current page, currentPageId is empty";
         return;
     }
 
     pages[currentPageId]->setCustomTopWidgetVisible(scheme, visible);
+    fmDebug() << "setCustomTopWidgetVisible: visibility set for scheme:" << scheme;
 }
 
 bool WorkspaceWidget::getCustomTopWidgetVisible(const QString &scheme)
 {
+    fmDebug() << "getCustomTopWidgetVisible called for scheme:" << scheme;
     if (currentPageId.isEmpty()) {
-        qDebug() << "Cannot find current page, currentPageId is empty";
+        fmWarning() << "getCustomTopWidgetVisible: Cannot find current page, currentPageId is empty";
         return false;
     }
 
     if (!pages[currentPageId]) {
-        qDebug() << "Cannot find current page, currentPageId is empty";
+        fmWarning() << "getCustomTopWidgetVisible: Cannot find current page, currentPageId is empty";
         return false;
     }
 
@@ -157,8 +162,9 @@ QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
 
 void WorkspaceWidget::createNewPage(const QString &uniqueId)
 {
+    fmInfo() << "createNewPage called with uniqueId:" << uniqueId;
     if (pages.contains(uniqueId)) {
-        qDebug() << "pages already contains" << uniqueId;
+        fmWarning() << "createNewPage: pages already contains" << uniqueId;
         return;
     }
 
@@ -171,14 +177,16 @@ void WorkspaceWidget::createNewPage(const QString &uniqueId)
 
 void WorkspaceWidget::removePage(const QString &removedId, const QString &nextId)
 {
+    fmInfo() << "removePage called, removedId:" << removedId << ", nextId:" << nextId;
     if (!pages.contains(removedId) || !pages.contains(nextId)) {
-        qDebug() << "pages does not contain" << removedId << nextId;
+        fmWarning() << "removePage: pages does not contain" << removedId << "or" << nextId;
         return;
     }
 
     if (currentPageId == removedId) {
         currentPageId = nextId;
         viewStackLayout->setCurrentWidget(pages[currentPageId]);
+        fmDebug() << "removePage: current page changed to:" << nextId;
     }
 
     auto page = pages[removedId];
@@ -186,39 +194,58 @@ void WorkspaceWidget::removePage(const QString &removedId, const QString &nextId
     if (page) {
         viewStackLayout->removeWidget(page);
         page->deleteLater();
+        fmDebug() << "removePage: page removed and scheduled for deletion:" << removedId;
     }
 }
 
 void WorkspaceWidget::setCurrentPage(const QString &uniqueId)
 {
+    fmDebug() << "setCurrentPage called with uniqueId:" << uniqueId;
     if (pages.contains(uniqueId)) {
         currentPageId = uniqueId;
         viewStackLayout->setCurrentWidget(pages[uniqueId]);
+        fmDebug() << "setCurrentPage: current page set to:" << uniqueId;
+    } else {
+        fmWarning() << "setCurrentPage: page not found:" << uniqueId;
     }
 }
 
 void WorkspaceWidget::onRefreshCurrentView()
 {
-    if (auto view = currentView())
+    fmDebug() << "onRefreshCurrentView called";
+    if (auto view = currentView()) {
         view->refresh();
+        fmDebug() << "onRefreshCurrentView: view refreshed";
+    } else {
+        fmWarning() << "onRefreshCurrentView: no current view to refresh";
+    }
 }
 
 void WorkspaceWidget::handleViewStateChanged()
 {
+    fmDebug() << "handleViewStateChanged called";
     if (currentPageId.isEmpty()) {
-        qDebug() << "Cannot find current page, currentPageId is empty";
+        fmWarning() << "handleViewStateChanged: Cannot find current page, currentPageId is empty";
         return;
     }
 
-    if (auto page = pages[currentPageId])
+    if (auto page = pages[currentPageId]) {
         page->viewStateChanged();
+        fmDebug() << "handleViewStateChanged: view state changed for page:" << currentPageId;
+    } else {
+        fmWarning() << "handleViewStateChanged: current page is null";
+    }
 }
 
 void WorkspaceWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
 {
+    fmDebug() << "handleAboutToPlaySplitterAnim called, startValue:" << startValue << ", endValue:" << endValue;
     if (auto view = dynamic_cast<FileView *>(currentView())) {
         int deltaWidth = startValue - endValue;
         view->aboutToChangeWidth(deltaWidth);
+        fmDebug() << "handleAboutToPlaySplitterAnim: width change applied, delta:" << deltaWidth;
+    } else {
+        fmWarning() << "handleAboutToPlaySplitterAnim: current view is not FileView";
     }
 }
 
@@ -246,6 +273,7 @@ void WorkspaceWidget::initializeUi()
 
 void WorkspaceWidget::initViewLayout()
 {
+    fmDebug() << "initViewLayout called";
     viewStackLayout = new QStackedLayout;
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
@@ -256,13 +284,15 @@ void WorkspaceWidget::initViewLayout()
     widgetLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(widgetLayout);
+    fmDebug() << "initViewLayout: layout initialized";
 }
 
 void WorkspaceWidget::onCreateNewWindow()
 {
+    fmInfo() << "onCreateNewWindow called";
     auto fileView = currentView();
     if (!fileView) {
-        fmWarning() << "Cannot find view";
+        fmWarning() << "onCreateNewWindow: Cannot find view";
         return;
     }
 
@@ -273,10 +303,13 @@ void WorkspaceWidget::onCreateNewWindow()
             urlList << url;
     }
 
+    fmDebug() << "onCreateNewWindow: selected URLs count:" << urlList.count();
+
     if (urlList.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
-        qWarning() << "Too much windows to open is not supported!";
+        fmWarning() << "onCreateNewWindow: Too much windows to open is not supported! Count:" << urlList.count();
         return;
     }
 
     WorkspaceEventCaller::sendOpenWindow(urlList);
+    fmDebug() << "onCreateNewWindow: open window event sent for" << urlList.count() << "URLs";
 }

@@ -21,11 +21,16 @@ HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
     : QHeaderView(orientation, parent),
       view(parent)
 {
+    fmInfo() << "Creating HeaderView with orientation:" << (orientation == Qt::Horizontal ? "Horizontal" : "Vertical");
+
     setHighlightSections(false);
     setSectionsClickable(true);
     setSortIndicatorShown(true);
     setSectionsMovable(true);
     setFirstSectionMovable(false);
+
+    fmDebug() << "HeaderView initialization completed - sections clickable:" << sectionsClickable()
+              << "movable:" << sectionsMovable() << "sort indicator shown:" << isSortIndicatorShown();
 }
 
 QSize HeaderView::sizeHint() const
@@ -64,10 +69,10 @@ void HeaderView::updateColumnWidth()
             break;
         }
 
-        for (; j > 0; --j) {
-            int logicalIndex = this->logicalIndex(j);
-            if (isSectionHidden(logicalIndex))
-                continue;
+    for (; j > 0; --j) {
+        int logicalIndex = this->logicalIndex(j);
+        if (isSectionHidden(logicalIndex))
+            continue;
 
             resizeSection(logicalIndex, model->getColumnWidth(j) + kRightPadding + kListModeRightMargin + 2 * kColumnPadding);
             break;
@@ -91,9 +96,13 @@ void HeaderView::updateColumnWidth()
 
 void HeaderView::doFileNameColumnResize(const int totalWidth)
 {
+    fmInfo() << "Resizing file name column, total width:" << totalWidth;
+
     int fileNameColumn = viewModel()->getColumnByRole(kItemFileDisplayNameRole);
     int columnCount = count();
     int columnWidthSumOmitFileName = 0;
+
+    fmDebug() << "File name column index:" << fileNameColumn << "total columns:" << columnCount;
 
     for (int i = 0; i < columnCount; ++i) {
         if (i == fileNameColumn || isSectionHidden(i))
@@ -105,13 +114,22 @@ void HeaderView::doFileNameColumnResize(const int totalWidth)
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
     int colWidth = state.value(QString::number(kItemFileDisplayNameRole), -1).toInt();
 
-    resizeSection(fileNameColumn, qMax(targetWidth, colWidth));
+    int finalWidth = qMax(targetWidth, colWidth);
+    fmDebug() << "Target width:" << targetWidth << "saved width:" << colWidth << "final width:" << finalWidth;
+
+    resizeSection(fileNameColumn, finalWidth);
+    fmDebug() << "File name column" << fileNameColumn << "resized to:" << finalWidth;
 }
 
 void HeaderView::onActionClicked(const int column, QAction *action)
 {
+    fmInfo() << "Column visibility action clicked - column:" << column << "action text:" << action->text()
+             << "current checked:" << action->isChecked();
+
     action->setChecked(!action->isChecked());
     setSectionHidden(column, action->isChecked());
+
+    fmDebug() << "Column" << column << "visibility changed to:" << (action->isChecked() ? "hidden" : "visible");
 
     emit hiddenSectionChanged(action->text(), action->isChecked());
 }
@@ -136,8 +154,11 @@ void HeaderView::mouseMoveEvent(QMouseEvent *e)
 
     int position = e->pos().x();
     int visual = visualIndexAt(position);
-    if (visual == -1)
+    if (visual == -1) {
+        fmDebug() << "Mouse move: no visual index found at position" << position;
         return;
+    }
+
     int log = logicalIndex(visual);
     int pos = sectionViewportPosition(log);
     int grip = style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, this);
@@ -193,6 +214,8 @@ void HeaderView::leaveEvent(QEvent *e)
 void HeaderView::contextMenuEvent(QContextMenuEvent *event)
 {
     Q_UNUSED(event)
+
+    fmInfo() << "Header context menu requested";
 
     QMenu *menu = new QMenu;
     auto model = viewModel();
