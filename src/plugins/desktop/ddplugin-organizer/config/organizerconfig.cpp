@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "config/organizerconfig.h"
 #include "organizerconfig_p.h"
 #include "organizer_defines.h"
 
@@ -43,6 +44,8 @@ inline constexpr char kKeyCustomGeo[] { "CustomGeometry" };
 
 inline constexpr char kGroupClassifierType[] { "Classifier_Type" };
 inline constexpr char kKeyEnabledItems[] { "EnabledItems" };
+
+inline constexpr char kKeyLastStyleConfigId[] { "LastStyleConfigId" };
 
 }   // namepace
 
@@ -301,9 +304,9 @@ void OrganizerConfig::writeCollectionBase(bool custom, const QList<CollectionBas
     d->settings->endGroup();
 }
 
-CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key) const
+CollectionStyle OrganizerConfig::collectionStyle(const QString &styleId, const QString &key) const
 {
-    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
+    d->settings->beginGroup(styleId.isEmpty() ? kGroupCollectionNormalized : styleId);
     d->settings->beginGroup(kGroupCollectionStyle);
     d->settings->beginGroup(key);
     CollectionStyle style;
@@ -327,9 +330,9 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
     return style;
 }
 
-void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &style)
+void OrganizerConfig::updateCollectionStyle(const QString &styleId, const CollectionStyle &style)
 {
-    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
+    d->settings->beginGroup(styleId.isEmpty() ? kGroupCollectionNormalized : styleId);
     d->settings->beginGroup(kGroupCollectionStyle);
     // delete old datas
     d->settings->remove(style.key);
@@ -350,9 +353,9 @@ void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &
     d->settings->endGroup();
 }
 
-void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles)
+void OrganizerConfig::writeCollectionStyle(const QString &styleId, const QList<CollectionStyle> &styles)
 {
-    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
+    d->settings->beginGroup(styleId.isEmpty() ? kGroupCollectionNormalized : styleId);
     // delete all old datas
     d->settings->remove(kGroupCollectionStyle);
     d->settings->beginGroup(kGroupCollectionStyle);
@@ -399,4 +402,24 @@ QString OrganizerConfig::path() const
                                                 "ddplugin-organizer.conf", nullptr);
 
     return configPath;
+}
+
+void OrganizerConfig::setLastStyleConfigId(const QString &id)
+{
+    d->settings->beginGroup(kGroupScreen);
+    d->settings->setValue(kKeyLastStyleConfigId, id);
+    d->settings->endGroup();
+}
+
+QString OrganizerConfig::lastStyleConfigId() const
+{
+    d->settings->beginGroup(kGroupScreen);
+    auto id = d->settings->value(kKeyLastStyleConfigId, "").toString();
+    d->settings->endGroup();
+    return id;
+}
+
+bool OrganizerConfig::hasConfigId(const QString &configId) const
+{
+    return d->settings->childGroups().contains(configId);
 }
