@@ -153,7 +153,8 @@ bool DFMSearcher::isValidSearchParameters() const
 bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
 {
     if (engine->searchType() == SearchType::Content) {
-        if (!DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
+        if (DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()
+            && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
             fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
             return false;
         } else {
@@ -179,7 +180,7 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
     options.setCaseSensitive(false);
 
     configureHiddenFilesOption(options, transformedPath);
-    
+
     if (options.method() == SearchMethod::Realtime) {
         configureRealtimeSearchOptions(options, transformedPath);
     }
@@ -201,7 +202,7 @@ void DFMSearcher::configureHiddenFilesOption(SearchOptions &options, const QStri
 void DFMSearcher::configureRealtimeSearchOptions(SearchOptions &options, const QString &transformedPath) const
 {
     options.setResultFoundEnabled(true);
-    
+
     // 判断是否需要排除索引路径
     if (shouldExcludeIndexedPaths(transformedPath)) {
         setExcludedPathsForRealtime(options);
@@ -214,13 +215,12 @@ bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) cons
     if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(transformedPath)) {
         return false;
     }
-    
+
     // 当索引目录不可用时，不排除索引路径
-    if (engine->searchType() == SearchType::FileName && 
-        !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+    if (engine->searchType() == SearchType::FileName && !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
         return false;
     }
-    
+
     // 其他情况下，排除索引路径以避免重复搜索
     return true;
 }
