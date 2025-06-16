@@ -55,7 +55,7 @@ public:
     ItemSelectionModel *selectionModel = nullptr;
     SelectionSyncHelper *selectionHelper = nullptr;
     QList<QUrl> relayoutedFiles;
-    QList<QString> relayoutedCollectionIDs;
+    QSet<QString> relayoutedCollectionIDs;
 
 private:
     NormalizedMode *q;
