@@ -32,14 +32,6 @@ pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
 pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
 pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
 pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
-pkg_check_modules(PC_XCB REQUIRED xcb)
-
-set(XCB_INCLUDE_DIRS ${PC_XCB_INCLUDE_DIRS})
-set(XCB_LIBRARIES ${PC_XCB_LIBRARIES})
-set(XCB_DEFINITIONS ${PC_XCB_CFLAGS_OTHER})
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(XCB DEFAULT_MSG XCB_LIBRARIES XCB_INCLUDE_DIRS)
 
 qt5_add_dbus_interface(SRC_FILES ${DFM_DBUS_XML_DIR}/org.deepin.filemanager.server.DeviceManager.xml devicemanager_interface)
 
@@ -71,8 +63,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     KF5::Codecs
     ${DtkWidget_LIBRARIES}
     ${X11_LIBRARIES}
-    ${XCB_LIBRARIES}
-    xcb-xfixes
 )
 
 add_test(
