@@ -177,7 +177,13 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
 
         if (fileInfo.isFile()) {
-            // 处理文件
+            // 早期扩展名过滤 - 避免昂贵的路径验证
+            if (!IndexTraverseUtils::isSupportedFileExtension(fileInfo.fileName())) {
+                fmDebug() << "[MixedPathListProvider::traverse] Skipping file with unsupported extension:" << path;
+                continue;
+            }
+            
+            // 处理文件 - 只有通过扩展名检查的文件才进行昂贵的路径验证
             if (IndexTraverseUtils::isValidFile(path)
                 && IndexUtility::isPathInContentIndexDirectory(path)) {
                 handler(path);
@@ -210,6 +216,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
     QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
     int processedDirs = 0;
     int additionalFiles = 0;
+    int skippedFilesByExtension = 0; // 统计因扩展名过滤跳过的文件数
 
     while (!dirQueue.isEmpty()) {
         if (!state.isRunning()) {
@@ -274,8 +281,15 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 continue;
             }
 
-            // 对于普通文件，只处理未处理过的
+            // 对于普通文件，早期扩展名过滤
             if (S_ISREG(st.st_mode)) {
+                // 早期扩展名检查 - 如果扩展名不支持，直接跳过
+                if (!IndexTraverseUtils::isSupportedFileExtension(entryName)) {
+                    skippedFilesByExtension++;
+                    continue; // 跳过不支持的文件扩展名，避免后续昂贵的路径验证操作
+                }
+                
+                // 只有通过扩展名检查的文件才进行昂贵的路径验证
                 if (IndexTraverseUtils::isValidFile(fullPath)
                     && IndexUtility::isPathInContentIndexDirectory(fullPath)) {
                     handler(fullPath);
@@ -292,5 +306,6 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
     }
 
     fmInfo() << "[MixedPathListProvider::traverse] Traversal completed - processed directories:" << processedDirs 
-             << "additional files:" << additionalFiles << "total unique files:" << processedFiles.size();
+             << "additional files:" << additionalFiles << "total unique files:" << processedFiles.size()
+             << "skipped files by extension:" << skippedFilesByExtension;
 }
