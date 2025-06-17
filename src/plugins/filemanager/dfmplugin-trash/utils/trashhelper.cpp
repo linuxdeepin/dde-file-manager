@@ -94,6 +94,7 @@ QFrame *TrashHelper::createEmptyTrashTopWidget()
     EmptyTrashWidget *emptyTrashWidget = new EmptyTrashWidget;
     QObject::connect(emptyTrashWidget, &EmptyTrashWidget::emptyTrash, TrashHelper::instance(), [emptyTrashWidget] {
         auto windId = TrashHelper::instance()->windowId(emptyTrashWidget);
+        fmInfo() << "Trash: Empty trash triggered from widget for window:" << windId;
         TrashHelper::emptyTrash(windId);
     });
     return emptyTrashWidget;
@@ -306,8 +307,11 @@ void TrashHelper::onTrashStateChanged()
 void TrashHelper::onTrashEmptyState()
 {
     isTrashEmpty = FileUtils::trashIsEmpty();
-    if (!isTrashEmpty)
+    if (!isTrashEmpty) {
+        fmDebug() << "Trash: Trash is not empty, no action needed";
         return;
+    }
+
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
         auto window = FMWindowsIns.findWindowById(winId);
