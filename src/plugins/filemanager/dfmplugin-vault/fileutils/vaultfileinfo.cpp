@@ -119,8 +119,10 @@ QString VaultFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
-        if (!proxy)
+        if (!proxy) {
+            fmWarning() << "Vault: No proxy available for absolute path";
             return "";
+        }
         return d->absolutePath(proxy->pathOf(type));
     default:
         return ProxyFileInfo::pathOf(type);
@@ -138,10 +140,13 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
         return ProxyFileInfo::urlOf(type);
     }
 }
+
 bool VaultFileInfo::exists() const
 {
-    if (urlOf(UrlInfoType::kUrl).isEmpty())
+    if (urlOf(UrlInfoType::kUrl).isEmpty()) {
+        fmDebug() << "Vault: URL is empty, file does not exist";
         return false;
+    }
 
     return proxy && proxy->exists();
 }
@@ -149,6 +154,7 @@ bool VaultFileInfo::exists() const
 void VaultFileInfo::refresh()
 {
     if (!proxy) {
+        fmWarning() << "Vault: No proxy available for refresh";
         return;
     }
 
@@ -258,8 +264,10 @@ QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kSizeFormat:
-        if (!proxy)
+        if (!proxy) {
+            fmDebug() << "Vault: No proxy available, using base extended attributes";
             return ProxyFileInfo::extendAttributes(type);
+        }
         return proxy->extendAttributes(type);
     default:
         return ProxyFileInfo::extendAttributes(type);

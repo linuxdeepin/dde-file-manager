@@ -30,7 +30,7 @@ RootInfo *FileDataManager::fetchRoot(const QUrl &url)
         return rootInfoMap.value(url);
     }
 
-    fmInfo() << "Creating new RootInfo for URL:" << url.toString();
+    fmDebug() << "Creating new RootInfo for URL:" << url.toString();
     return createRoot(url);
 }
 
@@ -61,7 +61,7 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh, const bool self)
 {
-    fmInfo() << "Cleaning root for URL:" << rootUrl.toString() << "key:" << key << "refresh:" << refresh << "self:" << self;
+    fmDebug() << "Cleaning root for URL:" << rootUrl.toString() << "key:" << key << "refresh:" << refresh << "self:" << self;
 
     QString rootPath = rootUrl.path();
     if (!rootPath.endsWith("/"))
@@ -90,7 +90,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl)
 {
-    fmInfo() << "Performing complete root cleanup for URL:" << rootUrl.toString();
+    fmDebug() << "Performing complete root cleanup for URL:" << rootUrl.toString();
 
     QString rootPath = rootUrl.path();
     if (!rootPath.endsWith("/"))
@@ -112,7 +112,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
 
 void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
 {
-    fmInfo() << "Stopping root work for URL:" << rootUrl.toString() << "key:" << key;
+    fmDebug() << "Stopping root work for URL:" << rootUrl.toString() << "key:" << key;
 
     QString rootPath = rootUrl.path();
     if (!rootPath.endsWith("/"))
@@ -151,7 +151,7 @@ void FileDataManager::onAppAttributeChanged(Application::ApplicationAttribute aa
 
 void FileDataManager::onHandleFileDeleted(const QUrl url)
 {
-    fmInfo() << "Handling file deletion request for URL:" << url.toString();
+    fmDebug() << "Handling file deletion request for URL:" << url.toString();
     cleanRoot(url);
 }
 

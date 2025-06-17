@@ -35,9 +35,11 @@ void VaultRemoveByNoneWidget::buttonClicked(int index, const QString &text)
 
     switch (index) {
     case 0: {
+        fmDebug() << "Vault: Cancel button clicked, closing dialog";
         emit closeDialog();
     } break;
     case 1: {
+        fmDebug() << "Vault: Delete button clicked, requesting authority dialog";
         VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultRemoveByNoneWidget::slotCheckAuthorizationFinished);
@@ -49,18 +51,25 @@ void VaultRemoveByNoneWidget::buttonClicked(int index, const QString &text)
 
 void VaultRemoveByNoneWidget::slotCheckAuthorizationFinished(bool result)
 {
+    fmDebug() << "Vault: Authorization check finished with result:" << result;
+
     disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultRemoveByNoneWidget::slotCheckAuthorizationFinished);
 
-    if (!result)
+    if (!result) {
+        fmWarning() << "Vault: Authorization failed, operation cancelled";
         return;
+    }
 
+    fmDebug() << "Vault: Authorization successful, attempting to lock vault";
     if (!VaultHelper::instance()->lockVault(false)) {
+        fmCritical() << "Vault: Failed to lock vault for removal";
         QString errMsg = tr("Failed to delete file vault");
         DDialog dialog(this);
         dialog.setIcon(QIcon::fromTheme("dialog-warning"));
         dialog.setTitle(errMsg);
         dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+        fmDebug() << "Vault: Showing error dialog for lock failure";
         dialog.exec();
         return;
     }

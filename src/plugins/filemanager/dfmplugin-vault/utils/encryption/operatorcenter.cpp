@@ -33,6 +33,7 @@ using namespace dfmplugin_vault;
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput("")
 {
+    fmDebug() << "Vault: OperatorCenter initialized";
 }
 
 QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString &behind)
@@ -48,12 +49,14 @@ bool OperatorCenter::runCmd(const QString &cmd)
     int mescs = 10000;
     if (cmd.startsWith(kRootProxy)) {
         mescs = -1;
+        fmDebug() << "Vault: Using root proxy, no timeout";
     }
-    process.start(cmd);
 
+    process.start(cmd);
     bool res = process.waitForFinished(mescs);
     standOutput = process.readAllStandardOutput();
     int exitCode = process.exitCode();
+
     if (cmd.startsWith(kRootProxy) && (exitCode == 127 || exitCode == 126)) {
         fmWarning() << "Vault: Run \'" << cmd << "\' fauled: Password Error! " << QString::number(exitCode);
         return false;
@@ -73,6 +76,7 @@ bool OperatorCenter::executeProcess(const QString &cmd)
 
     runCmd("id -un");
     if (standOutput.trimmed() == "root") {
+        fmDebug() << "Vault: Already running as root, executing directly";
         return runCmd(cmd);
     }
 
@@ -85,10 +89,15 @@ bool OperatorCenter::executeProcess(const QString &cmd)
 
 bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion)
 {
+    fmDebug() << "Vault: Saving second salt and ciphertext, version:" << vaultVersion;
+
     // 密文
     QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(ciphertext, salt, kIterationTwo, kPasswordCipherLength);
-    if (strCiphertext.isEmpty())
+    if (strCiphertext.isEmpty()) {
+        fmWarning() << "Vault: Failed to encrypt password with PBKDF2";
         return false;
+    }
+
     // 写入文件
     QString strSaltAndCiphertext = salt + strCiphertext;
     VaultConfig config;
@@ -96,14 +105,19 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
     // 更新保险箱版本信息
     config.set(kConfigNodeName, kConfigKeyVersion, QVariant(vaultVersion));
 
+    fmDebug() << "Vault: Second salt and ciphertext saved successfully";
     return true;
 }
 
 bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCount)
 {
+    fmDebug() << "Vault: Statistics files in directory:" << dirPath;
+
     QDir dir(dirPath);
-    if (!dir.exists())
+    if (!dir.exists()) {
+        fmWarning() << "Vault: Directory does not exist:" << dirPath;
         return false;
+    }
 
     dir.setSorting(QDir::DirsFirst);
     QFileInfoList list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
@@ -115,18 +129,25 @@ bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCoun
         }
     }
 
+    fmDebug() << "Vault: Total files count:" << *filesCount;
     return true;
 }
 
 void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount)
 {
+    fmDebug() << "Vault: Removing directory:" << dirPath << "total files:" << filesCount;
+
     QDir dir(dirPath);
-    if (!dir.exists() || filesCount < 1)
+    if (!dir.exists() || filesCount < 1) {
+        fmDebug() << "Vault: Directory does not exist or files count is invalid";
         return;
+    }
 
     dir.setSorting(QDir::DirsFirst);
     QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
     int count = infoList.size();
+    fmDebug() << "Vault: Processing" << count << "items in directory";
+
     for (int i = 0; i < count; ++i) {
         if (infoList.at(i).isDir()) {
             removeDir(infoList.at(i).absoluteFilePath(), filesCount, removedFileCount, removedDirCount);
@@ -148,12 +169,16 @@ void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *remo
 
 Result OperatorCenter::createKeyNew(const QString &password)
 {
+    fmDebug() << "Vault: Creating new key";
+
     strPubKey.clear();
     QString strPriKey("");
     rsam::createPublicAndPrivateKey(strPubKey, strPriKey);
+    fmDebug() << "Vault: RSA key pair created";
 
     // 私钥加密
     QString strCipher = rsam::privateKeyEncrypt(password, strPriKey);
+    fmDebug() << "Vault: Password encrypted with private key";
 
     // 验证公钥长度
     if (strPubKey.length() < 2 * kUserKeyInterceptIndex + 32) {
@@ -172,14 +197,19 @@ Result OperatorCenter::createKeyNew(const QString &password)
     QTextStream out2(&cipherFile);
     out2 << strCipher;
     cipherFile.close();
+    fmDebug() << "Vault: RSA ciphertext saved to:" << strCipherFilePath;
 
     return { true };
 }
 
 Result OperatorCenter::saveKey(QString key, QString path)
 {
-    if (key.isEmpty())
+    fmDebug() << "Vault: Saving key to path:" << path;
+
+    if (key.isEmpty()) {
+        fmWarning() << "Vault: Key is empty";
         return { false, tr("Failed to save public key file: The public key is empty.") };
+    }
 
     // 保存部分公钥
     QString publicFilePath = path;
@@ -192,6 +222,7 @@ Result OperatorCenter::saveKey(QString key, QString path)
     QTextStream out(&publicFile);
     out << key;
     publicFile.close();
+    fmDebug() << "Vault: Public key saved successfully";
     return { true };
 }
 
@@ -202,6 +233,8 @@ QString OperatorCenter::getPubKey()
 
 bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString &password)
 {
+    fmDebug() << "Vault: Verifying and retrieving password from keypath:" << keypath;
+
     QFile localPubKeyfile(keypath);
     if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
         fmCritical() << "Vault: cant't open local public key file!";
@@ -210,6 +243,7 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
 
     QString strLocalPubKey(localPubKeyfile.readAll());
     localPubKeyfile.close();
+    fmDebug() << "Vault: Local public key loaded, length:" << strLocalPubKey.length();
 
     // 利用完整公钥解密密文，得到密码
     QString strRSACipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
@@ -221,8 +255,10 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
 
     QString strRsaCipher(rsaCipherfile.readAll());
     rsaCipherfile.close();
+    fmDebug() << "Vault: RSA cipher loaded, length:" << strRsaCipher.length();
 
     password = rsam::publicKeyDecrypt(strRsaCipher, strLocalPubKey);
+    fmDebug() << "Vault: Password decrypted from RSA cipher";
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     QString temp = "";
@@ -242,6 +278,7 @@ OperatorCenter *OperatorCenter::getInstance()
 
 OperatorCenter::~OperatorCenter()
 {
+    fmDebug() << "Vault: OperatorCenter destroyed";
 }
 
 Result OperatorCenter::createDirAndFile()
@@ -255,6 +292,9 @@ Result OperatorCenter::createDirAndFile()
             fmCritical() << "Vault: create config dir failed!";
             return { false, tr("Failed to create config dir: %1").arg(strerror(errno)) };
         }
+        fmDebug() << "Vault: Config directory created:" << strConfigDir;
+    } else {
+        fmDebug() << "Vault: Config directory already exists:" << strConfigDir;
     }
 
     // 创建配置文件,并设置文件权限
@@ -265,9 +305,12 @@ Result OperatorCenter::createDirAndFile()
         if (configFile.open(QFileDevice::WriteOnly | QFileDevice::Text)) {
             configFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
             configFile.close();
+            fmDebug() << "Vault: Config file created:" << strConfigFilePath;
         } else {
             fmCritical() << "Vault: create config file failed!";
         }
+    } else {
+        fmDebug() << "Vault: Config file already exists:" << strConfigFilePath;
     }
 
     // 创建存放rsa公钥的文件,并设置文件权限
@@ -279,6 +322,7 @@ Result OperatorCenter::createDirAndFile()
     }
     prikeyFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     prikeyFile.close();
+    fmDebug() << "Vault: RSA public key file created:" << strPriKeyFile;
 
     // 创建存放rsa公钥加密后密文的文件,并设置文件权限
     QString strRsaCiphertext = makeVaultLocalPath(kRSACiphertextFileName);
@@ -289,6 +333,7 @@ Result OperatorCenter::createDirAndFile()
     }
     rsaCiphertextFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     rsaCiphertextFile.close();
+    fmDebug() << "Vault: RSA ciphertext file created:" << strRsaCiphertext;
 
     // 创建密码提示信息文件,并设置文件权限
     QString strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
@@ -299,17 +344,24 @@ Result OperatorCenter::createDirAndFile()
     }
     passwordHintFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     passwordHintFile.close();
+    fmDebug() << "Vault: Password hint file created:" << strPasswordHintFilePath;
 
     return { true };
 }
 
 Result OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
 {
+    fmDebug() << "Vault: Saving password and password hint";
+
     // encrypt password，write salt and cihper to file
     // random salt
     const QString &strRandomSalt = pbkdf2::createRandomSalt(kRandomSaltLength);
+    fmDebug() << "Vault: Random salt created, length:" << strRandomSalt.length();
+
     // cipher
     const QString &strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, kIteration, kPasswordCipherLength);
+    fmDebug() << "Vault: Password encrypted with PBKDF2";
+
     // salt and cipher
     const QString &strSaltAndCiphertext = strRandomSalt + strCiphertext;
     // save the second encrypt cipher, and update version
@@ -325,13 +377,16 @@ Result OperatorCenter::savePasswordAndPasswordHint(const QString &password, cons
     QTextStream out2(&passwordHintFile);
     out2 << passwordHint;
     passwordHintFile.close();
+    fmDebug() << "Vault: Password hint saved to:" << strPasswordHintFilePath;
 
     VaultConfig config;
     const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
     if (useUserPassword != kConfigKeyNotExist) {
         strCryfsPassword = password;
+        fmDebug() << "Vault: Using user password for cryfs";
     } else {
         strCryfsPassword = strSaltAndCiphertext;
+        fmDebug() << "Vault: Using encrypted password for cryfs";
     }
 
     return { true };
@@ -339,6 +394,8 @@ Result OperatorCenter::savePasswordAndPasswordHint(const QString &password, cons
 
 bool OperatorCenter::createKey(const QString &password, int bytes)
 {
+    fmDebug() << "Vault: Creating key with bytes:" << bytes;
+
     // 清空上次的用户密钥
     strUserKey.clear();
 
@@ -346,9 +403,11 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QString strPriKey("");
     QString strPubKey("");
     rsam::createPublicAndPrivateKey(strPubKey, strPriKey);
+    fmDebug() << "Vault: RSA key pair created";
 
     // 私钥加密
     QString strCipher = rsam::privateKeyEncrypt(password, strPriKey);
+    fmDebug() << "Vault: Password encrypted with private key";
 
     // 将公钥分成两部分（一部分用于保存到本地，一部分生成二维码，提供给用户）
     QString strSaveToLocal("");
@@ -361,6 +420,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QString strPart3 = strPubKey.mid(kUserKeyInterceptIndex + kUserKeyLength);
     strUserKey = strPart2;
     strSaveToLocal = strPart1 + strPart3;
+    fmDebug() << "Vault: Public key split into parts, user key length:" << strUserKey.length();
 
     // 保存部分公钥
     QString publicFilePath = makeVaultLocalPath(kRSAPUBKeyFileName);
@@ -372,6 +432,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QTextStream out(&publicFile);
     out << strSaveToLocal;
     publicFile.close();
+    fmDebug() << "Vault: Partial public key saved to:" << publicFilePath;
 
     // 保存密文
     QString strCipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
@@ -383,12 +444,15 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QTextStream out2(&cipherFile);
     out2 << strCipher;
     cipherFile.close();
+    fmDebug() << "Vault: RSA ciphertext saved to:" << strCipherFilePath;
 
     return true;
 }
 
 bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 {
+    fmDebug() << "Vault: Checking password";
+
     // 获得版本信息
     VaultConfig config;
     const QString &strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
@@ -413,10 +477,13 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
         const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
         if (useUserPassword != kConfigKeyNotExist) {
             cipher = password;
+            fmDebug() << "Vault: Using user password";
         } else {
             cipher = strNewSaltAndCipher;
+            fmDebug() << "Vault: Using encrypted password";
         }
     } else {   // 如果是旧版本，验证第一次加密的结果
+        fmDebug() << "Vault: Using old version password verification";
         // 获得本地盐及密文
         QString strfilePath = makeVaultLocalPath(kPasswordFileName);
         QFile file(strfilePath);
@@ -447,6 +514,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 
         // 删除旧版本遗留的密码文件
         QFile::remove(strfilePath);
+        fmDebug() << "Vault: Old password file removed:" << strfilePath;
     }
     return true;
 }
@@ -467,8 +535,10 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &cipher)
     }
     QString strLocalPubKey(localPubKeyfile.readAll());
     localPubKeyfile.close();
+    fmDebug() << "Vault: Local public key loaded, length:" << strLocalPubKey.length();
 
     QString strNewPubKey = strLocalPubKey.insert(kUserKeyInterceptIndex, userKey);
+    fmDebug() << "Vault: Complete public key reconstructed";
 
     // 利用完整公钥解密密文，得到密码
     QString strRSACipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
@@ -479,8 +549,10 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &cipher)
     }
     QString strRsaCipher(rsaCipherfile.readAll());
     rsaCipherfile.close();
+    fmDebug() << "Vault: RSA cipher loaded, length:" << strRsaCipher.length();
 
     QString strNewPassword = rsam::publicKeyDecrypt(strRsaCipher, strNewPubKey);
+    fmDebug() << "Vault: Password decrypted from RSA cipher";
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     if (!checkPassword(strNewPassword, cipher)) {
@@ -506,6 +578,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
     }
     passwordHint = QString(passwordHintFile.readAll());
     passwordHintFile.close();
+    fmDebug() << "Vault: Password hint loaded, length:" << passwordHint.length();
 
     return true;
 }
@@ -544,7 +617,11 @@ QStringList OperatorCenter::getConfigFilePath()
 
 QString OperatorCenter::autoGeneratePassword(int length)
 {
-    if (length < 3) return "";
+    if (length < 3) {
+        fmWarning() << "Vault: Password length too short:" << length;
+        return "";
+    }
+
     ::srand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
 
     QString strPassword("");
@@ -571,10 +648,12 @@ bool OperatorCenter::getRootPassword()
     // 判断当前是否是管理员登陆
     bool res = runCmd("id -un");   // file path is fixed. So write cmd direct
     if (res && standOutput.trimmed() == "root") {
+        fmDebug() << "Vault: Already running as root";
         return true;
     }
 
     if (false == executeProcess("sudo whoami")) {
+        fmWarning() << "Vault: Failed to get root privileges";
         return false;
     }
 
@@ -688,16 +767,22 @@ QString OperatorCenter::passwordFromKeyring()
 
 void OperatorCenter::removeVault(const QString &basePath)
 {
-    if (basePath.isEmpty())
+    fmDebug() << "Vault: Removing vault from base path:" << basePath;
+
+    if (basePath.isEmpty()) {
+        fmWarning() << "Vault: Base path is empty, cannot remove vault";
         return;
+    }
 
     QtConcurrent::run([this, basePath]() {
+        fmDebug() << "Vault: Starting vault removal in background thread";
         int filesCount { 0 };
         int removedFileCount { 0 };
         int removedDirCount { 0 };
         if (statisticsFilesInDir(basePath, &filesCount)) {
             filesCount++;   // the basePath dir
             removeDir(basePath, filesCount, &removedFileCount, &removedDirCount);
+            fmDebug() << "Vault: Vault removal completed";
         }
     });
 }

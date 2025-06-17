@@ -55,7 +55,7 @@ IconItemDelegate::IconItemDelegate(FileViewHelper *parent)
 {
     Q_D(IconItemDelegate);
 
-    fmInfo() << "Creating IconItemDelegate";
+    fmDebug() << "Creating IconItemDelegate";
 
     d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
     d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -84,7 +84,7 @@ IconItemDelegate::~IconItemDelegate()
 {
     Q_D(IconItemDelegate);
 
-    fmInfo() << "Destroying IconItemDelegate";
+    fmDebug() << "Destroying IconItemDelegate";
 
     if (d->expandedItem) {
         fmDebug() << "Cleaning up expanded item widget";

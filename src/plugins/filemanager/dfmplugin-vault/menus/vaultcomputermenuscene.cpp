@@ -16,16 +16,19 @@ using namespace dfmplugin_vault;
 
 AbstractMenuScene *VaultComputerMenuCreator::create()
 {
+    fmDebug() << "Vault: Creating VaultComputerMenuScene";
     return new VaultComputerMenuScene();
 }
 
 VaultComputerMenuScene::VaultComputerMenuScene(QObject *parent)
     : dfmbase::AbstractMenuScene(parent), d(new VaultComputerMenuScenePrivate(this))
 {
+    fmDebug() << "Vault: VaultComputerMenuScene initialized";
 }
 
 VaultComputerMenuScene::~VaultComputerMenuScene()
 {
+    fmDebug() << "Vault: VaultComputerMenuScene destroyed";
 }
 
 QString VaultComputerMenuScene::name() const
@@ -35,19 +38,35 @@ QString VaultComputerMenuScene::name() const
 
 bool VaultComputerMenuScene::initialize(const QVariantHash &params)
 {
+    fmDebug() << "Vault: Initializing menu scene with params count:" << params.size();
+
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (d->selectFiles.count() == 1 && d->selectFiles.first().path().endsWith(".vault"))
         return true;
+
+    fmDebug() << "Vault: Invalid selection for vault menu scene";
     return false;
 }
 
 bool VaultComputerMenuScene::create(QMenu *parent)
 {
+    fmDebug() << "Vault: Creating vault computer menu";
+
+    if (!parent) {
+        fmWarning() << "Vault: Parent menu is null";
+        return false;
+    }
+
     parent->clear();   // vault item in computer has its own menu actions.
 
     VaultHelper::instance()->appendWinID(d->windowId);
     auto menu = VaultHelper::instance()->createMenu();
+    if (!menu) {
+        fmWarning() << "Vault: Failed to create vault menu";
+        return false;
+    }
+
     d->acts = menu->actions();
     parent->addActions(d->acts);
     menu->deleteLater();
@@ -56,6 +75,7 @@ bool VaultComputerMenuScene::create(QMenu *parent)
 
 void VaultComputerMenuScene::updateState(QMenu *parent)
 {
+    fmDebug() << "Vault: Updating menu state";
     return AbstractMenuScene::updateState(parent);
 }
 
@@ -69,11 +89,17 @@ bool VaultComputerMenuScene::triggered(QAction *action)
 
 AbstractMenuScene *VaultComputerMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
-        return nullptr;
+    fmDebug() << "Vault: Getting scene for action:" << (action ? action->text() : "null");
 
-    if (!d->predicateAction.key(action).isEmpty())
+    if (action == nullptr) {
+        fmDebug() << "Vault: Action is null, returning null scene";
+        return nullptr;
+    }
+
+    if (!d->predicateAction.key(action).isEmpty()) {
+        fmDebug() << "Vault: Action belongs to vault menu scene";
         return const_cast<VaultComputerMenuScene *>(this);
+    }
 
     return AbstractMenuScene::scene(action);
 }
@@ -81,4 +107,5 @@ AbstractMenuScene *VaultComputerMenuScene::scene(QAction *action) const
 VaultComputerMenuScenePrivate::VaultComputerMenuScenePrivate(VaultComputerMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
+    fmDebug() << "Vault: VaultComputerMenuScenePrivate initialized";
 }
