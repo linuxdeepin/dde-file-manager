@@ -38,20 +38,26 @@ On Document Viewer interface, press **Ctrl + Shift + /** to view all shortcut ke
 
 ## Main Interface
 
-On File Manager interface, you can execute many operations with the functional bars. It is designed to be easy-to-use, user-friendly and efficient improving.
+The main interface of the file manager is simple, user-friendly, and feature-rich. Mastering its functions will make file management simpler and more efficient.
 
-![1|maininterface](fig/p_maininterface.png)
+![1|maininterface](fig/p_main_interface.png)
 
-| No. | Name        | Description                                                                                                                                                  |
-| --- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Left panel  | Click icons in left panel to quickly visit local files, disks, computers in LAN, bookmarks and tags.                                                         |
-| 2   | Address bar | You can quickly switch visiting history, switch among directory levels, search and input address in address bar.                                             |
-| 3   | View        | Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) to switch view modes.                                                  |
-| 4   | Info column | Click ![fileinfo](../common/fileinfo.svg) to view basic information and tags of files(folders).                                                              |
-| 5   | Main menu   | You can create new window, switch themes, set share password, make settings, view manual and application information, and exit the application in Main menu. |
-| 6   | Status bar  | You can view the number of files or selected files.                                                                                                          |
 
-> ![tips](../common/tips.svg) Tips: you can drag the dividing line on the right of left panel to change its width.
+
+| No.  | Name           | Description                                                  |
+| ---- | -------------- | ------------------------------------------------------------ |
+| 1    | Navigation Bar | Click navigation icons to quickly access local files, disks, network neighbors, bookmarks, tags, etc. |
+| 2    | Tab Bar        | Create, remove, or reorder tabs in the tab bar.              |
+| 3    | Address Bar    | Quickly switch browsing history, navigate between parent/child directories, or enter a path. |
+| 4    | View & Options | Click ![icon_view](../common/icon_view.svg), ![list_view](../common/list_view.svg), ![treelist_view](../common/treelist_view.svg) to switch between icon, list, or tree list views. Click ![](../common/view_options.svg) to adjust icon size, grid density, or enable previews. |
+| 5    | Sorting        | Click ![](../common/sorting.svg) to change sorting criteria. |
+| 6    | Search         | Search for files in the current directory.                   |
+| 7    | Menu Bar       | Create new windows, switch themes, set sharing passwords, configure settings, view help/about, or exit. |
+| 8    | Status Bar     | Displays total files or selected file count.                 |
+
+> ![tips](/home/jiangwanying/common/tips.svg) Tip: Drag the divider on the right side of the left navigation bar to adjust its width.
+
+---
 
 ## Basic Functions
 
@@ -88,21 +94,27 @@ File Manager is featured with the basic functions as a file manager, you can eas
    - **Custom Text**: Input the file name and SN.
 3. Click **Rename** to finish operation.
 
-![1|batch_rename](fig/p_rename.png)
+![1|batch_rename](fig/p_batch_rename.png)
 
 ### View Files
 
-Click the icon on the menu bar![icon_view](../common/icon_view.svg),![list_view](../common/list_view.svg) ,![list_view](../common/treelist_view.svg)or use the shortcut keys **Ctrl + 1**, **Ctrl + 2** and **Ctrl + 3** to switch between icon view, list view, and tree list view.
+Click menu bar icons ![icon_view](../common/icon_view.svg), ![list_view](../common/list_view.svg), ![treelist_view](../common/treelist_view.svg) or use shortcuts **Ctrl + 1**, **Ctrl + 2**, **Ctrl + 3** to switch views.
 
-- Icon view: displaying filenames, icons or thumbnails.
+- **Icon View**: Displays file names and icons/thumbnails in tiles.  
+  ![1|icon_view](fig/p_iconview.png)
 
-![1|iconview](fig/p_iconview.png)
+- **List View**: Shows file icons/thumbnails, names, modification times, sizes, and types in a list.  
+  ![1|list_view](fig/p_listview.png)
 
-- List view: displaying file icons or thumbnails, names, time modified, sizes, types and etc in a list. 
+- **Tree List View**: Expands directories hierarchically with file details.  
+  ![1|list_view](fig/p_treelistview.png)
 
-![1|listview](fig/p_listview.png)
+Click ![](../common/view_options.svg) to adjust view styles:
 
-* Tree list view: Expand the file directory in a tree shape and display file icons, thumbnails, name, modification time, size, type and other information.
+- Icon View: Customize icon size and grid density.  
+  ![1|list_view](fig/view_options_1.png)
+- List/Tree View: Adjust row height.  
+  ![1|list_view](fig/view_options_2.png)
 
 
 
@@ -113,10 +125,10 @@ Click the icon on the menu bar![icon_view](../common/icon_view.svg),![list_view]
 
 ### Sorting
 
-1. Right-click in the blank area on File Manager, select **Sort by**.
-2. Choose among the sorting options, which include **Name**, **Time modified**, **Size** and **Type**.
+1. Right-click in the file manager or click ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/sorting.svg) in the title bar.
+2. Select **Sort by** > *Name*, *Modified*, *Created*, *Size*, or *Type*.
 
-You can check **Mix sorting of files and folders** in **Main menu** > **Settings > Basic settings**, and then sort the files and folders by the following steps.
+Enable **Mix files and folders** in **Main Menu > Settings > Basic Settings > Files and Directories** to sort them together.
 
 > ![tips](../common/tips.svg) Tips: you can click the head of the columns in the list view to change the sort order.
 
@@ -204,43 +216,47 @@ File Manager is featured with many useful functions, which are all designed to e
 
 ### Switch Address Bar
 
-There are three sections in address bar, namely back/forward buttons, breadcrumb bar, and directory/search bar. By default, breadcrumb bar is displayed in the address bar. 
+The address bar combines history navigation, breadcrumbs, and a path input field. By default, it shows breadcrumbs.
 
 ![0|addressbar](fig/addressbar1.png)
 
-- Clicking back/forward buttons to quickly view the previous address or the next address. 
-- Each level of the location of a file will form a breadcrumb. You can switch quickly among levels by clicking all breadcrumbs.
-
-By clicking the search icon, or right-click the file path and select **Edit address**, the address bar will be switched into inputting box. By clicking out of the inputting box, the address bar will restore to breadcrumbs automatically. 
-
-![0|addressbar](fig/addressbar2.png)
-
-- The inputting box can identify smartly. You can input keywords or an address and press **Enter**, the system will identify automatically and search or visit.
+- **History Navigation**: Use arrows to browse forward/backward.
+- **Breadcrumbs**: Click any level to jump directly. Hover and click ▼ to see full path hierarchy.  
+  ![](fig/addressbar2.png)
+- **Path Input**: Click the blank area to enter/edit a path. Click outside to revert to breadcrumbs.  
+  <img src="fig/addressbar3.png" alt="0|addressbar" style="zoom:67%;" />
 
 ### Search Files
 
-File Manager supports multiple search methods, including both general search by file name and file content, and advanced search by file type, creation time, and so on, which is helpful to improve efficiency and facilitate file management.
+Press **Ctrl + F** or click the search icon in the address bar to search.  
+![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search_button.png)
 
-- If you need to search in a specified directory, please enter it before search.
+Search supports basic (name/content) and advanced filters (type/size/time).
 
-> ![notes](../common/notes.svg) Notes: In **Settings**, check "Auto index internal disk" and "Index external storage device after connected to computer" to quicken the searching speed.
+- Search within a directory by navigating there first.
+- Use spaces to separate multiple keywords.
+
+> ![notes](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
 
 #### Full-Text Search
 
-You can search a file by keywords in its content.
+Search by file content keywords.  
+![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search1.png)  
+To enable:
 
-1. In File Manager, click ![icon_menu](../common/icon_menu.svg) > **Settings**.
-2. Check **Full-Text search** under **Index** of **Advanced**.
-3. Press **Ctrl + F** or click the searching button in the address bar to start searching. Enter the keywords and press **Enter**.
+1. Go to ![icon_menu](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/icon_menu.svg) > **Settings**.
+2. Check **Full-text search** under *Advanced Settings > Search*.  
+   ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search2.png)
 
 #### Advanced Search
 
-When there are many files and the search is slow, you can enable advanced search to narrow the search scope and improve the search efficiency.
+Click ![filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/filter.svg) after entering keywords to narrow results by:  
 
-1. In search bar, input the keywords and press **Enter**. When the results appear, you will see ![filter](../common/filter.svg) icon, you can click it to do advanced search.
-2. Select the searching range, file type and size, and modified time, accessed time and created time to narrow the search results.
-
-![0|filter](fig/p_filter.png)
+- Scope
+- File Size
+- File Type
+- Modification/Access/Creation Time  
+  ![0|filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_filter.png)
 
 ### Recent Files
 
@@ -250,17 +266,15 @@ By default, there is a **Recent** entry on left panel. Click it to view the rece
 
 ### Manage Tabs
 
-File Manager supports multi-tab view.
+- Click **+** in the tab bar to open a new tab.
+- Click **×** or middle-click a tab to close it.  
+  ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/tab1.png)
 
-1. On File Manager, right-click the folder.
-2. In the pop-up context menu, select **Open in new tab**.
-3. When the window has multi-tabs, you can:
-   - Click + in tab bar to add a new tab.
-   - Place the cursor onto the tab, click × on the tab or middle-click to close it.
+**Open folders in new tabs**:
 
-![1|tab](fig/p_tab.png)
-
-> ![tips](../common/tips.svg) Tips: When the File Manager has only one tab, the tab bar is hidden, you can press **Ctrl + T** to add a new tab.
+1. Right-click a folder.
+2. Select **Open in new tab**.  
+   ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_tab.png)
 
 ### Manage Bookmarks
 
@@ -290,19 +304,19 @@ You can add tag to multiple files/folders at a time, or add multiple tags to a s
 
 > ![notes](../common/notes.svg) Notes: The tag color is randomly assigned from eight default colors.
 
-![1|taginfo](fig/p_taginfo.png)
+![1|taginfo](fig/p_tag_info.png)
 
 ##### By Color Tag
 
 Right-click a file/folder, select a "color button" to create a color tag directly.
 
-![1|colortag](fig/p_colortag.png)
+![1|colortag](fig/p_color_tag.png)
 
 ##### By information column on the right side
 
 Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in the information column on the right side.
 
-![1|infotag](fig/p_infotag.png)
+![1|infotag](fig/p_info_tag.png)
 
 
 
@@ -347,7 +361,7 @@ File Manager supports file preview by pressing space bar. Select a file and pres
 
 In file/folder properties, click **Permissions** to set **Owner**, **Group** and **Others**. 
 
-![0|permission](fig/permission.png)
+![0|permission](fig/info.png)
 
 ### My Shares
 
@@ -446,15 +460,11 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 1. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
 
-![cd](fig/cd_interface.png)
-
 2. Right click the file (folder) and select **Add to disc** or drag the file (folder) directly to the burning interface.
 
 3. In the burning interface, click **Burn** in the upper right corner.
 
 4. A window pops up. Input the disc name. You can also enter the **Advanced settings** interface, set the file system and write speed, or check "Allow files to be added later", "Verify data" and so on, and click **Burn**.
-
-![cd](fig/cd_rename.png)
 
 5. After burning, a prompt box will pop up in the interface, and click **OK**.
 
@@ -468,11 +478,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 1. Open File Manager and click the CD Icon in the left panel to enter the CD interface.
 
-![cd](fig/cd_save_as_iso.png)
-
 2. Click **Save as Image File** in the top right corner.
-
-![cd](fig/cd_create_iso.png)
 
 3. In the pop-up window, select a save path, and click **Create ISO Image** to save files as an ISO image file.
 
@@ -505,98 +511,8 @@ Prerequisite: The Bluetooth devices of sender and receiver have been paired and 
 3. Select the receiver in the pop-up window, and click **Next**.  
 4. A file receiving request will pop up on the receiving device. After the receiver agrees the request, the sender starts to transfer the file.
    
-   
 
-## UnionTech OS Assistant
 
-UnionTech OS Assistant is a practical tool to realize cross terminal cooperation, efficient transmission, and real-time synchronization. It only needs to connect the mobile phone and PC, or use wireless delivery to easily transfer pictures, videos, files, etc.
-
-> ![notes](../common/notes.svg)Notes: Only Android phones are supported.
-
-### Preparation
-
-#### Install UnionTech OS Assistant
-
-1. Click ![icon](../common/found.svg) in the system tray or open File Manager and click **My Phone** in the left panel.
-
-2. Click **Install UnionTech OS Assistant**, a window with a QR code inside pops up.
-   
-   - Scan the QR code with your WeChat or browser to download and install UnionTech OS Assistant.
-   - Click **Download APK** to download it locally and import it into your phone for installation.
-
-![phone](fig/myphone.png)
-
-#### Log in UnionTech OS Assistant
-
-There are three ways to log in UnionTech OS Assistant, including: cell phone quick login, WeChat login, and account password login. Please choose one to login. If you haven't registered your account yet, please click **Register** on the login screen to register.
-
-#### Discovery Settings
-
-Use the "Discovery Settings" function to set how your phone and computer are discovered. In the UnionTech OS Assistant screen, click **Discovery Settings** in the upper right corner; on the computer system tray, right-click the icon ![icon](../common/found.svg) and select **Discovery Settings**, you can choose:
-
-- **Discoverable for everyone**: Within the LAN, all devices that are on the same network and in the same network segment are allowed to discover this phone or computer.
-- **Discoverable for the same UOS ID only**: Within the LAN, only devices logged into the same UOS ID are allowed to discover this phone or computer.
-- **Undiscoverable**: All devices are not allowed to discover this phone or computer.
-- **Discoverable for remote devices with the same UOS ID** (computer side): Remote devices logged into the same UOS ID are allowed to discover this computer.
-  
-  
-
-### Connect PC with Phone
-
-After logging into UnionTech OS Assistant, you can connect your phone to your computer by **Scan and Connect** or **Search Computer**.
-
-#### Scan and Connect
-
-Prerequisite: The phone and the computer are on the same wireless network and in the same network segment.
-
-After the network connection is successful, then perform the following steps.
-
-1. At the computer side, click ![icon](../common/found.svg)in the system tray or open File Manager and click **My Phone** in the left panel, "Scan and connect with UnionTech OS Assistant" interface pops up.
-2. At the phone side, enter UnionTech OS Assistant interface and click **Scan and Connect**, scan the QR code pops up in step 1.
-
-#### Search Computer
-
-Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same UOS ID; the phone and computer are discoverable.
-
-1. In UnionTech OS Assistant interface on your phone, click "Search Computer".
-
-2. Select the computer to be connected.
-
-If you need to disconnect, you can:
-
-- Click ![icon](../common/exit.svg) in UnionTech OS Assistant on your phone.
-- Right-click ![icon](../common/found.svg) in the system tray on PC, select your phone and click **Disconnect**.
-
-### Manage Files
-
-After the connection between the mobile phone and PC is successful, files can be transfered, viewed and managed easily.
-
-#### Transfer Files
-
-- **In UnionTech OS Assistant interface**
-   Send files from your phone to your computer: In the UnionTech OS Assistant interface, click **Transfer Assistant** and send files to your computer in the transfer window.
-
-- **In File Manager interface**
-   Send files from your computer to your phone: In the **File Manager > My Phone** interface, in the transfer window on the right side, you can select a computer file to transfer it in this window; or right-click a file on your computer and select **Send to My Phone**.
-
-- **By wireless delivery**
-   When the devices are logged into the same UOS ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
-  
-  1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
-  
-  2. In the pop-up window, select the phone or computer you want to deliver to.
-     
-     > ![icon](../common/notes.svg) Notes:
-     > 
-     > - You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
-     > - After logging in to the same UOS ID, you can perform the remote delivery.
-
-#### View/Edit Files
-
-- View computer files on your phone: In the interface of UnionTech OS Assistant, click **My Computer**, you can open, download or share computer files.
-- View/edit phone files from computer side: In the interface of **File Manager > My Phone**, the folders of photo albums, videos, documents, etc. are categorized and displayed, you can open and edit the files in the folders, and the files will be synced to your phone after being edited and saved.
-  
-  
 
 ## Add Corner Marker to Files/Folders
 
@@ -617,8 +533,6 @@ You can assign an icon file to a file or folder icon through the command line an
    For example, to add a corner marker to the upper left corner, you have to input:
    **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
 
-![mark](fig/single.png)
-
 ### Add Multiple Corner Markers
 
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
@@ -626,7 +540,7 @@ To add 2~4 corner markers to a file/folder, you can input "|" in the command to 
 For example, to add 4 corner markers to a file/folder icon, you can input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu|xxx(icon path);ld|xxx(icon path);ru|xxx(icon path);rd"**
 
-![mark](fig/multi.png)
+
 
 ### Cancel Corner Markers
 
@@ -643,9 +557,9 @@ You have to encrypt File Vault when you use it for the first time. File Vault pr
 #### Transparent Encryption
 
 1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
-
 2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
-   ![0|encrypt](fig/transparent_encryption.png)
+
+![0|encrypt](fig/transparent_encryption.png)
 
 #### Key Encryption
 
@@ -765,13 +679,11 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 #### Format External Disks
 
 1. In the left panel of File Manager, right-click the disk to format.
-
 2. Select **Unmount** and then select **Format**.
-
 3. In the pop-up window, choose the type and volume label for the disk.
-
 4. Click **Format**.
-   ![0|disk](fig/disk2.png)
+
+![0|disk](fig/disk2.png)
 
 > ![notes](../common/notes.svg) Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
@@ -807,56 +719,30 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 
 #### Basic
 
-**Open behavior**
+- **Open Behavior**: Choose to open folders in new windows/double-click/single-click files.
+- **New Windows/Tabs**: Set default actions for opening directories.
+- **Files & Directories**: Toggle *Show hidden files*, *Show extensions*, or *Mix files/folders in sorting*.  
 
-Choose whether to **Always open folder in new window** or not, and whether to open files by one click or double click.
+![setting](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/basic_setting.png)
 
-**New window and tab**
+#### Sidebar
 
-You can select a directory under **Open from default window** or **Open in new tab**. 
+- **Display Items**: Customize visibility of shortcuts, partitions, network, and tags.
 
-**View**
+#### Workspace
 
-You can set up the **Default size**, **Default view** and **Mix sorting of files and folders**.
+- **View**: Set default icon size, view mode, and sorting.
+- **Thumbnail Preview**: Configure file types for previews.
+- **Computer Items**: Choose displayed partitions/tags.
 
-**Hidden files**
+#### Advanced Settings
 
-- Check **Show hidden files** to show all hidden files.
-- Check **Show file extensions** to display file extensions.
+- **Search**: Enable full-text search and manually update indexes.
+- **Mount**: Auto-mount external disks, open after mounting, or display Samba entries.
+- **Dialogs**: Use file manager for file selection dialogs or enable delete confirmations.
+- **File Sharing**: Configure sharing permissions and save locations.
 
-![setting](fig/basic_setting.png)
 
-#### Advanced
-
-**Index**
-
-- You can check **Auto index internal disk**, when you search files, the files in internal disks would be searched.
-- You can check **Index external storage device after connected to computer**, In **Index**, when you search files, the files in the external disks would be searched as well.
-- You can check **Full-Text search** to search by content.
-
-**Preview**
-
-You can select which types of files can be previewed.
-
-**Mount** 
-
-- You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
-- You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
-- Check **Show item counts and sizes in the path of  mounted MTP devices** to display the status bar information at the bottom of the MTP device's path after it is mounted.
-- Check **Keep showing the mounted Samba shares** to show the remote mount link always in the left panel.
-
-**Dialog**
-
-- You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
-- You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
-
-**Others**
-
-- Check **Hide built-in disks on the Computer page**, and the computer interface will not display the local disk. 
-- Check **Hide loop partitions on the Computer page**, and the computer interface will not display the loop device. 
-- You can check **Show file system on disk icon**.
-
-![setting](fig/advanced_setting.png)
 
 ### Theme
 
