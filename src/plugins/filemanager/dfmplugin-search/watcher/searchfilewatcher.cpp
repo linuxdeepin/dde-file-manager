@@ -134,40 +134,59 @@ void SearchFileWatcher::onFileAdd(const QUrl &url)
 
 void SearchFileWatcher::handleFileAdd(const QUrl &url)
 {
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    if (!url.path().startsWith(targetUrl.path()))
+        return;
+
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
     if (url.fileName().contains(searchKey) &&
             !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
-                                  SearchHelper::searchTargetUrl(this->url()), url))
+                                  targetUrl, url))
         onFileAdd(url);
 }
 
 void SearchFileWatcher::handleFileDelete(const QUrl &url)
 {
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    if (!url.path().startsWith(targetUrl.path()))
+        return;
+
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
     if (url.fileName().contains(searchKey)&&
             !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
-                                  SearchHelper::searchTargetUrl(this->url()), url))
+                                  targetUrl, url))
         onFileDeleted(url);
 }
 
 void SearchFileWatcher::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    bool oldInScope = oldUrl.path().startsWith(targetUrl.path());
+    bool newInScope = newUrl.path().startsWith(targetUrl.path());
+    
+    // 如果两个URL都不在搜索范围内，则直接返回
+    if (!oldInScope && !newInScope)
+        return;
+
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
     auto oldMatch = oldUrl.fileName().contains(searchKey), newMatch = newUrl.fileName().contains(searchKey);
     if (!oldMatch && !newMatch)
         return;
     auto old = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
-                                    SearchHelper::searchTargetUrl(this->url()), oldUrl);
+                                    targetUrl, oldUrl);
     auto target = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
-                                       SearchHelper::searchTargetUrl(this->url()), newUrl);
-    if ((oldMatch && old) && (newMatch &&target)) {
+                                       targetUrl, newUrl);
+    if ((oldMatch && old && oldInScope) && (newMatch && target && newInScope)) {
         emit fileRename(oldUrl, newUrl);
     }
 
-    if (old && oldMatch)
+    if (old && oldMatch && oldInScope)
         return onFileDeleted(oldUrl);
 
-    if (target && newMatch)
+    if (target && newMatch && newInScope)
         return onFileAdd(newUrl);
 }
 
