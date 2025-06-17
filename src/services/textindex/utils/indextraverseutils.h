@@ -29,6 +29,15 @@ bool isValidDirectory(const QString &path, QSet<QString> &visitedDirs);
 // 检查是否应该跳过该目录
 bool shouldSkipDirectory(const QString &path);
 
+// 获取缓存的支持的文件扩展名集合
+const QSet<QString> &getSupportedFileExtensions();
+
+// 快速检查文件扩展名是否被支持（不创建QFileInfo对象）
+bool isSupportedFileExtension(const QString &fileName);
+
+// 从文件名中提取扩展名（不创建QFileInfo对象）
+QString extractFileExtension(const QString &fileName);
+
 QMap<QString, QString> fstabBindInfo();
 
 }   // namespace IndexTraverseUtils

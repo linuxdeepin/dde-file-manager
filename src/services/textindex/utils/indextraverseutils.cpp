@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "indextraverseutils.h"
+#include "textindexconfig.h"
 
 #include <QFileInfo>
 #include <QStorageInfo>
@@ -96,6 +97,35 @@ bool shouldSkipDirectory(const QString &path)
     }
 
     return false;
+}
+
+const QSet<QString> &getSupportedFileExtensions()
+{
+    static const QSet<QString> supportedExtensions = []() {
+        const QStringList extensions = TextIndexConfig::instance().supportedFileExtensions();
+        QSet<QString> extensionSet;
+        for (const QString &ext : extensions) {
+            extensionSet.insert(ext.toLower()); // 转换为小写确保一致性比较
+        }
+        return extensionSet;
+    }();
+    
+    return supportedExtensions;
+}
+
+QString extractFileExtension(const QString &fileName)
+{
+    int dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+        return fileName.mid(dotIndex + 1).toLower();
+    }
+    return QString();
+}
+
+bool isSupportedFileExtension(const QString &fileName)
+{
+    const QString extension = extractFileExtension(fileName);
+    return getSupportedFileExtensions().contains(extension);
 }
 
 QMap<QString, QString> fstabBindInfo()
