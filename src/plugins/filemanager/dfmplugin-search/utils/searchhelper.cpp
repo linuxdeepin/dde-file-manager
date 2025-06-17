@@ -323,6 +323,8 @@ bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QSt
 
 bool SearchHelper::allowRepeatUrl(const QUrl &cur, const QUrl &pre)
 {
+    if (UniversalUtils::urlEqualsWithQuery(cur, pre))
+        return false;
     if (cur.scheme() == scheme() && pre.scheme() == scheme())
         return true;
     return false;
