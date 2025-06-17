@@ -35,17 +35,21 @@ using namespace GlobalDConfDefines::ConfigPath;
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))
 {
+    fmDebug() << "Vault: Initializing FileEncryptHandle";
     connect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     connect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
+    fmDebug() << "Vault: FileEncryptHandle initialization completed";
 }
 
 FileEncryptHandle::~FileEncryptHandle()
 {
+    fmDebug() << "Vault: Destroying FileEncryptHandle";
     disconnect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     disconnect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
 
     delete d;
     d = nullptr;
+    fmDebug() << "Vault: FileEncryptHandle destroyed";
 }
 
 FileEncryptHandle *FileEncryptHandle::instance()
@@ -69,8 +73,11 @@ FileEncryptHandle *FileEncryptHandle::instance()
 void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &unlockFileDir,
                                     const QString &passWord, EncryptType type, int blockSize)
 {
-    if (!(createDirIfNotExist(lockBaseDir) && createDirIfNotExist(unlockFileDir)))
+    fmInfo() << "Vault: Starting vault creation";
+    if (!(createDirIfNotExist(lockBaseDir) && createDirIfNotExist(unlockFileDir))) {
+        fmCritical() << "Vault: Failed to create required directories for vault";
         return;
+    }
 
     d->mutex->lock();
     d->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
@@ -105,7 +112,9 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
  */
 bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &unlockFileDir, const QString &DSecureString)
 {
+    fmInfo() << "Vault: Starting vault unlock";
     if (!createDirIfNotExist(unlockFileDir)) {
+        fmCritical() << "Vault: Failed to create unlock directory:" << unlockFileDir;
         DialogManager::instance()->showErrorDialog(tr("Unlock failed"), tr("The %1 directory is occupied,\n please clear the files in this directory and try to unlock the safe again.").arg(unlockFileDir));
         return false;
     }
@@ -142,6 +151,7 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
  */
 bool FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 {
+    fmInfo() << "Vault: Starting vault lock";
     d->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
     int flg = d->lockVaultProcess(unlockFileDir, isForced);
 
@@ -167,6 +177,7 @@ bool FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 
 bool FileEncryptHandle::createDirIfNotExist(QString path)
 {
+    fmDebug() << "Vault: Checking directory existence:" << path;
     if (!QFile::exists(path)) {
         QDir().mkpath(path);
     } else {
@@ -175,6 +186,7 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
             fmCritical() << "Vault: Create vault dir failed, dir is not empty!";
             return false;
         }
+        fmDebug() << "Vault: Directory already exists and is empty:" << path;
     }
     return true;
 }
@@ -191,39 +203,57 @@ VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
 
     const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
+        fmWarning() << "Vault: cryfs binary not found, vault not available";
         d->curState = kNotAvailable;
     } else {
+        fmDebug() << "Vault: cryfs binary found at:" << cryfsBinary;
+
         QString lockBaseDir = encryptBaseDir;
         if (lockBaseDir.endsWith("/"))
             lockBaseDir += "cryfs.config";
         else
             lockBaseDir += "/cryfs.config";
 
+        fmDebug() << "Vault: Checking config file:" << lockBaseDir;
+
         if (QFile::exists(lockBaseDir)) {
+            fmDebug() << "Vault: Config file exists, checking mount status";
 
             QString realPath = QFileInfo(PathManager::vaultUnlockPath()).canonicalFilePath();
-            if (realPath.isEmpty())
+            if (realPath.isEmpty()) {
+                fmDebug() << "Vault: Real path is empty, vault is encrypted";
                 return kEncrypted;
+            }
 
             QUrl mountDirUrl = QUrl::fromLocalFile(realPath);
-
             const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(mountDirUrl);
-            if (fsType == "fuse.cryfs")
+            fmDebug() << "Vault: Filesystem type:" << fsType;
+
+            if (fsType == "fuse.cryfs") {
                 d->curState = kUnlocked;
-            else
+                fmDebug() << "Vault: Vault is unlocked (mounted)";
+            } else {
                 d->curState = kEncrypted;
+                fmDebug() << "Vault: Vault is encrypted (not mounted)";
+            }
         } else {
             d->curState = kNotExisted;
+            fmDebug() << "Vault: Config file does not exist, vault not created";
         }
     }
 
+    fmDebug() << "Vault: Final state determined:" << static_cast<int>(d->curState);
     return d->curState;
 }
 
 bool FileEncryptHandle::updateState(VaultState curState)
 {
-    if (curState == kNotExisted && d->curState != kEncrypted)
+    fmDebug() << "Vault: Updating state from" << static_cast<int>(d->curState) << "to" << static_cast<int>(curState);
+
+    if (curState == kNotExisted && d->curState != kEncrypted) {
+        fmWarning() << "Vault: Invalid state transition - cannot set to NotExisted from current state";
         return false;
+    }
 
     d->curState = curState;
 
@@ -243,19 +273,32 @@ EncryptType FileEncryptHandle::encryptAlgoTypeOfGroupPolicy()
 void FileEncryptHandle::slotReadError()
 {
     QString error = d->process->readAllStandardError().data();
+    fmWarning() << "Vault: Process error output:" << error;
+
     if (d->activeState.contains(1)) {
-        if (error.contains("mountpoint is not empty"))
+        fmDebug() << "Vault: Processing error for vault creation (state 1)";
+        if (error.contains("mountpoint is not empty")) {
             d->activeState[1] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
-        else if (error.contains("Permission denied"))
+            fmWarning() << "Vault: Creation failed - mountpoint is not empty";
+        } else if (error.contains("Permission denied")) {
             d->activeState[1] = static_cast<int>(ErrorCode::kPermissionDenied);
+            fmWarning() << "Vault: Creation failed - permission denied";
+        }
     } else if (d->activeState.contains(3)) {
-        if (error.contains("mountpoint is not empty"))
+        fmDebug() << "Vault: Processing error for vault unlock (state 3)";
+        if (error.contains("mountpoint is not empty")) {
             d->activeState[3] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
-        else if (error.contains("Permission denied"))
+            fmWarning() << "Vault: Unlock failed - mountpoint is not empty";
+        } else if (error.contains("Permission denied")) {
             d->activeState[3] = static_cast<int>(ErrorCode::kPermissionDenied);
+            fmWarning() << "Vault: Unlock failed - permission denied";
+        }
     } else if (d->activeState.contains(7)) {
-        if (error.contains("Device or resource busy"))
+        fmDebug() << "Vault: Processing error for vault lock (state 7)";
+        if (error.contains("Device or resource busy")) {
             d->activeState[7] = static_cast<int>(ErrorCode::kResourceBusy);
+            fmWarning() << "Vault: Lock failed - device or resource busy";
+        }
     }
     emit signalReadError(error);
 }
@@ -266,19 +309,24 @@ void FileEncryptHandle::slotReadError()
 void FileEncryptHandle::slotReadOutput()
 {
     QString msg = d->process->readAllStandardOutput().data();
+    fmDebug() << "Vault: Process output:" << msg;
     emit signalReadOutput(msg);
 }
 
 FileEncryptHandlerPrivate::FileEncryptHandlerPrivate(FileEncryptHandle *qq)
     : q(qq)
 {
+    fmDebug() << "Vault: Initializing FileEncryptHandlerPrivate";
     process = new QProcess;
     mutex = new QMutex;
     initEncryptType();
+    fmDebug() << "Vault: FileEncryptHandlerPrivate initialization completed";
 }
 
 FileEncryptHandlerPrivate::~FileEncryptHandlerPrivate()
 {
+    fmDebug() << "Vault: Destroying FileEncryptHandlerPrivate";
+
     if (process) {
         delete process;
         process = nullptr;
@@ -303,14 +351,20 @@ FileEncryptHandlerPrivate::~FileEncryptHandlerPrivate()
 int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
-    if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
+    if (cryfsBinary.isEmpty()) {
+        fmCritical() << "Vault: cryfs binary not found";
+        return static_cast<int>(ErrorCode::kCryfsNotExist);
+    }
+    fmDebug() << "Vault: Found cryfs binary at:" << cryfsBinary;
 
     QStringList arguments;
     CryfsVersionInfo version = versionString();
     if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
         arguments << QString("--allow-replaced-filesystem");
+        fmDebug() << "Vault: Added --allow-replaced-filesystem argument";
     }
     arguments << lockBaseDir << unlockFileDir;
+    fmDebug() << "Vault: Process arguments:" << arguments;
 
     setEnviroment(QPair<QString, QString>("CRYFS_FRONTEND", "noninteractive"));
 
@@ -322,10 +376,14 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
     process->waitForFinished();
     process->terminate();
 
-    if (process->exitStatus() == QProcess::NormalExit)
-        return process->exitCode();
-    else
+    if (process->exitStatus() == QProcess::NormalExit) {
+        int exitCode = process->exitCode();
+        fmDebug() << "Vault: Process exited normally with code:" << exitCode;
+        return exitCode;
+    } else {
+        fmWarning() << "Vault: Process crashed or was terminated abnormally";
         return -1;
+    }
 }
 
 /*!
@@ -343,14 +401,20 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
 int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
-    if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
+    if (cryfsBinary.isEmpty()) {
+        fmCritical() << "Vault: cryfs binary not found";
+        return static_cast<int>(ErrorCode::kCryfsNotExist);
+    }
+    fmDebug() << "Vault: Found cryfs binary at:" << cryfsBinary;
 
     QStringList arguments;
     CryfsVersionInfo version = versionString();
     if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
         arguments << QString("--allow-replaced-filesystem");
+        fmDebug() << "Vault: Added --allow-replaced-filesystem argument";
     }
     arguments << QString("--cipher") << encryptTypeMap.value(type) << QString("--blocksize") << QString::number(blockSize) << lockBaseDir << unlockFileDir;
+    fmDebug() << "Vault: Process arguments:" << arguments;
 
     setEnviroment(QPair<QString, QString>("CRYFS_FRONTEND", "noninteractive"));
 
@@ -362,10 +426,14 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
     process->waitForFinished();
     process->terminate();
 
-    if (process->exitStatus() == QProcess::NormalExit)
-        return process->exitCode();
-    else
+    if (process->exitStatus() == QProcess::NormalExit) {
+        int exitCode = process->exitCode();
+        fmDebug() << "Vault: Process exited normally with code:" << exitCode;
+        return exitCode;
+    } else {
+        fmWarning() << "Vault: Process crashed or was terminated abnormally";
         return -1;
+    }
 }
 
 /*!
@@ -393,20 +461,33 @@ int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir, bool isFo
     fusermountBinary = QStandardPaths::findExecutable("fusermount");
     if (isForced) {
         arguments << "-zu" << unlockFileDir;
+        fmDebug() << "Vault: Using forced unmount with -zu arguments";
     } else {
         arguments << "-u" << unlockFileDir;
+        fmDebug() << "Vault: Using normal unmount with -u arguments";
     }
-    if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
 
+    if (fusermountBinary.isEmpty()) {
+        fmCritical() << "Vault: fusermount binary not found";
+        return static_cast<int>(ErrorCode::kFusermountNotExist);
+    }
+    fmDebug() << "Vault: Found fusermount binary at:" << fusermountBinary;
+    fmDebug() << "Vault: Process arguments:" << arguments;
+
+    fmDebug() << "Vault: Starting fusermount process";
     process->start(fusermountBinary, arguments);
     process->waitForStarted();
     process->waitForFinished();
     process->terminate();
 
-    if (process->exitStatus() == QProcess::NormalExit)
-        return process->exitCode();
-    else
+    if (process->exitStatus() == QProcess::NormalExit) {
+        int exitCode = process->exitCode();
+        fmDebug() << "Vault: fusermount process exited normally with code:" << exitCode;
+        return exitCode;
+    } else {
+        fmWarning() << "Vault: fusermount process crashed or was terminated abnormally";
         return -1;
+    }
 }
 
 /*!
@@ -414,6 +495,8 @@ int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir, bool isFo
  */
 void FileEncryptHandlerPrivate::initEncryptType()
 {
+    fmDebug() << "Vault: Initializing encryption type mappings";
+
     encryptTypeMap.insert(EncryptType::AES_256_GCM, "aes-256-gcm");
     encryptTypeMap.insert(EncryptType::AES_256_CFB, "aes-256-cfb");
     encryptTypeMap.insert(EncryptType::AES_128_GCM, "aes-128-gcm");
@@ -441,11 +524,15 @@ void FileEncryptHandlerPrivate::initEncryptType()
 
 void FileEncryptHandlerPrivate::runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput)
 {
+    fmDebug() << "Vault: Running vault process to get output";
+    fmDebug() << "Vault: Arguments:" << arguments;
+
     const QString &cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
         fmCritical() << "Vault: cryfs is not exist!";
         return;
     }
+    fmDebug() << "Vault: Found cryfs program at:" << cryfsProgram;
 
     QProcess process;
     process.setEnvironment({ "CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=true" });
@@ -458,14 +545,20 @@ void FileEncryptHandlerPrivate::runVaultProcessAndGetOutput(const QStringList &a
 
 FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionString()
 {
-    if (cryfsVersion.isVaild())
+    fmDebug() << "Vault: Getting cryfs version information";
+
+    if (cryfsVersion.isVaild()) {
+        fmDebug() << "Vault: Using cached version info";
         return cryfsVersion;
+    }
 
     QString standardError { "" };
     QString standardOutput { "" };
 
     runVaultProcessAndGetOutput({ "--version" }, standardError, standardOutput);
     if (!standardOutput.isEmpty()) {
+        fmDebug() << "Vault: Parsing version from output:" << standardOutput;
+
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         QStringList &&datas = standardOutput.split('\n', QString::SkipEmptyParts);
 #else
@@ -473,6 +566,8 @@ FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionSt
 #endif
         if (!datas.isEmpty()) {
             const QString &data = datas.first();
+            fmDebug() << "Vault: First line of version output:" << data;
+
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
             QStringList &&tmpDatas = data.split(' ', QString::SkipEmptyParts);
 #else
@@ -500,15 +595,20 @@ FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionSt
 
 QStringList FileEncryptHandlerPrivate::algoNameOfSupport()
 {
+    fmDebug() << "Vault: Getting supported algorithm names";
+
     QStringList result { "" };
     QString cryfsProgram = QStandardPaths::findExecutable("cryfs");
     if (cryfsProgram.isEmpty()) {
         fmCritical() << "Vault: cryfs is not exist!";
         return result;
     }
+    fmDebug() << "Vault: Found cryfs program at:" << cryfsProgram;
 
     QProcess process;
     process.setEnvironment({ "CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=true" });
+    fmDebug() << "Vault: Starting process to get supported ciphers";
+
     process.start(cryfsProgram, { "--show-ciphers" });
     process.waitForStarted();
     process.waitForFinished();
@@ -518,44 +618,71 @@ QStringList FileEncryptHandlerPrivate::algoNameOfSupport()
 #else
     result = output.split('\n', Qt::SkipEmptyParts);
 #endif
+
+    fmDebug() << "Vault: Found" << result.size() << "supported algorithms";
     return result;
 }
 
 bool FileEncryptHandlerPrivate::isSupportAlgoName(const QString &algoName)
 {
+    fmDebug() << "Vault: Checking if algorithm is supported:" << algoName;
+
     static QStringList algoNames = algoNameOfSupport();
-    if (algoNames.contains(algoName))
-        return true;
-    return false;
+    bool supported = algoNames.contains(algoName);
+
+    fmDebug() << "Vault: Algorithm" << algoName << "supported:" << supported;
+    return supported;
 }
 
 void FileEncryptHandlerPrivate::syncGroupPolicyAlgoName()
 {
+    fmDebug() << "Vault: Synchronizing group policy algorithm name";
+
     VaultConfig config;
     const QString &algoName = config.get(kConfigNodeName, kConfigKeyAlgoName, QVariant("NoExist")).toString();
+    fmDebug() << "Vault: Retrieved algorithm name from config:" << algoName;
+
     if (algoName == "NoExist") {
         // 字段不存在，引入国密之前的保险箱，默认算法为aes-256-gcm
-        DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, encryptTypeMap.value(EncryptType::AES_256_GCM));
+        const QString defaultAlgo = encryptTypeMap.value(EncryptType::AES_256_GCM);
+        DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, defaultAlgo);
+        fmInfo() << "Vault: Set default algorithm for legacy vault:" << defaultAlgo;
     } else {
-        if (!algoName.isEmpty())
+        if (!algoName.isEmpty()) {
             DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+            fmDebug() << "Vault: Updated group policy with algorithm:" << algoName;
+        } else {
+            fmWarning() << "Vault: Algorithm name is empty in config";
+        }
     }
 }
 
 EncryptType FileEncryptHandlerPrivate::encryptAlgoTypeOfGroupPolicy()
 {
+    fmDebug() << "Vault: Getting encryption algorithm type from group policy";
+
     QString algoName { encryptTypeMap.value(EncryptType::SM4_128_ECB) };
+    fmDebug() << "Vault: Default algorithm name:" << algoName;
+
     if (DConfigManager::instance()->contains(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName)) {
         algoName = DConfigManager::instance()->value(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant(kConfigKeyNotExist)).toString();
+        fmDebug() << "Vault: Retrieved algorithm from group policy:" << algoName;
+
         if (algoName == kConfigKeyNotExist || algoName.isEmpty()) {
             algoName = encryptTypeMap.value(EncryptType::SM4_128_ECB);
+            fmDebug() << "Vault: Using fallback algorithm:" << algoName;
         }
+    } else {
+        fmDebug() << "Vault: Group policy key not found, using default";
     }
 
     if (!isSupportAlgoName(algoName)) {
+        fmWarning() << "Vault: Algorithm not supported:" << algoName;
         algoName = encryptTypeMap.value(EncryptType::SM4_128_ECB);
-        if (!isSupportAlgoName(algoName))
+        if (!isSupportAlgoName(algoName)) {
             algoName = encryptTypeMap.value(EncryptType::AES_256_GCM);
+            fmWarning() << "Vault: Fallback to AES-256-GCM:" << algoName;
+        }
     }
 
     EncryptType type { EncryptType::AES_256_GCM };
@@ -574,10 +701,13 @@ EncryptType FileEncryptHandlerPrivate::encryptAlgoTypeOfGroupPolicy()
 void FileEncryptHandlerPrivate::setEnviroment(const QPair<QString, QString> &value)
 {
     // Just append enviroment value, not replace.
-    if (!process)
+    if (!process) {
+        fmWarning() << "Vault: Process is null, cannot set environment";
         return;
+    }
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert(value.first, value.second);
     process->setProcessEnvironment(env);
+    fmDebug() << "Vault: Environment variable set successfully";
 }

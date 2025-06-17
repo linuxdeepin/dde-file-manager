@@ -57,9 +57,11 @@ void PasswordRecoveryView::buttonClicked(int index, const QString &text)
 {
     switch (index) {
     case 0:
+        fmDebug() << "Vault: Go to Unlock button clicked, jumping to unlock page";
         emit signalJump(PageType::kUnlockPage);
         break;
     case 1:
+        fmDebug() << "Vault: Close button clicked, closing dialog";
         emit sigCloseDialog();
         break;
     }

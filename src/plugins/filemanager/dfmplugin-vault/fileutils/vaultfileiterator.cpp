@@ -23,6 +23,8 @@ VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFil
     : AbstractDirIterator(VaultHelper::vaultToLocalUrl(url), nameFilters, filters, flags)
 {
     QUrl localUrl = VaultHelper::vaultToLocalUrl(url);
+    fmDebug() << "Vault: Local URL:" << localUrl.toString();
+
     dfmioDirIterator.reset(new DFMIO::DEnumerator(localUrl, nameFilters,
                                                   static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
                                                   static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
@@ -35,6 +37,7 @@ VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFil
 
 VaultFileIterator::~VaultFileIterator()
 {
+    fmDebug() << "Vault: Destroying VaultFileIterator";
 }
 
 QUrl VaultFileIterator::next()
@@ -87,7 +90,7 @@ const FileInfoPointer VaultFileIterator::fileInfo() const
         InfoFactory::cacheFileInfo(infoTrans);
     } else {
         fmWarning() << "Vault: info is nullptr, url = " << url;
-        return  InfoFactory::create<FileInfo>(fileUrl());
+        return InfoFactory::create<FileInfo>(fileUrl());
     }
 
     FileInfoPointer vaultInfo(new VaultFileInfo(fileUrl(), infoTrans));

@@ -70,13 +70,13 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     this->setLayout(mainLayout);
 
     connect(savePathTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndex(int)));
-
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(savePathTypeComboBox), AcName::kAcComboVaultRetrieveMethod);
     AddATTag(qobject_cast<QWidget *>(defaultFilePathEdit), AcName::kAcEditVaultRetrieveDefaultPath);
     AddATTag(qobject_cast<QWidget *>(filePathEdit), AcName::kAcEditVaultRetrieveOtherPath);
+    fmDebug() << "Vault: Testing accessibility tags added";
 #endif
 }
 
@@ -93,33 +93,41 @@ void RetrievePasswordView::verificationKey()
     QString keyPath;
     switch (savePathTypeComboBox->currentIndex()) {
     case 0: {
+        fmDebug() << "Vault: Checking default key path:" << defaultKeyPath;
         if (QFile::exists(defaultKeyPath)) {
             defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
             emit sigBtnEnabled(1, true);
             keyPath = defaultKeyPath;
+            fmInfo() << "Vault: Default key file found and loaded";
         } else {
             defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             defaultFilePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Default key file not found at path:" << defaultKeyPath;
         }
         break;
     }
     case 1:
         keyPath = filePathEdit->text();
+        fmDebug() << "Vault: Checking specified key path:" << keyPath;
         if (!QFile::exists(keyPath)) {
             filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             filePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Specified key file not found at path:" << keyPath;
         } else {
             emit sigBtnEnabled(1, true);
+            fmInfo() << "Vault: Specified key file found and validated";
         }
         break;
     }
 
     if (OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
         validationResults = password;
+        fmInfo() << "Vault: Key verification successful, password retrieved (length:" << password.length() << ")";
         emit signalJump(PageType::kPasswordRecoverPage);
     } else {
+        fmWarning() << "Vault: Key verification failed for path:" << keyPath;
         verificationPrompt->setText(tr("Verification failed"));
     }
 }
@@ -145,9 +153,11 @@ void RetrievePasswordView::buttonClicked(int index, const QString &text)
 {
     switch (index) {
     case 0:
+        fmDebug() << "Vault: Back button clicked, jumping to unlock page";
         emit signalJump(PageType::kUnlockPage);
         break;
     case 1:
+        fmInfo() << "Vault: Verify Key button clicked, starting authorization";
         //! 用户权限认证(异步授权)
         VaultUtils::instance().showAuthorityDialog(kPolkitVaultRetrieve);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
@@ -172,10 +182,12 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         if (QFile::exists(defaultKeyPath)) {
             defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
             emit sigBtnEnabled(1, true);
+            fmDebug() << "Vault: Default key file exists, button enabled";
         } else {
             defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             defaultFilePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Default key file not found, button disabled";
         }
         verificationPrompt->setText("");
     } break;
@@ -193,6 +205,7 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         } else {
             filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
             emit sigBtnEnabled(1, false);
+            fmDebug() << "Vault: No path selected, button disabled";
         }
         verificationPrompt->setText("");
         break;

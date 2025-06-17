@@ -246,13 +246,10 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
     const QModelIndex &index = parent()->indexAt(pos);
 
-    if (!index.isValid()) {
-        fmDebug() << "Position" << pos << "is in empty area - no valid index";
+    if (!index.isValid())
         return true;
-    }
 
     if (isSelected(index)) {
-        fmDebug() << "Position" << pos << "is on selected item at index:" << index.row();
         return false;
     } else {
         const QRect &rect = parent()->visualRect(index);

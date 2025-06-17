@@ -56,6 +56,8 @@ void VaultRemoveByRecoverykeyView::clear()
 
 void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int duration)
 {
+    fmDebug() << "Vault: Showing alert message:" << text << "duration:" << duration;
+
     if (!tooltip) {
         tooltip = new DToolTip(text);
         tooltip->setObjectName("AlertTooltip");
@@ -79,6 +81,7 @@ void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int dur
     }
 
     if (duration < 0) {
+        fmDebug() << "Vault: Alert message set to persistent display";
         return;
     }
 
@@ -103,16 +106,20 @@ void VaultRemoveByRecoverykeyView::buttonClicked(int index, const QString &text)
 
     switch (index) {
     case 0: {   // cancel
+        fmDebug() << "Vault: Cancel button clicked, closing dialog";
         emit sigCloseDialog();
     } break;
     case 1: {   // ok
+        fmInfo() << "Vault: Delete button clicked, validating recovery key";
         const QString key = getRecoverykey();
         QString cipher;
         if (!OperatorCenter::getInstance()->checkUserKey(key, cipher)) {
+            fmWarning() << "Vault: Recovery key validation failed";
             showAlertMessage(tr("Wrong recovery key"));
             return;
         }
 
+        fmInfo() << "Vault: Recovery key validated successfully, requesting authorization";
         VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
@@ -127,6 +134,7 @@ void VaultRemoveByRecoverykeyView::onRecoveryKeyChanged()
     QString key = keyEdit->toPlainText();
     int length = key.length();
     int maxLength = MAX_KEY_LENGTH + 7;
+    fmDebug() << "Vault: Recovery key changed - length:" << length << "max allowed:" << maxLength;
 
     //! 限制密钥输入框只能输入数字、字母、以及+/-
     QRegularExpression rx("[a-zA-Z0-9-+/]+");
@@ -150,6 +158,7 @@ void VaultRemoveByRecoverykeyView::onRecoveryKeyChanged()
         keyEdit->setPlainText(key);
         textCursor.setPosition(position - (length - maxLength));
         keyEdit->setTextCursor(textCursor);
+        fmWarning() << "Vault: Recovery key truncated from" << length << "to" << maxLength << "characters";
 
         keyEdit->blockSignals(false);
         return;
@@ -166,21 +175,30 @@ void VaultRemoveByRecoverykeyView::onRecoveryKeyChanged()
 
 void VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished(bool result)
 {
+    fmInfo() << "Vault: Authorization check finished with result:" << result;
+
     disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
 
-    if (!result)
+    if (!result) {
+        fmWarning() << "Vault: Authorization failed, operation cancelled";
         return;
+    }
 
+    fmDebug() << "Vault: Authorization successful, attempting to lock vault";
     if (!VaultHelper::instance()->lockVault(false)) {
+        fmCritical() << "Vault: Failed to lock vault for removal";
         QString errMsg = tr("Failed to delete file vault");
         DDialog dialog(this);
         dialog.setIcon(QIcon::fromTheme("dialog-warning"));
         dialog.setTitle(errMsg);
         dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+        fmDebug() << "Vault: Showing error dialog for lock failure";
         dialog.exec();
         return;
     }
+
+    fmDebug() << "Vault: Vault locked successfully, proceeding to removal progress";
     QTimer::singleShot(0, this, [this]() {
         emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
     });
@@ -189,6 +207,7 @@ void VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished(bool result)
 int VaultRemoveByRecoverykeyView::afterRecoveryKeyChanged(QString &str)
 {
     if (str.isEmpty()) {
+        fmDebug() << "Vault: Recovery key is empty, returning position -1";
         return -1;
     }
 
