@@ -84,6 +84,7 @@ QString TrashDirIterator::fileName() const
     if (fileinfo) {
         return fileinfo->displayOf(DisPlayInfoType::kFileDisplayName);
     } else {
+        fmWarning() << "Trash: No file info available for file name retrieval";
         return QString();
     }
 }
@@ -94,6 +95,7 @@ QUrl TrashDirIterator::fileUrl() const
     if (fileinfo) {
         return fileinfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     } else {
+        fmWarning() << "Trash: No file info available for file URL retrieval";
         return QUrl();
     }
 }

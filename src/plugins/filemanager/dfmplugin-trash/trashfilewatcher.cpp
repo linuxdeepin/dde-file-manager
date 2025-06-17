@@ -27,18 +27,22 @@ TrashFileWatcherPrivate::TrashFileWatcherPrivate(const QUrl &fileUrl, TrashFileW
 
 bool TrashFileWatcherPrivate::start()
 {
-    if (watcher.isNull())
+    if (watcher.isNull()) {
+        fmWarning() << "Trash: Cannot start watcher, watcher is null";
         return false;
+    }
     started = watcher->start();
     if (!started)
-        fmWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
+        fmWarning() << "Trash: Watcher start failed, error:" << watcher->lastError().errorMsg();
     return started;
 }
 
 bool TrashFileWatcherPrivate::stop()
 {
-    if (watcher.isNull())
+    if (watcher.isNull()) {
+        fmWarning() << "Trash: Cannot stop watcher, watcher is null";
         return false;
+    }
     started = watcher->stop();
     return started;
 }
@@ -48,7 +52,7 @@ void TrashFileWatcherPrivate::initFileWatcher()
     const QUrl &trashUrl = url;
     watcher.reset(new DWatcher(trashUrl));
     if (!watcher) {
-        fmWarning("watcher create failed.");
+        fmWarning() << "Trash: File watcher creation failed";
         abort();
     }
 }
