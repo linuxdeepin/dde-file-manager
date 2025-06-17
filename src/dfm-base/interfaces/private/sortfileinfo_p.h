@@ -17,9 +17,6 @@ public:
     explicit SortFileInfoPrivate(SortFileInfo *qq);
     ~SortFileInfoPrivate();
 
-    // 内部补全方法
-    bool doCompleteFileInfo();
-
 public:
     SortFileInfo *const q;   // SortFileInfo实例对象
     QUrl url;

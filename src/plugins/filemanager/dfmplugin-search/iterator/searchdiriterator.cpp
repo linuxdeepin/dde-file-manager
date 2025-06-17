@@ -17,6 +17,8 @@
 
 #include <QUuid>
 
+#include <sys/stat.h>
+
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
@@ -179,7 +181,7 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
-        sortInfo->completeFileInfoAsync();
+        doCompleteSortInfo(sortInfo);
         result.append(sortInfo);
     }
     d->childrens.clear();
@@ -208,6 +210,51 @@ bool SearchDirIterator::isWaitingForUpdates() const
     QMutexLocker lk(&d->mutex);
     
     return !d->taskId.isEmpty() && !d->searchFinished && !d->searchStoped;
+}
+
+void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
+{
+    if (!sortInfo || sortInfo->isInfoCompleted())
+        return;
+
+    QUrl url = sortInfo->fileUrl();
+
+    if (!url.isLocalFile())
+        return;
+
+    struct stat64 statBuffer;
+    const QString filePath = url.path();
+
+    if (::stat64(filePath.toUtf8().constData(), &statBuffer) != 0)
+        return;
+
+             // 一次性设置所有从 stat64 获取的信息
+
+             // 基础信息
+    sortInfo->setSize(statBuffer.st_size);
+    sortInfo->setFile(S_ISREG(statBuffer.st_mode));
+    sortInfo->setDir(S_ISDIR(statBuffer.st_mode));
+    sortInfo->setSymlink(S_ISLNK(statBuffer.st_mode));
+
+             // 隐藏文件检查
+    QString fileName = url.fileName();
+    sortInfo->setHide(fileName.startsWith('.'));
+
+             // 权限信息
+    sortInfo->setReadable(statBuffer.st_mode & S_IRUSR);
+    sortInfo->setWriteable(statBuffer.st_mode & S_IWUSR);
+    sortInfo->setExecutable(statBuffer.st_mode & S_IXUSR);
+
+             // 时间信息
+    sortInfo->setLastReadTime(statBuffer.st_atime);
+    sortInfo->setLastModifiedTime(statBuffer.st_mtime);
+    sortInfo->setCreateTime(statBuffer.st_ctime);
+
+             // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
+    sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
+
+             // 标记所有信息已完成
+    sortInfo->setInfoCompleted(true);
 }
 
 }

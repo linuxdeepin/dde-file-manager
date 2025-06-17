@@ -174,7 +174,6 @@ private:
                   const AbstractSortFilter::SortScenarios sort);
     bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
-private:
     void switchTreeView();
     void switchListView();
     QList<QUrl> sortAllTreeFilesByParent(const QUrl &dir, const bool reverse = false);
@@ -194,7 +193,6 @@ private:
     void removeVisibleChildren(const int startPos, const int size);
     void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
 
-private:
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
                        AbstractSortFilter::SortScenarios sort);
     bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
@@ -211,6 +209,7 @@ private:
                             const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
     bool checkAndUpdateFileInfoUpdate();
     void checkAndSortBytMimeType(const QUrl &url);
+    void doCompleteFileInfo(SortInfoPointer sortInfo);
 
 private:
     QUrl current;

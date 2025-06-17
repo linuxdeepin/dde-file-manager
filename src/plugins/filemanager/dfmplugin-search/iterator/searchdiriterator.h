@@ -41,6 +41,7 @@ signals:
 
 private:
     SearchDirIteratorPrivate *const d { nullptr };
+    void doCompleteSortInfo(SortInfoPointer sortInfo);
 };
 
 }
