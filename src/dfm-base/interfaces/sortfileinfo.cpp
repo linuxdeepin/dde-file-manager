@@ -183,53 +183,6 @@ bool SortFileInfo::needsCompletion() const
     return !isInfoCompleted();
 }
 
-// 新增：文件信息补全接口
-bool SortFileInfo::completeFileInfo()
-{
-    if (isInfoCompleted()) {
-        return true;  // 已经完成，无需重复获取
-    }
-    return d->doCompleteFileInfo();
-}
-
-QFuture<bool> SortFileInfo::completeFileInfoAsync()
-{
-    if (isInfoCompleted()) {
-        // 如果已经完成，返回一个立即完成的 Future
-        QPromise<bool> promise;
-        promise.start();
-        promise.addResult(true);
-        promise.finish();
-        return promise.future();
-    }
-    
-    return QtConcurrent::run([this]() {
-        return d->doCompleteFileInfo();
-    });
-}
-
-QFuture<bool> SortFileInfo::completeFileInfoAsync(CompletionCallback callback)
-{
-    if (isInfoCompleted()) {
-        if (callback) {
-            callback(true);
-        }
-        QPromise<bool> promise;
-        promise.start();
-        promise.addResult(true);
-        promise.finish();
-        return promise.future();
-    }
-    
-    return QtConcurrent::run([this, callback]() {
-        bool success = d->doCompleteFileInfo();
-        if (callback) {
-            callback(success);
-        }
-        return success;
-    });
-}
-
 SortFileInfoPrivate::SortFileInfoPrivate(SortFileInfo *qq)
     : q(qq)
 {
@@ -239,50 +192,5 @@ SortFileInfoPrivate::~SortFileInfoPrivate()
 {
 }
 
-bool SortFileInfoPrivate::doCompleteFileInfo()
-{
-    if (!url.isLocalFile()) {
-        return false;
-    }
-    
-    struct stat64 statBuffer;
-    const QString filePath = url.path();
-    
-    if (::stat64(filePath.toUtf8().constData(), &statBuffer) != 0) {
-        return false;
-    }
-    
-    QMutexLocker locker(&mutex);
-    
-    // 一次性设置所有从 stat64 获取的信息
-    
-    // 基础信息
-    filesize = statBuffer.st_size;
-    file = S_ISREG(statBuffer.st_mode);
-    dir = S_ISDIR(statBuffer.st_mode);
-    symLink = S_ISLNK(statBuffer.st_mode);
-    
-    // 权限信息
-    readable = statBuffer.st_mode & S_IRUSR;
-    writeable = statBuffer.st_mode & S_IWUSR;
-    executable = statBuffer.st_mode & S_IXUSR;
-    
-    // 时间信息
-    lastRead = statBuffer.st_atime;
-    lastModifed = statBuffer.st_mtime;
-    create = statBuffer.st_ctime;
-    
-    // 隐藏文件检查
-    QString fileName = url.fileName();
-    hide = fileName.startsWith('.');
-    
-    // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
-    displayType = MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path());
-    
-    // 标记所有信息已完成
-    infoCompleted = true;
-    
-    return true;
-}
 
 }

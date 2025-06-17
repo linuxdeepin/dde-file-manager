@@ -63,11 +63,6 @@ public:
     bool isInfoCompleted() const;
     bool needsCompletion() const;
 
-    // 新增：文件信息补全接口（一次性获取所有信息）
-    bool completeFileInfo();  // 同步补全
-    QFuture<bool> completeFileInfoAsync();  // 异步补全
-    QFuture<bool> completeFileInfoAsync(CompletionCallback callback);  // 异步补全带回调
-
 private:
     QScopedPointer<SortFileInfoPrivate> d;
 };

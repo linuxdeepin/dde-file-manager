@@ -331,9 +331,6 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
         }
     }
 
-    if (!info->completeFileInfo())
-        return false;
-
     if (filter.comboValid[kFileType]) {
         QString fileTypeStr = info->displayType();
         if (!fileTypeStr.startsWith(filter.typeString))

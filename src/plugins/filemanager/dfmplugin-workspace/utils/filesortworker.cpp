@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesortworker.h"
+#include "workspacehelper.h"
+
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
@@ -10,11 +12,13 @@
 #include <dfm-base/utils/fileinfohelper.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
-#include "workspacehelper.h"
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <dfm-io/dfmio_utils.h>
 
 #include <QStandardPaths>
+
+#include <sys/stat.h>
 
 using namespace dfmplugin_workspace;
 using namespace dfmbase::Global;
@@ -1027,6 +1031,8 @@ QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byIn
             if (!UniversalUtils::urlEquals(parent, current) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
             auto sortInfo = children.value(parantUrl(parent)).value(parent);
+            if (sortInfo && sortInfo->needsCompletion())
+                doCompleteFileInfo(sortInfo);
             if (!UniversalUtils::urlEquals(parent, current) && !checkFilters(sortInfo, byInfo)) {
                 allSubUnShowDir.append(removeVisibleTreeChildren(parent));
                 continue;
@@ -1050,6 +1056,9 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
     for (const auto &sortInfo : children.value(parent)) {
         if (isCanceled)
             return;
+
+        if (sortInfo && sortInfo->needsCompletion())
+            doCompleteFileInfo(sortInfo);
 
         if (checkFilters(sortInfo, byInfo))
             filterUrls.append(sortInfo->fileUrl());
@@ -1301,6 +1310,8 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
             sortIndex = insertSortList(url, sortList, AbstractSortFilter::SortScenarios::kSortScenariosNormal);
         } else if (!firstFile && !isMixDirAndFile) {
             auto sortInfo = sortInfos.value(url);
+            if (sortInfo && sortInfo->needsCompletion())
+                doCompleteFileInfo(sortInfo);
             if (sortInfo && sortInfo->isFile()) {
                 firstFile = true;
                 sortIndex = sortList.count();
@@ -1919,4 +1930,49 @@ void FileSortWorker::checkAndSortBytMimeType(const QUrl &url)
         mimeSorting = false;
         emit requestSortByMimeType();
     }
+}
+
+void FileSortWorker::doCompleteFileInfo(SortInfoPointer sortInfo)
+{
+    if (!sortInfo || sortInfo->isInfoCompleted())
+        return;
+
+    QUrl url = sortInfo->fileUrl();
+
+    if (!url.isLocalFile())
+        return;
+
+    struct stat64 statBuffer;
+    const QString filePath = url.path();
+
+    if (::stat64(filePath.toUtf8().constData(), &statBuffer) != 0)
+        return;
+
+    // 一次性设置所有从 stat64 获取的信息
+
+    // 基础信息
+    sortInfo->setSize(statBuffer.st_size);
+    sortInfo->setFile(S_ISREG(statBuffer.st_mode));
+    sortInfo->setDir(S_ISDIR(statBuffer.st_mode));
+    sortInfo->setSymlink(S_ISLNK(statBuffer.st_mode));
+
+    // 隐藏文件检查
+    QString fileName = url.fileName();
+    sortInfo->setHide(fileName.startsWith('.'));
+
+    // 权限信息
+    sortInfo->setReadable(statBuffer.st_mode & S_IRUSR);
+    sortInfo->setWriteable(statBuffer.st_mode & S_IWUSR);
+    sortInfo->setExecutable(statBuffer.st_mode & S_IXUSR);
+
+    // 时间信息
+    sortInfo->setLastReadTime(statBuffer.st_atime);
+    sortInfo->setLastModifiedTime(statBuffer.st_mtime);
+    sortInfo->setCreateTime(statBuffer.st_ctime);
+
+    // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
+    sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
+
+    // 标记所有信息已完成
+    sortInfo->setInfoCompleted(true);
 }
