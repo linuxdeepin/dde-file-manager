@@ -6798,7 +6798,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
-        <translation>Podgląd ekranu</translation>
+        <translation>Wyświetl podgląd</translation>
     </message>
 </context>
 <context>
