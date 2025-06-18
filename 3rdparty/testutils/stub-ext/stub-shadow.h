@@ -98,6 +98,23 @@ struct FuncShadow<Ret (*)(Args...), Lamda>
     }
 };
 
+template<typename Ret, typename... Args, class Lamda>
+struct FuncShadow<Ret (*)(Args...) noexcept, Lamda>
+{
+    typedef Ret (*Shadow)(Args...);
+    typedef Ret RetType;
+
+    static Ret call(Args ...args)
+    {
+       Shadow shadow = &call;
+       long id = (long)shadow;
+       auto iter = stub_wrappers.find(id);
+       assert(stub_wrappers.find(id) != stub_wrappers.end());
+       LamdaWrapper<Lamda> *wrapper = dynamic_cast<LamdaWrapper<Lamda> *>(iter->second);
+       return LamdaCaller<LAMDA_FUNCTION_TYPE>::call(wrapper, args...);
+    }
+};
+
 template<typename Ret, class Obj,typename... Args, class Lamda>
 struct FuncShadow<Ret (Obj::*)(Args...), Lamda>
 {

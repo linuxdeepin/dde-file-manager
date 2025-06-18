@@ -18,7 +18,6 @@ class Logger;
 
 DPF_BEGIN_NAMESPACE
 
-class FilterAppender;
 class FrameLogManagerPrivate;
 class FrameLogManager : public QObject
 {

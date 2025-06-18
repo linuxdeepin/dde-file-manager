@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // test_pluginmanager.cpp - PluginManager类单元测试
 // 基于原始ut_pluginmanager.cpp，使用新的测试架构
 
@@ -19,7 +23,7 @@ using namespace dpf;
 
 /**
  * @brief PluginManager类单元测试
- * 
+ *
  * 测试范围：
  * 1. 插件管理器基本功能
  * 2. 插件路径管理
@@ -30,25 +34,27 @@ using namespace dpf;
 class PluginManagerTest : public ::testing::Test
 {
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         // 注意：PluginManager没有公开的instance方法，我们通过LifeCycle访问
         // 这里我们创建一个临时的PluginManager进行测试
         manager = new PluginManager();
         ASSERT_NE(manager, nullptr);
-        
+
         // 创建临时目录用于测试
         tempDir = new QTemporaryDir();
         ASSERT_TRUE(tempDir->isValid());
     }
-    
-    void TearDown() override {
+
+    void TearDown() override
+    {
         // 清理插件管理器状态
         // manager->shutdown();  // 如果有shutdown方法
-        
+
         delete manager;
         delete tempDir;
     }
-    
+
     PluginManager *manager;
     QTemporaryDir *tempDir;
 };
@@ -61,7 +67,7 @@ TEST_F(PluginManagerTest, Constructor)
 {
     // 验证对象创建成功
     EXPECT_NE(manager, nullptr);
-    
+
     // 验证初始状态
     EXPECT_TRUE(manager->pluginIIDs().isEmpty());
     EXPECT_TRUE(manager->pluginPaths().isEmpty());
@@ -77,7 +83,7 @@ TEST_F(PluginManagerTest, SingletonPattern)
     // 通过LifeCycle获取插件路径
     QStringList paths1 = LifeCycle::pluginPaths();
     QStringList paths2 = LifeCycle::pluginPaths();
-    
+
     // 验证返回的是相同的数据（说明是同一个实例）
     EXPECT_EQ(paths1, paths2);
 }
@@ -89,13 +95,13 @@ TEST_F(PluginManagerTest, SingletonPattern)
 TEST_F(PluginManagerTest, QObjectFunctionality)
 {
     // 验证是QObject实例
-    QObject *obj = qobject_cast<QObject*>(manager);
+    QObject *obj = qobject_cast<QObject *>(manager);
     EXPECT_NE(obj, nullptr);
-    
+
     // 验证元对象系统
     const QMetaObject *metaObj = manager->metaObject();
     EXPECT_NE(metaObj, nullptr);
-    
+
     // 验证对象名设置功能
     const QString testName = "TestPluginManager";
     manager->setObjectName(testName);
@@ -109,11 +115,13 @@ TEST_F(PluginManagerTest, QObjectFunctionality)
 TEST_F(PluginManagerTest, PluginPaths)
 {
     QStringList testPaths;
-    testPaths << "/test/path1" << "/test/path2" << "/test/path3";
-    
+    testPaths << "/test/path1"
+              << "/test/path2"
+              << "/test/path3";
+
     // 设置插件路径
     manager->setPluginPaths(testPaths);
-    
+
     // 验证路径设置成功
     QStringList retrievedPaths = manager->pluginPaths();
     EXPECT_EQ(retrievedPaths, testPaths);
@@ -130,16 +138,16 @@ TEST_F(PluginManagerTest, PluginPaths)
 TEST_F(PluginManagerTest, BasicFunctionality)
 {
     const QString testPath = "/test/plugins";
-    
+
     // 设置插件路径
     QStringList paths;
     paths << testPath;
     manager->setPluginPaths(paths);
-    
+
     // 验证路径设置
     EXPECT_EQ(manager->pluginPaths().first(), testPath);
-    
+
     // 验证初始状态
     EXPECT_FALSE(manager->isAllPluginsInitialized());
     EXPECT_FALSE(manager->isAllPluginsStarted());
-} 
+}

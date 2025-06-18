@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """
 DDE文件管理器单元测试报表生成器
 功能：生成包含测试结果、覆盖率、性能等信息的综合HTML报表

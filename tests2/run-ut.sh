@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # DDE文件管理器单元测试一键运行脚本
 # 功能：编译单元测试 + 运行测试 + 生成覆盖率报告 + 生成测试报表
 
