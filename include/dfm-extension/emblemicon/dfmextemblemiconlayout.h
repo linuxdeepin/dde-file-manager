@@ -9,6 +9,7 @@
 
 #include <string>
 #include <memory>
+#include <cstdint>
 
 BEGEN_DFMEXT_NAMESPACE
 
