@@ -290,6 +290,16 @@ QStringList RootInfo::getKeyWords() const
     return keyWords;
 }
 
+bool RootInfo::checkKeyOnly(const QString &key) const
+{
+    for (auto threadKey : traversalThreads.keys()) {
+        if (threadKey != key)
+            return false;
+    }
+
+    return true;
+}
+
 void RootInfo::doFileDeleted(const QUrl &url)
 {
     fmDebug() << "File deleted event for URL:" << url.toString();
