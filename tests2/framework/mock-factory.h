@@ -1,13 +1,22 @@
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QObject>
-#include <QWidget>
 #include <QTimer>
 #include <QSignalSpy>
 #include <QTest>
+#include <QCoreApplication>
+
+// GUI相关头文件，只在需要时包含
+#ifdef QT_GUI_LIB
+#include <QWidget>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QApplication>
+#endif
 #include <QPoint>
 #include <QStandardPaths>
 #include <QDateTime>
@@ -21,6 +30,10 @@
 #include <functional>
 #include <unordered_map>
 #include <typeinfo>
+#include <thread>
+#include <chrono>
+
+
 
 /**
  * @brief DDE文件管理器Mock工厂和测试辅助工具
@@ -162,6 +175,7 @@ private:
  */
 class EventSimulator {
 public:
+#ifdef QT_GUI_LIB
     /**
      * @brief 模拟鼠标点击
      * @param widget 目标控件
@@ -262,8 +276,19 @@ public:
         timer.start();
         
         while (timer.elapsed() < ms) {
-            QApplication::processEvents();
+            QCoreApplication::processEvents();
             QTest::qWait(10);
+        }
+    }
+#endif // QT_GUI_LIB
+    
+    /**
+     * @brief 模拟定时器超时（非GUI版本）
+     * @param timer 定时器对象
+     */
+    static void simulateTimerTimeout(QTimer* timer) {
+        if (timer && timer->isActive()) {
+            emit timer->timeout();
         }
     }
 };
@@ -313,12 +338,14 @@ private:
             }
         }
         
+#ifdef QT_GUI_LIB
         if constexpr (std::is_base_of_v<QWidget, QtObject>) {
             // 为Widget设置测试友好的属性
             QWidget* widget = static_cast<QWidget*>(object);
             widget->setAttribute(Qt::WA_DontShowOnScreen, true);
             widget->resize(100, 100);  // 默认大小
         }
+#endif
     }
 };
 
@@ -471,6 +498,7 @@ public:
 #define WAIT_FOR_SIGNAL_TIMEOUT(spy, timeout) \
     EXPECT_TRUE(spy.waitForSignal(timeout)) << "Signal not emitted within " << timeout << "ms"
 
+#ifdef QT_GUI_LIB
 /**
  * @brief 模拟鼠标点击的便利宏
  */
@@ -488,6 +516,7 @@ public:
  */
 #define SIMULATE_TEXT(widget, text) \
     DFMTest::EventSimulator::simulateTextInput(widget, text)
+#endif
 
 /**
  * @brief 创建临时文件的便利宏
@@ -506,4 +535,4 @@ public:
  */
 #define TEMP_PATH_CLEANER(path) \
     auto cleaner_##__LINE__ = [&](){ DFMTest::TestUtils::cleanupTempPath(path); }; \
-    QScopeGuard guard_##__LINE__(cleaner_##__LINE__) 
+    QScopeGuard guard_##__LINE__(cleaner_##__LINE__)

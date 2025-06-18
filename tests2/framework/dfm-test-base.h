@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+
 // dfm-test-base.h - DDE文件管理器测试基础设施
 // 提供增强的测试框架核心，包括改进的打桩基础设施和Qt6Test集成支持
 

@@ -17,13 +17,14 @@
 DPF_BEGIN_NAMESPACE
 namespace backtrace {
 
+namespace inner {
 /*!
  * \brief demangle ABI-mandated entry point in the
  * C++ runtime library for demangling
  * \param value backtrace string
  * \return demangled value
  */
-static std::string demangle(void *value)
+std::string demangle(void *value)
 {
     if (!value) {
         qCDebug(logDPF) << "Demangle: null pointer provided";
@@ -61,7 +62,7 @@ static std::string demangle(void *value)
     return ostream.str();
 }
 
-static void printStack(void *frames[], int numFrames)
+void printStack(void *frames[], int numFrames)
 {
     qCInfo(logDPF) << "Printing stack trace with" << numFrames << "frames";
     for (int i = 0; i < numFrames; ++i) {
@@ -70,7 +71,7 @@ static void printStack(void *frames[], int numFrames)
     }
 }
 
-static void printStack(int firstFramesToSkip)
+void printStack(int firstFramesToSkip)
 {
     const int kMaxFrames = 100;
     void *frames[kMaxFrames];
@@ -85,7 +86,7 @@ static void printStack(int firstFramesToSkip)
  *  SIGILL SIGSEGV SIGBUS SIGABRT
  * \param sig
  */
-static void stackTraceHandler(int sig)
+void stackTraceHandler(int sig)
 {
     // reset to default handler
     signal(sig, SIG_DFL);
@@ -119,7 +120,7 @@ static void stackTraceHandler(int sig)
     // re-signal to default handler (so we still get core dump if needed...)
     raise(sig);
 }
-
+}   // namespace inner
 /*!
  * \brief initbacktrace
  * Register signal handler.
@@ -131,7 +132,7 @@ void installStackTraceHandler()
         qCInfo(logDPF) << "Installing stack trace signal handlers";
         // just use the plain old signal as it's simple and sufficient
         // for this use case
-        signal(SIGSEGV, stackTraceHandler);
+        signal(SIGSEGV, inner::stackTraceHandler);
         qCDebug(logDPF) << "Registered SIGSEGV handler";
 #ifdef DPF_FULLSIG_STRACE_ENABLE
         signal(SIGINT, stackTraceHandler);

@@ -152,6 +152,8 @@ function(dfm_create_component_test COMPONENT_NAME)
         ${DFM_SOURCE_DIR}/src              # 源代码根目录
         ${DFM_SOURCE_DIR}/include          # 公共头文件目录
         ${DFM_SOURCE_DIR}/src/${COMPONENT_NAME}  # 组件特定目录
+        ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub  # stub.h头文件
+        ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext  # stubext.h头文件
     )
     
     # 自动推导并链接依赖
@@ -269,12 +271,24 @@ function(dfm_discover_test_files COMPONENT_NAME TEST_OBJ_NAME)
             $<TARGET_OBJECTS:${TEST_OBJ_NAME}>  # 包含带覆盖率的源码对象
         )
         
+        # 创建testutils库（如果不存在）
+        if(NOT TARGET testutils)
+            add_library(testutils STATIC
+                ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext/stub-shadow.cpp
+            )
+            target_include_directories(testutils PUBLIC
+                ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub
+                ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext
+            )
+        endif()
+
         # 链接测试框架和覆盖率库
         target_link_libraries(${FULL_TEST_NAME} PRIVATE
             Qt6::Test           # Qt6测试框架
             GTest::GTest        # Google Test框架
             GTest::Main         # Google Test主函数
             gcov                # 覆盖率库
+            testutils           # 测试工具库
         )
         
         # 继承对象库的依赖 - 这很重要！
@@ -305,6 +319,8 @@ function(dfm_discover_test_files COMPONENT_NAME TEST_OBJ_NAME)
             ${DFM_SOURCE_DIR}/src/${COMPONENT_NAME}
             ${CMAKE_CURRENT_SOURCE_DIR}  # 测试文件所在目录
             ${CMAKE_CURRENT_SOURCE_DIR}/../../framework  # 测试框架头文件
+            ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub  # stub.h头文件
+            ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext  # stubext.h头文件
         )
         
         # 设置测试运行时属性
