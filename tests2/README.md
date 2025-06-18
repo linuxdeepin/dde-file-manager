@@ -191,12 +191,3 @@ make VERBOSE=1
 - **覆盖率工具**: lcov, genhtml
 - **系统**: Linux (Ubuntu/Debian 推荐)
 
-## 📚 相关文档
-
-- [蓝图设计文档](../ut-blueprint-zh-cn.md)
-- [开发计划](../ut-plan.md)
-- [任务完成报告](TASK004-COMPLETION-REPORT.md)
-
----
-
-**🎉 现代化测试的力量：一行配置，自动化一切！**
