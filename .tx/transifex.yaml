@@ -1,0 +1,28 @@
+filters:
+- filter_type: file
+  source_file: translations/dde-file-manager.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-file-manager_<lang>.ts
+- filter_type: file
+  source_file: translations/dde-computer-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-computer-desktop/desktop_<lang>.ts
+- filter_type: file
+  source_file: translations/dde-home-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-home-desktop/desktop_<lang>.ts
+- filter_type: file
+  source_file: translations/dde-trash-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-trash-desktop/desktop_<lang>.ts
+- filter_type: file
+  source_file: translations/dde-file-manager-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-file-manager-desktop/desktop_<lang>.ts
+settings:
+  pr_branch_name: transifex_update_<br_unique_id>
