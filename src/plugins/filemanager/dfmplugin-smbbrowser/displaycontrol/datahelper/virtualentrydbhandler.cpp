@@ -139,14 +139,20 @@ QString VirtualEntryDbHandler::getDisplayNameOf(const QUrl &entryUrl)
     QString path = entryUrl.path();
     path.remove("." + QString(kVEntrySuffix));   // ==> smb://1.2.3.4/hello/
     QUrl u(path);
-    if (u.path().isEmpty())
+    if (u.path().isEmpty()) {
+        fmDebug() << "Empty path for URL, returning host:" << u.host();
         return u.host();
+    }
 
     Q_ASSERT(handler);
     const auto &field = Expression::Field<VirtualEntryData>;
     auto data = handler->query<VirtualEntryData>().where(field("key") == path).toBean();
-    if (data)
+    if (data) {
+        fmDebug() << "Found display name for path:" << path << "name:" << data->getDisplayName();
         return data->getDisplayName();
+    }
+
+    fmWarning() << "No display name found for path:" << path;
     return "";
 }
 
@@ -177,7 +183,7 @@ bool VirtualEntryDbHandler::checkDbExists()
     handler = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        fmWarning() << "The database is invalid! open error";
+        fmCritical() << "The database is invalid! open error for path:" << dbFilePath;
         return false;
     }
     db.close();
@@ -216,8 +222,10 @@ void VirtualEntryDbHandler::checkAndUpdateTable()
     };
     handler->excute(QString("PRAGMA table_info(%1)").arg(tableName), [=](QSqlQuery *query) {
         while (query->next()) {
-            if (query->value(1).toString() == "targetPath")
+            if (query->value(1).toString() == "targetPath") {
+                fmDebug() << "Table structure is up to date, targetPath column exists";
                 return;
+            }
         }
         alterTable();
     });

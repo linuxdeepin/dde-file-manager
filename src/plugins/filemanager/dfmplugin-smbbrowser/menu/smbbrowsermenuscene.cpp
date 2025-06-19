@@ -49,8 +49,10 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
-    if (d->selectFiles.count() != 1 || d->isEmptyArea)
+    if (d->selectFiles.count() != 1 || d->isEmptyArea) {
+        fmWarning() << "SmbBrowserMenuScene initialize failed: invalid selection or empty area";
         return false;
+    }
 
     d->url = d->selectFiles.first();
     auto subScenes = subscene();
@@ -63,8 +65,10 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
 
 bool SmbBrowserMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmCritical() << "Cannot create SmbBrowserMenuScene: parent menu is null";
         return false;
+    }
 
     auto addAct = [&](const QString &actId) {
         auto act = parent->addAction(d->predicateName[actId]);
@@ -88,8 +92,10 @@ void SmbBrowserMenuScene::updateState(QMenu *parent)
     auto unmountAct = d->predicateAction[SmbBrowserActionId::kUnmountSmb];
     auto propertyAct = d->predicateAction[SmbBrowserActionId::kProperties];
 
-    if (!(mountAct && unmountAct && propertyAct))
+    if (!(mountAct && unmountAct && propertyAct)) {
+        fmWarning() << "Some menu actions are missing, cannot update state properly";
         return AbstractMenuScene::updateState(parent);
+    }
 
     bool isMounted = smb_browser_utils::isSmbMounted(d->url.toString());
     mountAct->setVisible(d->url.path() == "/" ? false : !isMounted);
@@ -102,32 +108,43 @@ void SmbBrowserMenuScene::updateState(QMenu *parent)
 
 bool SmbBrowserMenuScene::triggered(QAction *action)
 {
-    if (!action)
+    if (!action) {
+        fmWarning() << "SmbBrowserMenuScene triggered with null action";
         return AbstractMenuScene::triggered(action);
+    }
 
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (!d->predicateAction.contains(actId))
         return AbstractMenuScene::triggered(action);
 
-    if (d->selectFiles.count() != 1)
+    if (d->selectFiles.count() != 1) {
+        fmWarning() << "Invalid file selection count for SMB operation:" << d->selectFiles.count();
         return AbstractMenuScene::triggered(action);
+    }
 
     quint64 winId = d->windowId;
     const QString &smbUrl = d->selectFiles.first().toString();
-    if (actId == SmbBrowserActionId::kOpenSmb)
+    if (actId == SmbBrowserActionId::kOpenSmb) {
+        fmDebug() << "Opening SMB location in current window:" << smbUrl;
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl(smbUrl));
-    else if (actId == SmbBrowserActionId::kOpenSmbInNewTab)
+    } else if (actId == SmbBrowserActionId::kOpenSmbInNewTab) {
+        fmDebug() << "Opening SMB location in new tab:" << smbUrl;
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, QUrl(smbUrl));
-    else if (actId == SmbBrowserActionId::kOpenSmbInNewWin)
+    } else if (actId == SmbBrowserActionId::kOpenSmbInNewWin) {
+        fmDebug() << "Opening SMB location in new window:" << smbUrl;
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(smbUrl));
-    else if (actId == SmbBrowserActionId::kMountSmb)
+    } else if (actId == SmbBrowserActionId::kMountSmb) {
+        fmDebug() << "Mounting SMB share:" << smbUrl;
         d->actMount();
-    else if (actId == SmbBrowserActionId::kUnmountSmb)
+    } else if (actId == SmbBrowserActionId::kUnmountSmb) {
+        fmDebug() << "Unmounting SMB share:" << smbUrl;
         d->actUnmount();
-    else if (actId == SmbBrowserActionId::kProperties)
+    } else if (actId == SmbBrowserActionId::kProperties) {
+        fmDebug() << "Showing SMB properties:" << smbUrl;
         d->actProperties();
-    else
+    } else {
         return AbstractMenuScene::triggered(action);
+    }
     return true;
 }
 
@@ -159,19 +176,24 @@ void SmbBrowserMenuScenePrivate::actUnmount()
     const QString &devId = smb_browser_utils::getDeviceIdByStdSmb(smbPath);
     fmDebug() << "get device id of" << url << devId;
 
-    DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-        if (!ok)
+    DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [smbPath](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
+        if (!ok) {
+            fmCritical() << "SMB unmount failed for:" << smbPath << "error code:" << err.code << "message:" << err.message;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
+        }
     });
 }
 
 void SmbBrowserMenuScenePrivate::actMount()
 {
     const QString &smbPath = url.toString().toLower();
+    fmDebug() << "Starting SMB mount operation for path:" << smbPath;
+
     DeviceManager::instance()->mountNetworkDeviceAsync(smbPath, [smbPath](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
-        fmInfo() << "mount done: " << smbPath << ok << err.code << err.message << mpt;
-        if (!ok && err.code != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
+        if (!ok && err.code != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
+            fmCritical() << "SMB mount failed for:" << smbPath << "error code:" << err.code << "message:" << err.message;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+        }
     });
 }
 
