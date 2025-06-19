@@ -92,8 +92,10 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     if (!allSideBar.isEmpty()) {
         auto sidebar = allSideBar.first();
         // TODO(zhangs): refactor, register ?
-        if (sidebar->addItem(item, direct) == -1)
+        if (sidebar->addItem(item, direct) == -1) {
+            fmWarning() << "Failed to add item to sidebar widget, url:" << url;
             return false;
+        }
         // for select to computer
         QUrl &&itemUrl = item->url();
         QUrl &&sidebarUrl = sidebar->currentUrl();
@@ -120,8 +122,11 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 
 bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 {
-    if (!SideBarInfoCacheMananger::instance()->contains(url))
+    if (!SideBarInfoCacheMananger::instance()->contains(url)) {
+        fmWarning() << "Item not found in cache for removal, url:" << url;
         return false;
+    }
+
     SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
     if (SideBarWidget::kSidebarModelIns)
         return SideBarWidget::kSidebarModelIns->removeRow(url);
@@ -130,8 +135,10 @@ bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 
 bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &properties)
 {
-    if (!SideBarInfoCacheMananger::instance()->contains(url))
+    if (!SideBarInfoCacheMananger::instance()->contains(url)) {
+        fmWarning() << "Item not found in cache for update, url:" << url;
         return false;
+    }
 
     ItemInfo info { SideBarInfoCacheMananger::instance()->itemInfo(url) };
 
@@ -186,6 +193,8 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
             ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(url, info);
         allSideBar.first()->updateItem(url, info);
         return ret;
+    } else {
+        fmWarning() << "No sidebar widgets available for item update, url:" << url;
     }
 
     return false;
@@ -196,8 +205,10 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
     Q_ASSERT(index >= 0 && index <= UINT8_MAX);
 
     ItemInfo info { url, properties };
-    if (SideBarInfoCacheMananger::instance()->contains(info))
+    if (SideBarInfoCacheMananger::instance()->contains(info)) {
+        fmWarning() << "Item already exists in cache for insertion, url:" << url << "index:" << index;
         return false;
+    }
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
@@ -211,7 +222,11 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
                 sidebar->setCurrentUrl(item->url());
             return ret;
+        } else {
+            fmWarning() << "Failed to create sidebar item for insertion, index:" << index << "url:" << url;
         }
+    } else {
+        fmWarning() << "No sidebar widgets available for item insertion, index:" << index << "url:" << url;
     }
 
     return false;

@@ -144,6 +144,7 @@ int SideBarWidget::findItem(const QUrl &url) const
         }
     }
 
+    fmDebug() << "Item not found in sidebar, URL:" << url;
     return -1;
 }
 // zhuangshu: Currently, function findItemIndex can only support to find out the sub item of group,
@@ -158,12 +159,17 @@ void SideBarWidget::editItem(const QUrl &url)
 {
     QModelIndex ret = findItemIndex(url);
     int pos = ret.row();
-    if (pos < 0)
+    if (pos < 0) {
+        fmWarning() << "Cannot edit item, not found in sidebar, URL:" << url;
         return;
+    }
 
     auto idx = kSidebarModelIns->index(pos, 0, ret.parent());
-    if (idx.isValid())
+    if (idx.isValid()) {
         sidebarView->edit(idx);
+    } else {
+        fmWarning() << "Cannot edit item, invalid index, URL:" << url;
+    }
 }
 
 void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
@@ -181,6 +187,8 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
     if (item && item->parent()) {
         //  item->setHiiden(visible);
         sidebarView->setRowHidden(item->row(), item->parent()->index(), !visible);
+    } else {
+        fmWarning() << "Cannot change item visibility, invalid item or parent, URL:" << url;
     }
 
     sidebarView->updateSeparatorVisibleState();
@@ -225,8 +233,10 @@ void SideBarWidget::saveStateWhenClose()
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = kSidebarModelIns->itemFromIndex(index);
-    if (!item || dynamic_cast<SideBarItemSeparator *>(item))
+    if (!item || dynamic_cast<SideBarItemSeparator *>(item)) {
+        fmDebug() << "Item activation ignored for separator or null item";
         return;
+    }
 
     DViewItemActionList list = item->actionList(Qt::RightEdge);
     if (list.count() > 0 && !list.first()->isEnabled()) {
@@ -243,6 +253,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         auto preIndex = sidebarView->previousIndex();
         if (!preIndex.isValid()) {
             sidebarView->setPreviousIndex(preIndex);
+            fmWarning() << "Network resource busy, unable to visit:" << url;
             return;
         }
         SideBarItem *preItem = kSidebarModelIns->itemFromIndex(preIndex);
@@ -250,6 +261,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
             return;
         setCurrentUrl(qvariant_cast<QUrl>(preItem->data(SideBarItem::Roles::kItemUrlRole)));
         sidebarView->setPreviousIndex(preIndex);
+        fmWarning() << "Reverted to previous item due to network busy:" << url;
         return;
     }
 
@@ -266,6 +278,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         auto preIndex = sidebarView->previousIndex();
         if (!preIndex.isValid()) {
             sidebarView->setPreviousIndex(preIndex);
+            fmDebug() << "Opened folder in separate process:" << target;
             return;
         }
         SideBarItem *preItem = kSidebarModelIns->itemFromIndex(preIndex);
@@ -282,18 +295,23 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         }
         setCurrentUrl(qvariant_cast<QUrl>(preItem->data(SideBarItem::Roles::kItemUrlRole)));
         sidebarView->setPreviousIndex(preIndex);
+        fmDebug() << "Reverted to previous item after separate process launch";
         return;
     }
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
     sidebarView->update(sidebarView->previousIndex());
     sidebarView->update(sidebarView->currentIndex());
+
+    fmInfo() << "Item activation completed, URL:" << url;
 }
 
 void SideBarWidget::customContextMenuCall(const QPoint &pos)
 {
     SideBarItem *item = sidebarView->itemAt(pos);
-    if (!item)
+    if (!item) {
+        fmDebug() << "Context menu request ignored, no item at position";
         return;
+    }
 
     // 相对坐标转全局坐标
     const QPoint &globalPos = sidebarView->mapToGlobal(pos);
@@ -304,17 +322,22 @@ void SideBarWidget::customContextMenuCall(const QPoint &pos)
 void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newName)
 {
     SideBarItem *item = kSidebarModelIns->itemFromIndex(index);
-    if (!item)
+    if (!item) {
+        fmWarning() << "Item rename failed, item not found";
         return;
+    }
 
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };
+    fmInfo() << "Renaming item from" << item->text() << "to" << newName << "URL:" << url;
     SideBarManager::instance()->runRename(item, SideBarHelper::windowId(this), newName);
 }
 
 void SideBarWidget::updateWindowEffect()
 {
-    if (!compositingConfig)
+    if (!compositingConfig) {
+        fmWarning() << "Compositing config is null, cannot update window effect";
         return;
+    }
 
     auto winEffect = compositingConfig->value(kWindowEffectTypeKey).toInt() != kWinOptimalPerformance;
     if (winEffect == isWindowEffect)
