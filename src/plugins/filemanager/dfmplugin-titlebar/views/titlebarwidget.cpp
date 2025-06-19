@@ -80,8 +80,10 @@ TabBar *TitleBarWidget::tabBar() const
 
 void TitleBarWidget::openNewTab(const QUrl &url)
 {
-    if (!tabBar()->tabAddable())
+    if (!tabBar()->tabAddable()) {
+        fmWarning() << "Cannot open new tab - maximum tab count reached";
         return;
+    }
 
     tabBar()->createTab();
 
@@ -513,6 +515,8 @@ void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
         TitleBarEventCaller::sendTabChanged(this, tab->uniqueId());
         TitleBarEventCaller::sendChangeCurrentUrl(this, tab->getCurrentUrl());
         restoreTitleBarState(tab->uniqueId());
+    } else {
+        fmWarning() << "Tab current changed but new tab is null - newIndex:" << newIndex;
     }
 }
 

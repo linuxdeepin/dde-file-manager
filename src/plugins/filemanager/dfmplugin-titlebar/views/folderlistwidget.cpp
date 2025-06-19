@@ -96,7 +96,7 @@ QModelIndex FolderListWidgetPrivate::getStartIndexFromHover(bool isUp)
     QModelIndex currentIndex = folderView->currentIndex();
     if (currentIndex.isValid()) {
         nextRow = currentIndex.row();
-    } 
+    }
     else {
         QPoint mousePos = q->mapFromGlobal(QCursor::pos());
         QModelIndex hoverIndex = folderView->indexAt(mousePos);
@@ -108,7 +108,7 @@ QModelIndex FolderListWidgetPrivate::getStartIndexFromHover(bool isUp)
     } else {
         nextRow = (nextRow + 1) % rowCount;
     }
-    
+
     return folderModel->index(nextRow, 0);
 }
 
@@ -118,7 +118,7 @@ void FolderListWidgetPrivate::selectUp()
         q->hide();
         return;
     }
-    
+
     auto curIndex = folderView->currentIndex();
     if (!curIndex.isValid()) {
         curIndex = getStartIndexFromHover(true);
@@ -128,7 +128,7 @@ void FolderListWidgetPrivate::selectUp()
             row = folderModel->rowCount() - 1;
         curIndex = folderModel->index(row, 0);
     }
-    
+
     if (curIndex.isValid())
         folderView->setCurrentIndex(curIndex);
 }
@@ -139,7 +139,7 @@ void FolderListWidgetPrivate::selectDown()
         q->hide();
         return;
     }
-    
+
     auto curIndex = folderView->currentIndex();
     if (!curIndex.isValid()) {
         curIndex = getStartIndexFromHover(false);
@@ -149,7 +149,7 @@ void FolderListWidgetPrivate::selectDown()
             row = 0;
         curIndex = folderModel->index(row, 0);
     }
-    
+
     if (curIndex.isValid())
         folderView->setCurrentIndex(curIndex);
 }
@@ -158,7 +158,7 @@ void FolderListWidgetPrivate::handleKeyInput(const QString &pressedText)
 {
     if (pressedText.isEmpty() || !pressedText[0].isPrint())
         return;
-        
+
     QModelIndex currentIndex = folderView->currentIndex();
     int startRow = -1;
     if (!currentIndex.isValid()) {

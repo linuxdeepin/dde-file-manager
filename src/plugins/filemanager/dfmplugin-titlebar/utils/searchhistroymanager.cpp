@@ -55,6 +55,7 @@ void SearchHistroyManager::handleMountNetworkResult(const QString &address, bool
 {
     auto addr = trimTrailingSlashes(address);
     if (!isValidMount(addr, ret, err)) {
+        fmWarning() << "Network mount failed or invalid for address:" << addr << "error:" << static_cast<int>(err);
         // Remove the address only if it was in the cache, as before.
         ipAddressCache.removeOne(addr);
         return;
@@ -131,8 +132,10 @@ void SearchHistroyManager::addIPHistoryCache(const QString &address)
 
 void SearchHistroyManager::writeIntoIPHistory(const QString &ipAddr)
 {
-    if (ipAddr.isEmpty())
+    if (ipAddr.isEmpty()) {
+        fmWarning() << "Cannot write empty IP address to history";
         return;
+    }
 
     auto history = getIPHistory();
     IPHistroyData data(ipAddr, QDateTime::currentDateTime());
@@ -178,9 +181,11 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
 void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
 {
     if (schemeFilters.isEmpty()) {
+        fmDebug() << "Clearing all search history";
         QStringList list;
         Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
     } else {
+        fmDebug() << "Clearing search history for schemes:" << schemeFilters;
         QStringList historyList = Application::appObtuselySetting()->value(kConfigGroupName, kConfigSearchHistroy).toStringList();
         for (const QString &data : historyList) {
             QUrl url(data);
@@ -194,5 +199,6 @@ void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
 
 void SearchHistroyManager::clearIPHistory()
 {
+    fmDebug() << "Clearing IP connection history";
     Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigIPHistroy, {});
 }

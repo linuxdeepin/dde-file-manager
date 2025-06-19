@@ -54,8 +54,10 @@ SearchEditWidget::~SearchEditWidget()
 
 void SearchEditWidget::activateEdit(bool setAdvanceBtn)
 {
-    if (!searchEdit || !advancedButton || !searchButton)
+    if (!searchEdit || !advancedButton || !searchButton) {
+        fmWarning() << "Cannot activate edit - one or more widgets are null";
         return;
+    }
 
     if (parentWidget() && parentWidget()->width() >= kWidthThresholdExpand)
         setSearchMode(SearchMode::kExtraLarge);
@@ -72,8 +74,10 @@ void SearchEditWidget::activateEdit(bool setAdvanceBtn)
 
 void SearchEditWidget::deactivateEdit()
 {
-    if (!searchEdit || !advancedButton)
+    if (!searchEdit || !advancedButton) {
+        fmWarning() << "Cannot deactivate edit - searchEdit or advancedButton is null";
         return;
+    }
 
     advancedButton->setChecked(false);
     advancedButton->setVisible(false);
@@ -113,8 +117,10 @@ void SearchEditWidget::updateSearchEditWidget(int parentWidth)
 
 void SearchEditWidget::setSearchMode(SearchMode mode)
 {
-    if (advancedButton->isChecked() || searchEdit->hasFocus())
+    if (advancedButton->isChecked() || searchEdit->hasFocus()) {
+        fmDebug() << "Cannot change search mode - advanced button checked or search edit has focus";
         return;
+    }
 
     currentMode = mode;
     updateSearchWidgetLayout();
@@ -136,9 +142,12 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         QUrlQuery query { url.query() };
         QString searchKey { query.queryItemValue("keyword", QUrl::FullyDecoded) };
         if (!searchKey.isEmpty()) {
+            fmDebug() << "Found search keyword in URL:" << searchKey;
             activateEdit(false);
-            if (searchKey != lastExecutedSearchText && searchKey != searchEdit->text())
+            if (searchKey != lastExecutedSearchText && searchKey != searchEdit->text()) {
+                fmDebug() << "Setting search text from URL";
                 searchEdit->setText(searchKey);
+            }
         }
         return;
     }
@@ -159,6 +168,7 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
+        fmDebug() << "Search text is empty, quitting search";
         quitSearch();
         return;
     }
@@ -184,20 +194,28 @@ void SearchEditWidget::expandSearchEdit()
 void SearchEditWidget::performSearch()
 {
     currentCursorPos = searchEdit->lineEdit()->cursorPosition();
-    if (pendingSearchText.isEmpty())
+    if (pendingSearchText.isEmpty()) {
+        fmDebug() << "Pending search text is empty, skipping search";
         return;
+    }
 
-    if (!TitleBarHelper::searchEnabled)
+    if (!TitleBarHelper::searchEnabled) {
+        fmWarning() << "Search is disabled, cannot perform search";
         return;
+    }
 
     // Trim whitespace from the search string
     QString trimmedSearchText = pendingSearchText.trimmed();
-    if (trimmedSearchText.isEmpty())
+    if (trimmedSearchText.isEmpty()) {
+        fmDebug() << "Trimmed search text is empty, skipping search";
         return;
+    }
 
     // Check if this is the same as the last executed search
-    if (trimmedSearchText == lastExecutedSearchText)
+    if (trimmedSearchText == lastExecutedSearchText) {
+        fmDebug() << "Search text unchanged from last search, skipping";
         return;
+    }
 
     lastExecutedSearchText = trimmedSearchText;
     lastSearchTime = QDateTime::currentMSecsSinceEpoch();

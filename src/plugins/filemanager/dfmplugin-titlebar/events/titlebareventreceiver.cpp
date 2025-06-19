@@ -28,7 +28,7 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 {
     Q_ASSERT(!scheme.isEmpty());
     if (CrumbManager::instance()->isRegistered(scheme)) {
-        fmWarning() << "Crumb sechme " << scheme << "has been resigtered!";
+        fmWarning() << "Crumb scheme" << scheme << "has already been registered";
         return false;
     }
 
@@ -80,16 +80,20 @@ void TitleBarEventReceiver::handleStopSpinner(quint64 windowId)
 void TitleBarEventReceiver::handleShowFilterButton(quint64 windowId, bool visible)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot show filter button: titlebar widget not found for window id" << windowId;
         return;
+    }
     w->showSearchFilterButton(visible);
 }
 
 void TitleBarEventReceiver::handleViewModeChanged(quint64 windowId, int mode)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot change view mode: titlebar widget not found for window id" << windowId;
         return;
+    }
 
     w->setViewModeState(mode);
 }
@@ -102,24 +106,30 @@ void TitleBarEventReceiver::handleSetNewWindowAndTabEnable(bool enable)
 void TitleBarEventReceiver::handleWindowForward(quint64 windowId)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot navigate forward: titlebar widget not found for window id" << windowId;
         return;
+    }
     w->navWidget()->forward();
 }
 
 void TitleBarEventReceiver::handleWindowBackward(quint64 windowId)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot navigate backward: titlebar widget not found for window id" << windowId;
         return;
+    }
     w->navWidget()->back();
 }
 
 void TitleBarEventReceiver::handleRemoveHistory(quint64 windowId, const QUrl &url)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot remove URL from history: titlebar widget not found for window id" << windowId;
         return;
+    }
     w->navWidget()->removeUrlFromHistoryStack(url);
 }
 
@@ -131,8 +141,10 @@ TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
 bool TitleBarEventReceiver::handleTabAddable(quint64 windowId)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot check tab addable: titlebar widget not found for window id" << windowId;
         return false;
+    }
 
     return w->tabBar()->tabAddable();
 }
@@ -141,6 +153,7 @@ void TitleBarEventReceiver::handleCloseTabs(const QUrl &url)
 {
     auto titlebarWidges = TitleBarHelper::titlebars();
 
+    fmDebug() << "Closing tabs with URL:" << url.toString();
     for (auto w : titlebarWidges)
         w->tabBar()->closeTab(url);
 }
@@ -162,8 +175,11 @@ void TitleBarEventReceiver::handleSetTabAlias(const QUrl &url, const QString &na
 void TitleBarEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)
 {
     TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
-    if (!w)
+    if (!w) {
+        fmWarning() << "Cannot open new tab: titlebar widget not found for window id" << windowId;
         return;
+    }
 
+    fmDebug() << "Opening new tab for window id:" << windowId << "URL:" << url.toString();
     w->openNewTab(url);
 }

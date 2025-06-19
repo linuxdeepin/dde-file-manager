@@ -40,8 +40,10 @@ OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
 
 void OptionButtonBoxPrivate::updateCompactButton()
 {
-    if (!compactButton)
+    if (!compactButton) {
+        fmWarning() << "Compact button is null, cannot update";
         return;
+    }
 
     // Update icon based on current view mode
     switch (currentMode) {
@@ -55,6 +57,7 @@ void OptionButtonBoxPrivate::updateCompactButton()
         compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
         break;
     default:
+        fmWarning() << "Unknown view mode for compact button:" << int(currentMode);
         break;
     }
 }
@@ -62,7 +65,7 @@ void OptionButtonBoxPrivate::updateCompactButton()
 void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 {
     if (currentMode == mode) {
-        fmDebug() << "The current mode already : " << int(mode);
+        fmDebug() << "The current mode already:" << int(mode);
         return;
     }
 
@@ -77,8 +80,10 @@ void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
     QUrl tmpUrl = url.adjusted(QUrl::RemoveQuery);
     auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(tmpUrl.scheme()));
     auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", tmpUrl).toMap().value("viewMode", defaultViewMode).toInt());
-    if (viewMode == ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
+    if (viewMode == ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+        fmInfo() << "Tree view is disabled in config, switching to list mode";
         viewMode = ViewMode::kListMode;
+    }
 
     switchMode(viewMode);
 }
@@ -89,14 +94,18 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
     switch (mode) {
     case ViewMode::kIconMode:
         iconViewButton->setChecked(true);
+        fmDebug() << "Icon view button checked";
         break;
     case ViewMode::kListMode:
         listViewButton->setChecked(true);
+        fmDebug() << "List view button checked";
         break;
     case ViewMode::kTreeMode:
         treeViewButton->setChecked(true);
+        fmDebug() << "Tree view button checked";
         break;
     default:
+        fmWarning() << "Unknown view mode in switchMode:" << int(mode);
         break;
     }
     viewOptionsButton->switchMode(mode, currentUrl);
@@ -120,7 +129,10 @@ ViewOptionsButton *OptionButtonBox::viewOptionsButton() const
 
 void OptionButtonBox::setViewOptionsButton(ViewOptionsButton *button)
 {
-    if (!button) return;
+    if (!button) {
+        fmWarning() << "Trying to set null view options button";
+        return;
+    }
 
     if (!d->hBoxLayout->replaceWidget(d->viewOptionsButton, button)->isEmpty()) {
 
@@ -137,6 +149,8 @@ void OptionButtonBox::setViewOptionsButton(ViewOptionsButton *button)
 
         d->viewOptionsButton->setCheckable(false);
         d->viewOptionsButton->setFocusPolicy(Qt::NoFocus);
+    } else {
+        fmWarning() << "Failed to replace view options button";
     }
 }
 
@@ -155,8 +169,10 @@ void OptionButtonBox::updateOptionButtonBox(int parentWidth)
     // If the current url scheme has no button visibility state set, do not hide buttons
     if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
         && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
+        fmDebug() << "All buttons hidden for scheme:" << d->currentUrl.scheme();
         return;
     }
+
     if (parentWidth <= kCompactModeThreshold) {
         if (!d->isCompactMode) {
             switchToCompactMode();
@@ -172,11 +188,13 @@ void OptionButtonBox::updateOptionButtonBox(int parentWidth)
 
 void OptionButtonBox::onUrlChanged(const QUrl &url)
 {
+    fmDebug() << "URL changed to:" << url.toString();
     d->currentUrl = url;
     d->loadViewMode(url);
     if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
         auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
-        
+        fmDebug() << "Button visibility state for scheme" << url.scheme() << "is" << state;
+
         // Store the state-based visibility
         d->listViewEnabled = !(state & OptionButtonManager::kHideListViewBtn);
         d->iconViewEnabled = !(state & OptionButtonManager::kHideIconViewBtn);
@@ -199,6 +217,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
             setContentsMargins(5, 0, 15, 0);
         }
     } else {
+        fmDebug() << "No visibility state found for scheme, showing all buttons";
         // Reset all state-based visibility to true
         d->listViewEnabled = true;
         d->iconViewEnabled = true;
@@ -257,6 +276,7 @@ void OptionButtonBox::initializeUi()
     d->buttonGroup->addButton(d->listViewButton);
 
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
+        fmDebug() << "Tree view is enabled, creating tree view button";
         d->treeViewButton = new CustomDToolButton;
         d->treeViewButton->setCheckable(true);
         d->treeViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
@@ -264,6 +284,8 @@ void OptionButtonBox::initializeUi()
         d->treeViewButton->setToolTip(tr("Tree view"));
         d->treeViewButton->setIconSize(buttonIconSize);
         d->buttonGroup->addButton(d->treeViewButton);
+    } else {
+        fmDebug() << "Tree view is disabled in configuration";
     }
 
     d->viewOptionsButton = new ViewOptionsButton(this);
@@ -409,7 +431,10 @@ DToolButton *OptionButtonBox::listViewButton() const
 
 void OptionButtonBox::setListViewButton(DToolButton *listViewButton)
 {
-    if (!listViewButton) return;
+    if (!listViewButton) {
+        fmWarning() << "Trying to set null list view button";
+        return;
+    }
 
     if (!d->hBoxLayout->replaceWidget(d->listViewButton, listViewButton)->isEmpty()) {
 
@@ -426,6 +451,8 @@ void OptionButtonBox::setListViewButton(DToolButton *listViewButton)
 
         d->listViewButton->setCheckable(true);
         d->listViewButton->setFocusPolicy(Qt::NoFocus);
+    } else {
+        fmWarning() << "Failed to replace list view button";
     }
 }
 
@@ -446,7 +473,10 @@ DToolButton *OptionButtonBox::iconViewButton() const
 
 void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
 {
-    if (!iconViewButton) return;
+    if (!iconViewButton) {
+        fmWarning() << "Trying to set null icon view button";
+        return;
+    }
 
     if (!d->hBoxLayout->replaceWidget(d->iconViewButton, iconViewButton)->isEmpty()) {
 
@@ -463,6 +493,8 @@ void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
 
         d->iconViewButton->setCheckable(true);
         d->iconViewButton->setFocusPolicy(Qt::NoFocus);
+    } else {
+        fmWarning() << "Failed to replace icon view button";
     }
 }
 

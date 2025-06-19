@@ -52,8 +52,10 @@ QUrl HistoryStack::back()
     const QUrl &currentUrl = list.value(index);
     QUrl url;
 
-    if (index <= 0)
+    if (index <= 0) {
+        fmDebug() << "Cannot navigate back: already at first position in history";
         return url;
+    }
 
     while (--index >= 0) {
         if (index >= list.count())
@@ -69,6 +71,7 @@ QUrl HistoryStack::back()
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
+            fmWarning() << "Removing invalid URL from history during back navigation:" << url.toString();
             removeAt(index);
             url = list.at(index);
         } else {
@@ -84,8 +87,10 @@ QUrl HistoryStack::forward()
     const QUrl &currentUrl = list.value(index);
     QUrl url;
 
-    if (index >= list.count() - 1)
+    if (index >= list.count() - 1) {
+        fmDebug() << "Cannot navigate forward: already at last position in history";
         return url;
+    }
 
     while (++index < list.count()) {
         url = list.at(index);
@@ -98,6 +103,7 @@ QUrl HistoryStack::forward()
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
+            fmWarning() << "Removing invalid URL from history during forward navigation:" << url.toString();
             removeAt(index);
             --index;
             url = list.at(index);
@@ -142,12 +148,16 @@ void HistoryStack::removeAt(int i)
 
 void HistoryStack::removeUrl(const QUrl &url)
 {
-    if (list.isEmpty() || index < 0 || index >= list.length())
+    if (list.isEmpty() || index < 0 || index >= list.length()) {
+        fmWarning() << "Cannot remove URL from history: invalid history state";
         return;
+    }
 
     const QUrl &curUrl = list.at(index);
-    if (UniversalUtils::urlEquals(url, curUrl))
+    if (UniversalUtils::urlEquals(url, curUrl)) {
+        fmDebug() << "Cannot remove current URL from history:" << url.toString();
         return;
+    }
 
     QString removePath = url.path();
 
@@ -213,6 +223,7 @@ bool HistoryStack::needCheckExist(const QUrl &url)
 bool HistoryStack::checkPathIsExist(const QUrl &url)
 {
     if (ProtocolUtils::isRemoteFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
+        fmWarning() << "Remote file is busy, treating as non-existent:" << url.toString();
         return false;
     } else {
         auto info = InfoFactory::create<FileInfo>(url);

@@ -139,8 +139,10 @@ Tab *TabBar::tabAt(const int &index)
 
 void TabBar::setCurrentIndex(const int index)
 {
-    if (index < 0 || index >= tabList.count())
+    if (index < 0 || index >= tabList.count()) {
+        fmWarning() << "Cannot set current index - invalid index:" << index << "tab count:" << count();
         return;
+    }
 
     int oldIndex = currentIndex;
     currentIndex = index;
@@ -191,8 +193,10 @@ void TabBar::closeTab(const QUrl &url)
 void TabBar::onTabCloseButtonClicked()
 {
     auto tab = dynamic_cast<Tab *>(sender());
-    if (!tab)
+    if (!tab) {
+        fmWarning() << "Tab close button clicked but sender is not a Tab";
         return;
+    }
 
     int closingIndex = tabList.indexOf(tab);
 
@@ -252,8 +256,10 @@ void TabBar::onAboutToNewWindow(Tab *tab)
 void TabBar::onTabClicked()
 {
     Tab *tab = qobject_cast<Tab *>(sender());
-    if (!tab)
+    if (!tab) {
+        fmWarning() << "Tab clicked but sender is not a Tab";
         return;
+    }
     setCurrentIndex(tabList.indexOf(tab));
 }
 
@@ -430,6 +436,7 @@ void TabBar::initializeConnections()
 {
     connect(tabAddButton, &DIconButton::clicked, this, &TabBar::tabAddButtonClicked);
     connect(DevProxyMng, &DeviceProxyManager::mountPointAboutToRemoved, this, [this](QStringView mpt) {
+        fmDebug() << "Mount point about to be removed:" << mpt.toString();
         closeTab(QUrl::fromLocalFile(mpt.toString()));
     });
 }
