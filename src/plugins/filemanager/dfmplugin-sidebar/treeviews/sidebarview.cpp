@@ -53,8 +53,10 @@ void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
     SideBarModel *mod = q->model();
     Q_ASSERT(mod);
     SideBarItem *item = mod->itemFromIndex(curIndex);
-    if (dynamic_cast<SideBarItemSeparator *>(item))
+    if (dynamic_cast<SideBarItemSeparator *>(item)) {
+        fmDebug() << "Current changed to separator item, ignoring";
         return;
+    }
 
     this->previous = current;
     current = curIndex;
@@ -63,11 +65,15 @@ void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
 
 void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmWarning() << "Double clicked on invalid index";
         return;
+    }
     SideBarItem *item = q->model()->itemFromIndex(index);
-    if (!dynamic_cast<SideBarItemSeparator *>(item))
+    if (!dynamic_cast<SideBarItemSeparator *>(item)) {
+        fmDebug() << "Double clicked on non-separator item, ignoring";
         return;
+    }
 
     q->onChangeExpandState(index, !q->isExpanded(index));
 }
@@ -86,8 +92,10 @@ void SideBarViewPrivate::restorePalette()
 
 void SideBarViewPrivate::notifyOrderChanged()
 {
-    if (draggedGroup.isEmpty())
+    if (draggedGroup.isEmpty()) {
+        fmDebug() << "No dragged group to notify order change";
         return;
+    }
 
     QTimer::singleShot(0, this, [this] {   // this must be invoked after items are sorted finished
         QList<QUrl> ret;
@@ -128,17 +136,23 @@ bool SideBarViewPrivate::canEnter(QDragEnterEvent *event)
 {
     Q_ASSERT(q);
 
-    if (!event)
+    if (!event) {
+        fmWarning() << "Drag enter event is null";
         return false;
+    }
 
-    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent))
+    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent)) {
+        fmDebug() << "Drag enter rejected: empty URLs or prohibited path";
         return false;
+    }
 
     SideBarItem *item = q->itemAt(event->position().toPoint());
     if (item) {
         const QUrl &targetItemUrl { item->targetUrl() };
-        if (!checkTargetEnable(targetItemUrl))
+        if (!checkTargetEnable(targetItemUrl)) {
+            fmDebug() << "Drag enter rejected: target not enabled, URL:" << targetItemUrl;
             return false;
+        }
     }
 
     return true;
@@ -148,8 +162,10 @@ bool SideBarViewPrivate::canMove(QDragMoveEvent *event)
 {
     Q_ASSERT(q);
 
-    if (!event)
+    if (!event) {
+        fmWarning() << "Drag move event is null";
         return false;
+    }
 
     const QList<QUrl> &urls = urlsForDragEvent.isEmpty()
             ? event->mimeData()->urls()
@@ -157,17 +173,23 @@ bool SideBarViewPrivate::canMove(QDragMoveEvent *event)
 
     if (!urls.isEmpty()) {
         SideBarItem *item = q->itemAt(event->position().toPoint());
-        if (!item)
+        if (!item) {
+            fmDebug() << "Drag move rejected: no item at position";
             return false;
+        }
 
         const QUrl &targetItemUrl { item->targetUrl() };
-        if (!checkTargetEnable(targetItemUrl))
+        if (!checkTargetEnable(targetItemUrl)) {
+            fmDebug() << "Drag move rejected: target not enabled, URL:" << targetItemUrl;
             return false;
+        }
 
         Qt::DropAction action { Qt::CopyAction };
         if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DragMoveData", urls, item->url(), &action)) {
-            if (action == Qt::IgnoreAction)
+            if (action == Qt::IgnoreAction) {
+                fmDebug() << "Drag move rejected: hook returned IgnoreAction";
                 return false;
+            }
         }
     }
 
@@ -540,8 +562,10 @@ QUrl SideBarView::urlAt(const QPoint &pt) const
 
 void SideBarView::saveStateWhenClose()
 {
-    if (SideBarHelper::groupExpandRules().isEmpty())
+    if (SideBarHelper::groupExpandRules().isEmpty()) {
+        fmDebug() << "No group expand rules to save";
         return;
+    }
     if (d->groupExpandState.isEmpty())
         d->groupExpandState = SideBarHelper::groupExpandRules();
 
@@ -559,20 +583,25 @@ void SideBarView::setCurrentUrl(const QUrl &url)
         if (checkIndex.isValid()) {
             d->current = checkIndex;
         } else {
+            fmWarning() << "URL not found in sidebar, clearing selection:" << url;
             this->clearSelection();
             return;
         }
     }
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
-    if (!sidebarModel)
+    if (!sidebarModel) {
+        fmWarning() << "Sidebar model is null, cannot set current URL";
         return;
+    }
     SideBarItem *currentItem = sidebarModel->itemFromIndex(index);
     if (currentItem && currentItem->parent()) {
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
         // If the current item's group is not expanded, do not set current index, otherwise
         // the unexpanded group would be expaned again.
-        if (groupItem && !groupItem->isExpanded())
+        if (groupItem && !groupItem->isExpanded()) {
+            fmDebug() << "Group not expanded, skipping current index set for URL:" << url;
             return;
+        }
     }
 
     this->setCurrentIndex(index);
@@ -590,8 +619,10 @@ QUrl SideBarView::currentUrl() const
 QModelIndex SideBarView::findItemIndex(const QUrl &url) const
 {
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
-    if (!sidebarModel)
+    if (!sidebarModel) {
+        fmWarning() << "Sidebar model is null, cannot find item index";
         return QModelIndex();
+    }
 
     int count = sidebarModel->rowCount();
     for (int i = 0; i < count; i++) {
@@ -611,6 +642,7 @@ QModelIndex SideBarView::findItemIndex(const QUrl &url) const
         }
     }
 
+    fmDebug() << "Item index not found for URL:" << url;
     return QModelIndex();
 }
 
@@ -770,8 +802,11 @@ void SideBarView::updateSeparatorVisibleState()
     QString lastGroupName = DefaultGroup::kNotExistedGroup;
     bool allItemsInvisiable = true;
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
-    if (!sidebarModel)
+    if (!sidebarModel) {
+        fmWarning() << "Sidebar model is null, cannot update separator visible state";
         return;
+    }
+
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
         SideBarItem *item = sidebarModel->itemFromIndex(i);   // top item
         if (item)
@@ -817,11 +852,15 @@ void SideBarView::updateSeparatorVisibleState()
 void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
 {
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
-    if (!sidebarModel)
+    if (!sidebarModel) {
+        fmWarning() << "Sidebar model is null, cannot change expand state";
         return;
+    }
     SideBarItem *item = sidebarModel->itemFromIndex(index);
-    if (!item)
+    if (!item) {
+        fmWarning() << "Item is null, cannot change expand state";
         return;
+    }
 
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
 

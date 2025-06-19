@@ -29,8 +29,10 @@ SideBarModel::SideBarModel(QObject *parent)
 bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     // when drag onto the empty space of the area, just return false.
-    if (column == -1 || row == -1 || !data)
+    if (column == -1 || row == -1 || !data) {
+        fmDebug() << "Drop rejected: invalid parameters, column:" << column << "row:" << row << "data:" << (data != nullptr);
         return false;
+    }
 
     Q_ASSERT(column == 0);
 
@@ -56,15 +58,19 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
     };
     SideBarItem *targetItem = this->itemFromIndex(row, parent);
 
-    if (isSeparator(targetItem))   // According to the requirement，sparator does not support to drop.
+    if (isSeparator(targetItem)) {   // According to the requirement，sparator does not support to drop.
+        fmDebug() << "Drop rejected: target is separator";
         return false;
+    }
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction) {
         SideBarItem *sourceItem = curDragItem;
 
-        if (!isSourceItemValid(sourceItem))
+        if (!isSourceItemValid(sourceItem)) {
+            fmWarning() << "Drop rejected: invalid source item";
             return false;
+        }
 
         // normal drag tag or bookmark or quick access
         if (isItemDragEnabled(targetItem) && isTheSameGroup(sourceItem, targetItem))
@@ -84,8 +90,10 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
 
 bool SideBarModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
-    if (!canDropMimeData(data, action, row, column, parent))
+    if (!canDropMimeData(data, action, row, column, parent)) {
+        fmWarning() << "Drop operation failed: canDropMimeData check failed";
         return false;
+    }
 
     return QStandardItemModel::dropMimeData(data, action, row, column, parent);
 }
@@ -94,8 +102,10 @@ QMimeData *SideBarModel::mimeData(const QModelIndexList &indexes) const
 {
     curDragItem = nullptr;
     QMimeData *data = QStandardItemModel::mimeData(indexes);
-    if (!data)
+    if (!data) {
+        fmWarning() << "Failed to create mime data";
         return nullptr;
+    }
     if (!indexes.isEmpty())
         curDragItem = itemFromIndex(indexes.first().row(), indexes.first().parent());
     return data;
@@ -169,11 +179,15 @@ QList<SideBarItem *> SideBarModel::subItems(const QString &groupName) const
 
 bool SideBarModel::insertRow(int row, SideBarItem *item)
 {
-    if (!item)
+    if (!item) {
+        fmWarning() << "Insert row failed: item is null";
         return false;
+    }
 
-    if (0 > row)
+    if (0 > row) {
+        fmWarning() << "Insert row failed: invalid row index:" << row;
         return false;
+    }
 
     if (findRowByUrl(item->url()).row() > 0)
         return true;
@@ -209,8 +223,10 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
 
 int SideBarModel::appendRow(SideBarItem *item, bool direct)
 {
-    if (!item)
+    if (!item) {
+        fmWarning() << "Append row failed: item is null";
         return -1;
+    }
 
     auto r = findRowByUrl(item->url()).row();
     if (r > 0)
@@ -269,8 +285,10 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
 
 bool SideBarModel::removeRow(const QUrl &url)
 {
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Remove row failed: invalid URL:" << url;
         return false;
+    }
 
     int count = this->rowCount();
     for (int i = 0; i < count; i++) {
@@ -294,13 +312,17 @@ bool SideBarModel::removeRow(const QUrl &url)
         }
     }
 
+    fmWarning() << "Item not found for removal, URL:" << url;
     return false;
 }
 
 void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
 {
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Update row failed: invalid URL:" << url;
         return;
+    }
+
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);   // Top item
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
@@ -330,6 +352,8 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
             }
         }
     }
+
+    fmWarning() << "Item not found for update, URL:" << url;
 }
 
 QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
@@ -356,6 +380,7 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
         }
     }
 
+    fmDebug() << "Row not found for URL:" << url;
     return retIndex;
 }
 
