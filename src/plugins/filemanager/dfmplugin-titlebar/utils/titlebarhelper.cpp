@@ -42,8 +42,10 @@ QList<TitleBarWidget *> TitleBarHelper::titlebars()
 
 TitleBarWidget *TitleBarHelper::findTileBarByWindowId(quint64 windowId)
 {
-    if (!kTitleBarMap.contains(windowId))
+    if (!kTitleBarMap.contains(windowId)) {
+        fmWarning() << "Cannot find titlebar widget for window id:" << windowId;
         return nullptr;
+    }
 
     return kTitleBarMap[windowId];
 }
@@ -72,8 +74,10 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
     auto window = FMWindowsIns.findWindowById(id);
     Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
     auto titleBarWidget = dynamic_cast<TitleBarWidget *>(window->titleBar());
-    if (!titleBarWidget || !titleBarWidget->titleBar())
+    if (!titleBarWidget || !titleBarWidget->titleBar()) {
+        fmWarning() << "Cannot create settings menu: invalid titlebar widget for window id" << id;
         return;
+    }
 
     if (window->property("WINDOW_DISABLE_TITLEBAR_MENU").toBool()) {
         titleBarWidget->titleBar()->setDisableFlags(Qt::WindowSystemMenuHint);
@@ -250,20 +254,22 @@ void TitleBarHelper::handleSearch(QWidget *sender, const QString &text)
     if (currentUrl.isValid()) {
         bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
         if (isDisableSearch) {
-            fmInfo() << "search : current directory disable to search! " << currentUrl;
+            fmInfo() << "Search disabled for current directory:" << currentUrl.toString();
             return;
         }
     }
 
-    fmInfo() << "search :" << text;
+    fmInfo() << "Starting search with keyword:" << text;
     TitleBarEventCaller::sendSearch(sender, text);
 }
 
 void TitleBarHelper::openCurrentUrlInNewTab(quint64 windowId)
 {
     FileManagerWindowsManager::FMWindow *window = FMWindowsIns.findWindowById(windowId);
-    if (!window)
+    if (!window) {
+        fmWarning() << "Cannot open new tab: window not found for id" << windowId;
         return;
+    }
 
     TitleBarEventCaller::sendOpenTab(windowId, window->currentUrl());
 }

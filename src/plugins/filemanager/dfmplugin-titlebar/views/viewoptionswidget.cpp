@@ -173,6 +173,7 @@ void ViewOptionsWidgetPrivate::initConnect()
 {
     connect(displayPreviewCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
         bool isChecked = (state == Qt::Checked);
+        fmDebug() << "Display preview state changed to:" << isChecked;
         Q_EMIT q->displayPreviewVisibleChanged(isChecked);
         DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, isChecked);
     });
@@ -183,6 +184,7 @@ void ViewOptionsWidgetPrivate::initConnect()
         map["iconSizeLevel"] = value;
         Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
         Application::appObtuselySetting()->sync();
+        fmDebug() << "Icon size level saved to settings for URL:" << fileUrl.toString();
     });
     connect(iconSizeSlider, &DSlider::iconClicked, this, [this](DSlider::SliderIcons icon, bool checked) {
         if (icon == DSlider::LeftIcon) {
@@ -201,6 +203,7 @@ void ViewOptionsWidgetPrivate::initConnect()
         map["gridDensityLevel"] = value;
         Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
         Application::appObtuselySetting()->sync();
+        fmDebug() << "Grid density level saved to settings for URL:" << fileUrl.toString();
     });
     connect(gridDensitySlider, &DSlider::iconClicked, this, [this](DSlider::SliderIcons icon, bool checked) {
         if (icon == DSlider::LeftIcon) {
@@ -219,6 +222,7 @@ void ViewOptionsWidgetPrivate::initConnect()
         map["listHeightLevel"] = value;
         Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
         Application::appObtuselySetting()->sync();
+        fmDebug() << "List height level saved to settings for URL:" << fileUrl.toString();
     });
     connect(listHeightSlider, &DSlider::iconClicked, this, [this](DSlider::SliderIcons icon, bool checked) {
         if (icon == DSlider::LeftIcon) {
@@ -239,6 +243,7 @@ void ViewOptionsWidgetPrivate::initConnect()
 
 void ViewOptionsWidgetPrivate::setUrl(const QUrl &url)
 {
+    fmDebug() << "Setting URL for view options:" << url.toString();
     fileUrl = url;
     QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
@@ -262,12 +267,14 @@ void ViewOptionsWidgetPrivate::setUrl(const QUrl &url)
 
 void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)
 {
+    fmDebug() << "Switching view options mode to:" << static_cast<int>(mode);
     bool iconVisible = (mode == ViewMode::kIconMode);
     bool listVisible = (mode == ViewMode::kListMode || mode == ViewMode::kTreeMode);
     if (OptionButtonManager::instance()->hasVsibleState(fileUrl.scheme())) {
         auto state = OptionButtonManager::instance()->optBtnVisibleState(fileUrl.scheme());
         bool hideListHeightOpt = state & OptionButtonManager::kHideListHeightOpt;
         listVisible = listVisible && !hideListHeightOpt;
+        fmDebug() << "Option button visibility state applied, hideListHeightOpt:" << hideListHeightOpt;
     }
     iconSizeFrame->setVisible(iconVisible);
     gridDensityFrame->setVisible(iconVisible);
@@ -281,12 +288,15 @@ void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)
         widgetHeight += singleHeight;
     }
     q->setFixedHeight(widgetHeight);
+    fmDebug() << "View options widget height set to:" << widgetHeight;
 }
 
 void ViewOptionsWidgetPrivate::showSliderTips(Dtk::Widget::DSlider *slider, int pos, const QVariantList &valList)
 {
-    if (pos >= valList.count() || valList.count() <= 1)
+    if (pos >= valList.count() || valList.count() <= 1) {
+        fmWarning() << "Invalid slider tip position:" << pos << "or insufficient values:" << valList.count();
         return;
+    }
     int offset = (pos * (slider->slider()->width() - 28)) / (valList.count() - 1);
     QPoint showPoint = slider->slider()->mapToGlobal(QPoint(offset, -52));
     QToolTip::showText(showPoint, valList.at(pos).toString(), slider);
@@ -316,35 +326,37 @@ void ViewOptionsWidget::exec(const QPoint &pos, DFMBASE_NAMESPACE::Global::ViewM
 {
     d->setUrl(url);
     d->switchMode(mode);
-    
+
     // Calculate appropriate display position to ensure widget stays within screen bounds
     QPoint showPos = pos;
 
     if (QApplication::screenAt(pos)) {
-        
+
         QRect screenRect = QApplication::screenAt(pos)->availableGeometry();
 
         // Check right boundary
         if (pos.x() + width() > screenRect.right()) {
             showPos.setX(screenRect.right() - width());
         }
-        
-        // Check left boundary 
+
+        // Check left boundary
         if (showPos.x() < screenRect.left()) {
             showPos.setX(screenRect.left());
         }
-        
+
         // Check bottom boundary
         if (pos.y() + height() > screenRect.bottom()) {
             showPos.setY(screenRect.bottom() - height());
         }
-        
+
         // Check top boundary
         if (showPos.y() < screenRect.top()) {
             showPos.setY(screenRect.top());
         }
+    } else {
+        fmWarning() << "Could not determine screen for position:" << pos;
     }
-    
+
     move(showPos);
     show();
 

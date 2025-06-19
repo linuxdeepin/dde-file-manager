@@ -85,12 +85,13 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
     // connect to server
     if (index == kConnectButton) {
         if (serverComboBox->currentText().isEmpty()) {
+            fmWarning() << "Connect attempt with empty server address";
             close();
             return;
         }
 
         QString url = getCurrentUrlString();
-        fmInfo() << "try connecting" << url;
+        fmInfo() << "Attempting to connect to server:" << url;
         updateCollections(url, false);
 
         const QString &currentDir = QDir::currentPath();
@@ -249,6 +250,7 @@ void ConnectToServerDialog::initServerDatas()
 
         QUrl url(processedUrl);
         if (!expectedSchemes.contains(url.scheme()) || url.host().isEmpty()) {
+            fmDebug() << "Skipping invalid URL in history:" << urlStr;
             return;
         }
 
@@ -303,7 +305,7 @@ QStringList ConnectToServerDialog::updateCollections(const QString &newUrlStr, b
     QUrl newUrl = QUrl::fromUserInput(newUrlStr);
 
     if (newUrl.host().isEmpty()) {
-        fmWarning() << "invalid url" << newUrlStr << "refuse to collect.";
+        fmWarning() << "Invalid URL provided for collection:" << newUrlStr;
         DialogManagerInstance->showErrorDialog(tr("Error"),
                                                tr("Unable to favorite illegitimate url!"));
         return collections;
@@ -338,7 +340,7 @@ QString ConnectToServerDialog::getCurrentUrlString()
         return url;
 
     if (url.contains(QRegularExpression(R"([?&]charset=)"))) {
-        fmInfo() << "user passed the charset param in url." << url;
+        fmDebug() << "User provided charset parameter in URL:" << url;
         return url;
     }
 
@@ -527,10 +529,14 @@ void ConnectToServerDialog::onAddButtonClicked()
 {
     const QString &currScheme = schemeComboBox->currentText();
     const QString &currHost = serverComboBox->currentText();
-    if (currScheme.isEmpty() || currHost.isEmpty())
+    if (currScheme.isEmpty() || currHost.isEmpty()) {
+        fmWarning() << "Cannot add to favorites: scheme or host is empty";
         return;
+    }
 
     const QString &fullUrlStr = getCurrentUrlString();
+    fmInfo() << "Adding server to favorites:" << fullUrlStr;
+
     const QStringList &collections = updateCollections(fullUrlStr, true);
     model->setStringList(collections);
 
