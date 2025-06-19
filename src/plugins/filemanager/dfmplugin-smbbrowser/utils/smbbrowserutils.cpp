@@ -70,7 +70,7 @@ QString getDeviceIdByStdSmb(const QString &stdSmb)
             return id;
     }
 
-    fmDebug() << "cannot find matched device id of" << stdSmb;
+    fmWarning() << "No matching device ID found for SMB path:" << stdSmb << "using path as fallback";
     return stdSmb;
 }
 
@@ -81,8 +81,10 @@ QString getDeviceIdByStdSmb(const QString &stdSmb)
  */
 bool isServiceRuning(const QString &service)
 {
-    if (service.isEmpty() || (service != "smb" && service != "nmb"))
+    if (service.isEmpty() || (service != "smb" && service != "nmb")) {
+        fmWarning() << "Invalid service name for status check:" << service;
         return false;
+    }
 
     QDBusInterface iface("org.freedesktop.systemd1",
                          QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
@@ -93,6 +95,8 @@ bool isServiceRuning(const QString &service)
         const QVariant &variantStatus = iface.property("SubState");   // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
         if (variantStatus.isValid())
             return "running" == variantStatus.toString();
+    } else {
+        fmWarning() << "Failed to create D-Bus interface for service:" << service;
     }
     return false;
 }
@@ -104,8 +108,10 @@ bool isServiceRuning(const QString &service)
  */
 bool startService(const QString &service)
 {
-    if (service.isEmpty() || (service != "smb" && service != "nmb"))
+    if (service.isEmpty() || (service != "smb" && service != "nmb")) {
+        fmWarning() << "Invalid service name for start operation:" << service;
         return false;
+    }
 
     fmDebug() << QString("activate smbd: construct %1d interface").arg(service);
     QDBusInterface iface("org.freedesktop.systemd1",
@@ -131,12 +137,19 @@ void enableServiceAsync()
 
 bool checkAndEnableService(const QString &service)
 {
-    if (isServiceRuning(service))
-        return true;
-    if (startService(service)) {
-        enableServiceAsync();
+    if (isServiceRuning(service)) {
+        fmDebug() << "Service already running:" << service;
         return true;
     }
+
+    fmDebug() << "Service not running, attempting to start:" << service;
+    if (startService(service)) {
+        enableServiceAsync();
+        fmDebug() << "Successfully started and enabled service:" << service;
+        return true;
+    }
+
+    fmCritical() << "Failed to start service:" << service;
     return false;
 }
 
