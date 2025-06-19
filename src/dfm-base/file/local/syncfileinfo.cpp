@@ -888,6 +888,9 @@ QString SyncFileInfoPrivate::symLinkTarget() const
         symLinkTarget.prepend(currPath);
     }
 
+    if (symLinkTarget.endsWith("/"))
+        symLinkTarget.chop(1);
+
     return symLinkTarget;
 }
 
