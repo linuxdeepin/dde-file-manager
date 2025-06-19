@@ -27,9 +27,6 @@ SimplifiedSearchWorker::SimplifiedSearchWorker(QObject *parent)
       isRunning(false),
       finishedSearcherCount(0)
 {
-    // 设置定时检查结果的计时器
-    resultTimer.setInterval(50);   // 50ms定时更新UI
-    connect(&resultTimer, &QTimer::timeout, this, &SimplifiedSearchWorker::onCheckResults);
 }
 
 SimplifiedSearchWorker::~SimplifiedSearchWorker()
@@ -62,16 +59,12 @@ void SimplifiedSearchWorker::startSearch()
 
     // 创建搜索器并启动搜索
     createSearchers();
-
-    // 启动结果更新计时器
-    resultTimer.start();
 }
 
 void SimplifiedSearchWorker::stopSearch()
 {
     isRunning = false;
-    // 停止计时器
-    resultTimer.stop();
+
     cleanupSearchers();
 }
 
@@ -222,14 +215,6 @@ void SimplifiedSearchWorker::mergeResults(AbstractSearcher *searcher)
                 resultMap.insert(url, it.value());
             }
         }
-    }
-}
-
-void SimplifiedSearchWorker::onCheckResults()
-{
-    // 定时检查结果并通知UI更新
-    if (isRunning && !resultMap.isEmpty()) {
-        emit resultsUpdated(taskId);
     }
 }
 

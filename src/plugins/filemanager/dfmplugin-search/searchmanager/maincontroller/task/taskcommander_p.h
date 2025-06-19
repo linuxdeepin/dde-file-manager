@@ -35,11 +35,11 @@ public:
     Q_INVOKABLE void setTaskId(const QString &id) { taskId = id; }
     Q_INVOKABLE void setSearchUrl(const QUrl &url) { searchUrl = url; }
     Q_INVOKABLE void setKeyword(const QString &keyword) { searchKeyword = keyword; }
-    
+
     // 获取结果
     Q_INVOKABLE DFMSearchResultMap getResults();
     Q_INVOKABLE QList<QUrl> getResultUrls();
-    
+
     // 控制搜索流程
     Q_INVOKABLE void startSearch();
     Q_INVOKABLE void stopSearch();
@@ -54,7 +54,6 @@ protected:
 private slots:
     void onSearcherFinished();
     void onSearcherUnearthed();
-    void onCheckResults();
 
 private:
     void createSearchers();
@@ -66,14 +65,13 @@ private:
     QString taskId;
     QUrl searchUrl;
     QString searchKeyword;
-    
+
     QList<AbstractSearcher *> searchers;
     DFMSearchResultMap resultMap;
-    
+
     QReadWriteLock rwLock;
     QMutex mutex;
-    QTimer resultTimer;
-    
+
     bool isRunning { false };
     int finishedSearcherCount { 0 };
 };
@@ -97,10 +95,10 @@ private slots:
 private:
     TaskCommander *q { nullptr };
     QString taskId { "" };
-    
+
     QThread workerThread;
     SimplifiedSearchWorker *searchWorker { nullptr };
-    
+
     bool deleted { false };
 };
 
