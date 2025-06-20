@@ -25,18 +25,21 @@ SearchManager *SearchManager::instance()
 
 bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword)
 {
+    fmInfo() << "Starting search task - winId:" << winId << "taskId:" << taskId << "url:" << url.toString() << "keyword:" << keyword;
+
     // Save task information
     taskInfoMap[taskId] = qMakePair(url, keyword);
-    
+
     // Track all search tasks for this window
     winTasksMap.insert(winId, taskId);
-    
+
     // Perform search
     if (mainController) {
         taskIdMap[winId] = taskId;
         return mainController->doSearchTask(taskId, url, keyword);
     }
 
+    fmWarning() << "MainController not available, cannot start search task:" << taskId;
     return false;
 }
 
@@ -46,6 +49,7 @@ DFMSearchResultMap SearchManager::matchedResults(const QString &taskId)
     if (mainController)
         return mainController->getResults(taskId);
 
+    fmWarning() << "MainController not available, cannot retrieve results for taskId:" << taskId;
     return {};
 }
 
@@ -55,6 +59,7 @@ QList<QUrl> SearchManager::matchedResultUrls(const QString &taskId)
     if (mainController)
         return mainController->getResultUrls(taskId);
 
+    fmWarning() << "MainController not available, cannot retrieve result URLs for taskId:" << taskId;
     return {};
 }
 
@@ -70,11 +75,13 @@ void SearchManager::stop(quint64 winId)
 {
     if (taskIdMap.contains(winId)) {
         QString taskId = taskIdMap[winId];
-        
+
         // Remove all tasks associated with this window
         winTasksMap.remove(winId);
-        
+
         stop(taskId);
+    } else {
+        fmDebug() << "No active search task found for window:" << winId;
     }
 }
 
@@ -88,6 +95,9 @@ void SearchManager::onDConfigValueChanged(const QString &config, const QString &
     QVariantMap data;
     bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
     data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
+
+    fmInfo() << "Full-text search configuration changed - enabled:" << enabled;
+
     dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", QString("Search"), data);
 
     emit enableFullTextSearchChanged(enabled);
@@ -108,6 +118,7 @@ void SearchManager::init()
     Q_ASSERT(mainController == nullptr);
 
     mainController = new MainController(this);
+
     // Direct connection to prevent event loop from disrupting the sequence
     connect(mainController, &MainController::matched, this, &SearchManager::matched, Qt::QueuedConnection);
     connect(mainController, &MainController::searchCompleted, this, &SearchManager::searchCompleted, Qt::QueuedConnection);

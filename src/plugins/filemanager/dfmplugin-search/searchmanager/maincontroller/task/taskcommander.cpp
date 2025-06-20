@@ -306,6 +306,8 @@ TaskCommander::TaskCommander(QString taskId, const QUrl &url, const QString &key
                     d->searchWorker->setKeyword(keyword);
                 },
                 Qt::QueuedConnection);
+    } else {
+        fmWarning() << "Failed to create search worker for task:" << taskId;
     }
 }
 
@@ -320,8 +322,10 @@ QString TaskCommander::taskID() const
 
 DFMSearchResultMap TaskCommander::getResults() const
 {
-    if (!d->searchWorker)
+    if (!d->searchWorker) {
+        fmWarning() << "Search worker not available for getting results";
         return DFMSearchResultMap();
+    }
 
     DFMSearchResultMap results;
     QMetaObject::invokeMethod(d->searchWorker, "getResults", Qt::DirectConnection,
@@ -332,8 +336,10 @@ DFMSearchResultMap TaskCommander::getResults() const
 
 QList<QUrl> TaskCommander::getResultsUrls() const
 {
-    if (!d->searchWorker)
+    if (!d->searchWorker) {
+        fmWarning() << "Search worker not available for getting result URLs";
         return QList<QUrl>();
+    }
 
     QList<QUrl> results;
     QMetaObject::invokeMethod(d->searchWorker, "getResultUrls", Qt::DirectConnection,
@@ -344,8 +350,10 @@ QList<QUrl> TaskCommander::getResultsUrls() const
 
 bool TaskCommander::start()
 {
-    if (!d->searchWorker)
+    if (!d->searchWorker) {
+        fmWarning() << "Cannot start search, search worker not available";
         return false;
+    }
 
     QMetaObject::invokeMethod(d->searchWorker, "startSearch", Qt::QueuedConnection);
     return true;

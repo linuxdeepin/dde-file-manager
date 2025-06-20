@@ -58,6 +58,8 @@ void MainController::stop(QString taskId)
     if (taskManager.contains(taskId)) {
         taskManager[taskId]->stop();
         taskManager.remove(taskId);
+    } else {
+        fmWarning() << "Cannot stop task, task not found:" << taskId;
     }
 }
 

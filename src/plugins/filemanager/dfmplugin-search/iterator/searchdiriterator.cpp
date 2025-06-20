@@ -56,6 +56,7 @@ void SearchDirIteratorPrivate::doSearch()
         searchRootWatcher->startWatcher();
         connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
             if (UniversalUtils::urlEquals(targetUrl, url)) {
+                fmWarning() << "Search target deleted, stopping search:" << url;
                 SearchManager::instance()->stop(taskId);
                 SearchEventCaller::sendChangeCurrentUrl(winId, QUrl("computer:///"));
             }
@@ -63,7 +64,10 @@ void SearchDirIteratorPrivate::doSearch()
     }
 
     bool isDisable = CustomManager::instance()->isDisableSearch(targetUrl);
-    if (isDisable) return;
+    if (isDisable) {
+        fmDebug() << "Search disabled for target:" << targetUrl;
+        return;
+    }
 
     QString redirectedPath = CustomManager::instance()->redirectedPath(targetUrl);
     if (!redirectedPath.isEmpty()) {
@@ -239,8 +243,10 @@ void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
 
     QUrl url = sortInfo->fileUrl();
 
-    if (!url.isLocalFile())
+    if (!url.isLocalFile()) {
+        fmWarning() << "Cannot complete sort info for non-local file:" << url;
         return;
+    }
 
     struct stat64 statBuffer;
     const QString filePath = url.path();

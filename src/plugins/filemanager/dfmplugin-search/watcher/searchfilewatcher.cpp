@@ -80,8 +80,10 @@ void SearchFileWatcher::addWatcher(const QUrl &url)
         return;
 
     AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(url);
-    if (!watcher)
+    if (!watcher) {
+        fmWarning() << "Failed to create watcher for URL:" << url.toString();
         return;
+    }
 
     watcher->moveToThread(this->thread());
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &SearchFileWatcher::onFileAttributeChanged);
@@ -136,28 +138,36 @@ void SearchFileWatcher::handleFileAdd(const QUrl &url)
 {
     // 首先检查文件是否在搜索目录范围内
     auto targetUrl = SearchHelper::searchTargetUrl(this->url());
-    if (!url.path().startsWith(targetUrl.path()))
+    if (!url.path().startsWith(targetUrl.path())) {
+        fmDebug() << "File add ignored: not within search target path" << targetUrl.path();
         return;
+    }
 
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
     if (url.fileName().contains(searchKey) &&
             !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
-                                  targetUrl, url))
+                                  targetUrl, url)) {
+        fmDebug() << "File add matches search criteria:" << url.toString();
         onFileAdd(url);
+    }
 }
 
 void SearchFileWatcher::handleFileDelete(const QUrl &url)
 {
     // 首先检查文件是否在搜索目录范围内
     auto targetUrl = SearchHelper::searchTargetUrl(this->url());
-    if (!url.path().startsWith(targetUrl.path()))
+    if (!url.path().startsWith(targetUrl.path())) {
+        fmDebug() << "File delete ignored: not within search target path" << targetUrl.path();
         return;
+    }
 
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
-    if (url.fileName().contains(searchKey)&&
+    if (url.fileName().contains(searchKey) &&
             !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
-                                  targetUrl, url))
+                                  targetUrl, url)) {
+        fmDebug() << "File delete matches search criteria:" << url.toString();
         onFileDeleted(url);
+    }
 }
 
 void SearchFileWatcher::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
@@ -166,28 +176,37 @@ void SearchFileWatcher::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
     auto targetUrl = SearchHelper::searchTargetUrl(this->url());
     bool oldInScope = oldUrl.path().startsWith(targetUrl.path());
     bool newInScope = newUrl.path().startsWith(targetUrl.path());
-    
+
     // 如果两个URL都不在搜索范围内，则直接返回
-    if (!oldInScope && !newInScope)
+    if (!oldInScope && !newInScope) {
+        fmDebug() << "File rename ignored: neither URL is within search target path";
         return;
+    }
 
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
     auto oldMatch = oldUrl.fileName().contains(searchKey), newMatch = newUrl.fileName().contains(searchKey);
-    if (!oldMatch && !newMatch)
+    if (!oldMatch && !newMatch) {
+        fmDebug() << "File rename ignored: neither filename matches search keyword";
         return;
+    }
+
     auto old = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
                                     targetUrl, oldUrl);
     auto target = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
                                        targetUrl, newUrl);
     if ((oldMatch && old && oldInScope) && (newMatch && target && newInScope)) {
+        fmDebug() << "File rename event emitted - both URLs valid:" << oldUrl.toString() << "to" << newUrl.toString();
         emit fileRename(oldUrl, newUrl);
     }
 
-    if (old && oldMatch && oldInScope)
+    if (old && oldMatch && oldInScope) {
+        fmDebug() << "Emitting file delete for old URL:" << oldUrl.toString();
         return onFileDeleted(oldUrl);
+    }
 
-    if (target && newMatch && newInScope)
+    if (target && newMatch && newInScope) {
+        fmDebug() << "Emitting file add for new URL:" << newUrl.toString();
         return onFileAdd(newUrl);
+    }
 }
-
 }
