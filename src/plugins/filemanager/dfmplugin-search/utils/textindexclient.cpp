@@ -16,7 +16,7 @@ void registerMetaTypes()
     static bool registered = false;
     if (!registered) {
         int id = qRegisterMetaType<DPSEARCH_NAMESPACE::TextIndexClient::TaskType>("DPSEARCH_NAMESPACE::TextIndexClient::TaskType");
-        fmDebug() << "Meta type registered with id:" << id;
+        fmDebug() << "TextIndex meta type registered with id:" << id;
         registered = true;
     }
 }
@@ -54,9 +54,12 @@ bool TextIndexClient::ensureInterface()
             auto reply = sessionBusIface->startService("org.deepin.Filemanager.TextIndex");
             if (!reply.isValid())
                 fmWarning() << "[TextIndex] Failed to start service:" << reply.error().message();
+        } else {
+            fmDebug() << "TextIndex service already registered";
         }
 
         // 创建接口
+        fmDebug() << "Creating new TextIndex D-Bus interface";
         interface.reset(new OrgDeepinFilemanagerTextIndexInterface(
                 "org.deepin.Filemanager.TextIndex",
                 "/org/deepin/Filemanager/TextIndex",
@@ -77,6 +80,8 @@ bool TextIndexClient::ensureInterface()
                 this, &TextIndexClient::onDBusTaskProgressChanged);
 
         fmInfo() << "[TextIndex] Interface successfully initialized";
+    } else {
+        fmDebug() << "TextIndex interface already available and valid";
     }
 
     return interface && interface->isValid();
@@ -85,6 +90,7 @@ bool TextIndexClient::ensureInterface()
 void TextIndexClient::checkServiceStatus()
 {
     if (!ensureInterface()) {
+        fmWarning() << "Cannot check service status: interface unavailable";
         emit serviceStatusResult(ServiceStatus::Unavailable);
         return;
     }
@@ -103,8 +109,10 @@ void TextIndexClient::handleServiceTestReply(QDBusPendingCallWatcher *watcher)
     QDBusPendingReply<bool> reply = *watcher;
 
     if (reply.isError()) {
+        fmWarning() << "TextIndex service test failed:" << reply.error().message();
         emit serviceStatusResult(ServiceStatus::Error);
     } else {
+        fmDebug() << "TextIndex service is available and responding";
         emit serviceStatusResult(ServiceStatus::Available);
     }
 }
@@ -112,6 +120,7 @@ void TextIndexClient::handleServiceTestReply(QDBusPendingCallWatcher *watcher)
 void TextIndexClient::checkIndexExists()
 {
     if (!ensureInterface()) {
+        fmWarning() << "Cannot check index existence: interface unavailable";
         emit indexExistsResult(false, false);
         return;
     }
@@ -129,6 +138,7 @@ void TextIndexClient::handleIndexExistsReply(QDBusPendingCallWatcher *watcher)
     QDBusPendingReply<bool> reply = *watcher;
 
     if (reply.isError()) {
+        fmWarning() << "Failed to check if TextIndex database exists:" << reply.error().message();
         emit indexExistsResult(false, false);
     } else {
         emit indexExistsResult(reply.value(), true);
@@ -138,6 +148,7 @@ void TextIndexClient::handleIndexExistsReply(QDBusPendingCallWatcher *watcher)
 void TextIndexClient::startTask(TaskType type, const QStringList &paths)
 {
     if (!ensureInterface()) {
+        fmCritical() << "Cannot start TextIndex task: interface unavailable";
         emit taskFailed(type, paths.join("|"), "Failed to connect to service");
         return;
     }
@@ -146,13 +157,15 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
     QDBusPendingReply<bool> pendingTask;
     switch (type) {
     case TaskType::Create:
+        fmDebug() << "Sending CreateIndexTask request for paths:" << paths;
         pendingTask = interface->CreateIndexTask(paths);
         break;
     case TaskType::Update:
+        fmDebug() << "Sending UpdateIndexTask request for paths:" << paths;
         pendingTask = interface->UpdateIndexTask(paths);
         break;
     default:
-        fmWarning() << "Unknown task type:" << static_cast<int>(type);
+        fmWarning() << "Unknown TextIndex task type:" << static_cast<int>(type);
         return;
     }
 
@@ -164,8 +177,9 @@ void TextIndexClient::startTask(TaskType type, const QStringList &paths)
         QDBusPendingReply<bool> reply = *watcher;
 
         if (reply.isError() || !reply.value()) {
-            emit taskFailed(type, paths.join("|"),
-                            reply.isError() ? reply.error().message() : "Failed to start task");
+            QString errorMsg = reply.isError() ? reply.error().message() : "Failed to start task";
+            fmWarning() << "TextIndex task start failed:" << errorMsg;
+            emit taskFailed(type, paths.join("|"), errorMsg);
             return;
         }
 
@@ -194,7 +208,7 @@ TextIndexClient::TaskType TextIndexClient::stringToTaskType(const QString &type)
     };
 
     if (!typeMap.contains(type)) {
-        fmWarning() << "Unknown task type string:" << type;
+        fmWarning() << "Unknown TextIndex task type string:" << type << "using default Create type";
         return TaskType::Create;   // 默认返回类型
     }
     return typeMap.value(type);
@@ -209,8 +223,10 @@ void TextIndexClient::onDBusTaskFinished(const QString &type, const QString &pat
     TaskType taskType = stringToTaskType(type);
 
     if (success) {
+        fmDebug() << "TextIndex task completed successfully:" << type << "path:" << path;
         emit taskFinished(taskType, path, true);
     } else {
+        fmWarning() << "TextIndex task failed:" << type << "path:" << path;
         emit taskFailed(taskType, path, "Task failed");
     }
 }
@@ -228,6 +244,7 @@ void TextIndexClient::onDBusTaskProgressChanged(const QString &type, const QStri
 void TextIndexClient::checkHasRunningTask()
 {
     if (!ensureInterface()) {
+        fmWarning() << "Cannot check running tasks: interface unavailable";
         emit hasRunningTaskResult(false, false);
         return;
     }
@@ -255,6 +272,7 @@ void TextIndexClient::handleHasRunningTaskReply(QDBusPendingCallWatcher *watcher
 void TextIndexClient::checkHasRunningRootTask()
 {
     if (!ensureInterface()) {
+        fmWarning() << "Cannot check running root tasks: interface unavailable";
         emit hasRunningRootTaskResult(false, false);
         return;
     }
@@ -269,6 +287,7 @@ void TextIndexClient::checkHasRunningRootTask()
         QDBusPendingReply<bool> reply = *watcher;
 
         if (reply.isError()) {
+            fmWarning() << "Failed to check TextIndex root task:" << reply.error().message();
             emit hasRunningRootTaskResult(false, false);
             return;
         }
@@ -283,6 +302,7 @@ void TextIndexClient::checkHasRunningRootTask()
 void TextIndexClient::getLastUpdateTime()
 {
     if (!ensureInterface()) {
+        fmWarning() << "Cannot get last update time: interface unavailable";
         emit lastUpdateTimeResult(QString(), false);
         return;
     }
@@ -296,6 +316,8 @@ void TextIndexClient::setEnable(bool enabled)
 {
     if (ensureInterface()) {
         interface->SetEnabled(enabled);
+    } else {
+        fmWarning() << "Cannot set TextIndex enabled state: interface unavailable";
     }
 }
 

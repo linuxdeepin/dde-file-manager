@@ -21,8 +21,10 @@ CustomManager *CustomManager::instance()
 
 bool dfmplugin_search::CustomManager::registerCustomInfo(const QString &scheme, const QVariantMap &properties)
 {
-    if (isRegisted(scheme))
+    if (isRegisted(scheme)) {
+        fmDebug() << "Scheme already registered:" << scheme;
         return false;
+    }
 
     customInfos.insert(scheme, properties);
     return true;
@@ -68,7 +70,9 @@ QString CustomManager::redirectedPath(const QUrl &url)
     if (path.endsWith('/') && !targetPath.isEmpty())
         path = path.left(path.length() - 1);
 
-    return (path + targetPath);
+    QString finalPath = path + targetPath;
+    fmInfo() << "Redirected path for URL" << url.toString() << ":" << finalPath;
+    return finalPath;
 }
 
 bool CustomManager::isUseNormalMenu(const QString &scheme)
