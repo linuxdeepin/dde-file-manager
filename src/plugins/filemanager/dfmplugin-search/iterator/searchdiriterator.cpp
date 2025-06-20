@@ -79,23 +79,24 @@ void SearchDirIteratorPrivate::doSearch()
 void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
-        // 从SearchManager获取结果，这些结果已经经过合并处理
+        // 直接在主线程更新结果，但使用高效的双缓冲机制
         const auto &results = SearchManager::instance()->matchedResults(taskId);
-        if (results.isEmpty())
-            return;
-            
-        QMutexLocker lk(&mutex);
-        childrens = results;
-    }
+        if (!results.isEmpty()) {
+            resultBuffer.updateResults(results);
+            hasConsumedResults.store(false, std::memory_order_release);   // 标记有新数据
+        }
 
-    resultWaitCond.wakeAll();
+        // 通知等待的消费者
+        QMutexLocker lk(&waitMutex);
+        resultWaitCond.wakeAll();
+    }
 }
 
 void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
 {
     if (taskId == id) {
         fmInfo() << "taskId: " << taskId << "search completed!";
-        searchFinished = true;
+        searchFinished.store(true, std::memory_order_release);
     }
 
     resultWaitCond.wakeAll();
@@ -104,7 +105,7 @@ void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
 void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
 {
     if (taskId == id) {
-        searchStoped = true;
+        searchStoped.store(true, std::memory_order_release);
         emit q->sigStopSearch();
         if (searchRootWatcher)
             searchRootWatcher->stopWatcher();
@@ -160,31 +161,47 @@ QUrl SearchDirIterator::url() const
 QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
 {
     QList<QSharedPointer<SortFileInfo>> result;
-    
+
     // 确保搜索已经开始
     std::call_once(d->searchOnceFlag, [this]() {
-        d->searchStoped = false;
+        d->searchStoped.store(false, std::memory_order_release);
         emit this->sigSearch();
     });
-    
-    // Lock and wait for children to be populated or search to stop/finish.
-    QMutexLocker lk(&d->mutex);
-    while (d->childrens.isEmpty() && !d->searchStoped) {
-        if (d->searchFinished)
-            break;
-        d->resultWaitCond.wait(&d->mutex);
+
+    // 等待搜索结果或搜索完成/停止
+    {
+        QMutexLocker lk(&d->waitMutex);
+        while ((d->resultBuffer.isEmpty() || d->hasConsumedResults.load(std::memory_order_acquire)) && !d->searchStoped.load(std::memory_order_acquire)) {
+            if (d->searchFinished.load(std::memory_order_acquire))
+                break;
+            d->resultWaitCond.wait(&d->waitMutex);
+        }
     }
-    if (d->searchFinished && d->childrens.isEmpty())
+
+    // 修复：搜索完成时，仍需检查是否有未消费的结果
+    // 只有在搜索完成且缓冲区为空且已消费过结果的情况下才返回空
+    if (d->searchFinished.load(std::memory_order_acquire) && d->resultBuffer.isEmpty() && d->hasConsumedResults.load(std::memory_order_acquire))
         return {};
 
-    for (auto it = d->childrens.begin(); it != d->childrens.end(); ++it) {
+    const auto results = d->resultBuffer.consumeResults();
+
+    // 如果没有新结果且搜索已完成，返回空
+    if (results.isEmpty() && d->searchFinished.load(std::memory_order_acquire))
+        return {};
+
+    // TODO (perf) : 存在性能问题，重复获取全量数据
+    // 在子线程中处理数据，不影响主线程
+    for (auto it = results.begin(); it != results.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
         doCompleteSortInfo(sortInfo);
         result.append(sortInfo);
     }
-    d->childrens.clear();
+
+    // 标记结果已被消费，避免重复处理
+    d->hasConsumedResults.store(true, std::memory_order_release);
+
     return result;
 }
 
@@ -200,16 +217,19 @@ bool SearchDirIterator::isWaitingForUpdates() const
 {
     // We're waiting for updates if:
     // 1. Search has started (check if the once_flag has been called)
-    // 2. Search is not finished 
+    // 2. Search is not finished OR the result buffer is not empty
     // 3. Search is not stopped
-    
+
     // Since we can't directly check if once_flag has been called,
-    // we can infer it from the taskId not being empty
-    
-    // Protect access to shared variables
-    QMutexLocker lk(&d->mutex);
-    
-    return !d->taskId.isEmpty() && !d->searchFinished && !d->searchStoped;
+    // we can infer it from the taskId not being empty.
+
+    // We are waiting for updates if the search is not finished yet,
+    // OR if the search is finished but there are still results in the buffer.
+    const bool hasPendingResults = !d->resultBuffer.isEmpty();
+    const bool isSearchInProgress = !d->searchFinished.load(std::memory_order_acquire);
+    return !d->taskId.isEmpty()
+            && (isSearchInProgress || hasPendingResults)
+            && !d->searchStoped.load(std::memory_order_acquire);
 }
 
 void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
@@ -228,33 +248,73 @@ void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
     if (::stat64(filePath.toUtf8().constData(), &statBuffer) != 0)
         return;
 
-             // 一次性设置所有从 stat64 获取的信息
+    // 一次性设置所有从 stat64 获取的信息
 
-             // 基础信息
+    // 基础信息
     sortInfo->setSize(statBuffer.st_size);
     sortInfo->setFile(S_ISREG(statBuffer.st_mode));
     sortInfo->setDir(S_ISDIR(statBuffer.st_mode));
     sortInfo->setSymlink(S_ISLNK(statBuffer.st_mode));
 
-             // 隐藏文件检查
+    // 隐藏文件检查
     QString fileName = url.fileName();
     sortInfo->setHide(fileName.startsWith('.'));
 
-             // 权限信息
+    // 权限信息
     sortInfo->setReadable(statBuffer.st_mode & S_IRUSR);
     sortInfo->setWriteable(statBuffer.st_mode & S_IWUSR);
     sortInfo->setExecutable(statBuffer.st_mode & S_IXUSR);
 
-             // 时间信息
+    // 时间信息
     sortInfo->setLastReadTime(statBuffer.st_atime);
     sortInfo->setLastModifiedTime(statBuffer.st_mtime);
     sortInfo->setCreateTime(statBuffer.st_ctime);
 
-             // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
+    // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
     sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
 
-             // 标记所有信息已完成
+    // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
+}
+
+// ======== SearchResultBuffer 实现 ========
+
+void SearchResultBuffer::updateResults(const DFMSearchResultMap &newResults)
+{
+    QMutexLocker lock(&writerMutex);
+
+    // 写入非活跃缓冲区
+    if (useBufferA.load(std::memory_order_acquire)) {
+        bufferB = newResults;
+        useBufferA.store(false, std::memory_order_release);   // 原子切换
+    } else {
+        bufferA = newResults;
+        useBufferA.store(true, std::memory_order_release);   // 原子切换
+    }
+}
+
+DFMSearchResultMap SearchResultBuffer::getResults() const
+{
+    // 无锁读取活跃缓冲区
+    return useBufferA.load(std::memory_order_acquire) ? bufferA : bufferB;
+}
+
+DFMSearchResultMap SearchResultBuffer::consumeResults()
+{
+    QMutexLocker lock(&writerMutex);
+    DFMSearchResultMap results;
+    if (useBufferA.load(std::memory_order_acquire)) {
+        results.swap(bufferA);
+    } else {
+        results.swap(bufferB);
+    }
+    return results;
+}
+
+bool SearchResultBuffer::isEmpty() const
+{
+    // 检查当前活跃缓冲区是否为空
+    return useBufferA.load(std::memory_order_acquire) ? bufferA.isEmpty() : bufferB.isEmpty();
 }
 
 }

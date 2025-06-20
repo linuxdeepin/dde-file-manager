@@ -61,7 +61,6 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
     FileInfoPointer file = fileInfo(index);
     if (!file.get()) {
-        fmDebug() << "No file info available for transparency check at index:" << index.row();
         return false;
     }
 
@@ -114,10 +113,10 @@ QWidget *FileViewHelper::indexWidget(const QModelIndex &index) const
 
 int FileViewHelper::selectedIndexsCount() const
 {
-    //When using the FileView selection model
-    //please be careful not to call it directly.
-    //It needs to be strongly converted, otherwise it will call the QT native selection model
-    //causing data errors and affecting performance
+    // When using the FileView selection model
+    // please be careful not to call it directly.
+    // It needs to be strongly converted, otherwise it will call the QT native selection model
+    // causing data errors and affecting performance
     return parent()->selectedIndexCount();
 }
 
@@ -404,7 +403,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     fmDebug() << "Committing file rename from:" << originalName << "to:" << newFileName;
     fmDebug() << "Old URL:" << oldUrl.toString() << "New URL:" << newUrl.toString();
 
-    //Todo(yanghao): tag
+    // Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 

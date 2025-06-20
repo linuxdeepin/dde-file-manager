@@ -11,7 +11,7 @@
 #include <QElapsedTimer>
 #include <QDebug>
 
-typedef QList<QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo>>& SortInfoList;
+typedef QList<QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo>> &SortInfoList;
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
@@ -93,9 +93,9 @@ void TraversalDirThreadManager::start()
 
     running = true;
     if (this->sortRole != dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault
-            && dirIterator->oneByOne()) {
+        && dirIterator->oneByOne()) {
         fmDebug() << "Setting QueryAttributes for sorted one-by-one iteration";
-        dirIterator->setProperty("QueryAttributes","standard::name,standard::type,standard::size,\
+        dirIterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,\
                                   standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
     }
 
