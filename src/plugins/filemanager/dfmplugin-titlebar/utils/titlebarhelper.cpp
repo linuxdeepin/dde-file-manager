@@ -247,9 +247,6 @@ void TitleBarHelper::handleSearch(QWidget *sender, const QString &text)
     if (curTitleBar)
         currentUrl = curTitleBar->currentUrl();
 
-    if (currentUrl.isLocalFile())
-        QDir::setCurrent(currentUrl.toLocalFile());
-
     if (currentUrl.isValid()) {
         bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
         if (isDisableSearch) {
