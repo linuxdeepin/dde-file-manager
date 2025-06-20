@@ -178,8 +178,6 @@ void Search::bindEvents()
                                    SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_FilterView_Show",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
-                                   SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleAddressInputStr);
 
