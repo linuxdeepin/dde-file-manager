@@ -8,6 +8,7 @@
 #include "dfmplugin_optical_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_optical {
 

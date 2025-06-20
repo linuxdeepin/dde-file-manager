@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultvisiblemanager.h"
-#include "utils/policy/policymanager.h"
 #include "fileutils/vaultfileinfo.h"
 #include "utils/vaulthelper.h"
 #include "fileutils/vaultfileiterator.h"
@@ -12,12 +11,11 @@
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"
-#include "utils/policy/policymanager.h"
 #include "utils/servicemanager.h"
 #include "menus/vaultmenuscene.h"
 #include "menus/vaultcomputermenuscene.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/base/schemefactory.h>
@@ -48,18 +46,12 @@ VaultVisibleManager::VaultVisibleManager(QObject *parent)
 {
 }
 
-bool VaultVisibleManager::isVaultEnabled()
-{
-    return PolicyManager::isVaultVisiable();
-}
-
 void VaultVisibleManager::infoRegister()
 {
-    PolicyManager::instance()->slotVaultPolicy();
-    if (isVaultEnabled() && !infoRegisterState) {
+    if (!infoRegisterState) {
         UrlRoute::regScheme(VaultHelper::instance()->scheme(), "/", VaultHelper::instance()->icon(), true, tr("My Vault"));
 
-        //注册Scheme为"vault"的扩展的文件信息
+        // 注册Scheme为"vault"的扩展的文件信息
         InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
         WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme(), WatcherFactory::kNoCache);
         DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
@@ -69,9 +61,6 @@ void VaultVisibleManager::infoRegister()
 
 void VaultVisibleManager::pluginServiceRegister()
 {
-    if (!isVaultEnabled())
-        return;
-
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
 
@@ -116,11 +105,6 @@ void VaultVisibleManager::addVaultComputerMenu()
 
 void VaultVisibleManager::updateSideBarVaultItem()
 {
-    // It is not clear if this configuration still requires
-    // TODO: If it's still needed. maybe hide valut ?
-    if (!isVaultEnabled())
-        return;
-
     static std::once_flag flag;
     std::call_once(flag, []() {
         ItemClickedActionCallback cdCb { VaultHelper::siderItemClicked };
@@ -148,8 +132,6 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
         updateSideBarVaultItem();
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
-
-    VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
 void VaultVisibleManager::removeSideBarVaultItem()

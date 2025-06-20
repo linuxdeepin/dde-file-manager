@@ -8,6 +8,7 @@
 #include "dfmplugin_search_global.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/sortfileinfo.h>
 
 #include <dboxwidget.h>
 
@@ -28,7 +29,7 @@ QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-using FilterCallback = std::function<bool(DFMBASE_NAMESPACE::FileInfo *info, QVariant data)>;
+using FilterCallback = std::function<bool(DFMBASE_NAMESPACE::SortFileInfo *info, QVariant data)>;
 
 namespace dfmplugin_search {
 
@@ -70,11 +71,8 @@ public:
     bool contains(const QUrl &url);
     void saveOptions(QMap<int, QVariant> &options);
 
-    static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::FileInfo *info, QVariant data);
+    static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::SortFileInfo *info, QVariant data);
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
-
-public Q_SLOTS:
-    void updateBackgroundColor();
 
 public:
     QBoxLayout *mainLayout;

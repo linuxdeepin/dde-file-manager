@@ -14,7 +14,8 @@
 #include "tagdbupgradeunit.h"
 #include "smbvirtualentryupgradeunit.h"
 #include "vaultupgradeunit.h"
-
+#include "desktoporganizeupgradeunit.h"
+#include "appattributeupgradeunit.h"
 // units end
 
 #include <QList>
@@ -33,7 +34,9 @@ inline QList<QSharedPointer<UpgradeUnit>> createUnits()
         RegUnit(dfm_upgrade::BookMarkUpgradeUnit),
         RegUnit(dfm_upgrade::TagDbUpgradeUnit),
         RegUnit(dfm_upgrade::SmbVirtualEntryUpgradeUnit),
-        RegUnit(dfm_upgrade::VaultUpgradeUnit)
+        RegUnit(dfm_upgrade::VaultUpgradeUnit),
+        RegUnit(dfm_upgrade::DesktopOrganizeUpgradeUnit),
+        RegUnit(dfm_upgrade::AppAttributeUpgradeUnit)
     };
 }
 

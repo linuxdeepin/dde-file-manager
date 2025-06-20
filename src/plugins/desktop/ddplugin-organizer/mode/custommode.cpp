@@ -23,7 +23,8 @@
 using namespace ddplugin_organizer;
 using namespace dfmbase;
 
-CustomModePrivate::CustomModePrivate(CustomMode *qq) : q(qq)
+CustomModePrivate::CustomModePrivate(CustomMode *qq)
+    : q(qq)
 {
 
     selectionModel = new ItemSelectionModel(nullptr, qq);
@@ -36,12 +37,12 @@ CustomModePrivate::~CustomModePrivate()
 }
 
 CustomMode::CustomMode(QObject *parent)
-    : CanvasOrganizer(parent)
-    , d(new CustomModePrivate(this))
+    : CanvasOrganizer(parent), d(new CustomModePrivate(this))
 {
     d->dataSyncTimer.setInterval(500);
     d->dataSyncTimer.setSingleShot(true);
     connect(&d->dataSyncTimer, &QTimer::timeout, this, &CustomMode::onItemsChanged);
+    fmDebug() << "CustomMode created";
 }
 
 CustomMode::~CustomMode()
@@ -53,6 +54,7 @@ CustomMode::~CustomMode()
     d->dataHandler = nullptr;
 
     delete d;
+    fmDebug() << "CustomMode destroyed";
 }
 
 OrganizerMode CustomMode::mode() const
@@ -75,9 +77,9 @@ bool CustomMode::initialize(CollectionModel *m)
     connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection, Qt::QueuedConnection);
 
     d->dataHandler = new CustomDataHandler();
-    connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this](){
+    connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this]() {
         d->dataSyncTimer.start();
-    }); // delay to save collection datas
+    });   // delay to save collection datas
 
     // restore collection as config
     QList<CollectionBaseDataPtr> store = CfgPresenter->customProfile();
@@ -97,10 +99,10 @@ bool CustomMode::initialize(CollectionModel *m)
 
     {
         int srcState = model->modelShell()->modelState();
-        if (srcState & 0x1) {// 0x1 is ready
-            model->refresh(model->rootIndex(), false, 0); // refresh own model.
-        } else if (srcState == 0) {// 0x0 is uninitialized
-            model->refresh(model->rootIndex(), true, 0); // refresh source model.
+        if (srcState & 0x1) {   // 0x1 is ready
+            model->refresh(model->rootIndex(), false, 0);   // refresh own model.
+        } else if (srcState == 0) {   // 0x0 is uninitialized
+            model->refresh(model->rootIndex(), true, 0);   // refresh source model.
         } else {
             fmDebug() << "source model is refreshing" << srcState;
         }
@@ -121,8 +123,10 @@ void CustomMode::reset()
 void CustomMode::layout()
 {
     const int holderSize = d->holders.values().size();
-    if (holderSize < 1)
+    if (holderSize < 1) {
+        fmDebug() << "No collection holders to layout";
         return;
+    }
 
     QList<CollectionHolderPointer> unassigned;
     QRect *used = new QRect[holderSize];
@@ -167,14 +171,19 @@ void CustomMode::detachLayout()
 void CustomMode::rebuild()
 {
     {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         auto files = QSet<QUrl>::fromList(model->files());
-
+#else
+        auto files = QSet<QUrl>(model->files().begin(), model->files().end());
+#endif
         // remove invaild url
         d->dataHandler->check(files);
 
         // write config. do not save if no files.
-        if (!files.isEmpty())
+        if (!files.isEmpty()) {
             CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
+            fmDebug() << "Saved custom profile with" << files.size() << "files";
+        }
     }
 
     // get region name and items, then create collection.
@@ -188,6 +197,7 @@ void CustomMode::rebuild()
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
+            fmDebug() << "Creating new collection holder for" << name;
             collectionHolder.reset(new CollectionHolder(key, d->dataHandler));
             collectionHolder->createFrame(surfaces.first().data(), model);
             // set view
@@ -205,7 +215,7 @@ void CustomMode::rebuild()
 
             connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);
             // temp. save style.
-            connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, [this](const QString &id){
+            connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, [this](const QString &id) {
                 if (auto holder = d->holders.value(id)) {
                     CfgPresenter->updateCustomStyle(holder->style());
                 }
@@ -219,6 +229,7 @@ void CustomMode::rebuild()
             collectionHolder->setStretchable(true);
 
             d->holders.insert(key, collectionHolder);
+            fmInfo() << "Created and configured new collection holder:" << name;
         }
 
         collectionHolder->show();
@@ -237,8 +248,10 @@ void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
     Q_UNUSED(parent)
 
-    if (first < 0 || last < 0)
+    if (first < 0 || last < 0) {
+        fmWarning() << "Invalid file insertion range:" << first << "to" << last;
         return;
+    }
 
     const QList<QUrl> &files = model->files();
     if (first >= files.count() || last >= files.count()) {
@@ -307,7 +320,7 @@ bool CustomMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     return false;
 }
 
-bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     auto urls = mimeData->urls();
     QList<QUrl> collectionItems;
@@ -320,12 +333,16 @@ bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const 
         files << url.toString();
     }
 
-    if (collectionItems.isEmpty())
+    if (collectionItems.isEmpty()) {
+        fmDebug() << "No collection items found in drop data";
         return false;
+    }
 
     QPoint gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
-    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty())
+    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty()) {
+        fmDebug() << "Drop position is not empty, cannot drop collection items";
         return false;
+    }
 
     model->take(collectionItems);
     canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
@@ -338,8 +355,10 @@ bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const 
 
 void CustomMode::onNewCollection(const QList<QUrl> &list)
 {
-    if (list.isEmpty())
+    if (list.isEmpty()) {
+        fmWarning() << "Cannot create collection with empty file list";
         return;
+    }
 
     // todo 检查数据有效性
     CollectionBaseDataPtr base(new CollectionBaseData);
@@ -361,10 +380,11 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
         style.key = base->key;
         style.screenIndex = screen;
         style.rect = QRect(rect.topLeft(), QSize(rect.width() * 4, rect.height() * 2))
-                .marginsRemoved(QMargins(4, 4, 4, 4)); // defalut size
+                             .marginsRemoved(QMargins(4, 4, 4, 4));   // defalut size
 
         // save the style of new collection.
         CfgPresenter->updateCustomStyle(style);
+        fmDebug() << "Set initial style for new collection on screen" << screen;
     }
 
     model->refresh(model->rootIndex(), false, 0);
@@ -375,7 +395,7 @@ void CustomMode::onDeleteCollection(const QString &key)
     QList<QUrl> urls;
     {
         auto bd = d->dataHandler->baseDatas();
-        auto it = std::find_if(bd.begin(), bd.end(), [&key](const CollectionBaseDataPtr &handler){
+        auto it = std::find_if(bd.begin(), bd.end(), [&key](const CollectionBaseDataPtr &handler) {
             return handler->key == key;
         });
         if (it != bd.end())
@@ -388,6 +408,7 @@ void CustomMode::onDeleteCollection(const QString &key)
 
     if (urls.isEmpty()) {
         d->holders.remove(key);
+        fmInfo() << "Collection deleted (was empty):" << key;
         return;
     }
 
@@ -401,8 +422,10 @@ void CustomMode::onDeleteCollection(const QString &key)
             break;
         viewIndex++;
     }
-    if (viewIndex >= root.count())
+    if (viewIndex >= root.count()) {
         viewIndex = 1;
+        fmWarning() << "Could not find matching screen, using default view index";
+    }
 
     auto &&viewPoint = holder->frame()->geometry().topLeft();
     auto &&gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
@@ -423,5 +446,3 @@ void CustomMode::onItemsChanged()
 {
     CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
 }
-
-

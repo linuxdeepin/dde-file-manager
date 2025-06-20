@@ -27,6 +27,7 @@ public:
     void setAutoArrange(bool on);
     void enableChanged(bool enable);
     void autoArrangeChanged(bool on);
+
 public:
     QVBoxLayout *mainLayout = nullptr;
     DTK_WIDGET_NAMESPACE::DTitlebar *titlebar = nullptr;
@@ -34,11 +35,13 @@ public:
     QWidget *contentWidget = nullptr;
     QVBoxLayout *contentLayout = nullptr;
     SwitchWidget *autoArrange = nullptr;
+    SwitchWidget *enableOrganize = nullptr;
     OrganizationGroup *organization = nullptr;
     SizeSlider *sizeSlider = nullptr;
+
 private:
     OptionsWindow *q;
 };
 
 }
-#endif // OPTIONSWINDOW_P_H
+#endif   // OPTIONSWINDOW_P_H

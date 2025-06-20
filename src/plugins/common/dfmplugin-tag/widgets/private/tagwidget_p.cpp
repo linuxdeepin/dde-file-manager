@@ -16,8 +16,7 @@
 #endif
 
 #include <QVBoxLayout>
-
-static constexpr int kTagWidgetHeight { 114 };
+#include <QSizePolicy>
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
@@ -51,6 +50,8 @@ void TagWidgetPrivate::initializeUI()
     colorListWidget->setObjectName("tagActionWidget");
     colorListWidget->setToolTipVisible(false);
 
+    colorListWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     crumbEdit = new TagCrumbEdit(q);
     crumbEdit->setObjectName("tagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
@@ -80,8 +81,6 @@ void TagWidgetPrivate::initializeUI()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &TagWidgetPrivate::initUiForSizeMode);
 #else
     mainLayout->setContentsMargins(10, 10, 10, 10);
-    crumbEdit->setMaximumHeight(100);
-    q->setFixedHeight(kTagWidgetHeight);
 #endif
 }
 
@@ -89,8 +88,6 @@ void TagWidgetPrivate::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     mainLayout->setContentsMargins(DSizeModeHelper::element(5, 10), 6, 10, 10);
-    crumbEdit->setMaximumHeight(DSizeModeHelper::element(50, 50));
-    colorListWidget->setFixedWidth(214);
-    q->setFixedHeight(DSizeModeHelper::element(kTagWidgetHeight, kTagWidgetHeight));
+    colorListWidget->setMaximumWidth(214);
 #endif
 }

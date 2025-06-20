@@ -29,15 +29,17 @@ public:
     QString systemPathIconNameByPath(QString path);
     bool isSystemPath(QString path) const;
     bool checkContainsSystemPath(const QList<QUrl> &urlList);
+    QList<QUrl> canonicalUrlList(const QList<QUrl> &urls);
+    QString getRealpathSafely(const QString &path) const;
 
 private:
     explicit SystemPathUtil(QObject *parent = nullptr);
     ~SystemPathUtil();
     void initialize();
     void mkPath(const QString &path);
-    void cleanPath(QString *path) const;
     bool checkContainsSystemPathByFileInfo(const QList<QUrl> &urlList);
     bool checkContainsSystemPathByFileUrl(const QList<QUrl> &urlList);
+    QString findSystemPathKey(const QString &path) const;
 
 public:
     void loadSystemPaths();

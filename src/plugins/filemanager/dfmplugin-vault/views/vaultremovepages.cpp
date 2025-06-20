@@ -5,7 +5,6 @@
 #include "vaultremovepages.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
 #include "utils/fileencrypthandle.h"
@@ -24,7 +23,7 @@
 #include <DLabel>
 
 #include <QFrame>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>
@@ -36,7 +35,6 @@ Q_DECLARE_METATYPE(const char *)
 constexpr int kKeyVerifyDeleteBtn = 1;
 constexpr int kPassWordDeleteBtn = 2;
 
-using namespace PolkitQt1;
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
@@ -109,10 +107,6 @@ void VaultRemovePages::showRecoveryKeyWidget()
 void VaultRemovePages::showRemoveProgressWidget()
 {
     clearContents(true);
-    if (getButtons().size() > 1) {
-        getButton(0)->setVisible(false);
-        getButton(1)->setVisible(false);
-    }
     clearButtons();
 
     progressView = new VaultRemoveProgressView(this);
@@ -146,12 +140,6 @@ void VaultRemovePages::showNodeWidget()
 
     connect(noneWidget, &VaultRemoveByNoneWidget::closeDialog, this, &VaultRemovePages::close);
     connect(noneWidget, &VaultRemoveByNoneWidget::jumpPage, this, &VaultRemovePages::pageSelect);
-}
-
-void VaultRemovePages::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
-    DDialog::showEvent(event);
 }
 
 void VaultRemovePages::onButtonClicked(int index, const QString &text)

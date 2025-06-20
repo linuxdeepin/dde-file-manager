@@ -48,6 +48,7 @@ protected:
     void moveEvent(QMoveEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 Q_SIGNALS:
     void aboutToOpen();
@@ -56,6 +57,8 @@ Q_SIGNALS:
     void currentUrlChanged(const QUrl &url);
     void currentViewStateChanged();
     void selectUrlChanged(const QList<QUrl> &urlList);
+    void aboutToPlaySplitterAnimation(int startValue, int endValue);
+    void windowSplitterWidthChanged(const QVariant &value);
 
     // The following signals are used to send shortcut requests
     void reqRefresh();   // F5

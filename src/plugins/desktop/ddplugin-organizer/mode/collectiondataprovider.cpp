@@ -58,8 +58,10 @@ QList<QUrl> CollectionDataProvider::items(const QString &key) const
 bool CollectionDataProvider::contains(const QString &key, const QUrl &url) const
 {
     auto it = collections.find(key);
-    if (it == collections.end())
+    if (it == collections.end()) {
+        fmDebug() << "Collection not found:" << key;
         return false;
+    }
 
     return (*it)->items.contains(url);
 }
@@ -67,34 +69,56 @@ bool CollectionDataProvider::contains(const QString &key, const QUrl &url) const
 bool CollectionDataProvider::sorted(const QString &key, const QList<QUrl> &urls)
 {
     auto it = collections.find(key);
-    if (it == collections.end())
+    if (it == collections.end()) {
+        fmWarning() << "Cannot sort: collection not found:" << key;
         return false;
+    }
 
-    if ((*it)->items.size() != urls.size())
+    if ((*it)->items.size() != urls.size()) {
+        fmWarning() << "Cannot sort: size mismatch for collection" << key
+                    << "existing:" << (*it)->items.size() << "new:" << urls.size();
         return false;
+    }
 
     // check data, \a all member of urls must be in items.
     for (const QUrl &url : urls) {
-        if (!(*it)->items.contains(url))
+        if (!(*it)->items.contains(url)) {
+            fmWarning() << "Cannot sort: url not found in collection" << key << "url:" << url.toString();
             return false;
+        }
     }
 
     (*it)->items = urls;
+    fmInfo() << "Collection sorted successfully:" << key << "with" << urls.size() << "items";
     emit itemsChanged(key);
     return true;
 }
 
 void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &targetKey, int targetIndex)
 {
-    if (urls.isEmpty())
-        return;
-
-    auto sourceId = key(urls.first());
-    if (sourceId.isEmpty()) {
-        // not belong collection
+    if (urls.isEmpty()) {
+        fmDebug() << "moveUrls called with empty url list";
         return;
     }
 
+    auto sourceId = key(urls.first());
+    if (sourceId.isEmpty()) {
+        fmWarning() << "Source collection not found for urls, cannot move";
+        return;
+    }
+    // In Qt6, when the size of the list is exceeded, the insert operation of QList will trigger an assertion crash
+    // To avoid the crash, if the size bigger than list's size, use append instead.
+    auto moveUrlInItems = [&urls](QHash<QString, CollectionBaseDataPtr>::Iterator &it, int targetIndex) {
+        if (targetIndex > it.value()->items.size()) {
+            for (auto url : urls) {
+                it.value()->items.append(url);
+            }
+        } else {
+            for (auto url : urls) {
+                it.value()->items.insert(targetIndex++, url);
+            }
+        }
+    };
     if (sourceId == targetKey) {
         // same collection
         auto it = collections.find(sourceId);
@@ -102,16 +126,15 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
             for (auto url : urls) {
                 int oldIndex = it.value()->items.indexOf(url);
                 if (-1 == oldIndex) {
-                    fmWarning() << "unknow error:" << url << it.value()->items;
+                    fmWarning() << "Unknown error: url not found in collection" << url.toString() << "collection items:" << it.value()->items.size();
                     continue;
                 }
                 if (oldIndex < targetIndex)
                     targetIndex--;
                 it.value()->items.removeOne(url);
             }
-            for (auto url : urls) {
-                it.value()->items.insert(targetIndex++, url);
-            }
+            moveUrlInItems(it, targetIndex);
+
             emit itemsChanged(sourceId);
         }
     } else {
@@ -123,13 +146,11 @@ void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &ta
             }
             emit itemsChanged(sourceId);
         } else {
-            fmWarning() << "can not found :" << sourceId;
+            fmWarning() << "Cannot find source collection:" << sourceId;
         }
         it = collections.find(targetKey);
         if (it != collections.end()) {
-            for (auto url : urls) {
-                it.value()->items.insert(targetIndex++, url);
-            }
+            moveUrlInItems(it, targetIndex);
             emit itemsChanged(targetKey);
         }
     }

@@ -9,8 +9,6 @@
 
 #include <dtkwidget_global.h>
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
-
 #include <QWidget>
 
 class QLineEdit;
@@ -46,7 +44,7 @@ public:
 
 public Q_SLOTS:
     void onPasswordChanged(const QString &password);
-    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+    void slotCheckAuthorizationFinished(bool result);
 
 Q_SIGNALS:
     void signalJump(const RemoveWidgetType &type);

@@ -4,6 +4,8 @@
 
 #include "backgroundwm.h"
 
+#include <QGSettings>
+
 DDP_BACKGROUND_USE_NAMESPACE
 
 BackgroundWM::BackgroundWM(QObject *parent)
@@ -21,7 +23,7 @@ BackgroundWM::~BackgroundWM()
     }
 }
 
-void BackgroundWM::onAppearanceValueChanged(const QString& key)
+void BackgroundWM::onAppearanceValueChanged(const QString &key)
 {
     if (QStringLiteral("backgroundUris") == key) {
         fmInfo() << "appearance background changed...";
@@ -46,7 +48,7 @@ QString BackgroundWM::getBackgroundFromWm(const QString &screen)
 
     if (reply.error().type() != QDBusError::NoError) {
         fmWarning() << "Get background failed by wmDBus"
-                   << reply.error().type() << reply.error().name() << reply.error().message();
+                    << reply.error().type() << reply.error().name() << reply.error().message();
     } else {
         path = reply.argumentAt<0>();
     }
@@ -99,7 +101,7 @@ QString BackgroundWM::background(const QString &screen)
     QString path;
 
     if (!screen.isEmpty()) {
-        //1.Get the background from wm
+        // 1.Get the background from wm
         path = getBackgroundFromWm(screen);
         fmInfo() << "getBackgroundFromWm  path :" << path << "screen" << screen;
 

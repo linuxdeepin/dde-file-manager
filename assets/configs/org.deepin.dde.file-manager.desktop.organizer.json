@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"contents": {
 		"enableOrganizer": {
-			"value": -1,
+                        "value": 1,
 			"serial": 0,
 			"flags": [],
 			"name": "Enable Organizer",
@@ -12,6 +12,72 @@
 			"description": "It's used to control whether to enable the Organizer.",
 			"permissions": "readwrite",
 			"visibility": "public"
-		}
+		}, 
+		"enableVisibility" : {
+			"value": true,
+			"serial": 0,
+			"flags": [],
+			"name": "Enable Visibility",
+			"name[zh_CN]": "启用集合可见性",
+			"description[zh_CN]": "用于开启/关闭启用集合可见性",
+			"description": "Used to turn on/off enabling collection visibility.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		}, 
+		"hideAllKeySeq" : {
+                        "value": "Alt+O",
+			"serial": 0,
+			"flags": [],
+			"name": "Hide All KeySeq",
+			"name[zh_CN]": "隐藏集合快捷键",
+			"description[zh_CN]": "集合隐藏的快捷键字符串",
+			"description": "Collections of hidden shortcut strings.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"hideAllDialogRepeatNoMore": {
+			"value": false,
+			"serial": 0,
+			"flags": [],
+			"name": "Repeat No More",
+			"name[zh_CN]": "不重复提示集合隐藏",
+			"description[zh_CN]": "用于开启/关闭隐藏集合的提示对话框",
+			"description": "Prompt dialog for turning on/off hidden collections.",
+			"permissions": "readwrite",
+			"visibility": "public"
+                },
+                "organizeAction": {
+                        "value": 0,
+                        "serial": 0,
+                        "flags": [],
+                        "name": "Organize action",
+                        "name[zh_CN]": "整理动作",
+                        "description[zh_CN]": "单次整理（0）或自动整理（1），当选择单次整理时，整理行为仅在用户触发整理时发生，新建的文件不会被整理到集合中",
+                        "description": "Single-time organization (0) or automatic organization (1): When single-time organization is selected, the organization action only occurs when triggered by the user, and newly created files will not be organized into the collection.",
+                        "permissions": "readwrite",
+                        "visibility": "public"
+                },
+                "organizeCategories": {
+                        "value": ["kDocument", "kPicture", "kVideo", "kMusic", "kFolder"],
+                        "serial": 0,
+                        "flags": [],
+                        "name": "Organize categories",
+                        "name[zh_CN]": "整理策略",
+                        "description[zh_CN]": "将会被整理的文件类型，可选项为：应用（kApp）、文档（kDocument）、图片（kPicture）、视频（kVideo）、文件夹（kFolder）以及其他（kOther）",
+                        "description": "The types of files that will be organized, options: applications (kApp), documents (kDocument), pictures (kPicture), videos (kVideo), folders (kFolder), and other (kOther)",
+                        "permissions": "readwrite",
+                        "visibility": "public"
+                },
+                "collectionMovingOptimize": {
+                        "value": true,
+                        "serial": 0,
+                        "flags": [],
+                        "name": "Optimize moving performance",
+                        "name[zh_CN]": "优化移动性能",
+                        "description[zh_CN]": "提升低性能设备上，集合移动时的性能效果，开启此开关，将减少集合移动过程中的卡顿现象。",
+                        "description": "Improve the performance effect when moving the collection on low performance devices, turn on this switch, it will reduce the lag phenomenon during the collection moving.",
+                        "permissions": "readwrite",
+                        "visibility": "public"
+                }
 	}
 }

@@ -12,7 +12,7 @@
 #include "menu/smbbrowsermenuscene.h"
 #include "displaycontrol/protocoldevicedisplaymanager.h"
 
-#include <plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h>
+#include <plugins/common/dfmplugin-menu/menu_eventinterface_helper.h>
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -28,51 +28,51 @@ namespace dfmplugin_smbbrowser {
 DFM_LOG_REISGER_CATEGORY(DPSMBBROWSER_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
+
+void registScheme(const QString &scheme)
+{
+    UrlRoute::regScheme(scheme, "/", smb_browser_utils::icon(), true);
+    InfoFactory::regClass<SmbShareFileInfo>(scheme);
+    DirIteratorFactory::regClass<SmbShareIterator>(scheme);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", scheme);
+}
+
+void registSchemeHandler(const QString &scheme, PrehandlerFunc handler)
+{
+    auto ok = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", scheme, handler).toBool();
+    fmInfo() << scheme << "'s handler regist result:" << ok;
+}
 
 void SmbBrowser::initialize()
 {
-    UrlRoute::regScheme(Global::Scheme::kSmb, "/", smb_browser_utils::icon(), true);
-    UrlRoute::regScheme(Global::Scheme::kFtp, "/", smb_browser_utils::icon(), true);
-    UrlRoute::regScheme(Global::Scheme::kSFtp, "/", smb_browser_utils::icon(), true);
-    UrlRoute::regScheme(smb_browser_utils::networkScheme(), "/", smb_browser_utils::icon(), true);
-
-    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSmb);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kSmb);
-
-    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kFtp);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kFtp);
-
-    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSFtp);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kSFtp);
-
-    InfoFactory::regClass<SmbShareFileInfo>(smb_browser_utils::networkScheme());
-    DirIteratorFactory::regClass<SmbShareIterator>(smb_browser_utils::networkScheme());
-
     dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
-    bindWindows();
-
     smb_browser_utils::initSettingPane();
     smb_browser_utils::bindSetting();
-
-    followEvents();
+    bindWindows();
 }
 
 bool SmbBrowser::start()
 {
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSmb));
+    registScheme(Global::Scheme::kSmb);
+    registScheme(Global::Scheme::kFtp);
+    registScheme(Global::Scheme::kSFtp);
+    registScheme(Global::Scheme::kNetwork);
+    registScheme(Global::Scheme::kDav);
+    registScheme(Global::Scheme::kDavs);
+    registScheme(Global::Scheme::kNfs);
+
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kSmb), SmbBrowserMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kNetwork), SmbBrowserMenuCreator::name());
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", smb_browser_utils::networkScheme());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", smb_browser_utils::networkScheme(), SmbBrowserMenuCreator::name());
-
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kFtp));
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
-
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", smb_browser_utils::networkScheme());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_NotSupportTreeView", QString(Global::Scheme::kSmb));
+    QVariantMap property;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", QString(Global::Scheme::kNetwork), property);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", QString(Global::Scheme::kSmb), property);
 
     ProtocolDeviceDisplayManager::instance();
     registerNetworkAccessPrehandler();
+    followEvents();
 
     return true;
 }
@@ -152,9 +152,10 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CopyFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CutFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PreViewFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelMoveToTrash);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_SetTabName", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookSetTabName);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Show_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Copy_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Allow_Repeat_Url", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookAllowRepeatUrl);
 }
 
 void SmbBrowser::updateNeighborToSidebar()
@@ -175,13 +176,13 @@ void SmbBrowser::updateNeighborToSidebar()
 void SmbBrowser::registerNetworkAccessPrehandler()
 {
     PrehandlerFunc handler { travers_prehandler::networkAccessPrehandler };
-    PrehandlerFunc smbHanlder { travers_prehandler::smbAccessPrehandler };
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), smbHanlder).toBool())
-        fmWarning() << "smb's prehandler has been registered";
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSFtp), handler).toBool())
-        fmWarning() << "sftp's prehandler has been registered";
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFtp), handler).toBool())
-        fmWarning() << "ftp's prehandler has been registered";
+    PrehandlerFunc smbHandler { travers_prehandler::smbAccessPrehandler };
+    registSchemeHandler(Global::Scheme::kSmb, smbHandler);
+    registSchemeHandler(Global::Scheme::kFtp, handler);
+    registSchemeHandler(Global::Scheme::kSFtp, handler);
+    registSchemeHandler(Global::Scheme::kDav, handler);
+    registSchemeHandler(Global::Scheme::kDavs, handler);
+    registSchemeHandler(Global::Scheme::kNfs, handler);
 }
 
 void SmbBrowser::registerNetworkToSearch()
@@ -195,7 +196,7 @@ void SmbBrowser::registerNetworkToSearch()
 void SmbBrowser::registerNetworkToTitleBar()
 {
     QVariantMap property;
-    property["Property_Key_HideTreeViewBtn"] = true;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }

@@ -21,7 +21,7 @@ public:
     bool build() override;
     QList<QWidget *> subWidgets() const override;
 protected slots:
-    void onChenged(bool);
+    void onChanged(bool);
 protected:
     QList<CheckBoxWidget *> categories;
     const QHash<ItemCategory, QString> categoryName;

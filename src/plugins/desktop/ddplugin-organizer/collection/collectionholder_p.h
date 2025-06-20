@@ -29,15 +29,16 @@ public:
     CollectionHolder *q;
     QString id;
     int screenIndex = 1;
-    CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
+    CollectionFrameSize sizeMode = CollectionFrameSize::kMiddle;
     QPointer<CollectionDataProvider> provider = nullptr;
     QPointer<CollectionModel> model = nullptr;
     QPointer<CollectionFrame> frame = nullptr;
     QPointer<CollectionWidget> widget = nullptr;
     QPointer<Surface> surface = nullptr;
     QTimer styleTimer;
+    bool customGeo = false;
 };
 
 }
 
-#endif // COLLECTIONHOLDER_P_H
+#endif   // COLLECTIONHOLDER_P_H

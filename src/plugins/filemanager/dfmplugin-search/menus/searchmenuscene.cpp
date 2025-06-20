@@ -7,8 +7,8 @@
 #include "utils/searchhelper.h"
 #include "utils/custommanager.h"
 
-#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -105,7 +105,11 @@ void SearchMenuScenePrivate::updateMenu(QMenu *menu)
         if (openLocalAct) {
             openLocalAct->setVisible(true);
             actions.removeOne(openLocalAct);
-            actions.insert(1, openLocalAct);
+
+            if (actions.size() < 1)
+                actions.append(openLocalAct);
+            else
+                actions.insert(1, openLocalAct);
             menu->addActions(actions);
         }
     }
@@ -124,8 +128,10 @@ void SearchMenuScenePrivate::updateSortMenu(QMenu *menu)
     if (contians)
         return;
 
-    actions.size() > 1 ? actions.insert(1, predicateAction[SearchActionId::kSrtPath])
-                       : actions.append(predicateAction[SearchActionId::kSrtPath]);
+    if (actions.size() > 1)
+        actions.insert(1, predicateAction[SearchActionId::kSrtPath]);
+    else
+        actions.append(predicateAction[SearchActionId::kSrtPath]);
 
     menu->addActions(actions);
     auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();

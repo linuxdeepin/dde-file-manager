@@ -6,7 +6,7 @@
 
 #include "interface/canvasinterface.h"
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 #include <QMimeData>
@@ -18,24 +18,23 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 using namespace ddplugin_organizer;
 
 #define CanvasModelPush(topic, args...) \
-        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
+    dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
 
 #define CanvasModelFollow(topic, args...) \
-        dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasModelUnfollow(topic, args...) \
-        dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
-#define CheckFilterConnected(sig) \
-        if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {\
-            fmWarning() << "filter signal was not connected to any object" << #sig;\
-            return false; \
-        }
+#define CheckFilterConnected(sig)                                               \
+    if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {                    \
+        fmWarning() << "filter signal was not connected to any object" << #sig; \
+        return false;                                                           \
+    }
 
 CanvasModelShell::CanvasModelShell(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 CanvasModelShell::~CanvasModelShell()
@@ -71,22 +70,20 @@ bool CanvasModelShell::take(const QUrl &url)
 bool CanvasModelShell::eventDataRested(QList<QUrl> *urls, void *extData)
 {
     Q_UNUSED(extData);
-    CheckFilterConnected(CanvasModelShell::filterDataRested)
+    CheckFilterConnected(CanvasModelShell::filterDataRested);
     return filterDataRested(urls);
 }
 
 bool CanvasModelShell::eventDataInserted(const QUrl &url, void *extData)
 {
     Q_UNUSED(extData);
-    CheckFilterConnected(CanvasModelShell::filterDataInserted)
+    CheckFilterConnected(CanvasModelShell::filterDataInserted);
     return filterDataInserted(url);
 }
 
 bool CanvasModelShell::eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData)
 {
     Q_UNUSED(extData);
-    CheckFilterConnected(CanvasModelShell::filterDataRenamed)
+    CheckFilterConnected(CanvasModelShell::filterDataRenamed);
     return filterDataRenamed(oldUrl, newUrl);
 }
-
-

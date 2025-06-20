@@ -5,13 +5,11 @@
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/policy/policymanager.h"
 
 #include <dfm-framework/event/event.h>
 
 #include <DPalette>
 #include <DFontSizeManager>
-#include <DApplicationHelper>
 #include <DFileDialog>
 #include <DLabel>
 #include <DFileChooserEdit>
@@ -32,10 +30,17 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
-    : QWidget(parent)
+    : VaultBaseView(parent)
 {
     initUI();
     initConnect();
+}
+
+void VaultActiveSaveKeyFileView::setEncryptInfo(EncryptInfo &info)
+{
+    info.keyPath = defaultPathRadioBtn->isChecked()
+            ? kVaultBasePath + QString("/") + (kRSAPUBKeyFileName) + QString(".key")
+            : selectfileSavePathEdit->text();
 }
 
 void VaultActiveSaveKeyFileView::initUI()
@@ -70,8 +75,9 @@ void VaultActiveSaveKeyFileView::initUI()
 
     selectfileSavePathEdit = new DFileChooserEdit(this);
     DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
-    selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
+    selectfileSavePathEdit->lineEdit()->setReadOnly(true);
+    selectfileSavePathEdit->lineEdit()->setClearButtonEnabled(false);
     filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setDefaultSuffix(QString("key"));
@@ -135,7 +141,7 @@ void VaultActiveSaveKeyFileView::initUI()
     layout5->addWidget(selectfileSavePathEdit);
 
     QVBoxLayout *vlayout5 = new QVBoxLayout(frame1);
-    vlayout5->setMargin(0);
+    vlayout5->setContentsMargins(0, 0, 0, 0);
     vlayout5->setSpacing(0);
     vlayout5->addLayout(layout4);
     vlayout5->addWidget(line);
@@ -185,37 +191,13 @@ void VaultActiveSaveKeyFileView::initConnect()
     connect(selectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &VaultActiveSaveKeyFileView::slotChangeEdit);
     connect(filedialog, &DFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
     connect(nextBtn, &DPushButton::clicked,
-            this, &VaultActiveSaveKeyFileView::slotNextBtnClicked);
+            this, &VaultActiveSaveKeyFileView::accepted);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();
     });
 #endif
-}
-
-void VaultActiveSaveKeyFileView::slotNextBtnClicked()
-{
-    //! 获取密钥字符串
-    QString pubKey = OperatorCenter::getInstance()->getPubKey();
-    if (pubKey.isEmpty()) {
-        return;
-    }
-
-    bool flg = false;
-    if (defaultPathRadioBtn->isChecked()) {
-        //! 密钥保存默认路径
-        QString path = kVaultBasePath + QString("/") + (kRSAPUBKeyFileName) + QString(".key");
-        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
-    } else if (otherPathRadioBtn->isChecked()) {
-        //! 密钥保存用户指定路径
-        QString path = selectfileSavePathEdit->text();
-        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
-    }
-
-    if (flg) {
-        emit sigAccepted();
-    }
 }
 
 void VaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
@@ -260,7 +242,6 @@ void VaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
 
 void VaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
     defaultPathRadioBtn->setChecked(true);
     selectfileSavePathEdit->clear();
     otherRadioBtnHitMsg->hide();
@@ -273,7 +254,7 @@ bool VaultActiveSaveKeyFileView::eventFilter(QObject *watched, QEvent *event)
         QFrame *frame = static_cast<QFrame *>(watched);
         QPainter painter(frame);
         QPalette palette = this->palette();
-        painter.setBrush(palette.background());
+        painter.setBrush(palette.window());
 
         painter.setPen(Qt::transparent);
         QRect rect = this->rect();
@@ -317,7 +298,7 @@ void RadioFrame::paintEvent(QPaintEvent *event)
     rect.setWidth(rect.width() - 1);
     rect.setHeight(rect.height() - 1);
     painter.drawRoundedRect(rect, 8, 8);
-    //也可用QPainterPath 绘制代替 painter.drawRoundedRect(rect, 8, 8);
+    // 也可用QPainterPath 绘制代替 painter.drawRoundedRect(rect, 8, 8);
     {
         QPainterPath painterPath;
         painterPath.addRoundedRect(rect, 8, 8);

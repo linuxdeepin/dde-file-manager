@@ -17,8 +17,7 @@ using namespace dfmplugin_tag;
 DWIDGET_USE_NAMESPACE
 
 TagColorListWidget::TagColorListWidget(QWidget *parent, UseType type)
-    : QFrame(parent)
-    , useType(type)
+    : QFrame(parent), useType(type)
 {
     setObjectName("tagActionWidget");
     setFocusPolicy(Qt::StrongFocus);
@@ -82,7 +81,7 @@ void TagColorListWidget::initUiElement()
     }
 
     buttonLayout = new QHBoxLayout;
-    buttonLayout->setMargin(0);
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
     buttonLayout->setSpacing(0);
 
     if (useType == kAction)

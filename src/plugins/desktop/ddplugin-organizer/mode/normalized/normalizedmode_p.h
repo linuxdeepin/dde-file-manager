@@ -21,7 +21,7 @@ public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
     ~NormalizedModePrivate();
 
-    QPoint findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height);
+    QPoint findValidPos(int &currentIndex, const int width, const int height);
 
     void collectionStyleChanged(const QString &id);
     CollectionHolderPointer createCollection(const QString &id);
@@ -29,23 +29,36 @@ public:
     void openEditor(const QUrl &url);
     void checkTouchFile(const QUrl &url);
     void checkPastedFiles(const QList<QUrl> &urls);
+    void connectCollectionSignals(CollectionHolderPointer collection);
+
+    bool tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table);
+
 public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
     void onClearSelection();
     void onDropFile(const QString &collection, QList<QUrl> &urls);
     void onIconSizeChanged();
     void onFontChanged();
+    void refreshViews(bool silence);
+    void updateHolderSurfaceIndex(QWidget *surface);
+    bool batchRenameFiles();
+
+    bool moveFilesToCanvas(int viewIndex, const QList<QUrl> &urls, const QPoint &viewPoint);
+
 public:
-    void restore(const QList<CollectionBaseDataPtr> &cfgs);
+    void restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized = false);
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
     NormalizedModeBroker *broker = nullptr;
     ItemSelectionModel *selectionModel = nullptr;
     SelectionSyncHelper *selectionHelper = nullptr;
+    QList<QUrl> relayoutedFiles;
+    QList<QString> relayoutedCollectionIDs;
+
 private:
     NormalizedMode *q;
 };
 
 }
 
-#endif // NORMALIZEDMODE_P_H
+#endif   // NORMALIZEDMODE_P_H

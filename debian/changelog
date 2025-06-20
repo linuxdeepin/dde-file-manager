@@ -1,6 +1,492 @@
+dde-file-manager (6.5.66) unstable; urgency=medium
+
+  * fix bugs
+  * enhance logging
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 20 Jun 2025 14:26:49 +0800
+
+dde-file-manager (6.5.65) unstable; urgency=medium
+
+  * fix some bugs. 
+
+ -- Liuyangming <liuyangming@uniontech.com>  Wed, 18 Jun 2025 18:40:08 +0800
+
+dde-file-manager (6.5.64) unstable; urgency=medium
+
+  * fix some bugs.
+
+ -- Liuyangming <liuyangming@uniontech.com>  Wed, 18 Jun 2025 11:28:55 +0800
+
+dde-file-manager (6.5.63) unstable; urgency=medium
+
+  * unknown
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 12 Jun 2025 21:25:25 +0800
+
+dde-file-manager (6.5.62) unstable; urgency=medium
+
+  * fix info and debug level logs are still printed
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 12 Jun 2025 20:36:48 +0800
+
+dde-file-manager (6.5.61) unstable; urgency=medium
+
+  * fix some bugs.
+
+ -- Liuyangming <liuyangming@uniontech.com>  Thu, 12 Jun 2025 19:10:11 +0800
+
+dde-file-manager (6.5.60) unstable; urgency=medium
+
+  * fix a full-text index update problem
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 14:50:50 +0800
+
+dde-file-manager (6.5.59) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 12:23:30 +0800
+
+dde-file-manager (6.5.58) unstable; urgency=medium
+
+  * fix bugs
+  * 
+
+ -- Liuyangming <liuyangming@uniontech.com>  Thu, 05 Jun 2025 21:14:11 +0800
+
+dde-file-manager (6.5.57) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Jun 2025 19:46:23 +0800
+
+dde-file-manager (6.5.56) unstable; urgency=medium
+
+  * fix bugs and add logs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 29 May 2025 17:38:45 +0800
+
+dde-file-manager (6.5.55) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 27 May 2025 20:43:59 +0800
+
+dde-file-manager (6.5.54) unstable; urgency=medium
+
+  * remove libutpm2
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 22 May 2025 15:11:36 +0800
+
+dde-file-manager (6.5.53) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 22 May 2025 11:54:23 +0800
+
+dde-file-manager (6.5.52) unstable; urgency=medium
+
+  * new search
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 21 May 2025 20:01:04 +0800
+
+dde-file-manager (6.5.51) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 15 May 2025 20:27:26 +0800
+
+dde-file-manager (6.5.50) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Wed, 14 May 2025 16:41:55 +0800
+
+dde-file-manager (6.5.49) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 08 May 2025 20:06:43 +0800
+
+dde-file-manager (6.5.48) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Tue, 29 Apr 2025 17:39:55 +0800
+
+dde-file-manager (6.5.47) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 24 Apr 2025 19:18:14 +0800
+
+dde-file-manager (6.5.46) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 17 Apr 2025 13:12:52 +0800
+
+dde-file-manager (6.5.45) unstable; urgency=medium
+
+ * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 10 Apr 2025 19:50:17 +0800
+
+dde-file-manager (6.5.44) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Wed, 02 Apr 2025 15:53:07 +0800
+
+dde-file-manager (6.5.43) unstable; urgency=medium
+
+  * Feature additions (view mode switching, FileStatisticsJob)
+  * UI fixes (dialog buttons, password input, element dimensions)
+  * Performance improvements (memory management, text indexing)
+  * Code refactoring (URL validation, file checks)
+  * Localization updates (multiple translations)
+  * Core improvements (MIME initialization, URL handling) 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 27 Mar 2025 14:13:23 +0800
+
+dde-file-manager (6.5.42) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Mar 2025 15:24:59 +0800
+
+dde-file-manager (6.5.41) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Mar 2025 21:20:03 +0800
+
+dde-file-manager (6.5.40) unstable; urgency=medium
+
+  * Enhance URL determination, fix UI errors, improve file operations, update translations, and implement features like mount point normalization, drag-and-drop enhancements, and file copy synchronization with range support, alongside various UI and localization improvements. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Mar 2025 19:10:05 +0800
+
+dde-file-manager (6.5.39) unstable; urgency=medium
+
+  * Prevent UI flickering during sidebar expansion, improve Unicode sorting in file comparison, simplify file info creation and speedtimer management, ensure proper initialization, and replace abort() with Q_ASSERT_X for plugin loading failures. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 12 Mar 2025 20:26:26 +0800
+
+dde-file-manager (6.5.38) unstable; urgency=medium
+
+  * fix bug
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 11 Mar 2025 18:54:03 +0800
+
+dde-file-manager (6.5.37) unstable; urgency=medium
+
+  * Optimize file dialog and fix issues including extension search, directory size display, font handling, tag widget behavior, partition access, icon rendering, and sorting enhancements with full-width character and directory support.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 11 Mar 2025 14:27:12 +0800
+
+dde-file-manager (6.5.36) unstable; urgency=medium
+
+  * Enhance translation support in dde-file-manager and introduce Qt6 plugin version compatibility checks.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 07 Mar 2025 14:31:42 +0800
+
+dde-file-manager (6.5.35) unstable; urgency=medium
+
+  * This update addresses multiple issues including encryption/decryption processes, device mounting, UI improvements, error handling, and permission checks, introduces features like crypttab header support and blur effects, and migrates from Qt5 to Qt6. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 06 Mar 2025 20:41:48 +0800
+
+dde-file-manager (6.5.34) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 28 Feb 2025 17:33:52 +0800
+
+dde-file-manager (6.5.33) unstable; urgency=medium
+
+  * revert a commit for CI
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Feb 2025 17:40:35 +0800
+
+dde-file-manager (6.5.32) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Feb 2025 15:53:18 +0800
+
+dde-file-manager (6.5.31) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 20 Feb 2025 21:24:09 +0800
+
+dde-file-manager (6.5.30) unstable; urgency=medium
+
+  * fix: Resolved the issue where the prompt message was incomplete during the first SFTP access
+  * feat: Add slider configuration with custom value list
+  * fix: the frontend logic of decrypt device.
+  * refactor: Improve sidebar item validation and drag-and-drop handling
+  * fix: Disable titlebar menu for file dialog and improve window handling
+  * fix: Fixed the issue of failing to rename multiple files simultaneously
+  * feat: refact the encrypt backend
+  * fix: Fixed the issue where changing the password only responded the first time
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 15 Feb 2025 15:30:10 +0800
+
+dde-file-manager (6.5.29) unstable; urgency=medium
+
+  * fix: random event registration failure due to plugin startup order
+  * chore: remove redunant comments
+  * fix: icon scaling and improve performance in item delegates
+  * fix: Resolve display issue with Close All button in property dialog for multiple directory selection.
+  * fix: sort "send-to-bluetooth" option in canvas menu
+  * feat: add tooltip for multi-line display in property dialog
+  * fix: update path handling in isMptOfDevice method
+  * fix: Modify the history record logic of the address bar connecting to the remote file server.
+  * fix: Fixed the issue of not entering the username and password during mount, and directly closing the authentication window, prompting for incorrect information.
+  * fix: improve drag and drop permission checks
+  * fix: add conditional compilation for window and file plugins
+  * fix: ensure file info attributes are properly retrieved
+  * fix: improve icon cache refresh mechanism
+  * feat: Impl OpenFiles extension
+  * chore: update License
+  * feat: Impl example for openFiles
+  * feat: add debian config for dfm-extension-example
+  * chore: remove `dfm-gui`
+  * feat: add ext interfaces for file operation
+  * fix: Modify the translation
+  * fix: add application version to common log data
+  * fix: use error message from operation when mounting network device fails
+  * fix: [propertydialog] optimize media info parsing with background worker
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 14 Feb 2025 10:31:38 +0800
+
+dde-file-manager (6.5.28) unstable; urgency=medium
+
+  * remove gio-qt
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 08 Feb 2025 17:37:50 +0800
+
+dde-file-manager (6.5.27) unstable; urgency=medium
+
+ * fix: improve file type detection using statx
+ * feat: improve image dimension detection in property dialog
+ * fix: findMeCb cannot work
+ * fix: Cannot reconnect to server after unmounting FTP without closing file manager
+ * Fix: Adjust the close button and the calculation method of text display.
+ * fix: Fixed the issue that video playback failed
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 07 Feb 2025 14:25:21 +0800
+
+dde-file-manager (6.5.26) unstable; urgency=medium
+
+  * update 6.5.26.
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Thu, 16 Jan 2025 19:52:53 +0800
+
+dde-file-manager (6.5.25) unstable; urgency=medium
+
+  *update 6.5.25
+  *update libdfm6-io-dev, libdfm6-mount-dev, libdfm6-burn-dev 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Fri, 10 Jan 2025 11:16:58 +0800
+
+dde-file-manager (6.5.24) unstable; urgency=medium
+
+  * update 6.5.24 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Fri, 10 Jan 2025 08:34:12 +0800
+
+dde-file-manager (6.5.23) unstable; urgency=medium
+
+  * update 6.5.23 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Thu, 09 Jan 2025 15:42:36 +0800
+
+dde-file-manager (6.5.22) unstable; urgency=medium
+
+  * fix: fix crash when closing folder list widget
+  * fix: optimize filename display height in icon view
+  * fix: correct config key for restore view mode
+  * chore: update translation
+  * feat: Add media file information display in property dialog
+  * fix: move burn confirm dialog center.
+  * refactor: move spinner start logic to TitleBarHelper
+  * fix: size not updated in admin mode.
+  * fix: save last visited url in filedialog.
+  * fix: add dmask fmask when mount device
+  * fix: refactoring the deletion logic for temporary passwords
+  * refactor: improve network mount password handling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 02 Jan 2025 19:49:12 +0800
+
+dde-file-manager (6.5.21) unstable; urgency=medium
+
+  * fix bugs
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 26 Dec 2024 19:25:15 +0800
+
+dde-file-manager (6.5.20) unstable; urgency=medium
+
+  * fix crash
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 20 Dec 2024 21:16:53 +0800
+
+dde-file-manager (6.5.19) unstable; urgency=medium
+
+  * fix crash 
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 20 Dec 2024 15:45:03 +0800
+
+dde-file-manager (6.5.18) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 20 Dec 2024 13:11:12 +0800
+
+dde-file-manager (6.5.17) unstable; urgency=medium
+
+  *fix  disk-encrypt blocked
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Mon, 16 Dec 2024 15:26:08 +0800
+
+dde-file-manager (6.5.16) unstable; urgency=medium
+
+  * adapt to dde-shell 1.99.X
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 14 Dec 2024 16:34:52 +0800
+
+dde-file-manager (6.5.15) unstable; urgency=medium
+
+  * fix bugs.
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Sat, 14 Dec 2024 13:20:29 +0800
+
+dde-file-manager (6.5.14) unstable; urgency=medium
+
+  * fix bugs
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 07 Dec 2024 11:09:19 +0800
+
+dde-file-manager (6.5.13) unstable; urgency=medium
+
+  * Refactor project structure
+  * Refactor debian packages structure
+  * fix bugs
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 06 Dec 2024 11:28:48 +0800
+
+dde-file-manager (6.5.12) unstable; urgency=medium
+
+  * Refactoring Full-Text Search
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 30 Nov 2024 14:36:45 +0800
+
+dde-file-manager (6.5.11) unstable; urgency=medium
+
+  *fix bugs
+  * 
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Sat, 30 Nov 2024 09:15:27 +0800
+
+dde-file-manager (6.5.10) unstable; urgency=medium
+
+  [ zhangsheng ]
+  * desktop adapt to Qt6.8
+
+  [ XuShitong ]
+  * fix AbstractBaseView ABI issue.
+
+ -- XuShitong <xushitong@uniontech.com>  Fri, 22 Nov 2024 13:35:06 +0800
+
+dde-file-manager (6.5.9) unstable; urgency=medium
+
+  * fix dav mount issue.
+  * 
+
+ -- XuShitong <xushitong@uniontech.com>  Fri, 15 Nov 2024 13:11:25 +0800
+
+dde-file-manager (6.5.8) unstable; urgency=medium
+
+  * fix some bugs 
+  * dav/nfs supported
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 08 Nov 2024 13:41:17 +0800
+
+dde-file-manager (6.5.7) unstable; urgency=medium
+
+  * fix some bugs
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Sat, 12 Oct 2024 14:04:10 +0800
+
+dde-file-manager (6.5.6) unstable; urgency=medium
+
+  * fix some bugs
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 11 Oct 2024 16:18:07 +0800
+
+dde-file-manager (6.5.5) unstable; urgency=medium
+
+  * update version to 6.5.5
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 26 Sep 2024 17:35:18 +0800
+
+dde-file-manager (6.5.4) unstable; urgency=medium
+
+  * fix some bugs
+  * 
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 20 Sep 2024 18:01:05 +0800
+
+dde-file-manager (6.5.3) unstable; urgency=medium
+
+  * change version to 6.5.3
+
+ -- liuyangming <liuyangming@uniontech.com>  Fri, 06 Sep 2024 18:52:01 +0800
+
+dde-file-manager (6.5.2) unstable; urgency=medium
+
+  * refactor daemon
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 05 Sep 2024 22:25:31 +0800
+
+dde-file-manager (6.5.1) unstable; urgency=medium
+
+  * update file manager version to V6.5.1
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 22 Aug 2024 13:33:50 +0800
+
+dde-file-manager (6.5.0) unstable; urgency=medium
+
+  * update file manager version to V6.5.0
+  * 
+
+ -- liuyangming <liuyangming@uniontech.com>  Thu, 15 Aug 2024 18:14:50 +0800
+
+dde-file-manager (6.0.54) unstable; urgency=medium
+
+  * 6.0.54,to strengthen DBUS security
+  * 
+
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 10 Jul 2024 11:14:50 +0800
+
+dde-file-manager (6.0.53) unstable; urgency=medium
+
+  * 6.0.53,to support AM interface and video wallpaper
+  * 
+
+ -- lvwujun <lvwujun@uniontech.com>  Wed, 26 Jun 2024 9:57:50 +0800
+
 dde-file-manager (6.0.52) unstable; urgency=medium
 
-  * 6.0.52,to support am show-item
+  * 6.0.52,to support AM show-item
   * 
 
  -- lvwujun <lvwujun@uniontech.com>  Fri, 31 May 2024 15:26:50 +0800

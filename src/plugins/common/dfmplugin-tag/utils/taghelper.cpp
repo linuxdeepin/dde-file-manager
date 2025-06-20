@@ -276,7 +276,7 @@ void TagHelper::crumbEditInputFilter(DCrumbEdit *edit)
         return;
 
     QString srcTcxt = edit->toPlainText().remove(QChar::ObjectReplacementCharacter);
-    QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
+    QRegularExpression rx("[\\\\/\':\\*\\?\"<>|%&]");
     if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
         edit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
         const auto &tagsColors = TagManager::instance()->getTagsColor(edit->crumbList());

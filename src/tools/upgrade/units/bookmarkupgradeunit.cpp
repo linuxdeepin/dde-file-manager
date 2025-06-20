@@ -30,7 +30,6 @@ static constexpr char kKeyIndex[] { "index" };
 static constexpr char kKeydefaultItem[] { "defaultItem" };
 static constexpr char kKeyCreated[] { "created" };
 static constexpr char kKeyLastModi[] { "lastModified" };
-static constexpr char kKeyLocateUrl[] { "locateUrl" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 
 static QString kConfigurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager.json";
@@ -41,7 +40,6 @@ QVariantMap BookmarkData::serialize()
     QVariantMap v;
     v.insert(kKeyCreated, created.toString(Qt::ISODate));
     v.insert(kKeyLastModi, lastModified.toString(Qt::ISODate));
-    v.insert(kKeyLocateUrl, locateUrl);
     v.insert(kKeyMountPoint, deviceUrl);
     v.insert(kKeyName, name);
     v.insert(kKeyUrl, url);
@@ -69,8 +67,10 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
         qCInfo(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "success";
 
     QFile file(kConfigurationPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << kConfigurationPath;
         return false;
+    }
 
     QByteArray data = file.readAll();
     file.close();
@@ -88,9 +88,9 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 
 bool BookMarkUpgradeUnit::upgrade()
 {
-    qCInfo(logToolUpgrade) << "upgrading";
+    qCInfo(logToolUpgrade) << "Starting bookmark upgrading process";
     const QVariantList &quickAccessItems = initData();
-    doUpgrade(quickAccessItems);   //generate quick access field to configuration
+    doUpgrade(quickAccessItems);   // generate quick access field to configuration
 
     return true;
 }
@@ -116,7 +116,7 @@ QVariantList BookMarkUpgradeUnit::initData() const
     for (const BookmarkData &data : defPreDefInitOrder) {
         BookmarkData temData = data;
         const QVariantMap &item = temData.serialize();
-        if (data.index >= 0)
+        if (data.index >= 0 && data.index <= quickAccessItemList.size())
             quickAccessItemList.insert(data.index, item);
         else
             quickAccessItemList.append(item);
@@ -141,9 +141,9 @@ QVariantList BookMarkUpgradeUnit::initData() const
 
     auto parseUrlFromOrderData = [](const QString &src) {
         QString bookmarkOrderItem = src;
-        bookmarkOrderItem.remove(0, 9);   //remove `bookmark:`
+        bookmarkOrderItem.remove(0, 9);   // remove `bookmark:`
         QUrl url(bookmarkOrderItem);
-        QString urlString = url.toString(QUrl::RemoveFragment | QUrl::RemoveQuery);   //remove ?# or #
+        QString urlString = url.toString(QUrl::RemoveFragment | QUrl::RemoveQuery);   // remove ?# or #
         return urlString;
     };
     // 2. sort the bookmark data to `sortedBookmarkOrderList` according to `bookmarkDataList`
@@ -181,7 +181,7 @@ QVariantList BookMarkUpgradeUnit::initData() const
         QString readableStr = data.value("url").toUrl().toString();   // convert url to human readable string.
         data.insert("url", readableStr);
         quickAccessItemList.append(data);
-        qCInfo(logToolUpgrade) << "Bookmark raw data is sorded to quickAccessItemList";
+        qCInfo(logToolUpgrade) << "Added sorted bookmark to final list:" << data.value("name").toString();
     }
     qCInfo(logToolUpgrade) << "after: quickAccessItemList.count = " << quickAccessItemList.count();
     return quickAccessItemList;
@@ -190,8 +190,10 @@ QVariantList BookMarkUpgradeUnit::initData() const
 bool BookMarkUpgradeUnit::doUpgrade(const QVariantList &quickAccessDatas)
 {
     QFile file(kConfigurationPath);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCCritical(logToolUpgrade) << "Failed to open configuration file for writing:" << kConfigurationPath;
         return false;
+    }
 
     QJsonObject quickAccess;
     quickAccess.insert(kConfigKeyName, QJsonArray::fromVariantList(quickAccessDatas));

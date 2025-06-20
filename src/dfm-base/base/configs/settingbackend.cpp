@@ -7,14 +7,23 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/settingdialog/customsettingitemregister.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/viewdefines.h>
 
 #include <DSettings>
+#include <DLabel>
+#include <DSlider>
+#include <DSettingsOption>
 
 #include <QDebug>
 #include <QApplication>
 
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
+DFMGLOBAL_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 #define TOP_GROUP_BASE "00_base"
 #define LV2_GROUP_OPEN_ACTION "00_base.00_open_action"
@@ -32,11 +41,13 @@ using namespace dfmbase;
 
 BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivate::keyToAA {
     { LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
-    { LV2_GROUP_OPEN_ACTION ".01_open_file_action", Application::kOpenFileMode },
+    { LV2_GROUP_OPEN_ACTION ".02_open_file_action", Application::kOpenFileMode },
     { LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
-    { LV2_GROUP_VIEW ".01_view_mode", Application::kViewMode },
+    { LV2_GROUP_VIEW ".01_icon_grid_density", Application::kGridDensityLevel },
+    { LV2_GROUP_VIEW ".02_list_height", Application::kListHeightLevel },
+    { LV2_GROUP_VIEW ".03_view_mode", Application::kViewMode },
     { LV2_GROUP_FILES_AND_FOLDERS ".02_mixed_sort", Application::kFileAndDirMixedSort },
 };
 
@@ -128,42 +139,47 @@ void SettingBackend::addSettingAccessor(const QString &key, GetOptFunc get, Save
     if (set)
         d->setters.insert(key, set);
     else
-        qCInfo(logDFMBase) << "null setter function is passed for key: " << key;
+        qCWarning(logDFMBase) << "Null setter function provided for setting key:" << key;
     if (get)
         d->getters.insert(key, get);
     else
-        qCInfo(logDFMBase) << "null getter function is passed for key: " << key;
+        qCWarning(logDFMBase) << "Null getter function provided for setting key:" << key;
+    
+    qCDebug(logDFMBase) << "Setting accessor added for key:" << key;
 }
 
 void SettingBackend::removeSettingAccessor(const QString &key)
 {
     if (!d->setters.contains(key) || !d->getters.contains(key)) {
-        qCWarning(logDFMBase) << "Invalid key, cannot remove!";
+        qCWarning(logDFMBase) << "Cannot remove setting accessor - key not found:" << key;
         return;
     }
 
     d->setters.remove(key);
     d->getters.remove(key);
+    qCDebug(logDFMBase) << "Setting accessor removed for key:" << key;
 }
 
 void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToAA.containsValue(attr)) {
-        qCWarning(logDFMBase) << "NO mapped for ApplicationAttr::" << attr;
+        qCWarning(logDFMBase) << "No UI key mapping found for ApplicationAttribute:" << static_cast<int>(attr);
         return;
     }
     auto uiKey = d->keyToAA.key(attr);
     addSettingAccessor(uiKey, nullptr, set);
+    qCDebug(logDFMBase) << "Setting accessor added for ApplicationAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
 void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set)
 {
     if (!d->keyToGA.containsValue(attr)) {
-        qCWarning(logDFMBase) << "NO map for GenericAttr::" << attr;
+        qCWarning(logDFMBase) << "No UI key mapping found for GenericAttribute:" << static_cast<int>(attr);
         return;
     }
     auto uiKey = d->keyToGA.key(attr);
     addSettingAccessor(uiKey, nullptr, set);
+    qCDebug(logDFMBase) << "Setting accessor added for GenericAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
 void SettingBackend::addToSerialDataKey(const QString &key)
@@ -227,7 +243,23 @@ void SettingBackend::initBasicSettingConfig()
     ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
                            tr("Always open folder in new window"),
                            false);
-    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".01_open_file_action",
+    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+                           tr("Activate existing window when reopening folder"),
+                           false);
+    addSettingAccessor(
+            LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+            []() {
+                return !(DConfigManager::instance()->value(kViewDConfName,
+                                                           kOpenFolderWindowsInASeparateProcess,
+                                                           true)
+                                 .toBool());
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kViewDConfName,
+                                                     kOpenFolderWindowsInASeparateProcess,
+                                                     !(val.toBool()));
+            });
+    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".02_open_file_action",
                            tr("Open file:"),
                            QStringList { tr("Click"),
                                          tr("Double click") },
@@ -298,46 +330,55 @@ void SettingBackend::initWorkspaceSettingConfig()
     ins->addGroup(TOP_GROUP_WORKSPACE, tr("Workspace"));
     ins->addGroup(LV2_GROUP_VIEW, tr("View"));
 
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".00_icon_size",
-                           tr("Default size:"),
-                           QStringList { tr("Extra small"),
-                                         tr("Small"),
-                                         tr("Medium"),
-                                         tr("Large"),
-                                         tr("Extra large") },
-                           1);
+    ViewDefines viewDefines;
+
+    int iconSizeLevelMax = viewDefines.iconSizeCount() - 1;
+    int iconSizeLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
+                        tr("Default icon size:"),
+                        "dfm_viewoptions_minicon",
+                        "dfm_viewoptions_maxicon",
+                        iconSizeLevelMax,
+                        iconSizeLevelMin,
+                        viewDefines.getIconSizeList(),
+                        5);
+    int iconGridDensityLevelMax = viewDefines.iconGridDensityCount() - 1;
+    int iconGridDensityLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".01_icon_grid_density",
+                        tr("Default icon grid density:"),
+                        "dfm_viewoptions_mingrid",
+                        "dfm_viewoptions_maxgrid",
+                        iconGridDensityLevelMax,
+                        iconGridDensityLevelMin,
+                        viewDefines.getIconGridDensityList(),
+                        2);
+    int listHeightLevelMax = viewDefines.listHeightCount() - 1;
+    int listHeightLevelMin = 0;
+    ins->addSliderConfig(LV2_GROUP_VIEW ".02_list_height",
+                        tr("Default list height:"),
+                        "dfm_viewoptions_minlist",
+                        "dfm_viewoptions_maxlist",
+                        listHeightLevelMax,
+                        listHeightLevelMin,
+                        viewDefines.getListHeightList(),
+                        1);
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
-        viewModeValues.append( tr("Tree") );
+        viewModeValues.append(tr("Tree"));
         viewModeKeys.append(8);
     }
-    ins->addComboboxConfig(LV2_GROUP_VIEW ".01_view_mode",
+    ins->addComboboxConfig(LV2_GROUP_VIEW ".03_view_mode",
                            tr("Default view:"),
                            { { "values", viewModeValues },
                              { "keys", viewModeKeys } },
                            1);
-    ins->addConfig(LV2_GROUP_VIEW ".02_restore_view_mode",
-                   { { "key", "02_restore_view_mode" },
+    ins->addConfig(LV2_GROUP_VIEW ".04_restore_view_mode",
+                   { { "key", "04_restore_view_mode" },
                      { "desc", tr("Restore default view mode for all directories") },
                      { "text", tr("Restore default view mode") },
                      { "type", "pushButton" },
                      { "trigger", QVariant(Application::kRestoreViewMode) } });
-    ins->addCheckBoxConfig(LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
-                           tr("Open folder windows in a separate process"),
-                           false);
-    addSettingAccessor(
-            LV2_GROUP_VIEW ".03_open_folder_windows_in_aseparate_process",
-            []() {
-                return DConfigManager::instance()->value(kViewDConfName,
-                                                         kOpenFolderWindowsInASeparateProcess,
-                                                         false);
-            },
-            [](const QVariant &val) {
-                DConfigManager::instance()->setValue(kViewDConfName,
-                                                     kOpenFolderWindowsInASeparateProcess,
-                                                     val);
-            });
 
     ins->addGroup(LV2_GROUP_PREVIEW, tr("Thumbnail preview"));
 

@@ -33,13 +33,18 @@ class OpenWithDialogListItem : public QWidget
     Q_OBJECT
 
 public:
-    explicit OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
+    explicit OpenWithDialogListItem(const QString &iconName, const QString &text, QWidget *parent = nullptr);
 
     void setChecked(bool checked);
     QString text() const;
 
 protected:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     void enterEvent(QEvent *e) override;
+#else
+    void enterEvent(QEnterEvent *e) override;
+#endif
+
     void leaveEvent(QEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
 
@@ -47,7 +52,9 @@ public slots:
     void initUiForSizeMode();
 
 private:
-    QIcon icon;
+    void updateLabelIcon(int size);
+
+    QString iconName;
     DIconButton *checkButton;
     DLabel *iconLabel;
     DLabel *label;
@@ -77,7 +84,7 @@ private:
     void initData();
     void checkItem(OpenWithDialogListItem *item);
     void useOtherApplication();
-    OpenWithDialogListItem *createItem(const QIcon &icon, const QString &name, const QString &filePath);
+    OpenWithDialogListItem *createItem(const QString &iconName, const QString &name, const QString &filePath);
 
     QScrollArea *scrollArea { nullptr };
     DTK_WIDGET_NAMESPACE::DFlowLayout *recommandLayout { nullptr };

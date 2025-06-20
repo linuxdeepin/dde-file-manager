@@ -11,6 +11,14 @@
 
 namespace dfmplugin_smbbrowser {
 
+/**
+ * @brief The SmbBrowser class
+ * this plugin is not only for handle samba shares
+ * but also for usual schemes such as ftp/sftp/nfs/dav
+ * TODO RENAME this plugin someday!
+ * NetShareAccessHandler might be a good name.
+ */
+
 class SmbBrowser : public dpf::Plugin
 {
     Q_OBJECT

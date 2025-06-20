@@ -9,11 +9,13 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <DDesktopServices>
 #include <dtkwidget_global.h>
@@ -23,9 +25,12 @@
 #include <QStandardPaths>
 #include <QProcess>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>
+#include <sys/statvfs.h>
 
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
@@ -66,7 +71,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
 {
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "Failed to create block device:" << id;
         return QVariantMap();
     }
     return loadBlockInfo(dev);
@@ -118,9 +123,39 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
     datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
     datas[kPreferredDevice] = getNullStrIfNotValid(Property::kBlockPreferredDevice);
+    datas[kSymlinks] = dev->getProperty(dfmmount::Property::kBlockSymlinks).toStringList();
 
-    if (dev->optical())
-        datas[kUDisks2Size] = dev->sizeTotal();
+    auto config = dev->getProperty(Property::kBlockConfiguration).toMap();
+    if (!config.isEmpty()) {
+        QJsonObject jsonRootObj;
+        QMapIterator<QString, QVariant> iter(config);
+        while (iter.hasNext()) {
+            iter.next();
+            auto key = iter.key();
+            QVariantMap value = iter.value().toMap();
+            jsonRootObj.insert(key, QJsonObject::fromVariantMap(value));
+        }
+        QJsonDocument doc(jsonRootObj);
+        datas[kConfiguration] = QString(doc.toJson(QJsonDocument::Compact));
+    }
+
+    datas[kUDisks2Size] = dev->sizeTotal();
+    auto mpt = dev->mountPoint();
+    if (!mpt.isEmpty() && !dev->optical()) {
+        auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
+                                                      "deviceCapacityDisplay",
+                                                      DEVICE_SIZE_DISPLAY_BY_DISK)
+                            .toInt();
+        if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
+            struct statvfs fsInfo;
+            int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
+            if (ok == 0) {
+                const quint64 blksize = quint64(fsInfo.f_frsize);
+                auto total = fsInfo.f_blocks * blksize;
+                datas[kSizeTotal] = total;
+            }
+        }
+    }
 
     auto eType = dev->partitionEType();
     datas[kHasExtendedPatition] = eType == PartitionType::kMbrWin95_Extended_LBA
@@ -139,7 +174,7 @@ QVariantMap DeviceHelper::loadProtocolInfo(const QString &id)
 {
     auto dev = DeviceHelper::createProtocolDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "device is not exist!: " << id;
+        qCWarning(logDFMBase) << "Failed to create protocol device:" << id;
         return {};
     }
     return loadProtocolInfo(dev);
@@ -268,7 +303,7 @@ void DeviceHelper::openFileManagerToDevice(const QString &blkId, const QString &
         //            mountPoint = QString("burn:///dev/%1/disc_files/").arg(blkId.mid(blkId.lastIndexOf("/") + 1));
         //        }
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountPoint });
-        qCInfo(logDFMBase) << "open by dde-file-manager: " << mountPoint;
+        qCInfo(logDFMBase) << "Opened device in file manager - device:" << blkId << "mount point:" << mountPoint;
         return;
     }
 
@@ -314,7 +349,9 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
 
-    qCDebug(logDFMBase) << "optical usage persistented: " << datas;
+    qCDebug(logDFMBase) << "Optical device usage info persisted for device:" << tag
+                        << "total size:" << info[kBurnTotalSize].toULongLong()
+                        << "used size:" << info[kBurnUsedSize].toULongLong();
 }
 
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
@@ -329,20 +366,13 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
         datas[DeviceProperty::kSizeFree] = datas[DeviceProperty::kSizeTotal].toULongLong() - datas[DeviceProperty::kSizeUsed].toULongLong();
         datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
         datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
-
-        qCDebug(logDFMBase) << "optical usage loaded: " << tag << "\n"
-                            << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << "\n"
-                            << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << "\n"
-                            << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << "\n"
-                            << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
-                            << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
 }
 
 bool DeviceHelper::checkNetworkConnection(const QString &id)
 {
     QUrl url(id);
-    if (!(DeviceUtils::isSamba(url) || DeviceUtils::isSftp(url) || DeviceUtils::isFtp(url)))
+    if (!(ProtocolUtils::isSMBFile(url) || ProtocolUtils::isSFTPFile(url) || ProtocolUtils::isFTPFile(url)))
         return true;
 
     QString host, port;
@@ -352,16 +382,16 @@ bool DeviceHelper::checkNetworkConnection(const QString &id)
             return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
                                [host](const QString &port) {
                                    bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
-                                   qCDebug(logDFMBase) << "checking network connection of" << host
-                                                       << "at" << port
-                                                       << connected;
+                                   qCDebug(logDFMBase) << "Network connection check for host:" << host
+                                                       << "port:" << port
+                                                       << "result:" << connected;
                                    return connected;
                                });
         }
         return NetworkUtils::instance()->checkNetConnection(host, port);
     }
 
-    qCWarning(logDFMBase) << "cannot parse host and port of" << id;
+    qCWarning(logDFMBase) << "Failed to parse host and port from device ID:" << id;
     return true;
 }
 
@@ -381,7 +411,7 @@ QVariantMap DeviceHelper::makeFakeProtocolInfo(const QString &id)
     fakeInfo[DeviceProperty::kDeviceIcon] = "folder-remote";
     fakeInfo["fake"] = true;
 
-    if (DeviceUtils::isSamba(QUrl(path))) {
+    if (ProtocolUtils::isSMBFile(QUrl(path))) {
         QString host, share;
         if (DeviceUtils::parseSmbInfo(path, host, share))
             fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("%1 on %2").arg(share).arg(host);

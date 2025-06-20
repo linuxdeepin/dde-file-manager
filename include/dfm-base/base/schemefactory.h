@@ -40,6 +40,7 @@ class SchemeFactory
 public:
     // 定义创建函数类型
     typedef std::function<QSharedPointer<T>(const QUrl &url)> CreateFunc;
+    typedef std::function<T*(const QUrl &url)> CreatePointerFunc;
     using TransFunc = std::function<QSharedPointer<T>(QSharedPointer<T>)>;
 
 protected:
@@ -47,6 +48,8 @@ protected:
     DThreadMap<QString, CreateFunc> constructList {};
     // 转换函数列表
     DThreadMap<QString, TransFunc> transList {};
+    // 构造函数列表
+    DThreadMap<QString, CreatePointerFunc> constructPointerList {};
 
 public:
     /*!
@@ -151,6 +154,86 @@ public:
         return info;
     }
 
+    /*!
+     * \method regClassPointer
+     * \brief 注册Class与Scheme的关联
+     * \param CT = T 默认传递构造为顶层基类
+     * \param scheme 传递scheme进行类构造绑定
+     * \param errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
+     *  否则返回true
+     */
+    template<class CT = T>
+    bool regClassPointer(const QString &scheme, QString *errorString = nullptr)
+    {
+        CreatePointerFunc foo = [=](const QUrl &url) {
+            return new CT(url);
+        };
+        return regPointerCreator(scheme, foo, errorString);
+    }
+
+    /*!
+     * \method regPointerCreator
+     * \brief 注册Class创建器与Scheme的关联
+     * \param scheme 传递scheme进行类构造绑定
+     * \param creator 创建函数
+     * \param errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
+     *  否则返回true
+     */
+    bool regPointerCreator(const QString &scheme, CreatePointerFunc creator, QString *errorString = nullptr)
+    {
+        QString error;
+        FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+
+        if (constructPointerList.contains(scheme)) {
+            error = "The current scheme has registered "
+                    "the associated construction class";
+            return false;
+        }
+
+        constructPointerList.insert(scheme, creator);
+        finally.dismiss();
+        return true;
+    }
+    /*!
+     * \method createPointer
+     * \brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
+     * 否则将创建空指针
+     * 首先需要注册scheme到DFMUrlRoute类
+     * 其次需要注册scheme到DFMSchemeFactory<T>类
+     * \param url 需要构造的Url
+     * \param errorString 错误信息赋值的字符串
+     * \return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
+     * 如果没有注册 scheme 到 DFMUrlRoute，返回空指针
+     * 如果没有注册 scheme 与 class 构造函数规则，返回空指针
+     */
+    T* createPointer(const QUrl &url, QString *errorString = nullptr)
+    {
+        return createPointer(url.scheme(), url, errorString);
+    }
+
+    T *createPointer(const QString &scheme, const QUrl &url, QString *errorString = nullptr)
+    {
+        QString error;
+        FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+
+        if (!UrlRoute::hasScheme(scheme)) {
+            error = "No scheme found for "
+                    "URL registration";
+            return nullptr;
+        }
+
+        CreatePointerFunc constantFunc = constructPointerList.value(scheme);
+        if (!constantFunc) {
+            error = "Scheme should be call registered 'regClass()' function "
+                    "before create function";
+            return nullptr;
+        }
+        finally.dismiss();
+        return constantFunc(url);
+    }
+
     // cache fileinfo in enumerator, transform fileinfo to desktop fileinfo in need
     QSharedPointer<T> transformInfo(const QString &scheme, QSharedPointer<T> info)
     {
@@ -176,6 +259,12 @@ public:
     template<class CT = FileInfo>
     static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
+        assert(qApp->thread() == QThread::currentThread());
+        static std::once_flag createFlag;
+        // main thread create InfoCacheController
+        std::call_once(createFlag, [] {
+            InfoCacheController::instance();
+        });
         if (opts & RegOpts::kNoCache)
             InfoCacheController::instance().setCacheDisbale(scheme);
         return instance().SchemeFactory<FileInfo>::regClass<CT>(scheme, errorString);
@@ -240,13 +329,21 @@ public:
             if (info && tarScheme == Global::Scheme::kAsyncFile)
                 info->updateAttributes();
 
-            emit InfoCacheController::instance().cacheFileInfo(url, info);
+            if (type != Global::CreateFileInfoType::kCreateFileInfoAutoNoCache)
+                emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
 
         if (!info)
             qCWarning(logDFMBase) << "info is nullptr url = " << url;
 
         return qSharedPointerDynamicCast<T>(info);
+    }
+
+    static void cacheFileInfo(const QSharedPointer<FileInfo> &info) {
+        if (InfoCacheController::instance().cacheDisable(info->fileUrl().scheme()))
+            return;
+        emit InfoCacheController::instance().removeCacheFileInfo({info->fileUrl()});
+        emit InfoCacheController::instance().cacheFileInfo(info->fileUrl(), info);
     }
 
 private:
@@ -264,13 +361,13 @@ public:
     template<class CT = AbstractBaseView>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractBaseView>::regClass<CT>(scheme, errorString);
+        return instance().SchemeFactory<AbstractBaseView>::regClassPointer<CT>(scheme, errorString);
     }
 
     template<class T>
-    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    static T* create(const QUrl &url, QString *errorString = nullptr)
     {
-        auto view = instance().SchemeFactory<AbstractBaseView>::create(url, errorString);
+        auto view = instance().SchemeFactory<AbstractBaseView>::createPointer(url, errorString);
         return view;
     }
 

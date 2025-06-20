@@ -30,7 +30,6 @@ public:
     virtual void addPreItems(const QString &targetKey, const QList<QUrl> &urls, int targetIndex);
     virtual bool checkPreItem(const QUrl &url, QString &key, int &index);
     virtual bool takePreItem(const QUrl &url, QString &key, int &index);
-protected:
     virtual QString replace(const QUrl &oldUrl, const QUrl &newUrl) = 0;
     virtual QString append(const QUrl &) = 0;
     virtual QString prepend(const QUrl &) = 0;
@@ -40,6 +39,7 @@ protected:
 signals:
     void nameChanged(const QString &key, const QString &name);
     void itemsChanged(const QString &key);
+
 protected:
     QHash<QString, CollectionBaseDataPtr> collections;
     QHash<QString, QPair<int, QList<QUrl>>> preCollectionItems;
@@ -47,4 +47,4 @@ protected:
 
 }
 
-#endif // COLLECTIONDATAPROVIDER_H
+#endif   // COLLECTIONDATAPROVIDER_H

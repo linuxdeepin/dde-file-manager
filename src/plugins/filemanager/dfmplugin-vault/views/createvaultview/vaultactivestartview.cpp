@@ -20,15 +20,10 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveStartView::VaultActiveStartView(QWidget *parent)
-    : QWidget(parent)
+    : VaultBaseView(parent)
 {
     initUi();
     initConnect();
-}
-
-void VaultActiveStartView::slotStartBtnClicked()
-{
-    emit sigAccepted();
 }
 
 void VaultActiveStartView::initUi()
@@ -47,7 +42,7 @@ void VaultActiveStartView::initUi()
     startBtn->setFixedWidth(200);
 
     QVBoxLayout *play = new QVBoxLayout(this);
-    play->setMargin(0);
+    play->setContentsMargins(0, 0, 0, 0);
     play->addWidget(titleLabel);
     play->addSpacing(5);
     play->addWidget(pLabel3);
@@ -78,7 +73,7 @@ void VaultActiveStartView::initUiForSizeMode()
 void VaultActiveStartView::initConnect()
 {
     connect(startBtn, &DPushButton::clicked,
-            this, &VaultActiveStartView::slotStartBtnClicked);
+            this, &VaultActiveStartView::accepted);
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();

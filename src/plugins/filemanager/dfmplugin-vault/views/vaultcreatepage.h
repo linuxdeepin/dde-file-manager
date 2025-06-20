@@ -19,20 +19,20 @@ class VaultActiveFinishedView;
 class VaultActiveSaveKeyFileView;
 class VaultActiveView : public VaultPageBase
 {
+    Q_OBJECT
 public:
     explicit VaultActiveView(QWidget *parent = nullptr);
 
-protected:
-    //! 重写基类关闭事件
-    void closeEvent(QCloseEvent *event) override;
-
-    void showEvent(QShowEvent *event) override;
-
 private slots:
     void slotNextWidget();
+    void encryptVault();
 
 private:
     void setBeginingState();
+    void asyncCreateVault();
+    Result createVault();
+    bool handleKeyModeEncryption();
+    bool handleTransparentModeEncryption();
 
 private:
     //! 窗口容器
@@ -42,6 +42,8 @@ private:
     VaultActiveSetUnlockMethodView *setUnclockMethodWidget { nullptr };
     VaultActiveFinishedView *activeVaultFinishedWidget { nullptr };
     VaultActiveSaveKeyFileView *saveKeyFileWidget { nullptr };
+
+    EncryptInfo encryptInfo;
 };
 }
 #endif   //! VAULTACTIVEVIEW_H

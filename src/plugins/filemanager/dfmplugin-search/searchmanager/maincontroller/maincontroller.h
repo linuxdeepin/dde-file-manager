@@ -6,6 +6,7 @@
 #define MAINCONTROLLER_H
 
 #include "task/taskcommander.h"
+#include "searchmanager/searcher/searchresult_define.h"
 
 #include <QHash>
 #include <QFuture>
@@ -20,13 +21,17 @@ private:
     explicit MainController(QObject *parent = nullptr);
     ~MainController();
 
-    void stop(QString taskId);
     bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);
-    QList<QUrl> getResults(QString taskId);
+    void stop(QString taskId);
+    
+    // 获取统一的搜索结果
+    DFMSearchResultMap getResults(QString taskId);
+    
+    // 为兼容性保留的接口
+    QList<QUrl> getResultUrls(QString taskId);
 
 private slots:
     void onFinished(QString taskId);
-    void onIndexFullTextSearchChanged(bool enable);
 
 signals:
     void matched(QString taskId);

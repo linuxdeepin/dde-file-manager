@@ -4,40 +4,38 @@ project(dfmplugin-dirshare)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB DIRSHARE_FILES
+# 设置二进制文件名
+set(BIN_NAME dfm-dirshare-plugin)
+
+FILE(GLOB_RECURSE DIRSHARE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    )
+)
 
-add_library(${PROJECT_NAME}
+# Qt6 依赖
+find_package(Qt6 COMPONENTS Core Network REQUIRED)
+
+# 创建共享库
+add_library(${BIN_NAME}
     SHARED
     ${DIRSHARE_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
+# 链接必要的库
+target_link_libraries(${BIN_NAME}
+    Qt6::Network
+    DFM6::base
+    DFM6::framework
 )
 
-target_link_libraries(${PROJECT_NAME}
-    Qt5::Network
-    DFM::base
-    DFM::framework
-    ${DtkWidget_LIBRARIES}
-)
-
-#install library file
+# 安装库文件
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
+    ${DFM_PLUGIN_COMMON_CORE_DIR}
 )

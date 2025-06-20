@@ -20,10 +20,6 @@ public:
 
     static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
 
-    static VaultPolicyState getVaultPolicy();
-
-    static bool setVaultPolicyState(int policyState);
-
     static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
 
     static int getLeftoverErrorInputTimes();

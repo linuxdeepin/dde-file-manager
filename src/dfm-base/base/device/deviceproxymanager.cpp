@@ -6,14 +6,12 @@
 #include "devicemanager.h"
 #include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
-#include <dfm-base/utils/finallyutil.h>
 
 #include <QDBusServiceWatcher>
-#include <QtConcurrent>
 
 using namespace dfmbase;
-static constexpr char kDeviceService[] { "org.deepin.filemanager.server" };
-static constexpr char kDevMngPath[] { "/org/deepin/filemanager/server/DeviceManager" };
+static constexpr char kDeviceService[] { "org.deepin.Filemanager.Daemon" };
+static constexpr char kDevMngPath[] { "/org/deepin/Filemanager/Daemon/DeviceManager" };
 
 DeviceProxyManager *DeviceProxyManager::instance()
 {
@@ -21,7 +19,7 @@ DeviceProxyManager *DeviceProxyManager::instance()
     return &ins;
 }
 
-const OrgDeepinFilemanagerServerDeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
+const OrgDeepinFilemanagerDaemonDeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
 {
     return d->devMngDBus.data();
 }
@@ -43,20 +41,6 @@ QStringList DeviceProxyManager::getAllBlockIdsByUUID(const QStringList &uuids, G
     QStringList devs;
     for (const auto &id : devices) {
         const auto &&info = queryBlockInfo(id);
-        if (uuids.contains(info.value(GlobalServerDefines::DeviceProperty::kUUID).toString()))
-            devs << id;
-    }
-    return devs;
-}
-
-QStringList DeviceProxyManager::asyncGetAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts)
-{
-    const auto &&devices = getAllBlockIds(opts);
-    QStringList devs;
-    for (const auto &id : devices) {
-        const auto &&info = asyncQueryBlockInfo(id);
-        if (info.value("error", QVariant(false)).toBool())
-            return devs;
         if (uuids.contains(info.value(GlobalServerDefines::DeviceProperty::kUUID).toString()))
             devs << id;
     }
@@ -96,32 +80,6 @@ QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload
     }
 }
 
-QVariantMap DeviceProxyManager::asyncQueryBlockInfo(const QString &id, bool reload)
-{
-    if (d->isDBusRuning() && d->devMngDBus) {
-        auto fun = [=](const QString &id, bool reload) -> QDBusPendingReply<QVariantMap> {
-            DeviceManagerInterface devMngDBus(kDeviceService, kDevMngPath, QDBusConnection::sessionBus());
-            return devMngDBus.QueryBlockDeviceInfo(id, reload);
-        };
-        return d->asyncQueryInfo(id, reload, fun);
-    } else {
-        return queryBlockInfo(id, reload);
-    }
-}
-
-QVariantMap DeviceProxyManager::asyncQueryProtocolInfo(const QString &id, bool reload)
-{
-    if (d->isDBusRuning() && d->devMngDBus) {
-        auto fun = [=](const QString &id, bool reload) -> QDBusPendingReply<QVariantMap> {
-            DeviceManagerInterface devMngDBus(kDeviceService, kDevMngPath, QDBusConnection::sessionBus());
-            return devMngDBus.QueryProtocolDeviceInfo(id, reload);
-        };
-        return d->asyncQueryInfo(id, reload, fun);
-    } else {
-        return queryProtocolInfo(id, reload);
-    }
-}
-
 void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 {
     if (d->isDBusRuning() && d->devMngDBus)
@@ -133,7 +91,8 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     d->initConnection();
-    return true;
+    QTimer::singleShot(1000, this, [this] { d->initMounts(); });
+    return isDBusRuning();
 }
 
 bool DeviceProxyManager::isDBusRuning()
@@ -143,6 +102,9 @@ bool DeviceProxyManager::isDBusRuning()
 
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QStringList &&mpts = d->externalMounts.values();
     QString path = filePath.endsWith("/") ? filePath : filePath + "/";
@@ -152,6 +114,9 @@ bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     QReadLocker lk(&d->lock);
@@ -164,6 +129,9 @@ bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     QReadLocker lk(&d->lock);
@@ -245,19 +213,22 @@ void DeviceProxyManagerPrivate::initConnection()
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
         connectToDBus();
         emit q->devMngDBusRegistered();
-        qCWarning(logDFMBase) << "server dbus registered, connected to DBus...";
+        qCInfo(logDFMBase) << "Device manager DBus service registered, switching to DBus connection";
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
         devMngDBus.reset();
         connectToAPI();
         emit q->devMngDBusUnregistered();
-        qCWarning(logDFMBase) << "server dbus unregistered, connected to API...";
+        qCInfo(logDFMBase) << "Device manager DBus service unregistered, switching to direct API connection";
     });
 
-    if (isDBusRuning())
+    if (isDBusRuning()) {
+        qCInfo(logDFMBase) << "Device manager DBus service is available, connecting to DBus";
         connectToDBus();
-    else
+    } else {
+        qCInfo(logDFMBase) << "Device manager DBus service not available, connecting to API directly";
         connectToAPI();
+    }
 }
 
 void DeviceProxyManagerPrivate::initMounts()
@@ -266,17 +237,19 @@ void DeviceProxyManagerPrivate::initMounts()
     std::call_once(flag, [this]() {
         using namespace GlobalServerDefines;
 
-        auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
+        auto func = [this](const QStringList &devs,
+                           std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query,
+                           bool pass = false) {
             for (const auto &dev : devs) {
                 auto &&info = query(q, dev, false);
                 auto mpt = info.value(DeviceProperty::kMountPoint).toString();
                 if (!mpt.isEmpty()) {
                     if (DeviceUtils::isMountPointOfDlnfs(mpt) && !info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix))
                         continue;
-                    mpt = mpt.endsWith("/") ? mpt : mpt + "/";
+                    mpt = canonicalMountPoint(mpt);
                     // FIXME(xust): fix later, the kRemovable is not always correct.
                     QWriteLocker lk(&lock);
-                    if (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isSystemDisk(info))
+                    if (pass || (info.value(DeviceProperty::kRemovable).toBool() && !DeviceUtils::isBuiltInDisk(info)))
                         externalMounts.insert(dev, mpt);
                     allMounts.insert(dev, mpt);
                 }
@@ -286,8 +259,23 @@ void DeviceProxyManagerPrivate::initMounts()
         auto blks = q->getAllBlockIds();
         auto protos = q->getAllProtocolIds();
         func(blks, &DeviceProxyManager::queryBlockInfo);
-        func(protos, &DeviceProxyManager::queryProtocolInfo);
+        // All protocol devices should be added to externalMounts
+        func(protos, &DeviceProxyManager::queryProtocolInfo, true);
     });
+}
+
+QString DeviceProxyManagerPrivate::canonicalMountPoint(const QString &mpt) const
+{
+    if (mpt.isEmpty())
+        return {};
+
+    QString mountPoint = mpt;
+    QFileInfo fileInfo(mountPoint);
+    if (fileInfo.exists())
+        mountPoint = fileInfo.canonicalFilePath();
+
+    mountPoint = mountPoint.endsWith("/") ? mountPoint : mountPoint + "/";
+    return mountPoint;
 }
 
 void DeviceProxyManagerPrivate::connectToDBus()
@@ -295,7 +283,7 @@ void DeviceProxyManagerPrivate::connectToDBus()
     if (currentConnectionType == kDBusConnecting)
         return;
     if (qApp->property("SIGTERM").toBool()) {
-        qWarning() << "Current app state is SIGTERM";
+        qCWarning(logDFMBase) << "Application is in SIGTERM state, skipping DBus connection";
         return;
     }
 
@@ -335,6 +323,7 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(DevMngIns, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
 
     currentConnectionType = kDBusConnecting;
+    qCInfo(logDFMBase) << "Device proxy manager connected to DBus service successfully";
 }
 
 void DeviceProxyManagerPrivate::connectToAPI()
@@ -375,6 +364,7 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::blockDevMountedManually, this, &DeviceProxyManagerPrivate::addMounts);
 
     currentConnectionType = kAPIConnecting;
+    qCInfo(logDFMBase) << "Device proxy manager connected to API directly";
 
     DevMngIns->startMonitor();
 }
@@ -387,43 +377,20 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
     currentConnectionType = kNoneConnection;
 }
 
-QVariantMap DeviceProxyManagerPrivate::asyncQueryInfo(const QString &id, bool reload, std::function<QDBusPendingReply<QVariantMap>(const QString&, bool)> func)
-{
-    QEventLoop loop;
-    QFutureWatcher<QDBusPendingReply<QVariantMap>>* fw = new QFutureWatcher<QDBusPendingReply<QVariantMap>>;
-    FinallyUtil release([&] {
-        if (fw) {
-            delete fw;
-            fw = nullptr;
-        }
-    });
-    connect(fw, &QFutureWatcher<QDBusPendingReply<QVariantMap>>::finished, [&loop](){
-        loop.quit();
-    });
-    QFuture<QDBusPendingReply<QVariantMap>> ft =
-    QtConcurrent::run([id, reload, func](){
-        QDBusPendingReply<QVariantMap> reply = func(id, reload);
-        reply.waitForFinished();
-        return reply;
-        });
-    fw->setFuture(ft);
-    if (loop.exec()) {
-        return QVariantMap({{"error", true}});
-    }
-    return fw->result();
-}
-
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
-    QString p = mpt.endsWith("/") ? mpt : mpt + "/";
+    QString p = canonicalMountPoint(mpt);
     if (!id.startsWith(kBlockDeviceIdPrefix) && DeviceUtils::isMountPointOfDlnfs(p))
         return;
+
+    // NOTE: Moving positions may cause deadlock
+    Q_EMIT q->mountPointAboutToAdded(mpt);
 
     QWriteLocker lk(&lock);
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
-                && !DeviceUtils::isSystemDisk(info))
+            && !DeviceUtils::isBuiltInDisk(info))
             externalMounts.insert(id, p);
     } else {
         externalMounts.insert(id, p);
@@ -433,6 +400,14 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 
 void DeviceProxyManagerPrivate::removeMounts(const QString &id)
 {
+    // NOTE: Moving positions may cause deadlock
+    QString mpt;
+    {
+        QReadLocker locker(&lock);
+        mpt = externalMounts.value(id);
+    }
+    Q_EMIT q->mountPointAboutToRemoved(mpt);
+
     QWriteLocker lk(&lock);
     externalMounts.remove(id);
     allMounts.remove(id);

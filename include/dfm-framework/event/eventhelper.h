@@ -203,7 +203,7 @@ struct ApplyReturnValue
 {
     void *data;
     explicit ApplyReturnValue(void *data_)
-        : data(data_) {}
+        : data(data_) { }
 };
 template<class T, class U>
 void operator,(const T &value, const ApplyReturnValue<U> &container)
@@ -226,7 +226,7 @@ template<class Result>
 inline QVariant resultGenerator()
 {
     int typeId = qMetaTypeId<Result>();
-    return QVariant(QVariant::Type(typeId));
+    return QVariant(QMetaType(typeId));
 }
 template<>
 inline QVariant resultGenerator<void>()
@@ -260,7 +260,7 @@ struct EventHelper<Result (T::*)(void)>
 {
     using Func = Result (T::*)(void);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         Q_UNUSED(args)
@@ -280,7 +280,7 @@ struct EventHelper<Result (T::*)(Arg1)>
 {
     using Func = Result (T::*)(Arg1);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -301,7 +301,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2)>
 {
     using Func = Result (T::*)(Arg1, Arg2);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -323,7 +323,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3)>
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -346,7 +346,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4)>
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -370,7 +370,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5)>
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -395,7 +395,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -421,7 +421,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -448,7 +448,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -476,7 +476,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
 {
     using Func = Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9);
     EventHelper(T *self, Func func)
-        : s(self), f(func) {}
+        : s(self), f(func) { }
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
@@ -660,7 +660,7 @@ struct EventHandler
         return compare(obj) && memberFunctionVoidCast(func) == funcIndex;
     }
 
-    inline bool operator==(const EventHandler &rhs)
+    inline bool operator==(const EventHandler &rhs) const
     {
         return objectIndex == rhs.objectIndex
                 && funcIndex == rhs.funcIndex;

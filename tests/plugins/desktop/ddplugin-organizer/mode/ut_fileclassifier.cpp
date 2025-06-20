@@ -19,15 +19,18 @@ namespace {
 class TestFileClassifier : public FileClassifier, public Test
 {
 public:
-    Classifier mode() const {return kName;}
-    ModelDataHandler *dataHandler() const {return nullptr;}
-    QStringList classes() const {return ids.keys();}
-    QString classify(const QUrl &url) const {return ids.key(url.fileName().left(3));}
-    QString className(const QString &key) const {return ids.value(key);}
-public:
-    void SetUp() override {
+    Classifier mode() const { return kName; }
+    ModelDataHandler *dataHandler() const { return nullptr; }
+    QStringList classes() const { return ids.keys(); }
+    QString classify(const QUrl &url) const { return ids.key(url.fileName().left(3)); }
+    QString className(const QString &key) const { return ids.value(key); }
+    void updateClassifier() {};
 
-        stub.set_lamda(&ConfigPresenter::instance, [this](){
+public:
+    void SetUp() override
+    {
+
+        stub.set_lamda(&ConfigPresenter::instance, [this]() {
             return cfg;
         });
 
@@ -36,7 +39,8 @@ public:
         ids.insert("2", "two");
     }
 
-    void TearDown() override {
+    void TearDown() override
+    {
         delete cfg;
     }
 
@@ -49,7 +53,7 @@ public:
 
 TEST_F(TestFileClassifier, createClassifier)
 {
-    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [](){
+    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, []() {
         return kCatDefault;
     });
 
@@ -62,35 +66,35 @@ TEST_F(TestFileClassifier, createClassifier)
 
 TEST_F(TestFileClassifier, construct)
 {
-     CollectionBaseDataPtr dp(new CollectionBaseData);
-     collections.insert("1", dp);
-     QList<CollectionBaseDataPtr> in;
-     stub.set_lamda(&ConfigPresenter::saveNormalProfile,
-                    [&in](ConfigPresenter *, const QList<CollectionBaseDataPtr> &baseDatas){
+    CollectionBaseDataPtr dp(new CollectionBaseData);
+    collections.insert("1", dp);
+    QList<CollectionBaseDataPtr> in;
+    stub.set_lamda(&ConfigPresenter::saveNormalProfile,
+                   [&in](ConfigPresenter *, const QList<CollectionBaseDataPtr> &baseDatas) {
+                       in = baseDatas;
+                   });
 
-         in = baseDatas;
-     });
+    emit this->itemsChanged("1");
 
-     emit this->itemsChanged("1");
-
-     ASSERT_EQ(in.size(), 1);
-     EXPECT_EQ(in.first(), dp);
+    ASSERT_EQ(in.size(), 1);
+    EXPECT_EQ(in.first(), dp);
 }
 
 namespace {
 class TestFileClassifier2 : public TestFileClassifier
 {
 public:
-    void SetUp() override {
+    void SetUp() override
+    {
         TestFileClassifier::SetUp();
-        stub.set_lamda(&ConfigPresenter::saveNormalProfile, [](){});
-        QObject::connect(this, &FileClassifier::itemsChanged, this, [this]
-                         (const QString &t){
+        stub.set_lamda(&ConfigPresenter::saveNormalProfile, []() {});
+        QObject::connect(this, &FileClassifier::itemsChanged, this, [this](const QString &t) {
             types.append(t);
         });
     }
 
-    void initDP() {
+    void initDP()
+    {
         dp.reset(new CollectionBaseData);
         dp->name = "one";
         dp->key = "1";

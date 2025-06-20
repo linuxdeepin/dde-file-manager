@@ -45,18 +45,27 @@ void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible
     SearchEventCaller::sendShowAdvanceSearchBar(winId, visible);
 }
 
-void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &u)
-{
-    if (u.scheme() != SearchHelper::scheme())
-        SearchEventReceiver::handleStopSearch(winId);
-}
-
 void SearchEventReceiver::handleAddressInputStr(quint64 windId, QString *str)
 {
     if (str->startsWith("search:?") && !str->contains("winId=")) {
         QString winId = "&winId=" + QString::number(windId);
         str->append(winId);
     }
+}
+
+void SearchEventReceiver::handleFileAdd(const QUrl &url)
+{
+    emit SearchManager::instance()->fileAdd(url);
+}
+
+void SearchEventReceiver::handleFileDelete(const QUrl &url)
+{
+    emit SearchManager::instance()->fileDelete(url);
+}
+
+void SearchEventReceiver::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    emit SearchManager::instance()->fileRename(oldUrl, newUrl);
 }
 
 SearchEventReceiver::SearchEventReceiver(QObject *parent)

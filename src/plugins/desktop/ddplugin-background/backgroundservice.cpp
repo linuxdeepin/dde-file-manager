@@ -4,27 +4,47 @@
 
 #include "backgroundservice.h"
 
+#include <QStandardPaths>
+#include <QSettings>
+#include <QDBusInterface>
+
 DDP_BACKGROUND_USE_NAMESPACE
 
 BackgroundService::BackgroundService(QObject *parent)
     : QObject(parent)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     fmInfo() << "create com.deepin.wm";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), this);
     wmInter->setTimeout(200);
     fmInfo() << "create com.deepin.wm end";
-
     currentWorkspaceIndex = getCurrentWorkspaceIndex();
     connect(wmInter, &WMInter::WorkspaceSwitched, this, &BackgroundService::onWorkspaceSwitched);
+#else
+    fmInfo() << "create com.deepin.wm";
+    QDBusInterface *interface = new QDBusInterface("com.deepin.wm",
+                                                   "/com/deepin/wm",
+                                                   "com.deepin.wm",
+                                                   QDBusConnection::sessionBus(),
+                                                   this);
+    fmInfo() << "create com.deepin.wm end";
+    interface->setTimeout(200);
+    currentWorkspaceIndex = getCurrentWorkspaceIndex();
+    connect(interface, SIGNAL(WorkspaceSwitched(int, int)),
+            this, SLOT(onWorkspaceSwitched(int, int)));
+
+#endif
 }
 
 BackgroundService::~BackgroundService()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (wmInter) {
         wmInter->deleteLater();
         wmInter = nullptr;
     }
+#endif
 }
 
 void BackgroundService::onWorkspaceSwitched(int from, int to)

@@ -11,7 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/windowutils.h>
 
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 #include <DDBusSender>
 #include <DSysInfo>
 
@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
 #    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 #else
@@ -67,11 +67,12 @@ DFMBASE_USE_NAMESPACE
 WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     : QObject(parent), q(parent)
 {
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     fmDebug() << "create com.deepin.wm interface.";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), q);
     fmDebug() << "end com.deepin.wm interface.";
+#endif
 
     regionMonitor = new DRegionMonitor(q);
     connect(regionMonitor, &DRegionMonitor::buttonPress, this, &WallpaperSettingsPrivate::onMousePressed);
@@ -93,8 +94,10 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     sessionIfs = new SessionIfs(this);
     fmDebug() << "end" << SessionIfs::staticInterfaceName();
     connect(sessionIfs, &SessionIfs::LockedChanged, this, [this]() {
-        if (sessionIfs->locked())
+        if (sessionIfs->locked()) {
+            fmDebug() << "Session locked, hiding wallpaper settings";
             q->hide();
+        }
     });
 
     reloadTimer.setSingleShot(true);
@@ -115,7 +118,7 @@ void WallpaperSettingsPrivate::propertyForWayland()
 void WallpaperSettingsPrivate::initUI()
 {
     QVBoxLayout *layout = new QVBoxLayout(q);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     // wallpaper
@@ -171,6 +174,7 @@ void WallpaperSettingsPrivate::initUI()
 void WallpaperSettingsPrivate::relaylout()
 {
     if (mode == WallpaperSettings::Mode::ScreenSaverMode) {
+        fmDebug() << "Switching to screensaver mode layout";
         waitControlLabel->show();
         waitControl->show();
         lockScreenBox->show();
@@ -179,6 +183,7 @@ void WallpaperSettingsPrivate::relaylout()
         q->layout()->removeItem(carouselLayout);
         static_cast<QBoxLayout *>(q->layout())->insertLayout(0, toolLayout);
     } else {
+        fmDebug() << "Switching to wallpaper mode layout";
         waitControlLabel->hide();
         waitControl->hide();
         lockScreenBox->hide();
@@ -186,6 +191,9 @@ void WallpaperSettingsPrivate::relaylout()
         if (DSysInfo::deepinType() != DSysInfo::DeepinServer) {
             carouselCheckBox->show();
             carouselControl->setVisible(carouselCheckBox->isChecked());
+            fmDebug() << "Carousel controls shown, server type:" << DSysInfo::deepinType();
+        } else {
+            fmDebug() << "Carousel controls hidden for server version";
         }
         q->layout()->removeItem(toolLayout);
         static_cast<QBoxLayout *>(q->layout())->insertLayout(0, carouselLayout);
@@ -265,6 +273,7 @@ QString WallpaperSettingsPrivate::timeFormat(int second)
 
 void WallpaperSettingsPrivate::carouselTurn(bool checked)
 {
+    fmInfo() << "Wallpaper carousel turned" << (checked ? "on" : "off");
     carouselControl->setVisible(checked);
     adjustModeSwitcher();
 
@@ -324,7 +333,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QString value = reply.value();
         auto wallapers = processListReply(value);
         fmDebug() << "get available wallpapers" << wallapers;
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
         actualEffectivedWallpaper = appearanceIfs->GetCurrentWorkspaceBackgroundForMonitor(screenName);
 #else
         actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
@@ -384,8 +393,10 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
 
 void WallpaperSettingsPrivate::onItemPressed(const QString &itemData)
 {
-    if (itemData.isEmpty())
+    if (itemData.isEmpty()) {
+        fmWarning() << "Item pressed with empty data";
         return;
+    }
 
     if (mode == WallpaperSettings::Mode::WallpaperMode) {
         //wmInter->SetTransientBackground(itemData); // it will case gsetting emit valuechanged signal (key is backgroundUris).
@@ -402,29 +413,45 @@ void WallpaperSettingsPrivate::onItemPressed(const QString &itemData)
         if (wallpaperPrview->isVisible()) {
             QThread::msleep(300);
             wallpaperPrview->setVisible(false);
+            fmDebug() << "Hidden wallpaper preview for screensaver mode";
         }
     }
 }
 
 void WallpaperSettingsPrivate::onItemButtonClicked(WallpaperItem *item, const QString &id)
 {
-    if (!item)
+    if (!item) {
+        fmWarning() << "Item button clicked with null item";
         return;
+    }
 
     if (id == DESKTOP_BUTTON_ID) {
-        if (!q->isWallpaperLocked())
+        if (!q->isWallpaperLocked()) {
+            fmInfo() << "Applying wallpaper to desktop";
             q->applyToDesktop();
+        } else {
+            fmWarning() << "Cannot apply to desktop - wallpaper is locked";
+        }
     } else if (id == LOCK_SCREEN_BUTTON_ID) {
-        if (!q->isWallpaperLocked())
+        if (!q->isWallpaperLocked()) {
+            fmInfo() << "Applying wallpaper to lock screen";
             q->applyToGreeter();
+        } else {
+            fmWarning() << "Cannot apply to lock screen - wallpaper is locked";
+        }
     } else if (id == DESKTOP_AND_LOCKSCREEN_BUTTON_ID) {
         if (!q->isWallpaperLocked()) {
+            fmInfo() << "Applying wallpaper to both desktop and lock screen";
             q->applyToDesktop();
             q->applyToGreeter();
+        } else {
+            fmWarning() << "Cannot apply to desktop and lock screen - wallpaper is locked";
         }
     } else if (id == SCREENSAVER_BUTTON_ID) {
+        fmInfo() << "Setting screensaver:" << item->itemData();
         screenSaverIfs->setCurrentScreenSaver(item->itemData());
     } else if (id == CUSTOMSCREENSAVER_BUTTON_ID) {
+        fmInfo() << "Starting custom screensaver config:" << item->itemData();
         screenSaverIfs->StartCustomConfig(item->itemData());
     }
 
@@ -544,7 +571,7 @@ void WallpaperSettingsPrivate::initCloseButton()
 
 void WallpaperSettingsPrivate::initCarousel()
 {
-    DPalette pal = DApplicationHelper::instance()->palette(q);
+    DPalette pal = DPaletteHelper::instance()->palette(q);
     QColor textColor = pal.color(QPalette::Normal, QPalette::BrightText);
 
     carouselLayout = new QHBoxLayout(q);
@@ -635,7 +662,7 @@ void WallpaperSettingsPrivate::initScreenSaver()
     lockScreenBox->installEventFilter(q);
     connect(lockScreenBox, &QCheckBox::toggled, screenSaverIfs, &ScreenSaverIfs::setLockScreenAtAwake);
 
-    DPalette pal = DApplicationHelper::instance()->palette(q);
+    DPalette pal = DPaletteHelper::instance()->palette(q);
     QColor textColor = pal.color(QPalette::Normal, QPalette::BrightText);
 
     QPalette lsPal = lockScreenBox->palette();
@@ -722,6 +749,7 @@ bool WallpaperSettingsPrivate::eventFilter(QObject *watched, QEvent *event)
 WallpaperSettings::WallpaperSettings(const QString &screenName, Mode mode, QWidget *parent)
     : DBlurEffectWidget(parent), d(new WallpaperSettingsPrivate(this))
 {
+    fmInfo() << "Creating WallpaperSettings for screen:" << screenName << "mode:" << static_cast<int>(mode);
     d->screenName = screenName;
     d->mode = mode;
     init();
@@ -746,8 +774,10 @@ WallpaperSettings::~WallpaperSettings()
 
 void WallpaperSettings::switchMode(WallpaperSettings::Mode mode)
 {
-    if (mode == d->mode)
+    if (mode == d->mode) {
+        fmDebug() << "Mode switch requested but already in mode:" << static_cast<int>(mode);
         return;
+    }
 
     if (d->mode == Mode::ScreenSaverMode) {
         d->wallpaperPrview->setVisible(true);
@@ -829,8 +859,10 @@ void WallpaperSettings::adjustGeometry()
 
 void WallpaperSettings::refreshList()
 {
-    if (!isVisible())
+    if (!isVisible()) {
+        fmDebug() << "Refresh list skipped - widget not visible";
         return;
+    }
 
     d->wallpaperList->hide();
     d->wallpaperList->clear();
@@ -874,12 +906,16 @@ void WallpaperSettings::hideEvent(QHideEvent *event)
     d->regionMonitor->unregisterRegion();
 
     if (d->mode == Mode::WallpaperMode) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         if (!d->currentSelectedWallpaper.isEmpty())
             d->wmInter->SetTransientBackground("");
-
-        if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
+#endif
+        if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF())) {
             manager->stop();
+            fmDebug() << "Stopped thumbnail manager";
+        }
     } else {
+        fmDebug() << "Stopping screensaver preview";
         d->screenSaverIfs->Stop();
     }
 
@@ -1120,39 +1156,39 @@ void WallpaperSettings::loadScreenSaver()
 void WallpaperSettings::applyToDesktop()
 {
     if (nullptr == d->appearanceIfs) {
-        fmWarning() << "appearanceIfs is nullptr";
+        fmCritical() << "Cannot apply to desktop - appearanceIfs is nullptr";
         return;
     }
 
     if (d->currentSelectedWallpaper.isEmpty()) {
-        fmWarning() << "cureentWallpaper is empty";
+        fmWarning() << "Cannot apply to desktop - current wallpaper is empty";
         return;
     }
 
-    fmDebug() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->currentSelectedWallpaper;
+    fmDebug() << "Applying wallpaper to desktop - screen:" << d->screenName << "wallpaper:" << d->currentSelectedWallpaper;
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(d->screenName) << QVariant::fromValue(d->currentSelectedWallpaper);
     d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("SetMonitorBackground"), argumentList);
-    fmDebug() << "dbus Appearance SetMonitorBackground end";
 
     emit backgroundChanged();
+    fmInfo() << "Desktop wallpaper application completed";
 }
 
 void WallpaperSettings::applyToGreeter()
 {
     if (nullptr == d->appearanceIfs) {
-        fmWarning() << "m_dbusAppearance is nullptr";
+        fmCritical() << "Cannot apply to greeter - appearanceIfs is nullptr";
         return;
     }
 
     if (d->currentSelectedWallpaper.isEmpty()) {
-        fmWarning() << "cureentWallpaper is empty";
+        fmWarning() << "Cannot apply to greeter - current wallpaper is empty";
         return;
     }
 
-    fmDebug() << "dbus Appearance greeterbackground is called " << d->currentSelectedWallpaper;
+    fmDebug() << "Applying wallpaper to greeter/lock screen:" << d->currentSelectedWallpaper;
     d->appearanceIfs->Set("greeterbackground", d->currentSelectedWallpaper);
-    fmDebug() << "dbus Appearance greeterbackground end ";
+    fmDebug() << "Greeter wallpaper application completed";
 }
 
 bool WallpaperSettings::isWallpaperLocked() const
@@ -1181,8 +1217,10 @@ void WallpaperSettings::init()
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    if (WindowUtils::isWayLand())
+    if (WindowUtils::isWayLand()) {
+        fmDebug() << "Running on Wayland, setting window properties";
         d->propertyForWayland();
+    }
 
     setBlendMode(DBlurEffectWidget::BehindWindowBlend);
 

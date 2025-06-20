@@ -225,7 +225,13 @@ QStringList FileTagCache::getTagsByFiles(const QStringList &paths) const
 
     for (const QString &path : paths) {
         QStringList tags = d->fileTagsCache.value(path).toStringList();
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         intersectionTags = intersectionTags.toSet().intersect(tags.toSet()).values();
+#else
+        auto intersectionSet = QSet<QString> { intersectionTags.begin(), intersectionTags.end() };
+        auto tagsSet = QSet<QString> { tags.begin(), tags.end() };
+        intersectionTags = intersectionSet.intersect(tagsSet).values();
+#endif
         if (intersectionTags.isEmpty())
             break;
     }

@@ -6,6 +6,7 @@
 #include <dfm-base/utils/desktopfile.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QDir>
@@ -99,7 +100,7 @@ QString DesktopFileInfo::desktopExec() const
 
 QString DesktopFileInfo::desktopIconName() const
 {
-    //special handling for trash desktop file which has tash datas
+    // special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
         if (!FileUtils::trashIsEmpty())
             return "user-trash-full";
@@ -233,7 +234,7 @@ bool DesktopFileInfo::canTag() const
     if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
         return false;
 
-    //桌面主目录不支持添加tag功能
+    // 桌面主目录不支持添加tag功能
     if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
         return false;
 
@@ -244,11 +245,11 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanMoveOrCopy:
-        //部分桌面文件不允许复制或剪切
+        // 部分桌面文件不允许复制或剪切
         if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
             return false;
 
-        //exec执行字符串中“-O”参数表示打开主目录
+        // exec执行字符串中“-O”参数表示打开主目录
         if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
             return false;
 
@@ -257,6 +258,10 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
         if (d->deepinID == "dde-computer")
             return false;
 
+        return ProxyFileInfo::canAttributes(type);
+    case FileCanType::kCanRename:
+        if (!isAttributes(OptInfoType::kIsWritable))
+            return false;
         return ProxyFileInfo::canAttributes(type);
     default:
         return ProxyFileInfo::canAttributes(type);
@@ -280,4 +285,17 @@ QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)
     map["DeepinVendor"] = desktopFile.desktopDeepinVendor();
 
     return map;
+}
+
+QSharedPointer<FileInfo> DesktopFileInfo::convert(QSharedPointer<FileInfo> fileInfo)
+{
+    const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
+    // invoking suffix/mimeTypeName might cost huge time
+    if (ProtocolUtils::isRemoteFile(url))
+        return fileInfo;
+
+    if (FileUtils::isDesktopFileSuffix(fileInfo->fileUrl()))
+        return FileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url, fileInfo));
+
+    return fileInfo;
 }

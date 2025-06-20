@@ -43,7 +43,7 @@ void KeyValueLabel::initUI()
     connect(rightValueEdit, &RightValueWidget::clicked, this, &KeyValueLabel::valueAreaClicked);
     rightValueEdit->setMinimumWidth(130);
     glayout = new QGridLayout;
-    glayout->setMargin(0);
+    glayout->setContentsMargins(0, 0, 0, 0);
     glayout->addWidget(leftValueLabel, 0, 0);
     glayout->addWidget(rightValueEdit, 0, 1);
     glayout->setColumnStretch(0, 1);
@@ -125,7 +125,7 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
         fontW = fontMinWidth;
     QString elideNote = fontM.elidedText(value, elideMode, fontW);
     rightValueEdit->setCompleteText(value);
-    rightValueEdit->setText(elideNote);
+    rightValueEdit->setPlainText(elideNote);
     if (toolTipVisibility) {
         if (elideNote != value)
             rightValueEdit->setToolTip(value);
@@ -239,9 +239,7 @@ void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void RightValueWidget::showEvent(QShowEvent *event)
 {
-    if (!document()->toPlainText().isEmpty())
-        this->setFixedHeight(static_cast<int>(document()->size().height()) + 2);
-
+    setFixedHeight(static_cast<int>(document()->size().height()) + 2);
     QTextEdit::showEvent(event);
 }
 

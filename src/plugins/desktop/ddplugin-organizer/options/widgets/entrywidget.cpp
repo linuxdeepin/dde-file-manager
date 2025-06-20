@@ -9,9 +9,7 @@
 using namespace ddplugin_organizer;
 
 EntryWidget::EntryWidget(QWidget *left, QWidget *right, QWidget *parent)
-    : ContentBackgroundWidget(parent)
-    , leftWidget(left)
-    , rightWidget(right)
+    : ContentBackgroundWidget(parent), leftWidget(left), rightWidget(right)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(10);
@@ -21,10 +19,9 @@ EntryWidget::EntryWidget(QWidget *left, QWidget *right, QWidget *parent)
     if (leftWidget && rightWidget) {
         layout->addWidget(leftWidget, 0, Qt::AlignLeft);
         layout->addWidget(rightWidget, 0, Qt::AlignRight);
-    } else if (leftWidget) { // only lelf
+    } else if (leftWidget) {   // only lelf
         layout->addWidget(leftWidget, 1, Qt::AlignLeft);
-    } else if (rightWidget) { // only right
+    } else if (rightWidget) {   // only right
         layout->addWidget(rightWidget, 1, Qt::AlignRight);
     }
 }
-

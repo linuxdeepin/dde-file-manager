@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor />
+  <vendor_url />
+  <action id="org.deepin.Filemanager.DiskEncrypt.Encrypt">
+    <description>Disk encryption</description>
+    <message>Authentication is required to encrypt the disk</message>
+    <message xml:lang="zh_CN">加密磁盘需要认证</message>
+    <message xml:lang="zh_HK">加密磁片需要認證</message>
+    <message xml:lang="zh_TW">加密磁片需要認證</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+  <action id="org.deepin.Filemanager.DiskEncrypt.Decrypt">
+    <description>Disk encryption</description>
+    <message>Authentication is required to decrypt the disk</message>
+    <message xml:lang="zh_CN">取消加密磁盘需要认证</message>
+    <message xml:lang="zh_HK">取消加密磁片需要認證</message>
+    <message xml:lang="zh_TW">取消加密磁片需要認證</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+  <action id="org.deepin.Filemanager.DiskEncrypt.ChangePassphrase">
+    <description>Disk encryption</description>
+    <message>Authentication is required to change the passphrase of disk</message>
+    <message xml:lang="zh_CN">修改磁盘密码需要认证</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

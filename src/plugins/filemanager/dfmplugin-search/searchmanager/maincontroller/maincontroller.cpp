@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "maincontroller.h"
-#include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/application/application.h>
@@ -24,37 +23,25 @@ MainController::MainController(QObject *parent)
 
 MainController::~MainController()
 {
-    for (auto &task : taskManager) {
+    for (auto task : taskManager.values()) {
         task->stop();
-        task->deleteSelf();
-        task = nullptr;
+        task->deleteLater();
     }
     taskManager.clear();
 }
 
-void MainController::stop(QString taskId)
-{
-    if (taskManager.contains(taskId)) {
-        disconnect(taskManager[taskId]);
-        taskManager[taskId]->stop();
-        taskManager[taskId]->deleteSelf();
-        taskManager[taskId] = nullptr;
-        taskManager.remove(taskId);
-    }
-}
-
 bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString &keyword)
 {
-    if (taskManager.contains(taskId))
-        stop(taskId);
+    if (taskManager.contains(taskId)) {
+        taskManager[taskId]->stop();
+    }
 
     auto task = new TaskCommander(taskId, url, keyword);
     Q_ASSERT(task);
     fmInfo() << "new task: " << task << task->taskID();
 
-    //直连，防止1被事件循环打乱时序
-    connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::DirectConnection);
-    connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::DirectConnection);
+    connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::QueuedConnection);
+    connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::QueuedConnection);
 
     if (task->start()) {
         taskManager.insert(taskId, task);
@@ -62,11 +49,19 @@ bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString
     }
 
     fmWarning() << "fail to start task " << task << task->taskID();
-    task->deleteSelf();
+    task->deleteLater();
     return false;
 }
 
-QList<QUrl> MainController::getResults(QString taskId)
+void MainController::stop(QString taskId)
+{
+    if (taskManager.contains(taskId)) {
+        taskManager[taskId]->stop();
+        taskManager.remove(taskId);
+    }
+}
+
+DFMSearchResultMap MainController::getResults(QString taskId)
 {
     if (taskManager.contains(taskId))
         return taskManager[taskId]->getResults();
@@ -74,23 +69,15 @@ QList<QUrl> MainController::getResults(QString taskId)
     return {};
 }
 
-void MainController::onFinished(QString taskId)
+QList<QUrl> MainController::getResultUrls(QString taskId)
 {
     if (taskManager.contains(taskId))
-        stop(taskId);
+        return taskManager[taskId]->getResultsUrls();
 
-    emit searchCompleted(taskId);
+    return {};
 }
 
-void MainController::onIndexFullTextSearchChanged(bool enable)
+void MainController::onFinished(QString taskId)
 {
-    return;
-    if (enable && !indexFuture.isRunning()) {
-        indexFuture = QtConcurrent::run([]() {
-            FullTextSearcher searcher(QUrl(), "");
-            fmInfo() << "create index for full-text search";
-            searcher.createIndex("/");
-            fmInfo() << "create index for full-text search done";
-        });
-    }
+    emit searchCompleted(taskId);
 }

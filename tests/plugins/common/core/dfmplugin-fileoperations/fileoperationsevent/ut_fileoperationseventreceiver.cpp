@@ -407,7 +407,7 @@ TEST_F(UT_FileOperationsEventReceiver, testRevocation)
     EXPECT_TRUE(op->revocation(0, ret, handle));
 
     stub_ext::StubExt stub;
-    stub.set_lamda(static_cast<void (FileOperationsEventReceiver::*)(quint64, const QList<QUrl>, const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+    stub.set_lamda(static_cast<void (FileOperationsEventReceiver::*)(quint64, const QList<QUrl>, const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(
                        &FileOperationsEventReceiver::handleOperationCut), []{});
     ret.insert("targets", {});
@@ -416,19 +416,19 @@ TEST_F(UT_FileOperationsEventReceiver, testRevocation)
     ret.insert("targets", {QUrl()});
     EXPECT_TRUE(op->revocation(0, ret, handle));
 
-    stub.set_lamda(static_cast<void (FileOperationsEventReceiver::*)(quint64, const QList<QUrl>, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+    stub.set_lamda(static_cast<void (FileOperationsEventReceiver::*)(quint64, const QList<QUrl>, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(
                        &FileOperationsEventReceiver::handleOperationDeletes), []{});
     ret.insert("event", GlobalEventType::kDeleteFiles);
     EXPECT_TRUE(op->revocation(0, ret, handle));
 
-    stub.set_lamda(static_cast<void (TrashFileEventReceiver::*)(quint64, const QList<QUrl>, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+    stub.set_lamda(static_cast<void (TrashFileEventReceiver::*)(quint64, const QList<QUrl>, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(
                        &TrashFileEventReceiver::handleOperationMoveToTrash), []{});
     ret.insert("event", GlobalEventType::kMoveToTrash);
     EXPECT_TRUE(op->revocation(0, ret, handle));
 
-    stub.set_lamda(static_cast<void (TrashFileEventReceiver::*)(quint64, const QList<QUrl>,const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+    stub.set_lamda(static_cast<void (TrashFileEventReceiver::*)(quint64, const QList<QUrl>,const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                      DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(
                        &TrashFileEventReceiver::handleOperationRestoreFromTrash), []{});
     ret.insert("event", GlobalEventType::kRestoreFromTrash);
@@ -438,7 +438,7 @@ TEST_F(UT_FileOperationsEventReceiver, testRevocation)
     ret.insert("event", GlobalEventType::kRenameFile);
     EXPECT_TRUE(op->revocation(0, ret, handle));
 
-    stub.set_lamda(static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl, const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)>(
+    stub.set_lamda(static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl, const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag)>(
                        &FileOperationsEventReceiver::handleOperationRenameFile), []{ return true; });
     ret.insert("targets", {QUrl()});
     EXPECT_TRUE(op->revocation(0, ret, handle));

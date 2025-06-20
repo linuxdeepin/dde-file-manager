@@ -17,7 +17,7 @@ QJsonObject SmbReportData::prepareData(const QVariantMap &args) const
 {
     QVariantMap temArgs = args;
     temArgs.insert("tid", 1000500001);
-    uint time = QDateTime::currentDateTime().toTime_t();
+    uint time = QDateTime::currentDateTime().toSecsSinceEpoch();
     temArgs.insert("resultTime", time);
     if (temArgs.value("result").toBool()) {
         temArgs.insert("errorId", 0);

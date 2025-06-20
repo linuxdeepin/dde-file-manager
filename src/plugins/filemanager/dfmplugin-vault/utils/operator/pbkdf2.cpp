@@ -20,12 +20,16 @@ char pbkdf2::charToHexadecimalChar(char nibble)
 
 char *pbkdf2::octalToHexadecimal(const char *str, int length)
 {
+    fmDebug() << "Vault: Converting octal to hexadecimal, length:" << length;
+
     const char *s = str;
     int i = 0;
     length *= 2;
 
-    if (length > CIPHER_LENGHT_MAX)
+    if (length > CIPHER_LENGHT_MAX) {
+        fmWarning() << "Vault: Length exceeds maximum, truncating to:" << (CIPHER_LENGHT_MAX - 1);
         length = CIPHER_LENGHT_MAX - 1;
+    }
 
     char *bit_string = reinterpret_cast<char *>(malloc(size_t(length + 1)));
 
@@ -36,13 +40,15 @@ char *pbkdf2::octalToHexadecimal(const char *str, int length)
     }
     bit_string[i] = 0;
 
+    fmDebug() << "Vault: Octal to hexadecimal conversion completed, result length:" << i;
     return bit_string;
 }
 
 // 生成随机盐
 QString pbkdf2::createRandomSalt(int byte)
-
 {
+    fmDebug() << "Vault: Creating random salt with byte length:" << byte;
+
     BIGNUM *rnd = BN_new();
     int bits = byte * 4;
     int top = 0, bottom = 0;
@@ -50,8 +56,10 @@ QString pbkdf2::createRandomSalt(int byte)
 
     char *cstr = BN_bn2hex(rnd);
     QString strRandSalt = QString::fromUtf8(QByteArray(cstr));
+    free(cstr);
     BN_free(rnd);
 
+    fmDebug() << "Vault: Random salt created successfully, length:" << strRandSalt.length();
     return strRandSalt;
 }
 
@@ -63,6 +71,7 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     }
     // 字节长度
     int nCipherLength = cipherByteNum / 2;
+    fmDebug() << "Vault: Cipher length in bytes:" << nCipherLength;
 
     // 格式化随机盐
     uchar salt_value[SALT_LENGTH_MAX];
@@ -71,6 +80,7 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     for (int i = 0; i < nSaltLength; i++) {
         salt_value[i] = uchar(randSalt.at(i).toLatin1());
     }
+    fmDebug() << "Vault: Salt formatted, length:" << nSaltLength;
 
     // 生成密文
     QString strCipherText("");
@@ -80,12 +90,15 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     // 修复bug-60724
     std::string strPassword = password.toStdString();
     const char *pwd = strPassword.c_str();
+
+    fmDebug() << "Vault: Calling PKCS5_PBKDF2_HMAC_SHA1";
     if (PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                                salt_value, randSalt.length(),
                                iteration,
                                nCipherLength,
                                out)
         != 0) {
+        fmDebug() << "Vault: PKCS5_PBKDF2_HMAC_SHA1 succeeded";
         char *pstr = octalToHexadecimal(reinterpret_cast<char *>(out), nCipherLength);
         // 修复bug-51478
         strCipherText = QString(pstr);
@@ -94,6 +107,8 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     } else {
         fmCritical() << "Vault: the function of PKCS5_PBKDF2_HMAC_SHA1 failed";
     }
+
     free(out);
+    fmDebug() << "Vault: PBKDF2 encryption completed";
     return strCipherText;
 }

@@ -38,7 +38,7 @@ void ProcessDialog::initialize(bool desktop)
 
 bool ProcessDialog::execDialog()
 {
-    const QString exe = onDesktop ? QString("/usr/bin/dde-file-manager") : QString("/usr/bin/dde-desktop");
+    const QString exe = onDesktop ? QString("/usr/libexec/dde-file-manager") : QString("/usr/bin/dde-shell");
     auto process = queryProcess(exe);
     if (process.isEmpty())
         return true;
@@ -54,13 +54,8 @@ bool ProcessDialog::execDialog()
 void ProcessDialog::restart()
 {
     if (killed && !onDesktop) {
-        const QString &desktop = "/usr/bin/dde-desktop";
-        qCInfo(logToolUpgrade) << "restart desktop...";
-#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
-        QProcess::startDetached(desktop);
-#else
-        QProcess::startDetached(desktop, {});
-#endif
+        qCInfo(logToolUpgrade) << "Restarting dde-shell service";
+        QProcess::startDetached("systemctl", { "--user", "restart", "dde-shell-plugin@org.deepin.ds.desktop.service" });
     }
 }
 
@@ -81,10 +76,10 @@ QList<int> ProcessDialog::queryProcess(const QString &exec)
         if (isEqual(exePath, exec)) {
             int tuid = targetUid(info.absoluteFilePath());
             if (tuid == currentUser) {
-                qCInfo(logToolUpgrade) << "find active process:" << exePath << pid << "user" << tuid;
+                qCInfo(logToolUpgrade) << "Found matching process:" << exePath << "PID:" << pid << "User:" << tuid;
                 pids.append(pid);
             } else {
-                qCInfo(logToolUpgrade) << "find anthoer user's active process:" << exePath << pid << "user" << tuid << currentUser;
+                qCInfo(logToolUpgrade) << "Found process from different user:" << exePath << "PID:" << pid << "User:" << tuid << "(current:" << currentUser << ")";
             }
         }
     }
@@ -132,7 +127,7 @@ bool ProcessDialog::isEqual(const QString &link, QString match) const
     //! It is not sure that the suffix '(deleted)' is stable.
     match.append(" (deleted)");
     if (link == match) {
-        qCWarning(logToolUpgrade) << "unstable match:" << match;
+        qCWarning(logToolUpgrade) << "Matched executable with (deleted) suffix:" << match;
         return true;
     }
 

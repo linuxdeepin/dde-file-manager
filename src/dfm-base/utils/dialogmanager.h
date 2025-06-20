@@ -12,8 +12,10 @@
 
 #include <dfm-mount/base/dmount_global.h>
 
-#include <QObject>
+#include <DSettingsWidgetFactory>
 #include <DDialog>
+
+#include <QObject>
 
 using namespace DTK_NAMESPACE::Widget;
 
@@ -81,6 +83,10 @@ public:
     int showAskIfAddExcutableFlagAndRunDialog();
     void showDeleteSystemPathWarnDialog(quint64 winId);
 
+    // 注册自定义控件创建器
+    void registerSettingWidget(const QString &viewType,
+                               std::function<DSettingsWidgetFactory::WidgetCreateHandler> handler);
+
 private:
     explicit DialogManager(QObject *parent = nullptr);
     ~DialogManager();
@@ -89,6 +95,9 @@ private:
     QIcon infoIcon;
     QIcon warningIcon;
     QIcon errorIcon;
+
+    // 存储自定义控件创建器的映射
+    QMap<QString, std::function<DSettingsWidgetFactory::WidgetCreateHandler>> settingWidgetCreators;
 };
 
 }

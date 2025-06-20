@@ -5,7 +5,7 @@
         "dfm.disk.hidden":{
             "value":[],
             "serial":0,
-            "flags":[],
+            "flags":["global"],
             "name":"Hide disks",
             "name[zh_CN]":"磁盘隐藏",
             "description[zh_CN]":"用于配置磁盘隐藏，该数组中包含了需要隐藏的磁盘的UUID",

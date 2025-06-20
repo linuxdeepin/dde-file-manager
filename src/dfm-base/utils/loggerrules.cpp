@@ -6,6 +6,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
+using namespace GlobalDConfDefines::ConfigPath;
 DFMBASE_BEGIN_NAMESPACE
 
 LoggerRules &LoggerRules::instance()
@@ -20,11 +21,9 @@ void LoggerRules::initLoggerRules()
     qunsetenv("QT_LOGGING_RULES");
 
     // set env
-    currentRules = logRules;
-    qCWarning(logDFMBase) << "Current system env log rules:" << logRules;
+    currentRules = QString(logRules);
 
     logRules = DConfigManager::instance()->value(kDefaultCfgPath, "log_rules").toByteArray();
-    qCWarning(logDFMBase) << "Current app log rules :" << logRules;
     appendRules(logRules);
     setRules(currentRules);
 

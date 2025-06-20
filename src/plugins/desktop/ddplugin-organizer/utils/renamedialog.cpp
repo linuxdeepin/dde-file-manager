@@ -12,7 +12,7 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#define CONTENTSIZE QSize(275, 25)
+#define CONTENTWIDTH 275
 #define HSPACEWIDTH 30
 #define VSPACEWIDTH 10
 #define MARGINWIDTH 0
@@ -50,8 +50,8 @@ void RenameDialogPrivate::initUi()
     mainFrame = new QFrame(q);
     mainLayout = new QVBoxLayout(mainFrame);
 
-    QRegExp regStr("[0-9]+");
-    validator = new QRegExpValidator(regStr, q);
+    QRegularExpression regStr("[0-9]+");
+    validator.reset(new QRegularExpressionValidator(regStr));
 }
 
 void RenameDialogPrivate::initParameters()
@@ -66,7 +66,7 @@ void RenameDialogPrivate::initParameters()
     label->setText(tr("Mode:"));
     comboBox = std::get<1>(modeSelection);
     comboBox->addItems(QStringList() << tr("Replace Text") << tr("Add Text") << tr("Custom Text"));
-    comboBox->setFixedSize(CONTENTSIZE);
+    comboBox->setFixedWidth(CONTENTWIDTH);
 
     // mode:replace
     label = std::get<0>(replaceForFinding);
@@ -74,13 +74,13 @@ void RenameDialogPrivate::initParameters()
     lineEdit = std::get<1>(replaceForFinding);
     lineEdit->setFocus();
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(replaceForReplacing);
     label->setText(tr("Replace:"));
     lineEdit = std::get<1>(replaceForReplacing);
     lineEdit->setPlaceholderText(tr("Optional"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     // mode:add
     label = std::get<0>(addForAdding);
@@ -88,27 +88,27 @@ void RenameDialogPrivate::initParameters()
     lineEdit = std::get<1>(addForAdding);
     lineEdit->setPlaceholderText(tr("Required"));
     lineEdit->setMaxLength(300);
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(addForLocating);
     label->setText(tr("Location:"));
     comboBox = std::get<1>(addForLocating);
     comboBox->addItems(QStringList() << tr("Before file name") << tr("After file name"));
-    comboBox->setFixedSize(CONTENTSIZE);
+    comboBox->setFixedWidth(CONTENTWIDTH);
 
     // mode:custom
     label = std::get<0>(customForName);
     label->setText(tr("File name:"));
     lineEdit = std::get<1>(customForName);
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
 
     label = std::get<0>(customForNumber);
     label->setText(tr("Start at:"));
     lineEdit = std::get<1>(customForNumber);
     lineEdit->setPlaceholderText(tr("Required"));
-    lineEdit->setFixedSize(CONTENTSIZE);
-    lineEdit->setValidator(validator);
+    lineEdit->setFixedWidth(CONTENTWIDTH);
+    lineEdit->setValidator(validator.data());
     lineEdit->setText(QStringLiteral("1"));
 
     label = nullptr;
@@ -127,7 +127,7 @@ void RenameDialogPrivate::initLayout()
     comboBox = std::get<1>(modeSelection);
     label->setBuddy(comboBox);
     hLayout = std::get<2>(modeSelection);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(comboBox);
@@ -137,7 +137,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(replaceForFinding);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(replaceForFinding);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -146,12 +146,12 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(replaceForReplacing);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(replaceForReplacing);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
 
-    replaceLayout.first->setMargin(MARGINWIDTH);
+    replaceLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     replaceLayout.first->addLayout(std::get<2>(replaceForFinding));
     replaceLayout.first->addSpacing(VSPACEWIDTH);
     replaceLayout.first->addLayout(std::get<2>(replaceForReplacing));
@@ -162,7 +162,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(addForAdding);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(addForAdding);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -171,12 +171,12 @@ void RenameDialogPrivate::initLayout()
     comboBox = std::get<1>(addForLocating);
     label->setBuddy(comboBox);
     hLayout = std::get<2>(addForLocating);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(comboBox);
 
-    addLayout.first->setMargin(MARGINWIDTH);
+    addLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     addLayout.first->addLayout(std::get<2>(addForAdding));
     addLayout.first->addSpacing(VSPACEWIDTH);
     addLayout.first->addLayout(std::get<2>(addForLocating));
@@ -187,7 +187,7 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(customForName);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(customForName);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
@@ -196,21 +196,21 @@ void RenameDialogPrivate::initLayout()
     lineEdit = std::get<1>(customForNumber);
     label->setBuddy(lineEdit);
     hLayout = std::get<2>(customForNumber);
-    hLayout->setMargin(MARGINWIDTH);
+    hLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     hLayout->addWidget(label);
     hLayout->addSpacing(HSPACEWIDTH);
     hLayout->addWidget(lineEdit);
 
-    customLayout.first->setMargin(MARGINWIDTH);
+    customLayout.first->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     customLayout.first->addLayout(std::get<2>(customForName));
     customLayout.first->addSpacing(VSPACEWIDTH);
     customLayout.first->addLayout(std::get<2>(customForNumber));
     customLayout.second->setLayout(customLayout.first);
 
     // total layout
-    mainLayout->setMargin(MARGINWIDTH);
+    mainLayout->setContentsMargins(MARGINWIDTH, MARGINWIDTH, MARGINWIDTH, MARGINWIDTH);
     mainLayout->addWidget(titleLabel);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(14);
     mainLayout->addLayout(std::get<2>(modeSelection));
     mainLayout->addSpacing(VSPACEWIDTH);
 
@@ -224,6 +224,7 @@ void RenameDialogPrivate::initLayout()
     mainLayout->addSpacing(15);
 
     mainFrame->setLayout(mainLayout);
+    q->setIcon(QIcon::fromTheme("dde-file-manager"));
 }
 
 void RenameDialogPrivate::initConnect()

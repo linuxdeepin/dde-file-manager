@@ -14,6 +14,7 @@ class CustomMode : public CanvasOrganizer
 {
     Q_OBJECT
     friend class CustomModePrivate;
+
 public:
     explicit CustomMode(QObject *parent = nullptr);
     ~CustomMode() override;
@@ -32,15 +33,16 @@ protected slots:
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
-    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint) override;
+    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData) override;
 private slots:
     void onNewCollection(const QList<QUrl> &);
     void onDeleteCollection(const QString &key);
     void onItemsChanged();
+
 private:
     CustomModePrivate *d;
 };
 
 }
 
-#endif // CUSTOMMODE_H
+#endif   // CUSTOMMODE_H

@@ -8,6 +8,7 @@
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/finallyutil.h>
 
@@ -19,6 +20,8 @@
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dopticaldiscinfo.h>
 #include <dfm-burn/dopticaldiscmanager.h>
+
+#include <sys/statvfs.h>
 
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
@@ -100,7 +103,7 @@ void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmoun
     if (/*old != newStorage && */ newStorage.isValid()) {
         const QString &devId = itemData.value(DeviceProperty::kId).toString();
         emit DevMngIns->devSizeChanged(devId,
-                                       itemData.value(DeviceProperty::kSizeTotal).toULongLong(),
+                                       newStorage.total,
                                        newStorage.avai);
     }
 }
@@ -117,13 +120,31 @@ DevStorage DeviceWatcherPrivate::queryUsageOfBlock(const QVariantMap &itemData)
                  opticalStorage.value(DeviceProperty::kSizeFree).toULongLong(),
                  opticalStorage.value(DeviceProperty::kSizeUsed).toULongLong() };
     } else {
-        QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
-        quint64 total = itemData.value(DeviceProperty::kSizeTotal).toULongLong();
-        qint64 avai = si.bytesAvailable();
-        if (avai < 0)   // if nagative value returned, error occured.
-            return {};
-        return { total, static_cast<quint64>(avai), total - avai };
+        auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
+                                                      "deviceCapacityDisplay",
+                                                      DEVICE_SIZE_DISPLAY_BY_DISK)
+                            .toInt();
+        if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
+            struct statvfs fsInfo;
+            QString mpt = itemData.value(DeviceProperty::kMountPoint).toString();
+            int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
+            if (ok == 0) {
+                const quint64 blksize = quint64(fsInfo.f_frsize);
+                auto total = fsInfo.f_blocks * blksize;
+                auto avai = fsInfo.f_bavail * blksize;
+                auto usage = (fsInfo.f_blocks - fsInfo.f_bavail) * blksize;
+                return { total, avai, usage };
+            }
+        } else {
+            QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
+            quint64 total = itemData.value(DeviceProperty::kUDisks2Size).toULongLong();
+            qint64 avai = si.bytesAvailable();
+            if (avai < 0)   // if nagative value returned, error occured.
+                return {};
+            return { total, static_cast<quint64>(avai), total - avai };
+        }
     }
+    return {};
 }
 
 DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemData)
@@ -146,14 +167,15 @@ DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemDat
 
 void DeviceWatcher::initDevDatas()
 {
-    qCInfo(logDFMBase) << "initDevDatas start";
+    qCInfo(logDFMBase) << "Device data initialization started";
     auto mng { DDeviceManager::instance() };
     const auto &devs { mng->devices() };
     for (const auto &dev : devs.value(DeviceType::kBlockDevice))
         d->allBlockInfos.insert(dev, DeviceHelper::loadBlockInfo(dev));
     for (const auto &dev : devs.value(DeviceType::kProtocolDevice))
         d->allProtocolInfos.insert(dev, DeviceHelper::loadProtocolInfo(dev));
-    qCInfo(logDFMBase) << "initDevDatas end";
+    qCInfo(logDFMBase) << "Device data initialization completed - block devices:" 
+                       << d->allBlockInfos.size() << "protocol devices:" << d->allProtocolInfos.size();
 }
 
 /*!
@@ -167,12 +189,14 @@ void DeviceWatcher::initDevDatas()
  */
 void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
-    FinallyUtil final([id] { qCInfo(logDFMBase) << "query optical usage finished for" << id; });
+    FinallyUtil final([id] { qCDebug(logDFMBase) << "Optical device usage query completed for device:" << id; });
     Q_UNUSED(final);
 
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
-    if (data.value(DeviceProperty::kId).toString().isEmpty())
+    if (data.value(DeviceProperty::kId).toString().isEmpty()) {
+        qCWarning(logDFMBase) << "Failed to load block info for optical device:" << id;
         return;
+    }
     bool sizeChanged = false;
     QScopedPointer<DFMBURN::DOpticalDiscInfo> info { DFMBURN::DOpticalDiscManager::createOpticalInfo(data.value(DeviceProperty::kDevice).toString()) };
     if (info) {
@@ -197,26 +221,36 @@ void DeviceWatcher::queryOpticalDevUsage(const QString &id)
  */
 void DeviceWatcher::updateOpticalDevUsage(const QString &id, const QString &mpt)
 {
-    FinallyUtil final([id] { qCInfo(logDFMBase) << "update optical usage finished for" << id; });
+    FinallyUtil final([id] { qCDebug(logDFMBase) << "Optical device usage update completed for device:" << id; });
     Q_UNUSED(final);
-    if (mpt.isEmpty())
+    if (mpt.isEmpty()) {
+        qCWarning(logDFMBase) << "Mount point is empty for optical device:" << id;
         return;
+    }
 
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
-    if (data.value(DeviceProperty::kId).toString().isEmpty() || !data.value(DeviceProperty::kOptical).toBool())
+    if (data.value(DeviceProperty::kId).toString().isEmpty() || !data.value(DeviceProperty::kOptical).toBool()) {
+        qCWarning(logDFMBase) << "Invalid optical device data for device:" << id;
         return;
+    }
 
     const QString &mediaType { DeviceUtils::formatOpticalMediaType(data.value(DeviceProperty::kMedia).toString()) };
-    if (mediaType != "DVD+RW" && mediaType != "DVD-RW")
+    if (mediaType != "DVD+RW" && mediaType != "DVD-RW") {
+        qCDebug(logDFMBase) << "Optical device media type not supported for usage update - device:" << id << "type:" << mediaType;
         return;
+    }
 
     const QString &fs { data.value(DeviceProperty::kFileSystem).toString() };
-    if (fs != "udf")
+    if (fs != "udf") {
+        qCDebug(logDFMBase) << "Optical device filesystem not supported for usage update - device:" << id << "filesystem:" << fs;
         return;
+    }
 
     const quint64 freeSize { data.value(DeviceProperty::kSizeFree).toULongLong() };
-    if (freeSize != 0)
+    if (freeSize != 0) {
+        qCDebug(logDFMBase) << "Optical device has free space, no usage update needed - device:" << id << "free size:" << freeSize;
         return;
+    }
 
     // Note: QStorageInfo::bytesTotal is not accurate for DVD-RW
     // TODO(zhangs): For the total capacity of a DVD-RW disc,
@@ -228,6 +262,8 @@ void DeviceWatcher::updateOpticalDevUsage(const QString &id, const QString &mpt)
     qint64 avai = si.bytesAvailable() > 0 ? si.bytesAvailable() : 0;
     data[DeviceProperty::kSizeUsed] = static_cast<quint64>(si.bytesTotal() - avai);
 
+    qCDebug(logDFMBase) << "Optical device usage updated - device:" << id 
+                        << "total:" << si.bytesTotal() << "available:" << avai;
     saveOpticalDevUsage(id, data);
 }
 
@@ -241,7 +277,7 @@ void DeviceWatcher::saveOpticalDevUsage(const QString &id, const QVariantMap &da
 void DeviceWatcher::startWatch()
 {
     if (d->isWatching) {
-        qCInfo(logDFMBase) << "watching device changes now...";
+        qCInfo(logDFMBase) << "Device watcher is already monitoring device changes";
         return;
     }
 
@@ -249,7 +285,7 @@ void DeviceWatcher::startWatch()
     mng->startMonitorWatch();
     auto blkMonitor = mng->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
     if (!blkMonitor) {
-        qCWarning(logDFMBase) << "block monitor is not valid!!!";
+        qCCritical(logDFMBase) << "Failed to get block device monitor - device watching cannot start";
     } else {
         auto ptr = blkMonitor.data();
         d->connections << connect(ptr, &DBlockMonitor::driveAdded, DeviceManager::instance(), &DeviceManager::blockDriveAdded);
@@ -265,11 +301,12 @@ void DeviceWatcher::startWatch()
         d->connections << connect(ptr, &DBlockMonitor::propertyChanged, this, &DeviceWatcher::onBlkDevPropertiesChanged);
 
         d->isWatching = true;
+        qCInfo(logDFMBase) << "Block device monitor connected successfully";
     }
 
     auto protoMonitor = mng->getRegisteredMonitor(DeviceType::kProtocolDevice).objectCast<DProtocolMonitor>();
     if (!protoMonitor) {
-        qCWarning(logDFMBase) << "protocol monitor is not valid!!!";
+        qCCritical(logDFMBase) << "Failed to get protocol device monitor - protocol device watching cannot start";
     } else {
         auto ptr = protoMonitor.data();
         d->connections << connect(ptr, &DProtocolMonitor::deviceAdded, this, &DeviceWatcher::onProtoDevAdded);
@@ -278,6 +315,7 @@ void DeviceWatcher::startWatch()
         d->connections << connect(ptr, &DProtocolMonitor::mountRemoved, this, &DeviceWatcher::onProtoDevUnmounted);
 
         d->isWatching = true;
+        qCInfo(logDFMBase) << "Protocol device monitor connected successfully";
     }
 }
 
@@ -292,7 +330,7 @@ void DeviceWatcher::stopWatch()
 
 void DeviceWatcher::onBlkDevAdded(const QString &id)
 {
-    qCDebug(logDFMBase) << "new block device added: " << id;
+    qCInfo(logDFMBase) << "Block device added:" << id;
     auto dev = DeviceHelper::createBlockDevice(id);
     d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(dev));
 
@@ -302,7 +340,7 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
 {
-    qCDebug(logDFMBase) << "block device removed: " << id;
+    qCInfo(logDFMBase) << "Block device removed:" << id;
     QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allBlockInfos.remove(id);
     emit DevMngIns->blockDevRemoved(id, oldMpt);
@@ -312,7 +350,11 @@ void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 {
     const QVariantMap &info = d->allBlockInfos.value(id);
     // query info async avoid blocking main thread when disks' IO load is too high.
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QtConcurrent::run(&DeviceWatcherPrivate::queryUsageOfItem, d.data(), info, DFMMOUNT::DeviceType::kBlockDevice);
+#else
     QtConcurrent::run(d.data(), &DeviceWatcherPrivate::queryUsageOfItem, info, DFMMOUNT::DeviceType::kBlockDevice);
+#endif
     emit DevMngIns->blockDevMounted(id, mpt);
 }
 
@@ -368,8 +410,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
         const auto &var = iter.value();
         auto name = DeviceHelper::castFromDFMMountProperty(property);
         if (name.isEmpty()) {
-            qCInfo(logDFMBase) << Utils::getNameByProperty(property) << "has no mapped device name";
-            qCInfo(logDFMBase) << "changed value is: " << var;
+            qCDebug(logDFMBase) << "Property has no mapped device name - property:" << Utils::getNameByProperty(property) << "value:" << var;
             continue;
         } else {
             QVariantMap &item = d->allBlockInfos[id];
@@ -387,6 +428,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
                 item[DeviceProperty::kSizeFree] = 0;
                 item[DeviceProperty::kSizeUsed] = 0;
                 DeviceHelper::persistentOpticalInfo(item);
+                qCDebug(logDFMBase) << "Optical device properties cleared for device:" << id;
             }
             emit DevMngIns->blockDevPropertyChanged(id, name, var);
         }
@@ -395,7 +437,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
 
 void DeviceWatcher::onProtoDevAdded(const QString &id)
 {
-    qCDebug(logDFMBase) << "new protocol device added: " << id;
+    qCInfo(logDFMBase) << "Protocol device added:" << id;
     d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevAdded(id);
@@ -404,7 +446,7 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
 
 void DeviceWatcher::onProtoDevRemoved(const QString &id)
 {
-    qCDebug(logDFMBase) << "protocol device removed: " << id;
+    qCInfo(logDFMBase) << "Protocol device removed:" << id;
     QString oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allProtocolInfos.remove(id);
 
@@ -495,4 +537,5 @@ DeviceWatcherPrivate::DeviceWatcherPrivate(DeviceWatcher *qq)
     : QObject(qq), q(qq)
 {
     connect(DevProxyMng, &DeviceProxyManager::devSizeChanged, this, &DeviceWatcherPrivate::updateStorage, Qt::QueuedConnection);
+    DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.mount");
 }

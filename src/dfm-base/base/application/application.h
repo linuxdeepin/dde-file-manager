@@ -32,7 +32,9 @@ public:
         kUrlOfNewTab,   // default path to new tabs
         kThemeName,
         kFileAndDirMixedSort,   // Mixed sorting of ordinary files and directories
-        kListItemExpandable   // Item expandable as tree in FileView with list view mode
+        kListItemExpandable,   // Item expandable as tree in FileView with list view mode
+        kGridDensityLevel,   // grid density level
+        kListHeightLevel   // list view height level
     };
 
     Q_ENUM(ApplicationAttribute)
@@ -65,8 +67,8 @@ public:
     Q_ENUM(GenericAttribute)
 
     enum TriggerAttribute {
-        kRestoreViewMode,    // restore defualt view mode to all dir
-        kClearSearchHistory     // clear search history
+        kRestoreViewMode,   // restore defualt view mode to all dir
+        kClearSearchHistory   // clear search history
     };
 
     Q_ENUM(TriggerAttribute)
@@ -93,7 +95,7 @@ public:
 
     static Settings *dataPersistence();
 
-    static void appAttributeTrigger(TriggerAttribute ta);
+    static void appAttributeTrigger(TriggerAttribute ta, quint64 winId);
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
@@ -101,6 +103,8 @@ Q_SIGNALS:
     void appAttributeEdited(ApplicationAttribute aa, const QVariant &value);
     void genericAttributeEdited(GenericAttribute ga, const QVariant &value);
     void iconSizeLevelChanged(int level);
+    void gridDensityLevelChanged(int level);
+    void listHeightLevelChanged(int level);
     void viewModeChanged(int mode);
     void previewCompressFileChanged(bool enable);
     void showedFileSuffixChanged(bool enable);
@@ -111,7 +115,7 @@ Q_SIGNALS:
 
     void genericSettingCreated(Settings *settings);
     void appSettingCreated(Settings *settings);
-    void clearSearchHistory();
+    void clearSearchHistory(quint64 winId);
 
 protected:
     Application(ApplicationPrivate *dd, QObject *parent = nullptr);

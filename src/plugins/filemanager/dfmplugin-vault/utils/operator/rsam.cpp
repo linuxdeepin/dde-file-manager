@@ -14,6 +14,8 @@ DPVAULT_USE_NAMESPACE
 bool rsam::createPublicAndPrivateKey(QString &publicKey, QString &privateKey)
 
 {
+    fmDebug() << "Vault: Creating RSA public and private key pair";
+
     // 创建rsa对象
     RSA *pRsa = RSA_new();
     BIGNUM *pNum = BN_new();
@@ -57,6 +59,7 @@ bool rsam::createPublicAndPrivateKey(QString &publicKey, QString &privateKey)
     delete[] pPrivateKey;
     delete[] pPublicKey;
 
+    fmDebug() << "Vault: RSA objects cleaned up successfully";
     return true;
 }
 
@@ -119,8 +122,10 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
 
     RSA *pRsa = RSA_new();
     if (publicKey.contains(kKeyBegin)) {
+        fmDebug() << "Vault: Loading RSA public key format";
         pRsa = PEM_read_bio_RSAPublicKey(pPublicKeyBio, &pRsa, nullptr, nullptr);
     } else {
+        fmDebug() << "Vault: Loading RSA PUBKEY format";
         pRsa = PEM_read_bio_RSA_PUBKEY(pPublicKeyBio, &pRsa, nullptr, nullptr);
     }
 
@@ -130,6 +135,8 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
     }
 
     int nLen = RSA_size(pRsa);
+    fmDebug() << "Vault: RSA key size for decryption:" << nLen;
+
     char *passwordBuf = new char[nLen];
     memset(passwordBuf, 0, size_t(nLen));
 
@@ -137,7 +144,12 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
     QByteArray ciphertextArry = ciphertext.toUtf8();
     ciphertextArry = QByteArray::fromBase64(ciphertextArry);
     int nCiphertextLen = ciphertextArry.length();
+    fmDebug() << "Vault: Base64 decoded ciphertext length:" << nCiphertextLen;
+
     uchar *pCiphertextData = reinterpret_cast<uchar *>(ciphertextArry.data());
+
+    fmDebug() << "Vault: Performing RSA public decryption";
+
     int nSize = RSA_public_decrypt(nCiphertextLen,
                                    pCiphertextData,
                                    reinterpret_cast<uchar *>(passwordBuf),
@@ -153,5 +165,6 @@ QString rsam::publicKeyDecrypt(const QString &ciphertext, const QString &publicK
     BIO_free_all(pPublicKeyBio);
     RSA_free(pRsa);
 
+    fmDebug() << "Vault: Public key decryption cleanup completed";
     return qstrPassword;
 }

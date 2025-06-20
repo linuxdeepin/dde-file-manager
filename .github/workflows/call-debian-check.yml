@@ -3,11 +3,6 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened]
 
-permissions:
-  pull-requests: write
-  contents: read
-  checks: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,6 +10,4 @@ concurrency:
 jobs:
   debian-check:
     uses: linuxdeepin/.github/.github/workflows/debian-check.yml@master
-    with:
-      job_name: "debian-check"
-    
+    secrets: inherit

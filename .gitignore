@@ -4,7 +4,6 @@
 *.o
 *.obj
 .qmake.stash
-*.cmake
 CMakeLists.txt.user*
 CMakeFiles
 CMakeCache.txt
@@ -72,6 +71,9 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 # vscode
 .vscode
 
+# deepin-IDE
+.unioncode
+
 # debhelper-build-stamp
 
 .debhelper
@@ -83,3 +85,11 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 *.tar.gz
 *.log
 *.substvars
+
+# clangd cache files
+.cache/clangd/
+
+# cursor
+.cursorindexingignore
+.cursor
+.specstory

@@ -23,6 +23,7 @@ class WatcherCache : public QObject
     friend InfoCache;
 Q_SIGNALS:
     void fileDelete(const QUrl &url);
+    void updateWatcherTime(const QList<QUrl> &url, const bool add);
 
 public:
     static WatcherCache &instance();
@@ -31,7 +32,7 @@ public:
     QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
 
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
-    void removeCacheWatcher(const QUrl &url);
+    void removeCacheWatcher(const QUrl &url, const bool isEmit = true);
     void removeCacheWatcherByParent(const QUrl &parent);
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disbale = true);

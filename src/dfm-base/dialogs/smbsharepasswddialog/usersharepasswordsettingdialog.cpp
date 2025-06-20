@@ -21,6 +21,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmbase;
 DWIDGET_USE_NAMESPACE
 
+static constexpr int kMaxSmbPasswordLength { 127 };
+
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
     : DDialog(parent)
 {
@@ -46,6 +48,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     editAreaLay->setContentsMargins(0, 20, 0, 6);
 
     passwordEdit = new Dtk::Widget::DPasswordEdit(this);
+    passwordEdit->lineEdit()->setMaxLength(kMaxSmbPasswordLength);
     editAreaLay->addWidget(passwordEdit);
     DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
     DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);

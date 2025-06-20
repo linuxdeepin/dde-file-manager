@@ -32,18 +32,25 @@ LocalFileWatcherPrivate::LocalFileWatcherPrivate(const QUrl &fileUrl, LocalFileW
  */
 bool LocalFileWatcherPrivate::start()
 {
-    if (watcher.isNull())
-        return false;
-
-    dfmio::DFile file(url);
-    if (!file.exists()) {
-        qCWarning(logDFMBase) << "watcher start failed, error: watcher dir is not exists ! url = " << url;
+    if (watcher.isNull()) {
+        qCWarning(logDFMBase) << "LocalFileWatcher::start: Cannot start watcher, watcher instance is null";
         return false;
     }
 
+    dfmio::DFile file(url);
+    if (!file.exists()) {
+        qCWarning(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher, target directory does not exist:" << url;
+        return false;
+    }
+
+    qCDebug(logDFMBase) << "LocalFileWatcher::start: Starting file watcher for:" << url;
     started = watcher->start();
-    if (!started)
-        qCWarning(logDFMBase) << "watcher start failed, error: " << watcher->lastError().errorMsg();
+    if (!started) {
+        qCWarning(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher for:" << url
+                              << "Error:" << watcher->lastError().errorMsg();
+    } else {
+        qCInfo(logDFMBase) << "LocalFileWatcher::start: Successfully started file watcher for:" << url;
+    }
     return started;
 }
 /*!
@@ -55,8 +62,12 @@ bool LocalFileWatcherPrivate::start()
  */
 bool LocalFileWatcherPrivate::stop()
 {
-    if (watcher.isNull())
+    if (watcher.isNull()) {
+        qCWarning(logDFMBase) << "LocalFileWatcher::stop: Cannot stop watcher, watcher instance is null";
         return false;
+    }
+
+    qCDebug(logDFMBase) << "LocalFileWatcher::stop: Stopping file watcher for:" << url;
     started = watcher->stop();
     return started;
 }
@@ -78,11 +89,13 @@ LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
  */
 void LocalFileWatcherPrivate::initFileWatcher()
 {
+    qCDebug(logDFMBase) << "LocalFileWatcher::initFileWatcher: Initializing file watcher for:" << url;
     watcher.reset(new DWatcher(url));
     if (!watcher) {
-        qCWarning(logDFMBase, "watcher create failed.");
+        qCCritical(logDFMBase) << "LocalFileWatcher::initFileWatcher: Critical error - failed to create DWatcher instance for:" << url;
         abort();
     }
+    qCDebug(logDFMBase) << "LocalFileWatcher::initFileWatcher: Successfully created DWatcher instance for:" << url;
 }
 /*!
  * \brief AbstractFileWatcher::initConnect 初始化dfm-io中文件监视器的信号连接
@@ -97,16 +110,19 @@ void LocalFileWatcherPrivate::initConnect()
 
 void LocalFileWatcher::notifyFileAdded(const QUrl &url)
 {
+    qCDebug(logDFMBase) << "LocalFileWatcher::notifyFileAdded: File added notification for:" << url;
     emit subfileCreated(url);
 }
 
 void LocalFileWatcher::notifyFileChanged(const QUrl &url)
 {
+    qCDebug(logDFMBase) << "LocalFileWatcher::notifyFileChanged: File changed notification for:" << url;
     emit fileAttributeChanged(url);
 }
 
 void LocalFileWatcher::notifyFileDeleted(const QUrl &url)
 {
+    qCDebug(logDFMBase) << "LocalFileWatcher::notifyFileDeleted: File deleted notification for:" << url;
     emit fileDeleted(url);
 }
 

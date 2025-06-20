@@ -4,7 +4,6 @@
 
 #include "unlockview.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
@@ -76,13 +75,13 @@ void UnlockView::initUI()
     play1->addWidget(tipsButton);
 
     QHBoxLayout *play2 = new QHBoxLayout();
-    play2->setMargin(0);
+    play2->setContentsMargins(0, 0, 0, 0);
     play2->addStretch(1);
     play2->addWidget(forgetPassword);
     forgetPassword->setAlignment(Qt::AlignRight);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addStretch();
     mainLayout->addLayout(play1);
     mainLayout->addLayout(play2);
@@ -116,6 +115,7 @@ void UnlockView::buttonClicked(int index, const QString &text)
         emit sigBtnEnabled(1, false);
 
         if (!VaultHelper::instance()->enableUnlockVault()) {
+            fmWarning() << "Vault: Cannot unlock vault under networking";
             showToolTip(tr("Can't unlock the vault under the networking!"), kToolTipShowDuration, ENToolTip::kInformation);
             emit sigBtnEnabled(1, true);
             return;
@@ -125,6 +125,7 @@ void UnlockView::buttonClicked(int index, const QString &text)
 
         if (nLeftoverErrorTimes < 1) {
             int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+            fmWarning() << "Vault: Too many failed attempts, need to wait" << nNeedWaitMinutes << "minutes";
             passwordEdit->showAlertMessage(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes));
             return;
         }
@@ -133,12 +134,14 @@ void UnlockView::buttonClicked(int index, const QString &text)
 
         QString strCipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
+            fmInfo() << "Vault: Password validation successful, unlocking vault";
             unlockByPwd = true;
             VaultHelper::instance()->unlockVault(strCipher);
             // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
             VaultDBusUtils::restoreLeftoverErrorInputTimes();
             VaultDBusUtils::restoreNeedWaitMinutes();
         } else {
+            fmWarning() << "Vault: Password validation failed";
             //! 设置密码输入框颜色
             //! 修复bug-51508 激活密码框警告状态
             passwordEdit->setAlert(true);
@@ -148,18 +151,23 @@ void UnlockView::buttonClicked(int index, const QString &text)
 
             // 显示错误输入提示
             nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+            fmDebug() << "Vault: Remaining error attempts after failure:" << nLeftoverErrorTimes;
 
             if (nLeftoverErrorTimes < 1) {
+                fmWarning() << "Vault: Maximum error attempts reached, starting wait timer";
                 // 计时10分钟后，恢复密码编辑框
                 VaultDBusUtils::startTimerOfRestorePasswordInput();
                 // 错误输入次数超过了限制
                 int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
                 passwordEdit->showAlertMessage(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes));
             } else {
-                if (nLeftoverErrorTimes == 1)
+                if (nLeftoverErrorTimes == 1) {
+                    fmWarning() << "Vault: Wrong password, one chance left";
                     passwordEdit->showAlertMessage(tr("Wrong password, one chance left"));
-                else
+                } else {
+                    fmWarning() << "Vault: Wrong password," << nLeftoverErrorTimes << "chances left";
                     passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
+                }
             }
         }
         return;
@@ -183,12 +191,14 @@ void UnlockView::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
         if (state == static_cast<int>(ErrorCode::kSuccess)) {
+            fmInfo() << "Vault: Vault unlocked successfully";
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
                                                      VaultHelper::instance()->rootUrl());
             VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
             VaultAutoLock::instance()->slotUnlockVault(state);
             emit sigCloseDialog();
         } else if (state == static_cast<int>(ErrorCode::kUnspecifiedError)) {   //! cryfs没有成功卸载挂载目录
+            fmWarning() << "Vault: Unspecified error occurred, attempting to unmount";
             //! cryfs卸载挂载目录会概率性失败
             //! 卸载挂载目录
             QProcess process;
@@ -198,23 +208,29 @@ void UnlockView::onVaultUlocked(int state)
             process.waitForFinished();
             process.terminate();
             if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
+                fmDebug() << "Vault: Fusermount completed successfully";
                 QString strPwd = passwordEdit->text();
                 QString strCipher("");
                 //! 判断密码是否正确
                 if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
                     return;
                 } else {   //! 密码不正确
+                    fmWarning() << "Vault: Password verification failed after unmount";
                     //! 设置密码输入框颜色,并弹出tooltip
                     passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
                     passwordEdit->showAlertMessage(tr("Wrong password"));
                 }
+            } else {
+                fmCritical() << "Vault: Failed to unmount vault directory";
             }
         } else if (state == static_cast<int>(ErrorCode::kWrongPassword)) {
+            fmWarning() << "Vault: Wrong password error during unlock";
             DDialog dialog(tr("Wrong password"), "", this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
             dialog.exec();
         } else {
+            fmCritical() << "Vault: Failed to unlock file vault, error code:" << state;
             //! error tips
             QString errMsg = tr("Failed to unlock file vault, error code is %1").arg(state);
             DDialog dialog(this);
@@ -235,7 +251,6 @@ void UnlockView::slotTooltipTimerTimeout()
 
 void UnlockView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnlockVaultPage);
     if (extraLockVault) {
         extraLockVault = false;
     }
@@ -252,15 +267,18 @@ void UnlockView::showEvent(QShowEvent *event)
     if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
         if (strPwdHint.isEmpty()) {
             tipsButton->hide();
+            fmDebug() << "Vault: Password hint is empty, hiding tips button";
         } else {
             tipsButton->show();
+            fmDebug() << "Vault: Password hint available, showing tips button";
         }
+    } else {
+        fmWarning() << "Vault: Failed to get password hint";
     }
 }
 
 void UnlockView::closeEvent(QCloseEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
     extraLockVault = true;
     QFrame::closeEvent(event);
 }

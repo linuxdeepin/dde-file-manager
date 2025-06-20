@@ -27,6 +27,7 @@ public Q_SLOTS:
     bool hookSetTabName(const QUrl &url, QString *tabName);
 
     bool hookTitleBarAddrHandle(QUrl *url);
+    bool hookAllowRepeatUrl(const QUrl &cur, const QUrl &pre);
 
 private:
     bool getOriginalUri(const QUrl &in, QUrl *out);

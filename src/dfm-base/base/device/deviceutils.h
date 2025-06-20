@@ -48,20 +48,15 @@ public:
     static bool isPWOpticalDiscDev(const QString &dev);
     static bool isPWUserspaceOpticalDiscDev(const QString &dev);
 
-    static bool isSamba(const QUrl &url);
-    static bool isFtp(const QUrl &url);
-    static bool isSftp(const QUrl &url);
-    static bool isMtpFile(const QUrl &url);
     static bool supportDfmioCopyDevice(const QUrl &url);
     static bool supportSetPermissionsDevice(const QUrl &url);
-    static bool isExternalBlock(const QUrl &url);
     static QUrl parseNetSourceUrl(const QUrl &target);
 
     static bool parseSmbInfo(const QString &smbPath, QString &host, QString &share, QString *port = nullptr);
 
     static QMap<QString, QString> fstabBindInfo();
 
-    static QString nameOfSystemDisk(const QVariantMap &datas);
+    static QString nameOfBuiltInDisk(const QVariantMap &datas);
     static QString nameOfOptical(const QVariantMap &datas);
     static QString nameOfEncrypted(const QVariantMap &datas);
     static QString nameOfDefault(const QString &label, const quint64 &size);
@@ -73,7 +68,6 @@ public:
 
     static bool isSubpathOfDlnfs(const QString &path);
     static bool isMountPointOfDlnfs(const QString &path);
-    static bool isLowSpeedDevice(const QUrl &url);
 
     static QString getLongestMountRootPath(const QString &filePath);
 
@@ -84,8 +78,12 @@ public:
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
 
+    static bool isBuiltInDisk(const QVariantHash &devInfo);
+    static bool isBuiltInDisk(const QVariantMap &devInfo);
     static bool isSystemDisk(const QVariantHash &devInfo);
     static bool isSystemDisk(const QVariantMap &devInfo);
+    static bool isDataDisk(const QVariantHash &devInfo);
+    static bool isDataDisk(const QVariantMap &devInfo);
     static bool isSiblingOfRoot(const QVariantHash &devInfo);
     static bool isSiblingOfRoot(const QVariantMap &devInfo);
 
@@ -93,6 +91,7 @@ private:
     static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
     static bool findDlnfsPath(const QString &target, Compare func);
+    static QVariantHash toHash(const QVariantMap &map);
 };
 
 }

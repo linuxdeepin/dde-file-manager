@@ -5,8 +5,11 @@
 #include "searchfilewatcher.h"
 #include "searchfilewatcher_p.h"
 #include "utils/searchhelper.h"
+#include "searchmanager/searchmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
+
+#include <dfm-framework/event/event.h>
 
 #include <algorithm>
 
@@ -42,6 +45,12 @@ SearchFileWatcher::SearchFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new SearchFileWatcherPrivate(url, this), parent)
 {
     dptr = static_cast<SearchFileWatcherPrivate *>(d.data());
+    connect(SearchManager::instance(), &SearchManager::fileAdd, this,
+            &SearchFileWatcher::handleFileAdd, Qt::QueuedConnection);
+    connect(SearchManager::instance(), &SearchManager::fileDelete, this,
+            &SearchFileWatcher::handleFileDelete, Qt::QueuedConnection);
+    connect(SearchManager::instance(), &SearchManager::fileRename, this,
+            &SearchFileWatcher::handleFileRename, Qt::QueuedConnection);
 }
 
 SearchFileWatcher::~SearchFileWatcher()
@@ -91,7 +100,6 @@ void SearchFileWatcher::removeWatcher(const QUrl &url)
 
 void SearchFileWatcher::onFileDeleted(const QUrl &url)
 {
-    removeWatcher(url);
     emit fileDeleted(url);
 }
 
@@ -117,6 +125,69 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
     }
 
     emit fileRename(fromUrl, isMatched ? toUrl : QUrl());
+}
+
+void SearchFileWatcher::onFileAdd(const QUrl &url)
+{
+    emit subfileCreated(url);
+}
+
+void SearchFileWatcher::handleFileAdd(const QUrl &url)
+{
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    if (!url.path().startsWith(targetUrl.path()))
+        return;
+
+    auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
+    if (url.fileName().contains(searchKey) &&
+            !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
+                                  targetUrl, url))
+        onFileAdd(url);
+}
+
+void SearchFileWatcher::handleFileDelete(const QUrl &url)
+{
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    if (!url.path().startsWith(targetUrl.path()))
+        return;
+
+    auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
+    if (url.fileName().contains(searchKey)&&
+            !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
+                                  targetUrl, url))
+        onFileDeleted(url);
+}
+
+void SearchFileWatcher::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    // 首先检查文件是否在搜索目录范围内
+    auto targetUrl = SearchHelper::searchTargetUrl(this->url());
+    bool oldInScope = oldUrl.path().startsWith(targetUrl.path());
+    bool newInScope = newUrl.path().startsWith(targetUrl.path());
+    
+    // 如果两个URL都不在搜索范围内，则直接返回
+    if (!oldInScope && !newInScope)
+        return;
+
+    auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
+    auto oldMatch = oldUrl.fileName().contains(searchKey), newMatch = newUrl.fileName().contains(searchKey);
+    if (!oldMatch && !newMatch)
+        return;
+    auto old = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
+                                    targetUrl, oldUrl);
+    auto target = dpfHookSequence->run("dfmplugin_search", "hook_Url_IsSubFile",
+                                       targetUrl, newUrl);
+    if ((oldMatch && old && oldInScope) && (newMatch && target && newInScope)) {
+        emit fileRename(oldUrl, newUrl);
+    }
+
+    if (old && oldMatch && oldInScope)
+        return onFileDeleted(oldUrl);
+
+    if (target && newMatch && newInScope)
+        return onFileAdd(newUrl);
 }
 
 }

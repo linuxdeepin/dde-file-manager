@@ -16,29 +16,33 @@
 using namespace ddplugin_organizer;
 
 namespace {
-inline constexpr char kGroupGeneral[] = "";   // "General" is default group in QSetting, so using empty string to access 'General' group.
-inline constexpr char kKeyEnable[] = "Enable";
-inline constexpr char kKeyMode[] = "Mode";
+inline constexpr char kGroupGeneral[] { "" };   // "General" is default group in QSetting, so using empty string to access 'General' group.
+inline constexpr char kKeyEnable[] { "Enable" };
+inline constexpr char kKeyMode[] { "Mode" };
+inline constexpr char kKeyVersion[] { "Version" };
 
-inline constexpr char kGroupCollectionNormalized[] = "Collection_Normalized";
-inline constexpr char kKeyClassification[] = "Classification";
+inline constexpr char kGroupScreen[] { "Screen_Resolution" };
 
-inline constexpr char kGroupCollectionCustomed[] = "Collection_Customed";
-inline constexpr char kGroupCollectionBase[] = "CollectionBase";
-inline constexpr char kKeyName[] = "Name";
-inline constexpr char kKeyKey[] = "Key";
-inline constexpr char kGroupItems[] = "Items";
+inline constexpr char kGroupCollectionNormalized[] { "Collection_Normalized" };
+inline constexpr char kKeyClassification[] { "Classification" };
 
-inline constexpr char kGroupCollectionStyle[] = "CollectionStyle";
-inline constexpr char kKeyScreen[] = "screen";
-inline constexpr char kKeyX[] = "X";
-inline constexpr char kKeyY[] = "Y";
-inline constexpr char kKeyWidth[] = "Width";
-inline constexpr char kKeyHeight[] = "Height";
-inline constexpr char kKeySizeMode[] = "SizeMode";
+inline constexpr char kGroupCollectionCustomed[] { "Collection_Customed" };
+inline constexpr char kGroupCollectionBase[] { "CollectionBase" };
+inline constexpr char kKeyName[] { "Name" };
+inline constexpr char kKeyKey[] { "Key" };
+inline constexpr char kGroupItems[] { "Items" };
 
-inline constexpr char kGroupClassifierType[] = "Classifier_Type";
-inline constexpr char kKeyEnabledItems[] = "EnabledItems";
+inline constexpr char kGroupCollectionStyle[] { "CollectionStyle" };
+inline constexpr char kKeyScreen[] { "screen" };
+inline constexpr char kKeyX[] { "X" };
+inline constexpr char kKeyY[] { "Y" };
+inline constexpr char kKeyWidth[] { "Width" };
+inline constexpr char kKeyHeight[] { "Height" };
+inline constexpr char kKeySizeMode[] { "SizeMode" };
+inline constexpr char kKeyCustomGeo[] { "CustomGeometry" };
+
+inline constexpr char kGroupClassifierType[] { "Classifier_Type" };
+inline constexpr char kKeyEnabledItems[] { "EnabledItems" };
 
 }   // namepace
 
@@ -84,19 +88,24 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
     Q_ASSERT(qApp->thread() == thread());
 
     auto configPath = path();
-    fmDebug() << "OrganizerConfig: file path" << configPath;
+    fmDebug() << "OrganizerConfig initializing with path:" << configPath;
 
     QFileInfo configFile(configPath);
-    if (!configFile.exists())
-        configFile.absoluteDir().mkpath(".");
+    if (!configFile.exists()) {
+        fmInfo() << "Config file does not exist, creating directory structure";
+        if (!configFile.absoluteDir().mkpath(".")) {
+            fmCritical() << "Failed to create config directory:" << configFile.absoluteDir().path();
+        }
+    }
 
     d->settings = new QSettings(configPath, QSettings::IniFormat);
 
     // delay sync
     d->syncTimer.setSingleShot(true);
-    connect(&d->syncTimer, &QTimer::timeout, this, [this]() {
-        d->settings->sync();
-    },
+    connect(
+            &d->syncTimer, &QTimer::timeout, this, [this]() {
+                d->settings->sync();
+            },
             Qt::QueuedConnection);
 }
 
@@ -118,6 +127,41 @@ int OrganizerConfig::mode() const
 void OrganizerConfig::setMode(int m)
 {
     d->setValue(kGroupGeneral, kKeyMode, m);
+}
+
+void OrganizerConfig::setVersion(const QString &v)
+{
+    d->setValue(kGroupGeneral, kKeyVersion, v);
+}
+
+QList<QSize> OrganizerConfig::surfaceSizes()
+{
+    QList<QSize> ret;
+    d->settings->beginGroup(kGroupScreen);
+    for (auto key : d->settings->allKeys()) {
+        auto val = d->settings->value(key).toString();
+        QStringList vals = val.split(":");
+        if (vals.count() < 2) {
+            fmWarning() << "Invalid screen resolution format for key" << key << ":" << val;
+            continue;
+        }
+        QSize size(vals.at(0).toInt(), vals.at(1).toInt());
+        ret.append(size);
+        fmDebug() << "Loaded screen size for" << key << ":" << size;
+    }
+
+    d->settings->endGroup();
+    return ret;
+}
+
+void OrganizerConfig::setScreenInfo(const QMap<QString, QString> info)
+{
+    d->settings->remove(kGroupScreen);
+    d->settings->beginGroup(kGroupScreen);
+
+    for (auto iter = info.cbegin(); iter != info.cend(); ++iter)
+        d->settings->setValue(iter.key(), iter.value());
+    d->settings->endGroup();
 }
 
 void OrganizerConfig::sync(int ms)
@@ -187,8 +231,11 @@ CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString
     d->settings->endGroup();
 
     if (key != base->key || base->key.isEmpty() || base->name.isEmpty()) {
-        fmWarning() << "invalid collection base" << key << base->key;
+        fmWarning() << "Invalid collection base data - expected key:" << key
+                    << "actual key:" << base->key << "name:" << base->name;
         base.clear();
+    } else {
+        fmDebug() << "Loaded collection base:" << base->name << "with" << base->items.size() << "items";
     }
     return base;
 }
@@ -272,6 +319,7 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
     }
 
     style.sizeMode = d->settings->value(kKeySizeMode).value<CollectionFrameSize>();
+    style.customGeo = d->settings->value(kKeyCustomGeo).toBool();
 
     d->settings->endGroup();
     d->settings->endGroup();
@@ -295,6 +343,7 @@ void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &
     d->settings->setValue(kKeyWidth, style.rect.width());
     d->settings->setValue(kKeyHeight, style.rect.height());
     d->settings->setValue(kKeySizeMode, static_cast<int>(style.sizeMode));
+    d->settings->setValue(kKeyCustomGeo, style.customGeo);
 
     d->settings->endGroup();
     d->settings->endGroup();
@@ -308,6 +357,7 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
     d->settings->remove(kGroupCollectionStyle);
     d->settings->beginGroup(kGroupCollectionStyle);
 
+    int validCount = 0;
     for (auto iter = styles.begin(); iter != styles.end(); ++iter) {
         if (iter->key.isEmpty())
             continue;
@@ -321,23 +371,13 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
         d->settings->setValue(kKeyWidth, iter->rect.width());
         d->settings->setValue(kKeyHeight, iter->rect.height());
         d->settings->setValue(kKeySizeMode, static_cast<int>(iter->sizeMode));
+        d->settings->setValue(kKeyCustomGeo, iter->customGeo);
 
         d->settings->endGroup();
     }
 
     d->settings->endGroup();
     d->settings->endGroup();
-}
-
-int OrganizerConfig::enabledTypeCategories() const
-{
-    // the defalut vaule -1 represents all items.
-    return d->value(kGroupClassifierType, kKeyEnabledItems, -1).toInt();
-}
-
-void OrganizerConfig::setEnabledTypeCategories(int flags)
-{
-    d->setValue(kGroupClassifierType, kKeyEnabledItems, flags);
 }
 
 OrganizerConfig::~OrganizerConfig()
@@ -355,7 +395,7 @@ QString OrganizerConfig::path() const
     QString configPath = paths.first();
     configPath = DFMIO::DFMUtils::buildFilePath(configPath.toStdString().c_str(),
                                                 QApplication::organizationName().toStdString().c_str(),
-                                                QApplication::applicationName().toStdString().c_str(),
+                                                "dde-desktop",
                                                 "ddplugin-organizer.conf", nullptr);
 
     return configPath;

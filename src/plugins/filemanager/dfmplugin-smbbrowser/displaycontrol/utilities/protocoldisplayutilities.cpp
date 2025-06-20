@@ -7,19 +7,27 @@
 #include "displaycontrol/datahelper/virtualentrydbhandler.h"
 #include "displaycontrol/info/protocolvirtualentryentity.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-framework/event/event.h>
 
 #include <DMenu>
 
 #include <QApplication>
 #include <QSettings>
+
+#undef signals
+extern "C" {
+#include <libsecret/secret.h>
+}
+#define signals public
 
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -63,11 +71,16 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_QtItemFlags", QVariant::fromValue(Qt::ItemIsEnabled | Qt::ItemIsSelectable) },
         { "Property_Key_Ejectable", false },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(ContextMenuCallback(sidebarMenuCall)) },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(ItemClickedActionCallback(sidebarItemClicked)) },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(FindMeCallback(sidebarUrlEquals)) },
         { "Property_Key_VisiableControl", "mounted_share_dirs" },
         { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
         //        { "Property_Key_ReportName", reportName }
     };
-    dpfSlotChannel->push(kSidebarEventNS, kSbSlotAdd, info->targetUrl(), opts);
+    auto stdSmb = vEntryUrl.path().remove("." + QString(kVEntrySuffix));
+    QUrl sidebarUrl(stdSmb);
+    sidebarUrl.setScheme("vsmb");
+    dpfSlotChannel->push(kSidebarEventNS, kSbSlotAdd, sidebarUrl, opts);
 }
 
 void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
@@ -76,8 +89,10 @@ void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
                          vEntryUrl);
 
     // build params
-    DFMEntryFileInfoPointer info(new EntryFileInfo(vEntryUrl));
-    dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, info->targetUrl());
+    auto stdSmb = vEntryUrl.path().remove("." + QString(kVEntrySuffix));
+    QUrl sidebarUrl(stdSmb);
+    sidebarUrl.setScheme("vsmb");
+    dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, sidebarUrl);
 }
 
 void computer_sidebar_event_calls::callComputerRefresh()
@@ -95,7 +110,9 @@ void computer_sidebar_event_calls::callComputerRefresh()
     }
 
     std::for_each(allStdSmbs.cbegin(), allStdSmbs.cend(), [=](const QString &smb) {
-        dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, QUrl(smb));
+        QUrl url(smb);
+        url.setScheme("vsmb");
+        dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, url);
     });
 
     dpfSlotChannel->push(kComputerEventNS, kCptSlotRefresh);
@@ -112,7 +129,11 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
         return;
     }
 
-    QVariant selectedUrls = QVariant::fromValue<QList<QUrl>>({ makeVEntryUrl(url.toString()) });
+    if (url.scheme() != "vsmb")
+        return;
+    QUrl smbUrl = url;
+    smbUrl.setScheme("smb");
+    QVariant selectedUrls = QVariant::fromValue<QList<QUrl>>({ makeVEntryUrl(smbUrl.toString()) });
     QVariantHash params {
         { MenuParamKey::kIsEmptyArea, false },
         { MenuParamKey::kWindowId, winId },
@@ -153,7 +174,7 @@ QStringList protocol_display_utilities::getMountedSmb()
     auto protoDevs = DevProxyMng->getAllProtocolIds();
     for (int i = protoDevs.count() - 1; i >= 0; i--) {
         QUrl dev(protoDevs.at(i));
-        if (!DeviceUtils::isSamba(dev)) {
+        if (!ProtocolUtils::isSMBFile(dev)) {
             protoDevs.removeAt(i);
             continue;
         }
@@ -192,7 +213,7 @@ QString protocol_display_utilities::getStandardSmbPath(const QUrl &entryUrl)
 QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
 {
     QString id = QUrl::fromPercentEncoding(devId.toLocal8Bit());
-    static const QRegularExpression kCifsSmbPrefix(R"(^file:///media/.*/smbmounts/)");
+    static const QRegularExpression kCifsSmbPrefix(R"(^file:///(?:run/)?media/.*/smbmounts/)");
 
     if (!id.startsWith(Global::Scheme::kFile) || !id.contains(kCifsSmbPrefix))
         return id;
@@ -304,4 +325,102 @@ bool protocol_display_utilities::hasMountedShareOf(const QString &stdHost)
     return std::any_of(allMounted.cbegin(), allMounted.cend(), [&](const QString &stdSmb) {
         return stdSmb.startsWith(stdHost);
     });
+}
+
+void computer_sidebar_event_calls::sidebarItemClicked(quint64 winId, const QUrl &url)
+{
+    QUrl smbUrl(url);
+    smbUrl.setScheme("smb");
+    auto sUrl = smbUrl.toString();
+    if (!sUrl.endsWith("/"))
+        sUrl += "/";
+    auto fullPath = VirtualEntryDbHandler::instance()->getFullSmbPath(sUrl);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl(fullPath));
+}
+
+bool computer_sidebar_event_calls::sidebarUrlEquals(const QUrl &item, const QUrl &target)
+{
+    if (item.scheme() == "vsmb" && target.scheme() == "smb") {
+        auto pathA = item.path();
+        auto pathB = target.path();
+        if (!pathA.endsWith('/'))
+            pathA += "/";
+        if (!pathB.endsWith('/'))
+            pathB += "/";
+        return pathA == pathB && item.host() == target.host();
+    }
+    return false;
+}
+
+void secret_utils::forgetPasswordInSession(const QString &host)
+{
+    const SecretSchema schema = {
+        "org.gnome.keyring.NetworkPassword",
+        SECRET_SCHEMA_NONE,
+        { { "user", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "domain", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "server", SECRET_SCHEMA_ATTRIBUTE_STRING },
+          { "protocol", SECRET_SCHEMA_ATTRIBUTE_STRING } }
+    };
+
+    GError_autoptr error = NULL;
+    SecretService *service = secret_service_get_sync(
+            SECRET_SERVICE_NONE,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error connecting to service:" << error->message;
+        return;
+    }
+
+    SecretCollection *sessionCollection = secret_collection_for_alias_sync(
+            service,
+            "session",   // 使用 "session" 别名获取会话集合
+            SECRET_COLLECTION_LOAD_ITEMS,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error getting session collection:" << error->message;
+        g_error_free(error);
+        g_object_unref(service);
+        return;
+    }
+    if (!sessionCollection) {
+        fmWarning() << "Session collection not found";
+        g_object_unref(service);
+        return;
+    }
+
+    // 在会话集合中搜索密码
+    GHashTable_autoptr query = g_hash_table_new_full(g_str_hash,
+                                                     g_str_equal,
+                                                     g_free,
+                                                     g_free);
+    g_hash_table_insert(query, g_strdup("server"), g_strdup(host.toStdString().c_str()));
+    g_hash_table_insert(query, g_strdup("protocol"), g_strdup("smb"));
+
+    GList_autoptr items = secret_collection_search_sync(
+            sessionCollection,
+            &schema,
+            query,
+            SECRET_SEARCH_ALL,
+            NULL,
+            &error);
+    if (error) {
+        fmWarning() << "Error searching in session collection:" << error->message;
+        g_object_unref(sessionCollection);
+        g_object_unref(service);
+        return;
+    }
+
+    while (items) {
+        SecretItem *item = reinterpret_cast<SecretItem *>(items->data);
+        items = items->next;
+        char *label = secret_item_get_label(item);
+        fmInfo() << "Remove saved item:" << QString(label);
+        secret_item_delete(item, nullptr, nullptr, nullptr);
+        g_free(label);
+    }
+    g_object_unref(sessionCollection);
+    g_object_unref(service);
 }

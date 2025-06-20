@@ -40,7 +40,6 @@ private:
 
 TEST_F(RecentTest, Initialize)
 {
-    stub.set_lamda(&RecentEventReceiver::initConnect, [] {});
     stub.set_lamda(&RecentManager::init, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&Recent::bindWindows, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&Recent::followEvents, [] { __DBG_STUB_INVOKE__ });
@@ -67,7 +66,6 @@ TEST_F(RecentTest, Start)
     auto follow1 = static_cast<HookType1>(&EventSequenceManager::follow);
     stub.set_lamda(follow1, [] { return true; });
 
-    stub.set_lamda(&Recent::addFileOperations, [] {});
     EXPECT_TRUE(ins.start());
 }
 
@@ -80,14 +78,6 @@ TEST_F(RecentTest, addRecentItem)
     auto push2 = static_cast<Push2>(&EventChannelManager::push);
     stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(ins.updateRecentItemToSideBar());
-}
-
-TEST_F(RecentTest, addFileOperations)
-{
-    typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &);
-    auto push1 = static_cast<Push1>(&EventChannelManager::push);
-    stub.set_lamda(push1, [] { __DBG_STUB_INVOKE__ return QVariant(); });
-    EXPECT_NO_FATAL_FAILURE(ins.addFileOperations());
 }
 
 TEST_F(RecentTest, onWindowOpened)

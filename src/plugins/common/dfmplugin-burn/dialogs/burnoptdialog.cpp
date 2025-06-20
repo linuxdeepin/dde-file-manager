@@ -125,8 +125,8 @@ void BurnOptDialog::initializeUi()
     volnameLabel->setFont(f13);
 
     volnameEdit = new QLineEdit();
-    QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&.]+");   //屏蔽特殊字符
-    QValidator *validator = new QRegExpValidator(regx, volnameEdit);
+    QRegularExpression regx("[^\\\\/\':\\*\\?\"<>|%&.]+");   //屏蔽特殊字符
+    QValidator *validator = new QRegularExpressionValidator(regx, volnameEdit);
     volnameEdit->setValidator(validator);
     volnameEdit->setMaxLength(kMaxLabelLen);
 
@@ -146,7 +146,7 @@ void BurnOptDialog::initializeUi()
     advanceBtn->setFont(f12);
 
     QHBoxLayout *advanceBtnLay = new QHBoxLayout(content);
-    advanceBtnLay->setMargin(0);
+    advanceBtnLay->setContentsMargins(0, 0, 0, 0);
     advanceBtnLay->setSpacing(0);
     advanceBtnLay->addStretch(1);
     advanceBtnLay->addWidget(advanceBtn);
@@ -157,7 +157,7 @@ void BurnOptDialog::initializeUi()
     advancedSettings->hide();
 
     QVBoxLayout *vLay = new QVBoxLayout(advancedSettings);
-    vLay->setMargin(0);
+    vLay->setContentsMargins(0, 0, 0, 0);
     vLay->setSpacing(8);
     advancedSettings->setLayout(vLay);
 
@@ -201,7 +201,7 @@ void BurnOptDialog::initializeUi()
     QWidget *wpostburn = new QWidget();
     wpostburn->setLayout(new QHBoxLayout);
     vLay->addWidget(wpostburn, 0, Qt::AlignTop);
-    wpostburn->layout()->setMargin(0);
+    wpostburn->layout()->setContentsMargins(0, 0, 0, 0);
     donotcloseComb->setFont(f12);
 
     // 刻录选项-校验数据

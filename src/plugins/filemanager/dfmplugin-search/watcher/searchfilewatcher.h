@@ -28,7 +28,14 @@ private:
     void onFileDeleted(const QUrl &url);
     void onFileAttributeChanged(const QUrl &url);
     void onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl);
+    void onFileAdd(const QUrl &url);
 
+private Q_SLOTS:
+    void handleFileAdd(const QUrl &url);
+    void handleFileDelete(const QUrl &url);
+    void handleFileRename(const QUrl &oldUrl, const QUrl &newUrl);
+
+private:
     SearchFileWatcherPrivate *dptr;
 };
 

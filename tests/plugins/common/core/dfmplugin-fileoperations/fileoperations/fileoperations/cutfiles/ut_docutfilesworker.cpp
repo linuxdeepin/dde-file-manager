@@ -158,30 +158,31 @@ TEST_F(UT_DoCutFilesWorker, testDoCutFile)
     stub.set_lamda(&FileUtils::isTrashFile, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&DoCutFilesWorker::doRenameFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     worker.stopWork = true;
-    EXPECT_FALSE(worker.doCutFile(sorceInfo, targetInfo));
+    bool skip = false;
+    EXPECT_FALSE(worker.doCutFile(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(VADDR(SyncFileInfo, size), []{ __DBG_STUB_INVOKE__ return 0;});
     stub.set_lamda(&DoCutFilesWorker::doRenameFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     stub.set_lamda(&DoCutFilesWorker::removeTrashInfo,[]{ __DBG_STUB_INVOKE__ });
-    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo));
+    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo, &skip));
 
     stub.reset(&FileUtils::isTrashFile);
     stub.set_lamda(&DoCutFilesWorker::doRenameFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     stub.set_lamda(VADDR(SyncFileInfo, isAttributes), []{ __DBG_STUB_INVOKE__ return true;});
-    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo));
+    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCutFilesWorker::doRenameFile, []{ __DBG_STUB_INVOKE__ return nullptr;});
     stub.set(ADDR(DoCutFilesWorker, checkDiskSpaceAvailable), checkDiskSpaceAvailableFunc);
-    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo));
+    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCutFilesWorker::checkDiskSpaceAvailable, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&DoCutFilesWorker::copyAndDeleteFile, []{ __DBG_STUB_INVOKE__ return false;});
-    EXPECT_FALSE(worker.doCutFile(sorceInfo, targetInfo));
+    EXPECT_FALSE(worker.doCutFile(sorceInfo, targetInfo, &skip));
 
     stub.set_lamda(&DoCutFilesWorker::copyAndDeleteFile, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&FileUtils::isTrashFile, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set_lamda(&DoCutFilesWorker::removeTrashInfo, []{ __DBG_STUB_INVOKE__ });
-    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo));
+    EXPECT_TRUE(worker.doCutFile(sorceInfo, targetInfo, &skip));
     worker.onUpdateProgress();
     worker.emitCompleteFilesUpdatedNotify(199);
 }
@@ -240,16 +241,16 @@ TEST_F(UT_DoCutFilesWorker, testRenameFileByHandler)
 
     FileInfoPointer toInfo(nullptr);
     stub.set_lamda(&DoCutFilesWorker::doCheckFile,[]{ __DBG_STUB_INVOKE__ return nullptr;});
-    bool skip{false};
-    EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &skip));
+    bool ok{false},skip{false};
+    EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &ok, &skip));
 
     stub.set_lamda(&DFMUtils::deviceNameFromUrl, []{ __DBG_STUB_INVOKE__
         return QByteArray("test-device");
     });
-    EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &skip));
+    EXPECT_FALSE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &ok, &skip));
 
     stub.set_lamda(&DoCutFilesWorker::renameFileByHandler, []{ __DBG_STUB_INVOKE__ return true;});
     stub.set(ADDR(DoCutFilesWorker, doCheckFile), doCheckFileFunc);
     worker.targetInfo = targetInfo;
-    EXPECT_TRUE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &skip));
+    EXPECT_TRUE(worker.doRenameFile(sorceInfo, targetInfo, "tests_iiii.txt", &ok, &skip));
 }

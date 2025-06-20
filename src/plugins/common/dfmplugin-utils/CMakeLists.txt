@@ -4,47 +4,49 @@ project(dfmplugin-utils)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# 设置二进制文件名
+set(BIN_NAME dfm-utils-plugin)
+
 configure_file(
-    "./config.h.in"
+    "${APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
-    )
+)
 
 FILE(GLOB_RECURSE UTILS_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    )
+)
 
-find_package(Dtk COMPONENTS Widget REQUIRED)
-find_package(Qt5 COMPONENTS Svg REQUIRED)
+# Qt6 依赖
+find_package(Qt6 COMPONENTS Core SvgWidgets REQUIRED)
 
-add_library(${PROJECT_NAME}
+# 创建共享库
+add_library(${BIN_NAME}
     SHARED
     ${UTILS_FILES}
 )
 
 set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
 add_definitions(-DEXTENSIONS_PATH=\"${EXTENSIONS_LIB_DIR}\")
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
-        ${Qt5Svg_INCLUDE_DIRS}
-)
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
+# 链接必要的库
+target_link_libraries(${BIN_NAME}
+    DFM6::base
+    DFM6::framework
     DFM::extension
-    Qt5::Svg
-    ${DtkWidget_LIBRARIES}
+    Qt6::SvgWidgets
 )
 
-#install library file
+# 安装库文件
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
+    ${DFM_PLUGIN_COMMON_CORE_DIR}
 )
+
+

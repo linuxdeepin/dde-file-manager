@@ -8,6 +8,7 @@
 #include <dfm-framework/dfm_framework_global.h>
 #include <dfm-framework/lifecycle/pluginmetaobject.h>
 #include <dfm-framework/lifecycle/plugincreator.h>
+#include <dfm-framework/lifecycle/pluginquickmetadata.h>
 
 #include <QString>
 #include <QStringList>
@@ -34,6 +35,18 @@ inline constexpr char kCustomData[] { "Custom" };
 inline constexpr char kVirtualPluginMeta[] { "Meta" };
 /// \brief kPluginDepends virtual plugin info list
 inline constexpr char kVirtualPluginList[] { "VirtualPlugins" };
+/// \brief kQuickUrl QML组件信息
+inline constexpr char kQuick[] { "Quick" };
+/// \brief kQuickUrl QML组件文件Url
+inline constexpr char kQuickUrl[] { "Url" };
+/// \brief kQuickUrl QML组件文件ID
+inline constexpr char kQuickId[] { "Id" };
+/// \brief kQuickUrl QML组件类型，可选 Containment | Window 空内容视为 Applet
+inline constexpr char kQuickType[] { "Type" };
+/// \brief kQuickUrl QML组件父组件名称(使用插件Name)，必须在 "Depends" 字段中存在
+inline constexpr char kQuickParent[] { "Parent" };
+/// \brief kQuickUrl QML组件拓展Applet 需在 SchemeFactory 注册
+inline constexpr char kQuickApplet[] { "Applet" };
 
 class PluginMetaObject;
 class PluginMetaObjectPrivate
@@ -59,6 +72,7 @@ public:
     QSharedPointer<Plugin> plugin;
     QSharedPointer<QPluginLoader> loader;
     QVariantMap customData;
+    QList<PluginQuickMetaPtr> quickMetaList;
 
     explicit PluginMetaObjectPrivate(PluginMetaObject *q)
         : q(q), loader(new QPluginLoader(nullptr))

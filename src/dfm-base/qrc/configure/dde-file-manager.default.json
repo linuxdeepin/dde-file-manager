@@ -1,7 +1,7 @@
 {
     "ApplicationAttribute": {
         "AllwayOpenOnNewWindow": false,
-        "IconSizeLevel": 1,
+        "IconSizeLevel": 5,
         "ViewMode": 1,
         "ViewSizeAdjustable": true,
         "ViewComppactMode": false,
@@ -9,7 +9,9 @@
         "OpenFileMode": 1,
         "UrlOfNewWindow": "computer:///",
         "UrlOfNewTab": "",
-        "ThemeName": "light"
+        "ThemeName": "light",
+        "GridDensityLevel": 3,
+        "ListHeightLevel": 1
     },
     "GenericAttribute": {
         "IndexInternal": true,
@@ -36,7 +38,9 @@
     "AnythingMonitorFilterPath": {
         "WhiteList":[
             "/media",
-            "/home"
+            "/home",
+            "/run/media",
+            "/var/home"
         ],
         "BlackList": [
             "~/.local/share/Trash"

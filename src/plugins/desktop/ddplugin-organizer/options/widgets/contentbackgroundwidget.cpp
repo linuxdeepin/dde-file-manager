@@ -5,7 +5,7 @@
 #include "contentbackgroundwidget.h"
 
 #include <DPalette>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QPainter>
 #include <QPainterPath>
@@ -13,9 +13,11 @@
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
-ContentBackgroundWidget::ContentBackgroundWidget(QWidget *parent) : QWidget(parent)
+ContentBackgroundWidget::ContentBackgroundWidget(QWidget *parent)
+    : QWidget(parent)
 {
     setAutoFillBackground(false);
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);   // 为了单击widget时，清除其他控件上的焦点
 
     // default radius is 8.
     rectRadius = 8;
@@ -23,7 +25,7 @@ ContentBackgroundWidget::ContentBackgroundWidget(QWidget *parent) : QWidget(pare
 
 void ContentBackgroundWidget::paintEvent(QPaintEvent *event)
 {
-    const DPalette &dp = DApplicationHelper::instance()->palette(this);
+    const DPalette &dp = DPaletteHelper::instance()->palette(this);
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setPen(Qt::NoPen);

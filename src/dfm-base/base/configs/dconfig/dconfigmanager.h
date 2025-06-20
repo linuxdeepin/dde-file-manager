@@ -6,18 +6,12 @@
 #define DCONFIGMANAGER_H
 
 #include <dfm-base/dfm_base_global.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 
 #include <QObject>
 #include <QVariant>
 
 DFMBASE_BEGIN_NAMESPACE
-
-inline constexpr char kDefaultCfgPath[] { "org.deepin.dde.file-manager" };
-inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins" };
-inline constexpr char kViewDConfName[] { "org.deepin.dde.file-manager.view" };
-inline constexpr char kKeyHideDisk[] { "dfm.disk.hidden" };
-inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
-inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.single.process" };
 
 class DConfigManagerPrivate;
 class DConfigManager : public QObject

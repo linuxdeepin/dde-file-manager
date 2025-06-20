@@ -4,6 +4,7 @@
 
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/dfm_base_global.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -12,6 +13,7 @@
 #include <QDebug>
 
 using namespace dfmbase;
+DFMGLOBAL_USE_NAMESPACE
 
 SettingJsonGenerator::SettingJsonGenerator()
 {
@@ -208,6 +210,45 @@ bool SettingJsonGenerator::addComboboxConfig(const QString &key, const QString &
         { "items", options },
         { "type", "combobox" },
         { "default", defaultVal }
+    };
+    return addConfig(key, config);
+}
+
+bool SettingJsonGenerator::addSliderConfig(const QString &key, const QString &name, int maxVal, int minVal, int defaultVal)
+{
+    return addSliderConfig(key, name, "", "", maxVal, minVal, defaultVal);
+}
+
+bool SettingJsonGenerator::addSliderConfig(const QString &key,
+                                           const QString &name,
+                                           const QString &leftIcon,
+                                           const QString &rightIcon,
+                                           int maxVal,
+                                           int minVal,
+                                           int defaultVal)
+{
+    return addSliderConfig(key, name, leftIcon, rightIcon, maxVal, minVal, {}, defaultVal);
+}
+
+bool SettingJsonGenerator::addSliderConfig(const QString &key,
+                                           const QString &name,
+                                           const QString &leftIcon,
+                                           const QString &rightIcon,
+                                           int maxVal,
+                                           int minVal,
+                                           QVariantList valueList,
+                                           int defaultVal)
+{
+    QVariantMap config {
+        { "key", key.mid(key.lastIndexOf(".") + 1) },
+        { "name", name },
+        { "type", "sliderWithSideIcon" },
+        { "max", maxVal},
+        { "min", minVal},
+        { "default", defaultVal },
+        { "left-icon", leftIcon },
+        { "right-icon", rightIcon },
+        { "values", valueList}
     };
     return addConfig(key, config);
 }

@@ -7,8 +7,8 @@
 #include "utils/tagmanager.h"
 
 using namespace dfmplugin_tag;
-static constexpr char kTagService[] { "org.deepin.filemanager.server" };
-static constexpr char kTagDBusPath[] { "/org/deepin/filemanager/server/TagManager" };
+static constexpr char kDaemonName[] { "org.deepin.Filemanager.Daemon" };
+static constexpr char kTagDBusPath[] { "/org/deepin/Filemanager/Daemon/TagManager" };
 
 TagProxyHandlePrivate::TagProxyHandlePrivate(TagProxyHandle *qq, QObject *parent)
     : QObject(parent),
@@ -27,13 +27,13 @@ bool TagProxyHandlePrivate::isDBusRuning()
 
 void TagProxyHandlePrivate::initConnection()
 {
-    dbusWatcher.reset(new QDBusServiceWatcher(kTagService, QDBusConnection::sessionBus()));
+    dbusWatcher.reset(new QDBusServiceWatcher(kDaemonName, QDBusConnection::sessionBus()));
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
-        fmInfo() << "serviceRegistered: " << kTagService;
+        fmInfo() << "serviceRegistered: " << kDaemonName;
         connectToDBus();
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [] {
-        fmWarning() << "Lost connection: " << kTagService;
+        fmWarning() << "Lost connection: " << kDaemonName;
     });
 
     connectToDBus();
@@ -230,7 +230,7 @@ bool TagProxyHandle::deleteFileTags(const QVariantMap &value)
 bool TagProxyHandle::connectToService()
 {
     fmInfo() << "Start initilize dbus: `TagManagerDBusInterface`";
-    d->tagDBusInterface.reset(new TagManagerDBusInterface(kTagService, kTagDBusPath,
+    d->tagDBusInterface.reset(new TagManagerDBusInterface(kDaemonName, kTagDBusPath,
                                                           QDBusConnection::sessionBus(), this));
     d->tagDBusInterface->setTimeout(3000);
     d->initConnection();

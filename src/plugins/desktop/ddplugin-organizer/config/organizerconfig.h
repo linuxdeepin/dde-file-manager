@@ -17,6 +17,7 @@ class OrganizerConfig : public QObject
 {
     Q_OBJECT
     friend class OrganizerConfigPrivate;
+
 public:
     explicit OrganizerConfig(QObject *parent = nullptr);
     ~OrganizerConfig() override;
@@ -24,6 +25,9 @@ public:
     void setEnable(bool e);
     int mode() const;
     void setMode(int m);
+    void setVersion(const QString &v);
+    QList<QSize> surfaceSizes();
+    void setScreenInfo(const QMap<QString, QString> info);
     void sync(int ms = 1000);
     int classification() const;
     void setClassification(int cf);
@@ -36,18 +40,18 @@ public:
     CollectionStyle collectionStyle(bool custom, const QString &key) const;
     void updateCollectionStyle(bool custom, const CollectionStyle &style);
     void writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles);
+
 public:
-    int enabledTypeCategories() const;
-    void setEnabledTypeCategories(int flags);
 signals:
 
 public slots:
 protected:
     QString path() const;
+
 private:
     OrganizerConfigPrivate *d;
 };
 
 }
 
-#endif // ORGANIZERCONFIG_H
+#endif   // ORGANIZERCONFIG_H

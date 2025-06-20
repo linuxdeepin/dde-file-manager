@@ -41,13 +41,9 @@ QIcon LocalFileIconProviderPrivate::fileSystemIcon(const QString &path) const
 
 QIcon LocalFileIconProviderPrivate::fromTheme(QString iconName) const
 {
+    assert(QThread::currentThread() == qApp->thread());
     QIcon icon;
-    {
-        static QMutex mut;
-        QMutexLocker lk(&mut);
-        icon = QIcon::fromTheme(iconName);
-    }
-
+    icon = QIcon::fromTheme(iconName);
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;
@@ -115,7 +111,7 @@ QIcon LocalFileIconProvider::icon(const QString &path, const QIcon &feedback) co
     return icon;
 }
 
-QIcon LocalFileIconProvider::icon(FileInfo *info, const QIcon &feedback)
+QIcon LocalFileIconProvider::icon(FileInfoPointer info, const QIcon &feedback)
 {
     QIcon icon = d->fromTheme(info->nameOf(NameInfoType::kIconName));
 

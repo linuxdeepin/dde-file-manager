@@ -7,12 +7,12 @@
 
 #include "ddplugin_background_global.h"
 
-#include <com_deepin_wm.h>
-
-#include <QGSettings>
 #include <QObject>
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <com_deepin_wm.h>
 using WMInter = com::deepin::wm;
+#endif
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
@@ -33,10 +33,12 @@ protected slots:
 
 protected:
     int getCurrentWorkspaceIndex();
-    int currentWorkspaceIndex = 1; // worksapce index is started with 1.
+    int currentWorkspaceIndex = 1;   // worksapce index is started with 1.
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     WMInter *wmInter = nullptr;
+#endif
 };
 
 DDP_BACKGROUND_END_NAMESPACE
 
-#endif // BACKGROUNDSERVICE_H
+#endif   // BACKGROUNDSERVICE_H

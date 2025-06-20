@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <dfm-base/utils/filestatisticsjob.h>
-#include <dfm-base/utils/private/filestatissticsjob_p.h>
+#include <dfm-base/utils/private/filestatisticsjob_p.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <DComboBox>

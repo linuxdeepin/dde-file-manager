@@ -7,25 +7,31 @@
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
 #include "interface/canvasmanagershell.h"
+#include "interface/canvasgridshell.h"
+#include "interface/canvasmodelshell.h"
 #include "utils/fileoperator.h"
+#include "utils/renamedialog.h"
 #include "view/collectionview.h"
+#include "view/collectionframe.h"
+#include "view/collectionwidget.h"
 #include "delegate/collectionitemdelegate.h"
 
+#include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-framework/dpf.h>
 
+#include <QScrollBar>
 #include <QDebug>
 #include <QTime>
 
+#include <DGuiApplicationHelper>
+
 using namespace ddplugin_organizer;
 
-static constexpr int kCollectionGridColumnCount = 4;
-static constexpr int kSmallCollectionGridRowCount = 2;
-static constexpr int kLargeCollectionGridRowCount = 4;
-static constexpr int kCollectionGridMargin = 2;
-
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     broker = new NormalizedModeBroker(qq);
     broker->init();
@@ -36,61 +42,51 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
 
 NormalizedModePrivate::~NormalizedModePrivate()
 {
-
 }
 
-QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
+QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, const int height)
 {
-    auto gridSize = q->canvasViewShell->gridSize(currentIndex);
-    if (!gridSize.isValid()) {
-        // fix to last screen,and use overlap pos
+    if (currentIndex > q->surfaces.count())
         currentIndex = q->surfaces.count();
-        gridSize = q->canvasViewShell->gridSize(currentIndex);
-    }
 
-    if (nextPos.y() + height > gridSize.height()) {
-        // fix to first row
-        nextPos.setY(0);
-        nextPos.setX(nextPos.x() + width);
-    }
+    auto sur = q->surfaces.at(currentIndex - 1);
+    Q_ASSERT(sur);
 
-    if (nextPos.x() + width > gridSize.width()) {
+    auto gridSize = sur->gridSize();
 
-        if (currentIndex == q->surfaces.count()) {
-            // overlap pos
-            nextPos.setX(gridSize.width() - width);
-            nextPos.setY(gridSize.height() - height);
-            fmDebug() << "stack collection:" << gridSize << width << height << nextPos;
-
-            QPoint validPos(nextPos);
-            // update next pos
-            nextPos.setY(nextPos.y() + height);
-
-            return validPos;
+    QPoint pos(-1, -1);
+    // from UP to DOWN, RIGHT to LEFT, search an area to place the collection
+    for (int x = gridSize.width() - width; x >= 0; --x) {
+        for (int y = 0; y < gridSize.height() - height; ++y) {
+            QRect gridR { x, y, width, height };
+            auto screenR = sur->mapToPixelSize(gridR);
+            if (sur->isIntersected(screenR, nullptr))
+                continue;
+            pos = { x, y };
+            x = -1;   // break outside loop.
+            break;
         }
-
-        // fix to next screen
-        currentIndex += 1;
-
-        // restart find valid pos, in the first position of the next screen
-        nextPos.setX(0);
-        nextPos.setY(0);
-
-        return findValidPos(nextPos, currentIndex, style, width, height);
     }
 
-    QPoint validPos(nextPos);
-    // update next pos
-    nextPos.setY(nextPos.y() + height);
+    if (pos.x() >= 0 && pos.y() >= 0) {
+        fmDebug() << "Found valid position:" << pos << "on surface" << currentIndex;
+        return pos;
+    }
 
-    return validPos;
+    if (currentIndex == q->surfaces.count()) {
+        fmDebug() << "No space found, using bottom position";
+        return { 0, gridSize.height() - height };
+    }
+
+    currentIndex += 1;
+    return findValidPos(currentIndex, width, height);
 }
 
 void NormalizedModePrivate::collectionStyleChanged(const QString &id)
 {
     if (auto holder = holders.value(id)) {
         CfgPresenter->updateNormalStyle(holder->style());
-        q->layout();
+        // q->layout();
     }
 }
 
@@ -98,6 +94,8 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
 {
     QString name = classifier->className(id);
     Q_ASSERT(!name.isEmpty());
+
+    fmInfo() << "Creating new collection:" << name << "with id:" << id;
 
     CollectionHolderPointer holder;
     holder.reset(new CollectionHolder(id, classifier));
@@ -116,11 +114,10 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
     holder->setName(name);
     // disable rename,move,file shift,close,stretch
     holder->setRenamable(false);
-    holder->setMovable(false);
+    holder->setMovable(true);
     holder->setFileShiftable(false);
     holder->setClosable(false);
-    holder->setStretchable(false);
-
+    holder->setStretchable(true);
     // enable adjust
     holder->setAdjustable(true);
 
@@ -142,7 +139,8 @@ void NormalizedModePrivate::switchCollection()
                 // create new collection.
                 fmDebug() << "Collection " << base->key << "isn't existed, create it.";
                 CollectionHolderPointer collectionHolder(createCollection(base->key));
-                connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, &NormalizedModePrivate::collectionStyleChanged);
+                connectCollectionSignals(collectionHolder);
+
                 holders.insert(base->key, collectionHolder);
                 changed = true;
             }
@@ -157,12 +155,16 @@ void NormalizedModePrivate::switchCollection()
 void NormalizedModePrivate::openEditor(const QUrl &url)
 {
     auto key = classifier->key(url);
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmDebug() << "Cannot open editor: file not in any collection:" << url.toString();
         return;
+    }
 
     auto holder = holders.value(key);
-    if (Q_UNLIKELY(!holder))
+    if (Q_UNLIKELY(!holder)) {
+        fmWarning() << "Cannot open editor: collection holder not found for key:" << key;
         return;
+    }
 
     holder->openEditor(url);
 }
@@ -187,6 +189,77 @@ void NormalizedModePrivate::checkPastedFiles(const QList<QUrl> &urls)
                 selectionModel->select(idx, QItemSelectionModel::Select);
         }
     }
+}
+
+void NormalizedModePrivate::connectCollectionSignals(CollectionHolderPointer collection)
+{
+    connect(collection.data(), &CollectionHolder::styleChanged,
+            this, &NormalizedModePrivate::collectionStyleChanged);
+    connect(collection.data(), &CollectionHolder::frameSurfaceChanged,
+            this, &NormalizedModePrivate::updateHolderSurfaceIndex);
+    auto frame = dynamic_cast<CollectionFrame *>(collection->frame());
+    connect(frame, &CollectionFrame::editingStatusChanged,
+            q, &NormalizedMode::onCollectionEditStatusChanged);
+    connect(frame, &CollectionFrame::requestChangeSurface,
+            q, &NormalizedMode::changeCollectionSurface);
+    connect(frame, &CollectionFrame::requestDeactiveAllPredictors,
+            q, &NormalizedMode::deactiveAllPredictors);
+    connect(frame, &CollectionFrame::moveStateChanged,
+            q, &NormalizedMode::onCollectionMoving);
+    // QueueConnection: the slot function will be invoked later.
+    connect(classifier, &FileClassifier::itemsChanged,
+            this, &NormalizedModePrivate::switchCollection, Qt::QueuedConnection);
+
+    {   // update freeze image when signals emitted.
+        auto collWidget = collection->widget();
+        connect(q, &NormalizedMode::collectionChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(frame, &CollectionFrame::geometryChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(collection->itemView(), &CollectionView::iconSizeChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(collection->itemView()->verticalScrollBar(), &QScrollBar::valueChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(classifier, &FileClassifier::itemsChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(CfgPresenter, &ConfigPresenter::optimizeStateChanged,
+                collWidget, [collWidget](bool state) {if (state) collWidget->cacheSnapshot(); });
+        connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
+                collWidget, &CollectionWidget::cacheSnapshot);
+        connect(dfmbase::ThumbnailFactory::instance(), &dfmbase::ThumbnailFactory::produceFinished,
+                collWidget, [collWidget](const QUrl &url) {
+                    auto path = url.path();
+                    path = path.mid(0, path.lastIndexOf("/"));
+                    if (path == dfmbase::StandardPaths::location(dfmbase::StandardPaths::kDesktopPath))
+                        collWidget->cacheSnapshot();
+                });
+        dpfSignalDispatcher->subscribe("ddplugin_background", "signal_Background_BackgroundSetted",
+                                       collection->widget(), &CollectionWidget::cacheSnapshot);
+        connect(collection->widget(), &QWidget::destroyed, this, [](QObject *obj) {
+            dpfSignalDispatcher->unsubscribe("ddplugin_background", "signal_Background_BackgroundSetted",
+                                             obj, &CollectionWidget::cacheSnapshot);
+        });
+    }
+}
+
+bool NormalizedModePrivate::tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table)
+{
+    auto isIntersects = [](const QRect &item, const QList<QRect> &items) -> bool {
+        for (auto rect : items) {
+            if (rect.intersects(item))
+                return true;
+        }
+        return false;
+    };
+
+    for (int x = table.width() - item.width(); x >= 0; --x) {
+        for (int y = 0; y <= table.height() - item.height(); ++y) {
+            item.moveTopLeft({ x, y });
+            if (!isIntersects(item, inSeats))
+                return true;
+        }
+    }
+    return false;
 }
 
 void NormalizedModePrivate::onSelectFile(QList<QUrl> &urls, int flag)
@@ -233,10 +306,11 @@ void NormalizedModePrivate::onIconSizeChanged()
             int ret = del->setIconLevel(lv);
             lay |= ret > -1;
         }
+        view->updateRegionView();
     }
 
-    if (lay)
-        q->layout();
+    //    if (lay)
+    //        q->layout();
 }
 
 void NormalizedModePrivate::onFontChanged()
@@ -246,11 +320,117 @@ void NormalizedModePrivate::onFontChanged()
         view->updateRegionView();
     }
 
-    q->layout();
+    // q->layout();
 }
 
-void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
+void NormalizedModePrivate::refreshViews(bool silence)
 {
+    for (const CollectionHolderPointer &holder : holders.values()) {
+        auto view = holder->itemView();
+        if (view) view->refresh(silence);
+    }
+}
+
+void NormalizedModePrivate::updateHolderSurfaceIndex(QWidget *surface)
+{
+    auto holder = dynamic_cast<CollectionHolder *>(sender());
+    if (!holder) return;
+
+    for (int i = 0; i < q->surfaces.count(); ++i) {
+        if (surface == q->surfaces.at(i).data()) {
+            auto style = holder->style();
+            style.screenIndex = i + 1;
+            holder->setStyle(style);
+            break;
+        }
+    }
+}
+
+bool NormalizedModePrivate::batchRenameFiles()
+{
+    if (holders.count() == 0)
+        return false;
+
+    QList<QUrl> selectedUrls;
+    // 1. get files from canvas view.
+    auto canvasSelects = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_SelectedUrls", -1).value<QList<QUrl>>();
+    selectedUrls.append(canvasSelects);
+
+    // 2. get files from collections
+    for (const QModelIndex &idx : selectionModel->selectedIndexes()) {
+        auto url = q->getModel()->fileUrl(idx);
+        if (url.isValid())
+            selectedUrls << url;
+    }
+    if (selectedUrls.count() <= 1) return false;
+
+    auto view = holders.values().at(0)->itemView();
+    RenameDialog renameDlg(selectedUrls.count());
+    renameDlg.moveToCenter();
+
+    // see DDialog::exec,it will return the index of buttons
+    if (1 == renameDlg.exec()) {
+        RenameDialog::ModifyMode mode = renameDlg.modifyMode();
+        if (RenameDialog::kReplace == mode) {
+            auto content = renameDlg.getReplaceContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content, true);
+        } else if (RenameDialog::kAdd == mode) {
+            auto content = renameDlg.getAddContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content);
+        } else if (RenameDialog::kCustom == mode) {
+            auto content = renameDlg.getCustomContent();
+            FileOperatorIns->renameFiles(view, selectedUrls, content, false);
+        }
+    }
+
+    return true;
+}
+
+bool NormalizedModePrivate::moveFilesToCanvas(int viewIndex, const QList<QUrl> &urls, const QPoint &viewPoint)
+{
+    QList<QUrl> collectionItems;
+    QStringList files;
+    for (auto url : urls) {
+        QString &&key = classifier->key(url);
+        if (key.isEmpty())
+            continue;
+        collectionItems << url;
+        files << url.toString();
+    }
+
+    if (collectionItems.isEmpty()) {
+        fmDebug() << "No collection items found in move request";
+        return false;
+    }
+
+    QPoint gridPos = q->canvasViewShell->gridPos(viewIndex, viewPoint);
+    if (!q->canvasGridShell->item(viewIndex, gridPos).isEmpty()) {
+        fmDebug() << "Canvas position is not empty, cannot move files";
+        return false;
+    }
+
+    q->canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
+
+    for (auto url : collectionItems) {
+        classifier->remove(url);
+        q->canvasModelShell->fetch(url);
+    }
+
+    dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", collectionItems);
+    return true;
+}
+
+void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bool reorganized)
+{
+    if (cfgs.isEmpty() && CfgPresenter->organizeOnTriggered() && !reorganized) {
+        // feature: if org on trigger is enabled and no saved configs
+        // files should not be organized when launch.
+        classifier->reset({});
+        return;
+    }
+
+    relayoutedFiles.clear();
+    relayoutedCollectionIDs.clear();
     // order by config
     for (const CollectionBaseDataPtr &cfg : cfgs) {
         if (auto base = classifier->baseData(cfg->key)) {
@@ -263,17 +443,22 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
                 }
             }
 
-            ordered.append(org);
+            // those are not in config files should not be organized.
+            if (reorganized || !CfgPresenter->organizeOnTriggered())
+                ordered.append(org);
+            if (reorganized && !org.isEmpty()) {
+                relayoutedFiles.append(org);
+                relayoutedCollectionIDs.append(cfg->key);
+            }
+
             base->items = ordered;
         }
     }
 }
 
 NormalizedMode::NormalizedMode(QObject *parent)
-    : CanvasOrganizer(parent)
-    , d(new NormalizedModePrivate(this))
+    : CanvasOrganizer(parent), d(new NormalizedModePrivate(this))
 {
-
 }
 
 NormalizedMode::~NormalizedMode()
@@ -296,7 +481,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     // sync selection
     d->selectionHelper->setInnerModel(d->selectionModel);
-    //d->selectionHelper->setExternalModel(canvasSelectionShell->selectionModel());
+    d->selectionHelper->setExternalModel(canvasSelectionShell->selectionModel());
     d->selectionHelper->setShell(canvasSelectionShell);
     d->selectionHelper->setEnabled(true);
 
@@ -314,6 +499,7 @@ bool NormalizedMode::initialize(CollectionModel *m)
 
     connect(canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d, &NormalizedModePrivate::onIconSizeChanged);
     connect(canvasManagerShell, &CanvasManagerShell::fontChanged, d, &NormalizedModePrivate::onFontChanged);
+    connect(canvasManagerShell, &CanvasManagerShell::requestRefresh, d, &NormalizedModePrivate::refreshViews);
 
     // must be DirectConnection to keep sequential
     connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
@@ -321,11 +507,17 @@ bool NormalizedMode::initialize(CollectionModel *m)
     connect(model, &CollectionModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
 
     connect(model, &CollectionModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &CollectionModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
+    connect(
+            model, &CollectionModel::modelReset, this, [this] { rebuild(); }, Qt::QueuedConnection);
+
+    connect(CfgPresenter, &ConfigPresenter::reorganizeDesktop, this, &NormalizedMode::onReorganizeDesktop, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::releaseCollection, this, &NormalizedMode::releaseCollection, Qt::QueuedConnection);
 
     // creating if there already are files.
-    if (!model->files().isEmpty())
+    if (!model->files().isEmpty()) {
+        fmDebug() << "Found existing files, triggering rebuild";
         rebuild();
+    }
 
     return true;
 }
@@ -346,10 +538,9 @@ void NormalizedMode::layout()
 {
     auto holders = d->holders.values();
     {
-        const QStringList &ordered =  d->classifier->classes();
+        const QStringList &ordered = d->classifier->classes();
         const int max = ordered.size();
-        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1,
-                  const CollectionHolderPointer &t2) {
+        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1, const CollectionHolderPointer &t2) {
             int i1 = ordered.indexOf(t1->id());
             if (i1 < 0)
                 i1 = max;
@@ -360,12 +551,80 @@ void NormalizedMode::layout()
         });
     }
 
+    // see if collections should be re-layout
+    //      1. calc the bounding rect of all collections which in same screen.
+    QList<QRect> orphanRects;   // those collections who's surface loses， should be re-layouted into surface_0.
+    QList<QRect> rectsOnSurface0;
+    QList<QSize> collectionGridSizes;
+    QMap<int, QRect> boundingRects;
+    for (int i = 0; i < holders.count(); ++i) {
+        const CollectionHolderPointer &holder = holders.at(i);
+        auto style = CfgPresenter->normalStyle(holder->id());
+        if (style.key.isEmpty()) continue;
+        int sIdx = style.screenIndex - 1;
+        boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
+        collectionGridSizes.append(Surface::mapToGridSize(style.rect.size()));
+
+        if (surfaces.count() > 0) {
+            if (sIdx > surfaces.count() - 1)
+                orphanRects.append(QRect(QPoint(0, 0), Surface::mapToGridSize(style.rect.size())));
+            if (sIdx == 0)
+                rectsOnSurface0.append(surfaces[0]->mapToGridGeo(style.rect));
+        }
+    }
+    //      1.1 see if the bounding rect in screen is widther or higher than screen rect
+    QMap<int, bool> surfaceRelayout;
+    for (auto iter = boundingRects.cbegin(); iter != boundingRects.cend(); ++iter) {
+        int idx = iter.key();
+        if (idx >= surfaces.count())
+            continue;
+        auto surface = surfaces.at(idx);
+        auto boundingRect = iter.value();
+        if (boundingRect.width() > surface->width()
+            || boundingRect.height() > surface->height())
+            surfaceRelayout.insert(idx, true);
+    }
+    //      1.2 make sure all orphan rects can be placed on surface 0
+    if (orphanRects.count() > 0 && surfaces.count() > 0 && !surfaceRelayout.contains(0)) {
+        for (auto &orphan : orphanRects) {
+            if (!d->tryPlaceRect(orphan, rectsOnSurface0, surfaces[0]->gridSize())) {
+                surfaceRelayout.insert(0, true);
+                break;
+            }
+            rectsOnSurface0.append(orphan);
+        }
+    }
+
+    //      2. see if screen resolution was changed, if so the collections should be re-layout or move.
+    //         since only horizontal axis is reversed, only screen width should be concerned
+    QMap<int, int> surfaceMove;   // key: surface/screen index, val: the delta x value that collections should move.
+    auto savedScreenSizes = CfgPresenter->surfaceSizes();
+    for (int i = 0; i < surfaces.count() && !surfaceRelayout.contains(i); ++i) {
+        auto sur = surfaces.at(i);
+        if (!sur) continue;
+        if (i >= savedScreenSizes.count()) continue;
+        int newWidth = sur->width();
+        int oldWidth = savedScreenSizes.at(i).width();
+        surfaceMove.insert(i, newWidth - oldWidth);
+    }
+
+    //      3. if screen count == 1, make sure that all of the collections can be placed without overlap
+    auto prefferDefaultSize = kMiddle;
+    if (surfaces.count() == 1 && surfaceRelayout.contains(0)) {   // if re-layout is already decided, only need to decided the default size.
+        auto surSize = surfaces.at(0)->gridSize();
+        // see if current size can hold all collections with middle size
+        auto rows = surSize.height() / kDefaultCollectionSize[kMiddle].height();
+        auto cols = surSize.width() / kDefaultCollectionSize[kMiddle].width();
+        if (rows * cols < holders.count())
+            prefferDefaultSize = kSmall;
+    }
+
     // screen num is start with 1
+    static constexpr char kPropertyReLayout[] = "re-layout";
     int screenIdx = 1;
     QList<CollectionStyle> toSave;
-    QPoint nextPos(0, 0);
-
-    for (const CollectionHolderPointer &holder : holders) {
+    for (int i = 0; i < holders.count(); ++i) {
+        const CollectionHolderPointer &holder = holders.at(i);
         auto style = CfgPresenter->normalStyle(holder->id());
         if (Q_UNLIKELY(style.key != holder->id())) {
             if (!style.key.isEmpty())
@@ -373,26 +632,54 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        int currentHeightTime = style.sizeMode == CollectionFrameSize::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
-        auto pos = d->findValidPos(nextPos, screenIdx, style, kCollectionGridColumnCount, currentHeightTime);
+        if (style.screenIndex > surfaces.count()   // maybe screen count reduced, screenIndex starts at 1
+            || surfaceRelayout.contains(style.screenIndex - 1)   // if current surface cannot cover the boundingrect, re-layout items
+            || style.screenIndex == -1   // new coming items.
+        ) {
+            if (!holder->property(kPropertyReLayout).toBool()) {
+                holder->setProperty(kPropertyReLayout, true);
+                holder->setSurface(nullptr);   // take off it's parent surface so when do re-layout on it, the position can be correctly calculated.
+                holders.append(holder);   // add to end of the list so items can be handle later.
+                continue;
+            }
+        }
 
-        Q_ASSERT(screenIdx > 0);
-        Q_ASSERT(screenIdx <= surfaces.count());
+        if (holder->property(kPropertyReLayout).toBool()) {
+            holder->setProperty(kPropertyReLayout, false);
+            // need to find a preffered place to place this item.
+            auto size = kDefaultCollectionSize.value(prefferDefaultSize);
+            auto gridPos = d->findValidPos(screenIdx, size.width(), size.height());
+            Q_ASSERT(screenIdx > 0);
+            Q_ASSERT(screenIdx <= surfaces.count());
+            style.screenIndex = screenIdx;
+            style.sizeMode = prefferDefaultSize;
 
-        style.screenIndex = screenIdx;
-        holder->setSurface(surfaces.at(screenIdx - 1).data());
+            QRect gridGeo = { gridPos, size };
+            auto rect = surfaces.at(screenIdx - 1)->mapToPixelSize(gridGeo);
+            style.rect = rect.marginsRemoved({ kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin,
+                                               kCollectionGridMargin });
+        } else {
+            if (surfaceMove.value(style.screenIndex - 1, 0) != 0) {   // surface size changed. x coordinate should be changed.
+                int dx = surfaceMove.value(style.screenIndex - 1);
+                style.rect.adjust(dx, 0, dx, 0);
+            }
+        }
 
-        auto rect = canvasViewShell->gridVisualRect(style.screenIndex, pos);
-
-        style.rect = QRect(rect.topLeft(), QSize(rect.width() * kCollectionGridColumnCount, rect.height() * currentHeightTime))
-                .marginsRemoved(QMargins(kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin));
+        holder->setSurface(surfaces.at(style.screenIndex - 1).data());
         holder->setStyle(style);
         holder->show();
-
         toSave << style;
     }
 
     CfgPresenter->writeNormalStyle(toSave);
+
+    // save new screen resolutions.
+    QList<QWidget *> surfaceList;
+    for (auto s : surfaces)
+        surfaceList.append(s.data());
+    CfgPresenter->setSurfaceInfo(surfaceList);
 }
 
 void NormalizedMode::detachLayout()
@@ -402,17 +689,19 @@ void NormalizedMode::detachLayout()
     }
 }
 
-void NormalizedMode::rebuild()
+void NormalizedMode::rebuild(bool reorganize)
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
-    QTime time;
+    QElapsedTimer time;
     time.start();
     {
+        if (reorganize && d->classifier->updateClassifier())  // classifier's categories should be updated.
+            model->refresh(model->rootIndex(), false, 0);
         auto files = model->files();
         d->classifier->reset(files);
 
         // order item as config
-        d->restore(CfgPresenter->normalProfile());
+        d->restore(CfgPresenter->normalProfile(), reorganize);
 
         fmInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
         time.restart();
@@ -441,13 +730,26 @@ void NormalizedMode::rebuild()
             // 创建没有的组
             if (collectionHolder.isNull()) {
                 collectionHolder = d->createCollection(key);
-                connect(collectionHolder.data(), &CollectionHolder::styleChanged, d, &NormalizedModePrivate::collectionStyleChanged);
+                d->connectCollectionSignals(collectionHolder);
                 d->holders.insert(key, collectionHolder);
             }
         }
     }
 
     layout();
+
+    QTimer::singleShot(0, this, [this] {
+        if (!d->relayoutedCollectionIDs.isEmpty()) {
+            // QParallelAnimationGroup *anis = new QParallelAnimationGroup();
+            for (auto id : d->relayoutedCollectionIDs) {
+                // auto ani = d->holders.value(id)->createAnimation();
+                // ani->setParent(anis);
+                // anis->addAnimation(ani);
+                d->holders.value(id)->selectFiles(d->relayoutedFiles);
+            }
+            // anis->start(QAbstractAnimation::DeleteWhenStopped);
+        }
+    });
 
     fmInfo() << QString("create groups %0 takes %1 ms").arg(d->holders.size()).arg(time.elapsed());
 
@@ -456,7 +758,26 @@ void NormalizedMode::rebuild()
 
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    d->classifier->replace(oldUrl, newUrl);
+    if (CfgPresenter->organizeOnTriggered()) {
+        QString oldType = d->classifier->key(oldUrl);
+        if (oldType.isEmpty()) {  // old item is not in collection
+            fmDebug() << "Renamed file was not in any collection";
+            return;
+        }
+        QString newType = d->classifier->classify(newUrl);
+        if (newType == oldType) {
+            auto idx = d->classifier->baseData(oldType)->items.indexOf(oldUrl);
+            d->classifier->baseData(oldType)->items.replace(idx, newUrl);
+        } else {
+            d->classifier->baseData(oldType)->items.removeAll(oldUrl);
+            dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_Select", QList<QUrl> { newUrl });
+        }
+
+        Q_EMIT d->classifier->itemsChanged(oldType);
+    } else {
+        d->classifier->replace(oldUrl, newUrl);
+    }
+
     d->switchCollection();
 
     const auto &renameFileData = FileOperatorIns->renameFileData();
@@ -479,6 +800,11 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
+    if (ConfigPresenter::instance()->organizeOnTriggered()) {
+        fmDebug() << "File insertion skipped due to organize-on-trigger mode";
+        return;
+    }
+
     QList<QUrl> urls;
     for (int i = first; i <= last; i++) {
         QModelIndex index = model->index(i, 0, parent);
@@ -487,7 +813,7 @@ void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int la
         auto url = model->fileUrl(index);
         d->classifier->prepend(url);
         urls.append(url);
-   }
+    }
 
     d->switchCollection();
 
@@ -520,32 +846,159 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
     }
 }
 
+void NormalizedMode::onReorganizeDesktop()
+{
+    rebuild(true);
+    for (auto type : d->classifier->classes())
+        Q_EMIT d->classifier->itemsChanged(type);   // to update the collection view's vertical scroll range.
+}
+
+void NormalizedMode::releaseCollection(int category)
+{
+    if (!d->classifier)
+        return;
+    QString key = kCategory2Key.value(ItemCategory(category), "");
+    if (key.isEmpty())
+        return;
+
+    auto files = model->files();
+    QList<QUrl> releases;
+    for (auto url : files) {
+        if (d->classifier->classify(url) == key)
+            releases << url;
+    }
+    if (!releases.isEmpty())
+        d->moveFilesToCanvas(0, releases, { 0, 0 });
+}
+
+void NormalizedMode::onCollectionEditStatusChanged(bool editing)
+{
+    this->editing = editing;
+}
+
+void NormalizedMode::changeCollectionSurface(const QString &screenName)
+{
+    auto frame = dynamic_cast<QWidget *>(sender());
+    if (!frame) return;
+
+    for (auto surface : surfaces) {
+        auto surfaceScreenName = surface->property(dfmbase::DesktopFrameProperty::kPropScreenName).toString();
+        if (surfaceScreenName == screenName) {
+            frame->setParent(surface.data());
+            frame->show();
+            break;
+        }
+    }
+}
+
+void NormalizedMode::deactiveAllPredictors()
+{
+    for (auto surface : surfaces) {
+        if (surface)
+            surface->deactivatePosIndicator();
+    }
+}
+
+void NormalizedMode::onCollectionMoving(bool moving)
+{
+    for (auto holder : d->holders) {
+        if (holder)
+            holder->setFreeze(moving);
+    }
+}
+
+bool NormalizedMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
+{
+    if (!CfgPresenter->organizeOnTriggered())
+        return false;
+
+    Qt::DropAction act = Qt::DropAction::MoveAction;
+    QVariantHash *ext = reinterpret_cast<QVariantHash *>(extData);
+    if (ext && ext->contains("QDropEvent")) {
+        QDropEvent *event = reinterpret_cast<QDropEvent *>(ext->value("QDropEvent").toLongLong());
+        if (event)
+            act = event->dropAction();
+    }
+
+    if (act == Qt::MoveAction)
+        return d->moveFilesToCanvas(viewIndex, mimeData->urls(), viewPoint);
+    return false;
+}
+
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 {
-    // All datas are not displayed on the desktop.
+    bool filter { false };
+    // remove urls that not contained in collections
     if (urls && d->classifier) {
-        urls->clear();
-        return true;
+        for (auto iter = urls->begin(); iter != urls->end();) {
+            bool contained { false };
+            for (const auto &key : d->classifier->keys()) {
+                if (d->classifier->contains(key, *iter)) {
+                    contained = true;
+                    break;
+                }
+            }
+            if (contained) {
+                iter = urls->erase(iter);
+                filter = true;
+            } else {
+                iter++;
+            }
+        }
     }
-    return false;
+    return filter;
 }
 
 bool NormalizedMode::filterDataInserted(const QUrl &url)
 {
-    return d->classifier;
+    if (ConfigPresenter::instance()->organizeOnTriggered())
+        return false;
+
+    if (d->classifier)
+        return d->classifier->acceptInsert(url);
+
+    return false;
 }
 
 bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    return d->classifier;
+    if (!d->classifier)
+        return false;
+
+    if (!CfgPresenter->organizeOnTriggered())
+        return d->classifier->acceptRename(oldUrl, newUrl);
+
+    QString oldType = d->classifier->key(oldUrl);
+    if (oldType.isEmpty())   // old item is not in collection.
+        return false;
+
+    QString newType = d->classifier->classify(newUrl);
+    if (newType != oldType)   // the renamed result should be placed on desktop not in collection
+        return false;
+
+    return true;
 }
 
 bool NormalizedMode::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_A) // select all
-        return d->broker->selectAllItems();
+    // select all
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_A)
+        d->broker->selectAllItems();
 
     return CanvasOrganizer::filterShortcutkeyPress(viewIndex, key, modifiers);
+}
+
+bool NormalizedMode::filterKeyPress(int viewIndex, int key, int modifiers) const
+{
+    if (key == Qt::Key_F2 && modifiers == Qt::NoModifier) {
+        return d->batchRenameFiles();
+    }
+    return CanvasOrganizer::filterKeyPress(viewIndex, key, modifiers);
+}
+
+bool NormalizedMode::filterContextMenu(int, const QUrl &, const QList<QUrl> &, const QPoint &) const
+{
+    return isEditing();
 }
 
 bool NormalizedMode::setClassifier(Classifier id)
@@ -557,15 +1010,20 @@ bool NormalizedMode::setClassifier(Classifier id)
         }
 
         // remove old classifier.
+        fmInfo() << "Removing old classifier and setting new one:" << id;
         removeClassifier();
+    } else {
+        fmInfo() << "Setting initial classifier:" << id;
     }
 
     // clear all collections
     d->holders.clear();
 
     d->classifier = ClassifierCreator::createClassifier(id);
-    if (!d->classifier)
+    if (!d->classifier) {
+        fmWarning() << "Failed to create classifier:" << id;
         return false;
+    }
 
     model->setHandler(d->classifier->dataHandler());
     model->refresh(model->rootIndex(), false, 0);
@@ -578,8 +1036,7 @@ void NormalizedMode::removeClassifier()
         if (model && model->handler() == d->classifier->dataHandler())
             model->setHandler(nullptr);
 
-       delete d->classifier;
-       d->classifier = nullptr;
+        delete d->classifier;
+        d->classifier = nullptr;
     }
 }
-

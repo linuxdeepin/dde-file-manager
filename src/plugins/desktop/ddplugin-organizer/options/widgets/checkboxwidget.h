@@ -19,11 +19,12 @@ public:
     void setChecked(bool checked = true);
     bool checked() const;
 signals:
-    void chenged(bool checked);
+    void changed(bool checked);
+
 protected:
-     DTK_WIDGET_NAMESPACE::DCheckBox *checkBox = nullptr;
+    DTK_WIDGET_NAMESPACE::DCheckBox *checkBox = nullptr;
 };
 
 }
 
-#endif // CHECKBOXWIDGET_H
+#endif   // CHECKBOXWIDGET_H

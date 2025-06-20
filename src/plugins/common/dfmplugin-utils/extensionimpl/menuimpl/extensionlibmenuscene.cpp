@@ -8,7 +8,7 @@
 #include "private/extensionlibmenuscene_p.h"
 #include "extensionimpl/pluginsload/extensionpluginmanager.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/utils/universalutils.h>
@@ -120,7 +120,10 @@ void ExtensionLibMenuScene::updateState(QMenu *parent)
             if (actions.contains(befor) && actionIndex != -1) {
                 actions.removeAt(actionIndex);
                 int beforIndex { actions.indexOf(befor) };
-                actions.insert(beforIndex, action);
+                if (actions.size() < beforIndex || beforIndex < 0)
+                    actions.append(action);
+                else
+                    actions.insert(beforIndex, action);
             }
         }
         parent->addActions(actions);

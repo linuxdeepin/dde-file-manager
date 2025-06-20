@@ -67,6 +67,11 @@ ExtensionPluginManagerPrivate::ExtensionPluginManagerPrivate(ExtensionPluginMana
 #endif
 }
 
+ExtensionPluginManagerPrivate::~ExtensionPluginManagerPrivate()
+{
+    release();
+}
+
 void ExtensionPluginManagerPrivate::startInitializePlugins()
 {
     Q_Q(ExtensionPluginManager);
@@ -86,8 +91,7 @@ void ExtensionPluginManagerPrivate::startInitializePlugins()
     connect(worker, &ExtensionPluginInitWorker::initPluginsFinished, this, [this, q]() {
         curState = ExtensionPluginManager::kInitialized;
         emit q->allPluginsInitialized();
-        workerThread.quit();
-        workerThread.wait();
+        release();
     });
     connect(worker, &ExtensionPluginInitWorker::requestInitPlugin, this, [this](ExtPluginLoaderPointer loader) {
         // Some plugins construct GUI object in `initialize`,
@@ -155,7 +159,7 @@ void ExtensionPluginManagerPrivate::restartDesktop(const QUrl &url)
     }
 
     QMap<QString, QString> args;
-    args.insert(dfm_upgrade::kArgDesktop, "dde-desktop");
+    args.insert(dfm_upgrade::kArgDesktop, "dde-shell");
 
     int ret = func(args);
 
@@ -179,15 +183,28 @@ void ExtensionPluginManagerPrivate::doAppendExt(const QString &name, ExtPluginLo
 
     DFMEXT::DFMExtMenuPlugin *menu { loader->resolveMenuPlugin() };
     if (menu)
-        menuMap.insert(name, QSharedPointer<DFMEXT::DFMExtMenuPlugin>(menu));
+        menuMap.insert(name, menu);
 
     DFMEXT::DFMExtEmblemIconPlugin *emblem { loader->resolveEmblemPlugin() };
     if (emblem)
-        emblemMap.insert(name, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>(emblem));
+        emblemMap.insert(name, emblem);
 
     DFMEXT::DFMExtWindowPlugin *window { loader->resolveWindowPlugin() };
     if (window)
-        windowMap.insert(name, QSharedPointer<DFMEXT::DFMExtWindowPlugin>(window));
+        windowMap.insert(name, window);
+
+    DFMEXT::DFMExtFilePlugin *file { loader->resolveFilePlugin() };
+    if (file)
+        fileMap.insert(name, file);
+}
+
+void ExtensionPluginManagerPrivate::release()
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        workerThread.quit();
+        workerThread.wait();
+    });
 }
 
 ExtensionPluginManager &ExtensionPluginManager::instance()
@@ -224,25 +241,32 @@ bool ExtensionPluginManager::exists(ExtensionPluginManager::ExtensionType type) 
     return false;
 }
 
-QList<QSharedPointer<dfmext::DFMExtMenuPlugin>> ExtensionPluginManager::menuPlugins() const
+QList<DFMEXT::DFMExtMenuPlugin *> ExtensionPluginManager::menuPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 
     return d->menuMap.values();
 }
 
-QList<QSharedPointer<dfmext::DFMExtEmblemIconPlugin>> ExtensionPluginManager::emblemPlugins() const
+QList<DFMEXT::DFMExtEmblemIconPlugin *> ExtensionPluginManager::emblemPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 
     return d->emblemMap.values();
 }
 
-QList<QSharedPointer<dfmext::DFMExtWindowPlugin>> ExtensionPluginManager::windowPlugins() const
+QList<DFMEXT::DFMExtWindowPlugin *> ExtensionPluginManager::windowPlugins() const
 {
     Q_D(const ExtensionPluginManager);
 
     return d->windowMap.values();
+}
+
+QList<DFMEXT::DFMExtFilePlugin *> ExtensionPluginManager::filePlugins() const
+{
+    Q_D(const ExtensionPluginManager);
+
+    return d->fileMap.values();
 }
 
 DFMEXT::DFMExtMenuProxy *ExtensionPluginManager::pluginMenuProxy() const

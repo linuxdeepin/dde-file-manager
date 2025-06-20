@@ -38,10 +38,10 @@ public:
     InitState currentState() const;
     bool initialized() const;
     bool exists(ExtensionType type) const;
-    QList<QSharedPointer<DFMEXT::DFMExtMenuPlugin>> menuPlugins() const;
-    QList<QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>> emblemPlugins() const;
-    QList<QSharedPointer<DFMEXT::DFMExtWindowPlugin>> windowPlugins() const;
-
+    QList<DFMEXT::DFMExtMenuPlugin *> menuPlugins() const;
+    QList<DFMEXT::DFMExtEmblemIconPlugin *> emblemPlugins() const;
+    QList<DFMEXT::DFMExtWindowPlugin *> windowPlugins() const;
+    QList<DFMEXT::DFMExtFilePlugin *> filePlugins() const;
     DFMEXT::DFMExtMenuProxy *pluginMenuProxy() const;
 
 Q_SIGNALS:

@@ -27,6 +27,7 @@ static const QString kUserTrashFullOpened = "user-trash-full-opened";
 
 DialogManager *DialogManager::instance()
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     static DialogManager ins;
     return &ins;
 }
@@ -146,7 +147,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         else if (err.code == DeviceError::kDaemonErrorCannotMkdirMountPoint)
             errMsg = tr("Cannot create the mountpoint: the file name is too long");
         else if (static_cast<int>(err.code) == EACCES)
-            errMsg = tr("Permission denied");
+            errMsg = tr("Authentication failed");
         else if (static_cast<int>(err.code) == ENOENT)
             errMsg = tr("No such file or directory");
         else if (err.code >= DeviceError::kGIOError
@@ -259,6 +260,12 @@ void DialogManager::addTask(const JobHandlePointer task)
     taskdialog->addTask(task);
 }
 
+void DialogManager::registerSettingWidget(const QString &viewType,
+                                          std::function<DSettingsWidgetFactory::WidgetCreateHandler> handler)
+{
+    settingWidgetCreators[viewType] = handler;
+}
+
 void DialogManager::showSetingsDialog(FileManagerWindow *window)
 {
     Q_ASSERT(window);
@@ -267,9 +274,21 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
         qCWarning(logDFMBase) << "isSettingDialogShown true";
         return;
     }
+
     window->setProperty("isSettingDialogShown", true);
-    DSettingsDialog *dsd = new SettingDialog(window);
+    SettingDialog *dsd = new SettingDialog(window);
+
+    // 在初始化前注册所有缓存的自定义控件创建器
+    auto factory = dsd->widgetFactory();
+    for (auto iter = settingWidgetCreators.constBegin();
+         iter != settingWidgetCreators.constEnd();
+         ++iter) {
+        factory->registerWidget(iter.key(), iter.value());
+    }
+
+    dsd->initialze();
     dsd->show();
+
     connect(dsd, &DSettingsDialog::finished, [window] {
         window->setProperty("isSettingDialogShown", false);
     });
@@ -365,7 +384,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList, bool isTras
     QString title;
     QString fileName;
     QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
-    bool isLocalFile = dfmbase::FileUtils::isLocalFile(urlList.first());
+    bool isLocalFile = urlList.first().isLocalFile();
     if (isLocalFile) {
         if (urlList.size() == 1) {
             SyncFileInfo f(urlList.first());
@@ -450,13 +469,14 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     }
 
     QFontMetrics fm(d.font());
-    d.setIcon(QIcon::fromTheme("user-trash-full-opened"));
+    const auto &icon = FileUtils::trashIsEmpty() ? QIcon::fromTheme("user-trash") : QIcon::fromTheme("user-trash-full");
+    d.setIcon(icon);
 
     QString deleteFileName = tr("Do you want to delete %1?");
     QString deleteFileItems = tr("Do you want to delete the selected %1 items?");
 
     const QUrl &urlFirst = urls.first();
-    if (dfmbase::FileUtils::isLocalFile(urlFirst)) {   // delete local file
+    if (urlFirst.isLocalFile()) {   // delete local file
         if (urls.size() == 1) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(urlFirst);
             d.setTitle(deleteFileName.arg(fm.elidedText(info->displayOf(DisPlayInfoType::kFileDisplayName), Qt::ElideMiddle, NAME_MAX)));

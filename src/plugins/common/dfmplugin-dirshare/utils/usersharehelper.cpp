@@ -10,6 +10,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -31,14 +32,13 @@
 #include <pwd.h>
 #include <unistd.h>
 
-Q_DECLARE_METATYPE(QString *)
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_dirshare {
 
 namespace DaemonServiceIFace {
-static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
-static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.UserShareManager" };
+static constexpr char kInterfaceService[] { "org.deepin.Filemanager.UserShareManager" };
+static constexpr char kInterfacePath[] { "/org/deepin/Filemanager/UserShareManager" };
+static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.UserShareManager" };
 
 static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
@@ -97,7 +97,9 @@ bool UserShareHelper::share(const ShareInfo &info)
 
     if (isValidShare(info)) {
         const auto &&name = info.value(ShareInfoKeys::kName).toString();
-        if (name.startsWith("-") || name.endsWith(" ")) {
+        // 是否包含了非法字符：%<>*?|/\\+=;:,\"，且不能以 "-" 和空格开头，或者空格结尾
+        QRegularExpression regex(R"(^(?![ -])[^%<>*?|/\\+=;:,"]*$(?<! ))");
+        if (!regex.match(name).hasMatch()) {
             DialogManagerInstance->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
             return false;
         }
@@ -142,26 +144,21 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    QString encPass;
-    auto ret = dpfSlotChannel->push("dfmplugin_stringencrypt", "slot_OpenSSL_EncryptString",
-                                    passwd, &encPass);
-    if (ret != 0) {
-        fmWarning() << "cannot encrypt password!!!";
-        DialogManagerInstance->showErrorDialog(tr("Error"), tr("Cannot encrypt password"));
-        return;
-    }
+    QString encPass = FileUtils::encryptString(passwd);
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, encPass);
-    bool result = reply.isValid() && reply.error().message().isEmpty();
-    fmInfo() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
+    bool success = reply.isValid() && reply.value();
+    fmInfo() << "Samba password set result:" << success
+             << ", error msg:" << (reply.isValid() ? "none" : reply.error().message());
 
-    Q_EMIT sambaPasswordSet(result);
+    Q_EMIT sambaPasswordSet(success);
 }
 
-void UserShareHelper::removeShareByPath(const QString &path)
+bool UserShareHelper::removeShareByPath(const QString &path)
 {
     const QString &&shareName = shareNameByPath(path);
     if (!shareName.isEmpty())
-        removeShareByShareName(shareName);
+        return removeShareByShareName(shareName);
+    return false;
 }
 
 int UserShareHelper::readPort()
@@ -246,34 +243,65 @@ void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
 
 QString UserShareHelper::sharedIP() const
 {
-    QString selfIp;
-    QStringList validIpList;
-    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
-        if (!netInterface.isValid())
-            continue;
-        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
-        if (!(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack)))
-            continue;
-        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-        foreach (QNetworkAddressEntry entry, entryList) {
-            if (!entry.ip().toString().isEmpty() && entry.ip().toString() != "0.0.0.0" && entry.ip().toIPv4Address()) {
-                validIpList << entry.ip().toString();
-            }
+    QString ip = "127.0.0.1";
+    QDBusInterface networkIface("org.freedesktop.NetworkManager",
+                                "/org/freedesktop/NetworkManager",
+                                "org.freedesktop.NetworkManager",
+                                QDBusConnection::systemBus());
+
+    auto primaryConn = networkIface.property("PrimaryConnection").value<QDBusObjectPath>();
+    QDBusInterface actIface("org.freedesktop.NetworkManager",
+                            primaryConn.path(),
+                            "org.freedesktop.NetworkManager.Connection.Active",
+                            QDBusConnection::systemBus());
+
+    auto ipv4CfgPath = actIface.property("Ip4Config").value<QDBusObjectPath>();
+    if (ipv4CfgPath.path().isEmpty()) {
+        fmInfo() << "got invalid ipv4config in" << primaryConn.path();
+        return ip;
+    }
+
+    QDBusInterface ipConfigIface("org.freedesktop.NetworkManager",
+                                 ipv4CfgPath.path(),
+                                 "org.freedesktop.DBus.Properties",
+                                 QDBusConnection::systemBus());
+    QDBusReply<QVariant> reply = ipConfigIface.call("Get",
+                                                    "org.freedesktop.NetworkManager.IP4Config",
+                                                    "AddressData");
+    if (!reply.isValid()) {
+        fmWarning() << "Failed to get AddressData:" << reply.error();
+        return ip;
+    }
+
+    // 解析 aa{sv} 类型
+    const QDBusArgument arg = reply.value().value<QDBusArgument>();
+    if (arg.currentType() != QDBusArgument::ArrayType) {
+        return ip;
+    }
+
+    arg.beginArray();
+    while (!arg.atEnd()) {
+        // 开始处理内层数组元素
+        QVariantMap item;
+        arg >> item;
+        if (!item.value("address", "").toString().isEmpty()) {
+            ip = item.value("address").toString();
+            break;
         }
     }
-    // If multiple IPs are got, just take the first one.
-    // There is not a list control on the UI for the IP.
-    // TODO(zhuangshu):discuss this issue with product manager, or reference the code of dde-network-core plugin.
-    if (validIpList.count() > 0)
-        selfIp = validIpList.first();
+    arg.endArray();
 
-    return selfIp;
+    return ip;
 }
 
 int UserShareHelper::getSharePort() const
 {
     QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     auto ports = smbConf.value("global/smb ports").toString().split(" ", QString::SkipEmptyParts);
+#else
+    auto ports = smbConf.value("global/smb ports").toString().split(" ", Qt::SkipEmptyParts);
+#endif
     return ports.isEmpty() ? -1 : ports.first().toInt();
 }
 
@@ -286,10 +314,10 @@ bool UserShareHelper::canShare(FileInfoPointer info)
     if (!info || !info->isAttributes(OptInfoType::kIsDir) || !info->isAttributes(OptInfoType::kIsReadable))
         return false;
 
-    if (DevProxyMng->isFileOfProtocolMounts(info->pathOf(PathInfoType::kFilePath)))
+    if (DevProxyMng->isFileOfProtocolMounts(info->pathOf(PathInfoType::kCanonicalPath)))
         return false;
 
-    if (info->urlOf(UrlInfoType::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathOf(PathInfoType::kFilePath)))
+    if (info->urlOf(UrlInfoType::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathOf(PathInfoType::kCanonicalPath)))
         return false;
 
     return true;
@@ -320,6 +348,9 @@ void UserShareHelper::readShareInfos(bool sendSignal)
     QDir d(ShareConfig::kShareConfigPath);
     QFileInfoList shareList = d.entryInfoList(QDir::Files | QDir::Hidden);
     for (const auto &fileInfo : shareList) {
+        if (fileInfo.groupId() != SysInfoUtils::getUserId())
+            continue;
+
         QString filePath = fileInfo.absoluteFilePath();
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -429,18 +460,19 @@ void UserShareHelper::initMonitorPath()
         watcherManager->add(info.value(ShareInfoKeys::kPath).toString());
 }
 
-void UserShareHelper::removeShareByShareName(const QString &name)
+bool UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
-    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
+    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
-    } else {
-        fmWarning() << "share close failed: " << name << ", " << reply.error();
-        // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
+        runNetCmd(QStringList() << "usershare"
+                                << "delete" << name);
+        return true;
     }
 
-    runNetCmd(QStringList() << "usershare"
-                            << "delete" << name);
+    fmWarning() << "share close failed: " << name << ", " << reply.error();
+    // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
+    return false;
 }
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
@@ -449,7 +481,7 @@ void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPa
     if (shareName.isEmpty())
         return;
 
-    removeShareByShareName(shareName);
+    removeShareByShareName(shareName, true);
 }
 
 ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
@@ -506,20 +538,21 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
 
     // 端口被禁用
     if (err.contains("net usershare add: cannot convert name") && err.contains("{Device Timeout}")) {
-        NetworkUtils::instance()->doAfterCheckNet("127.0.0.1", { "139", "445" },
-                                                  [](bool result) {
-                                                      if (result) {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
-                                                      } else {
-                                                          DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
-                                                                                                 tr("SMB port is banned, please check the firewall strategy."));
-                                                      }
-                                                  },
-                                                  500);
+        NetworkUtils::instance()->doAfterCheckNet(
+                "127.0.0.1", { "139", "445" },
+                [](bool result) {
+                    if (result) {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"), "");
+                    } else {
+                        DialogManagerInstance->showErrorDialog(tr("Sharing failed"),
+                                                               tr("SMB port is banned, please check the firewall strategy."));
+                    }
+                },
+                500);
         return;
     }
 
-    //计算机名称过长会报错
+    // 计算机名称过长会报错
     if (err.contains("gethostname failed") && err.contains("net usershare add: cannot convert name")) {
         DialogManagerInstance->showErrorDialog(tr("Sharing failed"), tr("The computer name is too long"));
         return;

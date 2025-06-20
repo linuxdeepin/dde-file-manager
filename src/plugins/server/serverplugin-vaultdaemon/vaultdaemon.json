@@ -1,7 +1,0 @@
-{
-    "Name" : "serverplugin-vaultdaemon",
-    "Version" : "1.0.0",
-    "Description" : "The vault helper plugin for the dde-file-manager-server.",
-    "Depends" : [
-    ]
-}

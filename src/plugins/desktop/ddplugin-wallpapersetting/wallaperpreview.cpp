@@ -14,7 +14,7 @@ WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)
 {
 
-#ifdef COMPILE_ON_V23
+#ifdef COMPILE_ON_V2X
     fmDebug() << "create org.deepin.dde.Appearance1";
     inter = new BackgroudInter("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
@@ -37,9 +37,11 @@ WallaperPreview::~WallaperPreview()
 
 void WallaperPreview::init()
 {
+    fmInfo() << "Starting WallaperPreview initialization";
     pullImageSettings();
     buildWidgets();
     updateWallpaper();
+    fmInfo() << "WallaperPreview initialization completed";
 }
 
 void WallaperPreview::setVisible(bool v)
@@ -69,8 +71,10 @@ void WallaperPreview::updateWallpaper()
             userPath = wallpapers.value(screenName);
         }
 
-        if (userPath.isEmpty())
+        if (userPath.isEmpty()) {
+            fmWarning() << "Empty wallpaper path for screen:" << screenName;
             continue;
+        }
 
         recorder.insert(screenName, userPath);
 
@@ -98,6 +102,8 @@ void WallaperPreview::buildWidgets()
     if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode) // 仅显示和复制
             || (screens.count() == 1)) {  // 单屏模式
 
+        fmInfo() << "Building widgets for single screen mode, display mode:" << static_cast<int>(mode);
+
         ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
             fmCritical() << "get primary screen failed return";
@@ -105,11 +111,15 @@ void WallaperPreview::buildWidgets()
             return;
         }
 
+        fmDebug() << "Primary screen found:" << primary->name() << "geometry:" << primary->geometry();
+
         PreviewWidgetPtr wid = previewWidgets.value(primary->name());
         previewWidgets.clear();
         if (!wid.isNull()) {
-            if (wid->geometry() != primary->geometry())
+            if (wid->geometry() != primary->geometry()) {
+                fmDebug() << "Updating existing widget geometry from" << wid->geometry() << "to" << primary->geometry();
                 wid->setGeometry(primary->geometry());
+            }
         } else {
             wid = createWidget(primary);
         }
@@ -150,6 +160,8 @@ void WallaperPreview::updateGeometry()
                 continue;
             }
 
+            fmDebug() << "Updating geometry for screen:" << sp->name()
+                      << "from" << wid->geometry() << "to" << sp->geometry();
             wid->setGeometry(sp->geometry());
             // 大小变化后，直接更新背景显示
             wid->updateDisplay();
@@ -172,8 +184,12 @@ PreviewWidgetPtr WallaperPreview::createWidget(ScreenPointer sc)
 QString WallaperPreview::getBackground(const QString &screen)
 {
     QString ret;
-    if (screen.isEmpty())
+    if (screen.isEmpty()) {
+        fmWarning() << "Cannot get background: empty screen name provided";
         return ret;
+    }
+
+    fmDebug() << "Getting background for screen:" << screen;
 
     int retry = 5;
     static const int timeOut = 200;
@@ -202,3 +218,4 @@ QString WallaperPreview::getBackground(const QString &screen)
         fmDebug() << "getBackground path :" << ret << "screen" << screen;
     return ret;
 }
+

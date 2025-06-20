@@ -11,6 +11,7 @@
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -32,6 +33,7 @@ static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
+static std::atomic_bool canReadClipboard { true };
 
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
@@ -40,6 +42,8 @@ static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
 void onClipboardDataChanged()
 {
+    if (!canReadClipboard)
+        return;
 
     QMutexLocker lk(&clipboardFileUrlsMutex);
     clipboardFileUrls.clear();
@@ -50,7 +54,7 @@ void onClipboardDataChanged()
         return;
     }
     if (mimeData->hasFormat(kRemoteCopyKey)) {
-        qCInfo(logDFMBase) << "clipboard use other !";
+        qCWarning(logDFMBase) << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
@@ -61,14 +65,20 @@ void onClipboardDataChanged()
         clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
+    // 没有文件拷贝
+    if (!mimeData->hasFormat(kGnomeCopyKey)) {
+        qCWarning(logDFMBase) << "no kGnomeCopyKey target in mimedata formats!";
+        clipboardAction = ClipBoard::kUnknownAction;
+        return;
+    }
     const QString &data = mimeData->data(kGnomeCopyKey);
-    const static QRegExp regCut("cut\nfile://"), regCopy("copy\nfile://");
+    const static QRegularExpression regCut("cut\nfile://"), regCopy("copy\nfile://");
     if (data.contains(regCut)) {
         clipboardAction = ClipBoard::kCutAction;
     } else if (data.contains(regCopy)) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
-        qCWarning(logDFMBase) << "wrang kGnomeCopyKey data = " << data;
+        qCWarning(logDFMBase) << "wrong kGnomeCopyKey data = " << data;
         clipboardAction = ClipBoard::kUnknownAction;
     }
 
@@ -85,6 +95,14 @@ ClipBoard::ClipBoard(QObject *parent)
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this]() {
         onClipboardDataChanged();
         emit clipboardDataChanged();
+    });
+
+    connect(&FileManagerWindowsManager::instance(),
+            &FileManagerWindowsManager::windowCreated, this, [] {
+                GlobalData::canReadClipboard = true;
+            });
+    connect(&FileManagerWindowsManager::instance(), &FileManagerWindowsManager::lastWindowClosed, this, [] {
+        GlobalData::canReadClipboard = false;
     });
 }
 
@@ -119,7 +137,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     QString error;
     for (const QUrl &qurl : list) {
         ba.append("\n");
-        ba.append(qurl.toString());
+        ba.append(qurl.toString().toUtf8());
 
         const QString &path = qurl.toLocalFile();
         if (!path.isEmpty()) {
@@ -130,7 +148,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             const FileInfoPointer &info = InfoFactory::create<FileInfo>(qurl, Global::CreateFileInfoType::kCreateFileInfoAuto, &error);
 
             if (!info) {
-                qCWarning(logDFMBase) << QString("create file info error, case : %1").arg(error);
+                qCWarning(logDFMBase) << "Failed to create file info for URL:" << qurl << "error:" << error;
                 continue;
             }
             QStringList iconList;
@@ -145,7 +163,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             }
             // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
-            QIcon icon = LocalFileIconProvider::globalProvider()->icon(info.data());
+            QIcon icon = LocalFileIconProvider::globalProvider()->icon(info);
             FileInfo::FileType fileType = MimeTypeDisplayManager::
                                                   instance()
                                                           ->displayNameToEnum(info->nameOf(NameInfoType::kMimeTypeName));
@@ -153,7 +171,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
                 QIcon thumb(DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->thumbnailFilePath(QFileInfo(info->pathOf(PathInfoType::kAbsoluteFilePath)),
                                                                                                  DTK_GUI_NAMESPACE::DThumbnailProvider::Large));
                 if (thumb.isNull()) {
-                    //qCWarning(logDFMBase) << "thumbnail file faild " << fileInfo->absoluteFilePath();
+                    // qCWarning(logDFMBase) << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
                     icon = thumb;
                 }
@@ -170,7 +188,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     // 如果是剪切操作，则禁止跨用户的粘贴操作
     if (ClipBoard::kCutAction == action) {
         QByteArray userId;
-        userId.append(QString::number(getuid()));
+        userId.append(QString::number(getuid()).toUtf8());
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
 
@@ -185,10 +203,10 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     if (curUrl.isEmpty())
         return;
     QByteArray localPath;
-    if (dfmbase::FileUtils::isLocalFile(curUrl)) {
+    if (curUrl.isLocalFile()) {
         localPath = curUrl.toString().toLocal8Bit();
     } else {
-        qCInfo(logDFMBase) << "Remote Assistance copy: current url not local file";
+        qCWarning(logDFMBase) << "Remote assistance copy failed: URL is not a local file:" << curUrl;
         return;
     }
 
@@ -198,6 +216,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     mimeData->setData(GlobalData::kRemoteAssistanceCopyKey, localPath);
     mimeData->setText(curUrl.toString());
     qApp->clipboard()->setMimeData(mimeData);
+    qCInfo(logDFMBase) << "Remote assistance clipboard data set for URL:" << curUrl;
 }
 /*!
  * \brief ClipBoard::setDataToClopboard Set user data to clipboard
@@ -206,11 +225,12 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
 void ClipBoard::setDataToClipboard(QMimeData *mimeData)
 {
     if (!mimeData) {
-        qCWarning(logDFMBase) << "set data to clipboard failed, mimeData is null!";
+        qCWarning(logDFMBase) << "Failed to set clipboard data: mimeData is null";
         return;
     }
 
     qApp->clipboard()->setMimeData(mimeData);
+    qCDebug(logDFMBase) << "Custom mime data set to clipboard successfully";
 }
 
 /*!
@@ -293,6 +313,7 @@ void ClipBoard::replaceClipboardUrl(const QUrl &oldUrl, const QUrl &newUrl)
     clipboardUrls.replace(index, newUrl);
     setUrlsToClipboard(clipboardUrls, action);
 }
+
 /*!
  * \brief ClipBoard::getUrlsByX11 Use X11 to read URLs downloaded
  * remotely from the clipboard
@@ -303,14 +324,14 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     QAtomicInt currentCount = GlobalData::remoteCurrentCount;
     const QMimeData *mimedata = qApp->clipboard()->mimeData();
     if (!mimedata) {
-        qCWarning(logDFMBase) << "the clipboard mimedata is invalid!";
+        qCWarning(logDFMBase) << "X11 clipboard access failed: invalid mime data";
         return QList<QUrl>();
     }
     if (GlobalData::clipboardAction != kRemoteAction) {
-        qCWarning(logDFMBase) << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
+        qCWarning(logDFMBase) << "X11 clipboard read failed: current action is not remote action, got:" << GlobalData::clipboardAction;
         return QList<QUrl>();
     }
-    //使用x11创建一个窗口去阻塞获取URl
+    // 使用x11创建一个窗口去阻塞获取URl
     Display *display = XOpenDisplay(nullptr);
     unsigned long color = BlackPixel(display, DefaultScreen(display));
     Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 1, 1, 0, color, color);
@@ -374,7 +395,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
                         continue;
 
                     QString path = url.path();
-                    path = path.replace(QRegExp("/*/"), "/");
+                    path = path.replace(QRegularExpression("/*/"), "/");
                     if (path.isEmpty() || path == "/")
                         continue;
                     QUrl temp = QUrl::fromLocalFile(path);
@@ -400,7 +421,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     XCloseDisplay(display);
 
     if (isCanceled) {
-        qCWarning(logDFMBase) << "user cancel remote download !";
+        qCWarning(logDFMBase) << "X11 remote download cancelled by user";
         return QList<QUrl>();
     }
 
@@ -408,12 +429,12 @@ QList<QUrl> ClipBoard::getUrlsByX11()
 
     QList<QUrl> clipboardFileUrls;
     for (QUrl url : urls) {
-        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        // 链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         if (!url.toString().startsWith(Global::Scheme::kFile))
             continue;
 
         QString path = url.path();
-        path = path.replace(QRegExp("/*/"), "/");
+        path = path.replace(QRegularExpression("/*/"), "/");
         if (path.isEmpty() || path == "/")
             continue;
         QUrl temp = QUrl::fromLocalFile(path);

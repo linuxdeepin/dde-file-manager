@@ -6,11 +6,16 @@
 #define TAGPROXYHANDLE_P_H
 
 #include "dfmplugin_tag_global.h"
-#include "tagmanager_interface.h"
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include "tagmanager_interface.h"
+#else
+#    include "tagmanager_interface_qt6.h"
+#endif
 
 #include <QDBusVariant>
 
-using TagManagerDBusInterface = OrgDeepinFilemanagerServerTagManagerInterface;
+using TagManagerDBusInterface = OrgDeepinFilemanagerDaemonTagManagerInterface;
 
 class QDBusServiceWatcher;
 namespace dfmplugin_tag {

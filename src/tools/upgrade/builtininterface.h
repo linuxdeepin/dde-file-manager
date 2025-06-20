@@ -15,15 +15,21 @@
 
 namespace dfm_upgrade {
 
-#define GetUpgradeLibraryPath(path)                                                     \
-    {                                                                                   \
-        QString libPath(qApp->applicationDirPath() + "/../../tools/libdfm-upgrade.so"); \
-        if (!QFile::exists(libPath)) {                                                  \
-            libPath = QString(DFM_TOOLS_DIR) + "/libdfm-upgrade.so";                    \
-            qInfo() << QString("library does not exist, use : %1").arg(libPath);        \
-        }                                                                               \
-        path = libPath;                                                                 \
-    }
+#define GetUpgradeLibraryPath(path)                                              \
+    do {                                                                         \
+        QString libName;                                                         \
+        if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))                             \
+            libName = "libdfm-upgrade-qt6.so";                                   \
+        else                                                                     \
+            libName = "libdfm-upgrade.so";                                       \
+                                                                                 \
+        QString libPath(QString(DFM_BUILD_DIR) + "/tools/" + libName);           \
+        if (!QFile::exists(libPath)) {                                           \
+            libPath = QString(DFM_TOOLS_DIR) + "/" + libName;                    \
+            qInfo() << QString("library does not exist, use : %1").arg(libPath); \
+        }                                                                        \
+        path = libPath;                                                          \
+    } while (0)
 
 inline constexpr char kUpgradeFlag[] = "dfm-upgraded.lock";
 inline constexpr char kArgDesktop[] = "Desktop";
@@ -44,7 +50,6 @@ inline bool isNeedUpgrade()
         if (!dir.isWritable()) {
             qCritical() << "give up upgrading:the config dir is not writable" << dirPath;
             return false;
-            ;
         }
         return true;
     }

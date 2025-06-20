@@ -16,17 +16,33 @@ class ConfigPresenter : public QObject
 {
     Q_OBJECT
 public:
-    static ConfigPresenter* instance();
+    static ConfigPresenter *instance();
     bool initialize();
+
 public:
-    inline bool isEnable() const {return enable;}
+    inline QString version() const { return confVersion; }
+    void setVersion(const QString &v);
+
+    QList<QSize> surfaceSizes();
+    void setSurfaceInfo(const QList<QWidget *> surfaces);
+
+    inline bool isEnable() const { return enable; }
     void setEnable(bool e);
 
-    inline OrganizerMode mode() const {return curMode;}
+    inline bool isEnableVisibility() const { return enableVisibility; }
+    void setEnableVisibility(bool v);
+
+    inline OrganizerMode mode() const { return curMode; }
     void setMode(OrganizerMode m);
 
-    inline Classifier classification() const {return curClassifier;}
+    inline Classifier classification() const { return curClassifier; }
     void setClassification(Classifier cf);
+
+    QKeySequence hideAllKeySequence() const;
+    void setHideAllKeySequence(const QKeySequence &seq);
+
+    bool isRepeatNoMore() const;
+    void setRepeatNoMore(bool e);
 
     QList<CollectionBaseDataPtr> customProfile() const;
     void saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas);
@@ -41,26 +57,42 @@ public:
     CollectionStyle customStyle(const QString &key) const;
     void updateCustomStyle(const CollectionStyle &style) const;
     void writeCustomStyle(const QList<CollectionStyle> &styles) const;
+
 public:
     ItemCategories enabledTypeCategories() const;
     void setEnabledTypeCategories(ItemCategories flags);
+
+    OrganizeAction organizeAction() const;
+    bool organizeOnTriggered() const;
+
+    bool optimizeMovingPerformance() const;
+
 signals:
     // use Qt::QueuedConnection
     void changeEnableState(bool e);
+    void changeEnableVisibilityState(bool v);
+    void changeHideAllKeySequence(const QKeySequence &);
     void switchToNormalized(int);
+    void releaseCollection(int category);
     void switchToCustom();
     void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);
     void showOptionWindow();
+    void reorganizeDesktop();
+    void optimizeStateChanged(bool);
+
 public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);
     ~ConfigPresenter() override;
 private slots:
     void onDConfigChanged(const QString &cfg, const QString &key);
+
 private:
     OrganizerConfig *conf = nullptr;
+    QString confVersion;
     bool enable = false;
+    bool enableVisibility = true;
     OrganizerMode curMode = OrganizerMode::kNormalized;
     Classifier curClassifier = Classifier::kType;
 };
@@ -68,4 +100,4 @@ private:
 }
 
 #define CfgPresenter ConfigPresenter::instance()
-#endif // CONFIGPRESENTER_H
+#endif   // CONFIGPRESENTER_H

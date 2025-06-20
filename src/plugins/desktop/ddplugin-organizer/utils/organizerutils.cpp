@@ -8,10 +8,21 @@ using namespace ddplugin_organizer;
 
 bool OrganizerUtils::isAllItemCategory(const ItemCategories &flags)
 {
-    return flags == kCatDefault || flags == kCatAll;
+    return flags == kCatAll;
+}
+
+ItemCategories OrganizerUtils::buildBitwiseEnabledCategory(const ItemCategories &flags)
+{
+    auto result { flags };
+    if (flags == kCatDefault || flags < 0) {
+        result = kCatAll;
+        result &= ~kCatOther;
+        result &= ~kCatApplication;
+    }
+
+    return result;
 }
 
 OrganizerUtils::OrganizerUtils()
 {
-
 }

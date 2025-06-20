@@ -12,8 +12,17 @@
 DFMBASE_BEGIN_NAMESPACE
 
 namespace IconUtils {
-QPixmap renderIconBackground(const QSize &size);
+struct IconStyle
+{
+    int stroke { 2 };
+    int radius { 4 };
+    int shadowOffset { 1 };
+    int shadowRange { 3 };
+};
+QPixmap renderIconBackground(const QSize &size, const IconStyle &style = IconStyle {});
+QPixmap renderIconBackground(const QSizeF &size, const IconStyle &style = IconStyle {});
 QPixmap addShadowToPixmap(const QPixmap &originalPixmap, int shadowOffsetY, qreal blurRadius, qreal shadowOpacity);
+IconStyle getIconStyle(int size);
 }   // end namespace IconUtils
 
 DFMBASE_END_NAMESPACE

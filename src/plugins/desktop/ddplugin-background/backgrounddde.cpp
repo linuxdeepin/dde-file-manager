@@ -16,7 +16,7 @@ BackgroundDDE::BackgroundDDE(QObject *parent)
 {
     fmDebug() << "create org.deepin.dde.Appearance1";
     interface = new InterFace("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
-                          QDBusConnection::sessionBus(), this);
+                              QDBusConnection::sessionBus(), this);
     interface->setTimeout(200);
     fmDebug() << "create org.deepin.dde.Appearance1 end";
 
@@ -44,7 +44,7 @@ QString BackgroundDDE::getBackgroundFromDDE(const QString &screen)
 
     if (reply.error().type() != QDBusError::NoError) {
         fmWarning() << "Get background failed by DDE_DBus"
-                   << reply.error().type() << reply.error().name() << reply.error().message();
+                    << reply.error().type() << reply.error().name() << reply.error().message();
     } else {
         path = reply.argumentAt<0>();
     }
@@ -88,7 +88,7 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
                             }
 
                             int workspaceIndex = wpIndex.left(index).toInt();
-                            QString screenName = wpIndex.mid(index+1);
+                            QString screenName = wpIndex.mid(index + 1);
                             if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
                                 continue;
                             }

@@ -1,0 +1,16 @@
+Source: dfm-extension-example
+Section: devel
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
+Build-Depends: debhelper (>= 11),
+               cmake,
+               libdfm-extension-dev
+Standards-Version: 4.5.1
+
+Package: dfm-extension-example
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DFM Extension Example
+ An example extension plugin for DDE File Manager.
+ This package provides a plugin extension example
+ for the DDE File Manager. 

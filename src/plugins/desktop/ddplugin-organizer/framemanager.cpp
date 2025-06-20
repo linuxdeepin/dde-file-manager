@@ -10,10 +10,13 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include <dfm-base/dfm_desktop_defines.h>
 
+#include <DDBusSender>
+
 #include <QAbstractItemView>
+#include <QDBusInterface>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
@@ -25,10 +28,8 @@ using namespace ddplugin_organizer;
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 FrameManagerPrivate::~FrameManagerPrivate()
@@ -83,8 +84,10 @@ void FrameManagerPrivate::clearSurface()
 SurfacePointer FrameManagerPrivate::createSurface(QWidget *root)
 {
     SurfacePointer surface = nullptr;
-    if (Q_UNLIKELY(!root))
+    if (Q_UNLIKELY(!root)) {
+        fmWarning() << "Cannot create surface for null root widget";
         return surface;
+    }
 
     surface.reset(new Surface());
     surface->setProperty(DesktopFrameProperty::kPropScreenName, root->property(DesktopFrameProperty::kPropScreenName).toString());
@@ -98,7 +101,7 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
     Q_ASSERT(surface);
     Q_ASSERT(root);
 
-    auto view = dynamic_cast< QAbstractItemView *>(findView(root));
+    auto view = dynamic_cast<QAbstractItemView *>(findView(root));
     // check hidden flags
     if (view && !hidden) {
         surface->setParent(view->viewport());
@@ -134,17 +137,69 @@ void FrameManagerPrivate::refeshCanvas()
         canvas->canvasModel()->refresh(0, false);
 }
 
+void FrameManagerPrivate::onHideAllKeyPressed()
+{
+    const auto &surfaces { organizer->getSurfaces() };
+    if (surfaces.count() <= 0)
+        return;
+
+    fmDebug() << "Hide/Show all collections!";
+
+    bool aboutToHide = surfaces.at(0)->isVisible();
+    std::for_each(surfaces.begin(), surfaces.end(), [](SurfacePointer surface) {
+        surface->setVisible(!surface->isVisible());
+    });
+
+    if (!CfgPresenter->isRepeatNoMore() && aboutToHide) {
+        uint notifyId = QDate::currentDate().daysInYear();
+        QString keySequence = CfgPresenter->hideAllKeySequence().toString();
+        QString tips = tr("To disable the One-Click Hide feature, invoke the \"View Options\" window "
+                          "in the desktop context menu and turn off the \"One-Click Hide Collection\".");
+        QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
+        QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
+                                         .arg(notifyId);
+        DDBusSender()
+                .service("org.freedesktop.Notifications")
+                .path("/org/freedesktop/Notifications")
+                .interface("org.freedesktop.Notifications")
+                .method(QString("Notify"))
+                .arg(tr("Desktop organizer"))
+                .arg(notifyId)
+                .arg(QString("dde-desktop"))
+                .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
+                .arg(tips)
+                .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
+                .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
+                                   { "x-deepin-action-close-notify", cmdCloseNotify } })
+                .arg(3000)
+                .call();
+    }
+}
+
 void FrameManagerPrivate::enableChanged(bool e)
 {
     if (e == CfgPresenter->isEnable())
         return;
 
-    fmDebug() << "enableChanged" << e;
+    fmInfo() << "Organizer enable state changed to:" << e;
     CfgPresenter->setEnable(e);
-    if (e)
+    if (e) {
         q->turnOn();
-    else
+    } else {
         q->turnOff();
+    }
+}
+
+void FrameManagerPrivate::enableVisibility(bool e)
+{
+    fmDebug() << "Visibility state changed to:" << e;
+    CfgPresenter->setEnableVisibility(e);
+}
+
+void FrameManagerPrivate::saveHideAllSequence(const QKeySequence &seq)
+{
+    fmDebug() << "Hide all key sequence changed to:" << seq.toString();
+    CfgPresenter->setHideAllKeySequence(seq);
 }
 
 void FrameManagerPrivate::switchToCustom()
@@ -152,10 +207,11 @@ void FrameManagerPrivate::switchToCustom()
     Q_ASSERT(organizer);
 
     if (organizer->mode() == OrganizerMode::kCustom) {
-        fmDebug() << "reject to switch: current mode had been custom.";
+        fmDebug() << "Reject switch to custom: already in custom mode";
         return;
     }
 
+    fmInfo() << "Switching organizer to custom mode";
     CfgPresenter->setMode(kCustom);
     buildOrganizer();
 }
@@ -165,9 +221,11 @@ void FrameManagerPrivate::switchToNormalized(int cf)
     Q_ASSERT(organizer);
 
     if (organizer->mode() == OrganizerMode::kNormalized) {
+        fmInfo() << "Already in normalized mode, changing classification to:" << cf;
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         organizer->reset();
     } else {
+        fmInfo() << "Switching organizer to normalized mode with classification:" << cf;
         CfgPresenter->setMode(kNormalized);
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         buildOrganizer();
@@ -177,6 +235,7 @@ void FrameManagerPrivate::switchToNormalized(int cf)
 void FrameManagerPrivate::showOptionWindow()
 {
     if (options) {
+        fmDebug() << "Options window already exists, activating it";
         options->activateWindow();
         return;
     }
@@ -184,12 +243,26 @@ void FrameManagerPrivate::showOptionWindow()
     options = new OptionsWindow();
     options->setAttribute(Qt::WA_DeleteOnClose);
     options->initialize();
-    connect(options, &OptionsWindow::destroyed, this, [this](){
-        options = nullptr;
-    }, Qt::DirectConnection);
+    connect(
+            options, &OptionsWindow::destroyed, this, [this]() {
+                options = nullptr;
+            },
+            Qt::DirectConnection);
 
     options->moveToCenter(QCursor::pos());
     options->show();
+}
+
+void FrameManagerPrivate::onOrganizered()
+{
+    if (organizer) {
+        fmDebug() << "Organizer already exists, skipping reorganization";
+        return;
+    }
+
+    q->onBuild();
+    for (const SurfacePointer &sur : surfaceWidgets.values())
+        sur->show();
 }
 
 QWidget *FrameManagerPrivate::findView(QWidget *root) const
@@ -209,10 +282,8 @@ QWidget *FrameManagerPrivate::findView(QWidget *root) const
 }
 
 FrameManager::FrameManager(QObject *parent)
-    : QObject(parent)
-    , d(new FrameManagerPrivate(this))
+    : QObject(parent), d(new FrameManagerPrivate(this))
 {
-
 }
 
 FrameManager::~FrameManager()
@@ -238,9 +309,12 @@ bool FrameManager::initialize()
     bool enable = CfgPresenter->isEnable();
     fmInfo() << "Organizer enable:" << enable;
     if (enable)
-        turnOn(false); // builded by signal.
+        turnOn();   // builded by signal.
 
     connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::reorganizeDesktop, d, &FrameManagerPrivate::onOrganizered, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::changeEnableVisibilityState, d, &FrameManagerPrivate::enableVisibility, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::changeHideAllKeySequence, d, &FrameManagerPrivate::saveHideAllSequence, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::showOptionWindow, d, &FrameManagerPrivate::showOptionWindow, Qt::QueuedConnection);
@@ -256,19 +330,24 @@ void FrameManager::layout()
 
 void FrameManager::switchMode(OrganizerMode mode)
 {
-    if (d->organizer)
+    if (d->organizer) {
+        fmDebug() << "Deleting existing organizer before mode switch";
         delete d->organizer;
+    }
 
-    fmInfo() << "switch to" << mode;
+    fmInfo() << "Switching organizer to mode:" << static_cast<int>(mode);
 
     d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);
 
     connect(d->organizer, &CanvasOrganizer::collectionChanged, d, &FrameManagerPrivate::refeshCanvas);
+    connect(d->organizer, &CanvasOrganizer::hideAllKeyPressed, d, &FrameManagerPrivate::onHideAllKeyPressed);
 
     // initialize to create collection widgets
-    if (!d->surfaceWidgets.isEmpty())
+    if (!d->surfaceWidgets.isEmpty()) {
+        fmDebug() << "Setting" << d->surfaceWidgets.size() << "surfaces to organizer";
         d->organizer->setSurfaces(d->surfaces());
+    }
 
     d->organizer->setCanvasModelShell(d->canvas->canvasModel());
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
@@ -278,8 +357,16 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer->initialize(d->model);
 }
 
-void FrameManager::turnOn(bool build)
+void FrameManager::turnOn()
 {
+    fmInfo() << "Turning on organizer framework";
+
+#ifdef QT_DEBUG
+    QDBusInterface ifs("com.deepin.dde.desktop",
+                       "/org/deepin/dde/desktop/canvas",
+                       "org.deepin.dde.desktop.canvas");
+    ifs.call("EnableUIDebug", QVariant::fromValue(false));
+#endif
     Q_ASSERT(!d->canvas);
     Q_ASSERT(!d->model);
     Q_ASSERT(!d->organizer);
@@ -295,23 +382,18 @@ void FrameManager::turnOn(bool build)
 
     d->model = new CollectionModel(this);
     d->model->setModelShell(d->canvas->fileInfoModel());
-
-    if (build) {
-        onBuild();
-
-        // show surface
-        for (const SurfacePointer &sur : d->surfaceWidgets.values())
-            sur->setVisible(true);
-    }
-
-    // adjust canvas icon level
-    int viewIconLevel = d->canvas->iconLevel();
-    if (viewIconLevel > 2)
-        d->canvas->setIconLevel(2);
 }
 
 void FrameManager::turnOff()
 {
+    fmInfo() << "Turning off organizer framework";
+
+#ifdef QT_DEBUG
+    QDBusInterface ifs("com.deepin.dde.desktop",
+                       "/org/deepin/dde/desktop/canvas",
+                       "org.deepin.dde.desktop.canvas");
+    ifs.call("EnableUIDebug", QVariant::fromValue(true));
+#endif
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
@@ -340,6 +422,12 @@ bool FrameManager::organizerEnabled()
 
 void FrameManager::onBuild()
 {
+    // 1071 added, tag config file changed
+    if (CfgPresenter->version() != "2.0.0") {
+        fmInfo() << "Updating config version to 2.0.0";
+        CfgPresenter->setVersion("2.0.0");
+    }
+
     d->buildSurface();
 
     if (d->organizer) {
@@ -361,8 +449,10 @@ void FrameManager::onDetachWindows()
         sur->setParent(nullptr);
 
     // 解绑集合窗口
-    if (d->organizer)
+    if (d->organizer) {
+        fmDebug() << "Detaching organizer layout";
         d->organizer->detachLayout();
+    }
 }
 
 void FrameManager::onGeometryChanged()
@@ -379,4 +469,3 @@ void FrameManager::onGeometryChanged()
     if (d->organizer)
         d->organizer->layout();
 }
-

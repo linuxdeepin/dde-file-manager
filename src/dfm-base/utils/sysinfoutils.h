@@ -20,6 +20,7 @@ public:
     static QStringList getAllUsersOfHome();
     static QString getHostName();
     static int getUserId();
+    static float getMemoryUsage(int pid);
 
     static bool isRootUser();
     static bool isServerSys();
@@ -27,9 +28,10 @@ public:
     static bool isOpenAsAdmin();
     static bool isDeveloperModeEnabled();
     static bool isProfessional();
+    static bool isDeepin23();
     static bool isSameUser(const QMimeData *data);
+
     static void setMimeDataUserId(QMimeData *data);
-    static float getMemoryUsage(int pid);
 };
 }
 

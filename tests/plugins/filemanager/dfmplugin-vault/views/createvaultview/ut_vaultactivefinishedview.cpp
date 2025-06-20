@@ -5,6 +5,7 @@
 #include "stubext.h"
 #include "views/createvaultview/vaultactivefinishedview.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultutils.h"
 #include "utils/policy/policymanager.h"
 
 #include <gtest/gtest.h>
@@ -21,7 +22,6 @@
 DPVAULT_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
-using namespace PolkitQt1;
 
 TEST(UT_VaultActiveFinishedView, setFinishedBtnEnabled)
 {
@@ -55,7 +55,7 @@ TEST(UT_VaultActiveFinishedView, slotEncryptComplete_Fail)
 TEST(UT_VaultActiveFinishedView, slotEncryptVault_True)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&Authority::checkAuthorization, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&VaultUtils::showAuthorityDialog, [] { __DBG_STUB_INVOKE__ });
 
     VaultActiveFinishedView view;
     view.finishedBtn->setText(VaultActiveFinishedView::tr("Encrypt"));

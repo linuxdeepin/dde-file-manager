@@ -25,10 +25,11 @@ public slots:
     bool hookCanvasRequest(const QString &screen);
 #ifndef COMPILE_ON_V20
     void onQuit();
+
 protected:
     void onChanged();
     void show(QString name, int mode);
-    void startTreeland();
+
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
 #endif
@@ -38,12 +39,15 @@ class WlSetPlugin : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "wallpapersetting.json")
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+
 private:
     void registerDBus();
+
 private:
     EventHandle *handle = nullptr;
 

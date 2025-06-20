@@ -1,0 +1,7 @@
+{
+    "Name" : "dfmdaemon-recent-plugin",
+    "Version" : "1.0.0",
+    "Description" : "Recent backend",
+    "Depends" : [
+    ]
+}

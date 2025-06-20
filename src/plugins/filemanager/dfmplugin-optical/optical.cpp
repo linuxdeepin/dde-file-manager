@@ -14,7 +14,7 @@
 #include "menus/packetwritingmenuscene.h"
 #include "events/opticaleventreceiver.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/urlroute.h>
@@ -142,6 +142,7 @@ void Optical::addCustomTopWidget()
     QVariantMap map {
         { "Property_Key_Scheme", Global::Scheme::kBurn },
         { "Property_Key_KeepShow", false },
+        { "Property_Key_KeepTop", false },
         { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
         { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
     };
@@ -180,7 +181,7 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleDropFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleBlockShortcutPaste);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_Closeable", &OpticalEventReceiver::instance(),
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_Closeable", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleTabCloseable);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
@@ -205,7 +206,7 @@ void Optical::onDiscChanged(const QString &id)
     const auto &discUrl { OpticalHelper::transDiscRootById(id) };
     if (discUrl.isValid()) {
         emit OpticalSignalManager::instance()->discUnmounted(discUrl);
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", discUrl);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", discUrl);
     }
 }
 

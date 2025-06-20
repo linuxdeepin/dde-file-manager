@@ -47,8 +47,10 @@ const QString &VirtualEntryData::getKey() const
 
 void VirtualEntryData::setKey(const QString &newKey)
 {
-    if (key == newKey)
+    if (key == newKey) {
+        fmDebug() << "Key value unchanged, skipping update:" << newKey;
         return;
+    }
     key = newKey;
     emit keyChanged();
 }
@@ -60,8 +62,10 @@ const QString &VirtualEntryData::getProtocol() const
 
 void VirtualEntryData::setProtocol(const QString &newProtocol)
 {
-    if (protocol == newProtocol)
+    if (protocol == newProtocol) {
+        fmDebug() << "Protocol value unchanged, skipping update:" << newProtocol;
         return;
+    }
     protocol = newProtocol;
     emit protocolChanged();
 }
@@ -73,8 +77,10 @@ const QString &VirtualEntryData::getHost() const
 
 void VirtualEntryData::setHost(const QString &newHost)
 {
-    if (host == newHost)
+    if (host == newHost) {
+        fmDebug() << "Host value unchanged, skipping update:" << newHost;
         return;
+    }
     host = newHost;
     emit hostChanged();
 }
@@ -86,8 +92,10 @@ int VirtualEntryData::getPort() const
 
 void VirtualEntryData::setPort(int newPort)
 {
-    if (port == newPort)
+    if (port == newPort) {
+        fmDebug() << "Port value unchanged, skipping update:" << newPort;
         return;
+    }
     port = newPort;
     emit portChanged();
 }
@@ -99,8 +107,20 @@ const QString &VirtualEntryData::getDisplayName() const
 
 void VirtualEntryData::setDisplayName(const QString &newDisplayName)
 {
-    if (displayName == newDisplayName)
+    if (displayName == newDisplayName) {
+        fmDebug() << "DisplayName value unchanged, skipping update:" << newDisplayName;
         return;
+    }
     displayName = newDisplayName;
     emit displayNameChanged();
+}
+
+const QString &VirtualEntryData::getTargetPath() const
+{
+    return targetPath;
+}
+
+void VirtualEntryData::setTargetPath(const QString &targetPath)
+{
+    this->targetPath = targetPath;
 }

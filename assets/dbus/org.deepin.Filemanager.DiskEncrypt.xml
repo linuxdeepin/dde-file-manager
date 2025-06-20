@@ -1,0 +1,82 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.DiskEncrypt">
+    <signal name="EncryptProgress">
+      <arg name="dev" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="progress" type="d" direction="out"/>
+    </signal>
+    <signal name="DecryptProgress">
+      <arg name="dev" type="s" direction="out"/>
+      <arg name="devName" type="s" direction="out"/>
+      <arg name="progress" type="d" direction="out"/>
+    </signal>
+    <signal name="InitEncResult">
+      <arg name="result" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="EncryptResult">
+      <arg name="result" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="DecryptResult">
+      <arg name="result" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="ChangePassResult">
+      <arg name="result" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <signal name="WaitAuthInput">
+      <arg name="devInfo" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </signal>
+    <method name="InitEncryption">
+      <arg type="b" direction="out"/>
+      <arg name="args" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="ResumeEncryption">
+      <arg type="b" direction="out"/>
+      <arg name="args" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="Decryption">
+      <arg type="b" direction="out"/>
+      <arg name="args" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="ChangePassphrase">
+      <arg type="b" direction="out"/>
+      <arg name="args" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="SetupAuthArgs">
+      <arg name="args" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="IgnoreAuthSetup">
+    </method>
+    <method name="TpmToken">
+      <arg type="s" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
+    <method name="DeviceStatus">
+      <arg type="i" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
+    <method name="HolderDevice">
+      <arg type="s" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
+    <method name="IsTaskEmpty">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="IsTaskRunning">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="PendingDecryptionDevice">
+      <arg type="s" direction="out"/>
+    </method>
+  </interface>
+</node>

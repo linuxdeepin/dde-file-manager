@@ -28,6 +28,7 @@ class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
 {
     Q_OBJECT
     friend class CollectionWidgetPrivate;
+
 public:
     explicit CollectionWidget(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionWidget() override;
@@ -44,15 +45,28 @@ public:
     CollectionFrameSize collectionSize() const;
 
     CollectionView *view() const;
+
+    void setFreeze(bool freeze);
+
+public Q_SLOTS:
+    void cacheSnapshot();
+
 signals:
     void sigRequestClose(const QString &id);
     void sigRequestAdjustSizeMode(const CollectionFrameSize &size);
+
 protected slots:
     void updateMaskColor();
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
-    void enterEvent(QEvent *event) override;
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    void enterEvent(QEvent *) override;
+#else
+    void enterEvent(QEnterEvent *) override;
+#endif
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
@@ -62,4 +76,4 @@ private:
 
 }
 
-#endif // COLLECTIONWIDGET_H
+#endif   // COLLECTIONWIDGET_H

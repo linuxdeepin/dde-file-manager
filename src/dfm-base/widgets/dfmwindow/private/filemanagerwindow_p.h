@@ -9,18 +9,22 @@
 #include <dfm-base/widgets/dfmsplitter/splitter.h>
 #include <dfm-base/interfaces/abstractbaseview.h>
 #include <dfm-base/interfaces/abstractframe.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <DTitlebar>
 #include <DButtonBox>
+#include <DVerticalLine>
 
 #include <QObject>
 #include <QFrame>
 #include <QUrl>
 #include <QHBoxLayout>
+#include <QPropertyAnimation>
 
 #include <mutex>
 
 DWIDGET_USE_NAMESPACE
+
 namespace dfmbase {
 
 class FileManagerWindow;
@@ -35,34 +39,72 @@ public:
     bool processKeyPressEvent(QKeyEvent *event);
     int splitterPosition() const;
     void setSplitterPosition(int pos);
+    void resetTitleBarSize();
+    void resetSideBarSize();
+    void animateSplitter(bool expanded);
 
     void loadWindowState();
     void saveWindowState();
+
+    void showSideBar();
+    void hideSideBar();
+    void setupSidebarSepTracking();
+    int loadSidebarState() const;
     void saveSidebarState();
+    void updateSideBarState();
+    void updateSideBarVisibility();
+    void updateSidebarSeparator();
+    void updateSideBarSeparatorStyle();
+    void updateSideBarSeparatorPosition();
+
+    void handleSplitterMoved(int pos, int index);
 
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 680 };
+    static constexpr int kMinimumWindowWidth { 550 };
     static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };
-    static constexpr int kMinimumLeftWidth { 40 };
+    static constexpr int kMinimumLeftWidth { 95 };
     static constexpr int kMaximumLeftWidth { 600 };
     static constexpr int kDefaultLeftWidth { 200 };
+    static constexpr int kMinimumRightWidth { kMinimumWindowWidth };
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
+    QFrame *rightArea { nullptr };
+
     QHBoxLayout *midLayout { nullptr };
+    QVBoxLayout *rightLayout { nullptr };
+    QHBoxLayout *rightBottomLayout { nullptr };
+
     Splitter *splitter { nullptr };
+    QPropertyAnimation *curSplitterAnimation { nullptr };
+    int lastSidebarExpandedPostion { kDefaultLeftWidth };
     AbstractFrame *titleBar { nullptr };
     AbstractFrame *sideBar { nullptr };
     AbstractFrame *workspace { nullptr };
     AbstractFrame *detailSpace { nullptr };
+
+    DIconButton *iconLabel { nullptr };
+    CustomDIconButton *expandButton { nullptr };
+    DVerticalLine *sidebarSep { nullptr };
+    QWidget *iconArea { nullptr };
 
     std::once_flag titleBarFlag;
     std::once_flag titleMenuFlag;
     std::once_flag sideBarFlag;
     std::once_flag workspaceFlag;
     std::once_flag detailVewFlag;
+
+    bool sideBarAutoVisible { true };
+    bool sideBarShrinking { false };
+
+private:
+    bool setupAnimation(bool expanded);
+    void handleWindowResize(bool expanded);
+    void configureAnimation(int start, int end);
+    void connectAnimationSignals();
+    bool isAnimationEnabled() const;
 };
 
 }

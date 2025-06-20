@@ -5,7 +5,7 @@ project(ddplugin-organizer)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(EXT_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
+    ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/widgetutil.h
     )
 
 FILE(GLOB_RECURSE CORE_FILES
@@ -14,46 +14,35 @@ FILE(GLOB_RECURSE CORE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(DtkGui REQUIRED dtkgui )
-pkg_check_modules(DtkWidget REQUIRED dtkwidget )
+set(BIN_NAME dd-organizer-plugin)
+
+find_package(Qt6 COMPONENTS Core REQUIRED)
 
 # 指定资源文件
 set(QRC_FILE
     resources/images.qrc
 )
-qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
-add_library(${PROJECT_NAME}
+qt_add_resources(QRC_RESOURCES ${QRC_FILE})
+
+add_library(${BIN_NAME}
     SHARED
     ${CORE_FILES}
     ${EXT_FILES}
     ${QRC_RESOURCES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    ${DtkGui_INCLUDE_DIRS}
-    ${DtkWidget_INCLUDE_DIRS}
+target_link_libraries(${BIN_NAME}
+    DFM6::base
+    DFM6::framework
 )
 
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    ${DtkWidget_LIBRARIES}
-    ${DtkGui_LIBRARIES}
-    )
-
-#install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
-    )
+install(TARGETS ${BIN_NAME}
+    LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
+)
 
 # install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.desktop.organizer.json")

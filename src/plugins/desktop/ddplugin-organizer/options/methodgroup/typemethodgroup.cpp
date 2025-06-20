@@ -8,9 +8,8 @@
 
 using namespace ddplugin_organizer;
 
-namespace
-{
-    inline const char kKeyCheckboxID[] = "CheckboxID";
+namespace {
+inline const char kKeyCheckboxID[] = "CheckboxID";
 }
 
 TypeMethodGroup::TypeMethodGroup(QObject *parent)
@@ -18,12 +17,13 @@ TypeMethodGroup::TypeMethodGroup(QObject *parent)
 {
     QHash<ItemCategory, QString> *namePtr = const_cast<QHash<ItemCategory, QString> *>(&categoryName);
     *namePtr = {
-            {kCatApplication, tr("Apps")},
-            {kCatDocument, tr("Documents")},
-            {kCatPicture, tr("Pictures")},
-            {kCatVideo, tr("Videos")},
-            {kCatMusic, tr("Music")},
-            {kCatFloder, tr("Folders")}
+        { kCatApplication, tr("Apps") },
+        { kCatDocument, tr("Documents") },
+        { kCatPicture, tr("Pictures") },
+        { kCatVideo, tr("Videos") },
+        { kCatMusic, tr("Music") },
+        { kCatFolder, tr("Folders") },
+        { kCatOther, QObject::tr("Others") }
     };
 }
 
@@ -51,28 +51,28 @@ bool TypeMethodGroup::build()
         return true;
 
     auto items = CfgPresenter->enabledTypeCategories();
-    bool all = OrganizerUtils::isAllItemCategory(items);
+    items = OrganizerUtils::buildBitwiseEnabledCategory(items);
     for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {
         auto check = new CheckBoxWidget(categoryName.value(static_cast<ItemCategory>(i)));
         check->setProperty(kKeyCheckboxID, i);
-        connect(check, &CheckBoxWidget::chenged, this, &TypeMethodGroup::onChenged);
+        connect(check, &CheckBoxWidget::changed, this, &TypeMethodGroup::onChanged);
 
-        check->setChecked(all ? true : items & i);
+        check->setChecked(items & i);
         categories.append(check);
     }
 
     return true;
 }
 
-QList<QWidget*> TypeMethodGroup::subWidgets() const
+QList<QWidget *> TypeMethodGroup::subWidgets() const
 {
-    QList<QWidget*> wids;
+    QList<QWidget *> wids;
     for (QWidget *w : categories)
         wids << w;
     return wids;
 }
 
-void TypeMethodGroup::onChenged(bool on)
+void TypeMethodGroup::onChanged(bool on)
 {
     if (auto box = qobject_cast<CheckBoxWidget *>(sender())) {
         QVariant var = box->property(kKeyCheckboxID);
@@ -82,9 +82,9 @@ void TypeMethodGroup::onChenged(bool on)
                 auto flag = static_cast<ItemCategory>(value);
                 auto flags = CfgPresenter->enabledTypeCategories();
                 //! the flags may be -1 that can not to perform bit operation.
-                //! so we need to cover it to kCatAll.
-                if (OrganizerUtils::isAllItemCategory(flags))
-                    flags = kCatAll;
+                //! so we need to cover it to kCatAll then remove kCatOther.
+                if (flags == kCatDefault)
+                    flags = OrganizerUtils::buildBitwiseEnabledCategory(flags);
 
                 bool apply = false;
                 if (on) {
@@ -100,12 +100,15 @@ void TypeMethodGroup::onChenged(bool on)
                 }
 
                 if (apply) {
-                    if (OrganizerUtils::isAllItemCategory(flags))
-                        flags = kCatDefault;
-
+                    if (flags == kCatDefault)
+                        flags = OrganizerUtils::buildBitwiseEnabledCategory(flags);
                     CfgPresenter->setEnabledTypeCategories(flags);
-                    // using switch signal to reset the collection.
-                    emit CfgPresenter->switchToNormalized(id());
+                    // do not re-layout items if `organizeOnTrigger` and checkbox checked.
+                    if (!CfgPresenter->organizeOnTriggered()) {
+                        emit CfgPresenter->reorganizeDesktop();
+                    } else if (!on) {
+                        emit CfgPresenter->releaseCollection(flag);
+                    }
                 }
             }
         }

@@ -12,3 +12,9 @@ AbstractSearcher::AbstractSearcher(const QUrl &url, const QString &key, QObject 
       keyword(key)
 {
 }
+
+QList<QUrl> AbstractSearcher::takeAllUrls()
+{
+    // 将 DFMSearchResultMap 转换为 QList<QUrl>，用于向后兼容
+    return takeAll().keys();
+}

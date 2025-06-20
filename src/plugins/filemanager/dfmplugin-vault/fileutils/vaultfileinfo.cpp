@@ -63,8 +63,8 @@ QUrl VaultFileInfoPrivate::vaultUrl(const QUrl &url) const
 QUrl VaultFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
     QUrl theUrl = q->urlOf(FileInfo::FileUrlInfoType::kUrl);
-    QString newPath =  DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(),
-                                                      fileName.toStdString().c_str(), nullptr);
+    QString newPath = DFMIO::DFMUtils::buildFilePath(q->pathOf(PathInfoType::kAbsolutePath).toStdString().c_str(),
+                                                     fileName.toStdString().c_str(), nullptr);
     if (!newPath.startsWith(QDir::separator()))
         newPath = QDir::separator() + newPath;
     theUrl.setPath(newPath);
@@ -78,7 +78,7 @@ VaultFileInfo::VaultFileInfo(const QUrl &url)
     : ProxyFileInfo(url), d(new VaultFileInfoPrivate(url, this))
 {
     d->localUrl = VaultHelper::vaultToLocalUrl(url);
-    setProxy(InfoFactory::create<FileInfo>(d->localUrl,  Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache));
+    setProxy(InfoFactory::create<FileInfo>(d->localUrl, Global::CreateFileInfoType::kCreateFileInfoAsyncAndCache));
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url, const FileInfoPointer &proxy)
@@ -90,6 +90,7 @@ VaultFileInfo::VaultFileInfo(const QUrl &url, const FileInfoPointer &proxy)
 
 VaultFileInfo::~VaultFileInfo()
 {
+    delete d;
 }
 
 VaultFileInfo &VaultFileInfo::operator=(const VaultFileInfo &fileinfo)
@@ -118,8 +119,10 @@ QString VaultFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
-        if (!proxy)
+        if (!proxy) {
+            fmWarning() << "Vault: No proxy available for absolute path";
             return "";
+        }
         return d->absolutePath(proxy->pathOf(type));
     default:
         return ProxyFileInfo::pathOf(type);
@@ -137,10 +140,13 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
         return ProxyFileInfo::urlOf(type);
     }
 }
+
 bool VaultFileInfo::exists() const
 {
-    if (urlOf(UrlInfoType::kUrl).isEmpty())
+    if (urlOf(UrlInfoType::kUrl).isEmpty()) {
+        fmDebug() << "Vault: URL is empty, file does not exist";
         return false;
+    }
 
     return proxy && proxy->exists();
 }
@@ -148,6 +154,7 @@ bool VaultFileInfo::exists() const
 void VaultFileInfo::refresh()
 {
     if (!proxy) {
+        fmWarning() << "Vault: No proxy available for refresh";
         return;
     }
 
@@ -188,7 +195,7 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
         }
         return !proxy || proxy->canAttributes(type);
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     default:
         return ProxyFileInfo::canAttributes(type);
     }
@@ -257,8 +264,10 @@ QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kSizeFormat:
-        if (!proxy)
+        if (!proxy) {
+            fmDebug() << "Vault: No proxy available, using base extended attributes";
             return ProxyFileInfo::extendAttributes(type);
+        }
         return proxy->extendAttributes(type);
     default:
         return ProxyFileInfo::extendAttributes(type);

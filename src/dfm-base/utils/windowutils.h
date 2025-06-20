@@ -18,6 +18,8 @@ namespace dfmbase {
 class WindowUtils
 {
 public:
+    static bool isX11();
+
     static bool isWayLand();
 
     static bool keyShiftIsPressed();
@@ -25,8 +27,11 @@ public:
     static bool keyCtrlIsPressed();
 
     static bool keyAltIsPressed();
+
     static QScreen *cursorScreen();
+
+    static void closeAllFileManagerWindows();
 };
 
-}
+}   // namespace dfmbase
 #endif   // WINDOWUTILS_H

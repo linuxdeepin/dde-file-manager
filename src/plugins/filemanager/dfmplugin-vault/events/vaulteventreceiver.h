@@ -8,6 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_vault {
 class VaultEventReceiver : public QObject

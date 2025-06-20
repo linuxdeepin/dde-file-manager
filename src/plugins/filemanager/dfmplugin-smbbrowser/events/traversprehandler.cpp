@@ -22,15 +22,24 @@
 #include <QDBusInterface>
 #include <QNetworkInterface>
 
+#include <unistd.h>
+
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)
 {
     const auto &&scheme = url.scheme();
-    static const QStringList &kSupportedSchemes { Global::Scheme::kSmb, Global::Scheme::kFtp, Global::Scheme::kSFtp };
-    if (!kSupportedSchemes.contains(scheme))
+    static const QStringList &kSupportedSchemes { Global::Scheme::kSmb,
+                                                  Global::Scheme::kFtp,
+                                                  Global::Scheme::kSFtp,
+                                                  Global::Scheme::kNfs,
+                                                  Global::Scheme::kDav,
+                                                  Global::Scheme::kDavs };
+    if (!kSupportedSchemes.contains(scheme)) {
+        fmDebug() << "Scheme not supported for network access:" << scheme;
         return;
+    }
 
     // the mounted source must be the TOP dir.
     // if smb://1.2.3.4/top/subdir is passed in, the param passed to mount function must be smb://1.2.3.4/top
@@ -56,20 +65,52 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     }
 
     auto onMountFailed = [url, origUrl](const dfmmount::OperationErrorInfo &err) {
+        fmCritical() << "Mount operation failed for URL:" << url.toString()
+                     << "error code:" << err.code << "error message:" << err.message;
+
         DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
         // remove from history when mount failed.
         dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
-        if (!origUrl.isEmpty())
+        if (!origUrl.isEmpty()) {
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", origUrl);
+            fmDebug() << "Removed both original and decoded URLs from history";
+        }
+    };
+
+    static QString kRecordFilePath = QString("/tmp/dfm_smb_mount_%1.ini").arg(getuid());
+    static QString kRecordGroup = "defaultSmbPath";
+    static QRegularExpression kRegx { "/|\\.|:" };
+    auto recordSubPath = [](const QString &smbRoot, const QString &subPath) {
+        QFile record(kRecordFilePath);
+        if (!record.exists() && record.open(QIODevice::NewOnly)) {
+            record.close();
+            fmDebug() << "Created new record file:" << kRecordFilePath;
+        }
+        auto key(smbRoot);
+        key = key.replace(kRegx, "_");
+        QSettings sets(kRecordFilePath, QSettings::IniFormat);
+        sets.setValue(QString("%1/%2").arg(kRecordGroup).arg(key), subPath);
+    };
+    auto readSubPath = [](const QString &smbRoot) {
+        auto key(smbRoot);
+        key = key.replace(kRegx, "_");
+        QSettings sets(kRecordFilePath, QSettings::IniFormat);
+        return sets.value(QString("%1/%2").arg(kRecordGroup).arg(key), "").toString();
     };
 
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         fmInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
-            doChangeCurrentUrl(winId, mpt, subPath, url);
+            if (err.code == DFMMOUNT::DeviceError::kNoError)
+                recordSubPath(mountSource, subPath);
+            QString jumpTo(subPath);
+            if (jumpTo.isEmpty())
+                jumpTo = readSubPath(mountSource);
+            doChangeCurrentUrl(winId, mpt, jumpTo, url);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
+            QApplication::restoreOverrideCursor();
             onMountFailed(err);
         }
     });
@@ -92,6 +133,8 @@ void travers_prehandler::smbAccessPrehandler(quint64 winId, const QUrl &url, std
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Backward", winId);   // if failed/cancelled, back to previous page.
             return;
         }
+    } else {
+        fmDebug() << "Target host is not local, skipping service validation:" << targetHost;
     }
 
     QTimer::singleShot(100, qApp, [=] { networkAccessPrehandler(winId, url, after); });
@@ -135,13 +178,20 @@ void travers_prehandler::onSmbRootMounted(const QString &mountSource, Handler af
     if (after)
         after();
 
-    if (!ProtocolDeviceDisplayManager::instance()->isShowOfflineItem())
+    if (!ProtocolDeviceDisplayManager::instance()->isShowOfflineItem()) {
+        fmDebug() << "Show offline items is disabled, skipping virtual entry processing";
         return;
-    if (ProtocolDeviceDisplayManager::instance()->displayMode() != SmbDisplayMode::kAggregation)
-        return;
+    }
 
-    if (QUrl(mountSource).host().isEmpty())
+    if (ProtocolDeviceDisplayManager::instance()->displayMode() != SmbDisplayMode::kAggregation) {
+        fmDebug() << "Display mode is not aggregation, skipping virtual entry processing";
         return;
+    }
+
+    if (QUrl(mountSource).host().isEmpty()) {
+        fmWarning() << "Mount source has empty host, cannot process virtual entry:" << mountSource;
+        return;
+    }
 
     fmDebug() << "do cache root entry" << mountSource;
     VirtualEntryDbHandler::instance()->saveData(VirtualEntryData(mountSource));

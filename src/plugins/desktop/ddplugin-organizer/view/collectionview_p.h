@@ -26,10 +26,12 @@ class GraphicsEffect : public QGraphicsEffect
     Q_OBJECT
 public:
     explicit GraphicsEffect(CollectionView *parent);
+
 protected:
     void draw(QPainter *painter) override;
     void sourceChanged(ChangeFlags flags) override;
     QRectF boundingRectFor(const QRectF &sourceRect) const override;
+
 private:
     CollectionView *view;
 };
@@ -88,8 +90,8 @@ public:
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
 
     void updateDFMMimeData(QDropEvent *event);
-    bool checkTargetEnable(const QUrl &targetUrl);
     void redoFiles();
+    bool checkTargetEnable(QDropEvent *event, const QUrl &targetUrl);
 
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
@@ -146,12 +148,16 @@ public:
     QPoint pressedPosition;
     QRect elasticBand;
     bool pressedAlreadySelected = false;
+    bool ignoreMouseEvent = false;
 
     Qt::SortOrder sortOrder = Qt::DescendingOrder;
     int sortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
 
     QString searchKeys;
     QTimer *searchTimer = nullptr;
+
+    bool flicker = false;
+    bool freeze { false };
 
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };

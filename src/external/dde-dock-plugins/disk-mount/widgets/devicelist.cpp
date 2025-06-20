@@ -6,15 +6,18 @@
 #include "deviceitem.h"
 #include "device/dockitemdatamanager.h"
 
+#include <DGuiApplicationHelper>
+#include <DFontSizeManager>
+
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollBar>
-
-#include <DGuiApplicationHelper>
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
-using namespace Dtk::Gui;
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 DeviceList::DeviceList(QWidget *parent)
     : QScrollArea(parent)
@@ -24,51 +27,65 @@ DeviceList::DeviceList(QWidget *parent)
     initConnect();
 }
 
+void DeviceList::showEvent(QShowEvent *e)
+{
+    updateHeight();
+    QScrollArea::showEvent(e);
+}
+
 void DeviceList::addDevice(const DockItemData &item)
 {
-    if (deviceItems.contains(item.id))
+    if (deviceItems.contains(item.id)) {
+        qCDebug(logAppDock) << "Device already exists, removing before re-adding:" << item.id;
         removeDevice(item.id);
+    }
 
     auto devItem = new DeviceItem(item, this);
     connect(devItem, &DeviceItem::requestEject,
             this, &DeviceList::ejectDevice);
     deviceItems.insert(item.id, devItem);
     sortKeys.insert(item.id, item.sortKey);
+
     QStringList order = sortKeys.values();
-    qSort(order);
+    std::sort(order.begin(), order.end());
+
     deviceLay->insertWidget(order.indexOf(item.sortKey), devItem);
-    qCInfo(logAppDock) << "added item:" << item.id << devItem;
+
+    qCInfo(logAppDock) << "Added device item:" << item.id << devItem;
     updateHeight();
 }
 
 void DeviceList::removeDevice(const QString &id)
 {
     auto wgt = deviceItems.value(id, nullptr);
-    if (wgt) {
-        qCInfo(logAppDock) << "removed item:" << id << wgt;
-        deviceLay->removeWidget(wgt);
-        delete wgt;
-        wgt = nullptr;
-        deviceItems.remove(id);
-        sortKeys.remove(id);
-        updateHeight();
+    if (!wgt) {
+        qCDebug(logAppDock) << "Device not found for removal:" << id;
+        return;
     }
+
+    qCInfo(logAppDock) << "Removing device item:" << id << wgt;
+    deviceLay->removeWidget(wgt);
+    delete wgt;
+    wgt = nullptr;
+    deviceItems.remove(id);
+    sortKeys.remove(id);
+    updateHeight();
 }
 
 void DeviceList::ejectDevice(const QString &id)
 {
-    qCInfo(logAppDock) << "about to eject" << id;
+    qCInfo(logAppDock) << "Ejecting device:" << id;
     DockItemDataManager::instance()->ejectDevice(id);
 }
 
 void DeviceList::initUI()
 {
     deviceLay = new QVBoxLayout();
-    deviceLay->setMargin(0);
+    deviceLay->setContentsMargins(0, 0, 0, 0);
     deviceLay->setSpacing(0);
 
     QVBoxLayout *mainLay = new QVBoxLayout();
-    mainLay->setMargin(0);
+    mainLay->setContentsMargins(0, 0, 0, 0);
     mainLay->setSpacing(0);
     mainLay->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -84,7 +101,6 @@ void DeviceList::initUI()
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     verticalScrollBar()->setSingleStep(7);
-    viewport()->setAutoFillBackground(false);
     content->setAutoFillBackground(false);
     setWidgetResizable(true);
     setMaximumHeight(420);
@@ -108,7 +124,9 @@ void DeviceList::initConnect()
 
 void DeviceList::updateHeight()
 {
-    int contentHeight = 50 + kDeviceItemHeight * deviceItems.count();
+    const int itemHeight = deviceItems.isEmpty() ? 0 : deviceItems.first()->sizeHint().height();
+    const int headerHeight = headerWidget->sizeHint().height();
+    int contentHeight = headerHeight + itemHeight * deviceItems.count();
     if (contentHeight > 420)
         contentHeight = 420;
     resize(width(), contentHeight);
@@ -116,8 +134,8 @@ void DeviceList::updateHeight()
 
 QWidget *DeviceList::createHeader()
 {
-    QWidget *header = new QWidget(this);
-    header->setFixedWidth(kDockPluginWidth);
+    headerWidget = new QWidget(this);
+    headerWidget->setFixedWidth(kDockPluginWidth);
     QVBoxLayout *lay = new QVBoxLayout();
     lay->setSpacing(0);
     lay->setContentsMargins(20, 9, 0, 8);
@@ -125,20 +143,16 @@ QWidget *DeviceList::createHeader()
     QVBoxLayout *headerLay = new QVBoxLayout();
     headerLay->setContentsMargins(0, 0, 0, 0);
     headerLay->setSpacing(0);
-    header->setLayout(headerLay);
+    headerWidget->setLayout(headerLay);
 
     QLabel *title = new QLabel(tr("Disks"), this);
+    DFontSizeManager::instance()->bind(title, DFontSizeManager::T5, QFont::DemiBold);
     lay->addWidget(title);
 
     auto line = DeviceItem::createSeparateLine(1);
     line->setParent(this);
     headerLay->addLayout(lay);
     headerLay->addWidget(line);
-
-    QFont f = title->font();
-    f.setPixelSize(20);
-    f.setWeight(QFont::Medium);
-    title->setFont(f);
 
     auto setTextColor = [title](DGuiApplicationHelper::ColorType) {
         QPalette pal = title->palette();
@@ -152,5 +166,5 @@ QWidget *DeviceList::createHeader()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             title, [=](auto type) { setTextColor(type); });
     setTextColor(DGuiApplicationHelper::instance()->themeType());
-    return header;
+    return headerWidget;
 }

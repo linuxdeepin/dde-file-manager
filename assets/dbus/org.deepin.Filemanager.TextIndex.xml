@@ -1,0 +1,50 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.TextIndex">
+    <signal name="TaskFinished">
+      <arg name="type" type="s" direction="out"/>
+      <arg name="path" type="s" direction="out"/>
+      <arg name="success" type="b" direction="out"/>
+    </signal>
+    <signal name="TaskProgressChanged">
+      <arg name="type" type="s" direction="out"/>
+      <arg name="path" type="s" direction="out"/>
+      <arg name="count" type="x" direction="out"/>
+      <arg name="total" type="x" direction="out"/>
+    </signal>
+    <method name="Init">
+    </method>
+    <method name="IsEnabled">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="SetEnabled">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="CreateIndexTask">
+      <arg type="b" direction="out"/>
+      <arg name="paths" type="as" direction="in"/>
+    </method>
+    <method name="UpdateIndexTask">
+      <arg type="b" direction="out"/>
+      <arg name="paths" type="as" direction="in"/>
+    </method>
+    <method name="StopCurrentTask">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="HasRunningTask">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="IndexDatabaseExists">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="GetLastUpdateTime">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="ProcessFileChanges">
+      <arg type="b" direction="out"/>
+      <arg name="createdFiles" type="as" direction="in"/>
+      <arg name="modifiedFiles" type="as" direction="in"/>
+      <arg name="deletedFiles" type="as" direction="in"/>
+    </method>
+  </interface>
+</node>

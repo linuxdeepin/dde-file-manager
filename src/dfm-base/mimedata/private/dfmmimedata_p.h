@@ -22,7 +22,11 @@ public:
     void parseUrls(const QList<QUrl> &urls);
 
 public:
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QVariantMap attributes;
+#else
+    QMultiMap<QString, QVariant> attributes;
+#endif
     QString version;
 
     QList<QUrl> urlList;

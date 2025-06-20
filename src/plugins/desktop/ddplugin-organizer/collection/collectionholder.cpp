@@ -6,6 +6,7 @@
 #include "view/collectionframe.h"
 #include "view/collectionwidget.h"
 #include "view/collectionview.h"
+#include "config/configpresenter.h"
 #include "models/collectionmodel.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
@@ -13,12 +14,8 @@ using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 
 CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq, QObject *parent)
-    : QObject(qq)
-    , q(qq)
-    , id(uuid)
-    , provider(dataProvider)
+    : QObject(qq), q(qq), id(uuid), provider(dataProvider)
 {
-
 }
 
 CollectionHolderPrivate::~CollectionHolderPrivate()
@@ -32,24 +29,23 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
 void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)
 {
     sizeMode = size;
+    widget->setCollectionSize(size);
     emit q->styleChanged(id);
 }
 
 CollectionHolder::CollectionHolder(const QString &uuid, ddplugin_organizer::CollectionDataProvider *dataProvider, QObject *parent)
-    : QObject(parent)
-    , d(new CollectionHolderPrivate(uuid, dataProvider, this))
+    : QObject(parent), d(new CollectionHolderPrivate(uuid, dataProvider, this))
 {
     d->styleTimer.setSingleShot(true);
     d->styleTimer.setInterval(500);
 
-    connect(&d->styleTimer, &QTimer::timeout, this, [this](){
+    connect(&d->styleTimer, &QTimer::timeout, this, [this]() {
         emit styleChanged(id());
     });
 }
 
 CollectionHolder::~CollectionHolder()
 {
-
 }
 
 QString CollectionHolder::id() const
@@ -96,8 +92,10 @@ void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
     d->frame->setWidget(d->widget);
 
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
-    connect(d->frame, &CollectionFrame::geometryChanged, this, [this](){
+    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d->frame, &CollectionFrame::adjustSizeMode);
+    connect(d->frame, &CollectionFrame::sizeModeChanged, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
+    connect(d->frame, &CollectionFrame::surfaceChanged, this, &CollectionHolder::frameSurfaceChanged);
+    connect(d->frame, &CollectionFrame::geometryChanged, this, [this]() {
         d->styleTimer.start();
     });
 }
@@ -269,6 +267,34 @@ void CollectionHolder::setFileShiftable(bool enable)
 bool CollectionHolder::fileShiftable() const
 {
     return d->widget->view()->fileShiftable();
+}
+
+QPropertyAnimation *CollectionHolder::createAnimation()
+{
+    QPropertyAnimation *ani = new QPropertyAnimation(d->frame, "pos");
+    auto pos = d->frame->pos();
+    ani->setDuration(500);
+    ani->setEasingCurve(QEasingCurve::BezierSpline);
+    ani->setStartValue(pos);
+    ani->setEndValue(pos);
+    ani->setKeyValueAt(0.2, pos + QPoint { -10, 0 });
+    ani->setKeyValueAt(0.4, pos + QPoint { 10, 0 });
+    ani->setKeyValueAt(0.6, pos + QPoint { -10, 0 });
+    ani->setKeyValueAt(0.8, pos);
+    return ani;
+}
+
+void CollectionHolder::selectFiles(const QList<QUrl> &urls)
+{
+    if (!itemView()) return;
+    itemView()->selectUrls(urls);
+    itemView()->scrollToBottom();
+}
+
+void CollectionHolder::setFreeze(bool freeze)
+{
+    if (CfgPresenter->optimizeMovingPerformance())
+        d->widget->setFreeze(freeze);
 }
 
 void CollectionHolder::setStyle(const CollectionStyle &style)

@@ -56,7 +56,7 @@ WatcherCache &WatcherCache::instance()
 QSharedPointer<AbstractFileWatcher> WatcherCache::getCacheWatcher(const QUrl &url)
 {
     Q_D(WatcherCache);
-
+    emit updateWatcherTime({url}, true);
     return d->watchers.value(url);
 }
 /*!
@@ -75,8 +75,11 @@ QSharedPointer<AbstractFileWatcher> WatcherCache::getCacheWatcher(const QUrl &ur
 void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher)
 {
     Q_D(WatcherCache);
+    if (watcher.isNull())
+        return;
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &WatcherCache::fileDelete);
     d->watchers.insert(url, watcher);
+    emit updateWatcherTime({url}, true);
 }
 /*!
  * \brief removCacheWatcher 根据Url移除当前缓存的watcher
@@ -91,11 +94,13 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
  *
  * \return void
  */
-void WatcherCache::removeCacheWatcher(const QUrl &url)
+void WatcherCache::removeCacheWatcher(const QUrl &url, const bool isEmit)
 {
     Q_D(WatcherCache);
     emit fileDelete(url);
     d->watchers.remove(url);
+    if (isEmit)
+        emit updateWatcherTime({url}, false);
 }
 
 void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
@@ -105,10 +110,15 @@ void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
 
     Q_D(WatcherCache);
     auto keys = d->watchers.keys();
+    QList<QUrl> removeUrls;
     for (const auto &url : keys) {
-        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path()))
+        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path())) {
             d->watchers.remove(url);
+            removeUrls.append(url);
+        }
     }
+
+    emit updateWatcherTime(removeUrls, false);
 }
 
 bool WatcherCache::cacheDisable(const QString &scheme)

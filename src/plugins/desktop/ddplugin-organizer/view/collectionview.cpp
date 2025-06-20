@@ -13,6 +13,8 @@
 #include "utils/fileoperator.h"
 #include "broker/collectionhookinterface.h"
 #include "models/itemselectionmodel.h"
+#include "config/configpresenter.h"
+#include "mode/normalized/fileclassifier.h"
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
@@ -23,6 +25,7 @@
 
 #include <DApplication>
 #include <DFileDragClient>
+#include <DGuiApplicationHelper>
 
 #include <QScrollBar>
 #include <QUrl>
@@ -37,7 +40,7 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
 // no need view margin, this 2px used to draw inner and out order.
-static constexpr int kCollectionViewMargin = 0; //2
+static constexpr int kCollectionViewMargin = 0;   // 2
 
 static constexpr int kCollectionItemVerticalMargin = 2;
 static constexpr int kIconOffset = 10;
@@ -58,6 +61,12 @@ void CollectionViewPrivate::initUI()
 {
     q->setAttribute(Qt::WA_TranslucentBackground);
     q->setAttribute(Qt::WA_InputMethodEnabled);
+
+#ifdef QT_SCROLL_WHEEL_ANI
+    QScrollBar *bar = q->verticalScrollBar();
+    bar->setSingleStep(1);
+    q->setVerticalScrollBarPolicy(Qt::ScrollBarSlideAnimationOn);
+#endif
 
     q->viewport()->setAttribute(Qt::WA_TranslucentBackground);
     q->viewport()->setAutoFillBackground(false);
@@ -93,7 +102,12 @@ QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index)
     if (Q_UNLIKELY(!index.isValid()))
         return {};
 
-    QStyleOptionViewItem option = q->viewOptions();
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = q->viewOptions();
+#else
+    q->initViewItemOption(&option);
+#endif
     option.rect = itemRect(index);
     return q->itemDelegate()->paintGeomertys(option, index);
 }
@@ -137,7 +151,7 @@ void CollectionViewPrivate::updateVerticalBarRange()
     q->verticalScrollBar()->setRange(0, qMax(0, height));
     q->verticalScrollBar()->setPageStep(q->viewport()->height());
     q->verticalScrollBar()->setSingleStep(1);
-    fmDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
+    // fmDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
 }
 
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
@@ -190,7 +204,7 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 
 void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
 {
-    //fileUrl is file:///xxxx
+    // fileUrl is file:///xxxx
     QItemSelection seleted;
     for (const QUrl &url : fileUrl) {
         auto desktopUrl = url.toString();
@@ -335,7 +349,13 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     const qreal offsetY = pixRect.height() / 2;
     const QSize iconSize(iconWidth, iconWidth);
 
-    QStyleOptionViewItem option = q->viewOptions();
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = q->viewOptions();
+#else
+    q->initViewItemOption(&option);
+#endif
+
     option.state |= QStyle::State_Selected;
     // icon rect in pixmap.
     option.rect = pixRect.translated(iconMargin, iconMargin);
@@ -346,10 +366,10 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0; --i) {
         painter.save();
 
-        //opacity 50% 40% 30% 20%
+        // opacity 50% 40% 30% 20%
         painter.setOpacity(1.0 - (i + 5) * opacityBase);
 
-        //rotate
+        // rotate
         {
             qreal rotate = rotateBase * (qRound((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
             auto tf = painter.transform();
@@ -359,7 +379,7 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
             painter.setTransform(tf);
         }
 
-        //paint icon
+        // paint icon
         q->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
 
         painter.restore();
@@ -372,7 +392,6 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         painter.setOpacity(0.8);
         topIconSize = q->itemDelegate()->paintDragIcon(&painter, option, foucs);
         painter.restore();
-        ;
     }
 
     // paint text
@@ -380,7 +399,7 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         int length = 0;
         QString text;
         if (indexCount > maxTextCount) {
-            length = 28;   //there are three characters showed.
+            length = 28;   // there are three characters showed.
             text = QString::number(maxTextCount).append("+");
         } else {
             length = 24;   // one or two characters
@@ -562,15 +581,9 @@ bool CollectionViewPrivate::drop(QDropEvent *event)
 
 void CollectionViewPrivate::helpAction()
 {
-    class PublicApplication : public DApplication
-    {
-    public:
-        using DApplication::handleHelpAction;
-    };
-
     QString appName = qApp->applicationName();
     qApp->setApplicationName("dde");
-    reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
+    DGuiApplicationHelper::instance()->handleHelpAction();
     qApp->setApplicationName(appName);
 }
 
@@ -692,7 +705,7 @@ void CollectionViewPrivate::showFilesProperty()
 
 bool CollectionViewPrivate::dropFilter(QDropEvent *event)
 {
-    //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
+    // Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
     {
         QModelIndex index = q->indexAt(event->pos());
         if (index.isValid()) {
@@ -726,22 +739,24 @@ bool CollectionViewPrivate::dropClientDownload(QDropEvent *event) const
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
         event->acceptProposedAction();
-        fmWarning() << "drop on" << dropTargetUrl;
+        fmInfo() << "Client drop operation detected, target URL:" << dropTargetUrl;
 
         QList<QUrl> urlList = data->urls();
         if (!urlList.isEmpty()) {
             // follow canvas dropClientDownload
             DFileDragClient *client = new DFileDragClient(data, q);
-            fmDebug() << "dragClientDownload" << client << data << urlList;
+            fmDebug() << "Starting drag client download with" << urlList.size() << "URLs";
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
-                if (state == Finished)
+                if (state == Finished) {
                     selectItems(urlList);
-                fmDebug() << "stateChanged" << state << urlList;
+                    fmInfo() << "Client download finished, selected" << urlList.size() << "items";
+                }
+                fmDebug() << "Client state changed to:" << state;
             });
 
             connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
             connect(client, &DFileDragClient::destroyed, []() {
-                fmDebug() << "drag client deleted";
+                fmDebug() << "Drag client deleted";
             });
         }
 
@@ -761,7 +776,7 @@ bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = q->indexAt(event->pos());
         auto fileInfo = q->model()->fileInfo(index.isValid() ? index : q->rootIndex());
 
-        if (fileInfo && dfmbase::FileUtils::isLocalFile(fileInfo->urlOf(UrlInfoType::kUrl))) {
+        if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).isLocalFile()) {
             if (fileInfo->isAttributes(OptInfoType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kUrl));
             else
@@ -793,12 +808,12 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
 
     if (dropOnSelf) {
-        fmInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
+        fmDebug() << "Drop on self detected, skipping operation at position:" << dropPos.x() << "," << dropPos.y();
         return true;
     }
 
     if (targetIndex.isValid()) {
-        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "Drop on target item detected:" << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -807,7 +822,7 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
         for (const QUrl &url : urls) {
             auto key = provider->key(url);
             if (id != key) {
-                fmDebug() << "disbale shift file from other collection.";
+                fmDebug() << "File shifting disabled from other collection, source key:" << key;
                 return true;
             }
         }
@@ -826,11 +841,11 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
         return false;
 
     auto firstUrl = urls.first();
-    auto firstIndex = q->model()->index(firstUrl);
-    if (firstIndex.isValid()) {
-        fmWarning() << "source file belong collection:" << firstUrl;
-        return false;
-    }
+    // auto firstIndex = q->model()->index(firstUrl);
+    // if (firstIndex.isValid()) {
+    //     fmWarning() << "source file belong collection:" << firstUrl;
+    //     return false;
+    // }
 
     QString errString;
     auto itemInfo = InfoFactory::create<FileInfo>(firstUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
@@ -846,7 +861,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
 
     auto targetIndex = q->indexAt(event->pos());
     if (targetIndex.isValid()) {
-        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "Drop from canvas on target item:" << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -857,9 +872,13 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     provider->addPreItems(id, urls, index);
 
     for (auto url : urls)
+        provider->prepend(url);
+    selectItems(urls);
+
+    for (auto url : urls)
         canvasModelShell->take(url);
 
-    q->model()->fetch(urls);
+    // q->model()->fetch(urls);
 
     return true;
 }
@@ -939,7 +958,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionStartNode = provider->items(id).indexOf(currentSelectionStartFile);
     if (Q_UNLIKELY(-1 == currentSelectionStartNode)) {
         fmWarning() << "warning:can not find file:" << currentSelectionStartFile << " in collection:" << id
-                   << ".Or no file is selected.So fix to 0.";
+                    << ".Or no file is selected.So fix to 0.";
         currentSelectionStartNode = 0;
     }
 
@@ -947,7 +966,7 @@ void CollectionViewPrivate::continuousSelection(const QPersistentModelIndex &new
     auto &&currentSelectionEndNode = provider->items(id).indexOf(currentSelectionEndFile);
     if (Q_UNLIKELY(-1 == currentSelectionEndNode)) {
         fmWarning() << "warning:can not find file:" << currentSelectionEndFile << " in collection:" << id
-                   << ".Give up switch selection!";
+                    << ".Give up switch selection!";
         return;
     }
 
@@ -1022,8 +1041,21 @@ void CollectionViewPrivate::updateDFMMimeData(QDropEvent *event)
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
 }
 
-bool CollectionViewPrivate::checkTargetEnable(const QUrl &targetUrl)
+bool CollectionViewPrivate::checkTargetEnable(QDropEvent *event, const QUrl &targetUrl)
 {
+    auto rootUrl = q->model()->rootUrl();
+    if (rootUrl == targetUrl) {
+        auto classfier = dynamic_cast<FileClassifier *>(provider.data());
+        if (classfier) {
+            auto dragUrls = event->mimeData()->urls();
+            for (auto url : dragUrls) {
+                auto type = classfier->classify(url);
+                if (type != id)
+                    return false;
+            }
+        }
+    }
+
     if (!dfmmimeData.isValid())
         return true;
 
@@ -1070,19 +1102,7 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &i
         cellWidth = viewWidth;
         columnCount = 1;
     } else {
-        int margin = (availableWidth - columnCount * itemWidth) / (columnCount + 1) / 2;
-        cellWidth = itemWidth + 2 * margin;
-
-        // update viewMargins
-        int leftViewMargin = viewMargins.left() + margin;
-        int rightViewMargin = viewMargins.right() + margin;
-        int unUsedWidth = viewWidth - leftViewMargin - rightViewMargin - columnCount * cellWidth;
-        // try to divide equally
-        leftViewMargin += unUsedWidth / 2;
-        rightViewMargin += unUsedWidth - unUsedWidth / 2;
-
-        viewMargins.setLeft(leftViewMargin);
-        viewMargins.setRight(rightViewMargin);
+        cellWidth = itemWidth;
     }
 
     if (Q_UNLIKELY(cellWidth < 1)) {
@@ -1156,11 +1176,12 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
     : QAbstractItemView(parent), d(new CollectionViewPrivate(uuid, dataProvider, this))
 {
 #ifdef QT_DEBUG
-    d->showGrid = true;
+    // d->showGrid = true;
 #endif
 
     d->initUI();
     d->initConnect();
+    setObjectName("dd_collection_view");
 }
 
 CollectionView::~CollectionView()
@@ -1250,13 +1271,37 @@ void CollectionView::updateRegionView()
 
     const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
     d->updateViewSizeData(geometry().size(), viewMargin, itemSize);
+    d->updateVerticalBarRange();
+}
+
+void CollectionView::refresh(bool silence)
+{
+    if (verticalScrollBar())
+        verticalScrollBar()->setValue(0);
+
+    if (silence)
+        return;
+
+    d->flicker = true;
+    repaint();
+    update();
+    d->flicker = false;
+}
+
+void CollectionView::setFreeze(bool freeze)
+{
+    d->freeze = freeze;
 }
 
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
-    if (Q_UNLIKELY(!index.isValid()))
+    if (Q_UNLIKELY(!index.isValid())) {
+        fmWarning() << "Cannot open editor for invalid URL:" << url.toString();
         return;
+    }
+
+    fmInfo() << "Opening editor for URL:" << url.toString();
     selectionModel()->select(index, QItemSelectionModel::Select);
     this->setCurrentIndex(index);
     this->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
@@ -1279,6 +1324,12 @@ void CollectionView::selectUrl(const QUrl &url, const QItemSelectionModel::Selec
     this->update();
 }
 
+void CollectionView::selectUrls(const QList<QUrl> &urls)
+{
+    if (d)
+        d->selectItems(urls);
+}
+
 void CollectionView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
@@ -1298,7 +1349,7 @@ void CollectionView::setSelectionModel(QItemSelectionModel *selectionModel)
 
     //! when selection changed, we need to update all view.
     //! otherwise the expanded text will partly remain.
-    connect(selectionModel, &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)()) & QWidget::update);
+    connect(selectionModel, &QItemSelectionModel::selectionChanged, this, (void(QWidget::*)()) & QWidget::update);
 }
 
 void CollectionView::reset()
@@ -1614,10 +1665,21 @@ void CollectionView::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
 
+    if (d->freeze)
+        return;
+
     if (Q_UNLIKELY(!itemDelegate()))
         return;
 
-    auto option = viewOptions();
+    if (d->flicker)
+        return;
+
+    QStyleOptionViewItem option;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    option = viewOptions();
+#else
+    initViewItemOption(&option);
+#endif
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -1653,6 +1715,18 @@ void CollectionView::paintEvent(QPaintEvent *event)
             painter.drawText(rect, QString("%1-%2").arg(d->nodeToPos(node + startNode).x()).arg(d->nodeToPos(node + startNode).y()));
         }
         painter.restore();
+    }
+
+    {
+#ifdef QT_DEBUG
+        painter.save();
+        auto rect = viewport()->geometry();
+        rect = rect.marginsAdded({ 0, 20, 0, 0 });
+        painter.drawLine(rect.topLeft(), rect.bottomRight());
+        painter.drawLine(rect.topRight(), rect.bottomLeft());
+
+        painter.restore();
+#endif
     }
 
     // draw files
@@ -1702,22 +1776,37 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
 void CollectionView::wheelEvent(QWheelEvent *event)
 {
+#ifdef QT_SCROLL_WHEEL_ANI
+    return QAbstractItemView::wheelEvent(event);
+#else
     int currentPosition = verticalScrollBar()->sliderPosition();
     int scrollValue = event->angleDelta().y();
     int targetValue = currentPosition - scrollValue;
     verticalScrollBar()->setSliderPosition(targetValue);
+#endif
 }
 
 void CollectionView::mousePressEvent(QMouseEvent *event)
 {
+    auto pos = event->pos();
     bool leftButtonPressed = event->buttons().testFlag(Qt::LeftButton);
+
+    if (pos.x() < kCollectionStretchThreshold
+        || pos.x() > this->width() - kCollectionStretchThreshold
+        || pos.y() < kCollectionStretchThreshold
+        || pos.y() > this->height() - kCollectionStretchThreshold) {
+        if (leftButtonPressed) {
+            d->ignoreMouseEvent = true;
+            return;
+        }
+    }
+
     if (leftButtonPressed) {
         d->canUpdateVerticalBarRange = false;
     }
 
     d->checkTouchDarg(event);
 
-    auto pos = event->pos();
     auto index = indexAt(pos);
     if (index.isValid() && isPersistentEditorOpen(index))
         return;
@@ -1738,7 +1827,7 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
         if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
             // reselect index(maybe the user wants to drag and copy by Ctrl)
             selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
-        } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) {   //pressed on blank space.
+        } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) {   // pressed on blank space.
             setCurrentIndex(QModelIndex());
         }
 
@@ -1752,6 +1841,8 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
 
 void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::LeftButton)
+        d->ignoreMouseEvent = false;
     if (d->elasticBand.isValid()) {
         // clear elasticBand
         d->elasticBand = QRect();
@@ -1775,6 +1866,8 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 
 void CollectionView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (d->ignoreMouseEvent)
+        return;
     QAbstractItemView::mouseMoveEvent(event);
 
     // left button pressed on empty area.
@@ -1782,7 +1875,7 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
         QRect rect(d->pressedPosition, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
         d->elasticBand = rect.normalized();
 
-        //update selection
+        // update selection
         d->selectRect(d->elasticBand);
         update();
     } else {
@@ -1797,8 +1890,11 @@ void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
 
     auto pos = event->pos();
     const QModelIndex &index = indexAt(pos);
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmDebug() << "Double click on empty area";
         return;
+    }
+
     if (isPersistentEditorOpen(index)) {
         itemDelegate()->commitDataAndCloseEditor();
         QTimer::singleShot(200, this, [this, pos]() {
@@ -1821,6 +1917,7 @@ void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
         emit activated(persistent);
 
     const QUrl &url = model()->fileUrl(index);
+    fmInfo() << "Double click detected, opening file:" << url.toString();
     FileOperatorIns->openFiles(this, { url });
     event->accept();
 }
@@ -1853,6 +1950,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_F1: {
             d->helpAction();
             return;
+        }
+        case Qt::Key_F2: {
+            // this is a cheat, use canvas key event handler to do batch rename.
+            if (d->canvasViewShell->filterKeyPress(0, Qt::Key_F2, Qt::NoModifier))
+                return;
+            break;
         }
         case Qt::Key_Escape: {
             d->clearClipBoard();
@@ -1896,8 +1999,8 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier: {
         switch (event->key()) {
         case Qt::Key_A:
-            dynamic_cast<ItemSelectionModel *>(selectionModel())->selectAll();
-            return;
+            //  dynamic_cast<ItemSelectionModel *>(selectionModel())->selectAll();
+            return QAbstractItemView::keyPressEvent(event);
         case Qt::Key_C:
             d->copyFiles();
             return;
@@ -1908,7 +2011,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             d->cutFiles();
             return;
         case Qt::Key_V:
-            d->pasteFiles(); // paste files to canvas not collection
+            d->pasteFiles();   // paste files to canvas not collection
             return;
         case Qt::Key_Z:
             d->undoFiles();
@@ -1917,6 +2020,10 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             // redo
             d->redoFiles();
             return;
+        case Qt::Key_Minus:
+            [[fallthrough]];
+        case Qt::Key_Equal:
+            return QAbstractItemView::keyPressEvent(event);
         default:
             break;
         }
@@ -1929,6 +2036,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     } break;
     default:
         break;
+    }
+
+    {
+        const QKeySequence &seq { static_cast<int>(event->modifiers()) | event->key() };
+        if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq)
+            return QAbstractItemView::keyPressEvent(event);
     }
 
     {
@@ -1977,7 +2090,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
                 d->currentSelectionStartIndex = newCurrent;
                 selectionModel()->select(newCurrent, QItemSelectionModel::ClearAndSelect);
                 setCurrentIndex(newCurrent);
-            } else if (event->modifiers() == Qt::ShiftModifier){
+            } else if (event->modifiers() == Qt::ShiftModifier) {
                 d->continuousSelection(newCurrent);
             }
             event->accept();
@@ -1993,6 +2106,8 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
 
 void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 {
+    if (this->property(kCollectionPropertyEditing).toBool())
+        return;
     if (CollectionViewMenu::disableMenu())
         return;
 
@@ -2016,8 +2131,10 @@ void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 
 void CollectionView::startDrag(Qt::DropActions supportedActions)
 {
-    if (d->isDelayDrag())
+    if (d->isDelayDrag()) {
+        fmDebug() << "Drag delayed due to touch screen";
         return;
+    }
 
     // close editor before drag.
     // normally, items in editing status do not enter startDrag.
@@ -2029,7 +2146,7 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
         closePersistentEditor(currentIndex());
 
     if (CollectionHookInterface::startDrag(id(), supportedActions)) {
-        fmDebug() << "start drag by extend.";
+        fmDebug() << "Drag handled by extension interface";
         return;
     }
 
@@ -2037,8 +2154,10 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
     QModelIndexList validIndexes = selectionModel()->selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
-        if (!data)
+        if (!data) {
+            fmWarning() << "Failed to create mime data for drag operation";
             return;
+        }
 
         QPixmap pixmap = d->polymerizePixmap(validIndexes);
         QDrag *drag = new QDrag(this);
@@ -2084,8 +2203,9 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto pos = event->pos();
     auto hoverIndex = indexAt(pos);
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
-    if (!d->checkTargetEnable(currentUrl)) {
+    if (!d->checkTargetEnable(event, currentUrl)) {
         event->ignore();
+        return;
     } else if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             // hook
@@ -2149,6 +2269,19 @@ void CollectionView::focusInEvent(QFocusEvent *event)
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
+void CollectionView::changeEvent(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::FontChange:
+        updateRegionView();
+        break;
+    default:
+        break;
+    }
+
+    QAbstractItemView::changeEvent(event);
+}
+
 void CollectionView::scrollContentsBy(int dx, int dy)
 {
     // scroll the viewport to let the editor scrolled with item.
@@ -2206,8 +2339,10 @@ void CollectionView::sort(int role)
 
     d->sortRole = role;
     auto items = d->provider->items(d->id);
-    if (items.isEmpty())
+    if (items.isEmpty()) {
+        fmDebug() << "No items to sort in collection:" << d->id;
         return;
+    }
 
     std::sort(items.begin(), items.end(), [this](const QUrl &left, const QUrl &right) {
         return lessThan(left, right);
@@ -2233,10 +2368,8 @@ void CollectionView::currentChanged(const QModelIndex &current, const QModelInde
 }
 
 GraphicsEffect::GraphicsEffect(CollectionView *parent)
-    : QGraphicsEffect(parent)
-    , view(parent)
+    : QGraphicsEffect(parent), view(parent)
 {
-
 }
 
 void GraphicsEffect::draw(QPainter *painter)
@@ -2284,7 +2417,7 @@ void GraphicsEffect::draw(QPainter *painter)
     int begin = 0;
     if (drawTop) {
         pixmapPainter.save();
-        for (; begin < opacity; ++begin ) {
+        for (; begin < opacity; ++begin) {
             QRect rect(0, begin, size.width(), 1);
             pixmapPainter.setOpacity((begin) / qreal(opacity));
             pixmapPainter.drawPixmap(rect, source, rect);
@@ -2299,7 +2432,7 @@ void GraphicsEffect::draw(QPainter *painter)
         pixmapPainter.drawPixmap(content, source, content);
 
         int bottom = size.height() - opacity;
-        for (int i = 0; i < opacity; ++i ) {
+        for (int i = 0; i < opacity; ++i) {
             QRect rect(0, bottom + i, size.width(), 1);
             pixmapPainter.setOpacity((opacity - i) / qreal(opacity));
             pixmapPainter.drawPixmap(rect, source, rect);

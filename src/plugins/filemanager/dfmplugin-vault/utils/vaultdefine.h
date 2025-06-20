@@ -78,9 +78,10 @@ inline constexpr int kUserKeyInterceptIndex { 50 };   //! 用户密钥从公钥�
 
 inline constexpr char kRootProxy[] { "pkexec deepin-vault-authenticateProxy" };
 
+// NOTE: Not DBus! This is polkit policy (from com.deepin.filemanager.vault.policy)
 inline constexpr char kPolkitVaultCreate[] { "com.deepin.filemanager.daemon.VaultManager.Create" };
 inline constexpr char kPolkitVaultRemove[] { "com.deepin.filemanager.daemon.VaultManager.Remove" };
-
+inline constexpr char kPolkitVaultRetrieve[] { "com.deepin.filemanager.vault.VerifyKey.RetrievePassword" };
 inline constexpr int kBuffterMaxLine { 1024 };   //! shell命令输出每行最大的字符个数
 
 inline const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址

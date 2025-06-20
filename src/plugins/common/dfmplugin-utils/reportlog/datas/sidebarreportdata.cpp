@@ -15,6 +15,6 @@ QJsonObject SidebarReportData::prepareData(const QVariantMap &args) const
 {
     QVariantMap temArgs = args;
     temArgs.insert("tid", 1000500003);
-    temArgs.insert("sysTime", QDateTime::currentDateTime().toTime_t());
+    temArgs.insert("sysTime", QDateTime::currentDateTime().toSecsSinceEpoch());
     return QJsonObject::fromVariantMap(temArgs);
 }

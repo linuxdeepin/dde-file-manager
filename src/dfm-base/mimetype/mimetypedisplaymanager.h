@@ -23,14 +23,16 @@ public:
     FileInfo::FileType displayNameToEnum(const QString &mimeType);
     QString defaultIcon(const QString &mimeType);
     QMap<FileInfo::FileType, QString> displayNames();
-    void loadSupportMimeTypes();
     QStringList supportArchiveMimetypes();
     QStringList supportVideoMimeTypes();
     QStringList supportAudioMimeTypes();
+    QString displayTypeFromPath(const QString &filePath);
+    FileInfo::FileType fileTypeByExtension(const QString &filePath);
 
 private:
     explicit MimeTypeDisplayManager(QObject *parent = nullptr);
     void initData();
+    void loadSupportMimeTypes();
     QStringList readlines(const QString &path);
 
 private:
@@ -44,6 +46,8 @@ private:
     QStringList imageMimeTypes;
     QStringList executableMimeTypes;
     QStringList backupMimeTypes;
+    QList<QString> sortedExtensions;
+    QMap<QString, FileInfo::FileType> extensionMap;
 };
 
 }

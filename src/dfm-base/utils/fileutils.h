@@ -27,9 +27,6 @@ public:
 public:
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static int supportedMaxLength(const QString &fileSystem);
-    static bool isGvfsFile(const QUrl &url);
-    static bool isMtpFile(const QUrl &url);
-    static bool isGphotoFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
     static bool processLength(const QString &srcText, int srcPos, int maxLen, bool useCharCount, QString &dstText, int &dstPos);
     static bool isContainProhibitPath(const QList<QUrl> &urls);
@@ -38,6 +35,8 @@ public:
     static bool isDesktopFile(const QUrl &url);
     static bool isDesktopFileSuffix(const QUrl &url);
     static bool isDesktopFileInfo(const FileInfoPointer &info);
+    static void refreshIconCache();
+    static QString findIconFromXdg(const QString &iconName);
 
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
@@ -45,14 +44,13 @@ public:
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
     static bool isSameFile(const QUrl &url1, const QUrl &url2,
                            const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
-    static bool isLocalDevice(const QUrl &url);
+    static bool isSameFile(const QString &path1, const QString &path2);
     static bool isCdRomDevice(const QUrl &url);
     static bool trashIsEmpty();
     static QUrl trashRootUrl();
     static bool isTrashFile(const QUrl &url);
     static bool isTrashRootFile(const QUrl &url);
     static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
-    static bool isLocalFile(const QUrl &url);
     static int getFileNameLength(const QUrl &url, const QString &name);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
@@ -61,8 +59,9 @@ public:
     static QString cutFileName(const QString &name, int maxLength, bool useCharCount);
     static QString nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl = QUrl());
     static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
-
+#endif
     static quint16 getMemoryPageSize();
     static qint32 getCpuProcessCount();
 
@@ -78,6 +77,9 @@ public:
     static QString numberStr(const QString &str, int pos);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
+    static QString encryptString(const QString &str);
+    static QString decryptString(const QString &str);
+
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
     static QString nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir);
@@ -91,6 +93,11 @@ public:
     static QString trashPathToNormal(const QString &trash);
     static QString normalPathToTrash(const QString &normal);
     static bool supportLongName(const QUrl &url);
+
+    static bool isFullWidthChar(const QChar ch, QChar &normalized);
+    static QString makeQString(const QString::const_iterator &it, uint unicode);
+    static QString symlinkTarget(const QUrl &url);
+    static QString resolveSymlink(const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

@@ -12,6 +12,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <DFileDialog>
 #include <QWindow>
@@ -61,7 +62,7 @@ void DumpISOOptDialog::initliazeUi()
     contentWidget = new QWidget(this);
     // m_contentWidget->setStyleSheet("border: 1px solid red"); // debug
     QVBoxLayout *contentLay = new QVBoxLayout;
-    contentLay->setMargin(0);
+    contentLay->setContentsMargins(0, 0, 0, 0);
     contentWidget->setLayout(contentLay);
     addContent(contentWidget, Qt::AlignTop);
 
@@ -166,8 +167,8 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
 void DumpISOOptDialog::onPathChanged(const QString &path)
 {
     const QUrl &url { UrlRoute::fromUserInput(path) };
-    if (url.isEmpty() || !url.isValid() || !dfmbase::FileUtils::isLocalFile(url)
-        || DeviceUtils::isLowSpeedDevice(url) || DeviceUtils::isSamba(url)) {
+    if (url.isEmpty() || !url.isValid() || !url.isLocalFile()
+        || ProtocolUtils::isRemoteFile(url) || ProtocolUtils::isSMBFile(url)) {
         fmWarning() << "Path:" << path << "is prohibited";
         createImgBtn->setEnabled(false);
         return;

@@ -130,11 +130,11 @@ bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *act
     DFMExtActionImpl *beforeImpl = static_cast<DFMExtActionImpl *>(before);
     DFMExtActionImpl *impl = static_cast<DFMExtActionImpl *>(action);
     DFMExtActionImplPrivate *beforeImpl_d = dynamic_cast<DFMExtActionImplPrivate *>(beforeImpl->d);
-    DFMExtActionImplPrivate *impl_d = dynamic_cast<DFMExtActionImplPrivate *>(impl->d);
-    if (menu != nullptr
-        && impl != nullptr && impl_d != nullptr
-        && beforeImpl_d != nullptr) {
+    if (impl == nullptr || beforeImpl_d == nullptr)
+        return false;
 
+    DFMExtActionImplPrivate *impl_d = dynamic_cast<DFMExtActionImplPrivate *>(impl->d);
+    if (menu != nullptr && impl_d != nullptr) {
         QAction *beforeAc = beforeImpl_d->qaction();
 
         // 文管内部创建的不允许添加
@@ -146,7 +146,7 @@ bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *act
         menu->insertAction(beforeAc, ac);
 
         // Record sorting rules
-        QPair<QAction *, QAction*> pair(beforeAc, ac);
+        QPair<QAction *, QAction *> pair(beforeAc, ac);
         QList<QPair<QAction *, QAction *>> &rules = DFMExtMenuCache::instance().extMenuSortRules;
         if (!rules.contains(pair))
             rules.push_back(pair);

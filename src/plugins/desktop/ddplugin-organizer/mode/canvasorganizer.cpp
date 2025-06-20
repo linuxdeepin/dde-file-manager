@@ -10,6 +10,7 @@
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmanagershell.h"
 #include "interface/canvasselectionshell.h"
+#include "config/configpresenter.h"
 
 #include <QMimeData>
 
@@ -31,24 +32,21 @@ CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerMode mode)
     return ret;
 }
 
-CanvasOrganizer::CanvasOrganizer(QObject *parent) : QObject(parent)
+CanvasOrganizer::CanvasOrganizer(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 CanvasOrganizer::~CanvasOrganizer()
 {
-
 }
 
 void CanvasOrganizer::layout()
 {
-
 }
 
 void CanvasOrganizer::detachLayout()
 {
-
 }
 
 void CanvasOrganizer::setCanvasModelShell(CanvasModelShell *sh)
@@ -86,7 +84,9 @@ void CanvasOrganizer::setCanvasViewShell(CanvasViewShell *sh)
 
     // disable zoomin and zoomout by hook canvas's event.
     connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, this, &CanvasOrganizer::filterShortcutkeyPress, Qt::DirectConnection);
+    connect(canvasViewShell, &CanvasViewShell::filterKeyPress, this, &CanvasOrganizer::filterKeyPress, Qt::DirectConnection);
     connect(canvasViewShell, &CanvasViewShell::filterWheel, this, &CanvasOrganizer::filterWheel, Qt::DirectConnection);
+    connect(canvasViewShell, &CanvasViewShell::filterContextMenu, this, &CanvasOrganizer::filterContextMenu, Qt::DirectConnection);
 
     //connect(canvasViewShell, &CanvasViewShell::filterMousePress, this, &CanvasOrganizer::filterMousePress, Qt::DirectConnection);
 }
@@ -135,7 +135,11 @@ void CanvasOrganizer::setSurfaces(const QList<SurfacePointer> &surface)
 
 void CanvasOrganizer::reset()
 {
+}
 
+bool CanvasOrganizer::isEditing() const
+{
+    return editing;
 }
 
 bool CanvasOrganizer::filterDataRested(QList<QUrl> *urls)
@@ -153,7 +157,7 @@ bool CanvasOrganizer::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     return false;
 }
 
-bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     return false;
 }
@@ -162,13 +166,17 @@ bool CanvasOrganizer::filterShortcutkeyPress(int viewIndex, int key, int modifie
 {
     Q_UNUSED(viewIndex)
 
-    if (Qt::ControlModifier == modifiers) {
-        static const QList<int> filterKeys {
-                                            Qt::Key_Equal       // disbale ctrl + = to zooom out
-                                            , Qt::Key_Minus     // disbale ctrl + - to zooom in
-                                            };
-        return filterKeys.contains(key);
+    const QKeySequence &seq { modifiers | key };
+    if (CfgPresenter->isEnableVisibility() && CfgPresenter->hideAllKeySequence() == seq) {
+        emit hideAllKeyPressed();
+        return true;
     }
+
+    return false;
+}
+
+bool CanvasOrganizer::filterKeyPress(int viewIndex, int key, int modifiers) const
+{
     return false;
 }
 
@@ -178,8 +186,12 @@ bool CanvasOrganizer::filterWheel(int viewIndex, const QPoint &angleDelta, bool 
     return ctrl;
 }
 
+bool CanvasOrganizer::filterContextMenu(int, const QUrl &, const QList<QUrl> &, const QPoint &) const
+{
+    return false;
+}
+
 //bool CanvasOrganizer::filterMousePress(int viewIndex, int button, const QPoint &viewPos) const
 //{
 //    return false;
 //}
-

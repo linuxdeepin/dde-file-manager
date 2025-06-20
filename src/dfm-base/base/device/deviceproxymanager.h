@@ -12,7 +12,7 @@
 
 #define DevProxyMng DFMBASE_NAMESPACE::DeviceProxyManager::instance()
 
-class OrgDeepinFilemanagerServerDeviceManagerInterface;
+class OrgDeepinFilemanagerDaemonDeviceManagerInterface;
 namespace dfmbase {
 
 class DeviceProxyManagerPrivate;
@@ -30,17 +30,14 @@ class DeviceProxyManager : public QObject
 public:
     static DeviceProxyManager *instance();
 
-    const OrgDeepinFilemanagerServerDeviceManagerInterface *getDBusIFace() const;
+    const OrgDeepinFilemanagerDaemonDeviceManagerInterface *getDBusIFace() const;
 
     // device info getter
     QStringList getAllBlockIds(GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
     QStringList getAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
-    QStringList asyncGetAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
     QStringList getAllProtocolIds();
     QVariantMap queryBlockInfo(const QString &id, bool reload = false);
     QVariantMap queryProtocolInfo(const QString &id, bool reload = false);
-    QVariantMap asyncQueryBlockInfo(const QString &id, bool reload = false);
-    QVariantMap asyncQueryProtocolInfo(const QString &id, bool reload = false);
 
     // device operation
     void reloadOpticalInfo(const QString &id);
@@ -58,6 +55,8 @@ public:
     // device signals
 Q_SIGNALS:
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
+    void mountPointAboutToAdded(QStringView mpt);
+    void mountPointAboutToRemoved(QStringView mpt);
 
     void blockDevPropertyChanged(const QString &id, const QString &property, const QVariant &val);
     void blockDriveAdded();

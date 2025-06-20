@@ -157,7 +157,7 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return proxy;
+        return !proxy.isNull();
     case FileCanType::kCanDrop:
         return d->canDrop();
     case FileCanType::kCanDragCompress:
@@ -171,9 +171,19 @@ bool MasteredMediaFileInfo::canAttributes(const CanableInfoType type) const
 
 Qt::DropActions MasteredMediaFileInfo::supportedOfAttributes(const SupportedType type) const
 {
-    if (type == SupportType::kDrop)
+    if (type == SupportType::kDrop) {
         if (!OpticalHelper::isBurnEnabled())
             return Qt::IgnoreAction;
+
+        if (isAttributes(OptInfoType::kIsWritable)) {
+            return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+        }
+
+        if (d->canDrop()) {
+            return Qt::CopyAction | Qt::MoveAction;
+        }
+        return Qt::IgnoreAction;
+    }
     return ProxyFileInfo::supportedOfAttributes(type);
 }
 

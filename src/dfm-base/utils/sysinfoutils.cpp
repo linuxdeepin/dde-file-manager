@@ -90,7 +90,13 @@ bool SysInfoUtils::isDeveloperModeEnabled()
 
         QString func("IsDeveloperMode");
         QDBusReply<bool> reply = interface.call(func);
-        developerModel = reply.value();
+        if (reply.isValid()) {
+            developerModel = reply.value();
+            qCDebug(logDFMBase) << "Developer mode status retrieved:" << developerModel;
+        } else {
+            qCWarning(logDFMBase) << "Failed to query developer mode status via DBus:" << reply.error().message();
+            developerModel = false;
+        }
     }
 
     return developerModel;
@@ -99,6 +105,11 @@ bool SysInfoUtils::isDeveloperModeEnabled()
 bool SysInfoUtils::isProfessional()
 {
     return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
+}
+
+bool SysInfoUtils::isDeepin23()
+{
+    return DSysInfo::isCommunityEdition() && DSysInfo::productVersion() == "23";
 }
 
 bool SysInfoUtils::isSameUser(const QMimeData *data)
@@ -111,7 +122,7 @@ void SysInfoUtils::setMimeDataUserId(QMimeData *data)
 {
     QByteArray userId;
     QString strUserID = QString::number(getUserId());
-    userId.append(strUserID);
+    userId.append(strUserID.toUtf8());
     data->setData(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey, userId);
 
     QString strKey = QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey) + "_" + strUserID;

@@ -26,6 +26,11 @@ private:
     bool upgradeRecentConfigs();
     bool upgradeSearchConfigs();
     void clearDiskHidden();
+    void addOldGenericSettings();
+    bool checkOldGeneric(const QString &key);
+
+private:
+    QStringList oldGenericSettings;
 };
 }
 

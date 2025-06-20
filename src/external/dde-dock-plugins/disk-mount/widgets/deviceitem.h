@@ -21,6 +21,7 @@ public:
 
 protected:
     void mouseReleaseEvent(QMouseEvent *) override;
+    void resizeEvent(QResizeEvent *e) override;
 
 public Q_SLOTS:
     void updateUsage(quint64 usedSize);
@@ -32,12 +33,12 @@ private:
     void initUI();
     void openDevice();
     static void setTextColor(QWidget *obj, int themeType, double alpha);
-    static void setTextFont(QWidget *obj, int size, int weight);
 
 private:
     DockItemData data;
 
     QLabel *sizeLabel { nullptr };
+    QLabel *nameLabel { nullptr };
     QProgressBar *sizeProgress { nullptr };
 };
 

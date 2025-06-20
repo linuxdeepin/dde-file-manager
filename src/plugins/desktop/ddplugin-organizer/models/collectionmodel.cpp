@@ -104,8 +104,12 @@ void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft,
         auto url = shell->fileUrl(q->sourceModel()->index(i, 0));
         auto cur = q->index(url);
 
-        if (handler)
-            handler->acceptUpdate(url, roles);
+        if (handler && handler->acceptUpdate(url, roles)) {
+            if (!fileList.contains(url)) {
+                fileList.append(url);
+                fileMap.insert(url, shell->fileInfo(q->sourceModel()->index(i, 0)));
+            }
+        }
 
         if (cur.isValid())
             idxs << cur;
@@ -141,8 +145,10 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
         return;
     }
 
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid insertion range:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -150,7 +156,6 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
         if (!fileMap.contains(url) && handler->acceptInsert(url))
             files << url;
     }
-
     if (files.isEmpty())
         return;
 
@@ -167,8 +172,10 @@ void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent,
 void CollectionModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
 {
     Q_UNUSED(sourceParent)
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid removal range:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -210,6 +217,7 @@ void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &n
             fileList.append(newUrl);
             fileMap.insert(newUrl, newInfo);
             q->endInsertRows();
+            fmDebug() << "Inserted renamed file as new item";
             return;
         }
     } else {
@@ -248,8 +256,8 @@ void CollectionModelPrivate::doRefresh(bool global, bool file)
     } else {
         if (file) {
             // do not emit data changed signal, just refresh file info.
-           QSignalBlocker blocker(q);
-           q->update();
+            QSignalBlocker blocker(q);
+            q->update();
         }
 
         sourceAboutToBeReset();
@@ -499,8 +507,10 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     Q_UNUSED(column);
 
     QList<QUrl> urlList = data->urls();
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        fmDebug() << "No URLs in drop data";
         return false;
+    }
 
     QUrl targetFileUrl;
     if (!parent.isValid() || parent == rootIndex()) {
@@ -537,12 +547,15 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
         FileOperatorIns->dropToTrash(treeSelectUrl.isEmpty() ? urlList : treeSelectUrl);
+        fmInfo() << "Files dropped to trash";
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         // nothing to do.
+        fmDebug() << "Drop to computer desktop file, no action needed";
         return true;
-    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
+    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFileSuffix(targetFileUrl)) {
         FileOperatorIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        fmInfo() << "Files dropped to application:" << targetFileUrl.toString();
         return true;
     }
 

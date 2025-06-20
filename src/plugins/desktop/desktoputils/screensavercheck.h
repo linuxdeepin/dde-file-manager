@@ -7,9 +7,12 @@
 
 #include <QDBusMessage>
 #include <QProcessEnvironment>
-#include <QGSettings>
 #include <QDBusConnection>
 #include <QDebug>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#include <QGSettings>
+#endif
 
 namespace ddplugin_desktop_util {
 
@@ -33,11 +36,13 @@ static inline bool enableScreensaver()
         return false;
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("showScreenSaver") && !desktopSettings.get("showScreenSaver").toBool()) {
         qWarning() << "Gsetting show-screen-saver is false";
         return false;
     }
+#endif
 
     return true;
 }

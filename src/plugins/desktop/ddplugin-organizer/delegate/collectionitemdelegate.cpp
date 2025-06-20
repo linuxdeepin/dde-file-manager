@@ -18,11 +18,11 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/iconutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <DApplication>
-#include <DApplicationHelper>
 
 #include <QPainter>
 #include <QScrollBar>
@@ -66,8 +66,9 @@ ElideTextLayout *CollectionItemDelegatePrivate::createTextlayout(const QModelInd
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
+    int lineHeight = UniversalUtils::getTextLineHeight(index, q->parent()->fontMetrics());
     layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
-    layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
+    layout->setAttribute(ElideTextLayout::kLineHeight, lineHeight);
     layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignHCenter);
     if (painter) {
         layout->setAttribute(ElideTextLayout::kFont, painter->font());
@@ -423,6 +424,10 @@ bool CollectionItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
 
     FileInfoPointer info { parent()->model()->fileInfo(index) };
     if (info) {
+        // appimage 不显示缩略图底板
+        if (info->nameOf(NameInfoType::kMimeTypeName) == Global::Mime::kTypeAppAppimage)
+            return false;
+
         const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
         if (attribute.isValid() && !attribute.value<QIcon>().isNull())
             return true;
@@ -528,7 +533,9 @@ QPixmap CollectionItemDelegate::getIconPixmap(const QIcon &icon, const QSize &si
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    auto px = icon.pixmap(size, mode, state);
+    // 根据设备像素比获取合适大小的pixmap
+    QSize deviceSize = size * pixelRatio;
+    auto px = icon.pixmap(deviceSize, mode, state);
     px.setDevicePixelRatio(pixelRatio);
 
     return px;
@@ -734,10 +741,10 @@ void CollectionItemDelegate::initStyleOption(QStyleOptionViewItem *option, const
 
     // multi-selected background
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && model->selectedIndexes().size() > 1) {
-        option->palette.setColor(QPalette::Background, QColor("#0076F9"));
+        option->palette.setColor(QPalette::Window, QColor("#0076F9"));
         option->backgroundBrush = QColor("#0076F9");
     } else {   // normal
-        option->palette.setColor(QPalette::Background, QColor("#2da6f7"));
+        option->palette.setColor(QPalette::Window, QColor("#2da6f7"));
         option->backgroundBrush = QColor("#2da6f7");
     }
 
@@ -767,10 +774,21 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, co
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
     const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
-    qreal x = opts.rect.x();
-    qreal y = opts.rect.y();
+
+    // 保持图标原始比例
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
+
+    // 如果图标大于目标区域，等比例缩放
+    if (w > opts.rect.width() || h > opts.rect.height()) {
+        qreal scale = qMin(opts.rect.width() / w, opts.rect.height() / h);
+        w *= scale;
+        h *= scale;
+    }
+
+    qreal x = opts.rect.x();
+    qreal y = opts.rect.y();
+
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
         y += (opts.rect.size().height() - h) / 2.0;
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
@@ -784,25 +802,36 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, co
         painter->save();
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
+        auto iconStyle { IconUtils::getIconStyle(opts.rect.size().toSize().width()) };
         QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
         QRect imageRect { backgroundRect };
-        // 绘制带有阴影的背景
-        painter->drawPixmap(backgroundRect, IconUtils::renderIconBackground(backgroundRect.size()));
 
-        // 绘制缩略图(上下左右各缩小2px)
-        imageRect.adjust(4, 4, -4, -4);
+        // 绘制带有阴影的背景
+        auto stroke { iconStyle.stroke };
+        backgroundRect.adjust(-stroke, -stroke, stroke, stroke);
+        const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
+        const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
+        painter->drawPixmap(backgroundRect, shadowPixmap);
+        imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+
         QPainterPath clipPath;
-        clipPath.addRoundedRect(imageRect, 4, 4);
+        auto radius { iconStyle.radius - iconStyle.stroke };
+        clipPath.addRoundedRect(imageRect, radius, radius);
         painter->setClipPath(clipPath);
         painter->drawPixmap(imageRect, px);
         painter->restore();
+
         return backgroundRect;
     }
 
-    painter->drawPixmap(qRound(x), qRound(y), px);
+    // 使用QRectF和drawPixmap的重载版本来正确处理缩放
+    QRect targetRect(x, y, w, h);
+    painter->save();
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter->drawPixmap(targetRect, px, px.rect());
+    painter->restore();
 
-    // return rect before scale
-    return QRect(qRound(x), qRound(y), w, h);
+    return targetRect;
 }
 
 QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info)

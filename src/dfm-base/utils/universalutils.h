@@ -10,6 +10,8 @@
 #include <QString>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
+#include <QFontMetrics>
+#include <QModelIndex>
 
 namespace dfmbase {
 
@@ -28,8 +30,6 @@ public:
     static double sizeFormat(qint64 size, QString &unit);
     static QString sizeFormat(qint64 size, int percision);
 
-    static bool checkLaunchAppInterface();
-    static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);
     static bool runCommand(const QString &cmd, const QStringList &args, const QString &wd = QString());
     static int dockHeight();
     static QMap<QString, QString> getKernelParameters();
@@ -38,6 +38,7 @@ public:
     static QVariantHash convertFromQMap(const QVariantMap map);
 
     static bool urlEquals(const QUrl &url1, const QUrl &url2);
+    static bool urlEqualsWithQuery(const QUrl &url1, const QUrl &url2);
     static bool urlsTransformToLocal(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls);
     static bool urlTransformToLocal(const QUrl &sourceUrl, QUrl *targetUrls);
 
@@ -52,6 +53,11 @@ public:
     static bool isParentOnly(const QUrl &child, const QUrl &parent);
 
     static QString covertUrlToLocalPath(const QString &url);
+    static void boardCastPastData(const QUrl &sourcPath, const QUrl &targetPath,
+                                  const QList<QUrl> &files);
+
+    static int getTextLineHeight(const QModelIndex &index, const QFontMetrics &fontMetrics);
+    static int getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics);
 };
 
 }

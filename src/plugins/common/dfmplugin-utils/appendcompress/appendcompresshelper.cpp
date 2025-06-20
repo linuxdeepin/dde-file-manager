@@ -7,6 +7,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/event/event.h>
 #include <QProcess>
@@ -63,19 +64,11 @@ bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl>
 
 bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStringList &fromFilePaths)
 {
-    QStringList arguments;
-    QString cmd = "deepin-compressor";
-#ifdef COMPILE_ON_V23
-    cmd = "ll-cli";
-    arguments << "run";
-    arguments << "org.deepin.compressor";
-    arguments << "--exec";
-    arguments << "deepin-compressor";
-#endif
-    arguments << toFilePath;
+    QStringList arguments { toFilePath };
     arguments << fromFilePaths;
     arguments << "dragdropadd";
-    return QProcess::startDetached(cmd, arguments);
+
+    return QProcess::startDetached("deepin-compressor", arguments);
 }
 
 bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
@@ -93,7 +86,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
     if (toFilePath.isEmpty())
         return false;
 
-    if (DeviceUtils::isFtp(fromUrls.at(0)) || DeviceUtils::isFtp(toUrl))
+    if (ProtocolUtils::isFTPFile(fromUrls.at(0)) || ProtocolUtils::isFTPFile(toUrl))
         return false;
 
     if (dpfHookSequence->run("dfmplugin_utils", "hook_AppendCompress_Prohibit", fromUrls, toUrl)) {

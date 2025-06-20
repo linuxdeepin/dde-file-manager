@@ -592,6 +592,8 @@ public:
     QStringList classes() const { return ids.keys(); }
     QString classify(const QUrl &url) const { return ids.key(url.fileName().left(3)); }
     QString className(const QString &key) const { return ids.value(key); }
+    void updateClassifier() {};
+
     QMap<QString, QString> ids;
 };
 

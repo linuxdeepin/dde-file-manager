@@ -27,9 +27,10 @@ CustomSettingItemRegister *CustomSettingItemRegister::instance()
 bool CustomSettingItemRegister::registCustomSettingItemType(const QString &type, const CustomSettingItemCreator &creator)
 {
     if (creators.contains(type)) {
-        qCWarning(logDFMBase) << type << "is already registered...";
+        qCWarning(logDFMBase) << "Custom setting item type already registered:" << type;
         return false;
     }
     creators.insert(type, creator);
+    qCDebug(logDFMBase) << "Custom setting item type registered successfully:" << type;
     return true;
 }

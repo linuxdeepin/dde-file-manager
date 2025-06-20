@@ -13,6 +13,7 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfile.h>
 #include <dfm-burn/dburn_global.h>
@@ -23,6 +24,7 @@
 #include <QRegularExpressionMatch>
 #include <QMutex>
 #include <QSettings>
+#include <QDir>
 
 #include <libmount.h>
 #include <fstab.h>
@@ -51,11 +53,13 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     if (in.isEmpty())
         return {};
     libmnt_table *tab { mnt_new_table() };
-    if (!tab)
+    if (!tab) {
+        qCWarning(logDFMBase) << "Failed to create mount table for query:" << in;
         return {};
+    }
     FinallyUtil finally { [tab]() { if (tab) mnt_free_table(tab); } };
     if (mnt_table_parse_mtab(tab, nullptr) != 0) {
-        qCWarning(logDFMBase) << "Invalid mnt_table_parse_mtab call";
+        qCWarning(logDFMBase) << "Failed to parse mount table for query:" << in;
         return {};
     }
 
@@ -66,7 +70,7 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     if (fs)
         return { get(fs) };
 
-    qCWarning(logDFMBase) << "Invalid libmnt_fs*";
+    qCWarning(logDFMBase) << "Mount info not found for:" << in;
     return {};
 }
 
@@ -75,7 +79,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     if (!url.isValid())
         return QUrl();
 
-    if (!DeviceUtils::isSamba(url))
+    if (!ProtocolUtils::isSMBFile(url))
         return url;
 
     QUrl smbUrl;
@@ -93,7 +97,7 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     //  /root/.gvfs/smb-share...../helloworld.txt
     //  /media/user/smbmounts/smb-share...../helloworld.txt
     //  ======>  helloworld.txt
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/media/.*/smbmounts/[^/]*/)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*/|^/root/.gvfs/[^/]*/|^/(?:run/)?media/.*/smbmounts/[^/]*/)");
     QString fileName = fullPath.remove(prefix);
     fileName.chop(1);   // remove last '/'.
 
@@ -126,11 +130,9 @@ QString DeviceUtils::convertSuitableDisplayName(const QVariantMap &devInfo)
         return alias;
 
     QVariantMap clearInfo = devInfo.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
-    QString mpt = clearInfo.value(kMountPoint, devInfo.value(kMountPoint).toString()).toString();
-    QString idLabel = clearInfo.value(kIdLabel, devInfo.value(kIdLabel).toString()).toString();
     // NOTE(xust): removable/hintSystem is not always correct in some certain hardwares.
-    if (mpt == "/" || idLabel.startsWith("_dde_")) {
-        return nameOfSystemDisk(devInfo);
+    if (DeviceUtils::isBuiltInDisk(clearInfo.isEmpty() ? devInfo : clearDevInfo)) {
+        return nameOfBuiltInDisk(devInfo);
     } else if (devInfo.value(kIsEncrypted).toBool()) {
         return nameOfEncrypted(devInfo);
     } else if (devInfo.value(kOpticalDrive).toBool()) {
@@ -225,12 +227,12 @@ bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
 
 bool DeviceUtils::isBlankOpticalDisc(const QString &id)
 {
-    // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
+    // for dvd+rw/dvd-rw/bd-re disc, erase operation only overwrite some blocks which used to present filesystem,
     // so the blank field is still false even if it can be write datas from the beginning,
     auto &&map = DevProxyMng->queryBlockInfo(id);
     bool isBlank { map[kOpticalBlank].toBool() };
     auto mediaType { static_cast<MediaType>(map[kOpticalMediaType].toUInt()) };
-    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
+    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW || mediaType == MediaType::kBD_RE)
         isBlank |= map[kSizeTotal].toULongLong() == map[kSizeFree].toULongLong();
 
     return isBlank;
@@ -270,44 +272,12 @@ bool DeviceUtils::isPWUserspaceOpticalDiscDev(const QString &dev)
     return isPWOpticalDiscDev(dev);
 }
 
-bool DeviceUtils::isSamba(const QUrl &url)
-{
-    if (url.scheme() == Global::Scheme::kSmb)
-        return true;
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isFtp(const QUrl &url)
-{
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isSftp(const QUrl &url)
-{
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/sftp|^/root/\\.gvfs/sftp)" };
-    return hasMatch(url.path(), smbMatch);
-}
-
-bool DeviceUtils::isMtpFile(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
-    QRegularExpression re { gvfsMatch };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
 bool DeviceUtils::supportDfmioCopyDevice(const QUrl &url)
 {
     if (!url.isValid())
         return false;
 
-    return !isMtpFile(url);
+    return !ProtocolUtils::isMTPFile(url);
 }
 
 bool DeviceUtils::supportSetPermissionsDevice(const QUrl &url)
@@ -315,17 +285,12 @@ bool DeviceUtils::supportSetPermissionsDevice(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    return !isMtpFile(url);
-}
-
-bool DeviceUtils::isExternalBlock(const QUrl &url)
-{
-    return DeviceProxyManager::instance()->isFileOfExternalBlockMounts(url.path());
+    return !ProtocolUtils::isMTPFile(url);
 }
 
 QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
 {
-    if (!isSamba(target) && !isFtp(target))
+    if (!ProtocolUtils::isSMBFile(target) && !ProtocolUtils::isFTPFile(target))
         return {};
 
     QString host, port;
@@ -334,7 +299,7 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
         return {};
 
     QString protocol, share;
-    if (isSamba(target)) {
+    if (ProtocolUtils::isSMBFile(target)) {
         protocol = "smb";
         static const QRegularExpression regxSmb(R"(,share=([^,/]*))");
         auto match = regxSmb.match(target.path());
@@ -343,10 +308,10 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
         else
             return {};
     } else {
-        protocol = isSftp(target) ? "sftp" : "ftp";
+        protocol = ProtocolUtils::isSFTPFile(target) ? "sftp" : "ftp";
     }
 
-    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*|^/media/.*/smbmounts/[^/]*)");
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*|^/(?:run/)?media/.*/smbmounts/[^/]*)");
     QString dirPath = target.path();
     dirPath.remove(prefix);
     dirPath.prepend(share);
@@ -404,23 +369,33 @@ QMap<QString, QString> DeviceUtils::fstabBindInfo()
     return table;
 }
 
-QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
+QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
 {
     QVariantMap clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
 
     QString mountPoint = clearInfo.value(kMountPoint, datas.value(kMountPoint)).toString();
     QString label = clearInfo.value(kIdLabel, datas.value(kIdLabel)).toString();
     qlonglong size = datas.value(kSizeTotal).toLongLong();
+    bool canPowerOff = datas.value(kCanPowerOff).toBool();
 
     // get system disk name if there is no alias
-    if (mountPoint == "/")
+    if (DeviceUtils::isSystemDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return QObject::tr("System Disk");
-    if (!mountPoint.startsWith("/media/")) {
-        if (label.startsWith("_dde_data"))
-            return QObject::tr("Data Disk");
+
+    if (DeviceUtils::isDataDisk(clearInfo.isEmpty() ? datas : clearInfo))
+        return QObject::tr("Data Disk");
+
+    if (!canPowerOff && !mountPoint.isEmpty()) {
         if (label.startsWith("_dde_"))
             return datas.value(kIdLabel).toString().mid(5);
     }
+
+    if (datas.value(kIsEncrypted).toBool() && clearInfo.isEmpty()) {
+        if (label.isEmpty())
+            label = nameOfSize(datas.value(kSizeTotal).toLongLong());
+        return QObject::tr("%1 Encrypted").arg(label);
+    }
+
     return nameOfDefault(label, size);
 }
 
@@ -605,19 +580,6 @@ bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
     });
 }
 
-bool DeviceUtils::isLowSpeedDevice(const QUrl &url)
-{
-    if (!url.isValid())
-        return false;
-
-    const QString &path = url.toLocalFile();
-    static const QString lowSpeedMountpoint { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/|^/media/[\\s\\S]*/smbmounts)" };
-    // TODO(xust) /media/$USER/smbmounts might be changed in the future.
-    QRegularExpression re { lowSpeedMountpoint };
-    QRegularExpressionMatch match { re.match(path) };
-    return match.hasMatch();
-}
-
 /*!
  * \brief DeviceUtils::getLongestMountRootPath: get the mount root of a file `filePath`
  * return `/home/` for `/home/helloworld.txt`, eg.
@@ -656,6 +618,7 @@ QString DeviceUtils::getLongestMountRootPath(const QString &filePath)
     auto found = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
     return found != mpts.cend() ? *found : "/";
 }
+
 QString DeviceUtils::fileSystemType(const QUrl &url)
 {
     return DFMIO::DFMUtils::fsTypeFromUrl(url);
@@ -677,7 +640,7 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
 
 bool DeviceUtils::isUnmountSamba(const QUrl &url)
 {
-    if (!isSamba(url))
+    if (!ProtocolUtils::isSMBFile(url))
         return false;
 
     return !DevProxyMng->isFileOfProtocolMounts(url.path());
@@ -712,29 +675,79 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
     return bindPath;
 }
 
-bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
+bool DeviceUtils::isBuiltInDisk(const QVariantHash &devInfo)
 {
-    if (!devInfo.contains(GlobalServerDefines::DeviceProperty::kHintSystem))
+    // 如果是可移除设备，则不是内置磁盘
+    if (devInfo.value(kCanPowerOff).toBool())
         return false;
 
-    bool isSystem = devInfo.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()
-            || devInfo.value(GlobalServerDefines::DeviceProperty::kConnectionBus).toString() != "usb";
-    if (devInfo.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
-        isSystem = false;
-    // treat the siblings of root(/) device as System devices.
-    isSystem |= isSiblingOfRoot(devInfo);
-    return isSystem;
+    // 如果是光驱设备，则不是内置磁盘
+    if (devInfo.value(kOpticalDrive).toBool())
+        return false;
+
+    if (!devInfo.contains(kHintSystem))
+        return false;
+
+    // 检查是否为系统相关磁盘
+    QString mpt = devInfo.value(kMountPoint).toString();
+    QString idLabel = devInfo.value(kIdLabel).toString();
+    if (mpt == QDir::rootPath() || idLabel.startsWith("_dde_"))
+        return true;
+
+    // 检查硬件特征
+    bool hintSystem = devInfo.value(kHintSystem).toBool();
+    QString bus = devInfo.value(kConnectionBus).toString();
+    if (hintSystem || bus != "usb")
+        return true;
+
+    // 检查是否为根设备的兄弟设备
+    return isSiblingOfRoot(devInfo);
+}
+
+bool DeviceUtils::isBuiltInDisk(const QVariantMap &devInfo)
+{
+    return isBuiltInDisk(toHash(devInfo));
+}
+
+bool DeviceUtils::isSystemDisk(const QVariantHash &devInfo)
+{
+    // 检查是否为根目录
+    QString mountPoint = devInfo.value(kMountPoint).toString();
+    if (mountPoint == QDir::rootPath())
+        return true;
+
+    // 特殊情况：Root[X]分区, A-B Recover
+    QString label = devInfo.value(kIdLabel).toString();
+    if (label.startsWith("Root") && mountPoint == "/sysroot")
+        return true;
+
+    return false;
 }
 
 bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
 {
-    QVariantHash hash;
-    QMapIterator<QString, QVariant> iter(devInfo);
-    while (iter.hasNext()) {
-        iter.next();
-        hash.insert(iter.key(), iter.value());
-    }
-    return isSystemDisk(hash);
+    return isSystemDisk(toHash(devInfo));
+}
+
+bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
+{
+    // 如果是可移除设备，则不是数据盘
+    if (devInfo.value(kCanPowerOff).toBool())
+        return false;
+
+    // 如果是根目录，则不是数据盘
+    QString mountPoint = devInfo.value(kMountPoint).toString();
+    if (mountPoint == QDir::rootPath())
+        return false;
+
+    // 检查标签是否为数据盘标识
+    QString label = devInfo.value(kIdLabel).toString();
+    return label.startsWith("_dde_data") || label.startsWith("_dde_home");
+}
+
+bool DeviceUtils::isDataDisk(const QVariantMap &devInfo)
+{
+    return isDataDisk(toHash(devInfo));
 }
 
 bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
@@ -742,7 +755,7 @@ bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
     static QString rootDrive;
     static std::once_flag flg;
     std::call_once(flg, [] {
-        const QString &rootDev = DeviceUtils::getMountInfo("/", false);
+        const QString &rootDev = DeviceUtils::getMountInfo(QDir::rootPath(), false);
         const QString &rootDevId = DeviceUtils::getBlockDeviceId(rootDev);
         const auto &data = DevProxyMng->queryBlockInfo(rootDevId);
         rootDrive = data.value(GlobalServerDefines::DeviceProperty::kDrive).toString();
@@ -754,13 +767,7 @@ bool DeviceUtils::isSiblingOfRoot(const QVariantHash &devInfo)
 
 bool DeviceUtils::isSiblingOfRoot(const QVariantMap &devInfo)
 {
-    QVariantHash hash;
-    QMapIterator<QString, QVariant> iter(devInfo);
-    while (iter.hasNext()) {
-        iter.next();
-        hash.insert(iter.key(), iter.value());
-    }
-    return isSiblingOfRoot(hash);
+    return isSiblingOfRoot(toHash(devInfo));
 }
 
 bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
@@ -781,7 +788,7 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
-        qCWarning(logDFMBase) << "device: cannot parse mtab" << ret;
+        qCWarning(logDFMBase) << "Failed to parse mount table for DLNFS path search, return code:" << ret;
         return false;
     }
 
@@ -791,11 +798,14 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
             continue;
         if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
             QString mpt = unifyPath(mnt_fs_get_target(fs));
-            if (func(unifyPath(target), mpt))
+            if (func(unifyPath(target), mpt)) {
+                qCDebug(logDFMBase) << "DLNFS path match found - target:" << target << "mount point:" << mpt;
                 return true;
+            }
         }
     }
 
+    qCDebug(logDFMBase) << "No DLNFS path match found for target:" << target;
     return false;
 }
 
@@ -804,4 +814,13 @@ bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)
     QRegularExpression re(rex);
     QRegularExpressionMatch match = re.match(txt);
     return match.hasMatch();
+}
+
+QVariantHash DeviceUtils::toHash(const QVariantMap &map)
+{
+    QVariantHash hash;
+    hash.reserve(map.size());
+    for (auto it = map.constBegin(); it != map.constEnd(); ++it)
+        hash.insert(it.key(), it.value());
+    return hash;
 }

@@ -4,12 +4,17 @@
 
 #include "dconfigupgradeunit.h"
 #include "utils/upgradeutils.h"
+
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <QJsonObject>
+#include <QJsonArray>
 
 Q_DECLARE_LOGGING_CATEGORY(logToolUpgrade)
 
-using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
+using namespace dfm_upgrade;
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace DConfigKeys {
 static constexpr char kDFMMenuHidden[] { "dfm.menu.hidden" };
@@ -45,6 +50,7 @@ bool DConfigUpgradeUnit::upgrade()
     ret &= upgradeRecentConfigs();
     ret &= upgradeSearchConfigs();
     clearDiskHidden();
+    addOldGenericSettings();
 
     return ret;
 }
@@ -157,15 +163,28 @@ bool DConfigUpgradeUnit::upgradeMenuConfigs()
 
 bool DConfigUpgradeUnit::upgradeSmbConfigs()
 {
-    // 1. read main config value
-    auto oldVal = UpgradeUtils::genericAttribute("AlwaysShowOfflineRemoteConnections");
-    if (!oldVal.isValid())
+    static constexpr auto kOldKey { "AlwaysShowOfflineRemoteConnections" };
+    // 0. check old
+    if (checkOldGeneric(kOldKey)) {
+        qCDebug(logToolUpgrade) << "SMB configuration already processed, skipping";
         return true;
+    }
+
+    // 1. read main config value
+    auto oldVal = UpgradeUtils::genericAttribute(kOldKey);
+    if (!oldVal.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old SMB configuration found, skipping";
+        return true;
+    }
 
     auto alwaysShowSamba = oldVal.toBool();
     // 2. write to dconfig
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kSambaPermanent, alwaysShowSamba);
     qCInfo(logToolUpgrade) << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
@@ -179,42 +198,93 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
  */
 bool DConfigUpgradeUnit::upgradeRecentConfigs()
 {
-    auto oldValue = UpgradeUtils::genericAttribute("ShowRecentFileEntry");
-    if (!oldValue.isValid())
+    static constexpr auto kOldKey { "ShowRecentFileEntry" };
+
+    // 0. check old
+    if (checkOldGeneric(kOldKey)) {
+        qCDebug(logToolUpgrade) << "Recent file configuration already processed, skipping";
         return true;
+    }
+
+    // 1. read main config value
+    auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
+    if (!oldValue.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old recent file configuration found, skipping";
+        return true;
+    }
 
     const QString &configFile { "org.deepin.dde.file-manager.sidebar" };
-    if (!DConfigManager::instance()->addConfig(configFile))
+    if (!DConfigManager::instance()->addConfig(configFile)) {
+        qCCritical(logToolUpgrade) << "Failed to add sidebar configuration file:" << configFile;
         return false;
+    }
 
+    // 2. write to dconfig
     bool showRecent = oldValue.toBool();
     qCInfo(logToolUpgrade) << "upgrade: the old `showRecent` is" << showRecent;
     auto theSidebarVisiableList = DConfigManager::instance()->value(configFile, "itemVisiable").toMap();
     qCInfo(logToolUpgrade) << "upgrade: the new dconfig sidebar visiable list:" << theSidebarVisiableList;
     theSidebarVisiableList["recent"] = showRecent;
     DConfigManager::instance()->setValue(configFile, "itemVisiable", theSidebarVisiableList);
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
 bool DConfigUpgradeUnit::upgradeSearchConfigs()
 {
-    // 1. read main config value
-    auto oldValue = UpgradeUtils::genericAttribute("IndexFullTextSearch");
-    if (!oldValue.isValid())
+    static constexpr auto kOldKey { "IndexFullTextSearch" };
+
+    // 0. check old
+    if (checkOldGeneric(kOldKey)) {
+        qCInfo(logToolUpgrade) << "Search configuration already processed, skipping";
         return true;
+    }
+
+    // 1. read main config value
+    auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
+    if (!oldValue.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old search configuration found, skipping";
+        return true;
+    }
 
     const QString &configFile { "org.deepin.dde.file-manager.search" };
-    if (!DConfigManager::instance()->addConfig(configFile))
+    if (!DConfigManager::instance()->addConfig(configFile)) {
+        qCCritical(logToolUpgrade) << "Failed to add search configuration file:" << configFile;
         return false;
+    }
 
     bool ftsEnabled = oldValue.toBool();
     // 2. write to dconfig
     DConfigManager::instance()->setValue(configFile, "enableFullTextSearch", ftsEnabled);
     qCInfo(logToolUpgrade) << "upgrade: set search permanent to dconfig, value:" << ftsEnabled;
+
+    // 3. remove old config
+    oldGenericSettings.append(kOldKey);
+
     return true;
 }
 
 void DConfigUpgradeUnit::clearDiskHidden()
 {
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kDiskHidden, QStringList());
+}
+
+void DConfigUpgradeUnit::addOldGenericSettings()
+{
+    if (!oldGenericSettings.isEmpty())
+        UpgradeUtils::addOldGenericAttribute(QJsonArray::fromStringList(oldGenericSettings));
+}
+
+bool DConfigUpgradeUnit::checkOldGeneric(const QString &key)
+{
+    auto oldGeneric = UpgradeUtils::genericAttribute("OldAttributes");
+    if (oldGeneric.isValid() && oldGeneric.toStringList().contains(key)) {
+        qCDebug(logToolUpgrade) << "Old generic key already processed:" << key;
+        return true;
+    }
+
+    return false;
 }

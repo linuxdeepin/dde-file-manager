@@ -4,6 +4,7 @@
 
 #include "vaultremovebypasswordview.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultutils.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/encryption/vaultconfig.h"
 #include "utils/encryption/operatorcenter.h"
@@ -23,7 +24,6 @@
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
-using namespace PolkitQt1;
 
 VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     : QWidget(parent)
@@ -49,6 +49,7 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
         DFontSizeManager::instance()->bind(keyDeleteLabel, DFontSizeManager::T8, QFont::Medium);
         keyDeleteLabel->installEventFilter(this);
         keyDeleteLabel->setForegroundRole(DPalette::ColorType::LightLively);
+        fmDebug() << "Vault: Key delete label created for older vault version";
     }
 
     QVBoxLayout *mainLay = new QVBoxLayout;
@@ -60,6 +61,7 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
 
     connect(pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &VaultRemoveByPasswordView::onPasswordChanged);
     connect(tipsBtn, &QPushButton::clicked, this, [this] {
+        fmDebug() << "Vault: Tips button clicked, requesting password hint";
         QString strPwdHint("");
         if (OperatorCenter::getInstance()->getPasswordHint(strPwdHint)) {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
@@ -93,22 +95,24 @@ void VaultRemoveByPasswordView::buttonClicked(int index, const QString &text)
 
     switch (index) {
     case 0: {
+        fmDebug() << "Vault: Cancel button clicked, closing dialog";
         emit sigCloseDialog();
     } break;
     case 1: {
+        fmInfo() << "Vault: Delete button clicked, validating password";
         QString strPwd = pwdEdit->text();
         QString strCipher("");
         if (!OperatorCenter::getInstance()->checkPassword(strPwd, strCipher)) {
+            fmWarning() << "Vault: Password validation failed";
             showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
             return;
         }
 
-        auto ins = Authority::instance();
-        ins->checkAuthorization(kPolkitVaultRemove,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        fmInfo() << "Vault: Password validated successfully, requesting authorization";
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+
     } break;
     default:
         break;
@@ -134,12 +138,15 @@ void VaultRemoveByPasswordView::showToolTip(const QString &text, int duration, V
         floatWidget->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
         floatWidget->setWidget(tooltip);
     }
+
     if (EN_ToolTip::kWarning == enType) {
         //! 修复bug-51508 激活密码框的警告状态
         pwdEdit->setAlert(true);
         tooltip->setForegroundRole(DPalette::TextWarning);
+        fmDebug() << "Vault: Tooltip configured as warning type";
     } else {
         tooltip->setForegroundRole(DPalette::TextTitle);
+        fmDebug() << "Vault: Tooltip configured as information type";
     }
 
     if (parentWidget() && parentWidget()->parentWidget()) {
@@ -156,9 +163,11 @@ void VaultRemoveByPasswordView::showToolTip(const QString &text, int duration, V
         floatWidget->show();
         floatWidget->adjustSize();
         floatWidget->raise();
+        fmDebug() << "Vault: Tooltip displayed";
     }
 
     if (duration < 0) {
+        fmDebug() << "Vault: Tooltip set to persistent display";
         return;
     }
 
@@ -180,25 +189,33 @@ void VaultRemoveByPasswordView::onPasswordChanged(const QString &password)
     }
 }
 
-void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
 
-    if (Authority::Yes != result)
+    if (!result) {
+        fmWarning() << "Vault: Authorization failed, operation cancelled";
         return;
+    }
 
+    fmDebug() << "Vault: Authorization successful, attempting to lock vault";
     if (!VaultHelper::instance()->lockVault(false)) {
+        fmCritical() << "Vault: Failed to lock vault for removal";
         QString errMsg = tr("Failed to delete file vault");
         DDialog dialog(this);
         dialog.setIcon(QIcon::fromTheme("dialog-warning"));
         dialog.setTitle(errMsg);
         dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+        fmDebug() << "Vault: Showing error dialog for lock failure";
         dialog.exec();
         return;
     }
 
-    emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    fmDebug() << "Vault: Vault locked successfully, proceeding to removal progress";
+    QTimer::singleShot(0, this, [this](){
+        emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
+    });
 }
 
 bool VaultRemoveByPasswordView::eventFilter(QObject *obj, QEvent *evt)

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FRAMEMANAGER_P_H
-#define FRAMEANAGER_P_H
+#define FRAMEMANAGER_P_H
 
 #include "ddplugin_organizer_global.h"
 #include "framemanager.h"
@@ -12,6 +12,7 @@
 #include "models/collectionmodel.h"
 #include "interface/canvasinterface.h"
 #include "options/optionswindow.h"
+#include "options/alerthidealldialog.h"
 #include "utils/organizerutils.h"
 
 #include <dfm-framework/dpf.h>
@@ -32,23 +33,30 @@ public:
     QList<SurfacePointer> surfaces() const;
 public slots:
     void refeshCanvas();
+    void onHideAllKeyPressed();
 public slots:
     void enableChanged(bool e);
+    void enableVisibility(bool e);
+    void saveHideAllSequence(const QKeySequence &seq);
     void switchToCustom();
     void switchToNormalized(int cf);
     void showOptionWindow();
+    void onOrganizered();
+
 protected:
     QWidget *findView(QWidget *root) const;
+
 public:
     QMap<QString, SurfacePointer> surfaceWidgets;
-    CanvasOrganizer *organizer = nullptr;
-    CollectionModel *model = nullptr;
-    CanvasInterface *canvas = nullptr;
-    OptionsWindow *options = nullptr;
+    CanvasOrganizer *organizer { nullptr };
+    CollectionModel *model { nullptr };
+    CanvasInterface *canvas { nullptr };
+    OptionsWindow *options { nullptr };
+
 private:
     FrameManager *q = nullptr;
 };
 
 }
 
-#endif // FRAMEMANAGER_P_H
+#endif   // FRAMEMANAGER_P_H

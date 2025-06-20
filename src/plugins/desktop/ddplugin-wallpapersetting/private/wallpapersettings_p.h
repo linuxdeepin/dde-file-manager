@@ -12,9 +12,10 @@
 #include "dbus/screensaver_interface.h"
 #include "dbus/dbussessionmanager.h"
 
-#include <com_deepin_wm.h>
-
-#ifdef COMPILE_ON_V23
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include <com_deepin_wm.h>
+#endif
+#ifdef COMPILE_ON_V2X
 #    include "dbus/appearance_interface.h"
 #    define APPEARANCE_NAME org::deepin::dde::Appearance1
 #else
@@ -34,7 +35,9 @@ class QLabel;
 DWIDGET_USE_NAMESPACE
 
 namespace ddplugin_wallpapersetting {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 using WMInter = com::deepin::wm;
+#endif
 using AppearanceIfs = APPEARANCE_NAME;
 using SessionIfs = DBusSessionManager;
 using ScreenSaverIfs = com::deepin::ScreenSaver;
@@ -83,7 +86,9 @@ public:
     QString actualEffectivedWallpaper;
     QString currentSelectedWallpaper;
     WallpaperList *wallpaperList = nullptr;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     WMInter *wmInter = nullptr;
+#endif
     AppearanceIfs *appearanceIfs = nullptr;
     SessionIfs *sessionIfs = nullptr;
     ScreenSaverIfs *screenSaverIfs = nullptr;

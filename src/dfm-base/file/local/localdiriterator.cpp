@@ -10,6 +10,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
@@ -18,6 +20,7 @@
 
 USING_IO_NAMESPACE
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
 
 namespace DConfigKeys {
 static constexpr char kAllAsync[] { "dfm.iterator.allasync" };
@@ -59,27 +62,29 @@ FileInfoPointer LocalDirIteratorPrivate::fileInfo(const QSharedPointer<DFileInfo
     } else {
         isHidden = hideFileList.contains(fileName);
     }
+
     auto targetPath = dfmInfo->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
-    if (FileUtils::isLocalDevice(url) && (targetPath.isEmpty() || FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))) {
-        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url, dfmInfo));
+    if (ProtocolUtils::isLocalFile(url) && (targetPath.isEmpty() || ProtocolUtils::isLocalFile(QUrl::fromLocalFile(targetPath)))) {
+        info = QSharedPointer<SyncFileInfo>(new SyncFileInfo(url));
     } else {
         info = QSharedPointer<AsyncFileInfo>(new AsyncFileInfo(url, dfmInfo));
         info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes();
+        info.dynamicCast<AsyncFileInfo>()->cacheAsyncAttributes(q->property("QueryAttributes").toString());
     }
 
-    auto infoTrans = InfoFactory::transfromInfo<FileInfo>(url.scheme(), info);
-
-    if (infoTrans) {
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    if (info) {
+        if (!q->property("QueryAttributes").toString().isEmpty()
+            && q->property("QueryAttributes").toString() != "*") {
+            info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, true);
+            info->setExtendedAttributes(ExtInfoType::kFileNeedTransInfo, true);
+        }
+        info->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        info->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
     } else {
         qCWarning(logDFMBase) << "info is nullptr url = " << url;
     }
 
-    return infoTrans;
+    return info;
 }
 
 QList<FileInfoPointer> LocalDirIteratorPrivate::fileInfos()
@@ -134,6 +139,12 @@ QUrl LocalDirIterator::next()
  */
 bool LocalDirIterator::hasNext() const
 {
+    if (!d->initQuerry && d->dfmioDirIterator) {
+        d->initQuerry = true;
+        auto querry = property("QueryAttributes").toString();
+        if (!querry.isEmpty())
+            d->dfmioDirIterator->setQueryAttributes(querry);
+    }
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->hasNext();
 
@@ -156,7 +167,7 @@ QString LocalDirIterator::fileName() const
     if (path.isEmpty())
         return QString();
 
-    path = path.replace(QRegExp("/*/"), "/");
+    path = path.replace(QRegularExpression("/*/"), "/");
     if (path == "/")
         return QString();
 
@@ -203,7 +214,7 @@ void LocalDirIterator::cacheBlockIOAttribute()
     const QUrl &rootUrl = this->url();
     const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
     d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
-    d->isLocalDevice = FileUtils::isLocalDevice(rootUrl);
+    d->isLocalDevice = ProtocolUtils::isLocalFile(rootUrl);
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
 
@@ -238,6 +249,11 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         tmp->setReadable(sortInfo->isReadable);
         tmp->setWriteable(sortInfo->isWriteable);
         tmp->setExecutable(sortInfo->isExecutable);
+        tmp->setLastReadTime(sortInfo->lastRead);
+        tmp->setLastModifiedTime(sortInfo->lastModifed);
+        tmp->setCreateTime(sortInfo->create);
+        tmp->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(sortInfo->url.path()));
+        tmp->setInfoCompleted(true);
         wsortlist.append(tmp);
     }
     return wsortlist;
@@ -257,7 +273,7 @@ bool LocalDirIterator::oneByOne()
     if (info)
         return !info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() || !d->dfmioDirIterator;
 
-    return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
+    return !ProtocolUtils::isLocalFile(url()) || !d->dfmioDirIterator;
 }
 
 bool LocalDirIterator::initIterator()
@@ -269,6 +285,12 @@ bool LocalDirIterator::initIterator()
 
 DEnumeratorFuture *LocalDirIterator::asyncIterator()
 {
+    if (!d->initQuerry && d->dfmioDirIterator) {
+        d->initQuerry = true;
+        auto querry = property("QueryAttributes").toString();
+        if (!querry.isEmpty())
+            d->dfmioDirIterator->setQueryAttributes(querry);
+    }
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->asyncIterator();
     return nullptr;

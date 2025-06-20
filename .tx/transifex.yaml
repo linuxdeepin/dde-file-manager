@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: CC0-1.0
 filters:
 - filter_type: file
   source_file: translations/dde-file-manager.ts

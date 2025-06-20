@@ -4,48 +4,40 @@ project(dfmplugin-burn)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB BURN_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    )
-find_package(Dtk COMPONENTS Widget REQUIRED)
+# 设置二进制文件名
+set(BIN_NAME dfm-burn-plugin)
 
-add_library(${PROJECT_NAME}
+FILE(GLOB_RECURSE BURN_FILES CONFIGURE_DEPENDS
+    "./*.h"
+    "./*.cpp"
+    "./*.json"
+)
+
+# Qt6 依赖
+find_package(Qt6 COMPONENTS Core REQUIRED)
+
+# 创建共享库
+add_library(${BIN_NAME}
     SHARED
     ${BURN_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${BIN_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${DtkWidget_INCLUDE_DIRS}
+# 链接必要的库
+target_link_libraries(${BIN_NAME}
+    DFM6::base
+    DFM6::framework
 )
 
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFM::framework
-    
-    ${DtkWidget_LIBRARIES}
-)
-
-#install library file
+# 安装库文件
 install(TARGETS
-    ${PROJECT_NAME}
+    ${BIN_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_COMMON_EDGE_DIR}
+    ${DFM_PLUGIN_COMMON_CORE_DIR}
 )
 
-# install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+# 安装 dconfig 文件
 INSTALL_DCONFIG("org.deepin.dde.file-manager.burn.json")

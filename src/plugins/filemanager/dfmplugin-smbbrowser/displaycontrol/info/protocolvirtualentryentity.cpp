@@ -56,5 +56,8 @@ QUrl ProtocolVirtualEntryEntity::targetUrl() const
 {
     QString path = entryUrl.path();
     path.remove("." + QString(kVEntrySuffix));
-    return QUrl(path);
+    auto ret = QUrl(path);
+    if (ret.path() == "/" || ret.path().isEmpty())
+        return ret;
+    return VirtualEntryDbHandler::instance()->getFullSmbPath(path);
 }

@@ -173,12 +173,12 @@ TEST_F(UT_RootInfo, ClearTraversalThread)
     bool getCache = rootInfoObj->initThreadOfFileData(key, role, order, false);
 
     QString unexistKey("unexistThreadKey");
-    int threadCount = rootInfoObj->clearTraversalThread(unexistKey);
+    int threadCount = rootInfoObj->clearTraversalThread(unexistKey, false);
     EXPECT_EQ(threadCount, 1);
     EXPECT_EQ(rootInfoObj->discardedThread.count(), 0);
     EXPECT_FALSE(calledThreadQuit);
 
-    threadCount = rootInfoObj->clearTraversalThread(key);
+    threadCount = rootInfoObj->clearTraversalThread(key, false);
     EXPECT_EQ(threadCount, 0);
     EXPECT_EQ(rootInfoObj->discardedThread.count(), 1);
     EXPECT_TRUE(calledThreadQuit);
@@ -333,19 +333,25 @@ TEST_F(UT_RootInfo, DoThreadWatcherEvent)
 
     rootInfoObj->processFileEventRuning = true;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_FALSE(calledDoWatcherEvent);
 
     rootInfoObj->processFileEventRuning = false;
     rootInfoObj->cancelWatcherEvent = true;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_FALSE(calledDoWatcherEvent);
 
     rootInfoObj->processFileEventRuning = false;
     rootInfoObj->cancelWatcherEvent = false;
     rootInfoObj->doThreadWatcherEvent();
-    rootInfoObj->watcherEventFuture.waitForFinished();
+    for (auto &future : rootInfoObj->watcherEventFutures) {
+        future.waitForFinished();
+    }
     EXPECT_TRUE(calledDoWatcherEvent);
 }
 

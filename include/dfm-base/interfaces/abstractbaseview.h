@@ -32,6 +32,7 @@ public:
     virtual QList<QAction *> toolBarActionList() const;
     virtual QList<QUrl> selectedUrlList() const;
     virtual void refresh();
+    virtual QWidget *contentWidget() const;
 
 protected:
     void notifyStateChanged();

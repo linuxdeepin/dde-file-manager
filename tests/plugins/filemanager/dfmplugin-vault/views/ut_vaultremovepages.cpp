@@ -6,6 +6,7 @@
 #include "views/removevaultview/vaultremovebypasswordview.h"
 #include "views/removevaultview/vaultremoveprogressview.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultutils.h"
 
 #include <dfm-framework/event/eventdispatcher.h>
 
@@ -17,11 +18,8 @@
 #include <gtest/gtest.h>
 #include <stubext.h>
 
-#include <polkit-qt5-1/polkitqt1-authority.h>
-
 DPVAULT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-using namespace PolkitQt1;
 DPF_USE_NAMESPACE
 
 TEST(UT_VaultRemovePages, closeEvent)
@@ -50,7 +48,7 @@ TEST(UT_VaultRemovePages, onButtonClicked_cancel)
     bool checkAuthorization { false };
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&Authority::checkAuthorization, [ &checkAuthorization ]{ checkAuthorization = true; });
+    stub.set_lamda(&VaultUtils::showAuthorityDialog, [ &checkAuthorization ]{ checkAuthorization = true; });
 
     VaultRemovePages page;
     page.onButtonClicked(0, "");

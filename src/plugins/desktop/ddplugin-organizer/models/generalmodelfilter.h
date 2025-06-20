@@ -15,16 +15,19 @@ class GeneralModelFilter : public ModelDataHandler
 {
 public:
     explicit GeneralModelFilter();
-    bool installFilter(const QSharedPointer<ModelDataHandler> &filter);
-    void removeFilter(const QSharedPointer<ModelDataHandler> &filter);
+    virtual ~GeneralModelFilter();
+    bool installFilter(ModelDataHandler *filter);
+    void removeFilter(ModelDataHandler *filter);
     bool acceptInsert(const QUrl &url) override;
     QList<QUrl> acceptReset(const QList<QUrl> &urls) override;
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
     bool acceptUpdate(const QUrl &url, const QVector<int> &roles = {}) override;
+
 protected:
-    QList<QSharedPointer<ModelDataHandler>> modelFilters;
+    QList<ModelDataHandler *> modelFilters;
+    QList<ModelDataHandler *> defaultFilters;
 };
 
 }
 
-#endif // GENERALMODELFILTER_H
+#endif   // GENERALMODELFILTER_H

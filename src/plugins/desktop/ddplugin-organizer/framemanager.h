@@ -17,15 +17,17 @@ class FrameManager : public QObject
 {
     Q_OBJECT
     friend class FrameManagerPrivate;
+
 public:
     explicit FrameManager(QObject *parent = nullptr);
     ~FrameManager() override;
     bool initialize();
     void layout();
-    void turnOn(bool build = true);
+    void turnOn();
     void turnOff();
 
     bool organizerEnabled();
+
 signals:
 
 public slots:
@@ -33,12 +35,14 @@ public slots:
     void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
+
 protected:
     void switchMode(OrganizerMode mode);
+
 private:
     FrameManagerPrivate *d = nullptr;
 };
 
 }
 
-#endif // FRAMEMANAGER_H
+#endif   // FRAMEMANAGER_H

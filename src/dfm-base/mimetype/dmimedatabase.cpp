@@ -5,8 +5,10 @@
 #include "dmimedatabase.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QUrl>
 #include <QFileInfo>
@@ -43,13 +45,19 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
     QString path = fileInfo->pathOf(PathInfoType::kPath);
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
-        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        // fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
         if (fileInfo->nameOf(NameInfoType::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo->nameOf(NameInfoType::kFileName).endsWith(".lock") || fileInfo->nameOf(NameInfoType::kFileName).endsWith("lockfile")) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
                                               | QRegularExpression::OptimizeOnFirstUsageOption);
+#else
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                      QRegularExpression::DotMatchesEverythingOption
+                                              | QRegularExpression::DontCaptureOption);
+#endif
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);
@@ -65,7 +73,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
         }
     }
 
-    if (isMatchExtension || DeviceUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), mode);
@@ -93,6 +101,14 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
     if (!inod.isEmpty() && inodMimetypeCache.contains(inod)) {
         return inodMimetypeCache.value(inod);
     }
+
+    QUrl url = QUrl::fromLocalFile(fileName);
+    if (!ProtocolUtils::isLocalFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url))
+        return QMimeType();
+    auto link = FileUtils::symlinkTarget(url);
+    if (!link.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(link)))
+        return QMimeType();
+
     return mimeTypeForFile(QFileInfo(fileName), mode, inod, isGvfs);
 }
 
@@ -112,14 +128,20 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
 
-    //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+    // fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     if (!isMatchExtension) {
         if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
                                               | QRegularExpression::OptimizeOnFirstUsageOption);
+#else
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                      QRegularExpression::DotMatchesEverythingOption
+                                              | QRegularExpression::DontCaptureOption);
+#endif
 
             const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                                 QRegularExpression::DontCheckSubjectStringMatchOption);
@@ -135,7 +157,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             isMatchExtension = blackList.contains(filePath);
         }
     }
-    if (isMatchExtension || DeviceUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
@@ -165,7 +187,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 
 QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url) const
 {
-    if (dfmbase::FileUtils::isLocalFile(url))
+    if (url.isLocalFile())
         return mimeTypeForFile(url);
 
     return QMimeDatabase::mimeTypeForUrl(url);

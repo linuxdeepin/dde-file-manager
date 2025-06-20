@@ -35,7 +35,8 @@ public:
     ~CanvasOrganizer() override;
     virtual OrganizerMode mode() const = 0;
     virtual bool initialize(CollectionModel *) = 0;
-    inline CollectionModel *getModel() const {return model;}
+    inline CollectionModel *getModel() const { return model; }
+    inline QList<SurfacePointer> getSurfaces() const { return surfaces; }
     virtual void layout();
     virtual void detachLayout();
     virtual void setCanvasModelShell(CanvasModelShell *sh);
@@ -45,17 +46,21 @@ public:
     virtual void setCanvasSelectionShell(CanvasSelectionShell *sh);
     virtual void setSurfaces(const QList<SurfacePointer> &surfaces);
     virtual void reset();
+    virtual bool isEditing() const;
 
 signals:
     void collectionChanged();
+    void hideAllKeyPressed() const;
 
 protected slots:
     virtual bool filterDataRested(QList<QUrl> *urls);
     virtual bool filterDataInserted(const QUrl &url);
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
+    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData);
     virtual bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
+    virtual bool filterKeyPress(int viewIndex, int key, int modifiers) const;
     virtual bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
+    virtual bool filterContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos) const;
     //virtual bool filterMousePress(int viewIndex, int button, const QPoint &viewPos) const;
 protected:
     CollectionModel *model = nullptr;
@@ -65,8 +70,9 @@ protected:
     CanvasManagerShell *canvasManagerShell = nullptr;
     CanvasSelectionShell *canvasSelectionShell = nullptr;
     QList<SurfacePointer> surfaces;
+    bool editing = false;
 };
 
 }
 
-#endif // MUSTERMODE_H
+#endif   // MUSTERMODE_H

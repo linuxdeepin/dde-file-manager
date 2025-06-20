@@ -96,7 +96,7 @@
                     "options": [
                         {
                             "key": "icon_size",
-                            "name": "Default size:",
+                            "name": "Default icon size:",
                             "type": "combobox",
                             "items": [
                                 "Extra small",
@@ -166,18 +166,6 @@
                   "key": "index",
                   "name": "Index",
                   "options": [
-                    {
-                            "key": "index_internal",
-                            "text": "Auto index internal disk",
-                            "type": "checkbox",
-                            "default": true
-                    },
-                    {
-                            "key": "index_external",
-                            "text": "Index external storage device after connected to computer",
-                            "type": "checkbox",
-                            "default": false
-                    },
                     {
                             "key": "index_search",
                             "text": "Full-Text search",

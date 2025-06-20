@@ -9,15 +9,12 @@
 using namespace ddplugin_organizer;
 
 CustomDataHandler::CustomDataHandler(QObject *parent)
-    : CollectionDataProvider(parent)
-    , ModelDataHandler()
+    : CollectionDataProvider(parent), ModelDataHandler()
 {
-
 }
 
 CustomDataHandler::~CustomDataHandler()
 {
-
 }
 
 void CustomDataHandler::check(const QSet<QUrl> &vaild)
@@ -40,8 +37,15 @@ QList<CollectionBaseDataPtr> CustomDataHandler::baseDatas() const
 
 bool CustomDataHandler::addBaseData(const CollectionBaseDataPtr &base)
 {
-    if (!base || collections.contains(base->key))
+    if (!base) {
+        fmWarning() << "Cannot add null collection base data";
         return false;
+    }
+
+    if (collections.contains(base->key)) {
+        fmWarning() << "Collection with key already exists:" << base->key;
+        return false;
+    }
 
     collections.insert(base->key, base);
     return true;
@@ -99,12 +103,12 @@ QString CustomDataHandler::replace(const QUrl &oldUrl, const QUrl &newUrl)
     }
 
     if (oldIdx < 0) {
-        fmWarning() << "replace: no old url:" << oldUrl;
+        fmWarning() << "Replace failed - old URL not found:" << oldUrl;
         return "";
     }
 
     if (newIdx >= 0) {
-        fmWarning() << "replace: new url is existed:" << newUrl;
+        fmWarning() << "Replace failed - new URL already exists:" << newUrl;
         return "";
     }
 
@@ -129,11 +133,15 @@ void CustomDataHandler::insert(const QUrl &url, const QString &key, const int in
 {
     auto it = collections.find(key);
     if (Q_UNLIKELY(it == collections.end())) {
+        fmInfo() << "Creating new collection" << key << "for URL:" << url;
         CollectionBaseDataPtr base(new CollectionBaseData);
         base->key = key;
         base->items << url;
     } else {
-        it.value()->items.insert(index, url);
+        if (it.value()->items.size() < index || index < 0)
+            it.value()->items.append(url);
+        else
+            it.value()->items.insert(index, url);
     }
 
     emit itemsChanged(key);
@@ -143,10 +151,9 @@ bool CustomDataHandler::acceptInsert(const QUrl &url)
 {
     // todo(wcl) 新建流程
 
-
     for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
         if (iter.value()->items.contains(url)) {
-           return true;
+            return true;
         }
     }
 
@@ -171,7 +178,7 @@ bool CustomDataHandler::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
         if (iter.value()->items.contains(oldUrl)
-                || iter.value()->items.contains(newUrl))
+            || iter.value()->items.contains(newUrl))
             return true;
     }
 

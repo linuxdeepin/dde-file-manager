@@ -1,0 +1,15 @@
+include(CMakeFindDependencyMacro)
+
+# 添加必要的依赖
+find_dependency(dfm6-io)
+find_dependency(dfm6-mount)
+find_dependency(dfm6-burn)
+find_dependency(Qt6 COMPONENTS Core Widgets Gui Concurrent DBus Sql Network)
+find_dependency(Dtk6 COMPONENTS Core Widget Gui)
+
+set(@BIN_NAME@_INCLUDE_DIR @CMAKE_INSTALL_FULL_INCLUDEDIR@)
+set(@BIN_NAME@_LIBRARIES @BIN_NAME@)
+
+if(NOT TARGET @BIN_NAME@)
+    include("${CMAKE_CURRENT_LIST_DIR}/@BIN_NAME@Targets.cmake")
+endif()

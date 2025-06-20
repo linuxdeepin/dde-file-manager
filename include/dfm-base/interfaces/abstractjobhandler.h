@@ -34,7 +34,7 @@ public:
         kRevocation = 0x200,   // 拷贝时不处理文件名称
         kCopyRemote = 0x400,   // 深信服远程拷贝
         kRedo = 0x800,   // 重新执行（ctrl + Y）
-        kCountProgressCustomize = 0x800,   // 强制使用自己统计进度
+        kCountProgressCustomize = 0x1000,   // 强制使用自己统计进度
     };
     Q_ENUM(JobFlag)
     Q_DECLARE_FLAGS(JobFlags, JobFlag)
@@ -248,6 +248,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
     void workerFinish();
     void requestRemoveTaskWidget();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
+    void requestTaskDailog();
 Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
@@ -280,6 +281,7 @@ private:
 }   // namespace dfmbase
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback);

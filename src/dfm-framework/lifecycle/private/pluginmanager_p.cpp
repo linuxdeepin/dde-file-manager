@@ -4,6 +4,7 @@
 
 #include "pluginmetaobject_p.h"
 #include "pluginmanager_p.h"
+#include "pluginquickmetadata_p.h"
 
 #include <dfm-framework/listener/listener.h>
 #include <dfm-framework/lifecycle/plugin.h>
@@ -88,13 +89,13 @@ bool PluginManagerPrivate::readPlugins()
     std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
         readJsonToMeta(obj);
         const QString &pluginName { obj->name() };
-        if (lazyLoadPluginsNames.contains(pluginName)) {
+        if (lazyLoadPluginNames.contains(pluginName)) {
             qCDebug(logDPF) << "Skip load(lazy load): " << pluginName;
             return;
         }
 
         if (lazyPluginFilter && lazyPluginFilter(pluginName)) {
-            lazyLoadPluginsNames.append(pluginName);
+            lazyLoadPluginNames.append(pluginName);
             qCDebug(logDPF) << "Skip load(lazy load by filter): " << pluginName;
             return;
         }
@@ -121,16 +122,26 @@ bool PluginManagerPrivate::readPlugins()
  */
 void PluginManagerPrivate::scanfAllPlugin()
 {
-    if (pluginLoadIIDs.isEmpty())
+    if (pluginLoadIIDs.isEmpty()) {
+        qCWarning(logDPF) << "PluginManagerPrivate: no plugin IIDs configured, skipping scan";
         return;
+    }
+
+    qCInfo(logDPF) << "PluginManagerPrivate: starting plugin scan in" << pluginLoadPaths.size() << "paths";
+    int totalScanned = 0;
+    int validPlugins = 0;
 
     for (const QString &path : pluginLoadPaths) {
+        qCDebug(logDPF) << "PluginManagerPrivate: scanning path:" << path;
         QDirIterator dirItera(path, { "*.so" },
                               QDir::Filter::Files,
                               QDirIterator::IteratorFlag::NoIteratorFlags);
 
+        int pathScanned = 0;
         while (dirItera.hasNext()) {
             dirItera.next();
+            totalScanned++;
+            pathScanned++;
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
             const QString &fileName { dirItera.path() + "/" + dirItera.fileName() };
             qCDebug(logDPF) << "scan plugin:" << fileName;
@@ -138,16 +149,26 @@ void PluginManagerPrivate::scanfAllPlugin()
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&iid = metaJson.value("IID").toString();
-            if (!pluginLoadIIDs.contains(iid))
+            if (!pluginLoadIIDs.contains(iid)) {
+                qCWarning(logDPF) << "Invalid iid:" << fileName << iid;
                 continue;
+            }
 
             bool isVirtual = dataJson.contains(kVirtualPluginMeta) && dataJson.contains(kVirtualPluginList);
-            if (isVirtual)
+            if (isVirtual) {
+                qCDebug(logDPF) << "PluginManagerPrivate: found virtual plugin:" << fileName;
                 scanfVirtualPlugin(fileName, dataJson);
-            else
+            } else {
+                qCDebug(logDPF) << "PluginManagerPrivate: found real plugin:" << fileName;
                 scanfRealPlugin(metaObj, dataJson);
+            }
+            validPlugins++;
         }
+        qCDebug(logDPF) << "PluginManagerPrivate: scanned" << pathScanned << "files in path:" << path;
     }
+    
+    qCInfo(logDPF) << "PluginManagerPrivate: plugin scan completed - total scanned:" << totalScanned 
+                   << "valid plugins:" << validPlugins << "in read queue:" << readQueue.size();
 }
 
 void PluginManagerPrivate::scanfRealPlugin(PluginMetaObjectPointer metaObj,
@@ -239,6 +260,8 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
 
 void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData)
 {
+    qCDebug(logDPF) << "PluginManagerPrivate: parsing JSON metadata for plugin:" << metaObject->d->name;
+    
     metaObject->d->version = metaData.value(kPluginVersion).toString();
     metaObject->d->category = metaData.value(kPluginCategory).toString();
     metaObject->d->description = metaData.value(kPluginDescription).toString();
@@ -255,10 +278,60 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
         depends.pluginName = dependName;
         depends.pluginVersion = dependVersion;
         metaObject->d->depends.append(depends);
+        qCDebug(logDPF) << "PluginManagerPrivate: added dependency:" << dependName << "version:" << dependVersion;
         ++itera;
     }
 
     metaObject->d->state = PluginMetaObject::kReaded;
+
+    // QML 组件信息
+    QJsonArray &&quickArray = metaData.value(kQuick).toArray();
+    qCDebug(logDPF) << "PluginManagerPrivate: processing" << quickArray.size() << "Quick components for plugin:" << metaObject->d->name;
+    
+    for (const auto &quickItr : quickArray) {
+        const QJsonObject &quick = quickItr.toObject();
+
+        QString quickParent = quick.value(kQuickParent).toString();
+        // Quick plugin 的 parent 必须在 Depends 字段存在
+        if (!quickParent.isEmpty() && quickParent.contains(".")) {
+            QString parentPlugin = quickParent.split('.').first();
+            const QList<PluginDepend> &depends = metaObject->d->depends;
+            auto findItr = std::find_if(depends.cbegin(), depends.cend(), [&parentPlugin](const PluginDepend &depend) {
+                return depend.pluginName == parentPlugin;
+            });
+
+            if (findItr == metaObject->d->depends.end()) {
+                qCWarning(logDPF) << QString("Quick plugin %1 not find parent %2 plugin name on Depends field!")
+                                             .arg(metaObject->d->name)
+                                             .arg(quickParent);
+                continue;
+            }
+        }
+
+        // id url 不为空
+        QString url = quick.value(kQuickUrl).toString();
+        QString id = quick.value(kQuickId).toString();
+        if (url.isEmpty() || id.isEmpty()) {
+            qCWarning(logDPF) << QString("Quick plugin's id %1 or url %2 is empty").arg(id).arg(url);
+            continue;
+        }
+
+        PluginQuickMetaPtr quickMeta = PluginQuickMetaPtr::create();
+        // QML Url = [插件绝对路径 plugin.path] / [插件名称 plugin.name] / [url]
+        QString pluginPath = QFileInfo(metaObject->fileName()).absolutePath();
+        QString fullPath = pluginPath + QDir::separator() + metaObject->name() + QDir::separator() + url;
+        quickMeta->d->quickUrl = QUrl::fromLocalFile(fullPath);
+        quickMeta->d->quickId = id;
+        quickMeta->d->plugin = metaObject->name();
+        quickMeta->d->quickType = quick.value(kQuickType).toString();
+        quickMeta->d->quickApplet = quick.value(kQuickApplet).toString();
+        quickMeta->d->quickParent = quickParent;
+
+        metaObject->d->quickMetaList.append(quickMeta);
+        qCDebug(logDPF) << "PluginManagerPrivate: added Quick component:" << id << "url:" << fullPath;
+    }
+    
+    qCDebug(logDPF) << "PluginManagerPrivate: JSON metadata parsing completed for plugin:" << metaObject->d->name;
 }
 
 /*!
@@ -270,10 +343,15 @@ bool PluginManagerPrivate::loadPlugins()
     dependsSort(&loadQueue, &pluginsToLoad);
 
     bool ret = true;
-    std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
-        if (!PluginManagerPrivate::doLoadPlugin(pointer))
+    for (auto iter = loadQueue.begin(); iter != loadQueue.end();) {
+        if (!PluginManagerPrivate::doLoadPlugin(*iter)) {
+            qCWarning(logDPF) << "Failed to load plugin:" << (*iter)->name() << ", removing from queue";
+            iter = loadQueue.erase(iter);   // 移除失败的插件并获取下一个迭代器
             ret = false;
-    });
+        } else {
+            ++iter;   // 加载成功,继续下一个
+        }
+    }
     qCInfo(logDPF) << "End loading all plugins.";
 
     return ret;
@@ -368,6 +446,55 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool PluginManagerPrivate::checkPluginQtVersion(PluginMetaObjectPointer pointer)
+{
+    Q_ASSERT(pointer && pointer->d->loader);
+
+    auto name { pointer->d->name };
+    if (qtVersionInsensitivePluginNames.contains(name)) {
+        qCDebug(logDPF) << "Skip Qt version check" << name;
+        return true;
+    }
+
+    // Create QLibrary instance using the plugin's file path
+    QLibrary lib(pointer->d->loader->fileName());
+    if (!lib.load()) {
+        pointer->d->error = QString("Failed to load library for version check: %1").arg(lib.errorString());
+        return false;
+    }
+
+    // Use QLibrary to resolve qVersion symbol
+    using QVersionFunction = const char *(*)();
+    auto qVersionFunc = reinterpret_cast<QVersionFunction>(lib.resolve("qVersion"));
+
+    if (!qVersionFunc) {
+        pointer->d->error = QString("Plugin '%1' does not link against Qt").arg(pointer->d->name);
+        lib.unload();
+        return false;
+    }
+
+    const QString pluginQtVersion = QString::fromLatin1(qVersionFunc());
+    lib.unload();
+
+    if (!pluginQtVersion.startsWith('6')) {
+        pointer->d->error = QString("Qt version compatibility check failed:\n"
+                                    "- Plugin name: %1\n"
+                                    "- Plugin path: %2\n"
+                                    "- Plugin Qt version: %3\n"
+                                    "- Application Qt version: %4\n"
+                                    "Error: Qt6 application cannot load Qt%3 plugins.")
+                                    .arg(pointer->d->name)
+                                    .arg(pointer->fileName())
+                                    .arg(pluginQtVersion)
+                                    .arg(QString::fromLatin1(qVersion()));
+        return false;
+    }
+
+    return true;
+}
+#endif
+
 bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
 {
     Q_ASSERT(pointer);
@@ -388,16 +515,30 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
         return false;
     }
 
+    qCInfo(logDPF) << "PluginManagerPrivate: starting to load plugin:" << pointer->d->name;
     pointer->d->state = PluginMetaObject::State::kLoading;
 
     if (pointer->isVirtual() && loadedVirtualPlugins.contains(pointer->d->realName)) {
         auto creator = qobject_cast<PluginCreator *>(pointer->d->loader->instance());
-        if (creator)
+        if (creator) {
             pointer->d->plugin = creator->create(pointer->name());
+            qCDebug(logDPF) << "PluginManagerPrivate: created virtual plugin instance for:" << pointer->d->name;
+        } else {
+            qCWarning(logDPF) << "PluginManagerPrivate: failed to get creator for virtual plugin:" << pointer->d->name;
+        }
         pointer->d->state = PluginMetaObject::State::kLoaded;
         qCInfo(logDPF) << "Virtual Plugin: " << pointer->d->name << " has been loaded";
         return true;
     }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Check Qt version compatibility after plugin is loaded
+    if (!checkPluginQtVersion(pointer)) {
+        qCCritical(logDPF) << pointer->d->error;
+        pointer->d->loader->unload();
+        return false;
+    }
+#endif
 
     if (!pointer->d->loader->load()) {
         pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
@@ -409,14 +550,21 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer pointer)
     bool isNullPluginInstance { false };
     if (pointer->isVirtual()) {
         auto creator = qobject_cast<PluginCreator *>(pointer->d->loader->instance());
-        if (creator)
+        if (creator) {
             pointer->d->plugin = creator->create(pointer->name());
-        else
+            qCDebug(logDPF) << "PluginManagerPrivate: created virtual plugin instance:" << pointer->d->name;
+        } else {
             isNullPluginInstance = true;
+            qCWarning(logDPF) << "PluginManagerPrivate: failed to get creator for virtual plugin:" << pointer->d->name;
+        }
     } else {
         pointer->d->plugin = QSharedPointer<Plugin>(qobject_cast<Plugin *>(pointer->d->loader->instance()));
-        if (pointer->d->plugin.isNull())
+        if (pointer->d->plugin.isNull()) {
             isNullPluginInstance = true;
+            qCWarning(logDPF) << "PluginManagerPrivate: failed to get plugin instance for:" << pointer->d->name;
+        } else {
+            qCDebug(logDPF) << "PluginManagerPrivate: got plugin instance for:" << pointer->d->name;
+        }
     }
 
     if (isNullPluginInstance) {

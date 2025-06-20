@@ -14,8 +14,6 @@
 
 #include <QComboBox>
 
-#include <polkit-qt5-1/PolkitQt1/Authority>
-
 namespace dfmplugin_vault {
 class RetrievePasswordView : public QFrame
 {
@@ -76,7 +74,7 @@ private slots:
      * /brief slotCheckAuthorizationFinished 异步授权时，此函数接收授权完成的结果
      * /param result 授权结果 成功或失败
      */
-    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
+    void slotCheckAuthorizationFinished(bool result);
 
 private:
     /*!
@@ -86,8 +84,6 @@ private:
 
 protected:
     void showEvent(QShowEvent *event) override;
-
-    void closeEvent(QCloseEvent *event) override;
 
 private:
     //! 找回密码页面标题
@@ -114,7 +110,6 @@ private:
     QString validationResults;
 
     QGridLayout *funLayout { nullptr };
-    DTK_WIDGET_NAMESPACE::DFileDialog *fileDialog { nullptr };
 };
 }
 #endif   // VAULTRETRIEVEPASSWORD_H

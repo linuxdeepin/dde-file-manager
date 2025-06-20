@@ -1,0 +1,30 @@
+{
+    "Name" : "dfmplugin-trash",
+    "Version" : "1.0.0",
+    "CompatVersion" : "1.0.0",
+    "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+    "License" : [
+    ],
+    "Category" : "",
+    "Description" : "The trash plugin for the filemanager.",
+    "UrlLink" : "https://www.uniontech.com",
+    "Depends" : [
+        {"Name" : "dfmplugin-trashcore", "Version": "1.0.0"}
+    ],
+    "Custom": {
+        "QuickAccessDisplay" : [{
+            "MarkName" : "Trash",
+            "Url" : "trash:///",
+            "DefaultIndex" : 7,
+            "SidebarInfo" : {
+                "Name": "Trash",
+                "Icon": "user-trash-symbolic",
+                "Group": "Group_Common",
+                "VisiableControl" : "trash",
+                "ReportName" : "Trash"
+            }
+        }],
+        "PluginSchemes": ["trash"]
+    }
+}

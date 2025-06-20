@@ -12,6 +12,7 @@
 #include <dfm-base/base/standardpaths.h>
 
 #include <dfm-io/dfmio_utils.h>
+#include <unistd.h>
 
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -67,9 +68,22 @@ void VirtualEntryDbHandler::removeData(const QString &stdSmb)
 
 void VirtualEntryDbHandler::saveAggregatedAndSperated(const QString &stdSmb, const QString &displayName)
 {
+    // seperate entry
     VirtualEntryData data(stdSmb);
     data.setDisplayName(displayName);
+    {
+        QString key(stdSmb);
+        while (key.endsWith("/"))
+            key.chop(1);
+        static QString kRecordFilePath = QString("/tmp/dfm_smb_mount_%1.ini").arg(getuid());
+        static QString kRecordGroup = "defaultSmbPath";
+        static QRegularExpression kRegx { "/|\\.|:" };
+        key = key.replace(kRegx, "_");
+        QSettings sets(kRecordFilePath, QSettings::IniFormat);
+        data.setTargetPath(sets.value(QString("%1/%2").arg(kRecordGroup).arg(key), "").toString());
+    }
     saveData(data);
+    data.setTargetPath("");
 
     data.setKey(protocol_display_utilities::getSmbHostPath(stdSmb));
     data.setDisplayName(data.getHost());
@@ -84,6 +98,9 @@ void VirtualEntryDbHandler::saveData(const VirtualEntryData &data)
     bool inserted = handler->insert<VirtualEntryData>(data, true) >= 0;
     if (!inserted) {
         // do update.
+        const auto &field = Expression::Field<VirtualEntryData>;
+        handler->update<VirtualEntryData>(field("targetPath") = data.getTargetPath(),
+                                          field("key") == data.getKey());
     }
 }
 
@@ -122,15 +139,31 @@ QString VirtualEntryDbHandler::getDisplayNameOf(const QUrl &entryUrl)
     QString path = entryUrl.path();
     path.remove("." + QString(kVEntrySuffix));   // ==> smb://1.2.3.4/hello/
     QUrl u(path);
-    if (u.path().isEmpty())
+    if (u.path().isEmpty()) {
+        fmDebug() << "Empty path for URL, returning host:" << u.host();
         return u.host();
+    }
 
     Q_ASSERT(handler);
     const auto &field = Expression::Field<VirtualEntryData>;
     auto data = handler->query<VirtualEntryData>().where(field("key") == path).toBean();
-    if (data)
+    if (data) {
+        fmDebug() << "Found display name for path:" << path << "name:" << data->getDisplayName();
         return data->getDisplayName();
+    }
+
+    fmWarning() << "No display name found for path:" << path;
     return "";
+}
+
+QString VirtualEntryDbHandler::getFullSmbPath(const QString &stdSmb)
+{
+    Q_ASSERT(handler);
+    const auto &field = Expression::Field<VirtualEntryData>;
+    auto data = handler->query<VirtualEntryData>().where(field("key") == stdSmb).toBean();
+    if (data)
+        return stdSmb + data->getTargetPath();
+    return stdSmb;
 }
 
 bool VirtualEntryDbHandler::checkDbExists()
@@ -150,7 +183,7 @@ bool VirtualEntryDbHandler::checkDbExists()
     handler = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
-        fmWarning() << "The database is invalid! open error";
+        fmCritical() << "The database is invalid! open error for path:" << dbFilePath;
         return false;
     }
     db.close();
@@ -172,4 +205,28 @@ VirtualEntryDbHandler::VirtualEntryDbHandler(QObject *parent)
     fmDebug() << "start checking db info";
     checkDbExists();
     fmDebug() << "end checking db info";
+    fmDebug() << "start checking db struct";
+    checkAndUpdateTable();
+    fmDebug() << "end checking db struct";
+}
+
+void VirtualEntryDbHandler::checkAndUpdateTable()
+{
+    Q_ASSERT(handler);
+    QString tableName = SqliteHelper::tableName<VirtualEntryData>();
+
+    auto alterTable = [=] {
+        bool ret = handler->excute(QString("ALTER TABLE %1 ADD COLUMN targetPath TEXT")
+                                           .arg(tableName));
+        fmInfo() << "alter table: " << ret;
+    };
+    handler->excute(QString("PRAGMA table_info(%1)").arg(tableName), [=](QSqlQuery *query) {
+        while (query->next()) {
+            if (query->value(1).toString() == "targetPath") {
+                fmDebug() << "Table structure is up to date, targetPath column exists";
+                return;
+            }
+        }
+        alterTable();
+    });
 }

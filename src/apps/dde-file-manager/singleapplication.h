@@ -27,6 +27,9 @@ public slots:
     void readData();
     void closeServer();
 
+protected:
+    virtual void handleQuitAction() override;
+
 private:
     static QLocalSocket *getNewClientConnect(const QString &key, const QByteArray &message);
     static QString userServerName(const QString &key);

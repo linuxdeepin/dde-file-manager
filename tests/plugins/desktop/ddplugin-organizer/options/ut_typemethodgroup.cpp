@@ -21,7 +21,7 @@ TEST(TypeMethodGroup, construct)
     EXPECT_FALSE(type.categoryName.value(kCatPicture).isEmpty());
     EXPECT_FALSE(type.categoryName.value(kCatVideo).isEmpty());
     EXPECT_FALSE(type.categoryName.value(kCatMusic).isEmpty());
-    EXPECT_FALSE(type.categoryName.value(kCatFloder).isEmpty());
+    EXPECT_FALSE(type.categoryName.value(kCatFolder).isEmpty());
 }
 
 TEST(TypeMethodGroup, id)
@@ -42,9 +42,8 @@ TEST(TypeMethodGroup, build_none)
     type.categories.clear();
 }
 
-namespace
-{
-    inline const char kKeyCheckboxID[] = "CheckboxID";
+namespace {
+inline const char kKeyCheckboxID[] = "CheckboxID";
 }
 
 TEST(TypeMethodGroup, build_all)
@@ -52,8 +51,7 @@ TEST(TypeMethodGroup, build_all)
     TypeMethodGroup type;
     stub_ext::StubExt stub;
     ItemCategories enabled(kCatDefault);
-    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]()
-    {
+    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]() {
         return enabled;
     });
 
@@ -72,7 +70,7 @@ TEST(TypeMethodGroup, build_all)
     EXPECT_TRUE(enabled.testFlag(kCatPicture));
     EXPECT_TRUE(enabled.testFlag(kCatVideo));
     EXPECT_TRUE(enabled.testFlag(kCatMusic));
-    EXPECT_TRUE(enabled.testFlag(kCatFloder));
+    EXPECT_TRUE(enabled.testFlag(kCatFolder));
 }
 
 TEST(TypeMethodGroup, build_allflags)
@@ -81,10 +79,8 @@ TEST(TypeMethodGroup, build_allflags)
     stub_ext::StubExt stub;
     ItemCategories enabled(kCatApplication
                            | kCatDocument | kCatPicture
-                           | kCatVideo | kCatMusic | kCatFloder
-                           );
-    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]()
-    {
+                           | kCatVideo | kCatMusic | kCatFolder);
+    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]() {
         return enabled;
     });
 
@@ -103,7 +99,7 @@ TEST(TypeMethodGroup, build_allflags)
     EXPECT_TRUE(enabled.testFlag(kCatPicture));
     EXPECT_TRUE(enabled.testFlag(kCatVideo));
     EXPECT_TRUE(enabled.testFlag(kCatMusic));
-    EXPECT_TRUE(enabled.testFlag(kCatFloder));
+    EXPECT_TRUE(enabled.testFlag(kCatFolder));
 }
 
 TEST(TypeMethodGroup, build_flag)
@@ -111,8 +107,7 @@ TEST(TypeMethodGroup, build_flag)
     TypeMethodGroup type;
     stub_ext::StubExt stub;
     ItemCategories enabled(kCatVideo);
-    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]()
-    {
+    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]() {
         return enabled;
     });
 
@@ -135,7 +130,7 @@ TEST(TypeMethodGroup, build_flag)
     EXPECT_FALSE(enabled.testFlag(kCatPicture));
     EXPECT_TRUE(enabled.testFlag(kCatVideo));
     EXPECT_FALSE(enabled.testFlag(kCatMusic));
-    EXPECT_FALSE(enabled.testFlag(kCatFloder));
+    EXPECT_FALSE(enabled.testFlag(kCatFolder));
 }
 
 TEST(TypeMethodGroup, subWidgets)
@@ -143,7 +138,7 @@ TEST(TypeMethodGroup, subWidgets)
     CheckBoxWidget wid("");
     TypeMethodGroup type;
     type.categories << &wid;
-    auto list =  type.subWidgets();
+    auto list = type.subWidgets();
 
     ASSERT_EQ(list.size(), 1);
     EXPECT_EQ(list.first(), &wid);
@@ -154,15 +149,15 @@ TEST(TypeMethodGroup, onChenged)
 {
     bool connect = false;
     stub_ext::StubExt stub;
-    stub.set_lamda(&ConfigPresenter::switchToNormalized,[&connect](ConfigPresenter *self, int){
+    stub.set_lamda(&ConfigPresenter::switchToNormalized, [&connect](ConfigPresenter *self, int) {
         __DBG_STUB_INVOKE__
         connect = true;
     });
     TypeMethodGroup type;
     CheckBoxWidget *check = new CheckBoxWidget("temp_check");
-    check->setProperty("CheckboxID",1);
-    QObject::connect(check,&CheckBoxWidget::chenged,&type,&TypeMethodGroup::onChenged);
-    check->chenged(true);
+    check->setProperty("CheckboxID", 1);
+    QObject::connect(check, &CheckBoxWidget::changed, &type, &TypeMethodGroup::onChanged);
+    check->changed(true);
 
     EXPECT_FALSE(connect);
 

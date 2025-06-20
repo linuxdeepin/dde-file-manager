@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 namespace dfmbase {
 
@@ -19,7 +19,7 @@ QString InfoFactory::scheme(const QUrl &url)
     if (scheme != Global::Scheme::kFile)
         return scheme;
 
-    if (!FileUtils::isLocalDevice(url))
+    if (!ProtocolUtils::isLocalFile(url))
         return Global::Scheme::kAsyncFile;
 
     dfmio::DFileInfo dinfo(url);
@@ -27,7 +27,7 @@ QString InfoFactory::scheme(const QUrl &url)
         return scheme;
 
     auto targetPath = dinfo.attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
-    if (!targetPath.isEmpty() && !FileUtils::isLocalDevice(QUrl::fromLocalFile(targetPath)))
+    if (!targetPath.isEmpty() && !ProtocolUtils::isLocalFile(QUrl::fromLocalFile(targetPath)))
         scheme = Global::Scheme::kAsyncFile;
 
     return scheme;

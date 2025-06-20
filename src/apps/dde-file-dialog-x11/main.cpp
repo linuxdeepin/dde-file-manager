@@ -6,7 +6,6 @@
 
 #include <DApplication>
 #include <QDir>
-#include <QTextCodec>
 #include <QIcon>
 
 #include <dfm-base/dfm_plugin_defines.h>
@@ -22,6 +21,8 @@ Q_LOGGING_CATEGORY(logAppDialogX11, "org.deepin.dde.filemanager.filedialog-x11")
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -33,24 +34,25 @@ static constexpr char kDialogPluginInterface[] { "org.deepin.plugin.filedialog" 
 static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 
-static constexpr char kDialogCorePluginName[] { "filedialogplugin-core" };
-static constexpr char kDialogCoreLibName[] { "libfiledialogplugin-core.so" };
+static constexpr char kDialogCorePluginName[] { "filedialog-core-plugin" };
+static constexpr char kDialogCoreLibName[] { "libfiledialog-core-plugin.so" };
 static constexpr char kDFMCorePluginName[] { "dfmplugin-core" };
-static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
+static constexpr char kDFMCoreLibName[] { "libdfm-core-plugin.so" };
 
-static void initLog()
+static void initLogFilter()
 {
 #ifdef DTKCORE_CLASS_DConfigFile
     LoggerRules::instance().initLoggerRules();
 #endif
+}
+
+static void initLogSetting()
+{
     dpfLogManager->applySuggestedLogSettings();
 }
 
 static void initEnv()
 {
-    // Note: x11 flag!!!
-    qputenv("QT_QPA_PLATFORM", "xcb");
-
     // for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
@@ -112,15 +114,15 @@ static bool pluginsLoad()
 {
     QString msg;
     if (!DConfigManager::instance()->addConfig(kPluginsDConfName, &msg))
-        qCWarning(logAppDialogX11) << "Load plugins but dconfig failed: " << msg;
+        qCWarning(logAppDialogX11) << "pluginsLoad: Failed to load plugins dconfig:" << msg;
 
     QStringList pluginsDirs;
 #ifdef QT_DEBUG
     const QString &pluginsDir { DFM_BUILD_PLUGIN_DIR };
-    qCInfo(logAppDialogX11) << QString("Load plugins path : %1").arg(pluginsDir);
+    qCInfo(logAppDialogX11) << "pluginsLoad: Using debug plugins path:" << pluginsDir;
     pluginsDirs.push_back(pluginsDir + "/filemanager");
     pluginsDirs.push_back(pluginsDir + "/common");
-    pluginsDirs.push_back(pluginsDir);
+    pluginsDirs.push_back(pluginsDir + "/filedialog");
 #else
     pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
                 << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
@@ -128,41 +130,47 @@ static bool pluginsLoad()
                 << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
 #endif
 
-    qCInfo(logAppDialogX11) << "Using plugins dir:" << pluginsDirs;
+    qCInfo(logAppDialogX11) << "pluginsLoad: Using plugins directories:" << pluginsDirs;
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
                                          pluginsDirs);
     DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
     DPF_NAMESPACE::LifeCycle::setBlackListFilter(blackListFilter);
+    DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::filemanagerAllPlugins());
 
-    qCInfo(logAppDialogX11) << "Depend library paths:" << DApplication::libraryPaths();
-    qCInfo(logAppDialogX11) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
+    qCInfo(logAppDialogX11) << "pluginsLoad: Library paths:" << DApplication::libraryPaths();
+    qCInfo(logAppDialogX11) << "pluginsLoad: Plugin paths:" << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins()) {
+        qCCritical(logAppDialogX11) << "pluginsLoad: Failed to read plugins";
         return false;
+    }
 
     // We should make sure that the core plugin is loaded first
     if (!singlePluginLoad(kDialogCorePluginName, kDialogCoreLibName)) {
-        qCWarning(logAppDialogX11) << "Load" << kDialogCorePluginName << "failed";
+        qCCritical(logAppDialogX11) << "pluginsLoad: Failed to load dialog core plugin:" << kDialogCorePluginName;
         return false;
     }
     if (!singlePluginLoad(kDFMCorePluginName, kDFMCoreLibName)) {
-        qCWarning(logAppDialogX11) << "Load" << kDFMCorePluginName << "failed";
+        qCCritical(logAppDialogX11) << "pluginsLoad: Failed to load DFM core plugin:" << kDFMCorePluginName;
         return false;
     }
 
     // load plugins without core
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins()) {
+        qCCritical(logAppDialogX11) << "pluginsLoad: Failed to load remaining plugins";
         return false;
+    }
 
+    qCInfo(logAppDialogX11) << "pluginsLoad: All plugins loaded successfully";
     return true;
 }
 
 static void handleSIGTERM(int sig)
 {
-    qCCritical(logAppDialogX11) << "break with !SIGTERM! " << sig;
+    qCWarning(logAppDialogX11) << "handleSIGTERM: Received SIGTERM signal:" << sig;
 
     if (qApp) {
         qApp->setProperty("SIGTERM", true);
@@ -173,14 +181,14 @@ static void handleSIGTERM(int sig)
 int main(int argc, char *argv[])
 {
     initEnv();
-    initLog();
-
-    // Fixed the locale codec to utf-8
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+    initLogFilter();
 
     DApplication a(argc, argv);
+
+    // BUG-278055
+    initLogSetting();
+
     a.setOrganizationName(ORGANIZATION_NAME);
-    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
     a.setProperty("GTK", true);   // see: FileDialogHandle::winId()
     a.setWindowIcon(QIcon::fromTheme("dde-file-manager"));
@@ -193,21 +201,28 @@ int main(int argc, char *argv[])
         a.setApplicationName(appName);
     }
 
+    qCInfo(logAppDialogX11) << "main: X11 file dialog application started, version:" << a.applicationVersion();
+
     signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
     if (!pluginsLoad()) {
-        qCCritical(logAppDialogX11) << "Load pugin failed!";
-        abort();
+        qCCritical(logAppDialogX11) << "main: Failed to load plugins, terminating application";
+        Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
     }
 
+    qCInfo(logAppDialogX11) << "main: Application initialization completed successfully";
     int ret { a.exec() };
+    
+    qCInfo(logAppDialogX11) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    
     if (qApp->property("SIGTERM").toBool()) {
-        qWarning() << "Exit app by SIGTERM, reuturn: " << ret;
+        qCWarning(logAppDialogX11) << "main: Application terminated by SIGTERM, exit code:" << ret;
         _Exit(ret);
     }
 
+    qCInfo(logAppDialogX11) << "main: Application exiting normally with code:" << ret;
     return ret;
 }

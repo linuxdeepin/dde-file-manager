@@ -8,11 +8,73 @@
 #include "taskcommander.h"
 #include "searchmanager/searcher/abstractsearcher.h"
 
-#include <QFutureWatcher>
-#include <QUrl>
+#include <dfm-search/dsearch_global.h>
+#include <dfm-search/contentsearchapi.h>
+
+#include <QObject>
+#include <QList>
 #include <QReadWriteLock>
+#include <QAtomicInt>
+#include <QMap>
+#include <QSet>
+#include <QThread>
+#include <QMutex>
+#include <QTimer>
 
 DPSEARCH_BEGIN_NAMESPACE
+
+// 简化的单一搜索工作线程，负责整个搜索流程
+class SimplifiedSearchWorker : public QObject
+{
+    Q_OBJECT
+public:
+    explicit SimplifiedSearchWorker(QObject *parent = nullptr);
+    ~SimplifiedSearchWorker() override;
+
+    // 设置搜索参数
+    Q_INVOKABLE void setTaskId(const QString &id) { taskId = id; }
+    Q_INVOKABLE void setSearchUrl(const QUrl &url) { searchUrl = url; }
+    Q_INVOKABLE void setKeyword(const QString &keyword) { searchKeyword = keyword; }
+
+    // 获取结果
+    Q_INVOKABLE DFMSearchResultMap getResults();
+    Q_INVOKABLE QList<QUrl> getResultUrls();
+
+    // 控制搜索流程
+    Q_INVOKABLE void startSearch();
+    Q_INVOKABLE void stopSearch();
+
+signals:
+    void resultsUpdated(const QString &taskId);
+    void searchCompleted(const QString &taskId);
+
+protected:
+    void run();
+
+private slots:
+    void onSearcherFinished();
+    void onSearcherUnearthed();
+
+private:
+    void createSearchers();
+    bool isParentPath(const QString &parentPath, const QString &childPath) const;
+    void createSearchersForUrl(const QUrl &url);
+    void cleanupSearchers();
+    void mergeResults(AbstractSearcher *searcher);
+
+    QString taskId;
+    QUrl searchUrl;
+    QString searchKeyword;
+
+    QList<AbstractSearcher *> searchers;
+    DFMSearchResultMap resultMap;
+
+    QReadWriteLock rwLock;
+    QMutex mutex;
+
+    bool isRunning { false };
+    int finishedSearcherCount { 0 };
+};
 
 class TaskCommanderPrivate : public QObject
 {
@@ -23,28 +85,21 @@ public:
     explicit TaskCommanderPrivate(TaskCommander *parent);
     ~TaskCommanderPrivate();
 
-private:
-    static void working(AbstractSearcher *searcher);
-    AbstractSearcher *createFileNameSearcher(const QUrl &url, const QString &keyword);
+    // 非阻塞终止方法
+    // void prepareForDestroy();
 
 private slots:
-    void onUnearthed(AbstractSearcher *searcher);
-    void onFinished();
+    void onResultsUpdated(const QString &taskId);
+    void onSearchCompleted(const QString &taskId);
 
 private:
-    TaskCommander *q = nullptr;
-    volatile bool isWorking = false;
-    QString taskId;
+    TaskCommander *q { nullptr };
+    QString taskId { "" };
 
-    //当前所有的搜索结果和新数据缓冲区
-    QReadWriteLock rwLock;
-    QList<QUrl> resultList;
+    QThread workerThread;
+    SimplifiedSearchWorker *searchWorker { nullptr };
 
-    bool deleted = false;
-    bool finished = false;   //保证结束信号只发一次
-
-    QFutureWatcher<void> futureWatcher;
-    QList<AbstractSearcher *> allSearchers;
+    bool deleted { false };
 };
 
 DPSEARCH_END_NAMESPACE

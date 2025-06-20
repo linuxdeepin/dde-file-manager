@@ -8,7 +8,7 @@
 #include "displaycontrol/datahelper/virtualentrydbhandler.h"
 #include "displaycontrol/utilities/protocoldisplayutilities.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/dfm_event_defines.h>
@@ -71,8 +71,10 @@ bool VirtualEntryMenuScene::initialize(const QVariantHash &params)
 {
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (d->selectFiles.count() == 0)
+    if (d->selectFiles.count() == 0) {
+        fmWarning() << "No files selected, initialization failed";
         return false;
+    }
 
     auto subScenes = subscene();
     if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
@@ -96,18 +98,23 @@ bool VirtualEntryMenuScene::initialize(const QVariantHash &params)
     } else if (path.endsWith(kComputerProtocolSuffix)) {
         path.remove("." + QString(kComputerProtocolSuffix));
         d->stdSmb = protocol_display_utilities::getStandardSmbPath(path);
-        if (!d->stdSmb.startsWith("smb"))
+        if (!d->stdSmb.startsWith("smb")) {
+            fmWarning() << "Invalid SMB path after protocol conversion:" << d->stdSmb;
             return false;
+        }
         return true;
     }
 
+    fmWarning() << "Unsupported entry type, path does not match expected suffixes:" << path;
     return false;
 }
 
 bool VirtualEntryMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot create menu scene with null parent menu";
         return false;
+    }
 
     connect(parent, &QMenu::triggered, this, [=](QAction *triggered) { d->hookCptActions(triggered); });
 
@@ -127,8 +134,10 @@ bool VirtualEntryMenuScene::create(QMenu *parent)
 
 void VirtualEntryMenuScene::updateState(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot update menu state with null parent menu";
         return;
+    }
 
     using namespace menu_action_id;
     QStringList visibleActions;
@@ -144,8 +153,10 @@ void VirtualEntryMenuScene::updateState(QMenu *parent)
 
 bool VirtualEntryMenuScene::triggered(QAction *action)
 {
-    if (!action)
+    if (!action) {
+        fmWarning() << "Null action triggered";
         return false;
+    }
 
     using namespace menu_action_id;
     auto key = action->property(ActionPropertyKey::kActionID).toString();
@@ -162,8 +173,10 @@ bool VirtualEntryMenuScene::triggered(QAction *action)
 
 AbstractMenuScene *VirtualEntryMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        fmDebug() << "Null action passed to scene method";
         return nullptr;
+    }
 
     if (!d->predicateAction.key(action).isEmpty())
         return const_cast<VirtualEntryMenuScene *>(this);
@@ -182,10 +195,13 @@ VirtualEntryMenuScenePrivate::VirtualEntryMenuScenePrivate(VirtualEntryMenuScene
 
 void VirtualEntryMenuScenePrivate::setActionVisible(const QStringList &visibleActions, QMenu *menu)
 {
-    if (!menu)
+    if (!menu) {
+        fmWarning() << "Cannot set action visibility with null menu";
         return;
+    }
 
     using namespace menu_action_id;
+    int visibleCount = 0;
     for (const auto &act : menu->actions()) {
         const QString &id = act->property(ActionPropertyKey::kActionID).toString();
         act->setVisible(visibleActions.contains(id) || act->isSeparator());
@@ -214,8 +230,10 @@ void VirtualEntryMenuScenePrivate::insertActionBefore(const QString &inserted, c
 
 void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
 {
-    if (!triggered)
+    if (!triggered) {
+        fmWarning() << "Null action passed to hookCptActions";
         return;
+    }
 
     const QString &triggeredId = triggered->property(ActionPropertyKey::kActionID).toString();
     if (triggeredId == menu_action_id::kCptActLogoutAndForget)
@@ -226,7 +244,8 @@ void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
 
 void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 {
-    fmInfo() << "unmount all shares of" << stdSmb;
+    fmInfo() << "Unmounting all shares of" << stdSmb << "removeEntry:" << removeEntry;
+
     const QStringList &devIds = protocol_display_utilities::getMountedSmb();
     const QString &stdSmbRoot = stdSmb;
 
@@ -236,11 +255,15 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
             continue;
 
         DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            fmInfo() << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err.code << err.message;
-            if (!ok)
-                return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
-            if (removeEntry)
-                tryRemoveAggregatedEntry(stdSmbRoot, toStdSmb);
+            if (ok) {
+                fmInfo() << "Successfully unmounted device:" << devId << "SMB path:" << toStdSmb;
+                if (removeEntry)
+                    tryRemoveAggregatedEntry(stdSmbRoot, toStdSmb);
+            } else {
+                fmCritical() << "Failed to unmount device:" << devId << "SMB path:" << toStdSmb
+                             << "error code:" << err.code << "message:" << err.message;
+                DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
+            }
         });
     }
 
@@ -249,34 +272,45 @@ void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 
 void VirtualEntryMenuScenePrivate::actForgetAggregatedItem()
 {
-    fmInfo() << "forget saved pasword of" << stdSmb;
+    fmInfo() << "Forgetting saved password and unmounting all shares of" << stdSmb;
+
     computer_sidebar_event_calls::callForgetPasswd(stdSmb);
     actUnmountAggregatedItem(true);
 }
 
 void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 {
-    fmInfo() << "do mount for" << stdSmb;
+    fmInfo() << "Mounting separated item:" << stdSmb;
+
     QString path = stdSmb;
     while (path.endsWith("/"))
         path.chop(1);
 
-    DevMngIns->mountNetworkDeviceAsync(path, [](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &) {
-        if (ok) return;
-        DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
+    fmDebug() << "Normalized mount path:" << path;
+
+    DevMngIns->mountNetworkDeviceAsync(path, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mountPoint) {
+        if (ok) {
+            fmInfo() << "Successfully mounted network device:" << path << "mount point:" << mountPoint;
+        } else {
+            fmCritical() << "Failed to mount network device:" << path
+                         << "error code:" << err.code << "message:" << err.message;
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
+        }
     });
 }
 
 void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
 {
-    fmInfo() << "remove offline entry of" << stdSmb;
+    fmInfo() << "Removing offline entry for:" << stdSmb;
     Q_ASSERT(selectFiles.count() > 0);
 
     VirtualEntryDbHandler::instance()->removeData(stdSmb);
     computer_sidebar_event_calls::callItemRemove(selectFiles.first());
 
     if (aggregatedEntrySelected) {
-        // remove all associated seperated entry data
+        fmDebug() << "Removing associated separated entries for aggregated entry";
+
+        // remove all associated separated entry data
         QStringList seperatedSmbs;
         VirtualEntryDbHandler::instance()->allSmbIDs(nullptr, &seperatedSmbs);
         QString host = stdSmb;
@@ -295,13 +329,14 @@ void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
 
 void VirtualEntryMenuScenePrivate::actCptMount()
 {
-    fmDebug() << "hook on computer mount" << stdSmb;
+    fmDebug() << "Hooking computer mount action for:" << stdSmb;
     actMountSeperatedItem();
 }
 
 void VirtualEntryMenuScenePrivate::actCptForget()
 {
-    fmDebug() << "hook on computer forget" << stdSmb;
+    fmDebug() << "Hooking computer forget action for:" << stdSmb;
+
     // do remove the cached data.
     VirtualEntryDbHandler::instance()->removeData(stdSmb);
 }
@@ -325,6 +360,8 @@ void VirtualEntryMenuScenePrivate::gotoDefaultPageOnUnmount()
 
 void VirtualEntryMenuScenePrivate::tryRemoveAggregatedEntry(const QString &stdSmb, const QString &stdSmbSharePath)
 {
+    fmDebug() << "Attempting to remove aggregated entry:" << stdSmb << "share path:" << stdSmbSharePath;
+
     VirtualEntryDbHandler::instance()->removeData(stdSmbSharePath);
 
     const QStringList &devIds = protocol_display_utilities::getMountedSmb();
@@ -333,9 +370,12 @@ void VirtualEntryMenuScenePrivate::tryRemoveAggregatedEntry(const QString &stdSm
         return toStdSmb.startsWith(stdSmb);
     });
 
-    if (hasMounted)
+    if (hasMounted) {
+        fmDebug() << "Still has mounted shares, not removing aggregated entry:" << stdSmb;
         return;
+    }
 
+    fmInfo() << "No mounted shares remain, removing aggregated entry:" << stdSmb;
     const QUrl &aggregatedEntry = protocol_display_utilities::makeVEntryUrl(stdSmb);
     computer_sidebar_event_calls::callItemRemove(aggregatedEntry);
 }

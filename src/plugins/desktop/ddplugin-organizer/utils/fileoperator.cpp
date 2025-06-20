@@ -32,12 +32,12 @@ Q_GLOBAL_STATIC(FileOperatorGlobal, fileOperatorGlobal)
 FileOperatorPrivate::FileOperatorPrivate(FileOperator *qq)
     : q(qq)
 {
-     canvasOperator = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasViewPrivate_FileOperator").value<QObject *>();
-     if (!canvasOperator)
-         fmWarning() << "fail to get canvas file operator";
+    canvasOperator = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasViewPrivate_FileOperator").value<QObject *>();
+    if (!canvasOperator)
+        fmWarning() << "fail to get canvas file operator";
 
-     // the callback of pasting file on canvas.
-     QObject::connect(canvasOperator, SIGNAL(filePastedCallback()), q, SLOT(onCanvasPastedFiles()));
+    // the callback of pasting file on canvas.
+    QObject::connect(canvasOperator, SIGNAL(filePastedCallback()), q, SLOT(onCanvasPastedFiles()));
 }
 
 void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info, const QVariant &custom)
@@ -67,7 +67,11 @@ void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info, const QV
         emit q->requestSelectFile(files, QItemSelectionModel::Select);
 
         // record the file is not existed and selecting it when it is inserted.
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         pasteFileData = files.toSet();
+#else
+        pasteFileData = QSet<QUrl>(files.begin(), files.end());
+#endif
     }
 }
 
@@ -129,8 +133,10 @@ void FileOperator::copyFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
     d->filterDesktopFile(urls);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to copy";
         return;
+    }
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
@@ -139,8 +145,10 @@ void FileOperator::cutFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
     d->filterDesktopFile(urls);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files to cut";
         return;
+    }
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
@@ -157,13 +165,16 @@ void FileOperator::pasteFiles(const CollectionView *view, const QString &targetC
     }
 
     if (ClipBoard::kRemoteAction == action) {
+        fmInfo() << "Processing remote clipboard action";
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
-                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr, nullptr, QVariant(), nullptr);
+                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr);
         return;
     }
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files in clipboard to paste";
         return;
+    }
 
     QVariantMap data;
     // the taget collection that pasted file will be move to.
@@ -226,18 +237,24 @@ void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &ur
 void FileOperator::moveToTrash(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to move to trash";
         return;
+    }
 
+    fmInfo() << "Moving" << urls.size() << "files to trash";
     dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperator::deleteFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to delete";
         return;
+    }
 
+    fmWarning() << "Permanently deleting" << urls.size() << "files";
     dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
@@ -250,40 +267,46 @@ void FileOperator::undoFiles(const CollectionView *view)
 void FileOperator::previewFiles(const CollectionView *view)
 {
     auto selectUrls = d->getSelectedUrls(view);
-    if (selectUrls.isEmpty())
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "No files selected for preview";
         return;
+    }
 
     QList<QUrl> currentDirUrls = view->dataProvider()->items(view->id());
-    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+    fmInfo() << "Previewing" << selectUrls.size() << "files";
+    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
 
 void FileOperator::showFilesProperty(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "No files selected to show properties";
         return;
+    }
 
+    fmInfo() << "Showing properties for" << urls.size() << "files";
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)
 {
     /*!
-      * 从文管drop文件到集合，只能是追加（效果与从文管拖拽到桌面一致，而原因，也与桌面一样)
-      * 1.底层执行粘贴（拖拽释放也是粘贴）是异步执行，只有所有粘贴执行完成后，才会调用回调函数和发送事件，
-      * 在此之前，watcher已经监测到文件的创建，并通知model创建了文件index，创建时由于没有回调函数提供的位置信息和新文件名信息，
-      * 文件只能按顺序追加。
-      * 2.另一方面，底层无法做到在执行粘贴之前，就返回所有的最终文件名，因为其是在执行的过程中，逐个获取最终文件名称的，
-      * 因为存在同名文件时，需要弹窗让用户选择“共存”、“替换”或“跳过”选项。
-      * 3.另一种情况，底层已经掉了回调和发送事件，而model还没有将所有文件创建完毕，此时在回调中直接调用选中文件，存在部分文件选中失败的可能。
-      * 4.为了解决上述问题，可能的解决方案是在收到回调函数之后，延迟一定的时间，再去选中（原文管流程）。
-      * 5.但是，对于文件存放集合的问题则无法通过延迟解决，且，在弹窗让用户选中共存、跳过等时，实际已经有部分文件被创建成功，
-      * 由于缺少回调函数提供的位置信息，导致新创建的文件不会被集合劫持，从而会先显示在桌面上（按空位自动存放）。最后等回调的延迟超时后，
-      * 才会从桌面移动到集合中！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-      * 6.只能底层修改逻辑，让执行粘贴之前，返回所有最终文件名？？？包括重名的文件，也需要在开始粘贴之前，让用户完成所有选择后，再开始执行粘贴操作。
-      * 7.另外，即使在粘贴之前回调告诉了所有文件名称与所属集合信息，但是在执行粘贴的过程中，由于其他原因（比如用户手动修改了某个文件的名称），
-      * 导致又出现了文件重名，此时还是需要弹窗让用户选择？那么又需要通过一个事件向外通知该特殊情况？
-    */
+     * 从文管drop文件到集合，只能是追加（效果与从文管拖拽到桌面一致，而原因，也与桌面一样)
+     * 1.底层执行粘贴（拖拽释放也是粘贴）是异步执行，只有所有粘贴执行完成后，才会调用回调函数和发送事件，
+     * 在此之前，watcher已经监测到文件的创建，并通知model创建了文件index，创建时由于没有回调函数提供的位置信息和新文件名信息，
+     * 文件只能按顺序追加。
+     * 2.另一方面，底层无法做到在执行粘贴之前，就返回所有的最终文件名，因为其是在执行的过程中，逐个获取最终文件名称的，
+     * 因为存在同名文件时，需要弹窗让用户选择“共存”、“替换”或“跳过”选项。
+     * 3.另一种情况，底层已经掉了回调和发送事件，而model还没有将所有文件创建完毕，此时在回调中直接调用选中文件，存在部分文件选中失败的可能。
+     * 4.为了解决上述问题，可能的解决方案是在收到回调函数之后，延迟一定的时间，再去选中（原文管流程）。
+     * 5.但是，对于文件存放集合的问题则无法通过延迟解决，且，在弹窗让用户选中共存、跳过等时，实际已经有部分文件被创建成功，
+     * 由于缺少回调函数提供的位置信息，导致新创建的文件不会被集合劫持，从而会先显示在桌面上（按空位自动存放）。最后等回调的延迟超时后，
+     * 才会从桌面移动到集合中！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+     * 6.只能底层修改逻辑，让执行粘贴之前，返回所有最终文件名？？？包括重名的文件，也需要在开始粘贴之前，让用户完成所有选择后，再开始执行粘贴操作。
+     * 7.另外，即使在粘贴之前回调告诉了所有文件名称与所属集合信息，但是在执行粘贴的过程中，由于其他原因（比如用户手动修改了某个文件的名称），
+     * 导致又出现了文件重名，此时还是需要弹窗让用户选择？那么又需要通过一个事件向外通知该特殊情况？
+     */
 
     QVariantMap data;
     data.insert(kCollectionKey, key);
@@ -361,8 +384,7 @@ void FileOperator::removePasteFileData(const QUrl &oldUrl)
 {
     if (d->canvasOperator) {
         QMetaObject::invokeMethod(d->canvasOperator,
-                                  "removePasteFileData", Qt::DirectConnection
-                                , Q_ARG(QUrl, oldUrl));
+                                  "removePasteFileData", Qt::DirectConnection, Q_ARG(QUrl, oldUrl));
     }
     d->pasteFileData.remove(oldUrl);
 }
@@ -399,9 +421,7 @@ void FileOperator::onCanvasPastedFiles()
     // special calling
     if (d->canvasOperator) {
         QMetaObject::invokeMethod(d->canvasOperator,
-                                  "pasteFileData", Qt::DirectConnection
-                                  , QReturnArgument<QSet<QUrl>>("QSet<QUrl>", ret)
-                                  );
+                                  "pasteFileData", Qt::DirectConnection, QReturnArgument<QSet<QUrl>>("QSet<QUrl>", ret));
     }
 
     // just clear self
@@ -411,7 +431,11 @@ void FileOperator::onCanvasPastedFiles()
     clearDropFileData();
 
     // no need to clear selecion since the canvas(FileOperatorProxyPrivate) has done it.
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     auto list = ret.toList();
+#else
+    auto list = QList<QUrl>(ret.begin(), ret.end());
+#endif
     emit requestSelectFile(list, QItemSelectionModel::Select);
 
     // clear canvas
@@ -421,7 +445,12 @@ void FileOperator::onCanvasPastedFiles()
     }
 
     // record the file is not existed and selecting it when it is inserted.
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     d->pasteFileData = list.toSet();
+#else
+    d->pasteFileData = QSet<QUrl>(list.begin(), list.end());
+
+#endif
 }
 
 void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args)
@@ -431,7 +460,7 @@ void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args
     const FileOperatorPrivate::CallBackFunc funcKey = custom.first;
 
     switch (funcKey) {
-#if 0 // touch file is processed by canvas. edit it at inserting by calling touchFileData with FileOperatorProxy
+#if 0   // touch file is processed by canvas. edit it at inserting by calling touchFileData with FileOperatorProxy
     case FileOperatorPrivate::CallBackFunc::kCallBackTouchFile:
     case FileOperatorPrivate::CallBackFunc::kCallBackTouchFolder: {
         // Folder also belong to files
@@ -450,7 +479,7 @@ void FileOperator::callBackFunction(const AbstractJobHandler::CallbackArgus args
         JobHandlePointer jobHandle = args->value(AbstractJobHandler::CallbackKey::kJobHandle).value<JobHandlePointer>();
 
         if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
-            connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), [this, custom](const JobInfoPointer &infoPointer){
+            connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), [this, custom](const JobInfoPointer &infoPointer) {
                 d->callBackPasteFiles(infoPointer, custom.second);
             });
         } else {

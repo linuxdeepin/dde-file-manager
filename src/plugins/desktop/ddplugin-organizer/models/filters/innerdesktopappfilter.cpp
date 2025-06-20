@@ -8,12 +8,11 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QGSettings>
-
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
-InnerDesktopAppFilter::InnerDesktopAppFilter(QObject *parent) : QObject(parent), ModelDataHandler()
+InnerDesktopAppFilter::InnerDesktopAppFilter(QObject *parent)
+    : QObject(parent), ModelDataHandler()
 {
     keys.insert("desktopComputer", DesktopAppUrl::computerDesktopFileUrl());
     keys.insert("desktopTrash", DesktopAppUrl::trashDesktopFileUrl());
@@ -23,17 +22,20 @@ InnerDesktopAppFilter::InnerDesktopAppFilter(QObject *parent) : QObject(parent),
     hidden.insert("desktopTrash", false);
     hidden.insert("desktopHomeDirectory", false);
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
         gsettings = new QGSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
         connect(gsettings, &QGSettings::changed, this, &InnerDesktopAppFilter::changed);
         update();
     }
+#endif
 }
 
 void ddplugin_organizer::InnerDesktopAppFilter::update()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (gsettings) {
-        for (auto iter = hidden.begin() ; iter != hidden.end(); ++iter) {
+        for (auto iter = hidden.begin(); iter != hidden.end(); ++iter) {
             auto var = gsettings->get(iter.key());
             if (var.isValid())
                 iter.value() = !var.toBool();
@@ -41,6 +43,7 @@ void ddplugin_organizer::InnerDesktopAppFilter::update()
                 iter.value() = false;
         }
     }
+#endif
 }
 
 void InnerDesktopAppFilter::refreshModel()
@@ -76,6 +79,7 @@ bool InnerDesktopAppFilter::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
 
 void InnerDesktopAppFilter::changed(const QString &key)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     if (hidden.contains(key)) {
         auto var = gsettings->get(key);
         bool old = hidden.value(key);
@@ -84,7 +88,8 @@ void InnerDesktopAppFilter::changed(const QString &key)
         else
             hidden[key] = false;
 
-       if (old != hidden.value(key))
-           refreshModel();
+        if (old != hidden.value(key))
+            refreshModel();
     }
+#endif
 }

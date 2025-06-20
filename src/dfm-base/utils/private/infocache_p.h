@@ -31,9 +31,12 @@ class InfoCachePrivate
     QReadWriteLock copyLock;
 
     // 时间排序url,利用map的有序性，来处理时间到了要移除的url
-    QMap<QUrl, QString> urlTimeSortMap;
+    QHash<QUrl, QString> urlTimeSortHash;
     QMap<QString, QUrl> timeToUrlMap;
 
+    // 时间排序url,利用map的有序性，来处理时间到了要移除的url
+    QHash<QUrl, QString> urlTimeSortWatcherHash;
+    QMap<QString, QUrl> timeToUrlWatcherMap;
     std::atomic_bool cacheWorkerStoped { false };
 
 public:

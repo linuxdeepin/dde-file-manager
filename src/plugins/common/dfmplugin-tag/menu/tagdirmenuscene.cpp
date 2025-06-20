@@ -5,7 +5,7 @@
 #include "tagdirmenuscene.h"
 #include "private/tagdirmenuscene_p.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -71,7 +71,12 @@ void TagDirMenuScenePrivate::updateMenu(QMenu *menu)
         // insert 'OpenFileLocation' action
         if (openLocalAct) {
             actions.removeOne(openLocalAct);
-            actions.insert(1, openLocalAct);
+
+            if (actions.size() < 1)
+                actions.append(openLocalAct);
+            else
+                actions.insert(1, openLocalAct);
+
             menu->addActions(actions);
         }
     }

@@ -80,7 +80,22 @@ inline constexpr char kConnectionBus[] { "ConnectionBus" };
 inline constexpr char kUDisks2Size[] { "UDisks2Size" };
 inline constexpr char kDriveModel[] { "DriveModel" };
 inline constexpr char kPreferredDevice[] { "PreferredDevice" };
+inline constexpr char kConfiguration[] { "Configuration" };
+inline constexpr char kSymlinks[] { "Symlinks" };
 }   // namespace DeviceProperty
+
+/*!
+ * brief Recent property information
+ */
+namespace RecentProperty {
+inline constexpr char kPath[] { "Path" };
+inline constexpr char kHref[] { "Href" };
+inline constexpr char kModified[] { "modified" };
+
+inline constexpr char kAppName[] { "AppName" };
+inline constexpr char kAppExec[] { "AppExec" };
+inline constexpr char kMimeType[] { "MimeType" };
+}   // namespace RecentProperty
 
 /*!
  * \brief Options for processing the device list interface,

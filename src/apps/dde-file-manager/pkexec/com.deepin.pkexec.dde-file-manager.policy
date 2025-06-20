@@ -6,12 +6,12 @@
   <vendor>LinuxDeepin</vendor>
   <vendor_url>https://www.deepin.com/</vendor_url>
   <action id="com.deepin.pkexec.dde-file-manager">
-    <message>Authentication is required to view the folder</message>
-    <message xml:lang="zh_CN">查看文件夹需要输入密码</message>
-    <message xml:lang="zh_HK">查看文件夾需要輸入密碼</message>
-    <message xml:lang="zh_TW">查看資料夾需要輸入密碼</message>
-    <message xml:lang="ug">ھۆججەت قىسقۇچنى كۆرۈش ئۈچۈن پارول كىرگۈزۈشىڭىز كېرەك</message>
-    <message xml:lang="bo">ཡིག་ཁུག་ལ་ལྟ་བར་གསང་ཨང་འཇུག་དགོས།</message>
+    <message>Authentication is required to open it as administrator</message>
+    <message xml:lang="zh_CN">以管理员身份打开需要认证</message>
+    <message xml:lang="zh_HK">以管理員身份開啟需要驗證</message>
+    <message xml:lang="zh_TW">以管理員身分開啟需要認證</message>
+    <message xml:lang="ug">باشقۇرغۇچى ھوقۇقى بىلەن ئېچىش ئۈچۈن دەلىللەش كېرەك</message>
+    <message xml:lang="bo">དྲ་ངོས་སྤྱད་ནས་སྤྱོད་མཁན་གྱི་གོ་གནས་ཀྱིས་ཁ་ཕྱེ་བར་དམིགས་བསལ་བཀའ་འཁྲོལ་དགོས་པ།</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
@@ -22,12 +22,12 @@
     <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
   </action>
   <action id="com.deepin.pkexec.dde-file-manager-pkexec">
-    <message>Authentication is required to view the folder</message>
-    <message xml:lang="zh_CN">查看文件夹需要输入密码</message>
-    <message xml:lang="zh_HK">查看文件夾需要輸入密碼</message>
-    <message xml:lang="zh_TW">查看資料夾需要輸入密碼</message>
-    <message xml:lang="ug">ھۆججەت قىسقۇچنى كۆرۈش ئۈچۈن پارول كىرگۈزۈشىڭىز كېرەك</message>
-    <message xml:lang="bo">ཡིག་ཁུག་ལ་ལྟ་བར་གསང་ཨང་འཇུག་དགོས།</message>
+    <message>Authentication is required to open it as administrator</message>
+    <message xml:lang="zh_CN">以管理员身份打开需要认证</message>
+    <message xml:lang="zh_HK">以管理員身份開啟需要驗證</message>
+    <message xml:lang="zh_TW">以管理員身分開啟需要認證</message>
+    <message xml:lang="ug">باشقۇرغۇچى ھوقۇقى بىلەن ئېچىش ئۈچۈن دەلىللەش كېرەك</message>
+    <message xml:lang="bo">དྲ་ངོས་སྤྱད་ནས་སྤྱོད་མཁན་གྱི་གོ་གནས་ཀྱིས་ཁ་ཕྱེ་བར་དམིགས་བསལ་བཀའ་འཁྲོལ་དགོས་པ།</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>

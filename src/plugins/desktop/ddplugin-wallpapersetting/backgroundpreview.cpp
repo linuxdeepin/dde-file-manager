@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QPaintDevice>
+
 #include <qpa/qplatformwindow.h>
 #include <qpa/qplatformscreen.h>
 #include <qpa/qplatformbackingstore.h>
@@ -78,14 +79,16 @@ void BackgroundPreview::updateDisplay()
     auto winMap = rootMap();
     auto *win = winMap.value(screen);
     if (win == nullptr) {
-        fmCritical() << "can not get root " << screen;
+        fmCritical() << "Can not get root window for screen:" << screen;
         return;
     }
 
     QSize trueSize = win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();   // 使用屏幕缩放前的分辨率
+    fmDebug() << "Screen" << screen << "true size:" << trueSize;
+
     if (backgroundPixmap.isNull()) {
-        fmCritical() << "screen " << screen << "backfround path" << filePath
-                     << "can not read!";
+        fmCritical() << "Screen" << screen << "background path" << filePath
+                     << "can not read, using white fallback";
         backgroundPixmap = QPixmap(trueSize);
         backgroundPixmap.fill(Qt::white);
     }
@@ -101,8 +104,9 @@ void BackgroundPreview::updateDisplay()
                              trueSize.height()));
     }
 
-    fmDebug() << screen << "background path" << filePath << "truesize" << trueSize << "devicePixelRatio"
-              << this->devicePixelRatioF() << pix << "widget" << this;
+    fmDebug() << "Screen" << screen << "background path" << filePath << "truesize" << trueSize
+              << "devicePixelRatio" << this->devicePixelRatioF() << "final pixmap size:" << pix.size();
+
     pix.setDevicePixelRatio(this->devicePixelRatioF());
 
     pixmap = pix;

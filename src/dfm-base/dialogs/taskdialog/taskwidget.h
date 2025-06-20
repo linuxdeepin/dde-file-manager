@@ -67,7 +67,11 @@ private:
     bool showFileInfo(const FileInfoPointer info, const bool isOrg);
 
 protected:
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    virtual void enterEvent(QEnterEvent *event);
+#else
     virtual void enterEvent(QEvent *event);
+#endif
     virtual void leaveEvent(QEvent *event);
     virtual void paintEvent(QPaintEvent *event);
 
@@ -104,8 +108,8 @@ private:
     QAtomicInteger<bool> isShowError { false };   // 处于错误提示状态
 
     QTimer infoTimer;
-    FileInfoPointer originInfo{ nullptr };
-    FileInfoPointer targetInfo{ nullptr };
+    FileInfoPointer originInfo { nullptr };
+    FileInfoPointer targetInfo { nullptr };
 };
 
 }

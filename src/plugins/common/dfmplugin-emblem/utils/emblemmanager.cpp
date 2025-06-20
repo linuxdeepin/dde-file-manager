@@ -46,7 +46,13 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     if (!helper->isExtEmblemProhibited(info, url)) {
         // add gio embelm icons
         helper->pending(info);
-        emblems.append(helper->gioEmblemIcons(url));
+        const auto &gioEmblems = helper->gioEmblemIcons(url);
+        if (emblems.isEmpty()) {
+            emblems = gioEmblems;
+        } else if (emblems.size() < gioEmblems.size()) {
+            // Ensure that the custom emblems do not affect the display position by the system emblems
+            emblems.append(gioEmblems.mid(emblems.size()));
+        }
 
         // add custom emblem icons
         EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblems);
@@ -61,7 +67,11 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     for (int i = 0; i < qMin(paintRects.count(), emblems.count()); ++i) {
         if (emblems.at(i).isNull())
             continue;
-        emblems.at(i).paint(painter, paintRects.at(i).toRect());
+        // NOTE: for some special icons, the QIcon::paint function will cast lots of cpu resource.
+        // so use the painter drawPixmap function to paint the emblems.
+        QRect emblemRect = paintRects.at(i).toRect();
+        QPixmap emblemPix = emblems.at(i).pixmap(emblemRect.size());
+        painter->drawPixmap(emblemRect, emblemPix);
     }
 
     return true;

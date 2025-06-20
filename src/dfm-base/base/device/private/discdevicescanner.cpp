@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 static constexpr int kTimerInterval { 3000 };
-static const char kDesktopAppName[] { "dde-desktop" };
+static const char kDesktopAppName[] { "org.deepin.dde-shell" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 using namespace dfmbase;
@@ -47,35 +47,35 @@ DiscDeviceScanner::DiscDeviceScanner(QObject *parent)
 bool DiscDeviceScanner::startScan()
 {
     if (discScanTimer->isActive()) {
-        qCWarning(logDFMBase) << "Timer is active, cannot start again";
+        qCWarning(logDFMBase) << "Disc scanner timer is already active, cannot start again";
         return false;
     }
 
     if (discDevIdGroup.isEmpty()) {
-        qCWarning(logDFMBase) << "Current disc dev is empty, cannot start timer";
+        qCWarning(logDFMBase) << "No disc devices available for scanning, cannot start timer";
         return false;
     }
 
     // only try to open read/write if not root, since it doesn't seem
     // to make a difference for root and can have negative side-effects
     if (SysInfoUtils::isRootUser()) {
-        qCWarning(logDFMBase) << "Current user is root, cannot start timer";
+        qCWarning(logDFMBase) << "Running as root user, disc scanning disabled for safety";
         return false;
     }
 
     // cause a lot of logs in server version
     if (SysInfoUtils::isServerSys()) {
-        qCWarning(logDFMBase) << "Current OS version is server, cannot start timer";
+        qCWarning(logDFMBase) << "Running on server system, disc scanning disabled";
         return false;
     }
 
     // Usually the Community Edition does not require an optical drive to be inserted
     if (SysInfoUtils::isDesktopSys() && !SysInfoUtils::isProfessional()) {
-        qCWarning(logDFMBase) << "Current OS version is deepin destkop, does not require start timer";
+        qCWarning(logDFMBase) << "Running on desktop community edition, disc scanning not required";
         return false;
     }
 
-    qCInfo(logDFMBase) << "Start scan disc";
+    qCInfo(logDFMBase) << "Starting disc device scanning for" << discDevIdGroup.size() << "devices";
     discScanTimer->start(kTimerInterval);
 
     return true;
@@ -84,10 +84,10 @@ bool DiscDeviceScanner::startScan()
 void DiscDeviceScanner::stopScan()
 {
     if (!discScanTimer->isActive()) {
-        qCWarning(logDFMBase) << "Timer is active, canot stop";
+        qCWarning(logDFMBase) << "Disc scanner timer is not active, cannot stop";
         return;
     }
-    qCInfo(logDFMBase) << "Stop scan disc";
+    qCInfo(logDFMBase) << "Stopping disc device scanning";
     discScanTimer->stop();
 }
 
@@ -163,9 +163,9 @@ void DiscDeviceScanner::initialize()
 {
     static std::once_flag flag;
     std::call_once(flag, [this]() {
-        // ony runing desktop or filemanger, not allowed to run simultaneously
+        // only runing desktop or filemanger, not allowed to run simultaneously
         if (qApp->applicationName() != kDesktopAppName && DevProxyMng->isDBusRuning()) {
-            qCInfo(logDFMBase) << "Current app is filemanger and desktop running, don't init";
+            qCInfo(logDFMBase) << "File manager running with desktop active, disc scanner initialization skipped";
             return;
         }
 
@@ -177,6 +177,7 @@ void DiscDeviceScanner::initialize()
         connect(DevMngIns, &DeviceManager::opticalDiscWorkStateChanged, this, &DiscDeviceScanner::onDiscWorkingStateChanged);
 
         threadPool->setMaxThreadCount(4);
+        qCInfo(logDFMBase) << "Disc device scanner initialized with" << discIdGroup.size() << "optical devices";
         this->startScan();
     });
 }

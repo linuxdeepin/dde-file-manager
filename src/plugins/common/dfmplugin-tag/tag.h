@@ -45,6 +45,10 @@ private:
     void onMenuSceneAdded(const QString &scene);
     void bindEvents();
     void bindWindows();
+    void regToPropertyDialog();
+    void regTodDtailspace();
+    void registerPlugin(const QString &pluginName, std::function<void()> callback);
+    bool waitForPlugin(const QString &pluginName, std::function<void()> callback);
 
     QSet<QString> menuScenes;
     bool subscribedEvent { false };

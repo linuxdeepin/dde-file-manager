@@ -25,7 +25,7 @@
             "visibility": "public"
         },
         "desktop.blackList": {
-            "value": ["ddplugin-organizer"],
+            "value": [],
             "serial": 0,
             "flags": [],
             "name": "dde-desktop plugins blacklist",

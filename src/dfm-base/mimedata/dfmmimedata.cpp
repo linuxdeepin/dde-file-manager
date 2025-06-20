@@ -56,8 +56,7 @@ void DFMMimeDataPrivate::parseUrls(const QList<QUrl> &urls)
         if (!canTrash && !canDelete)
             break;
     }
-    isTrashUrl = urls.isEmpty() ?
-                false : FileUtils::isTrashFile(urls.first()) && !FileUtils::isTrashRootFile(urls.first());
+    isTrashUrl = urls.isEmpty() ? false : FileUtils::isTrashFile(urls.first()) && !FileUtils::isTrashRootFile(urls.first());
     attributes.insert(kCanTrashAttr, canTrash);
     attributes.insert(kCanDeleteAttr, canDelete);
     attributes.insert(kIsTrashAttr, isTrashUrl);
@@ -112,12 +111,19 @@ QByteArray DFMMimeData::toByteArray()
     if (d->urlList.isEmpty())
         return {};
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QVariantMap data;
+#else
+    QMultiMap<QString, QVariant> data;
+#endif
     data.insert(kVersionKey, d->version);
     data.insert(kUrlsKey, QUrl::toStringList(d->urlList));
     data.unite(d->attributes);
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QJsonDocument doc = QJsonDocument::fromVariant(data);
+#else
+    QJsonDocument doc = QJsonDocument::fromVariant(QVariant::fromValue(data));
+#endif
     return doc.toJson();
 }
 
@@ -160,7 +166,11 @@ DFMMimeData DFMMimeData::fromByteArray(const QByteArray &data)
 
     mimeData.d->version = version;
     mimeData.d->urlList = QUrl::fromStringList(map.take(kUrlsKey).toStringList());
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     mimeData.d->attributes = map;
+#else
+    mimeData.d->attributes = QMultiMap<QString, QVariant>(map);
+#endif
 
     return mimeData;
 }

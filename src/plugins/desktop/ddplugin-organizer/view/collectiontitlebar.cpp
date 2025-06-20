@@ -60,6 +60,8 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
 
     menuBtn = new OptionButton(q);
     menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
+    menuBtn->setCursor(Qt::ArrowCursor);
+    menuBtn->setToolTip(tr("Collection size"));
 
     mainLayout = new QHBoxLayout(q);
     mainLayout->setContentsMargins(8, 2, 8, 2);
@@ -128,28 +130,31 @@ void CollectionTitleBarPrivate::showMenu()
         DMenu *subMenu = new DMenu(menu);
         action->setMenu(subMenu);
 
-        action = new QAction(subMenu);
-        action->setText(tr("Large area"));
-        action->setCheckable(true);
-        if (CollectionFrameSize::kLarge == this->size)
-            action->setChecked(true);
-        subMenu->addAction(action);
+        static const char kPropertySize[] { "collection_size" };
+        static const QMap<CollectionFrameSize, QString> kSizeName {
+            { CollectionFrameSize::kSmall, tr("Small area") },
+            { CollectionFrameSize::kMiddle, tr("Middle area") },
+            { CollectionFrameSize::kLarge, tr("Large area") }
+        };
 
-        connect(action, &QAction::triggered, this, [=]() {
-            emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kLarge);
-            action->setChecked(true);
-        });
+        auto addAction = [=](CollectionFrameSize size) {
+            QAction *action = new QAction(subMenu);
+            action->setText(kSizeName.value(size));
+            action->setCheckable(true);
+            action->setProperty(kPropertySize, size);
+            if (size == this->size)
+                action->setChecked(true);
+            subMenu->addAction(action);
+            connect(action, &QAction::triggered,
+                    this, [=]() {
+                        auto size = static_cast<CollectionFrameSize>(action->property(kPropertySize).toInt());
+                        emit q->sigRequestAdjustSizeMode(size);
+                    });
+        };
 
-        action = new QAction(subMenu);
-        action->setText(tr("Small area"));
-        action->setCheckable(true);
-        if (CollectionFrameSize::kSmall == this->size)
-            action->setChecked(true);
-        subMenu->addAction(action);
-        connect(action, &QAction::triggered, this, [=]() {
-            emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kSmall);
-            action->setChecked(true);
-        });
+        addAction(kLarge);
+        addAction(kMiddle);
+        addAction(kSmall);
     }
 
     if (renamable) {
@@ -286,11 +291,16 @@ void CollectionTitleBar::resizeEvent(QResizeEvent *e)
     rounded();
 }
 
+void CollectionTitleBar::contextMenuEvent(QContextMenuEvent *)
+{
+    return;
+}
+
 void CollectionTitleBar::rounded()
 {
     QPainterPath path;
     const qreal radius = 8;
-    QRect rect(0, 0, width() + 1, height()); // Correct 1px for width
+    QRect rect(0, 0, width() + 1, height());   // Correct 1px for width
 
     path.moveTo(rect.topLeft().x() + radius, rect.topLeft().y() + radius);
     path.arcTo(QRect(rect.topLeft(), QSize(radius * 2, radius * 2)), 90, 90);
@@ -303,7 +313,8 @@ void CollectionTitleBar::rounded()
     setMaskPath(path);
 }
 
-OptionButton::OptionButton(QWidget *parent) : DIconButton (parent)
+OptionButton::OptionButton(QWidget *parent)
+    : DIconButton(parent)
 {
     DStyle::setFrameRadius(this, 4);
 
@@ -315,7 +326,7 @@ OptionButton::OptionButton(QWidget *parent) : DIconButton (parent)
     setFlat(true);
 
     auto pa = palette();
-    pa.setColor(QPalette::ButtonText, Qt::white); // icon is white
+    pa.setColor(QPalette::ButtonText, Qt::white);   // icon is white
     setPalette(pa);
 }
 
@@ -340,7 +351,7 @@ void OptionButton::paintEvent(QPaintEvent *event)
         p.setRenderHint(QPainter::Antialiasing);
         p.setBrush(background);
         p.setPen(Qt::NoPen);
-        p.drawRoundedRect(QRect(QPoint(0,0), size()), radius, radius);
+        p.drawRoundedRect(QRect(QPoint(0, 0), size()), radius, radius);
         p.restore();
     }
 

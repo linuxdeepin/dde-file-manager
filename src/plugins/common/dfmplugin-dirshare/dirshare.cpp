@@ -7,12 +7,13 @@
 #include "widget/sharecontrolwidget.h"
 #include "utils/usersharehelper.h"
 
-#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QDebug>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
@@ -36,8 +37,18 @@ bool DirShare::start()
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
 
-    CustomViewExtensionView func { DirShare::createShareControlWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
+    auto propertyPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
+    if (propertyPlugin && propertyPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        regToPropertyDialog();
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-propertydialog")
+                        regToPropertyDialog();
+                },
+                Qt::DirectConnection);
+    }
 
     return true;
 }
@@ -45,16 +56,34 @@ bool DirShare::start()
 QWidget *DirShare::createShareControlWidget(const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
-    static QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
-    if (!supported.contains(url.scheme()))
+    fmDebug() << "Creating share control widget for URL:" << url.toString();
+
+    // Check if scheme is supported
+    static const QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
+    if (!supported.contains(url.scheme())) {
+        fmWarning() << "Unsupported URL scheme:" << url.scheme();
         return nullptr;
+    }
 
     auto info = InfoFactory::create<FileInfo>(url);
-    bool disableWidget = UserShareHelper::needDisableShareWidget(info);
-    if (!UserShareHelper::canShare(info))
+    if (!info) {
+        fmWarning() << "Failed to create FileInfo for:" << url.toString();
         return nullptr;
+    }
 
-    return new ShareControlWidget(url, disableWidget);
+    // Check sharing permissions
+    if (!UserShareHelper::canShare(info)) {
+        fmWarning() << "User cannot share this item";
+        return nullptr;
+    }
+
+    bool disableWidget = UserShareHelper::needDisableShareWidget(info);
+    fmDebug() << "Share widget disabled status:" << disableWidget;
+
+    // Create and return the share control widget
+    auto widget = new ShareControlWidget(url, disableWidget);
+    fmDebug() << "Successfully created share control widget";
+    return widget;
 }
 
 void DirShare::bindScene(const QString &parentScene)
@@ -92,6 +121,12 @@ void DirShare::bindEvents()
     dpfSlotChannel->connect(kEventSpace, "slot_Share_WhoSharedByShareName", UserShareHelperInstance, &UserShareHelper::whoShared);
 
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Share_SetPassword", UserShareHelperInstance, &UserShareHelper::handleSetPassword);
+}
+
+void DirShare::regToPropertyDialog()
+{
+    CustomViewExtensionView func { DirShare::createShareControlWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
 }
 
 void DirShare::onShareStateChanged(const QString &path)

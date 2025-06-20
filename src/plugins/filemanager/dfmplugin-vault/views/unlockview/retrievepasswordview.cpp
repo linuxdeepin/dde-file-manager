@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "retrievepasswordview.h"
+#include "utils/vaultutils.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/policy/policymanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -26,8 +26,6 @@
 #include <QShowEvent>
 #include <QGridLayout>
 
-using namespace PolkitQt1;
-
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
@@ -45,12 +43,9 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
 
     filePathEdit = new DFileChooserEdit(this);
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    fileDialog = new DFileDialog(this, QDir::homePath());
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
     filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
-    filePathEdit->setFileDialog(fileDialog);
-    filePathEdit->lineEdit()->setReadOnly(true);
     filePathEdit->hide();
 
     defaultFilePathEdit = new QLineEdit(this);
@@ -75,13 +70,13 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     this->setLayout(mainLayout);
 
     connect(savePathTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndex(int)));
-
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(savePathTypeComboBox), AcName::kAcComboVaultRetrieveMethod);
     AddATTag(qobject_cast<QWidget *>(defaultFilePathEdit), AcName::kAcEditVaultRetrieveDefaultPath);
     AddATTag(qobject_cast<QWidget *>(filePathEdit), AcName::kAcEditVaultRetrieveOtherPath);
+    fmDebug() << "Vault: Testing accessibility tags added";
 #endif
 }
 
@@ -98,33 +93,41 @@ void RetrievePasswordView::verificationKey()
     QString keyPath;
     switch (savePathTypeComboBox->currentIndex()) {
     case 0: {
+        fmDebug() << "Vault: Checking default key path:" << defaultKeyPath;
         if (QFile::exists(defaultKeyPath)) {
             defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
             emit sigBtnEnabled(1, true);
             keyPath = defaultKeyPath;
+            fmInfo() << "Vault: Default key file found and loaded";
         } else {
             defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             defaultFilePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Default key file not found at path:" << defaultKeyPath;
         }
         break;
     }
     case 1:
         keyPath = filePathEdit->text();
+        fmDebug() << "Vault: Checking specified key path:" << keyPath;
         if (!QFile::exists(keyPath)) {
             filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             filePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Specified key file not found at path:" << keyPath;
         } else {
             emit sigBtnEnabled(1, true);
+            fmInfo() << "Vault: Specified key file found and validated";
         }
         break;
     }
 
     if (OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
         validationResults = password;
+        fmInfo() << "Vault: Key verification successful, password retrieved (length:" << password.length() << ")";
         emit signalJump(PageType::kPasswordRecoverPage);
     } else {
+        fmWarning() << "Vault: Key verification failed for path:" << keyPath;
         verificationPrompt->setText(tr("Verification failed"));
     }
 }
@@ -150,15 +153,14 @@ void RetrievePasswordView::buttonClicked(int index, const QString &text)
 {
     switch (index) {
     case 0:
+        fmDebug() << "Vault: Back button clicked, jumping to unlock page";
         emit signalJump(PageType::kUnlockPage);
         break;
     case 1:
+        fmInfo() << "Vault: Verify Key button clicked, starting authorization";
         //! 用户权限认证(异步授权)
-        auto ins = Authority::instance();
-        ins->checkAuthorization(PolicyKitRetrievePasswordActionId,
-                                UnixProcessSubject(getpid()),
-                                Authority::AllowUserInteraction);
-        connect(ins, &Authority::checkAuthorizationFinished,
+        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRetrieve);
+        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                 this, &RetrievePasswordView::slotCheckAuthorizationFinished);
         break;
     }
@@ -180,10 +182,12 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         if (QFile::exists(defaultKeyPath)) {
             defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
             emit sigBtnEnabled(1, true);
+            fmDebug() << "Vault: Default key file exists, button enabled";
         } else {
             defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             defaultFilePathEdit->setText("");
             emit sigBtnEnabled(1, false);
+            fmWarning() << "Vault: Default key file not found, button disabled";
         }
         verificationPrompt->setText("");
     } break;
@@ -192,7 +196,6 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         funLayout->addWidget(filePathEdit, 1, 0, 1, 2);
         defaultFilePathEdit->hide();
         filePathEdit->show();
-        fileDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         if (QFile::exists(filePathEdit->text()))
             emit sigBtnEnabled(1, true);
         else if (!filePathEdit->text().isEmpty() && filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))) {
@@ -202,6 +205,7 @@ void RetrievePasswordView::onComboBoxIndex(int index)
         } else {
             filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
             emit sigBtnEnabled(1, false);
+            fmDebug() << "Vault: No path selected, button disabled";
         }
         verificationPrompt->setText("");
         break;
@@ -215,12 +219,12 @@ void RetrievePasswordView::onBtnSelectFilePath(const QString &path)
         emit sigBtnEnabled(1, true);
 }
 
-void RetrievePasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+void RetrievePasswordView::slotCheckAuthorizationFinished(bool result)
 {
-    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+    disconnect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
                this, &RetrievePasswordView::slotCheckAuthorizationFinished);
     if (isVisible()) {
-        if (result == Authority::Yes) {
+        if (result) {
             verificationKey();
         }
     }
@@ -228,7 +232,6 @@ void RetrievePasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::
 
 void RetrievePasswordView::showEvent(QShowEvent *event)
 {
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kRetrievePassWordPage);
     if (QFile::exists(defaultKeyPath)) {
         defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
         emit sigBtnEnabled(1, true);
@@ -240,10 +243,4 @@ void RetrievePasswordView::showEvent(QShowEvent *event)
     setVerificationPage();
 
     QFrame::showEvent(event);
-}
-
-void RetrievePasswordView::closeEvent(QCloseEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
-    QFrame::closeEvent(event);
 }

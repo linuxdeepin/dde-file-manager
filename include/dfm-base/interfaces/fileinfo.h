@@ -113,8 +113,11 @@ public:
         kFileIsHid = 6,   // 是否是隐藏文件
         kFileLocalDevice = 7,   // 文件是本地文件
         kFileCdRomDevice = 8,   // 文件是光驱
-        kFileThumbnail = 9,     // 文件缩略图
+        kFileThumbnail = 9,   // 文件缩略图
         kCustomerStartExtended = 50,   // 其他用户使用
+        kFileNeedUpdate = 51,   // 文件信息需要在显示更新
+        kFileNeedTransInfo = 52,   // 文件信息需要转换为desktopfileinfo
+        kFileHighlightContent = 53,   // 文件需要高亮内容
         kUnknowExtendedInfo = 255,
     };
     /*!
@@ -191,7 +194,7 @@ public:
         kCanTrash = 1,   // 可以移动到回收站
         kCanRename = 2,   // 可以重命名
         kCanRedirectionFileUrl = 3,   // 可以重定向
-        kCanMoveOrCopy = 4,   // 可以移动或者拷贝
+        kCanMoveOrCopy = 4,   // 可以拷贝(若需要可以移动使用,则使用kCanRename去判断)
         kCanDrop = 5,   // 可以Drop
         kCanDrag = 6,   // 可以drag
         kCanDragCompress = 7,   // 可以压缩
@@ -247,8 +250,8 @@ public:
         kStandardFileExists = 20,   // bool
         kStandardIsLocalDevice = 21,   // bool
         kStandardIsCdRomDevice = 22,   // bool
-        kStandardFileType = 22,   // FileInfo::FileType
-        kOriginalUri = 23, // original uri
+        kStandardFileType = 23,   // FileInfo::FileType
+        kOriginalUri = 24,   // original uri
 
         kEtagValue = 40,   // string
 

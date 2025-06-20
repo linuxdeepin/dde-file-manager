@@ -4,12 +4,12 @@
 
 #include "stubext.h"
 #include "views/unlockview/retrievepasswordview.h"
+#include "utils/vaultutils.h"
 #include "utils/encryption/operatorcenter.h"
 
 #include <gtest/gtest.h>
 
 DPVAULT_USE_NAMESPACE
-using namespace PolkitQt1;
 
 TEST(UT_RetrievePasswordView, verificationKey_Zero_Exist)
 {
@@ -98,7 +98,7 @@ TEST(UT_RetrievePasswordView, buttonClicked_One)
 {
     bool isAuthorization { false };
     stub_ext::StubExt stub;
-    stub.set_lamda(&Authority::checkAuthorization, [ &isAuthorization ] { __DBG_STUB_INVOKE__ isAuthorization = true; });
+    stub.set_lamda(&VaultUtils::showAuthorityDialog, [ &isAuthorization ] { __DBG_STUB_INVOKE__ isAuthorization = true; });
 
     RetrievePasswordView view;
     view.buttonClicked(1, "");

@@ -8,6 +8,7 @@
 #include "dfmplugin_utils_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 class QMimeData;

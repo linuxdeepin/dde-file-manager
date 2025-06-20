@@ -35,14 +35,16 @@
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
+using namespace GlobalDConfDefines::ConfigPath;
+
 static constexpr char kSavePasswd[] { "savePasswd" };
 static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
 static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
 
-static constexpr char kDaemonService[] { "com.deepin.filemanager.daemon" };
-static constexpr char kDaemonPath[] { "/com/deepin/filemanager/daemon" };
-static constexpr char kDaemonMountPath[] { "/com/deepin/filemanager/daemon/MountControl" };
-static constexpr char kDaemonMountIface[] { "com.deepin.filemanager.daemon.MountControl" };
+static constexpr char kDaemonService[] { "org.deepin.Filemanager.MountControl" };
+static constexpr char kDaemonPath[] { "/org/deepin/Filemanager/MountControl" };
+static constexpr char kDaemonMountPath[] { "/org/deepin/Filemanager/MountControl" };
+static constexpr char kDaemonMountIface[] { "org.deepin.Filemanager.MountControl" };
 static constexpr char kDaemonIntroIface[] { "org.freedesktop.DBus.Introspectable" };
 static constexpr char kDaemonIntroMethod[] { "Introspect" };
 
@@ -58,7 +60,7 @@ DeviceManager *DeviceManager::instance()
 void DeviceManager::enableBlockAutoMount()
 {
     d->autoMountBlock = true;
-    qCInfo(logDFMBase) << "block device auto mount is enabled.";
+    qCInfo(logDFMBase) << "Block device auto mount enabled";
 }
 
 QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
@@ -91,7 +93,7 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
             && !data.value(DeviceProperty::kOptical).toBool())
             continue;
         if (opts.testFlag(DeviceQueryOption::kSystem)
-            && !DeviceUtils::isSystemDisk(data))
+            && !DeviceUtils::isBuiltInDisk(data))
             continue;
         if (opts.testFlag(DeviceQueryOption::kLoop)
             && !data.value(DeviceProperty::kIsLoopDevice).toBool())
@@ -163,16 +165,26 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "Failed to create block device for mounting:" << id;
         if (cb)
             cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
         Q_EMIT blockDevMountResult(id, false);
         return;
     }
 
+    QVariantMap options = opts;
+    const QStringList winFS { "ntfs", "vfat", "exfat" };
+    if (winFS.contains(dev->fileSystem())) {
+        auto optStr = options.value("options").toString();
+        optStr.prepend("dmask=000,fmask=000,");
+        if (optStr.endsWith(",")) optStr.chop(1);
+        options.insert("options", optStr);
+        qCDebug(logDFMBase) << "Windows filesystem detected, mount options adjusted for device:" << id << "filesystem:" << dev->fileSystem();
+    }
+
     if (dev->optical()) {
         if (d->isMountingOptical) {
-            qCWarning(logDFMBase) << "Currently mounting a disc!";
+            qCWarning(logDFMBase) << "Another optical device is currently being mounted, request rejected for device:" << id;
             Q_EMIT blockDevMountResult(id, false);
             return;
         }
@@ -183,21 +195,30 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             // so it needs to be updated.
             d->watcher->updateOpticalDevUsage(id, mpt);
             Q_EMIT this->blockDevMountResult(id, ok);
-            if (ok)
+            if (ok) {
+                qCInfo(logDFMBase) << "Optical device mounted successfully - device:" << id << "mount point:" << mpt;
                 Q_EMIT this->blockDevMountedManually(id, mpt);   // redundant: to notify deviceproxymanager update the cache.
+            } else {
+                qCWarning(logDFMBase) << "Optical device mount failed - device:" << id << "error:" << err.message;
+            }
             if (cb)
                 cb(ok, err, mpt);
         };
 
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
-            qCInfo(logDFMBase) << "query optical item info finished, about to starting mounting it...";
+            qCDebug(logDFMBase) << "Optical device info query completed, starting mount operation for device:" << id;
             d->isMountingOptical = false;
-            dev->mountAsync(opts, callback);
+            dev->mountAsync(options, callback);
             delete fw;
         });
         d->isMountingOptical = true;
+        qCInfo(logDFMBase) << "Starting optical device mount process - device:" << id;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        fw->setFuture(QtConcurrent::run(&DeviceWatcher::queryOpticalDevUsage, d->watcher, id));
+#else
         fw->setFuture(QtConcurrent::run(d->watcher, &DeviceWatcher::queryOpticalDevUsage, id));
+#endif
     } else {
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
@@ -206,7 +227,7 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             if (cryptoBackingDev != "/") {
                 auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
                 if (!backingDev) {
-                    qCWarning(logDFMBase) << "cannot create block device: " << cryptoBackingDev;
+                    qCWarning(logDFMBase) << "Failed to create backing device for encrypted device:" << id << "backing device:" << cryptoBackingDev;
                     if (cb)
                         cb(false, Utils::genOperateErrorInfo(DeviceError::kUnhandledError), "");
                     Q_EMIT blockDevMountResult(id, false);
@@ -218,23 +239,30 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
             bool optical = dev->optical();
             auto callback = [cb, removable, optical, id, timeout, this](bool ok, const OperationErrorInfo &err, const QString &mpt) {
                 this->blockDevMountResult(id, ok);
-                if (!mpt.isEmpty() && removable && !optical)
+                if (!mpt.isEmpty() && removable && !optical) {
                     DeviceManagerPrivate::handleDlnfsMount(mpt, true);
+                    qCDebug(logDFMBase) << "DLNFS mount handled for removable device:" << id << "mount point:" << mpt;
+                }
 
-                if (ok)
+                if (ok) {
+                    qCInfo(logDFMBase) << "Block device mounted successfully - device:" << id << "mount point:" << mpt;
                     Q_EMIT this->blockDevMountedManually(id, mpt);   // redundant: to notify deviceproxymanager update the cache.
+                } else {
+                    qCWarning(logDFMBase) << "Block device mount failed - device:" << id << "error code:" << err.code << "message:" << err.message;
+                }
 
                 if (cb)
                     cb(ok, err, mpt);
 
                 if (mpt.isEmpty() && err.code != DeviceError::kUDisksErrorAlreadyMounted) {
-                    qCWarning(logDFMBase) << "mount err:" << err.code << " : " << err.message;
+                    qCWarning(logDFMBase) << "Mount operation failed, scheduling retry for device:" << id << "attempt:" << (timeout + 1);
                     retryMount(id, DeviceType::kBlockDevice, timeout + 1);   // if device not mounted, mount it again
                 }
             };
-            dev->mountAsync(opts, callback);
+            qCInfo(logDFMBase) << "Starting block device mount operation - device:" << id;
+            dev->mountAsync(options, callback);
         } else {
-            qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
+            qCWarning(logDFMBase) << "Device is not mountable - device:" << id << "reason:" << errMsg;
             if (cb)
                 cb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorNotMountable), "");
 
@@ -249,13 +277,15 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
 
     auto dev = DeviceHelper::createBlockDevice(id);
     if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
+        qCWarning(logDFMBase) << "Failed to create block device for unmounting:" << id;
         return false;
     }
 
     auto mpt = dev->mountPoint();
-    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt)))
+    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt))) {
+        qCWarning(logDFMBase) << "Cannot unmount device, scanning operation in progress:" << id << "mount point:" << mpt;
         return false;
+    }
 
     if (dev->isEncrypted()) {
         bool noLock = opts.value(OperateParamField::kUnmountWithoutLock, false).toBool();
@@ -263,18 +293,26 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
         options.remove(OperateParamField::kUnmountWithoutLock);
 
         QString cleartextId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
-        if (cleartextId == "/")   // which means it's already unmounted and locked.
+        if (cleartextId == "/") {   // which means it's already unmounted and locked.
+            qCDebug(logDFMBase) << "Encrypted device already unmounted and locked:" << id;
             return true;
+        }
 
+        qCInfo(logDFMBase) << "Unmounting encrypted device - device:" << id << "cleartext device:" << cleartextId << "lock after unmount:" << !noLock;
         return noLock ? unmountBlockDev(cleartextId, options)
                       : unmountBlockDev(cleartextId, options) && dev->lock();
     } else {
-        if (mpt.isEmpty() && dev->mountPoints().isEmpty())
+        if (mpt.isEmpty() && dev->mountPoints().isEmpty()) {
+            qCDebug(logDFMBase) << "Device is not mounted, unmount operation skipped:" << id;
             return true;
-        if (!dev->hasFileSystem())
+        }
+        if (!dev->hasFileSystem()) {
+            qCDebug(logDFMBase) << "Device has no filesystem, unmount operation skipped:" << id;
             return true;
+        }
 
         DeviceManagerPrivate::unmountStackedMount(mpt);
+        qCInfo(logDFMBase) << "Unmounting block device - device:" << id << "mount point:" << mpt;
         return dev->unmount(opts);
     }
 }
@@ -701,9 +739,10 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 
     static QMap<QString, QString> defaultPort { { "smb", "445" },
                                                 { "ftp", "21" },
-                                                { "sftp", "22" } };
+                                                { "sftp", "22" },
+                                                { "nfs", "2049" } };
     QString host = u.host();
-    QString port = defaultPort.value(u.scheme(), "21");
+    QString port = defaultPort.value(u.scheme());
 
     static QRegularExpression regUrl(R"((\w+)://([^/:]+)(:\d*)?)");
     auto match = regUrl.match(address);
@@ -717,13 +756,15 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
     auto wrappedCb = [=](bool ok, const OperationErrorInfo &err, const QString &msg) {
-        Q_EMIT mountNetworkDeviceResult(ok, err.code, msg);
+        Q_EMIT mountNetworkDeviceResult(address, ok, err.code, err.code == DeviceError::kNoError ? msg : err.message);
         if (cb) cb(ok, err, msg);
         QApplication::restoreOverrideCursor();
     };
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QStringList ports { port };
+    QStringList ports;
+    if (!port.isEmpty())
+        ports.append(port);
     static const QStringList &defaultSmbPorts { "445", "139" };
     if (u.scheme() == "smb" && defaultSmbPorts.contains(port))
         ports = defaultSmbPorts;
@@ -743,17 +784,20 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 void DeviceManager::doAutoMountAtStart()
 {
     if (!DeviceUtils::isAutoMountEnable()) {
-        qCInfo(logDFMBase) << "auto mount is disabled.";
+        qCInfo(logDFMBase) << "Auto mount is disabled in system settings";
         return;
     }
 
     if (UniversalUtils::currentLoginUser() != getuid()) {
-        qCInfo(logDFMBase) << "give up auto mount cause current user is not logined";
+        qCInfo(logDFMBase) << "Auto mount skipped - current user is not the logged-in user";
         return;
     }
 
     static std::once_flag flg;
-    std::call_once(flg, [this] { d->mountAllBlockDev(); });
+    std::call_once(flg, [this] { 
+        qCInfo(logDFMBase) << "Starting auto mount process at application startup";
+        d->mountAllBlockDev(); 
+    });
 }
 
 void DeviceManager::detachAllRemovableBlockDevs()
@@ -800,13 +844,14 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     bool isOptical = me.value(DeviceProperty::kOpticalDrive).toBool();
     bool canPowerOff = me.value(DeviceProperty::kCanPowerOff).toBool();
 
-    auto func = [this, id, isOptical, canPowerOff, cb](bool allUnmounted, const OperationErrorInfo &err) {
+    auto media = me.value(DeviceProperty::kMedia).toString();
+    auto func = [this, id, isOptical, canPowerOff, cb, media](bool allUnmounted, const OperationErrorInfo &err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
-            else if (canPowerOff)
+            else if (canPowerOff && media != "flash_sd")   // do not detach SD driver.
                 powerOffBlockDevAsync(id, {}, cb);
             else if (cb)
                 cb(true, err);
@@ -841,9 +886,11 @@ void DeviceManager::detachAllProtoDevs()
 
 void DeviceManager::detachProtoDev(const QString &id)
 {
-    unmountProtocolDevAsync(id, {}, [id](bool ok, const OperationErrorInfo &err) {
-        if (!ok)
+    unmountProtocolDevAsync(id, {}, [this, id](bool ok, const OperationErrorInfo &err) {
+        if (!ok) {
             qCWarning(logDFMBase) << "unmount protocol device failed: " << id << err.message << err.code;
+            emit protocolDevUnmountAsyncFailed(id, err.code);
+        }
     });
 }
 
@@ -887,57 +934,67 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 {
     if (type == DeviceType::kProtocolDevice) {   // alwasy auto mount protocol device
+        qCDebug(logDFMBase) << "Auto mounting protocol device:" << id;
         mountProtocolDevAsync(id);
         return;
     }
 
     if (!d->autoMountBlock) {
-        qCInfo(logDFMBase) << "auto mount block device is not allowed in current application";
+        qCDebug(logDFMBase) << "Auto mount for block devices is disabled in current application context";
         return;
     }
 
     if (!DeviceUtils::isAutoMountEnable()) {
-        qCInfo(logDFMBase) << "auto mount is disabled";
+        qCDebug(logDFMBase) << "Auto mount is disabled in system settings";
         return;
     }
     if (!UniversalUtils::isLogined()) {
-        qCInfo(logDFMBase) << "give up auto mount cause no logined user" << id;
+        qCDebug(logDFMBase) << "Auto mount skipped - no user logged in for device:" << id;
         return;
     }
 
     if (UniversalUtils::currentLoginUser() != getuid()) {
-        qCInfo(logDFMBase) << "give up auto mount cause current user is not logined" << id;
+        qCDebug(logDFMBase) << "Auto mount skipped - current user is not the logged-in user for device:" << id;
         return;
     }
 
     if (UniversalUtils::isInLiveSys()) {
-        qCInfo(logDFMBase) << "auto mount is disabled in live system." << id;
+        qCDebug(logDFMBase) << "Auto mount disabled in live system for device:" << id;
         return;
     }
 
     CallbackType1 cb = nullptr;
     if (DeviceUtils::isAutoMountAndOpenEnable()) {
         cb = [id](bool ok, const OperationErrorInfo &, const QString &mpt) {
-            if (ok)
+            if (ok) {
+                qCInfo(logDFMBase) << "Auto mount and open - opening file manager for device:" << id << "mount point:" << mpt;
                 DeviceHelper::openFileManagerToDevice(id, mpt);
+            }
         };
     }
 
     if (type == DeviceType::kBlockDevice) {
         auto &&info = getBlockDevInfo(id);
         if (info.value(DeviceProperty::kIsEncrypted).toBool()
-            || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/")
+            || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/") {
+            qCDebug(logDFMBase) << "Auto mount skipped for encrypted device:" << id;
             return;
-        if (info.value(DeviceProperty::kHintIgnore).toBool())
+        }
+        if (info.value(DeviceProperty::kHintIgnore).toBool()) {
+            qCDebug(logDFMBase) << "Auto mount skipped for ignored device:" << id;
             return;
-        if (!info.value(DeviceProperty::kHasFileSystem).toBool())
+        }
+        if (!info.value(DeviceProperty::kHasFileSystem).toBool()) {
+            qCDebug(logDFMBase) << "Auto mount skipped for device without filesystem:" << id;
             return;
+        }
 
+        qCInfo(logDFMBase) << "Starting auto mount for block device:" << id;
         mountBlockDevAsync(id, {}, cb, timeout);
     }
 }
@@ -945,11 +1002,11 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 void DeviceManager::retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout)
 {
     if (timeout > 1) {
-        qCWarning(logDFMBase) << " retry mount stoped by timeout more than " << timeout << " times for: " << id;
+        qCWarning(logDFMBase) << "Mount retry limit exceeded for device:" << id << "attempts:" << timeout;
         return;
     }
 
-    qCInfo(logDFMBase) << " retry mount 5s later:" << id;
+    qCInfo(logDFMBase) << "Scheduling mount retry in 5 seconds for device:" << id << "attempt:" << timeout;
     QTimer::singleShot(5000, this, [id, type, timeout] { DeviceManager::instance()->doAutoMount(id, type, timeout); });
 }
 
@@ -962,10 +1019,10 @@ void DeviceManagerPrivate::mountAllBlockDev()
 {
     const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kMountable | DeviceQueryOption::kNotIgnored
                                                   | DeviceQueryOption::kNotMounted) };
-    qCInfo(logDFMBase) << "start to mount block devs: " << devs;
+    qCInfo(logDFMBase) << "Starting auto mount for" << devs.size() << "mountable block devices:" << devs;
     for (const auto &dev : devs) {
         if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
-            qCInfo(logDFMBase) << "no auto mount for optical devices." << dev;
+            qCDebug(logDFMBase) << "Skipping auto mount for optical device:" << dev;
             continue;
         }
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
@@ -1002,29 +1059,29 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
     if (mount) {
         auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
         if (!enableDlnfsMount) {
-            qCInfo(logDFMBase) << "dlnfs: mount is disabled";
+            qCDebug(logDFMBase) << "DLNFS mount is disabled in configuration";
             return;
         }
     }
 
     if (!isDaemonMountRunning()) {
-        qCWarning(logDFMBase) << "dlnfs: daemon mount is not working...";
+        qCWarning(logDFMBase) << "DLNFS daemon mount service is not available";
         return;
     }
 
     QString method = mount ? "Mount" : "Unmount";
 
-    qCInfo(logDFMBase) << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
+    qCInfo(logDFMBase) << "Starting DLNFS" << method.toLower() << "operation for mount point:" << mpt;
 
     QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
     QDBusReply<QVariantMap> reply = iface.call(method, mpt, QVariantMap { { "fsType", "dlnfs" } });
     const auto &ret = reply.value();
 
-    QString msg = QString("dlnfs: %1 on %2, result:").arg(method).arg(mpt);
-
-    qCDebug(logDFMBase) << msg << ret;
-    if (!ret.value("result").toBool())
-        qCWarning(logDFMBase) << msg << ret;
+    if (ret.value("result").toBool()) {
+        qCInfo(logDFMBase) << "DLNFS" << method.toLower() << "operation completed successfully for mount point:" << mpt;
+    } else {
+        qCWarning(logDFMBase) << "DLNFS" << method.toLower() << "operation failed for mount point:" << mpt << "result:" << ret;
+    }
 }
 
 void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
@@ -1051,53 +1108,58 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
-    if (uri.startsWith(Global::Scheme::kFtp) || uri.startsWith(Global::Scheme::kSFtp))
+    QStringList noDomainSchemes { Global::Scheme::kSFtp, Global::Scheme::kFtp, Global::Scheme::kDav, Global::Scheme::kDavs };
+    if (noDomainSchemes.contains(QUrl(uri).scheme()))
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;
     QApplication::restoreOverrideCursor();
-    if (dlg.exec() == QDialog::Accepted) {
-        QJsonObject loginInfo = dlg.getLoginData();
-        bool smbIntegrationEnabled = Application::genericAttribute(Application::GenericAttribute::kMergeTheEntriesOfSambaSharedFolders).toBool();
-        if (!uri.startsWith(Global::Scheme::kSmb) || !smbIntegrationEnabled) {
-            if (loginInfo.value(kSavePasswd).toInt() == 1)   // ftp mount with auth one time mode
-                loginInfo.insert(kSavePasswd, 0);   // set to never save password
-        }
 
-        auto data = loginInfo.toVariantMap();
-        using namespace GlobalServerDefines::NetworkMountParamKey;
-        if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
-            info.anonymous = true;
-        } else {
-            info.userName = data.value(kUser).toString();
-            info.domain = data.value(kDomain).toString();
-            info.passwd = data.value(kPasswd).toString();
-            info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(
-                    data.value(kPasswdSaveMode).toInt());
-            if (uri.startsWith(Global::Scheme::kSmb)) {
-                QVariantHash pwTypeData = Application::genericSetting()->value(kStashedSmbDevices, kSavedPasswordType, QVariantHash()).toHash();
-                const QString &key = QUrl(uri).toString(QUrl::RemovePath);
-                int newPwType = int(info.savePasswd);
-                int savedPwType = pwTypeData.value(key, -1).toInt();
-                if (savedPwType != int(NetworkMountPasswdSaveMode::kSavePermanently)) {
-                    pwTypeData.insert(key, newPwType);
-                    Application::genericSetting()->setValue(kStashedSmbDevices, kSavedPasswordType, pwTypeData);
-                }
-            }
-        }
-    } else {
+    // 将对话框手动关闭，以及用户取消输入都作为取消操作
+    if (dlg.exec() != QDialog::Accepted) {
         info.cancelled = true;
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        return info;
+    }
+
+    QJsonObject loginInfo = dlg.getLoginData();
+    auto data = loginInfo.toVariantMap();
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    if (data.value(kAnonymous, false).toBool()) {
+        info.anonymous = true;
+    } else {
+        info.userName = data.value(kUser).toString();
+        info.domain = data.value(kDomain).toString();
+        info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
+        QString pwd = data.value(kPasswd).toString();
+        info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
+
+        // save password in session if samba is integrated.
+        if (uri.startsWith(Global::Scheme::kSmb)) {
+            using AppGA = Application::GenericAttribute;
+            bool smbIntegrated = Application::genericAttribute(AppGA::kMergeTheEntriesOfSambaSharedFolders).toBool();
+            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently)
+                info.savePasswd = NetworkMountPasswdSaveMode::kSaveBeforeLogout;
+        }
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     return info;
 }
 
+QString DeviceManagerPrivate::encryptPasswd(const QString &passwd)
+{
+    // todo use encrypt-plugin
+    QByteArray byteArray = passwd.toUtf8();
+    QByteArray encodedByteArray = byteArray.toBase64();
+    return QString::fromUtf8(encodedByteArray);
+}
+
 int DeviceManagerPrivate::askForUserChoice(const QString &message, const QStringList &choices)
 {
     QString newMsg = message;
     QString title;
-    if (message.startsWith("Can’t verify the identity of")
+    if (message.startsWith("Can't verify the identity of")
         /*&& message.endsWith("If you want to be absolutely sure it is safe to continue, contact the "
                             "system administrator.")*/
     ) {
@@ -1127,7 +1189,6 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
     askForChoice.setTitle(title);
     askForChoice.setMessage(newMsg);
     askForChoice.addButtons(choices);
-    askForChoice.setMaximumWidth(480);
 
     return askForChoice.exec();
 }

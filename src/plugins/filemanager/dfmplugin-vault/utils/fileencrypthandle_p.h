@@ -63,6 +63,7 @@ private:
     bool isSupportAlgoName(const QString &algoName);
     void syncGroupPolicyAlgoName();
     EncryptType encryptAlgoTypeOfGroupPolicy();
+    void setEnviroment(const QPair<QString, QString> &value);
 
 private:
     QProcess *process { nullptr };

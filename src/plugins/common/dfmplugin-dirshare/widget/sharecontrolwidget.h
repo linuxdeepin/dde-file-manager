@@ -12,6 +12,7 @@
 
 #include <DLabel>
 #include <DTipLabel>
+#include <DLineEdit>
 #include <DCommandLinkButton>
 #include <DArrowLineDrawer>
 #include <QUrl>
@@ -46,7 +47,7 @@ protected:
     void setupShareNameEditor();
     void setupSharePermissionSelector();
     void setupShareAnonymousSelector();
-    QHBoxLayout* setupNetworkPath();
+    QHBoxLayout *setupNetworkPath();
     QHBoxLayout *setupUserName();
     QHBoxLayout *setupSharePassword();
     void setupShareNotes();
@@ -56,11 +57,12 @@ protected:
 
 protected Q_SLOTS:
     void updateShare();
-    void shareFolder();
-    void unshareFolder();
+    bool shareFolder();
+    bool unshareFolder();
     void updateWidgetStatus(const QString &filePath);
     void updateFile(const QUrl &oldOne, const QUrl &newOne);
     void onSambaPasswordSet(bool result);
+    void onShareNameChanged(const QString &name);
 
 private:
     void showMoreInfo(bool showMore);
@@ -71,7 +73,7 @@ private:
     QVBoxLayout *mainLayout { Q_NULLPTR };
     QFrame *moreInfoFrame { Q_NULLPTR };
     QCheckBox *shareSwitcher { Q_NULLPTR };
-    QLineEdit *shareNameEditor { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DLineEdit *shareNameEditor { Q_NULLPTR };
     QComboBox *sharePermissionSelector { Q_NULLPTR };
     QComboBox *shareAnonymousSelector { Q_NULLPTR };
 
@@ -88,7 +90,7 @@ private:
     bool isSharePasswordSet { false };
     QTimer *refreshIp { Q_NULLPTR };
 
-    //QTimer *m_jobTimer;
+    // QTimer *m_jobTimer;
     QString selfIp;
 
     QTimer *timer { Q_NULLPTR };

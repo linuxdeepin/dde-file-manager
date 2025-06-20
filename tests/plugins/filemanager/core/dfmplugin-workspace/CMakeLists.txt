@@ -19,7 +19,9 @@ add_executable(${PROJECT_NAME}
 find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    "${PluginPath}")
+    "${PluginPath}"
+    ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+    )
 target_link_libraries(${PROJECT_NAME} PRIVATE
     DFM::base
     DFM::framework

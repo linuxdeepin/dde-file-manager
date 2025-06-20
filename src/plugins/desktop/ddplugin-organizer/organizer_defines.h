@@ -14,9 +14,17 @@
 
 namespace ddplugin_organizer {
 
+inline const int kCollectionStretchThreshold = 10;
+inline constexpr char kCollectionPropertyEditing[] { "collection_editing" };
+
 enum OrganizerMode {
     kNormalized = 0,
     kCustom
+};
+
+enum OrganizeAction {
+    kOnTrigger,
+    kAlways
 };
 
 enum Classifier {
@@ -35,17 +43,37 @@ enum ItemCategory {
     kCatPicture = 0x04,
     kCatVideo = 0x08,
     kCatMusic = 0x10,
-    kCatFloder = 0x20,
+    kCatFolder = 0x20,
+    kCatOther = 0x40,
 
-    kCatEnd = kCatFloder,
-    kCatAll = kCatApplication | kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFloder,
+    kCatEnd = kCatOther,
+    kCatAll = kCatApplication | kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFolder | kCatOther,
     kCatDefault = -1
 };
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
 
+inline const char kTypeKeyApp[] = "Type_Apps";
+inline const char kTypeKeyDoc[] = "Type_Documents";
+inline const char kTypeKeyPic[] = "Type_Pictures";
+inline const char kTypeKeyVid[] = "Type_Videos";
+inline const char kTypeKeyMuz[] = "Type_Music";
+inline const char kTypeKeyFld[] = "Type_Folders";
+inline const char kTypeKeyOth[] = "Type_Other";
+inline const QMap<ItemCategory, QString> kCategory2Key {
+    { kCatApplication, kTypeKeyApp },
+    { kCatDocument, kTypeKeyDoc },
+    { kCatPicture, kTypeKeyPic },
+    { kCatVideo, kTypeKeyVid },
+    { kCatMusic, kTypeKeyMuz },
+    { kCatFolder, kTypeKeyFld },
+    { kCatOther, kTypeKeyOth }
+};
+
 enum CollectionFrameSize {
-    kSmall = 0,
-    kLarge
+    kMiddle = 0,
+    kLarge,
+    kSmall,
+    kFree
 };
 
 class CollectionBaseData
@@ -64,9 +92,10 @@ struct CollectionStyle
     QString key;
     QRect rect;
     CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
+    bool customGeo = false;
 };
 }
 
 Q_DECLARE_METATYPE(ddplugin_organizer::CollectionFrameSize);
 
-#endif // ORGANIZER_DEFINES_H
+#endif   // ORGANIZER_DEFINES_H

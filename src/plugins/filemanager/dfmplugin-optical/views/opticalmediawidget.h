@@ -13,7 +13,7 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QSvgWidget>
+#include <QtSvgWidgets/QSvgWidget>
 #include <DPushButton>
 
 namespace dfmplugin_optical {

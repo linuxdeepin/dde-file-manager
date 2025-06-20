@@ -6,6 +6,7 @@
 #define VAULTACTIVESAVEKEYFILEVIEW_H
 
 #include "dfmplugin_vault_global.h"
+#include "vaultbaseview.h"
 
 #include <dtkwidget_global.h>
 #include <DSuggestButton>
@@ -31,29 +32,19 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 };
 
-class VaultActiveSaveKeyFileView : public QWidget
+class VaultActiveSaveKeyFileView : public VaultBaseView
 {
     Q_OBJECT
 public:
     explicit VaultActiveSaveKeyFileView(QWidget *parent = nullptr);
+    void setEncryptInfo(EncryptInfo &info) override;
 
 private:
     void initUI();
     void initUiForSizeMode();
     void initConnect();
 
-signals:
-    /*!
-     * /brief sigAccepted   下一步的信号
-     */
-    void sigAccepted();
-
 public slots:
-    /*!
-     * /brief slotNextBtnClicked 保存密钥文件
-     */
-    void slotNextBtnClicked();
-
     /*!
      * /brief slotSelectRadioBtn  单选框选中槽函数
      * /param btn   选中的单选框按钮

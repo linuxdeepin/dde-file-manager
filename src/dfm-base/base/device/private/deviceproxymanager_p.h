@@ -5,7 +5,11 @@
 #ifndef DEVICEPROXYMANAGER_P_H
 #define DEVICEPROXYMANAGER_P_H
 
-#include "devicemanager_interface.h"
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#    include "devicemanager_interface.h"
+#else
+#    include "devicemanager_interface_qt6.h"
+#endif
 
 #include <dfm-base/dfm_base_global.h>
 
@@ -14,7 +18,7 @@
 #include <QtCore/qobjectdefs.h>
 #include <QReadWriteLock>
 
-using DeviceManagerInterface = OrgDeepinFilemanagerServerDeviceManagerInterface;
+using DeviceManagerInterface = OrgDeepinFilemanagerDaemonDeviceManagerInterface;
 class QDBusServiceWatcher;
 namespace dfmbase {
 
@@ -31,12 +35,11 @@ public:
     bool isDBusRuning();
     void initConnection();
     void initMounts();
+    QString canonicalMountPoint(const QString &mpt) const;
 
     void connectToDBus();
     void connectToAPI();
     void disconnCurrentConnections();
-
-    QVariantMap asyncQueryInfo(const QString &id, bool reload, std::function<QDBusPendingReply<QVariantMap>(const QString &, bool)> func);
 
 private Q_SLOTS:
     void addMounts(const QString &id, const QString &mpt);
@@ -50,7 +53,7 @@ private:
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
     QReadWriteLock lock;
     QMap<QString, QString> externalMounts;
-    QMap<QString, QString> allMounts;
+    QMap<QString, QString> allMounts;   // contain system disk
 
     enum {
         kNoneConnection = -1,

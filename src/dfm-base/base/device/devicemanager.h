@@ -114,10 +114,11 @@ Q_SIGNALS:
     void blockDevFsRemoved(const QString &id);
     void blockDevMountResult(const QString &id, bool result);
 
-    // these 3 signals is designed only for dock's opeartion.
+    // these 4 signals is designed only for dock's opeartion.
     void blockDevUnmountAsyncFailed(const QString &id, DFMMOUNT::DeviceError err);
     void blockDevEjectAsyncFailed(const QString &id, DFMMOUNT::DeviceError err);
     void blockDevPoweroffAysncFailed(const QString &id, DFMMOUNT::DeviceError err);
+    void protocolDevUnmountAsyncFailed(const QString &id, DFMMOUNT::DeviceError err);
 
     void protocolDevAdded(const QString &id);
     void protocolDevRemoved(const QString &id, const QString &oldMpt);
@@ -126,7 +127,7 @@ Q_SIGNALS:
 
     void opticalDiscWorkStateChanged(const QString &id, const QString &dev, bool working);
 
-    void mountNetworkDeviceResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+    void mountNetworkDeviceResult(const QString &address, bool ret, DFMMOUNT::DeviceError err, const QString &msg);
 
     void blockDevMountedManually(const QString &id, const QString &mpt);
 

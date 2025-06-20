@@ -8,6 +8,12 @@
 //  #undef DFM_PLUGIN_PATH
 //  #define DFM_PLUGIN_PATH xxx
 
+#ifndef DFM_BUILD_DIR
+#    define DFM_BUILD_DIR "${DFM_BUILD_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_BUILD_DIR"
+#endif
+
 #ifndef DFM_BUILD_PLUGIN_DIR
 #    define DFM_BUILD_PLUGIN_DIR "${DFM_BUILD_PLUGIN_DIR}"
 #elif
@@ -44,12 +50,6 @@
 #    warning "cmake unseting definition DFM_PLUGIN_DAEMON_EDGE_DIR"
 #endif
 
-#ifndef DFM_PLUGIN_SERVER_EDGE_DIR
-#    define DFM_PLUGIN_SERVER_EDGE_DIR "${DFM_PLUGIN_SERVER_EDGE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_SERVER_EDGE_DIR"
-#endif
-
 #ifndef DFM_PLUGIN_DESKTOP_EDGE_DIR
 #    define DFM_PLUGIN_DESKTOP_EDGE_DIR "${DFM_PLUGIN_DESKTOP_EDGE_DIR}"
 #elif
@@ -72,6 +72,18 @@
 #    define DFM_THUMBNAIL_TOOL "${DFM_THUMBNAIL_TOOL}"
 #elif
 #    warning "cmake unseting definition DFM_THUMBNAIL_TOOL"
+#endif
+
+#ifndef DFM_PREVIEW_TOOL
+#    define DFM_PREVIEW_TOOL "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager-preview"
+#elif
+#    warning "cmake unseting definition DFM_PREVIEW_TOOL"
+#endif
+
+#ifndef DFM_FILE_MANAGER_BINARY
+#    define DFM_FILE_MANAGER_BINARY "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager"
+#elif
+#    warning "cmake unseting definition DFM_FILE_MANAGER_BINARY"
 #endif
 
 #ifndef VERSION

@@ -1,0 +1,39 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "enableCifsMount": {
+            "value": true,
+            "serial":0,
+            "flags":["global"],
+            "name":"Mount SMB share by CIFS",
+            "name[zh_CN]":"通过 CIFS 挂载 SMB 共享",
+            "description[zh_CN]":"通过内核支持的 CIFS 挂载 SMB 共享文件夹，性能会更好。重启后生效。",
+            "description":"Mount SMB share folders via CIFS which is supported by kernel and have a better performance. Take effective after reboot.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "cifsMountOptionOverride": {
+            "value": {},
+            "serial":0,
+            "flags":["global"],
+            "name":"CIFS mount option override list",
+            "name[zh_CN]":"CIFS 挂载选项覆盖列表",
+            "description[zh_CN]":"这些输入将用于覆盖 CIFS 挂载选项。仅当 enableCifsMount 启用时有效。",
+            "description":"The inputs will be used to override the CIFS mount options. Valid only if enableCifsMount is on.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "deviceCapacityDisplay":{
+            "value": 0,
+            "serial":0,
+            "flags":[],
+            "name":"Device capacity display method",
+            "name[zh_CN]":"设备容量显示方式",
+            "description[zh_CN]":"以磁盘大小（0）或文件系统大小（1）显示设备容量。其余值视作 0。",
+            "description":"Display device capacity as disk size (0) or file system size (1). The remaining values are treated as 0.",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}

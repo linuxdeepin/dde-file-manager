@@ -6,11 +6,13 @@
 #define ORGANIZATIONGROUP_H
 
 #include "widgets/switchwidget.h"
+#include "widgets/shortcutwidget.h"
 #include "methodgroup/methodcombox.h"
 #include "methodgroup/methodgrouphelper.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QSpacerItem>
 
 namespace ddplugin_organizer {
 class OrganizationGroup : public QWidget
@@ -24,13 +26,26 @@ signals:
 
 public slots:
 protected slots:
-    void checkedChanged(bool);
+    void enableOrganizeChanged(bool);
+    void enableHideAllChanged(bool);
+
 private:
-    SwitchWidget *organizationSwitch = nullptr;
-    MethodComBox *methodCombox = nullptr;
-    MethodGroupHelper *currentClass = nullptr;
-    QVBoxLayout *contentLayout = nullptr;
+    QLayout *buildTypeLayout();
+    void initAll();
+    void clearlAll();
+    void initShortcutWidget();
+    void clearShortcutWidget();
+
+private:
+    SwitchWidget *organizationSwitch { nullptr };
+    SwitchWidget *hideAllSwitch { nullptr };
+    ShortcutWidget *shortcutForHide { nullptr };
+    MethodComBox *methodCombox { nullptr };
+    MethodGroupHelper *currentClass { nullptr };
+    QVBoxLayout *contentLayout { nullptr };
+    QSpacerItem *spacer1 { nullptr };
+    QSpacerItem *spacer2 { nullptr };
 };
 }
 
-#endif // ORGANIZATIONGROUP_H
+#endif   // ORGANIZATIONGROUP_H

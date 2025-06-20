@@ -9,6 +9,7 @@
 
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
@@ -20,6 +21,7 @@
 #include <QVBoxLayout>
 #include <QTextEdit>
 #include <QLabel>
+#include <QScreen>
 
 DFMBASE_USE_NAMESPACE
 
@@ -164,11 +166,13 @@ void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestFailureDialog, this, &BurnJobManager::showOpticalJobFailureDialog);
     connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
     connect(job, &AbstractBurnJob::requestCloseTab, this, [](const QUrl &url) {
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_Close", url);
     });
     connect(job, &AbstractBurnJob::requestReloadDisc, this, [](const QString &devId) {
         DevMngIns->mountBlockDevAsync(devId, {}, [devId](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
             DevProxyMng->reloadOpticalInfo(devId);
+            // WORKAROUND: 由于内核原因，reload总是失败，暂擦除后弹出光盘
+            DeviceManager::instance()->ejectBlockDevAsync(devId);
         });
     });
     connect(job, &AbstractBurnJob::burnFinished, this, [this, job](int type, bool result) {
@@ -221,6 +225,8 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -275,6 +281,8 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -298,7 +306,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
     QFrame *contentFrame { new QFrame };
     QVBoxLayout *mainLayout { new QVBoxLayout };
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     contentFrame->setLayout(mainLayout);
     d.addContent(contentFrame);
 
@@ -318,7 +326,8 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
     iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
-    d.moveToCenter();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 
@@ -332,7 +341,7 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
 
     QFrame *contentFrame { new QFrame };
     QVBoxLayout *mainLayout { new QVBoxLayout };
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     contentFrame->setLayout(mainLayout);
     d.addContent(contentFrame);
 
@@ -352,7 +361,8 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
     iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
-    d.moveToCenter();
+    d.move(WindowUtils::cursorScreen()->geometry().center()
+           - QPoint(d.width() / 2, d.height() / 2));
     d.exec();
 }
 

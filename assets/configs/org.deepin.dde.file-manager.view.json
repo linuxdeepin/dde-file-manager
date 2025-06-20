@@ -14,13 +14,57 @@
             "visibility":"private"
         },
         "dfm.open.in.single.process": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Open folder windows in a separate process",
             "name[zh_CN]":"在单独的进程中打开文件夹窗口",
             "description[zh_CN]":"用于判断是否在单独的进程中打开文件夹窗口",
             "description":"Used to determine whether to enable Open folder windows in a separate process",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.displaypreview.visible": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Display preview visible",
+            "name[zh_CN]":"显示预览",
+            "description[zh_CN]":"控制显示预览",
+            "description":"Control display preview",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.icon.size.level": {
+            "value":5,
+            "serial":0,
+            "flags":[],
+            "name":"Icon size level",
+            "name[zh_CN]":"图标大小级别",
+            "description[zh_CN]":"控制图标大小级别",
+            "description":"Control icon size level",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.icon.griddensity.level": {
+            "value":2,
+            "serial":0,
+            "flags":[],
+            "name":"Icon grid density level",
+            "name[zh_CN]":"图标网格密度级别",
+            "description[zh_CN]":"控制图标网格密度级别",
+            "description":"Control icon grid density level",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.list.height.level": {
+            "value":1,
+            "serial":0,
+            "flags":[],
+            "name":"List height level",
+            "name[zh_CN]":"列表高度级别",
+            "description[zh_CN]":"控制列表高度级别",
+            "description":"Control list height level",
             "permissions":"readwrite",
             "visibility":"private"
         }

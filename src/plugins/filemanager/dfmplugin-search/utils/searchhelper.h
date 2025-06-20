@@ -11,7 +11,6 @@
 
 #include <QUrl>
 #include <QWidget>
-#include <QDBusInterface>
 
 namespace dfmplugin_search {
 
@@ -60,8 +59,12 @@ public:
                 + QLatin1String(")\\z");
     }
     bool isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath);
+    bool allowRepeatUrl(const QUrl &cur, const QUrl &pre);
 
-    static QDBusInterface &anythingInterface();
+    bool crumbRedirectUrl(QUrl *redirectUrl);
+
+    [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
+
 private:
     explicit SearchHelper(QObject *parent = nullptr);
     ~SearchHelper() override;

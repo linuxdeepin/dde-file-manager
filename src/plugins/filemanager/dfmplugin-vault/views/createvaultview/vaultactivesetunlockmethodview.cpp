@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultactivesetunlockmethodview.h"
-#include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
-#include "utils/policy/policymanager.h"
 #include "utils/encryption/vaultconfig.h"
 
 #include <dfm-framework/event/event.h>
@@ -20,8 +18,8 @@
 
 #include <QDebug>
 #include <QToolTip>
-#include <QRegExp>
-#include <QRegExpValidator>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QGridLayout>
 #include <QVBoxLayout>
 
@@ -29,28 +27,32 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
-    : QWidget(parent)
+    : VaultBaseView(parent)
 {
     initUi();
     initConnect();
+}
 
-    if (!OperatorCenter::getInstance()->createDirAndFile())
-        fmCritical() << "Vault: create dir and file failed!";
+VaultActiveSetUnlockMethodView::~VaultActiveSetUnlockMethodView()
+{
+    if (!transEncryptTextLay->parent())
+        delete transEncryptTextLay;
 }
 
 void VaultActiveSetUnlockMethodView::initUi()
 {
+    fmDebug() << "Vault: Initializing UI components";
+
     titleLabel = new DLabel(tr("Set Vault Password"), this);
     titleLabel->setAlignment(Qt::AlignHCenter);
 
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new DComboBox(this);
-    QStringList lstItems;
-    lstItems << tr("Key encryption")  << tr("Transparent encryption");
-    typeCombo->addItems(lstItems);
+    typeCombo->addItem(tr("Key encryption"), EncryptMode::kKeyMode);
+    typeCombo->addItem(tr("Transparent encryption"), EncryptMode::kTransparentMode);
 
-    QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
-    QValidator *validator = new QRegExpValidator(regx, this);
+    QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
+    QValidator *validator = new QRegularExpressionValidator(regx, this);
 
     passwordLabel = new DLabel(tr("Password"), this);
     passwordEdit = new DPasswordEdit(this);
@@ -85,7 +87,7 @@ void VaultActiveSetUnlockMethodView::initUi()
     nextBtn->setEnabled(false);
 
     gridLayout = new QGridLayout();
-    gridLayout->setMargin(0);
+    gridLayout->setContentsMargins(0, 0, 0, 0);
     gridLayout->setVerticalSpacing(10);
 
     gridLayout->addWidget(pTypeLabel, 0, 0, 1, 1, Qt::AlignLeft);
@@ -101,7 +103,7 @@ void VaultActiveSetUnlockMethodView::initUi()
     gridLayout->addWidget(tipsEdit, 3, 1, 1, 5);
 
     QVBoxLayout *play = new QVBoxLayout(this);
-    play->setMargin(0);
+    play->setContentsMargins(0, 0, 0, 0);
     play->addWidget(titleLabel);
     play->addSpacing(15);
     play->addLayout(gridLayout);
@@ -123,19 +125,25 @@ void VaultActiveSetUnlockMethodView::initUi()
     AddATTag(qobject_cast<QWidget *>(transEncryptionText), AcName::kAcLabelVaultSetUnlockText);
     AddATTag(qobject_cast<QWidget *>(nextBtn), AcName::kAcBtnVaultSetUnlockNext);
 #endif
+
+    fmDebug() << "Vault: UI initialization completed successfully";
 }
 
 void VaultActiveSetUnlockMethodView::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     DFontSizeManager::instance()->bind(titleLabel, DSizeModeHelper::element(DFontSizeManager::SizeType::T7, DFontSizeManager::SizeType::T5), QFont::Medium);
+    fmDebug() << "Vault: Font size manager bound with DSizeMode support";
 #else
     DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::SizeType::T5, QFont::Medium);
+    fmDebug() << "Vault: Font size manager bound without DSizeMode support";
 #endif
 }
 
 void VaultActiveSetUnlockMethodView::initConnect()
 {
+    fmDebug() << "Vault: Initializing signal connections";
+
     connect(typeCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slotTypeChanged(int)));
     connect(passwordEdit, &DPasswordEdit::textEdited,
@@ -155,13 +163,16 @@ void VaultActiveSetUnlockMethodView::initConnect()
     connect(repeatPasswordEdit, &DPasswordEdit::focusChanged,
             this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
     connect(nextBtn, &DPushButton::clicked,
-            this, &VaultActiveSetUnlockMethodView::slotNextBtnClicked);
+            this, &VaultActiveSetUnlockMethodView::accepted);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        fmDebug() << "Vault: Size mode changed, reinitializing UI";
         initUiForSizeMode();
     });
 #endif
+
+    fmInfo() << "Vault: All signal connections established successfully";
 }
 
 void VaultActiveSetUnlockMethodView::clearText()
@@ -175,6 +186,17 @@ void VaultActiveSetUnlockMethodView::clearText()
     //! 修复BUG-51508 取消密码框警告状态
     repeatPasswordEdit->setAlert(false);
     tipsEdit->clear();
+}
+
+void VaultActiveSetUnlockMethodView::setEncryptInfo(EncryptInfo &info)
+{
+    info.mode = typeCombo->currentData().value<EncryptMode>();
+    if (info.mode == EncryptMode::kKeyMode) {
+        info.password = passwordEdit->text();
+        info.hint = tipsEdit->text();
+    } else {
+        fmDebug() << "Vault: Transparent mode - no password/hint needed";
+    }
 }
 
 void VaultActiveSetUnlockMethodView::slotPasswordEditing()
@@ -192,12 +214,14 @@ void VaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 {
     bool ok = checkPassword(passwordEdit->text());
     if (!ok) {
+        fmWarning() << "Vault: Password validation failed on edit finish";
         nextBtn->setEnabled(false);
         //! 修复BUG-51508 激活密码框警告状态
         passwordEdit->setAlert(true);
         passwordEdit->showAlertMessage(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"), TIPS_TIME);
     } else {
         if (checkInputInfo()) {
+            fmDebug() << "Vault: All input validated, enabling next button";
             nextBtn->setEnabled(true);
         }
     }
@@ -216,9 +240,12 @@ void VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if (!ok) {
+        fmWarning() << "Vault: Password mismatch detected";
         //! 修复BUG-51508 激活密码框警告状态
         repeatPasswordEdit->setAlert(true);
         repeatPasswordEdit->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
+    } else {
+        fmDebug() << "Vault: Password match confirmed";
     }
 }
 
@@ -229,11 +256,13 @@ void VaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
 
     bool bSizeMatch = strRepeatPassword.size() == strPassword.size();
     if (bSizeMatch) {
+        fmDebug() << "Vault: Password lengths match, checking validation";
         if (checkPassword(passwordEdit->text())) {
             if (checkRepeatPassword()) {
                 nextBtn->setEnabled(true);
                 return;
             } else {
+                fmDebug() << "Vault: Passwords don't match, showing alert";
                 repeatPasswordEdit->showAlertMessage(tr("Passwords do not match"));
             }
         }
@@ -253,46 +282,19 @@ void VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged(bool bFo
 void VaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
 {
     if (!checkPassword(str)) {
+        fmDebug() << "Vault: Generated password validation failed";
         nextBtn->setEnabled(false);
     } else {
+        fmDebug() << "Vault: Generated password valid, enabling next button";
         nextBtn->setEnabled(true);
-    }
-}
-
-void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
-{
-    VaultConfig config;
-    config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
-
-    if (typeCombo->currentIndex() == 0) {   // key encryption
-        QString strPassword = passwordEdit->text();
-        QString strPasswordHint = tipsEdit->text();
-        if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
-                && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
-            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
-            emit sigAccepted();
-        }
-    } else {   // transparent encryption
-        const QString &password = OperatorCenter::getInstance()->autoGeneratePassword(kPasswordLength);
-        if (password.isEmpty()) {
-            fmCritical() << "Vault: auto Generate password failed!";
-            return;
-        }
-
-        // save password to keyring
-        if (OperatorCenter::getInstance()->savePasswordToKeyring(password)) {
-            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodTransparent));
-            config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
-            emit sigAccepted();
-        } else {
-            fmCritical() << "Vault: save password to keyring failed!";
-        }
     }
 }
 
 void VaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
     if (index) {   // transparent encrypyion
+        fmDebug() << "Vault: Switching to transparent encryption mode";
+
         gridLayout->removeWidget(passwordLabel);
         gridLayout->removeWidget(passwordEdit);
         gridLayout->removeWidget(repeatPasswordLabel);
@@ -312,6 +314,8 @@ void VaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 
         nextBtn->setEnabled(true);
     } else {   // key encryption
+        fmDebug() << "Vault: Switching to key encryption mode";
+
         gridLayout->removeItem(transEncryptTextLay);
         transEncryptionText->setVisible(false);
 
@@ -337,7 +341,9 @@ void VaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &passw
 {
     DPasswordEdit *pPasswordEdit = qobject_cast<DPasswordEdit *>(sender());
     if (password.length() > PASSWORD_LENGHT_MAX) {
-        pPasswordEdit->setText(password.mid(0, PASSWORD_LENGHT_MAX));
+        QString truncated = password.mid(0, PASSWORD_LENGHT_MAX);
+        pPasswordEdit->setText(truncated);
+        fmWarning() << "Vault: Password truncated from" << password.length() << "to" << PASSWORD_LENGHT_MAX << "characters";
     }
 }
 
@@ -345,14 +351,14 @@ bool VaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {
     QString strPassword = password;
 
-    QRegExp rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
-    QRegExpValidator v(rx);
+    QRegularExpression rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
+    QRegularExpressionValidator v(rx);
     int pos = 0;
     QValidator::State res;
     res = v.validate(strPassword, pos);
     if (QValidator::Acceptable != res) {
+        fmDebug() << "Vault: Password failed validation - insufficient complexity or length";
         return false;
-
     } else {
         return true;
     }
@@ -363,6 +369,7 @@ bool VaultActiveSetUnlockMethodView::checkRepeatPassword()
     const QString &strRepeatPassword = repeatPasswordEdit->text();
     const QString &strPassword = passwordEdit->text();
     if (strRepeatPassword != strPassword) {
+        fmDebug() << "Vault: Passwords do not match";
         return false;
     } else {
         return true;
@@ -376,10 +383,4 @@ bool VaultActiveSetUnlockMethodView::checkInputInfo()
     } else {
         return false;
     }
-}
-
-void VaultActiveSetUnlockMethodView::showEvent(QShowEvent *event)
-{
-    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
-    QWidget::showEvent(event);
 }

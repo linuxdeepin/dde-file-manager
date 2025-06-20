@@ -41,17 +41,19 @@ class ExtensionPluginManagerPrivate : public QObject
     Q_DECLARE_PUBLIC(ExtensionPluginManager)
 
 public:
-    using DFMExtMenuPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
-    using DFMExtEmblemPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
-    using DFMExtWindowPluginMap = QMap<QString, QSharedPointer<DFMEXT::DFMExtWindowPlugin>>;
+    using DFMExtMenuPluginMap = QMap<QString, DFMEXT::DFMExtMenuPlugin *>;
+    using DFMExtEmblemPluginMap = QMap<QString, DFMEXT::DFMExtEmblemIconPlugin *>;
+    using DFMExtWindowPluginMap = QMap<QString, DFMEXT::DFMExtWindowPlugin *>;
+    using DFMExtFilePluginMap = QMap<QString, DFMEXT::DFMExtFilePlugin *>;
 
     explicit ExtensionPluginManagerPrivate(ExtensionPluginManager *qq);
-    ~ExtensionPluginManagerPrivate() override {}
+    ~ExtensionPluginManagerPrivate() override;
 
     void startInitializePlugins();
     void startMonitorPlugins();
     void restartDesktop(const QUrl &url);
     void doAppendExt(const QString &name, ExtPluginLoaderPointer loader);
+    void release();
 
 Q_SIGNALS:
     void startInitialize(const QStringList &paths);
@@ -65,6 +67,7 @@ public:
     DFMExtMenuPluginMap menuMap;
     DFMExtEmblemPluginMap emblemMap;
     DFMExtWindowPluginMap windowMap;
+    DFMExtFilePluginMap fileMap;
 
     QScopedPointer<DFMEXT::DFMExtMenuProxy> proxy { new DFMExtMenuImplProxy };
     AbstractFileWatcherPointer extPluginsPathWatcher;

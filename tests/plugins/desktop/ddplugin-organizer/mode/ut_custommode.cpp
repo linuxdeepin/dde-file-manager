@@ -276,7 +276,7 @@ TEST_F(UT_CustomMode, filterDropData)
     mode->d->dataHandler = new CustomDataHandler;
     mode->d->dataHandler->collections["window"] = ptr;
 
-    EXPECT_TRUE(mode->filterDropData(viewIndex, &mimeData, viewPoint));
+    EXPECT_TRUE(mode->filterDropData(viewIndex, &mimeData, viewPoint, nullptr));
     mode->model = nullptr;
 }
 

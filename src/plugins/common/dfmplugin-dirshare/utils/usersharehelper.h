@@ -38,7 +38,7 @@ public:
     bool share(const QVariantMap &info);
     bool isUserSharePasswordSet(const QString &username);
     void setSambaPasswd(const QString &userName, const QString &passwd);
-    void removeShareByPath(const QString &path);
+    bool removeShareByPath(const QString &path);
     int readPort();
     ShareInfoList shareInfos();
     ShareInfo shareInfoByPath(const QString &path);
@@ -73,7 +73,7 @@ private:
     void initConnect();
     void initMonitorPath();
 
-    void removeShareByShareName(const QString &name);
+    bool removeShareByShareName(const QString &name, bool silent = false);
     void removeShareWhenShareFolderDeleted(const QString &deletedPath);
     ShareInfo getOldShareByNewShare(const ShareInfo &newShare);
 

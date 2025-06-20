@@ -16,15 +16,19 @@
 #include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
+#include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QRegularExpression>
 #include <QDebug>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
 
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 CommandParserPrivate::CommandParserPrivate()
 {
@@ -88,34 +92,40 @@ QString CommandParser::value(const QString &name) const
 void CommandParser::processCommand()
 {
     if (isSet("d")) {
-        qCInfo(logAppFileManager) << "Start headless";
+        qCInfo(logAppFileManager) << "Starting file manager in headless mode";
         dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
         // whether to add setQuitOnLastWindowClosed
         return;
     }
 
     if (isSet("e")) {
+        qCDebug(logAppFileManager) << "Processing event command";
         processEvent();
         return;
     }
 
     if (isSet("p")) {
+        qCDebug(logAppFileManager) << "Showing property dialog";
         showPropertyDialog();
         return;
     }
     if (isSet("o")) {
+        qCDebug(logAppFileManager) << "Opening with dialog";
         openWithDialog();
         return;
     }
     if (isSet("O")) {
+        qCDebug(logAppFileManager) << "Opening home directory";
         openInHomeDirectory();
         return;
     }
     if (isSet("s") || isSet("sessionfile")) {
+        qCDebug(logAppFileManager) << "Opening session file";
         openSession();
         return;
     }
 
+    qCDebug(logAppFileManager) << "Opening URLs from command line arguments";
     openInUrls();
 }
 
@@ -126,7 +136,8 @@ void CommandParser::process()
 
 void CommandParser::process(const QStringList &arguments)
 {
-    qCInfo(logAppFileManager) << "App start args: " << arguments;
+    qCInfo(logAppFileManager) << "Processing command line arguments:" << arguments.size() << "args";
+    // 直接使用参数，不再进行 percent 解码，因为 FileManager1DBus 已经处理了 Base64 解码
     SessionBusiness::instance()->process(arguments);
     commandParser->process(arguments);
 }
@@ -213,6 +224,12 @@ void CommandParser::showPropertyDialog()
     QList<QUrl> urlList;
     for (const QString &path : paths) {
         QUrl url = QUrl::fromUserInput(path);
+        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
+        if (!fileInfo || !fileInfo->exists()) {
+            qCWarning(logAppFileManager) << "Failed to show property dialog: invalid path or file not exists -" << path;
+            continue;
+        }
+
         QString uPath = url.path();
         if (uPath.endsWith(QDir::separator()) && uPath.size() > 1)
             uPath.chop(1);
@@ -223,9 +240,12 @@ void CommandParser::showPropertyDialog()
             continue;
         urlList << url;
     }
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        qCWarning(logAppFileManager) << "No valid files found for property dialog";
         return;
+    }
 
+    qCInfo(logAppFileManager) << "Showing property dialog for" << urlList.size() << "files";
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urlList, QVariantHash());
 }
 
@@ -246,8 +266,12 @@ void CommandParser::openWithDialog()
             continue;
         urlList << url;
     }
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        qCWarning(logAppFileManager) << "No valid files found for open with dialog";
         return;
+    }
+    
+    qCInfo(logAppFileManager) << "Opening 'Open With' dialog for" << urlList.size() << "files";
     dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", 0, urlList);
 }
 
@@ -255,9 +279,10 @@ void CommandParser::openInHomeDirectory()
 {
     QString homePath = StandardPaths::location(StandardPaths::StandardLocation::kHomePath);
     QUrl url = QUrl::fromUserInput(homePath);
-    auto flag = !DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, false).toBool();
+    auto flag = DConfigManager::instance()->value(kViewDConfName,
+                                                  kOpenFolderWindowsInASeparateProcess, true)
+                        .toBool();
+    qCInfo(logAppFileManager) << "Opening home directory:" << homePath << "in separate process:" << flag;
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
@@ -269,7 +294,7 @@ void CommandParser::openInUrls()
             //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
             if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../") && !path.startsWith("/")) {
                 // 路径中包含特殊字符的全部uri编码
-                QRegExp regexp("[#&@\\!\\?]");
+                QRegularExpression regexp("[#&@\\!\\?]");
                 if (path.contains(regexp)) {
                     QString left, right, encode;
                     int idx = path.indexOf(regexp);
@@ -298,9 +323,9 @@ void CommandParser::openInUrls()
         argumentUrls.append(url);
     }
     if (argumentUrls.isEmpty()) {
-        auto flag = !DConfigManager::instance()->
-                value(kViewDConfName,
-                      kOpenFolderWindowsInASeparateProcess, false).toBool();
+        auto flag = DConfigManager::instance()->value(kViewDConfName,
+                                                      kOpenFolderWindowsInASeparateProcess, true)
+                            .toBool();
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl(), flag);
     }
     for (const QUrl &url : argumentUrls)
@@ -310,21 +335,35 @@ void CommandParser::openInUrls()
 void CommandParser::openWindowWithUrl(const QUrl &url)
 {
     // Some args must require the plugin to be started in advance
-    static const QMap<QString, QString> kSchemeMap {
-        { Global::Scheme::kSmb, "dfmplugin-smbbrowser" },
-        { Global::Scheme::kTrash, "dfmplugin-trash" }
-    };
-    if (Q_UNLIKELY(kSchemeMap.keys().contains(url.scheme()))) {
+    QMap<QString, QString> schemeMap {};
+    QMap<QString, dpf::PluginMetaObjectPointer> schemePlugins;
+    dpf::LifeCycle::pluginMetaObjs([&schemeMap, &schemePlugins](dpf::PluginMetaObjectPointer ptr) {
+        Q_ASSERT(ptr);
+        const auto &data { ptr->customData() };
+        if (data.isEmpty())
+            return false;
+        auto schemes = ptr->customData().value("PluginSchemes").toStringList();
+        if (schemes.isEmpty())
+            return false;
+        for (auto scheme : schemes) {
+            schemeMap.insert(scheme, ptr->name());
+            schemePlugins.insert(scheme, ptr);
+        }
+        return true;
+    });
+
+    if (Q_UNLIKELY(schemeMap.keys().contains(url.scheme())
+                   && schemePlugins.value(url.scheme())->pluginState() != dpf::PluginMetaObject::State::kLoaded)) {
         static std::once_flag flag;
-        std::call_once(flag, [url]() {
-            const QString &name { kSchemeMap.value(url.scheme()) };
+        std::call_once(flag, [url, schemeMap]() {
+            const QString &name { schemeMap.value(url.scheme()) };
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
         });
     }
-    auto flag = DConfigManager::instance()->
-            value(kViewDConfName,
-                  kOpenFolderWindowsInASeparateProcess, false).toBool();
-    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile");
+    auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                   kOpenFolderWindowsInASeparateProcess, true)
+                         .toBool();
+    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
 }
 
@@ -332,9 +371,12 @@ void CommandParser::openSession()
 {
     for (QString filename : positionalArguments()) {
         QString sessionFile = "";
-        if (!SessionBusiness::instance()->readPath(filename, &sessionFile))
-            qCWarning(logAppFileManager) << "no session path get";
-        openWindowWithUrl(QUrl(sessionFile));
+        if (!SessionBusiness::instance()->readPath(filename, &sessionFile)) {
+            qCWarning(logAppFileManager) << "Failed to read session path from file:" << filename;
+        } else {
+            qCInfo(logAppFileManager) << "Opening session file:" << sessionFile;
+            openWindowWithUrl(QUrl(sessionFile));
+        }
         break;   // current time only support one file.
     }
 }
@@ -342,13 +384,18 @@ void CommandParser::openSession()
 void CommandParser::processEvent()
 {
     const QStringList &argumets = positionalArguments();
-    if (argumets.isEmpty())
+    if (argumets.isEmpty()) {
+        qCWarning(logAppFileManager) << "No event arguments provided";
         return;
+    }
 
     const auto &&argsInfo = d->parseEventArgs(argumets.first().toLocal8Bit());
     const auto &srcUrls = UrlRoute::fromStringList(argsInfo.params.value("sources").toStringList());
 
+    qCDebug(logAppFileManager) << "Processing event:" << argsInfo.action << "with" << srcUrls.size() << "source URLs";
+
     if (argsInfo.action == "refresh") {
+        qCInfo(logAppFileManager) << "Refreshing directories for" << srcUrls.size() << "URLs";
         dpfSlotChannel->push("dfmplugin_workspace", "slot_RefreshDir", srcUrls);
         return;
     }
@@ -357,41 +404,63 @@ void CommandParser::processEvent()
         { "copy", GlobalEventType::kCopy },
         { "move", GlobalEventType::kCutFile },
         { "delete", GlobalEventType::kDeleteFiles },
-        { "trash", GlobalEventType::kMoveToTrash }
+        { "trash", GlobalEventType::kMoveToTrash },
+        { "cleantrash", GlobalEventType::kCleanTrash },
     };
 
-    if (!eventMap.contains(argsInfo.action))
+    if (!eventMap.contains(argsInfo.action)) {
+        qCWarning(logAppFileManager) << "Unknown event action:" << argsInfo.action;
         return;
+    }
 
     switch (eventMap[argsInfo.action]) {
     case GlobalEventType::kCopy: {
         const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        qCInfo(logAppFileManager) << "Copying" << srcUrls.size() << "files to:" << targetUrl.toString();
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, srcUrls, targetUrl,
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kCutFile: {
-        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)) {
+            qCWarning(logAppFileManager) << "Cannot move system files";
             return;
+        }
         const auto &targetUrl = UrlRoute::fromUserInput(argsInfo.params.value("target").toString());
+        qCInfo(logAppFileManager) << "Moving" << srcUrls.size() << "files to:" << targetUrl.toString();
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, srcUrls, targetUrl,
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kDeleteFiles: {
-        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls))
+        if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)) {
+            qCWarning(logAppFileManager) << "Cannot delete system files";
             return;
+        }
+        qCInfo(logAppFileManager) << "Deleting" << srcUrls.size() << "files";
         dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
     case GlobalEventType::kMoveToTrash: {
         if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)
-                || FileUtils::isTrashFile(srcUrls.first()))
+            || FileUtils::isTrashFile(srcUrls.first())) {
+            qCWarning(logAppFileManager) << "Cannot move system files or trash files to trash";
             return;
+        }
+        qCInfo(logAppFileManager) << "Moving" << srcUrls.size() << "files to trash";
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, srcUrls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         break;
     }
+    case GlobalEventType::kCleanTrash: {
+        qCInfo(logAppFileManager) << "Cleaning trash";
+        dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
+                                     0,
+                                     QList<QUrl>(),
+                                     AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+        break;
+    }
     default:
+        qCWarning(logAppFileManager) << "Unhandled event type for action:" << argsInfo.action;
         break;
     }
 }

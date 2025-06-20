@@ -4,9 +4,7 @@
 
 #include "private/framelogmanager_p.h"
 
-#include <dfm-framework/log/filterappender.h>
-
-#include <mutex>
+#include <DLog>
 
 Q_LOGGING_CATEGORY(logDPF, "org.deepin.dde.filemanager.lib.framework")
 
@@ -16,26 +14,6 @@ DPF_USE_NAMESPACE
 FrameLogManagerPrivate::FrameLogManagerPrivate(FrameLogManager *qq)
     : q(qq)
 {
-}
-
-void FrameLogManagerPrivate::initFilterAppender()
-{
-    static std::once_flag flag;
-    std::call_once(flag, [this]() {
-        curFilterAppender = new FilterAppender(DTK_CORE_NAMESPACE::DLogManager::getlogFilePath());
-        curFilterAppender->setFormat(
-                "%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [%{file:-20} %{function:-35} %{line}] %{message}\n");
-        curFilterAppender->setLogFilesLimit(5);
-        curFilterAppender->setDatePattern(FilterAppender::kDailyRollover);
-        loggerInstance()->registerAppender(curFilterAppender);
-    });
-}
-
-FilterAppender *FrameLogManagerPrivate::filterAppender()
-{
-    if (!curFilterAppender)
-        initFilterAppender();
-    return curFilterAppender;
 }
 
 /*!
@@ -60,7 +38,6 @@ void FrameLogManager::applySuggestedLogSettings()
 // 为保证兼容性，在该版本以下，采用原有log文件日志输出方式保存日志
 #else
     DLogManager::registerConsoleAppender();
-    d->initFilterAppender();
 #endif
 }
 
