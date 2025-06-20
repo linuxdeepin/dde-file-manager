@@ -191,8 +191,10 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    if (!d->currentDir.isValid())
+    if (!d->currentDir.isValid()) {
+        fmWarning() << "Invalid current directory for search menu scene";
         return false;
+    }
 
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
@@ -237,8 +239,10 @@ AbstractMenuScene *SearchMenuScene::scene(QAction *action) const
 
 bool SearchMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot create search menu scene with null parent menu";
         return false;
+    }
 
     // 创建子场景菜单
     AbstractMenuScene::create(parent);
