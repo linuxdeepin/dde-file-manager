@@ -7609,12 +7609,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało utworzyć skarbca: Nieznana metoda szyfrowania!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się utworzyć skarbca: Uzyskane hasło jest puste!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
