@@ -11,12 +11,12 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
-        <translation>No hi ha cap algorisme d&apos;encriptació disponible.</translation>
+        <translation>No hi ha cap algorisme d'encriptació disponible.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
-        <translation>L&apos;encriptació de TPM ha fallat.</translation>
+        <translation>L'encriptació de TPM ha fallat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
@@ -26,33 +26,30 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
-        <translation>Confirmeu l&apos;encriptació de %1?</translation>
+        <translation>Confirmeu l'encriptació de %1?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation>La partició actual s&apos;està a punt d&apos;encriptar i no es pot cancel·lar durant el procés. Confirmeu-ho.</translation>
+        <translation>La partició actual s'està a punt d'encriptar i no es pot cancel·lar durant el procés. Confirmeu-ho.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation>* Després d&apos;encriptar la partició, el sistema no pot tornar a una versió inferior. Confirmeu-ho.</translation>
+        <translation>* Després d'encriptar la partició, el sistema no pot tornar a una versió inferior. Confirmeu-ho.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="447"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
-        <translation>Ho confirmo i reinicia&apos;t</translation>
+        <translation>Ho confirmo i reinicia't</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm</source>
         <translation>Confirmeu-ho</translation>
     </message>
@@ -64,28 +61,23 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation>La desencriptació pot trigar molt de temps, així que assegureu-vos que l&apos;alimentació d&apos;energia estigui connectada fins que s&apos;hagi completat.</translation>
+        <translation>La desencriptació pot trigar molt de temps, així que assegureu-vos que l'alimentació d'energia estigui connectada fins que s'hagi completat.</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
         <source>Recovery key</source>
         <translation>Clau de recuperació</translation>
     </message>
@@ -131,13 +123,11 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="311"/>
         <source>Confirm</source>
         <translation>Confirma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
         <source>%1 cannot be empty</source>
         <translation>%1 no pot estar buida</translation>
     </message>
@@ -148,8 +138,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Com a mínim 8 bits, conté 3 tipus de A-Z, a-z, 0-9 i símbols</translation>
     </message>
@@ -173,14 +161,11 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
@@ -240,7 +225,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
         <source>Cancel partition encryption</source>
-        <translation>Cancel·la l&apos;encriptació de la partició</translation>
+        <translation>Cancel·la l'encriptació de la partició</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
@@ -250,27 +235,25 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Changing the encryption %1</source>
-        <translation>Es canvia l&apos;encriptació: %1</translation>
+        <translation>Es canvia l'encriptació: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>Continue partition encryption</source>
-        <translation>Continua l&apos;encriptació de la partició</translation>
+        <translation>Continua l'encriptació de la partició</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuar la desencriptació de la partició</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
         <source>Enable partition encryption</source>
-        <translation>Habilita l&apos;encriptació de particions</translation>
+        <translation>Habilita l'encriptació de particions</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -281,19 +264,18 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
         <translation>Error de PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
         <source>Change passphrase failed</source>
-        <translation>No s&apos;ha pogut canviar la contrasenya</translation>
+        <translation>No s'ha pogut canviar la contrasenya</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
         <source>Unlock device failed</source>
-        <translation>No s&apos;ha pogut desblocar el dispositiu</translation>
+        <translation>No s'ha pogut desblocar el dispositiu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="526"/>
@@ -318,7 +300,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
         <source>Encrypt failed</source>
-        <translation>Ha fallat l&apos;encriptació.</translation>
+        <translation>Ha fallat l'encriptació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="589"/>
@@ -328,12 +310,12 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>Reboot to continue encrypt</source>
-        <translation>Reinicia per continuar l&apos;encriptació</translation>
+        <translation>Reinicia per continuar l'encriptació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="674"/>
         <source>Reboot to finish decrypt</source>
-        <translation>Reinicia per acabar l&apos;encriptació</translation>
+        <translation>Reinicia per acabar l'encriptació</translation>
     </message>
 </context>
 <context>
@@ -346,16 +328,15 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="157"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation>En casos especials, com ara si oblideu la contrasenya o es danya el maquinari d&apos;encriptació, podeu desencriptar la partició amb la clau de recuperació. Exporteu-la a una partició no encriptada i guardeu-la en un lloc segur!</translation>
+        <translation>En casos especials, com ara si oblideu la contrasenya o es danya el maquinari d'encriptació, podeu desencriptar la partició amb la clau de recuperació. Exporteu-la a una partició no encriptada i guardeu-la en un lloc segur!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="172"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation>Seleccioneu una partició no encriptada com a camí d&apos;exportació del fitxer de clau.</translation>
+        <translation>Seleccioneu una partició no encriptada com a camí d'exportació del fitxer de clau.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Passphrase</source>
         <translation>Contrasenya</translation>
     </message>
@@ -372,12 +353,12 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation>El camí d&apos;exportació de la clau de recuperació no pot estar buit!</translation>
+        <translation>El camí d'exportació de la clau de recuperació no pot estar buit!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="241"/>
         <source>Recovery key export path is not exists!</source>
-        <translation>El camí d&apos;exportació de la clau de recuperació no existeix!</translation>
+        <translation>El camí d'exportació de la clau de recuperació no existeix!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="248"/>
@@ -397,18 +378,17 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="421"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation>El TPM està blocat i no es pot usar per a l&apos;encriptació de particions. Cancel·leu la contrasenya del TPM o trieu un altre mètode de desblocatge.</translation>
+        <translation>El TPM està blocat i no es pot usar per a l'encriptació de particions. Cancel·leu la contrasenya del TPM o trieu un altre mètode de desblocatge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM error</source>
         <translation>Error de TPM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM status error!</source>
-        <translation>Error de l&apos;estat de TPM!</translation>
+        <translation>Error de l'estat de TPM!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
@@ -418,7 +398,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation>Continueu l&apos;encriptació de la partició %1</translation>
+        <translation>Continueu l'encriptació de la partició %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="321"/>
@@ -442,24 +422,23 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="340"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation>L&apos;accés a la partició es desblocarà mitjançant una contrasenya.</translation>
+        <translation>L'accés a la partició es desblocarà mitjançant una contrasenya.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation>L&apos;accés a la partició es desblocarà mitjançant el xip de seguretat i el PIN TPM.</translation>
+        <translation>L'accés a la partició es desblocarà mitjançant el xip de seguretat i el PIN TPM.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="350"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation>L&apos;accés a la partició es desblocarà automàticament mitjançant el xip de seguretat TPM. No cal comprovar la contrasenya.</translation>
+        <translation>L'accés a la partició es desblocarà automàticament mitjançant el xip de seguretat TPM. No cal comprovar la contrasenya.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="332"/>
@@ -483,20 +462,16 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Com a mínim 8 bits, conté 3 tipus de A-Z, a-z, 0-9 i símbols</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
         <source>Confirm encrypt</source>
-        <translation>Confirmeu l&apos;encriptació</translation>
+        <translation>Confirmeu l'encriptació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
@@ -510,30 +485,28 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
         <source>Re-export the recovery key</source>
         <translation>Torna a exportar la clau de recuperació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation>*No s&apos;ha pogut desar la clau de recuperació. Torneu a desar-la en una partició no encriptada i guardeu-la en un lloc segur.</translation>
+        <translation>*No s'ha pogut desar la clau de recuperació. Torneu a desar-la en una partició no encriptada i guardeu-la en un lloc segur.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="143"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation>El camí d&apos;exportació de la clau de recuperació no pot estar buit!</translation>
+        <translation>El camí d'exportació de la clau de recuperació no pot estar buit!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="148"/>
         <source>Recovery key export path is not exists!</source>
-        <translation>El camí d&apos;exportació de la clau de recuperació no existeix!</translation>
+        <translation>El camí d'exportació de la clau de recuperació no existeix!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="154"/>
@@ -561,7 +534,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation>El dispositiu %1 s&apos;ha preencriptat, reinicieu per acabar-la.</translation>
+        <translation>El dispositiu %1 s'ha preencriptat, reinicieu per acabar-la.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="431"/>
@@ -595,12 +568,11 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
-        <source>%1&apos;s %2 has been changed</source>
-        <translation>El %2 de %1 s&apos;ha canviat</translation>
+        <source>%1's %2 has been changed</source>
+        <translation>El %2 de %1 s'ha canviat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
         <source>Change %1 failed</source>
         <translation>El canvi %1 ha fallat</translation>
     </message>
@@ -622,12 +594,12 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
         <source>Device %1 has been encrypted</source>
-        <translation>El dispositiu %1 s&apos;ha encriptat.</translation>
+        <translation>El dispositiu %1 s'ha encriptat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
         <source>Encrypt failed</source>
-        <translation>Ha fallat l&apos;encriptació.</translation>
+        <translation>Ha fallat l'encriptació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
@@ -637,12 +609,12 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
         <source>%1 is under encrypting...</source>
-        <translation>%1 s&apos;encripta...</translation>
+        <translation>%1 s'encripta...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation>El procés d&apos;encriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
+        <translation>El procés d'encriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
@@ -656,7 +628,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -668,7 +639,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="453"/>
         <source>Device %1 has been decrypted</source>
-        <translation>El dispositiu %1 s&apos;ha desencriptat.</translation>
+        <translation>El dispositiu %1 s'ha desencriptat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
@@ -677,14 +648,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
         <source>Decrypt failed</source>
         <translation>Ha fallat la desencriptació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="464"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation>El dispositiu %1 s&apos;està encriptant. Si us plau, feu la desencriptació un cop hagi acabat.</translation>
+        <translation>El dispositiu %1 s'està encriptant. Si us plau, feu la desencriptació un cop hagi acabat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="469"/>
@@ -694,22 +664,22 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation>El dispositiu no està completament desencriptat, si us plau finalitzeu la desencriptació abans d'accedir-hi.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ha fallat el desbloqueig del dispositiu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"></translation>
+        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
+        <translation>Si us plau feu clic a l'opció del menú de dret del disc "Continuar la encriptació de la partició" per completar la encriptació de la partició.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation>L&apos;estat del TPM és anormal, utilitzeu la clau de recuperació per desblocar-lo</translation>
+        <translation>L'estat del TPM és anormal, utilitzeu la clau de recuperació per desblocar-lo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="357"/>
@@ -751,7 +721,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
         <translation>Desbloca amb la clau de recuperació</translation>
     </message>

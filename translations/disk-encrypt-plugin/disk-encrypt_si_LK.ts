@@ -6,162 +6,150 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>නිශ්චිත කිරීමේ අවම අභියෝගයක් නොමැත</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>කිසිම අභියෝග ප්‍රතිශ්‍රිත අල්ගෝරිතමක් නොමැත.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM ප්‍රතිශ්‍රිත අවම අභියෝගය සාර්ථක වී නොයේ.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM අවම අභියෝගය නියැදි කර තිබේ.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ප්‍රතිශ්‍රිත අවම අභියෝගය නිශ්චිත කරන්න?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>වර්තමාන පාර්ශනය ප්‍රතිශ්‍රිත අවම අභියෝගය සාර්ථක වී යා යුතු අතර අභියෝගය අවම අභියෝගය නියැදි කරන ලද අවස්ථාවෙහි නියැදි කරන්න, ප්‍රතිශ්‍රිත අවම අභියෝගය නිශ්චිත කරන්න.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>* පාර්ශනය ප්‍රතිශ්‍රිත අවම අභියෝගය ප්‍රතිශ්‍රිත අවම අභියෝගය අවම අභියෝගය නියැදි කරන ලද අවස්ථාවෙහි නියැදි කරන්න, ප්‍රතිශ්‍රිත අවම අභියෝභය නිශ්චිත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="447"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>අවලංගු කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>නිශ්චිත කරන්න සහ බූස්ටාප්‍රාරම්භය කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>නිශ්චිත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="444"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ප්‍රතිශ්‍රිත අවම අභියෝගය නිශ්චිත කරන්න?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>ප්‍රතිශ්‍රිත අවම අභියෝගය අවම අභියෝගය නියැදි කරන ලද අවස්ථාවෙහි නියැදි කරන්න, ප්‍රතිශ්‍රිත අවම අභියෝගය අවම අභියෝගය නියැදි කරන්න.</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>පාස්ප්‍රෑස්</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>පින්</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>ප්‍රතිශ්‍රිත අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 සමග නිශ්චිත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
         <source>Please input recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>කර්මාන්ත අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
         <source>Old %1</source>
-        <translation type="unfinished"></translation>
+        <translation>පූර්ව %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>නව %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
         <source>Modify %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
         <source>Please enter %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>අවලංගු කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="311"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>නිශ්චිත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 නොමින් අභියෝගයක් නොමැති අතර නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>ප්‍රතිශ්‍රිත අවම අභියෝගය නියැදි කරන්න නොහැකිය!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>අවම 8 බිට්, A-Z, a-z, 0-9 සහ සංකේත අභියෝගය අවම අභියෝගය නියැදි කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 අසමානත්වය'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>ප්‍රතිශ්‍රිත අවම අභියෝගය සමග නිශ්චිත කරන්න</translation>
     </message>
 </context>
 <context>
@@ -169,18 +157,15 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 සමග නිශ්චිත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>PIN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -269,8 +254,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -281,7 +264,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -355,7 +337,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Passphrase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -401,7 +382,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -442,7 +422,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>passphrase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -483,22 +462,18 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
         <source>Confirm encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණය අපසන් කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>පින්</translation>
     </message>
 </context>
 <context>
@@ -506,49 +481,47 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="54"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>අපසන් කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
         <source>Re-export the recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>ඇති වූ හිමිකරණ අතිරේකය අන්තර්ගත කරන්ට අවසර ලබා ගැනීම</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>*හිමිකරණ අතිරේකය අවසන් කළ නොහැක්, ඔබ අතිරේකය අන්තර්ගත කරන්ට අවසර ලබා ගැනීම සඳහා අන්තර්ගත නොවූ පාර්ශවයකට අතිරේකය ආයාත කරන්න සහ එය තරඟාතුරා නොවූ අවසානයකට අවසන් කරන්න!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>අඩු වීම</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="143"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණ අතිරේකය ආයාත කරන මෙහෙයුම් මාර්ගය අවසන් කළ නොහැකිය!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="148"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණ අතිරේකය ආයාත කරන මෙහෙයුම් මාර්ගය අතිරේකය නොවේ!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="154"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>මෙම පාර්ශවය අඩු කළ හැකි නොවේ, ඔබ අඩු කළ හැකි පාර්ශවයකට ආයාත කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="167"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>මෙම පාර්ශවය හිමිකරණය වී ඇත, ඔබ අන්තර්ගත නොවූ පාර්ශවයකට හෝ USB flash drive සහිත අභ්‍යාත මෙහෙයුම් පාර්ශවයකට ආයාත කරන්න.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණ අතිරේකය දුම්රිය නොවේ!</translation>
     </message>
 </context>
 <context>
@@ -556,98 +529,97 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="424"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>පෙර හිමිකරණය අවසන් විය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>පෙර හිමිකරණය සඳහා ඔබ %1 අවසන් කරන්න සහ හිමිකරණය අවසන් කරන්න.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="431"/>
         <source>Preencrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>පෙර හිමිකරණය අවසන් වී නොහැකිය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="432"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>පෙර හිමිකරණය අවසන් වී නොහැකිය, ඔබ අවසන් කරන අතර ප්‍රමාණය අධිකරණය කරන්න.(%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="460"/>
         <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>සාධක අභියෝගය හෝ පින් අනුපාතය හෝ අන්තර්ගත නොවූ දුර්වලය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>සාධක අභියෝගය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="499"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>පින්</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="506"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 වෙනස් කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
-        <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"></translation>
+        <source>%1's %2 has been changed</source>
+        <translation>'%1' ආයාත කරන්න %2 වෙනස් විය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 වෙනස් කරන්න අවසන් වී නොහැකිය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="513"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 අනුපාතය හෝ අන්තර්ගත නොවූ දුර්වලය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ආයාත කරන්න %2 වෙනස් කරන්න අවසන් වී නොහැකිය, ඔබ අවසන් කරන අතර ප්‍රමාණය අධිකරණය කරන්න.(%3)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="180"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණය අවසන් විය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
         <source>Device %1 has been encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 අවසන් විය හිමිකරණය වී ඇත</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණය අවසන් වී නොහැකිය</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 හිමිකරණය අවසන් වී නොහැකිය, ඔබ අවසන් කරන අතර ප්‍රමාණය අධිකරණය කරන්න.(%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
         <source>%1 is under encrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 හිමිකරණය සඳහා අවසන් වී නොහැකිය...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>හිමිකරණය සඳහා ප්‍රමාණය අධිකරණය වී ඇත, ඔබ ප්‍රමාණය අධිකරණය සඳහා අවසන් කරන අතර ප්‍රමාණය අධිකරණය කරන්න</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 ස්වර්ණය සඳහා අවසන් වී නොහැකිය...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="306"/>
@@ -656,7 +628,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -677,7 +648,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
         <source>Decrypt failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -703,7 +673,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
+        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -751,7 +721,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
         <translation type="unfinished"></translation>
     </message>

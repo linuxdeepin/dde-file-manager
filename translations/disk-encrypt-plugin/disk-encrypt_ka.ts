@@ -6,162 +6,150 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>ტიპის რიცხვის შექმნა არ არის შესაძლებელი ტპმ-ის მიერ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>არ არის ხელმისაწვდომი შიფრის ალგორითმი.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>ტპმ-ის შიფრის პროცესი შეუძლებელია.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>ტპმ დაბლოკდა.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>შიფრის პროცესი %1-ისთვის დაადასტურება?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>მიმდებარე ფართობი შიფრის პროცესის შესახებ დაუშვებელია და არ შეიძლება გაუქმდეს შიფრის პროცესის განმავლობაში, გთხოვთ შიფრის პროცესის დადასტურებას.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>* შიფრის პროცესის შემდეგ სისტემას არ შეიძლება დაბრუნდეს ნაკლებ ვერსიაში, გთხოვთ შიფრის პროცესის დადასტურებას.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="447"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>გაუქმება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>დადასტურება და გადატვირთვა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>დადასტურება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="444"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1-ის გაშიფრვა დაადასტურება?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>გაშიფრვა შეიძლება დიდი ხანის განმავლობაში განხორციელდეს, ასე რომ დარწმუნდით, რომ ელექტროენერგია შედევნა გაშიფრვის სასრულსადმი.</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>პინი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის კლიუჩი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1-ის მიერ გამოყოფა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
         <source>Please input recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიტანოთ აღდგენის კლიუჩი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
         <source>Old %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ძველი %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ახალი %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
         <source>Modify %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1-ის შეცვლა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
         <source>Please enter %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიტანოთ %1 კიდევ ერთხელ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1-ის დამეტევა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>გაუქმება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="311"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>დადასტურება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 არ შეიძლება ცარიელი იყოს'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის კლიუჩი არასწორია!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>მინიმუმ 8 ბიტი, შეიცავს სამი ტიპს - A-Z, a-z, 0-9 და სიმბოლოებს</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 ურთიერთსართავის განსხვავება'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის კლიუჩის მიერ გამოყოფა</translation>
     </message>
 </context>
 <context>
@@ -169,65 +157,62 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1-ის მიერ გამოყოფა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>პინ-კოდი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>Please input %1 to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიყვანო %1 და დაშიფვან მოწყობილობას</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
         <source>Decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>დაშიფვან მოწყობილობა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="51"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიყვანო აღდგენის გასაღები კლეისი და დაშიფვან მოწყობილობას</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>შემოწმება აღდგენის გასაღები კლეისით</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის გასაღები კლეისი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
         <source>%1 cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 არ უნდა იყოს ცარიელი!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის გასაღები კლეისი არასწორია!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>დადასტურება</translation>
     </message>
 </context>
 <context>
@@ -235,95 +220,92 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="148"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"></translation>
+        <translation>გასაღები გადაღებული განყოფილება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>განყოფილების შიფვანის გაუქმება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>შიფვანის შეცვლა %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"></translation>
+        <translation>განაგრძო განყოფილების შიფვანი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>განაგრძო განყოფილების დაშიფვანი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>ჩართე განყოფილების შიფვანი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>შეცდომა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზას არ შეუძლია მიიღოს ტპმ-დან</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>პინ-კოდის შეცდომა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზის შეცვლა ვერ მოხდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობის გასაღების ვერ მოხდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>არასწორი პასფრაზა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="526"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობის მოთავსება ვერ მოხდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="544"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>გამოტავსება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>დაბლოკება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>lock</source>
-        <translation type="unfinished"></translation>
+        <translation>შიფვანის ვერ მოხდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>არ შეუძლია %1 მოწყობილობას %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="589"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"></translation>
+        <translation>გადატვირთე და განაგრძო შიფვანი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
@@ -355,7 +337,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Passphrase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -401,7 +382,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -442,7 +422,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>passphrase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -483,20 +462,16 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
         <source>Confirm encrypt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>PIN</source>
         <translation type="unfinished"></translation>
     </message>
@@ -510,7 +485,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
         <source>Re-export the recovery key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -521,7 +495,6 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -595,12 +568,11 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
-        <source>%1&apos;s %2 has been changed</source>
+        <source>%1's %2 has been changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
         <source>Change %1 failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -647,89 +619,87 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 დეკრიპტირებაში არის...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="306"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>დეკრიპტირების პროცესი შეიძლება გამოიწვიოს სისტემის გადახდის დახურვა, გთხოვთ შეამციროთ სისტემის მოქმედება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>შეცდომა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="452"/>
         <source>Decrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>დეკრიპტირება დასრულდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="453"/>
         <source>Device %1 has been decrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობა %1 დეკრიპტირდა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
         <source>Decrypt disk</source>
-        <translation type="unfinished"></translation>
+        <translation>დისკის დეკრიპტირება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
         <source>Decrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>დეკრიპტირება შეუძლებელია</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="464"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობა %1 ენკრიპტირებაში მყოფადაა, გთხოვთ დეკრიპტირებას შეასრულოთ ენკრიპტირების დასრულების შემდეგ.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="469"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობა %1 დეკრიპტირება შეუძლებელია, გთხოვთ ნახოთ ლოგი მეტი ინფორმაციისთვის. (%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობა არ არის სრულად დეკრიპტირებული, გთხოვთ დასრულოთ დეკრიპტირება წვდომის წინ.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>მოწყობილობის განახლება შეუძლებელია</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"></translation>
+        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
+        <translation>გთხოვთ დააწკაპუნოთ მარჯვენა მენიუ "პარტიციის ენკრიპტირების გაგრძელება" პარტიციის ენკრიპტირების დასრულების შესასწავლად.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM სტატუსი არასწორია, გთხოვთ გამოიყენოთ აღდგენის კლიუჩი განახლების შესასწავლად</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="357"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>არასწორი პინ-კოდი</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>არასწორი პასფრაზა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM შეცდომა</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="363"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ გამოიყენოთ აღდგენის კლიუჩი მოწყობილობის განახლების შესასწავლად.</translation>
     </message>
 </context>
 <context>
@@ -737,53 +707,52 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="51"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>გაუქმება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>განახლება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
         <source>Unlock encryption partition</source>
-        <translation type="unfinished"></translation>
+        <translation>განახლება ენკრიპტირებული პარტიციის განახლება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის კლიუჩის მიხედვით განახლება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>პასფრაზის მიხედვით განახლება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>პინ-კოდის მიხედვით განახლება</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
         <source>Please input recovery key to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიტანოთ აღდგენის კლიუჩი მოწყობილობის განახლების შესასწავლად</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
         <source>Please input passphrase to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიტანოთ პასფრაზა მოწყობილობის განახლების შესასწავლად</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please input PIN to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>გთხოვთ შეიტანოთ პინ-კოდი მოწყობილობის განახლების შესასწავლად</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>აღდგენის კლიუჩი არასწორია!</translation>
     </message>
 </context>
 </TS>

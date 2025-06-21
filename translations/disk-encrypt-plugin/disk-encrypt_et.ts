@@ -6,123 +6,118 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="374"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Ei saa luua juhuslikku numbri TPM-ga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="377"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pole saadaval kriptograafilist algoritmi.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM kriptograafia ebaõnnestus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM on lukustatud.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita kriptograafia %1?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;
+ Tänapäevane ühendus on kriptograafiliseks ja ei saa tühistada kriptograafia protsessi ajal, palun kinnita kriptograafia.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="421"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;
+ * Kriptograafilise ühenduse pärast süsteem ei saa tagasi pöörata väiksema versiooni, palun kinnita kriptograafia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="432"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="447"/>
         <source>Cancel</source>
         <translation>Loobu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="433"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita ja taaskäivita</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="434"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="448"/>
         <source>Confirm</source>
         <translation>Kinnita</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="444"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tühjesta %1?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="445"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;
+ Tühjendus võib kesteda kaua, seega tagasta toitumine ühenduse ajal, kuni tühjendus on valmis.</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastusvõti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita %1-ga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
         <source>Please input recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta taastusvõti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
         <source>Old %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vana %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uus %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
         <source>Modify %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Muuda %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
         <source>Please enter %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta %1 uuesti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kordu %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
@@ -131,37 +126,33 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="311"/>
         <source>Confirm</source>
         <translation type="unfinished">Kinnita</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 ei tohi olla tühjendatud'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastusvõti on kehtetu!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Vähemalt 8 biti, sisaldab 3 tüüpi A-Z, a-z, 0-9 ja sümbolit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 ebaühtsus'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita taastusvõtiga</translation>
     </message>
 </context>
 <context>
@@ -169,60 +160,57 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita %1-ga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>Please input %1 to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta %1, et tühjesta seade.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
         <source>Decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>Tühjesta seade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="51"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>palun sisesta taastamise võtme lahti käiguks seadme</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>kontrolli taastamise võtmega</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
         <source>%1 cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 ei tohi olla tühi!' </translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme ei ole kehtiv!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
@@ -235,105 +223,102 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="148"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Lahti kriptitud ühendus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="152"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Tühjenda ühenduse kriptimine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="156"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Muutmine kriptimise %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Jätka ühenduse kriptimist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="165"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Jätka ühenduse lahti käimist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="169"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiveeri ühenduse kriptimine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="225"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Viga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="226"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Parooli ei saa leida TPP-st</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="248"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="269"/>
         <source>PIN error</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN-viga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="276"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Parooli muutmine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="525"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadme lahti käimine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="526"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Vale parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="544"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadme ühendamine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>unmount</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="587"/>
         <source>lock</source>
-        <translation type="unfinished"></translation>
+        <translation>lock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="588"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kriptimine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="589"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ei saa %1 seadet %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Taaskäivita, et jätkata kriptimist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="674"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Taaskäivita, et lõpetada lahti käimine</translation>
     </message>
 </context>
 <context>
@@ -341,164 +326,157 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="130"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Lahti parooli kaudu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="157"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>Spetsiaalsel juhul, kui unustad parooli või kriptimise seadmete kahjustatud, saab kriptitud ühenduse lahti käimine taastamise võtmega, eksporti seda ühendusse, mis ei ole kriptitud, ja hoida seda ohutuskojas!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="172"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun vali kriptimata ühendus kui võtme faili eksportimise tee.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="192"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="194"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ei saa olla tühjendatud</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="225"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 eelnevus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme väljendamise tee ei saa olla tühjendatud!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="241"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme väljendamise tee ei ole olemas!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="248"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun eksporti välismaalise seadmega, näiteks mittekriptitud osa või USB-puhversalve.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="253"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>See osa on ainult loetav, palun eksporti kirjutatavale osale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="265"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>See osa on kriptitud, palun eksporti mittekriptitud osale või välismaalise seadmega, näiteks USB-puhversalve.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="421"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM on lukustatud ja ei saa kasutada osa kriptimiseks. Palun tühistage TPM-parool või valige teine lukustamise meetod.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM vigane</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="426"/>
         <source>TPM status error!</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM olekuvigane!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Järgmine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun jätkake osa %1 kriptimist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="321"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Eelmine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="320"/>
         <source>Export Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme väljendamine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="329"/>
         <source>Set %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 seadistamine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 kordamine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="336"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="340"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation type="unfinished"></translation>
+        <translation>Osa ligipääsu saab avada parooli abil.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation type="unfinished"></translation>
+        <translation>Osa ligipääsu saab avada TPM turvalisuse külge ja PIN-i abil.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="350"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Osa ligipääsu saab automaatselt avada TPM turvalisuse külge, parooli kontrolli ei pea tegema.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="332"/>
         <source>Please enter the %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisestage %1 uuesti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="110"/>
         <source>Unlock type</source>
-        <translation type="unfinished"></translation>
+        <translation>Avamise tüüp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="131"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kasutage TPM+PIN-i avamiseks selle arvutijärgi (soovitatud)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="132"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaatne avamine selle arvutijärgi TPM-i kaudu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="220"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Vähemalt 8 bitti, sisaldab 3 tüüpi A-Z, a-z, 0-9 ja sümbolid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
         <source>Confirm encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnitage kriptimine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="343"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="344"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
 </context>
 <context>
@@ -510,45 +488,43 @@
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="63"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="77"/>
         <source>Re-export the recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastamise võtme uuesti väljendamine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>*Taastamise võtme salvestamine ebaõnnestus, palun salvestage taastamise võtme mittekriptitud osale ja hoidke see ohutusandrus!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="82"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Viga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="143"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelvandusvõtme väljendamise tee ei saa olla tühjendatud!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="148"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelvandusvõtme väljendamise tee ei ole olemas!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="154"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>See üksus on loetletud, palun väljendage kirjalikku üksust!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="167"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Üksus on kriptitud, palun väljendage sellele üksusele või välisandmele, näiteks USB-puhversüsteemile.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="183"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelvandusvõtme faili ei saa looda!</translation>
     </message>
 </context>
 <context>
@@ -556,180 +532,177 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="424"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Eelkriptimine valmis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 on eelkriptitud, palun taaskäivitage, et lõpetada kriptimine.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="431"/>
         <source>Preencrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Eelkriptimine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="432"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 eelkriptimine ebaõnnestus, vaadake logi rohkem infot. (%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="460"/>
         <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>Vale parool või PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="499"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="506"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"></translation>
+        <translation>Muudatus %1 valmis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="507"/>
-        <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"></translation>
+        <source>%1's %2 has been changed</source>
+        <translation>'%1''s %2 on muudatud'</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="512"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Muudatus %1 ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="513"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vale %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 muudatus %2 ebaõnnestus, vaadake logi rohkem infot. (%3)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="180"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Kriptimine valmis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="181"/>
         <source>Device %1 has been encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 on kriptitud</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="185"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kriptimine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="186"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 kriptimine ebaõnnestus, vaadake logi rohkem infot. (%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="285"/>
         <source>%1 is under encrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 kriptitakse...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="286"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Kriptimise protsess võib põhjustada süsteemi tõrjutust, palun vähendage süsteemi tegevust</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="305"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>'%1 dekriptitakse...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="306"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekriptimise protsess võib põhjustada süsteemi tõrjutust, palun vähendage süsteemi tegevust</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Viga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="452"/>
         <source>Decrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekriptimine valmis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="453"/>
         <source>Device %1 has been decrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Seadet %1 on dekriptitud</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
         <source>Decrypt disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekripti disk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="463"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="468"/>
         <source>Decrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekriptimine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="464"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>La seade %1 on kriptimisel, palun dekripti kriptimise lõpuks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="469"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seade %1 dekriptimine ebaõnnestus, palun vaata logi rohkem infot.(%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seade pole täielikult dekriptitud, palun lõpeta dekriptimine enne kasutamist.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="554"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Seade kinni lukkumine ebaõnnestus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="555"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"></translation>
+        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
+        <translation>Palun klõpsa parempoolseks kettamenuks "Jätke osaline kriptimine" täiteks osalise kriptimise lõpuni.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM staatust on anomaalne, palun kasuta taastumise võtme, et sellel põhjustatud luku avada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="357"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>Vigane PIN</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Vigane parool</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM vigus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="363"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun kasuta taastumise võtme, et sellel põhjustatud luku avada.</translation>
     </message>
 </context>
 <context>
@@ -742,48 +715,47 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>Luku avamine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
         <source>Unlock encryption partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Luku avamine kriptimise osaliseks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Luku avamine taastumise võtme abil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Luku avamine parooli abil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>Luku avamine PIN-i abil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
         <source>Please input recovery key to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta taastumise võtme, et sellel põhjustatud luku avada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
         <source>Please input passphrase to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta parool, et sellel põhjustatud luku avada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please input PIN to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta PIN, et sellel põhjustatud luku avada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Taastumise võtme pole kehtiv!</translation>
     </message>
 </context>
 </TS>

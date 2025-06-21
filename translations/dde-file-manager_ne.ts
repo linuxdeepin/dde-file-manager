@@ -1,28 +1,30 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ne">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ne">
 <context>
     <name>AccessControlDBus</name>
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="49"/>
         <source>Invalid args</source>
-        <translation type="unfinished"/>
+        <translation>अवैध आर्ग्स</translation>
     </message>
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="50"/>
         <source>Invalid invoker</source>
-        <translation type="unfinished"/>
+        <translation>अवैध इंवोकर</translation>
     </message>
 </context>
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="342"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="354"/>
         <source>File Manager</source>
         <translation>फाइल प्रबन्धक</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="347"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="359"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
+        <translation>फाइल मैनेजर एक सामान्य रूप से उपयोग किया जाने वाला फाइल मैनेजमेंट टूल है, जिसमें खोज, कॉपी, ट्राश, संपीड़न/देसंपीड़न, फाइल गुण आदि शामिल हैं।</translation>
     </message>
 </context>
 <context>
@@ -30,15 +32,15 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>अनुमति शुरू करें</translation>
     </message>
 </context>
 <context>
     <name>DeviceList</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="143"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="148"/>
         <source>Disks</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डिस्कहरू</translation>
     </message>
 </context>
 <context>
@@ -56,50 +58,48 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
         <source>Eject all</source>
-        <translation type="unfinished"/>
+        <translation>सभी निकालें</translation>
     </message>
 </context>
 <context>
     <name>DoCopyFileWorker</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
-        <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <source>Can't access file!</source>
+        <translation>फाइल नहीं खोल सकें!</translation>
     </message>
 </context>
 <context>
     <name>DockItemDataManager</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="153"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="163"/>
         <source>The device has been safely removed</source>
-        <translation type="unfinished"/>
+        <translation>युक्ति सुरक्षित रूप से हटा दिए गए हैं</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="167"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="180"/>
         <source>eject</source>
-        <translation type="unfinished"/>
+        <translation>निकालें</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="168"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="181"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>अनमाउंट करें</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="169"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="174"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="182"/>
         <source>remove</source>
-        <translation type="unfinished"/>
+        <translation>हटा दें</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="171"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="184"/>
         <source>Operation failed</source>
-        <translation type="unfinished"/>
+        <translation>कार्य विफल</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="172"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="185"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
-        <translation type="unfinished"/>
+        <translation>युक्ति (%1) भरा हुआ है, अब %2 नहीं कर सकें।</translation>
     </message>
 </context>
 <context>
@@ -107,7 +107,7 @@
     <message>
         <location filename="../src/plugins/filedialog/core/dbus/filedialoghandle.cpp" line="588"/>
         <source>All Files </source>
-        <translation type="unfinished"/>
+        <translation>सब फाइल</translation>
     </message>
 </context>
 <context>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="685"/>
         <source>The file name or the path is too long!</source>
-        <translation type="unfinished"/>
+        <translation>फाइल का नाम या पथ बहुत लंबा है!</translation>
     </message>
 </context>
 <context>
@@ -123,22 +123,22 @@
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नाम</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय परिमार्जित</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">आकार</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">प्रकार</translation>
     </message>
 </context>
 <context>
@@ -146,7 +146,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>अनुमति खोल रहें हैं</translation>
     </message>
 </context>
 <context>
@@ -154,7 +154,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>अनुमति शुरू करें</translation>
     </message>
 </context>
 <context>
@@ -162,47 +162,47 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
         <source>Check TPM</source>
-        <translation type="unfinished"/>
+        <translation>एटीपी चेक करें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
         <source>Get Random</source>
-        <translation type="unfinished"/>
+        <translation>रैंडम प्राप्त करें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
         <source>Check Algo</source>
-        <translation type="unfinished"/>
+        <translation>एल्गो चेक करें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
         <source>Encrypt</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">शरीफ गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
         <source>Decrypt</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति खोलें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
         <source>EncryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति शुरू करें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
         <source>DecryptInProcess</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति खोलें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
         <source>EncryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति आज्ञा द्वारा शुरू करें</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
         <source>DecryptByCommand</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति आज्ञा द्वारा खोलें</translation>
     </message>
 </context>
 <context>
@@ -218,7 +218,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>अनुमति खोल रहें हैं</translation>
     </message>
 </context>
 <context>
@@ -226,15 +226,13 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>अनुमति शुरू करें</translation>
     </message>
 </context>
 <context>
     <name>PathManager</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
         <translation>रद्दी टोकरी</translation>
     </message>
@@ -244,249 +242,135 @@
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1105"/>
         <source>need authorization to access</source>
-        <translation type="unfinished"/>
+        <translation>पहुंच के लिए अनुमति आवश्यक है</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1176"/>
-        <source>Can&apos;t verify the identity of %1.</source>
-        <translation type="unfinished"/>
+        <source>Can't verify the identity of %1.</source>
+        <translation>%1 की पहचान संगवाद नहीं कर सकें।</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1177"/>
         <source>This happens when you log in to a computer the first time.</source>
-        <translation type="unfinished"/>
+        <translation>यह तब होता है जब आप कम्प्यूटर पर पहली बार लॉग इन करते हैं।</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1178"/>
         <source>The identity sent by the remote computer is</source>
-        <translation type="unfinished"/>
+        <translation>दूरस्थ कम्प्यूटर द्वारा भेजी गई पहचान है</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1180"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translation type="unfinished"/>
+        <translation>यदि तपाईं अझ बर्बाद गर्न ठूलो निश्चित छ, तब तपाईं सिस्टम अडमिनिस्ट्रेटरसँग सम्पर्क गर्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="361"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="26"/>
-        <location filename="../tests/dfm-base/file/local/ut_desktopfileinfo.cpp" line="30"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cleantrash/ut_docleantrashfilesworker.cpp" line="33"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cleantrash/ut_docleantrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/copyfiles/ut_docopyfilesworker.cpp" line="31"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/copyfiles/ut_docopyfilesworker.cpp" line="32"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cutfiles/ut_docutfilesworker.cpp" line="33"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cutfiles/ut_docutfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/deletefiles/ut_dodeletefilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/deletefiles/ut_dodeletefilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackfileworker.cpp" line="29"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackfileworker.cpp" line="30"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackjob.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackjob.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_docopyfileworker.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_docopyfileworker.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="24"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperatebaseworker.cpp" line="28"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperatebaseworker.cpp" line="29"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperationsutils.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperationsutils.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_docopyfromtrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_docopyfromtrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_domovetotrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_domovetotrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_dorestoretrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_dorestoretrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_filecopymovejob.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_filecopymovejob.cpp" line="44"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_fileoperationsservice.cpp" line="42"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_fileoperationsservice.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_operationsstackprocy.cpp" line="24"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_operationsstackprocy.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventhandler.cpp" line="37"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventhandler.cpp" line="38"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventreceiver.cpp" line="40"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventreceiver.cpp" line="41"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_trashfileeventreceiver.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_trashfileeventreceiver.cpp" line="44"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-menu/menuscene/ut_sendtomenuscene.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-trashcore/ut_trashfileinfo.cpp" line="32"/>
-        <location filename="../tests/plugins/common/dfmplugin-dirshare/main.cpp" line="22"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-titlebar/utils/ut_histroystack.cpp" line="25"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileitemdata.cpp" line="29"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileitemdata.cpp" line="31"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="36"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="38"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_rootinfo.cpp" line="28"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_rootinfo.cpp" line="30"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/utils/ut_filedatamanager.cpp" line="29"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/utils/ut_filesortworker.cpp" line="25"/>
         <source>System Disk</source>
         <translation>प्रणाली डिस्क</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="386"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="364"/>
         <source>Data Disk</source>
         <translation>डाटा डिस्क</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="383"/>
         <source>Blank %1 Disc</source>
         <translation>खाली% 1 डिस्क</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="306"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="312"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="383"/>
         <source>Unknown</source>
         <translation>अज्ञात</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="393"/>
         <source>%1 Drive</source>
         <translation>% 1 ड्राइभ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="414"/>
         <source>%1 Encrypted</source>
         <translation>% 1 ईन्क्रिप्टेड</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="98"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="422"/>
         <source>%1 Volume</source>
         <translation>% 1 खण्ड</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
+        <translation>यन्त्र खोजिरहेको छ, बन्द गर्नु चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>अनमाउंट असफल</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Cannot stop scanning device</source>
-        <translation type="unfinished"/>
+        <translation>यन्त्र खोजिरहेको छ बन्द गर्न नसकिने</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="107"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="310"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"/>
+        <translation>'%1 अन %2' बाट</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="203"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="18"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
         <source>Home</source>
         <translation>होम</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="326"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
         <source>Desktop</source>
         <translation>डेस्कटप</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="207"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="327"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
         <source>Videos</source>
         <translation>भिडियोस </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="209"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="328"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
         <source>Music</source>
         <translation>म्युजिक</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="211"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="329"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
         <source>Pictures</source>
         <translation>पिक्चारहरु </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="213"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="330"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
         <source>Documents</source>
         <translation>डोकुमेन्त्स </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="215"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
         <source>Downloads</source>
         <translation>डाउनलोडहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="217"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
         <source>Trash</source>
         <translation>रद्दी टोकरी</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="219"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
-        <location filename="../tests/plugins/common/dfmplugin-bookmark/controller/ut_bookmarkmanager.cpp" line="41"/>
         <source>Recent</source>
         <translation>रिसेन्ट </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
         <source>Auto mount</source>
         <translation>स्वत: माउन्ट</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
         <source>Open after auto mount</source>
         <translation>स्वत: माउन्ट पछि खोल्नुहोस्</translation>
     </message>
@@ -508,493 +392,345 @@
     <message>
         <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1336"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"> ORIGINAL FILE खोलने में असमर्थ है</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="251"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="222"/>
         <source>File has been moved or deleted</source>
         <translation>फाईल सारियो वा हटाईयो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
         <source>You do not have permission to access this folder</source>
         <translation>तपाईंसँग यो फोल्डर पहुँच गर्न अनुमति छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished"/>
+        <translation>तपाईं यसमा फाइलहरू छाड्न अनुमति छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>फोल्डर खाली छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="445"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="252"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="223"/>
         <source>Loading...</source>
         <translation>लोड हुँदैछ ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
         <source>Executable</source>
         <translation>कार्यान्वयन योग्य</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="7"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>फाइल प्रबन्धकको फाइल छनौटकर्ता संवाद प्रयोग गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="8"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="8"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation type="unfinished"/>
+        <translation>फाइलहरू डिलेट गर्दै अझ एक बर्बाद गर्न अनुमति छाड्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="9"/>
         <source>Index external storage device after connected to computer</source>
         <translation>कम्प्युटरमा जडित पछि बाह्य भण्डारण उपकरणको सूचकांक</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="10"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="10"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="10"/>
         <source>Auto index internal disk</source>
         <translation>स्वत: अनुक्रमणिका आन्तरिक डिस्क</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="11"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पूर्ण टेक्स्ट खोज</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
         <source>Built-in disks</source>
-        <translation type="unfinished"/>
+        <translation>अन्तर्निहित डिस्कहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
         <source>Computer</source>
         <translation>कम्प्युटर</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="46"/>
         <source>Computers in LAN</source>
         <translation>ल्यानमा कम्प्युटरहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
         <source>Loop partitions</source>
-        <translation type="unfinished"/>
+        <translation>लूप पार्टिसनहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
         <source>Mounted sharing folders</source>
-        <translation type="unfinished"/>
+        <translation>साझा फोल्डरहरू अटाँचिएको</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
-        <translation type="unfinished"/>
+        <translation>मेरा साझा</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <source>Network</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नेटवर्क</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
         <source>Mounted partitions and discs</source>
-        <translation type="unfinished"/>
+        <translation>अटाँचिएका पार्टिसनहरू र डिस्कहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
         <source>Partitions</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">भागीकरणहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
         <source>Quick access</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">गतिविधि पहुँच</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
         <source>Tag</source>
         <translation>ट्याग</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
         <source>Added tags</source>
-        <translation type="unfinished"/>
+        <translation>संग्रह गरिएका टेगहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>टाउल</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="168"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>अटाँचिएका सामान्य साझा फोल्डरहरू देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="37"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="37"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"/>
+        <translation>सामान्य साझा फोल्डरहरूका प्रविष्टि समावेश गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="38"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation type="unfinished"/>
+        <translation>अटाँचिएका MTP यन्त्रहरूको मार्गमा आइटम काउन्ट र साइज देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
-        <translation type="unfinished"/>
+        <translation>फाइल नामका चरको विस्तार गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्युटर पृष्ठमा अन्तर्निहित डिस्कहरू छुपाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्युटर पृष्ठमा लूप पार्टिसनहरू छुपाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="42"/>
         <source>Show crumb bar clickable area</source>
-        <translation type="unfinished"/>
+        <translation>क्रम्ब बार टिप्न सकिने क्षेत्र देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"/>
+        <translation>डिस्क आइकनमा फाइल सिस्टम देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="45"/>
         <source>Compressed file preview</source>
         <translation>संकुचित फाइल पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="46"/>
         <source>Document preview</source>
         <translation>डोकुमेन्त पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="47"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="47"/>
         <source>Image preview</source>
         <translation>छवि पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>दूरस्थ वातावरण थंबनेल प्रिव्यू देखाउँछ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
         <source>Text preview</source>
         <translation>पाठ पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>भिडियो पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>'डिफ़ल्ट आइकन साइज:'</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Music preview</source>
-        <translation type="unfinished"/>
+        <translation>म्युजिक प्रिव्यू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
         <source>Show hidden files in search results</source>
         <translation>खोज परिणामहरूमा लुकेका फाइलहरू देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
         <source>Extra small</source>
         <translation>थप सानो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
         <source>Small</source>
         <translation>सानो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
         <source>Medium</source>
         <translation>मध्यम</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
         <source>Large</source>
         <translation>ठूलो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
         <source>Extra large</source>
         <translation>धेरै ठूलाे</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>फाइल र फोल्डरहरूको साँचो विस्तार गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
         <source>Default view:</source>
         <translation>पूर्वनिर्धारित दृश्य:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
         <source>Show hidden files</source>
         <translation>लुकेका फाइलहरू देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>फाइल विस्तार देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
         <source>Open from default window:</source>
         <translation>पूर्वनिर्धारित विन्डोबाट खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
         <source>Open in new tab:</source>
         <translation>नयाँ ट्याबमा खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
         <source>Always open folder in new window</source>
         <translation>सँधै नयाँ विन्डोमा फोल्डर खोल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
         <source>Open file:</source>
         <translation>फाईल खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
         <source>Click</source>
         <translation> क्लिक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
         <source>Double click</source>
         <translation>दुई पटक क्लिक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
         <source>Advanced</source>
         <translation>उन्नत</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
         <source>Dialog</source>
         <translation>संवाद</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
         <source>Index</source>
         <translation>अनुक्रमणिका</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
         <source>Items on sidebar pane</source>
-        <translation type="unfinished"/>
+        <translation>साइडबार विंडोमा आइटमहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="184"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>माउन्ट</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
         <source>Other</source>
         <translation>अन्य</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
         <source>Preview</source>
         <translation>पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
         <source>Basic</source>
         <translation>आधारभूत</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
         <source>View</source>
         <translation>हेर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
         <source>Hidden files</source>
         <translation>लुकेका फाइलहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
         <source>New window and tab</source>
         <translation>नयाँ विन्डो र ट्याब</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
         <translation>खुल्ला व्यवहार</translation>
     </message>
@@ -1016,26 +752,15 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
-        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
@@ -1044,7 +769,7 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="44"/>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>स्टोप</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="695"/>
@@ -1052,26 +777,24 @@
         <translation>सर्टकट</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1332"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1348"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>यस सिस्टम वॉलपेपर लॉक छ। आप आफ्नो एडमिन संग सम्पर्क स्थापित गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1390"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1406"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (कापी)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1391"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1407"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation> (कापी %1)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="105"/>
         <source>dde-file-manager</source>
         <translation>dde- फाईल प्रबन्धक</translation>
     </message>
@@ -1092,88 +815,64 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="561"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
         <source>Open in new window</source>
         <translation>नयाँ विन्डोमा खोल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="565"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>नयाँ ट्याबमा खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="574"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>नाम बदल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="55"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"/>
+        <translation>क्विक एक्सेस बाट हटाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
         <source>Properties</source>
         <translation>गुणहरू</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="53"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="52"/>
         <source>New Folder</source>
         <translation>नयाँ फोल्डर</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="55"/>
         <source>New Text</source>
-        <translation type="unfinished"/>
+        <translation>नयाँ टेक्स्ट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="59"/>
         <source>Document</source>
         <translation>डोकुमेन्त </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
         <source>Spreadsheet</source>
         <translation>स्प्रिडशिटहरू</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="67"/>
         <source>Presentation</source>
         <translation>प्रेसेंतेशन </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="71"/>
         <source>New File</source>
-        <translation type="unfinished"/>
+        <translation>नयाँ फाइल</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="199"/>
@@ -1182,25 +881,21 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="541"/>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="635"/>
         <source>Compress</source>
         <translation>कम्प्रेस गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
         <source>Write only</source>
         <translation>मात्र लेख्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
         <source>Read only</source>
         <translation>पढ्न मात्र मिल्ने</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read-write</source>
         <translation>पढ्न-लेख्ननुहोस्</translation>
     </message>
@@ -1216,7 +911,6 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
         <translation>अन्य</translation>
     </message>
@@ -1238,7 +932,6 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="193"/>
         <source>Maximum</source>
         <translation>अधिकतम</translation>
     </message>
@@ -1254,14 +947,13 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>निकाल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="183"/>
         <source>Add to disc</source>
-        <translation type="unfinished"/>
+        <translation>डिस्क बाट थप्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="35"/>
@@ -1324,17 +1016,15 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <source>Invalid volume name</source>
-        <translation type="unfinished"/>
+        <translation>अमान्य भोल्युम नाम</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="139"/>
         <source>Unknown error</source>
         <translation>अज्ञात त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="340"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>बन्द</translation>
@@ -1347,7 +1037,6 @@
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="138"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="157"/>
         <source>Size: %1</source>
         <translation>आकार:% 1</translation>
     </message>
@@ -1413,22 +1102,20 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="119"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>नाम बदल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
-        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation type="unfinished"/>
+        <source>This file will be hidden if the file name starts with '.'. Do you want to hide it?</source>
+        <translation>यस फाइल नाम ड्योट चाहिएको छ भने छुपाइएको हुनेछ। तपाईं यसलाई छुपाउन चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="74"/>
         <source>Hide</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>छुपाउनु</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="104"/>
@@ -1459,11 +1146,10 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पहुँचिएक लाई पासवर्ड पुगाउँदै बाहिर निकाल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="227"/>
         <source>Open</source>
         <translation>खोल्नुहोस्</translation>
     </message>
@@ -1475,12 +1161,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="207"/>
         <source>Cannot access</source>
-        <translation type="unfinished"/>
+        <translation>पहुँच गर्न नसकिने</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
         <source>User directory</source>
-        <translation type="unfinished"/>
+        <translation>युजर डिरेक्टरी</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
@@ -1504,7 +1190,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
         <source>Android mobile device</source>
         <translation>एन्ड्रोइड मोबाइल उपकरण</translation>
     </message>
@@ -1527,17 +1212,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>तपाईं यो आइटम हटाउन चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>तपाईं %1 आइटम हटाउन चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>यो वास्तविक फाइलहरू डिलेट गर्दैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
@@ -1546,38 +1231,36 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="166"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="189"/>
         <source>Source path</source>
         <translation>स्रोत मार्ग</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
         <source>New window</source>
         <translation>नयाँ विन्डो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नयाँ ट्याब</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
         <source>Connect to Server</source>
         <translation>सर्भरमा जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Set share password</source>
         <translation>शेयर पासवर्ड सेट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
         <source>Change disk password</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डिस्क पासवर्ड बदल्नुहोस</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="114"/>
         <source>Settings</source>
         <translation>सेटिंग्स</translation>
     </message>
@@ -1592,9 +1275,9 @@
         <translation>ठेगाना सम्पादन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashfilehelper.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashfilehelper.cpp" line="127"/>
         <source>Unable to open items in the trash, please restore it first</source>
-        <translation type="unfinished"/>
+        <translation>कचरामा आइटम खोल्न नसकिने, तपाईं अब यसलाई पुनः स्थापित गर्नु पर्छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="74"/>
@@ -1602,83 +1285,77 @@
         <translation>रद्दी टोकरी खाली गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="173"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
         <source>Location</source>
         <translation>स्थान</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Replace Text</source>
         <translation>टेक्स्ट बदल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Add Text</source>
         <translation>टेक्स्ट थप्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Custom Text</source>
         <translation>कस्टम टेक्स्ट </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
         <source>Find</source>
         <translation>खोज्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="96"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
         <source>Required</source>
         <translation>आवाश्यक</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="83"/>
         <source>Replace</source>
         <translation>बदल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Optional</source>
         <translation>वैकल्पिक</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
         <source>Add</source>
         <translation>थप्नुहोस्:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Before file name</source>
         <translation>फाइल नाम अघि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>After file name</source>
         <translation>फाइल नाम पछि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
         <source>File name</source>
         <translation>फाईल नाम</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Start at</source>
-        <translation type="unfinished"/>
+        <translation>सुरु गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
         <source>Tips: Sort by selected file order</source>
         <translation>सुझावहरू: चयनित फाइल अर्डर द्वारा क्रमबद्ध गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.cpp" line="30"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/utils/shareutils.cpp" line="32"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-myshares/utils/ut_shareutils.cpp" line="34"/>
         <source>My Shares</source>
         <translation>मेरो सेयरहरू</translation>
     </message>
@@ -1689,7 +1366,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="88"/>
         <source>Search</source>
         <translation>खोजी गर्नुहोस्</translation>
     </message>
@@ -1704,354 +1380,347 @@
         <translation>खोजी गर्दै ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="303"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>मेरो वॉल्ट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>Create Vault</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट बनाउनु</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="262"/>
         <source>Unlock</source>
         <translation>अनलक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="278"/>
         <source>Lock</source>
-        <translation type="unfinished"/>
+        <translation>लॉक गर्नु</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="284"/>
         <source>Auto lock</source>
-        <translation type="unfinished"/>
+        <translation>स्वचालित लॉक</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="288"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>कदापि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="297"/>
         <source>5 minutes</source>
-        <translation type="unfinished"/>
+        <translation>5 मिनेट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="304"/>
         <source>10 minutes</source>
-        <translation type="unfinished"/>
+        <translation>10 मिनेट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="311"/>
         <source>20 minutes</source>
-        <translation type="unfinished"/>
+        <translation>20 मिनेट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="325"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट हटाउनु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
         <source>File not found</source>
-        <translation type="unfinished"/>
+        <translation>फाइल फेला पारिने</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>File already exists</source>
-        <translation type="unfinished"/>
+        <translation>फाइल पहिले नै अछी</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="11"/>
         <source>File is a directory</source>
-        <translation type="unfinished"/>
+        <translation>फाइल एक डिरेक्टरी हो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
         <source>File is not a directory</source>
-        <translation type="unfinished"/>
+        <translation>फाइल एक डिरेक्टरी छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="13"/>
-        <source>File is a directory that isn&apos;t empty</source>
-        <translation type="unfinished"/>
+        <source>File is a directory that isn't empty</source>
+        <translation>फाइल खाली छैन एक डिरेक्टरी हो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="14"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished"/>
+        <translation>फाइल एक सामान्य फाइल छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="15"/>
         <source>File is not a symbolic link</source>
-        <translation type="unfinished"/>
+        <translation>फाइल एक संकेतक लिंक छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="16"/>
         <source>File cannot be mounted</source>
-        <translation type="unfinished"/>
+        <translation>फाइल छिन छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="17"/>
         <source>Filename has too many characters</source>
-        <translation type="unfinished"/>
+        <translation>फाइलनेममा धेरू चरण छन्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="18"/>
         <source>Filename is invalid or contains invalid characters</source>
-        <translation type="unfinished"/>
+        <translation>फाइलनेम अमान्य वा अमान्य चरण राखिएको छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="19"/>
         <source>File contains too many symbolic links</source>
-        <translation type="unfinished"/>
+        <translation>फाइलमा धेरू संकेतक लिंक छन्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="20"/>
         <source>No space left on drive</source>
-        <translation type="unfinished"/>
+        <translation>ड्राइभमा स्थान बाँकी छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"/>
+        <translation>अमान्य तर्ग</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति निषेधित</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
         <source>Operation (or one of its parameters) not supported</source>
-        <translation type="unfinished"/>
+        <translation>कार्य (वा एउटा प्रमाण) समर्थित छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
-        <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"/>
+        <source>File isn't mounted</source>
+        <translation>फाइल छिन छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"/>
+        <translation>फाइल अहिले छिन छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
         <source>File was closed</source>
-        <translation type="unfinished"/>
+        <translation>फाइल बन्द भएको छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>Operation was cancelled</source>
-        <translation type="unfinished"/>
+        <translation>कार्य रद्द गरिएको छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operations are still pending</source>
-        <translation type="unfinished"/>
+        <translation>कार्यहरू अझ अपेक्षित छन्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
         <source>File is read-only</source>
-        <translation type="unfinished"/>
+        <translation>फाइल अक्षर छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="32"/>
         <source>Failed to open the file</source>
-        <translation type="unfinished"/>
+        <translation>फाइल खोल्न असफल</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
         <source>Target Trash File Not exist</source>
-        <translation type="unfinished"/>
+        <translation>लक्ष्य र अपरिच्छिन्न फाइल छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
-        <translation type="unfinished"/>
+        <translation>कार्यको समय सीमा समाप्त भएको छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
         <source>File is busy</source>
-        <translation type="unfinished"/>
+        <translation>फाइल भरी छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण अलग भएको छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
         <source>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</source>
-        <translation type="unfinished"/>
+        <translation>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>सफल</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
-        <translation type="unfinished"/>
+        <translation>असफल</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Sidebar</source>
-        <translation type="unfinished"/>
+        <translation>पक्ष बार</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
-        <translation type="unfinished"/>
+        <translation>वा</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="385"/>
         <source>Clear search history</source>
-        <translation type="unfinished"/>
+        <translation>खोज इतिहास धुवाँ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation type="unfinished"/>
+        <translation>अज्ञात</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>खोज</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="251"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>अवांस्ड खोज</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="380"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="385"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM द्वारा एक यादृच्छिक संख्या उत्पन्न नहीं कर सकते</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="388"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"/>
+        <translation>उपलब्ध शиф्र करण एल्गोरिथ्म नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="386"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="391"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"/>
+        <translation>TPM शिफ्र करण विफल रहा।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="389"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="394"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"/>
+        <translation>TPM लॉक है।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="453"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="458"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"/>
+        <translation>शिफ्र करण %1 की पुष्टि करें?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="456"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="461"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"/>
+        <translation>&gt;-
+ वर्तमान पार्टिशन शिफ्र करण के लिए तैयार है और शिफ्र करण प्रक्रिया के दौरान रद्द नहीं किया जा सकता, शिफ्र करण की पुष्टि करें।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="463"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="468"/>
         <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"/>
+        <translation>&gt;-
+ * पार्टिशन के शिफ्र करण के बाद, सिस्टम को एक कम वर्जन में वापस नहीं ले जाया जा सकता, शिफ्र करण की पुष्टि करें</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="474"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="475"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="480"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>पुष्टि और रीबूट करें</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="476"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="481"/>
         <source>Confirm</source>
         <translation>पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="491"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"/>
+        <translation>अशिफ्र करण %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="492"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"/>
+        <translation>&gt;-
+ अशिफ्र करण लंबा समय ले सकता है, इसलिए अशिफ्र करण पूरा होने तक बिजली कनेक्ट कर रखें।</translation>
     </message>
     <message>
-        <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="58"/>
+        <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>ग्रुब अपडेट कर रहे हैं...</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="149"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">सम्मोहन त्रुटि</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="150"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">यो कार्य अनुमति दिइनको छैन</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="166"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">मकान डिस्कमा अत्यन्त फ्री स्थान छैन</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="167"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">मकान डिवाइस लिसो व्यवस्थापन गर्न सकिनाही</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="168"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">मकान फोल्डर स्रोत फोल्डरको भाइमा छ</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="169"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">यो कार्य समर्थन छैन</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">कानून रिस्टोर गरिने विनावको मार्ग खोजिन्छैन</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">ड्राइश्मा को url विश्लेषण गरिने विनाव</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
         <source>Failed to obtain the trash original file</source>
-        <translation type="unfinished"/>
+        <translation>कचरा विशिष्ट फ़ाइल प्राप्त करने में विफल</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
         <source>Copy or Cut File failed!</source>
-        <translation type="unfinished"/>
+        <translation>कॉपी या कट फ़ाइल विफल!</translation>
     </message>
 </context>
 <context>
@@ -2059,7 +1728,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
         <source>Encrypting </source>
-        <translation type="unfinished"/>
+        <translation>शिफ्र करण </translation>
     </message>
 </context>
 <context>
@@ -2072,38 +1741,37 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>इकन आकार</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="128"/>
         <source>Auto arrange</source>
-        <translation type="unfinished"/>
+        <translation>स्वचालित व्यवस्था</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
         <source>Display Settings</source>
-        <translation type="unfinished"/>
+        <translation>दिखाए विन्यास</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>अपडेट करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>वॉलपेपर और स्क्रीनसेवर</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
-        <translation type="unfinished"/>
+        <translation>व्यक्तिगत विन्यास</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Set Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>वॉलपेपर सेट करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
@@ -2118,7 +1786,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय सिर्जना गरियो</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -2133,7 +1801,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>छोटा</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
@@ -2153,7 +1821,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="156"/>
         <source>Super large</source>
-        <translation type="unfinished"/>
+        <translation>अत्यधिक बड़ा</translation>
     </message>
 </context>
 <context>
@@ -2161,7 +1829,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">%1 अनुमोदन छैन</translation>
     </message>
 </context>
 <context>
@@ -2201,9 +1869,6 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="76"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>आवाश्यक</translation>
     </message>
@@ -2230,7 +1895,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">फाइल नाम अघि</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
@@ -2245,50 +1910,46 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation type="unfinished"/>
+        <translation>शुरू करें:</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="131"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति नहीं है</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="139"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>परीक्षा अवधि में</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="249"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="250"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="286"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति नहीं है</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="254"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="255"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="292"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>परीक्षा अवधि में</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::AlertHideAllDialog</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
-        <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation type="unfinished"/>
+        <source>The hortcut key "%1" to show collection</source>
+        <translation>कुंजी "%1" ली छोटो शृंखला देखाउनु भएको</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation type="unfinished"/>
+        <translation>कुनै चेतावनी</translation>
     </message>
 </context>
 <context>
@@ -2296,7 +1957,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="107"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>छोटो</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
@@ -2316,31 +1977,30 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
         <source>Super large</source>
-        <translation type="unfinished"/>
+        <translation>अत्यधिक ठूलो</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::CollectionTitleBarPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
-        <translation type="unfinished"/>
+        <translation>शृंखला आकार</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="137"/>
         <source>Large area</source>
-        <translation type="unfinished"/>
+        <translation>ठूलो क्षेत्र</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
         <source>Small area</source>
-        <translation type="unfinished"/>
+        <translation>छोटो क्षेत्र</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
-        <translation type="unfinished"/>
+        <translation>मध्य क्षेत्र</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
@@ -2356,90 +2016,90 @@
 <context>
     <name>ddplugin_organizer::CustomMode</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="349"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="365"/>
         <source>New Collection</source>
-        <translation type="unfinished"/>
+        <translation>नयाँ शृंखला</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
-        <source>Organize desktop</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="232"/>
-        <source>Enable desktop organization</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
-        <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <source>Organize desktop</source>
+        <translation>कार्य डेस्कटप</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
+        <source>Enable desktop organization</source>
+        <translation>कार्य डेस्कटप सक्षम गर्नु</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
-        <source>Organize by</source>
-        <translation type="unfinished"/>
+        <source>Desktop Settings</source>
+        <translation>डेस्कटप सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="238"/>
-        <source>Custom collection</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
+        <source>Organize by</source>
+        <translation>कार्य गर्नु अनुसार</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
+        <source>Custom collection</source>
+        <translation>कस्टम शृंखला</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
         <source>Type</source>
         <translation>प्रकार</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
         <source>Time accessed</source>
         <translation>समय पहुँच गरियो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="241"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="242"/>
         <source>Time modified</source>
         <translation>समय परिमार्जित</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="242"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="243"/>
         <source>Time created</source>
         <translation>समय सिर्जना गरियो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="244"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="245"/>
         <source>Create a collection</source>
-        <translation type="unfinished"/>
+        <translation>एउटा शृंखला बनाउनु</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="154"/>
-        <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
+        <source>To disable the One-Click Hide feature, invoke the "View Options" window in the desktop context menu and turn off the "One-Click Hide Collection".</source>
+        <translation>एक-क्लिक हाइड सुविधा बन्द गर्नुको लागि, डेस्कटप क्यान्टेक्स्ट मेनू मा "व्यू विकल्प" विंडो को आह्वान गर्नु र "एक-क्लिक हाइड शृंखला" को बन्द गर्नु</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="164"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
         <source>Desktop organizer</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="167"/>
-        <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation type="unfinished"/>
+        <translation>डेस्कटप कार्यकर्ता</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
+        <source>Shortcut "%1" to show collections</source>
+        <translation>शृंखला देखाउनका लागि कुंजी "%1" </translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">बन्द</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>No more prompts</source>
-        <translation type="unfinished"/>
+        <translation>कुनै चेतावनी छैन</translation>
     </message>
 </context>
 <context>
@@ -2447,7 +2107,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="256"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">%1 अनुमोदन छैन</translation>
     </message>
 </context>
 <context>
@@ -2463,17 +2123,17 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>डेस्कटप सेटिंग्स</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
         <source>Auto arrange icons</source>
-        <translation type="unfinished"/>
+        <translation>स्वचालित आकार चिन्ह</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
-        <translation type="unfinished"/>
+        <translation>कार्य डेस्कटप सक्षम गर्नु</translation>
     </message>
 </context>
 <context>
@@ -2481,22 +2141,22 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="39"/>
         <source>Organize desktop</source>
-        <translation type="unfinished"/>
+        <translation>कार्य डेस्कटप</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <source>Organize by</source>
-        <translation type="unfinished"/>
+        <translation>कार्य गर्नु अनुसार</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation type="unfinished"/>
+        <translation>एक क्लिकमा सबै शृंखला छिपाउनु</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"/>
+        <translation>शृंखला छिपाउन/देखाउन कुंजी</translation>
     </message>
 </context>
 <context>
@@ -2536,9 +2196,6 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="76"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="89"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="103"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>आवाश्यक</translation>
     </message>
@@ -2565,7 +2222,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">फाइल नाम अघि</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
@@ -2580,7 +2237,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation type="unfinished"/>
+        <translation>सुरु गर्नुभएको:</translation>
     </message>
 </context>
 <context>
@@ -2588,7 +2245,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="87"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>चिन्ह आकार</translation>
     </message>
 </context>
 <context>
@@ -2596,7 +2253,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="68"/>
         <source>Apps</source>
-        <translation type="unfinished"/>
+        <translation>एप्स</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="69"/>
@@ -2621,7 +2278,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="73"/>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>फोल्डर</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
@@ -2634,7 +2291,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="20"/>
         <source>Apps</source>
-        <translation type="unfinished"/>
+        <translation>अनुप्रयोग</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
@@ -2659,97 +2316,96 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>फोल्डर</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1030"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1064"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>वॉलपेपर लोड हुन रहेको ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1032"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1066"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>स्क्रीनसेभर लोड हुन रहेको ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1092"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1126"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>कस्टम स्क्रीनसेभर</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1093"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1095"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1127"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>अनुप्रयोग गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1168"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1202"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>यस सिस्टम वॉलपेपर लॉक छ। तपाईंको एडमिनसँग सम्पर्क गर्नुहोस्।</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettingsPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="140"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="142"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>वॉलपेपर</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="150"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="152"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>स्क्रीनसेभर</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="369"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="377"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>डेस्कटप</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="370"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="378"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>लॉक स्क्रीन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="371"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
         <source>Both</source>
-        <translation type="unfinished"/>
+        <translation>दुवै</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="553"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="579"/>
         <source>Wallpaper Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>वॉलपेपर स्लाइडशो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="594"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="620"/>
         <source>When login</source>
-        <translation type="unfinished"/>
+        <translation>लगिन गर्दा</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="596"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="622"/>
         <source>When wakeup</source>
-        <translation type="unfinished"/>
+        <translation>उठ गर्दा</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="634"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
         <source>Require a password on wakeup</source>
-        <translation type="unfinished"/>
+        <translation>उठ गर्दा पासवर्ड आवश्यक छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="666"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="692"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>कदापि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="668"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="694"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>चाहिएको समय:</translation>
     </message>
 </context>
 <context>
@@ -2757,24 +2413,24 @@
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="30"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"/>
+        <translation>फाइल मेनेजर एउटा नयाँ संस्करणमा अपडेट गरिने छ, जसमा चलिरहेका कार्यहरू समाप्त गरिने छ। तपाईं अब अपडेट गर्न चाहानु चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="32"/>
         <source>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"/>
+        <translation>डेस्कटप सेवा एउटा नयाँ संस्करणमा अपडेट गरिने छ, जसमा चलिरहेका कार्यहरू समाप्त गरिने छ। तपाईं अब अपडेट गर्न चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="33"/>
         <source>Update</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>अपडेट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="34"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -2791,7 +2447,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
         <source>%1 item selected</source>
         <translation>% 1 वस्तु चयन गरियो</translation>
     </message>
@@ -2830,11 +2485,6 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>पुष्टि गर्नुहोस्</translation>
@@ -2842,92 +2492,92 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="83"/>
         <source>Operating failed</source>
-        <translation type="unfinished"/>
+        <translation>कार्य विफल भयो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="84"/>
         <source>Mount failed</source>
-        <translation type="unfinished"/>
+        <translation>माउन्ट विफल भयो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="85"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>अनमाउन्ट विफल भयो</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>अनमाउन्ट गर्दै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>माउन्ट गर्दै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"/>
+        <translation>डिवाइस खाली गर्दै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"/>
+        <translation>डिवाइसको फाइलसिस्टम बनाउँदै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"/>
+        <translation>डिवाइस लॉक गर्दै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
         <source>Unlocking device now...</source>
-        <translation type="unfinished"/>
+        <translation>डिवाइस अनलॉक गर्दै छ ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="130"/>
         <source>The device is busy now</source>
-        <translation type="unfinished"/>
+        <translation>डिवाइस व्यस्त छ अब</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
         <source>Anonymous mount is not allowed</source>
-        <translation type="unfinished"/>
+        <translation>अनाम बाउंडिंग संग अनुमति छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="144"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>भुल भएको पासवर्ड</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="148"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
-        <translation type="unfinished"/>
+        <translation>बाउंडिंग बनाउन सकिँदैन: फाइल नाम लामो छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="150"/>
         <source>Authentication failed</source>
-        <translation type="unfinished"/>
+        <translation>प्रमाणीकरण असफल</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="152"/>
         <source>No such file or directory</source>
-        <translation type="unfinished"/>
+        <translation>कुनै फाइल वा फल्डर नाम छैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>Error occured while mounting device</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण बाउंडिंग गर्दै त्रुटि भएको</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण ब्लॉक भएको छ र तपाईंले यसलाई प्रवेश गर्नको अनुमति छैन। सुरक्षा केन्द्रमा यसको संयोजन नीति सेट गर्नु वा आपतकालीन अड्डामा संपर्क गर्नु आवश्यक छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण व्यस्त छ, अहिले हटाउन सकिदैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="187"/>
@@ -2936,21 +2586,17 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
-        <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
+        <source>Sorry, you don't have permission to operate the following %1 file/folder(s)!</source>
         <translation>माफ गर्नुहोस्, तपाईंसँग निम्न% 1 फाइल / फोल्डर (हरू) सञ्चालन गर्न अनुमति छैन!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="233"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ठिक छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
         <source>Operation failed!</source>
         <translation>सञ्चालन असफल!</translation>
     </message>
@@ -2962,18 +2608,10 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="303"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
-        <translation type="unfinished"/>
+        <translation>अन्क्रिप्ट डेटा %1 प्राप्त गर्नको लागि पासफ्रेज आवश्यक छ।</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="665"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
@@ -2987,7 +2625,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण प्राप्त गर्न तपाईंले पहिले डिस्क फॉर्मेट गर्नु पर्छ। तपाईं अहिले फॉर्मेट गर्न चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
@@ -3001,15 +2639,12 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>चलाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>टर्मिनलमा चलाउनुहोस्</translation>
@@ -3033,7 +2668,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
-        <translation type="unfinished"/>
+        <translation>चयन गरिएका %1 वस्तुहरू ट्रास्ज तल निस्काउन सकिदैन। तपाईं यी निरंतर हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
@@ -3042,14 +2677,11 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
-        <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation type="unfinished"/>
+        <source>Cannot move "%1" to the trash. Do you want to permanently delete it?</source>
+        <translation>"%1" ट्रास्ज तल निस्काउन सकिदैन। तपाईं यसलाई निरंतर हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>हटाउनुहोस्</translation>
@@ -3061,7 +2693,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
         <source>This action cannot be undone</source>
         <translation>यो कार्य पूर्ववत गर्न सकिदैन</translation>
     </message>
@@ -3083,12 +2714,12 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
         <source>Do you want to delete %1?</source>
-        <translation type="unfinished"/>
+        <translation>तपाईं %1 हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
         <source>Do you want to delete the selected %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>चयन गरिएका %1 वस्तुहरू हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
@@ -3103,37 +2734,37 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation type="unfinished"/>
+        <translation>प्रतिज्ञा गर्दा, यो %1 अन्तिम रूपमा हटाइयो, तपाईं यसलाई अन्तिम रूपमा हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation type="unfinished"/>
+        <translation>यी %1 वस्तुहरू प्रतिज्ञा गर्दा अन्तिम रूपमा हटाइयो। तपाईं यी वस्तुहरू अन्तिम रूपमा हटाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
         <source>This operation cannot be reversed.</source>
-        <translation type="unfinished"/>
+        <translation>यो कार्य उल्टाउन सकिदैन।</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="566"/>
-        <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>&quot;% 1&quot; पहिले नै अवस्थित छ, कृपया अर्को नाम प्रयोग गर्नुहोस्।</translation>
+        <source>"%1" already exists, please use another name.</source>
+        <translation>"% 1" पहिले नै अवस्थित छ, कृपया अर्को नाम प्रयोग गर्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण वा संसाधन व्यस्त</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="593"/>
-        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation type="unfinished"/>
+        <source>This file will be hidden if the file name starts with '.'. Do you want to hide it?</source>
+        <translation>यदि फाइल नाम '.' द्वारा सुरु भएको छ भने यो छिपाइयो। तपाईं यसलाई छिपाउन चाहानु भयो?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="594"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>छिपाउ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
@@ -3143,7 +2774,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
         <source>Unable to access %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 प्राप्त गर्न सकिदैन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="635"/>
@@ -3169,52 +2800,52 @@
 <context>
     <name>dfmbase::MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="23"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="24"/>
         <source>Directory</source>
         <translation>निर्देशिका</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="24"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="25"/>
         <source>Application</source>
         <translation>अनुप्रयोग</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="25"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="26"/>
         <source>Video</source>
         <translation>भिडियो</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="26"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="27"/>
         <source>Audio</source>
         <translation>अडियो</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="27"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="28"/>
         <source>Image</source>
         <translation>इमेज </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="28"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="29"/>
         <source>Archive</source>
         <translation>अर्चिवे</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="29"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
         <source>Text</source>
         <translation>टेक्स्ट </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
         <source>Executable</source>
         <translation>कार्यान्वयन योग्य</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
         <source>Backup file</source>
         <translation>ब्याकअप फाइल</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
         <source>Unknown</source>
         <translation>अज्ञात</translation>
     </message>
@@ -3294,7 +2925,7 @@
     <message>
         <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
         <source>Copy complete info</source>
-        <translation type="unfinished"/>
+        <translation>सम्पूर्ण जानकारी कोपी गर्नु</translation>
     </message>
 </context>
 <context>
@@ -3302,255 +2933,247 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Always open folder in new window</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">सँधै नयाँ विन्डोमा फोल्डर खोल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Open file:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">फाईल खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"> क्लिक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Double click</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">दुई पटक क्लिक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window and tab</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नयाँ विन्डो र ट्याब</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
         <source>Open from default window:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पूर्वनिर्धारित विन्डोबाट खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">कम्प्युटर</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">होम</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डेस्कटप</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">भिडियोस </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">म्युजिक</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पिक्चारहरु </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डोकुमेन्त्स </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डाउनलोडहरू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नयाँ ट्याबमा खोल्नुहोस्:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Current Directory</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">हालको निर्देशिका</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
         <source>Files and folders</source>
-        <translation type="unfinished"/>
+        <translation>फाइल र फल्डर</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
         <source>Show hidden files</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">लुकेका फाइलहरू देखाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>फाइल विस्तार देखाउ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>फाइल र फल्डरको छिटो तालिका गर्नु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="330"/>
         <source>Workspace</source>
-        <translation type="unfinished"/>
+        <translation>कामक्षेत्र</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="331"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">हेर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>डिफ़ॉल्ट आइकन नेटवर्क घनत्व:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>डिफ़ॉल्ट तालिका उचाई:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>पेड</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पूर्वनिर्धारित दृश्य:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">आइकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>फल्डर फिर्याउदा अस्तित्वमा छैन विंडो सक्रिय गर्नु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>प्रमुख आइकन आकार:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
         <source>List</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">सूची</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Restore default view mode for all directories</source>
-        <translation type="unfinished"/>
+        <translation>सबै डिरेक्टरीहरूका लागि डिफ़ॉल्ट व्यू मोड फिर्ता लिनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
         <source>Restore default view mode</source>
-        <translation type="unfinished"/>
+        <translation>डिफ़ॉल्ट व्यू मोड फिर्ता लिनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
         <source>Thumbnail preview</source>
-        <translation type="unfinished"/>
+        <translation>थंबनेल प्रीव्यू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Compressed file preview</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">संकुचित फाइल पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
         <source>Text preview</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पाठ पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
         <source>Document preview</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">डोकुमेन्त पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Image preview</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">छवि पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>Video preview</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">भिडियो पूर्वावलोकन</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="397"/>
         <source>Music preview</source>
-        <translation type="unfinished"/>
+        <translation>म्युजिक प्रीव्यू</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="400"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>दूरस्थ वातावरण थंबनेल प्रीव्यू प्रदर्शन गर्दछ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"/>
+        <translation>थंबनेल प्रीव्यू सक्षम गर्नु दूरस्थ डिरेक्टरीले धीमो खुल्न वा प्रक्रिया ठक्कर लगाउन सक्छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">उन्नत</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Mount</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">माउन्ट</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
         <source>Auto mount</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">स्वत: माउन्ट</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">स्वत: माउन्ट पछि खोल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="425"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"/>
+        <translation>सम्बा साझा फोल्डरहरूका प्रविष्टि सम्मिलन गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"/>
+        <translation>प्रविष्टि प्रदर्शन बदल्नु असफल माउन्टिंग गर्न सक्छ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="432"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">फाइल प्रबन्धकको फाइल छनौटकर्ता संवाद प्रयोग गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="434"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation type="unfinished"/>
+        <translation>फाइलहरू डिलिट गर्दछ अब तपाईंको पुष्टि माग्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -3593,7 +3216,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
         <source>Reverse selection</source>
-        <translation type="unfinished"/>
+        <translation>विपरीत छानबस</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -3643,17 +3266,17 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Open in terminal</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">टर्मिनलमा खोल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>उल्टा गर्नु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation type="unfinished"/>
+        <translation>पुनरावृत्ति गर्नु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -3728,7 +3351,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
-        <translation type="unfinished"/>
+        <translation>पेड दृश्य मोडमा स्विच गर्नु</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3831,7 +3454,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="111"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रिसेन्ट </translation>
     </message>
 </context>
 <context>
@@ -3839,12 +3462,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>स्रोत फाइल %1 जानकारी संघर्ष जानकारी फलन फल असफल!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>उद्देश्य फाइल %1 जानकारी संघर्ष जानकारी फलन फल असफल!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
@@ -3878,9 +3501,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="448"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="781"/>
         <source>In data statistics ...</source>
-        <translation type="unfinished"/>
+        <translation>डेटा सांख्यिकी मा ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="792"/>
@@ -3890,12 +3512,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
         <source>Syncing data</source>
-        <translation type="unfinished"/>
+        <translation>डेटा सिंक गर्दछ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="386"/>
         <source>Please wait</source>
-        <translation type="unfinished"/>
+        <translation>कृपया तपाईं बर्द्धि गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="597"/>
@@ -3911,7 +3533,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="662"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>बदल्नुहोस्</translation>
@@ -3939,12 +3560,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="29"/>
         <source>Enter a password to protect shared folders</source>
-        <translation type="unfinished"/>
+        <translation>साझा फोल्डरहरू रक्षा गर्नको लागि एक पासवर्ड प्रविष्ट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="53"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
-        <translation type="unfinished"/>
+        <translation>साझा फोल्डरमा एक पासवर्ड सेट गर्नुहोस् अनान्य बारे एक्सेसको लागि</translation>
     </message>
 </context>
 <context>
@@ -3970,7 +3591,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
-        <translation type="unfinished"/>
+        <translation>क्षमा गर्नुहोस्, तपाईंको त्वरित पहुँच डिरेक्टरी खोज्न सकिन्छ छ, हटाउनुहोस्?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
@@ -3990,12 +3611,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="58"/>
         <source>Pin to quick access</source>
-        <translation type="unfinished"/>
+        <translation>त्वरित पहुँचमा ठाडो गर्नु</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"/>
+        <translation>त्वरित पहुँच बाट हटाउनु</translation>
     </message>
 </context>
 <context>
@@ -4017,7 +3638,6 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="164"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="170"/>
         <source>Data verification successful.</source>
         <translation>डाटा प्रमाणीकरण सफल।</translation>
     </message>
@@ -4029,7 +3649,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
         <source>The device was not safely unmounted</source>
-        <translation type="unfinished"/>
+        <translation>यन्त्र ठामा बाट असुरक्षित अलग गरियो</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
@@ -4042,7 +3662,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="98"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">लाम्बार्क गर्न समर्थ छैन। मकसदको डिस्कमा अत्यन्त बाइजिबल अवस्थामा छैन।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
@@ -4055,7 +3675,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"/>
+        <translation>फाइल नाम वा पाथ लंबो छ। कृपया फाइल नाम वा पाथ कम गर्नु र फर्कनुहोस्।</translation>
     </message>
 </context>
 <context>
@@ -4079,7 +3699,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
         <source>Data verification failed</source>
-        <translation type="unfinished"/>
+        <translation>डेटा अस्वीकृत भएको छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
@@ -4117,17 +3737,17 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
         <source>View Image File</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>छवि फाइल देख्नु</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="315"/>
         <source>Image successfully created</source>
-        <translation type="unfinished"/>
+        <translation>छवि सफल रूपमा बनाइएको छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="350"/>
         <source>Image creation failed</source>
-        <translation type="unfinished"/>
+        <translation>छवि बनाइएको असफल</translation>
     </message>
 </context>
 <context>
@@ -4135,42 +3755,42 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="141"/>
         <source>Advanced settings</source>
-        <translation type="unfinished"/>
+        <translation>अवांतर सेटिंग्स</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="165"/>
         <source>File system: </source>
-        <translation type="unfinished"/>
+        <translation>फाइल सिस्टम: </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
         <source>ISO9660 Only</source>
-        <translation type="unfinished"/>
+        <translation>केवल ISO9660</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
         <source>ISO9660/Joliet (For Windows)</source>
-        <translation type="unfinished"/>
+        <translation>ISO9660/Joliet (विंडोजका लागि)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
-        <translation type="unfinished"/>
+        <translation>ISO9660/Rock Ridge (यूनिक्सका लागि)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (विंडोज CD/DVD मोड संग संगत)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
         <source>Device error</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
-        <source>Optical device %1 doesn&apos;t exist</source>
-        <translation type="unfinished"/>
+        <source>Optical device %1 doesn't exist</source>
+        <translation>ऑप्टिकल उपकरण %1 छैन</translation>
     </message>
 </context>
 <context>
@@ -4178,7 +3798,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"/>
+        <translation>फाइल नाम वा पथ लंबो छ। कृपया फाइल नाम वा पथ कम गरेर फेरि प्रयास गर्नुहोस्।</translation>
     </message>
 </context>
 <context>
@@ -4186,12 +3806,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
-        <translation type="unfinished"/>
+        <translation>ISO छवि बनाउँदै</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
         <source>to %1</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">क %1 भइसको</translation>
     </message>
 </context>
 <context>
@@ -4200,22 +3820,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="57"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>ISO छवि बनाउँदो</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="70"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">इमेज फाइल रूपमा बचाउनु</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="81"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation type="unfinished"/>
+        <translation>डिस्कमा सबै फाइलहरू पैकेज गरिन्छ र ISO छवि फाइलको रूपमा बनाइन्छ।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
         <source>Save the ISO image here:</source>
-        <translation type="unfinished"/>
+        <translation>ISO छवि यहाँ बचत गर्नुहोस्:</translation>
     </message>
 </context>
 <context>
@@ -4231,7 +3851,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="58"/>
         <source>Double click to open it</source>
-        <translation type="unfinished"/>
+        <translation>साथ दुई वार छाँटेर खोल्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -4244,32 +3864,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="184"/>
         <source>Computer display items</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्यूटर देखाउने वस्तु</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्यूटर पन्नामा इनबिल्ड डिस्क हटाउँदो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्यूटर पन्नामा लुप पार्टिसन हटाउँदो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="191"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"/>
+        <translation>डिस्क आइकनमा फाइल सिस्टम देखाउँदो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="195"/>
         <source>Hide My Directories on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्यूटर पन्नामा मे मे डिरेक्टरी हटाउँदो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="211"/>
         <source>Hide 3rd party entries on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>कम्प्यूटर पन्नामा तेस्रो पक्षका प्रवेश हटाउँदो</translation>
     </message>
 </context>
 <context>
@@ -4277,42 +3897,42 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण अनलॉक गर्न असफल</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>गलत पासवर्ड</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
         <source>Rename failed</source>
-        <translation type="unfinished"/>
+        <translation>नाम बदल्न असफल</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
         <source>The device is busy and cannot be renamed now</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण काम गरिरहेको छ र अब नाम बदल्न सकिँदैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
         <source>Format failed</source>
-        <translation type="unfinished"/>
+        <translation>फार्मेट गर्न असफल</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
         <source>The device is busy and cannot be formatted now</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण काम गरिरहेको छ र अब फार्मेट गर्न सकिँदैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>माउन्ट त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 बाट प्रवेश गर्न सकिँदैन</translation>
     </message>
 </context>
 <context>
@@ -4325,22 +3945,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 अक्षर रेडी र राइट परमिसन ओन गर्न चाहानु छ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
-        <translation type="unfinished"/>
+        <translation>एनेबल गरिबाट, रेडी र राइट परमिसन सदैव दिइनेछ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
         <source>Enable Now</source>
-        <translation type="unfinished"/>
+        <translation>अब सक्रिय गर्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -4361,7 +3981,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>मूल सूचना</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
@@ -4403,9 +4023,8 @@
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="197"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 %2 मा</translation>
     </message>
 </context>
 <context>
@@ -4423,7 +4042,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>विस्तार</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4438,12 +4057,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>प्रवेश गर्नु भएको</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>सम्पादित गर्नु भएको</translation>
     </message>
 </context>
 <context>
@@ -4474,12 +4093,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
         <source>Share name</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
         <source>Permission</source>
-        <translation type="unfinished"/>
+        <translation>अनुमति</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
@@ -4509,11 +4128,10 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Network path</source>
-        <translation type="unfinished"/>
+        <translation>जाला पाथ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="260"/>
         <source>Copy</source>
         <translation>प्रतिलिपी </translation>
     </message>
@@ -4524,42 +4142,38 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="292"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>कुनै</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
         <source>Set password</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड सेट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
         <source>Change password</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड बदल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
         <source>Share password</source>
-        <translation type="unfinished"/>
+        <translation>शेयर पासवर्ड</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="313"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
-        <translation type="unfinished"/>
+        <translation>यो पासवर्ड सबै शेयर फोल्डरमा लागू हुनेछ, र पासवर्ड बिना शेयर फोल्डरको आवेदनकर्ताहरू केवल अनाम आवेदनलाई अनुमति दिने शेयर फोल्डरहरू मात्र प्रवेश गर्न सक्छन्।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="416"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम दुई डट (..) वा एक डट (.) हुन नसक्छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
         <source>The share name is used by another user.</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम अर्को उपयोगकर्ताद्वारा प्रयोग भएको छ।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="435"/>
@@ -4570,7 +4184,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम पहिले बाटो छर्खे छ। तपाईं शेयर फोल्डर बदल्न चाहानु छुनु भएको छ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
@@ -4587,7 +4201,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम बहुत लंबो छ र यो काटिएको छ।</translation>
     </message>
 </context>
 <context>
@@ -4604,31 +4218,28 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="525"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>शेयर नाम %1 हुन नसक्छ, र एक डिश (-) वा अंतराल बर्बाद गर्न नसक्छ वा अंत अंतराल बर्बाद गर्न नसक्छ।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="513"/>
-        <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <source>Share folder can't be named after the current username</source>
+        <translation>शेयर फोल्डर वर्तमान उपयोगकर्ता नाम अनुसार नाम दिन सकिन्छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="519"/>
         <source>To protect the files, you cannot share this folder.</source>
-        <translation type="unfinished"/>
+        <translation>फाइलहरू सुरक्षा गर्न, तपाईं यो फोल्डर शेयर गर्न सकिन्छैन।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="547"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
         <source>Sharing failed</source>
-        <translation type="unfinished"/>
+        <translation>शेयर गर्न विफल भएको</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation type="unfinished"/>
+        <translation>SMB पोर्ट बैन गरिएको छ, कृपया फायरवल स्ट्राटेजी तपाईं जाँच गर्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
@@ -4640,97 +4251,88 @@
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>पिन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
         <source>Modify %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 बदल्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
         <source>Please enter %1 again</source>
-        <translation type="unfinished"/>
+        <translation>%1 फेरि दर्ता गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
         <source>New %1</source>
-        <translation type="unfinished"/>
+        <translation>नयाँ %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 फेरि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="323"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"/>
+        <translation>'%1 खाली छैन'</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
         <source>Recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी अमान्य छ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"/>
+        <translation>कम बाट 8 बिट हुनुपर्छ, A-Z, a-z, 0-9 र संकेतहरू राख्ने 3 प्रकार हुनुपर्छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"/>
+        <translation>'%1 असंगतता'</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 ले सत्यापन गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
         <source>Please input recovery key</source>
-        <translation type="unfinished"/>
+        <translation>कृपया पुनर्प्राप्ति कुंजी दिनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
         <source>Old %1</source>
-        <translation type="unfinished"/>
+        <translation>पुरानो %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी ले सत्यापन गर्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -4738,65 +4340,62 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="51"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation type="unfinished"/>
+        <translation>साधन डिक्रिप्ट गर्न लागि पुनर्प्राप्ति कुंजी दिनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 ले सत्यापन गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>पिन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
         <source>Please input %1 to decrypt device</source>
-        <translation type="unfinished"/>
+        <translation>%1 दिनुहोस् जसले साधन डिक्रिप्ट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी ले सत्यापन गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
         <source>Passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
         <source>Recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
         <source>%1 cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>'%1 खाली छैन!'</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्प्राप्ति कुंजी अमान्य छ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
         <source>Decrypt device</source>
-        <translation type="unfinished"/>
+        <translation>साधन डिक्रिप्ट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पुष्टि गर्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -4804,105 +4403,102 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"/>
+        <translation>ईन्क्रिप्ट गरिएको पार्टिसन ओपन गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>पार्टिसन ईन्क्रिप्ट बन्द गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"/>
+        <translation>ईन्क्रिप्ट बदल्नुहोस् %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>पार्टिसन ईन्क्रिप्ट जारी राख्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>पार्टिसन डिक्रिप्ट जारी राख्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"/>
+        <translation>पार्टिसन ईन्क्रिप्ट सक्षम गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"/>
+        <translation>TPM बाट पासफ्रेज अनुकूलित गर्न सकिन्छ न</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
         <source>PIN error</source>
-        <translation type="unfinished"/>
+        <translation>पिन त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज बदल्न विफल भयो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="501"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"/>
+        <translation>अनलॉक डिवाइस फेल हुआ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="502"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"/>
+        <translation>गलत पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="520"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"/>
+        <translation>माउंट डिवाइस फेल हुआ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>अनमाउंट</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
         <source>lock</source>
-        <translation type="unfinished"/>
+        <translation>लॉक</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="564"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>ईन्क्रिप्ट फेल हुआ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="565"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"/>
+        <translation>के अनुसार %1 डिवाइस %2 नहीं हो सकता</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="647"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"/>
+        <translation>ईन्क्रिप्ट करना जारी रखने के लिए पुनः स्टार्ट करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="648"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"/>
+        <translation>डिक्रिप्ट पूरा करने के लिए पुनः स्टार्ट करें</translation>
     </message>
 </context>
 <context>
@@ -4910,164 +4506,157 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
         <source>Unlock type</source>
-        <translation type="unfinished"/>
+        <translation>अनलॉक प्रकार</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज द्वारा अनलॉक किया गया</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation type="unfinished"/>
+        <translation>इस कंप्यूटर पर टीपीएम+पीआईएन का उपयोग करके अनलॉक करें (अनुशंसित)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम द्वारा इस कंप्यूटर पर स्वचालित अनलॉक</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड भूल जाने या ईन्क्रिप्शन हार्डवेयर नुकसान प्राप्त कर लेने जैसे विशेष स्थितियों में, आप पुनः स्थापित कुंजी के माध्यम से ईन्क्रिप्टेड पार्शन को डिक्रिप्ट कर सकते हैं, कृपया एक अनईन्क्रिप्टेड पार्शन में इसे निर्यात करें और सुरक्षित स्थान में रखें!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"/>
+        <translation>कृपया कुंजी फ़ाइल निर्यात पथ के रूप में एक अनईन्क्रिप्टेड पार्शन का चयन करें।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="356"/>
         <source>Passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेज</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"/>
+        <translation>'%1 खाली नहीं हो सकता'</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="348"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"/>
+        <translation>कम से कम 8 बिट्स, A-Z, a-z, 0-9 और चिन्हों के 3 प्रकार शामिल हैं</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"/>
+        <translation>'%1 असंगतता'</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>पुनः स्थापित कुंजी निर्यात पथ खाली नहीं हो सकता!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>पुनः स्थापित कुंजी निर्यात पथ मौजूद नहीं है!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>कृपया एक बाहरी डिवाइस जैसे अनईन्क्रिप्टेड पार्शन या USB फ्लैश ड्राइव में निर्यात करें।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>इस पार्शन केवल पढ़ा जा सकता है, कृपया एक लिखित पार्शन में निर्यात करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>इस पार्शन केवल ईन्क्रिप्टेड है, कृपया एक अनईन्क्रिप्टेड पार्शन या बाहरी डिवाइस जैसे USB फ्लैश ड्राइव में निर्यात करें।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"/>
+        <translation>कृपया पार्शन %1 के ईन्क्रिप्ट करना जारी रखें</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">अर्को </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
         <source>Confirm encrypt</source>
-        <translation type="unfinished"/>
+        <translation>ईन्क्रिप्ट करने की पुष्टि करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
         <source>Export Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>पुनः स्थापित कुंजी निर्यात करें</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
         <source>Previous</source>
-        <translation type="unfinished"/>
+        <translation>पिछला</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>Set %1</source>
-        <translation type="unfinished"/>
+        <translation>सेट %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"/>
+        <translation>पुनः %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="349"/>
         <source>Please enter the %1 again</source>
-        <translation type="unfinished"/>
+        <translation>कृपया %1 को फेर से दर्ज गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="353"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="354"/>
         <source>passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेस</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="357"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation type="unfinished"/>
+        <translation>पार्शन अनलॉक गर्न पासफ्रेस प्रयोग गर्नु पर्छ।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="360"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="363"/>
         <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>पिन</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="364"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation type="unfinished"/>
+        <translation>पार्शन अनलॉक गर्न टीपीएम सेक्युरिटी चिप र पिन प्रयोग गर्नु पर्छ।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation type="unfinished"/>
+        <translation>पार्शन अनलॉक गर्न टीपीएम सेक्युरिटी चिप द्वारा स्वचालित रूप ले गर्नु पर्छ, पासफ्रेस चेकिंग को आवश्यकता छैन।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम लॉक छ र पार्शन एन्क्रिप्शन को लागि प्रयोग गर्न सकिन्छ। कृपया टीपीएम पासवर्ड रद्द गर्नुहोस् वा अन्य अनलॉकिंग विधि छनौट गर्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="425"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="428"/>
         <source>TPM error</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="428"/>
         <source>TPM status error!</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम स्टेटस त्रुटि!</translation>
     </message>
 </context>
 <context>
@@ -5075,230 +4664,225 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुन: रिकवरी क्याक निकास गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"/>
+        <translation>रिकवरी क्याक सेभ गर्न असफल भए, कृपया रिकवरी क्याक एन्क्रिप्शन छैन भएको पार्शन मा पुन: सेभ गर्नुहोस् र तपाईंले ताजगी ठाउँमा राख्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>रिकवरी क्याक निकास पथ खाली छैन!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>रिकवरी क्याक निकास पथ छैन!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>यो पार्शन रीଡ ओनली छ, कृपया एक राइटेबल पार्शन मा निकास गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="168"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>यो पार्शन एन्क्रिप्ट छ, कृपया एन्क्रिप्ट छैन भएको पार्शन वा एउटा अन्य डिभिस (जस्तै USB फ्लास ड्राइभ) मा निकास गर्नुहोस्।</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"/>
+        <translation>रिकवरी क्याक फाइल बनाउन सकिन्छ न!</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="207"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"/>
+        <translation>एन्क्रिप्ट गर्न सफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="208"/>
         <source>Device %1 has been encrypted</source>
-        <translation type="unfinished"/>
+        <translation>युनिट %1 एन्क्रिप्ट गरियो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="202"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="212"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>एन्क्रिप्ट असफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>युनिट %1 एन्क्रिप्ट असफल भए, तपाईं ध्यान दिनुहोस् लग अनुसार अधिक जानकारी लिनुहोस्।(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="317"/>
         <source>%1 is under encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>'%1 एन्क्रिप्ट गरिरहेको छ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="318"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"/>
+        <translation>एन्क्रिप्ट गर्दै प्रक्रिया सिस्टम लग विस्तार भए बर्बाद गर्न सकिन्छ, कृपया सिस्टम आपरेशन कम गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="338"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>'%1 डिक्रिप्ट गरिरहेको छ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"/>
+        <translation>डिक्रिप्ट गर्दै प्रक्रिया सिस्टम लग विस्तार भए बर्बाद गर्न सकिन्छ, कृपया सिस्टम आपरेशन कम गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>त्रुटि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम स्टेटस असामान्य छ, कृपया रिकवरी क्याक ले यो अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="391"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"/>
+        <translation>गलत पिन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="393"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"/>
+        <translation>गलत पासफ्रेस</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="395"/>
         <source>TPM error</source>
-        <translation type="unfinished"/>
+        <translation>टीपीएम त्रुटि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="397"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्स्थापना कुंजी प्रयोग गरी उपकरण अनलॉक गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="448"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="458"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"/>
+        <translation>प्रेनक्रिप्ट गर्न सफल भयो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="449"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण %1 प्रेनक्रिप्ट गरियो, कृप्या रिबुट गरी एन्क्रिप्ट अन्त्य गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="455"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="465"/>
         <source>Preencrypt failed</source>
-        <translation type="unfinished"/>
+        <translation>प्रेनक्रिप्ट विफल भयो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="456"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="466"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण %1 प्रेनक्रिप्ट विफल भयो, कृप्या ध्यान दिनुहोस् लग फाइलमा अधिक जानकारीका लागि。(%)2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="476"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
         <source>Decrypt done</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="477"/>
-        <source>Device %1 has been decrypted</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
-        <source>Decrypt disk</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
-        <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"/>
+        <translation>अनक्रिप्ट गर्न सफल भयो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
-        <source>Decrypt failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
-        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"/>
+        <source>Device %1 has been decrypted</source>
+        <translation>उपकरण %1 अनक्रिप्ट गरियो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
+        <source>Decrypt disk</source>
+        <translation>डिस्क अनक्रिप्ट गर्नुहोस्</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="494"/>
+        <source>Wrong passpharse or PIN</source>
+        <translation>अपर्याप्त पासफ्रेस वा पिन</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
+        <source>Decrypt failed</source>
+        <translation>अनक्रिप्ट विफल भयो</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="498"/>
+        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
+        <translation>उपकरण %1 एन्क्रिप्टिङ अन्तर्गत छ, कृप्या एन्क्रिप्ट अन्त्य भए पछि अनक्रिप्ट गर्नुहोस्।</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="503"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
-        <source>passphrase</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
-        <source>PIN</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण %1 अनक्रिप्ट विफल भयो, कृप्या ध्यान दिनुहोस् लग फाइलमा अधिक जानकारीका लागि。(%)2</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
+        <source>passphrase</source>
+        <translation>पासफ्रेस</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <source>PIN</source>
+        <translation>पिन</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="540"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"/>
+        <translation>बदल %1 सफल भयो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
-        <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
+        <source>%1's %2 has been changed</source>
+        <translation>%1 को %2 बदल भयो</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"/>
+        <translation>बदल %1 विफल भयो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"/>
+        <translation>अपर्याप्त %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="542"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="552"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण %1 बदल %2 विफल भयो, कृप्या ध्यान दिनुहोस् लग फाइलमा अधिक जानकारीका लागि。(%)3</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="571"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>उपकरण पूर्ण रूप अनक्रिप्ट गरियो छैन, कृप्या अनक्रिप्ट अन्त्य भए पछि आगामी गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"/>
+        <translation>उपकराण अनलॉक विफल भयो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="579"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
+        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
+        <translation>कृप्या डिस्क मेनू "Continue partition encryption" बाट क्लिक गर्नुहोस् र एन्क्रिप्ट अन्त्य गर्नुहोस्।</translation>
     </message>
 </context>
 <context>
@@ -5306,53 +4890,52 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="51"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
         <source>Unlock</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">अनलक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
         <source>Unlock encryption partition</source>
-        <translation type="unfinished"/>
+        <translation>एन्क्रिप्ट अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्स्थापना कुंजी बाट अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"/>
+        <translation>पासफ्रेस बाट अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"/>
+        <translation>पिन बाट अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation type="unfinished"/>
+        <translation>कृप्या 24-अंकीय पुनर्स्थापना कुंजी दर्ता गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
         <source>Please input passphrase to unlock device</source>
-        <translation type="unfinished"/>
+        <translation>कृप्या पासफ्रेस दर्ता गर्नुहोस् र उपकरण अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please input PIN to unlock device</source>
-        <translation type="unfinished"/>
+        <translation>कृप्या पिन दर्ता गर्नुहोस् र उपकरण अनलॉक गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"/>
+        <translation>पुनर्स्थापना कुंजी अमान्य छ!</translation>
     </message>
 </context>
 <context>
@@ -5364,14 +4947,11 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
         <source>to %1</source>
         <translation>क %1 भइसको</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
         <source>Deleting %1</source>
         <translation>%1 छुरी गर्नुहोस्</translation>
     </message>
@@ -5392,25 +4972,21 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
         <translation>सम्मोहन त्रुटि</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>The action is denied</source>
         <translation>यो कार्य अनुमति दिइनको छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
         <translation>मकान फाइल %1 चाही छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
         <translation>मकान फोल्डर %1 चाही छ</translation>
     </message>
@@ -5451,19 +5027,16 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Original file %1 does not exist</source>
         <translation>मूल फाइल %1 छान छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>कुनैही छैन, %1 फाइलको आकार 4 गीगाबाइटसम्म छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
         <translation>मकान डिस्कमा अत्यन्त फ्री स्थान छैन</translation>
     </message>
@@ -5474,31 +5047,26 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
         <translation>मकान डिवाइस लिसो व्यवस्थापन गर्न सकिनाही</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
         <translation>मकान फोल्डर स्रोत फोल्डरको भाइमा छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
         <translation>यो कार्य समर्थन छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>%1 मा फाइलहरू दौरानीको प्रवेश गर्न सकिन्छौं छैन</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
         <translation>कानून रिस्टोर गरिने विनावको मार्ग खोजिन्छैन</translation>
     </message>
@@ -5520,12 +5088,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"/>
+        <translation>कपी वा कट फाइल फेल हुनु भएको! फेरि फाइल कपी गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
-        <source>Can&apos;t access file!</source>
-        <translation type="unfinished"/>
+        <source>Can't access file!</source>
+        <translation>फाइल प्रवेश गर्न सकिन्छ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -5580,12 +5148,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation type="unfinished"/>
+        <translation>कपी वा कट फाइल फेल हुनु भएको, कारण: %1. फेरि फाइल कपी गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation type="unfinished"/>
+        <translation>कपी वा कट फाइल फेल हुनु भएको, कारण: %1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
@@ -5594,17 +5162,11 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Original path %1</source>
         <translation>मूल मार्ग %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="251"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
         <source>Target path %1</source>
         <translation>लक्ष्य मार्ग %1</translation>
     </message>
@@ -5617,28 +5179,27 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="335"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="350"/>
         <source>Rename file error</source>
         <translation>फाइल रेनाम गर्ने विनाव</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="626"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="641"/>
         <source>Failed to create the directory</source>
         <translation>कतल बनाउने विनाव</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1151"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1169"/>
         <source>Failed to create the file</source>
         <translation>फाइल बनाउने विनाव</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1229"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1247"/>
         <source>link file error</source>
         <translation>फाइल link गर्ने विनाव</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1268"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1277"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1286"/>
         <source>Failed to modify file permissions</source>
         <translation>फाइल परमिटिशन बदल्ने विनाव</translation>
     </message>
@@ -5918,17 +5479,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>निर्मित</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>प्रवेश गरेको</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="109"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>सम्पादित</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="113"/>
@@ -5938,16 +5499,15 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>दृश्यता</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">अवधि</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="421"/>
         <source>%1 item</source>
         <translation>% 1 वस्तु</translation>
     </message>
@@ -6096,8 +5656,6 @@
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="302"/>
         <source>Allow to execute as program</source>
         <translation>प्रोग्रामको रूपमा कार्यान्वयन गर्न अनुमति दिनुहोस्</translation>
     </message>
@@ -6128,17 +5686,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पथ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">अन्तिम पहुँच</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रिसेन्ट </translation>
     </message>
 </context>
 <context>
@@ -6295,26 +5853,25 @@
 <context>
     <name>dfmplugin_search::CheckBoxWidthTextIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="296"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>अन्डेक्स अपडेट समाप्त भएको, अन्डेक्स अपडेट समय: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="297"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>अन्डेक्स अपडेट गर्नुहोस्</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="46"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="135"/>
         <source>Search</source>
         <translation>खोजी गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="142"/>
         <source>Full-Text search</source>
         <translation>पूर्ण टेक्स्ट खोज</translation>
     </message>
@@ -6348,65 +5905,65 @@
 <context>
     <name>dfmplugin_search::TextIndexStatusBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>एन्डेक्स अपडेट फेल हुनु भएको, कृपया</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="173"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>फेरि अपडेट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>फाइल विवरण खोज्न सकिन्छ। अन्डेक्सिंग केही मिनेट लाग्न सक्छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="198"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>अन्डेक्स बनाउँदैछ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="204"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>अन्डेक्स बनाउँदैछ, %1 फाइल अन्डेक्स गरिएको</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="209"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>अन्डेक्स बनाउँदैछ, %1/%2 आइटम अन्डेक्स गरिएको</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="410"/>
         <source>Quick access</source>
         <translation>गतिविधि पहुँच</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="388"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="411"/>
         <source>Partitions</source>
         <translation>भागीकरणहरू</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="389"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="412"/>
         <source>Network</source>
         <translation>नेटवर्क</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="390"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="413"/>
         <source>Tag</source>
         <translation>ट्याग</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
         <source>Other</source>
         <translation>अन्य</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="392"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="415"/>
         <source>Unknown Group</source>
         <translation>ज्ञात छैन गट</translation>
     </message>
@@ -6414,32 +5971,32 @@
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowserMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="165"/>
         <source>&amp;Open</source>
         <translation>प्रकाशन(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="166"/>
         <source>Open in new window</source>
         <translation>नयाँ विन्डोमा खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="150"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="167"/>
         <source>Open in new tab</source>
         <translation>नयाँ टाबमा प्रकाशन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="151"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="168"/>
         <source>P&amp;roperties</source>
         <translation>प्रप्तिहरण(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="169"/>
         <source>Mount</source>
         <translation>माउन्ट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="170"/>
         <source>Unmount</source>
         <translation>अनमाउन्ट</translation>
     </message>
@@ -6447,17 +6004,17 @@
 <context>
     <name>dfmplugin_smbbrowser::VirtualEntryMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="191"/>
         <source>Unmount</source>
         <translation>बाहिर निकाल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
         <source>Clear saved password and unmount</source>
         <translation>पहुँचिएक लाई पासवर्ड पुगाउँदै बाहिर निकाल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
         <source>Remove</source>
         <translation>मात्रक छुट्याउनुहोस्</translation>
     </message>
@@ -6495,13 +6052,13 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="198"/>
-        <source>Remove tag &quot;%1&quot;</source>
-        <translation>मार्कर छुट्याउनुहोस् &quot;%1&quot;.</translation>
+        <source>Remove tag "%1"</source>
+        <translation>मार्कर छुट्याउनुहोस् "%1".</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="200"/>
-        <source>Add tag &quot;%1&quot;</source>
-        <translation>ट्याग &quot;% 1&quot; थप्नुहोस्</translation>
+        <source>Add tag "%1"</source>
+        <translation>ट्याग "% 1" थप्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -6517,7 +6074,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>ठेगाना दर्ज गर्नुहोस्</translation>
     </message>
 </context>
 <context>
@@ -6528,62 +6085,60 @@
         <translation>सर्भरमा जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="117"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="155"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="118"/>
         <source>Clear History</source>
         <translation>ईतिहास खाली गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Unfavorite</source>
         <translation>फावरिटमा छुट्याउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Error</source>
         <translation>विफलता</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>विचारणामा अवैध url फावरिटमा छुट्याउने असको छ!
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="368"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
         <source>Charset Encoding</source>
         <translation>राउटर रूपांतरण</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="416"/>
         <source>Default</source>
         <translation>मूल्यांकन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="473"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="475"/>
         <source>My Favorites</source>
         <translation>मेरो पसंदीदा</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="460"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="462"/>
         <source>No favorites yet</source>
         <translation>पश्चात फावरिट छैन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Favorite</source>
         <translation>पसंदीदा</translation>
     </message>
@@ -6623,34 +6178,32 @@
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="172"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="177"/>
         <source>Passwords do not match</source>
         <translation>पासवर्डहरू मिलाउन सकिन्छन्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="194"/>
         <source>New password should differ from the current one</source>
         <translation>नयाँ पासवर्ड वर्तमान पासवर्ड सँग अंतर छन्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="249"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>न्यूनतम 8 अक्षरहरू। तीन प्रकार छ: 0-9, a-z, A-Z र सिम्बोलहरू। उपयोगकर्ताको नाम विभागित छ।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="264"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="285"/>
         <source>Password must be no more than %1 characters</source>
         <translation>पासवर्ड %1 अक्षरमा बढी छैन्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="272"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="276"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="294"/>
         <source>Password cannot be empty</source>
         <translation>पासवर्ड अनुक्रमित छैन्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="340"/>
         <source>Wrong password</source>
         <translation>गलाई गए पासवर्ड</translation>
     </message>
@@ -6718,32 +6271,29 @@
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="247"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="324"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>आइकन दृश्य</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="254"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="273"/>
         <source>List view</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="332"/>
-        <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>सूची दृश्य</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="284"/>
-        <source>Sort by</source>
-        <translation type="unfinished"/>
+        <source>Tree view</source>
+        <translation>वृक्ष दृश्य</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="290"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="306"/>
+        <source>Sort by</source>
+        <translation type="unfinished">द्वारा क्रमबद्ध गर्नुहोस्</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="312"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>दृश्य विकल्प</translation>
     </message>
 </context>
 <context>
@@ -6751,27 +6301,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नाम</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय परिमार्जित</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय सिर्जना गरियो</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">आकार</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">प्रकार</translation>
     </message>
 </context>
 <context>
@@ -6779,27 +6329,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>दृश्य विकल्प</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>आइकन आकार</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>नेटवर्क घनत्व</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>सूची उचाई</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>प्रिव्यू देखाउनुहोस्</translation>
     </message>
 </context>
 <context>
@@ -6823,12 +6373,12 @@
 <context>
     <name>dfmplugin_trash::TrashHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="274"/>
         <source>Source Path</source>
         <translation>स्रोत मार्ग</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
         <source>Time deleted</source>
         <translation>समय हटाइयो</translation>
     </message>
@@ -6836,27 +6386,27 @@
 <context>
     <name>dfmplugin_trash::TrashMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="204"/>
         <source>Restore</source>
         <translation> पुनर्स्थापना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="205"/>
         <source>Restore all</source>
         <translation>  सबै पुनर्स्थापना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="199"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
         <source>Empty trash</source>
         <translation>निस्संदेह को खाने मार्ग गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="200"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
         <source>Source path</source>
         <translation>स्रोत मार्ग</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="208"/>
         <source>Time deleted</source>
         <translation>समय हटाइयो</translation>
     </message>
@@ -6911,18 +6461,18 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="43"/>
-        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; ले फाइल भेट्न्छ</translation>
+        <source>Sending files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
+        <translation>"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" ले फाइल भेट्न्छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="44"/>
-        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; ले फाइल भेट्न सकिले भयो</translation>
+        <source>Failed to send files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
+        <translation>"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" ले फाइल भेट्न सकिले भयो</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="45"/>
-        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
-        <translation>&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;ले फाइल सफलतापूर्वक भेट्न्छ</translation>
+        <source>Sent to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" successfully</source>
+        <translation>"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"ले फाइल सफलतापूर्वक भेट्न्छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="46"/>
@@ -6966,7 +6516,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="54"/>
-        <source>File doesn&apos;t exist</source>
+        <source>File doesn't exist</source>
         <translation>फाइल छैन</translation>
     </message>
     <message>
@@ -7127,12 +6677,12 @@
 <context>
     <name>dfmplugin_vault::FileEncryptHandle</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
         <source>Unlock failed</source>
         <translation>बाँडेको फाइललाई खुल्न सकिनदैन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
         <translation>%1 फोल्डर लगाएको छ, कृपया यस फोल्डरमा छुपेर फाइलहरूलाई छोड्नुहोस् र फिर बाँडिएको बाँकलाई खुल्नु प्रयास गर्नुहोस्.</translation>
@@ -7141,54 +6691,54 @@
 <context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="187"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"/>
+        <translation>पब्लिक कुञ्ची बनाउन असफल: कुञ्ची लामो छ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="195"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>RSA कुञ्ची फाइल बचत असफल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="182"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="211"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"/>
+        <translation>पब्लिक कुञ्ची फाइल बचत असफल: पब्लिक कुञ्ची खाली छ।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="219"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>पब्लिक कुञ्ची फाइल बचत असफल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="256"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="293"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"/>
+        <translation>अनुपलब्ध विन्यास दिर: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="321"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>RSA गोप्न चावी फाइल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="332"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>RSA गोप्न चावी फाइल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="343"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"/>
+        <translation>सूचना फाइल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="375"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>सूचना जानकारी बचाउन असफल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="649"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="728"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड बचाउन असफल: %1</translation>
     </message>
 </context>
 <context>
@@ -7246,17 +6796,17 @@
         <translation>अनलक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="120"/>
         <source>Wrong recovery key</source>
         <translation>अडै जानकारी केय</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="240"/>
         <source>Failed to unlock file vault</source>
         <translation>फाइल बाँकलाई खुल्न माफिया</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="244"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
@@ -7275,39 +6825,33 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="194"/>
         <source>Select a path</source>
         <translation>एक मार्ग चुन्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="101"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="110"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="176"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="189"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="190"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="103"/>
         <source>Unable to get the key file</source>
         <translation>केय फाइल प्राप्त गर्न माफिया</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
         <source>Verification failed</source>
         <translation>परीक्षण असफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>पछाडि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>केय परीक्षण गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="149"/>
         <source>Retrieve Password</source>
         <translation>पासवर्ड लेख्नुहोस्</translation>
     </message>
@@ -7365,46 +6909,44 @@
         <translation>पासवर्ड उपहित: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="118"/>
-        <source>Can&apos;t unlock the vault under the networking!</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="119"/>
+        <source>Can't unlock the vault under the networking!</source>
         <translation>वैल्ट नेटवर्क तत्काल खोलिने मिलेको छैन!
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="129"/>
         <source>Please try again %1 minutes later</source>
         <translation>कृपया %1 मिनिट बाद फिर से प्रयास गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>गला पासवर्ड, कृपया %1 मिनिट बाद फिर से प्रयास गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="166"/>
         <source>Wrong password, one chance left</source>
         <translation>गला पासवर्ड, एउटा गेहराई बाकी छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="169"/>
         <source>Wrong password, %1 chances left</source>
         <translation>गला पासवर्ड, %1 गेहराइहरू बाकी छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="208"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
         <source>Wrong password</source>
         <translation>गला पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="214"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="230"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ठिक छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="235"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>फाइल वैल्ट खोल्न समस्या छ, त्रुटि कोड %1</translation>
     </message>
@@ -7418,8 +6960,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
-        <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>क्लिक &apos;शरीफ गर्नुहोस्&apos; र उपयोगी पासवर्ड अन्तर्भुक्त गर्नुहोस्.</translation>
+        <source>Click 'Encrypt' and input the user password.</source>
+        <translation>क्लिक 'शरीफ गर्नुहोस्' र उपयोगी पासवर्ड अन्तर्भुक्त गर्नुहोस्.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
@@ -7434,21 +6976,15 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">बन्द</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="204"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="226"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-vault/views/createvaultview/ut_vaultactivefinishedview.cpp" line="61"/>
         <source>Encrypt</source>
         <translation>शरीफ गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="182"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="213"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="241"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
@@ -7499,72 +7035,69 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Set Vault Password</source>
         <translation>वैल्ट पासवर्ड निर्धारण गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
         <source>Encryption method</source>
         <translation>शरीफ विधि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="51"/>
         <source>Key encryption</source>
         <translation>कुंजी शरीफ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="50"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-vault/bug/ut_vaultpluginbugtest.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Transparent encryption</source>
         <translation>पारदर्शी शरीफ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
         <source>Password</source>
         <translation>पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>≥ 8 चार, A-Z, a-z, 0-9 र संकेत शामिल छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Repeat password</source>
         <translation>पासवर्ड फेरि दोहोर्याउँनुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Input the password again</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड फेरि दिनुहोस</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
         <source>Password hint</source>
-        <translation type="unfinished"/>
+        <translation>पासवर्ड सूचना</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
         <source>Optional</source>
         <translation>वैकल्पिक</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="76"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट अनुपलब्ध भए बिना पासवर्ड जाँच गर्दै अन्तर्गत अनुपलब्ध हुनेछ, अन्य उपयोगकर्ता खातामा यसमा रहेका फाइलहरू अनुपलब्ध हुनेछ।</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Next</source>
         <translation>अर्को </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="230"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="246"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पासवर्डहरू मिलाउन सकिन्छन्</translation>
     </message>
 </context>
 <context>
@@ -7577,12 +7110,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Create your secure private space</source>
-        <translation type="unfinished"/>
+        <translation>तपाईंको सुरक्षित खास ठाउँ बनाउ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Advanced encryption technology</source>
-        <translation type="unfinished"/>
+        <translation>उन्नत चावी तकनीक</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
@@ -7592,25 +7125,35 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="41"/>
         <source>Create</source>
-        <translation type="unfinished"/>
+        <translation>बनाउ</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultActiveView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट बनाउन असफल: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट बनाउन असफल: चावी विधि प्राप्त गर्दै असफल!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="217"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
+        <source>Failed to create vault: Unknown encryption method!</source>
+        <translation>वॉल्ट बनाउन असफल: अज्ञात चावी विधि!</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
+        <source>Failed to create vault: Retrieved password is empty!</source>
+        <translation>वॉल्ट बनाउन असफल: प्राप्त पास खाली छ!</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"/>
+        <translation>स्वचालित पासवर्ड बनाउन असफल!</translation>
     </message>
 </context>
 <context>
@@ -7618,39 +7161,38 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>मेरो वॉल्ट</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट उपलब्ध छैन किनभने cryfs निस्टाल गरेको छैन!</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation> वॉल्ट</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>वॉल्ट उपलब्ध छैन किनभने cryfs निस्टाल गरेको छैन!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation type="unfinished"/>
+        <translation>एउटै कार्य चलिरहेको छ, त्यसैले तपाईंको कार्य गर्न सकिएन</translation>
     </message>
 </context>
 <context>
@@ -7658,7 +7200,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>मेरो वॉल्ट</translation>
     </message>
 </context>
 <context>
@@ -7666,32 +7208,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">हटाउनुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट हटाउ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="67"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट हटाउन असफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="71"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">ठिक छ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="84"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>हटाइए पछि, यसमा रहेका फाइलहरू अनिवार्य रूप देखि हटाइए</translation>
     </message>
 </context>
 <context>
@@ -7699,7 +7241,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>हटाइए पछि, यसमा रहेका फाइलहरू अनिवार्य रूप देखि हटाइए</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
@@ -7709,42 +7251,42 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
         <source>Key delete</source>
-        <translation type="unfinished"/>
+        <translation>कुञ्ची हटाउ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="67"/>
         <source>Password hint: %1</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">पासवर्ड उपहित: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="89"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट डिलीट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="107"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>सही पासवर्ड छैन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="205"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट डिलीट गर्न असफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="209"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">ठिक छ</translation>
     </message>
 </context>
 <context>
@@ -7752,37 +7294,37 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="27"/>
         <source>Input the 32-digit recovery key</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">32 अक्षर र जोडाउन जानकारी केय द्वारा भन्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="100"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट डिलीट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="118"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">अडै जानकारी केय</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="191"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट डिलीट गर्न असफल</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="195"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">ठिक छ</translation>
     </message>
 </context>
 <context>
@@ -7790,22 +7332,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="39"/>
         <source>Removing...</source>
-        <translation type="unfinished"/>
+        <translation>हटाइँदै छ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="71"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">ठिक छ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>फाइल वॉल्ट डिलीट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"/>
+        <translation>युक्तिपूर्ण रूपले हटाइएको</translation>
     </message>
 </context>
 <context>
@@ -7813,7 +7355,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
         <source>My Vault</source>
-        <translation type="unfinished"/>
+        <translation>मेरो वॉल्ट</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="114"/>
@@ -7824,56 +7366,56 @@
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="118"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>प्रस्तुत गर्न असफल %1, जसले गम्भीर रूपले विस्थापित वा पुनः नाम दिएको हुन सक्छ</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2195"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>माउन्ट त्रुटि</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2196"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"/>
+        <translation>सर्भर लगिन विवरण गलत छ। कृपया अप्स्टालिन र फेरि माउन्ट गर्नुहोस्</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="680"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="731"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">नाम</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="682"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="733"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय परिमार्जित</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="684"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय सिर्जना गरियो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="686"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">आकार</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="688"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="739"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">प्रकार</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileViewStatusBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="93"/>
         <source>Loading...</source>
         <translation>लोड हुँदैछ ...</translation>
     </message>
@@ -7883,7 +7425,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">%1 अनुमोदन छैन</translation>
     </message>
 </context>
 <context>
@@ -7891,74 +7433,74 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">%1 अनुमोदन छैन</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::SortAndDisplayMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="39"/>
         <source>Sort by</source>
         <translation>द्वारा क्रमबद्ध गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="37"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Display as</source>
         <translation>को रूपमा प्रदर्शन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
         <source>Name</source>
         <translation>नाम</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
         <source>Time modified</source>
         <translation>समय परिमार्जित</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">समय सिर्जना गरियो</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Size</source>
         <translation>आकार</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Type</source>
         <translation>प्रकार</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="50"/>
         <source>Icon</source>
         <translation>आइकन</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="51"/>
         <source>List</source>
         <translation>सूची</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>पेड</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::WorkspaceMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="59"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>अपडेट गर्नुहोस्</translation>
     </message>
 </context>
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="953"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1015"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>बचत गर्नुहोस्</translation>
@@ -8002,7 +7544,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द गर्नुहोस्</translation>
@@ -8013,112 +7554,112 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="279"/>
         <source>Available sizes: </source>
-        <translation type="unfinished"/>
+        <translation>उपलब्ध आकारहरू: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="281"/>
         <source>Custom Size</source>
-        <translation type="unfinished"/>
+        <translation>कस्टम आकार</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="308"/>
         <source>Device Pixel Ratio: </source>
-        <translation type="unfinished"/>
+        <translation>उपकरण पिक्सल अनुपात: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Theme: </source>
-        <translation type="unfinished"/>
+        <translation>थीम: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Light</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Dark</source>
-        <translation type="unfinished"/>
+        <translation>डार्क</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Mode: </source>
-        <translation type="unfinished"/>
+        <translation>मोड: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Normal</source>
-        <translation type="unfinished"/>
+        <translation>सामान्य</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Disabled</source>
-        <translation type="unfinished"/>
+        <translation>अक्षमित</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Hovered</source>
-        <translation type="unfinished"/>
+        <translation>होभर्ड</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Pressed</source>
-        <translation type="unfinished"/>
+        <translation>प्रेस्ड</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
         <source>Palette</source>
-        <translation type="unfinished"/>
+        <translation>पेलेट</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
         <source>Current mode icon does not support the palette</source>
-        <translation type="unfinished"/>
+        <translation>वर्तमान मोड आइकन पेलेट समर्थन गर्दैन</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="363"/>
         <source>Foreground:</source>
-        <translation type="unfinished"/>
+        <translation>फोरग्राउंड:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="378"/>
         <source>Background:</source>
-        <translation type="unfinished"/>
+        <translation>बैकग्राउंड:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="391"/>
         <source>Highlight:</source>
-        <translation type="unfinished"/>
+        <translation>हाइलाइट:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"/>
+        <translation>प्रमुख अग्रभाग:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
         <source>Background Color: </source>
-        <translation type="unfinished"/>
+        <translation>पृष्ठभूमि रंग:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>White</source>
-        <translation type="unfinished"/>
+        <translation>सफेद</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Black</source>
-        <translation type="unfinished"/>
+        <translation>कालो</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Transparent</source>
-        <translation type="unfinished"/>
+        <translation>अदृश्य</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Custom</source>
-        <translation type="unfinished"/>
+        <translation>प्रत्यक्ष</translation>
     </message>
 </context>
 <context>
@@ -8126,7 +7667,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="36"/>
         <source>Encrypted file, please enter the password</source>
-        <translation type="unfinished"/>
+        <translation>अनुशंसित फाइल, पासवर्ड दर्ज गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="42"/>
@@ -8142,7 +7683,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="90"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>असत्य पासवर्ड</translation>
     </message>
 </context>
 <context>
@@ -8150,22 +7691,22 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="61"/>
         <source>Artist:</source>
-        <translation type="unfinished"/>
+        <translation>कलाकार:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="73"/>
         <source>Album:</source>
-        <translation type="unfinished"/>
+        <translation>एल्बम:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="138"/>
         <source>unknown artist</source>
-        <translation type="unfinished"/>
+        <translation>अज्ञात कलाकार</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="142"/>
         <source>unknown album</source>
-        <translation type="unfinished"/>
+        <translation>अज्ञात एल्बम</translation>
     </message>
 </context>
 </TS>

@@ -277,7 +277,7 @@
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation>TPM&#xa0; تىن پارولنى ئالغىلى بولمىدى</translation>
+        <translation>TPM&amp;#xa0; تىن پارولنى ئالغىلى بولمىدى</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
