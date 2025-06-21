@@ -32,6 +32,7 @@ public:
     void connectCollectionSignals(CollectionHolderPointer collection);
 
     bool tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table);
+    QString generateScreenConfigId();
 
 public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
@@ -53,7 +54,7 @@ public:
     ItemSelectionModel *selectionModel = nullptr;
     SelectionSyncHelper *selectionHelper = nullptr;
     QList<QUrl> relayoutedFiles;
-    QList<QString> relayoutedCollectionIDs;
+    QSet<QString> relayoutedCollectionIDs;
 
 private:
     NormalizedMode *q;
