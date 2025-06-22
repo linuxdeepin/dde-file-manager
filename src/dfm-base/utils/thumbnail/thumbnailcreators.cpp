@@ -266,19 +266,26 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
 
     // fallback to QImageReader (for other formats or if heif-thumbnailer fails)
     QImageReader reader(filePath);
-    if (!reader.canRead()) {
+        if (!reader.canRead()) {
         qCWarning(logDFMBase) << "thumbnail: cannot read image file:" << filePath
                               << "error:" << reader.errorString();
         return {};
     }
 
     const QSize &imageSize = reader.size();
+
+    // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
+    // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
     if (!imageSize.isValid()) {
         qCWarning(logDFMBase) << "thumbnail: image file has invalid size attributes:" << filePath;
         return {};
     }
 
-    if (imageSize.width() > size || imageSize.height() > size) {
+    qCDebug(logDFMBase) << "thumbnail: image file size:" << imageSize << "for:" << filePath;
+
+    const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
+    if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
+        qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
         reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
     }
 
