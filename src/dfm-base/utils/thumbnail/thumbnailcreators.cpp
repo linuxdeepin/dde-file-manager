@@ -227,14 +227,45 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
 
 QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
-    //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
-    //! QImageReader构造时不传format参数，让其自行判断
-    //! fix bug #53200 QImageReader构造时不传format参数，会造成没有读取不了真实的文件 类型比如将png图标后缀修改为jpg，读取的类型不对
-
     QString mimeType = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath), QMimeDatabase::MatchContent).name();
-    const QString &suffix = mimeType.replace("image/", "");
 
-    QImageReader reader(filePath, suffix.toLatin1());
+    if (mimeType == "image/heif" || mimeType == "image/heic") {
+        QString outputPath = QDir::temp().filePath("heif_thumb_" + QFileInfo(filePath).baseName() + ".png");
+
+        // Delete any previous file
+        QFile::remove(outputPath);
+
+        QProcess process;
+        QStringList args = {
+            filePath,
+            outputPath,
+            QString::number(size)
+        };
+        process.start("heif-thumbnailer", args);
+
+        if (process.waitForFinished(3000)) {
+            if (QFileInfo::exists(outputPath)) {
+                QImage thumb(outputPath);
+                if (!thumb.isNull()) {
+                    QFile::remove(outputPath);
+                    qCDebug(logDFMBase) << "thumbnail: HEIF thumbnail successfully created with heif-thumbnailer for:" << filePath;
+                    return thumb;
+                } else {
+                    qCWarning(logDFMBase) << "thumbnail: heif-thumbnailer produced unreadable image for:" << filePath;
+                }
+            } else {
+                qCWarning(logDFMBase) << "thumbnail: heif-thumbnailer did not create output file for:" << filePath;
+            }
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: heif-thumbnailer process failed for:" << filePath
+                                  << "stderr:" << process.readAllStandardError();
+        }
+
+        // fallback to Qt reader below
+    }
+
+    // fallback to QImageReader (for other formats or if heif-thumbnailer fails)
+    QImageReader reader(filePath);
     if (!reader.canRead()) {
         qCWarning(logDFMBase) << "thumbnail: cannot read image file:" << filePath
                               << "error:" << reader.errorString();
@@ -242,19 +273,12 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     }
 
     const QSize &imageSize = reader.size();
-
-    // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
-    // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
     if (!imageSize.isValid()) {
         qCWarning(logDFMBase) << "thumbnail: image file has invalid size attributes:" << filePath;
         return {};
     }
 
-    qCDebug(logDFMBase) << "thumbnail: image file size:" << imageSize << "for:" << filePath;
-
-    const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
-    if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
-        qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
+    if (imageSize.width() > size || imageSize.height() > size) {
         reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
     }
 
