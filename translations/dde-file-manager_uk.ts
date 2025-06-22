@@ -119,29 +119,6 @@
     </message>
 </context>
 <context>
-    <name>FileViewModel</name>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
-        <source>Name</source>
-        <translation>Назва</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
-        <source>Time modified</source>
-        <translation>Час зміни</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
-        <source>Size</source>
-        <translation>Розмір</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
-        <source>Type</source>
-        <translation>Тип</translation>
-    </message>
-</context>
-<context>
     <name>FstabDecryptWorker</name>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
@@ -155,54 +132,6 @@
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
         <translation>Початкове шифрування</translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
-        <source>Check TPM</source>
-        <translation>Перевірити TPM</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
-        <source>Get Random</source>
-        <translation>Випадкове</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
-        <source>Check Algo</source>
-        <translation>Перевірити Algo</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
-        <source>Encrypt</source>
-        <translation>Зашифрувати</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
-        <source>Decrypt</source>
-        <translation>Розшифрувати</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
-        <source>EncryptInProcess</source>
-        <translation>ТриваєШифруванн</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
-        <source>DecryptInProcess</source>
-        <translation>ТриваєРозшифрування</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
-        <source>EncryptByCommand</source>
-        <translation>ШифруватиЗаКомандою</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
-        <source>DecryptByCommand</source>
-        <translation>РозшифруватиЗаКомандою</translation>
     </message>
 </context>
 <context>
@@ -271,72 +200,16 @@
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="361"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="26"/>
-        <location filename="../tests/dfm-base/file/local/ut_desktopfileinfo.cpp" line="30"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cleantrash/ut_docleantrashfilesworker.cpp" line="33"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cleantrash/ut_docleantrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/copyfiles/ut_docopyfilesworker.cpp" line="31"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/copyfiles/ut_docopyfilesworker.cpp" line="32"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cutfiles/ut_docutfilesworker.cpp" line="33"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/cutfiles/ut_docutfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/deletefiles/ut_dodeletefilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/deletefiles/ut_dodeletefilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackfileworker.cpp" line="29"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackfileworker.cpp" line="30"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackjob.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_abstrackjob.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_docopyfileworker.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_docopyfileworker.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="24"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperatebaseworker.cpp" line="28"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperatebaseworker.cpp" line="29"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperationsutils.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_fileoperationsutils.cpp" line="26"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_docopyfromtrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_docopyfromtrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_domovetotrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_domovetotrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_dorestoretrashfilesworker.cpp" line="34"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/trashfiles/ut_dorestoretrashfilesworker.cpp" line="35"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_filecopymovejob.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_filecopymovejob.cpp" line="44"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_fileoperationsservice.cpp" line="42"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_fileoperationsservice.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_operationsstackprocy.cpp" line="24"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/ut_operationsstackprocy.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventhandler.cpp" line="37"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventhandler.cpp" line="38"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventreceiver.cpp" line="40"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_fileoperationseventreceiver.cpp" line="41"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_trashfileeventreceiver.cpp" line="43"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/ut_trashfileeventreceiver.cpp" line="44"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-menu/menuscene/ut_sendtomenuscene.cpp" line="25"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-trashcore/ut_trashfileinfo.cpp" line="32"/>
-        <location filename="../tests/plugins/common/dfmplugin-dirshare/main.cpp" line="22"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-titlebar/utils/ut_histroystack.cpp" line="25"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileitemdata.cpp" line="29"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileitemdata.cpp" line="31"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="36"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="38"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_rootinfo.cpp" line="28"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_rootinfo.cpp" line="30"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/utils/ut_filedatamanager.cpp" line="29"/>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/utils/ut_filesortworker.cpp" line="25"/>
         <source>System Disk</source>
         <translation>Системний диск</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="386"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="364"/>
         <source>Data Disk</source>
         <translation>Диск із даними</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="383"/>
         <source>Blank %1 Disc</source>
         <translation>Порожній диск %1</translation>
     </message>
@@ -345,29 +218,23 @@
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="306"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="312"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="383"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="393"/>
         <source>%1 Drive</source>
         <translation>Пристрій %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="414"/>
         <source>%1 Encrypted</source>
         <translation>%1 Зашифрований</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="105"/>
-        <location filename="../tests/dfm-base/base/device/ut_deviceutils.cpp" line="422"/>
         <source>%1 Volume</source>
         <translation>Том %1</translation>
     </message>
@@ -389,7 +256,6 @@
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="114"/>
-        <location filename="../tests/dfm-base/base/device/private/ut_devicehelper.cpp" line="310"/>
         <source>%1 on %2</source>
         <translation>%1 на %2</translation>
     </message>
@@ -470,7 +336,6 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
-        <location filename="../tests/plugins/common/dfmplugin-bookmark/controller/ut_bookmarkmanager.cpp" line="41"/>
         <source>Recent</source>
         <translation>Нещодавні</translation>
     </message>
@@ -514,8 +379,6 @@
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="251"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="222"/>
         <source>File has been moved or deleted</source>
         <translation>Файл був переміщений чи видалений</translation>
     </message>
@@ -539,8 +402,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="445"/>
-        <location filename="../tests/dfm-base/file/local/ut_asyncfileinfo.cpp" line="252"/>
-        <location filename="../tests/dfm-base/file/local/ut_syncfileinfo.cpp" line="223"/>
         <source>Loading...</source>
         <translation>Завантаження...</translation>
     </message>
@@ -1328,7 +1189,6 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="139"/>
         <source>Unknown error</source>
         <translation>Невідома помилка</translation>
     </message>
@@ -1678,7 +1538,6 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.cpp" line="30"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/utils/shareutils.cpp" line="32"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-myshares/utils/ut_shareutils.cpp" line="34"/>
         <source>My Shares</source>
         <translation>Мої спільні</translation>
     </message>
@@ -1996,62 +1855,6 @@
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
         <translation>Оновлюємо GRUB...</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="149"/>
-        <source>Permission error</source>
-        <translation>Помилка прав доступу</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="150"/>
-        <source>The action is denied</source>
-        <translation>Виконання дії заборонено</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="166"/>
-        <source>Not enough free space on the target disk</source>
-        <translation>Не вистачає вільного місця на диску призначення</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="167"/>
-        <source>The target device is read only</source>
-        <translation>Пристрій призначення використовується лише для читання</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="168"/>
-        <source>Target folder is inside the source folder</source>
-        <translation>Тека призначення перебуває всередині теки походження даних</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="169"/>
-        <source>The action is not supported</source>
-        <translation>Підтримки виконання дії не передбачено</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
-        <source>Restore failed, original path could not be found</source>
-        <translation>Не вдалося відновити, не знайдено початковий шлях</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
-        <source>Failed to parse the url of trash</source>
-        <translation>Не вдалося обробити адресу смітника</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
-        <source>Failed to obtain the trash original file</source>
-        <translation>Не вдалося отримати початковий файл смітника</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
-        <source>Copy or Cut File failed!</source>
-        <translation>Не вдалося скопіювати або вирізати файл!</translation>
     </message>
 </context>
 <context>
@@ -7440,7 +7243,6 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="204"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="226"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-vault/views/createvaultview/ut_vaultactivefinishedview.cpp" line="61"/>
         <source>Encrypt</source>
         <translation>Зашифрувати</translation>
     </message>
@@ -7514,7 +7316,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
-        <location filename="../tests/plugins/filemanager/dfmplugin-vault/bug/ut_vaultpluginbugtest.cpp" line="66"/>
         <source>Transparent encryption</source>
         <translation>Прозоре шифрування</translation>
     </message>
