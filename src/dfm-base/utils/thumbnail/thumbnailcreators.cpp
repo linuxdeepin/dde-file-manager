@@ -268,7 +268,8 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     }
 
     // fallback to QImageReader (for other formats or if heif-thumbnailer fails)
-    QImageReader reader(filePath);
+    const QString &suffix = mimeType.replace("image/", "");
+    QImageReader reader(filePath, suffix.toLatin1());
         if (!reader.canRead()) {
         qCWarning(logDFMBase) << "thumbnail: cannot read image file:" << filePath
                               << "error:" << reader.errorString();
