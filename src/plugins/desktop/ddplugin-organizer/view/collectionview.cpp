@@ -739,22 +739,24 @@ bool CollectionViewPrivate::dropClientDownload(QDropEvent *event) const
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
         event->acceptProposedAction();
-        fmWarning() << "drop on" << dropTargetUrl;
+        fmInfo() << "Client drop operation detected, target URL:" << dropTargetUrl;
 
         QList<QUrl> urlList = data->urls();
         if (!urlList.isEmpty()) {
             // follow canvas dropClientDownload
             DFileDragClient *client = new DFileDragClient(data, q);
-            fmDebug() << "dragClientDownload" << client << data << urlList;
+            fmDebug() << "Starting drag client download with" << urlList.size() << "URLs";
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
-                if (state == Finished)
+                if (state == Finished) {
                     selectItems(urlList);
-                fmDebug() << "stateChanged" << state << urlList;
+                    fmInfo() << "Client download finished, selected" << urlList.size() << "items";
+                }
+                fmDebug() << "Client state changed to:" << state;
             });
 
             connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
             connect(client, &DFileDragClient::destroyed, []() {
-                fmDebug() << "drag client deleted";
+                fmDebug() << "Drag client deleted";
             });
         }
 
@@ -806,12 +808,12 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
 
     if (dropOnSelf) {
-        fmInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
+        fmDebug() << "Drop on self detected, skipping operation at position:" << dropPos.x() << "," << dropPos.y();
         return true;
     }
 
     if (targetIndex.isValid()) {
-        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "Drop on target item detected:" << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -820,7 +822,7 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
         for (const QUrl &url : urls) {
             auto key = provider->key(url);
             if (id != key) {
-                fmDebug() << "disbale shift file from other collection.";
+                fmDebug() << "File shifting disabled from other collection, source key:" << key;
                 return true;
             }
         }
@@ -859,7 +861,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
 
     auto targetIndex = q->indexAt(event->pos());
     if (targetIndex.isValid()) {
-        fmDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
+        fmDebug() << "Drop from canvas on target item:" << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -1294,8 +1296,12 @@ void CollectionView::setFreeze(bool freeze)
 void CollectionView::openEditor(const QUrl &url)
 {
     QModelIndex index = model()->index(url);
-    if (Q_UNLIKELY(!index.isValid()))
+    if (Q_UNLIKELY(!index.isValid())) {
+        fmWarning() << "Cannot open editor for invalid URL:" << url.toString();
         return;
+    }
+
+    fmInfo() << "Opening editor for URL:" << url.toString();
     selectionModel()->select(index, QItemSelectionModel::Select);
     this->setCurrentIndex(index);
     this->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
@@ -1884,8 +1890,11 @@ void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
 
     auto pos = event->pos();
     const QModelIndex &index = indexAt(pos);
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmDebug() << "Double click on empty area";
         return;
+    }
+
     if (isPersistentEditorOpen(index)) {
         itemDelegate()->commitDataAndCloseEditor();
         QTimer::singleShot(200, this, [this, pos]() {
@@ -1908,6 +1917,7 @@ void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
         emit activated(persistent);
 
     const QUrl &url = model()->fileUrl(index);
+    fmInfo() << "Double click detected, opening file:" << url.toString();
     FileOperatorIns->openFiles(this, { url });
     event->accept();
 }
@@ -2121,8 +2131,10 @@ void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 
 void CollectionView::startDrag(Qt::DropActions supportedActions)
 {
-    if (d->isDelayDrag())
+    if (d->isDelayDrag()) {
+        fmDebug() << "Drag delayed due to touch screen";
         return;
+    }
 
     // close editor before drag.
     // normally, items in editing status do not enter startDrag.
@@ -2134,7 +2146,7 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
         closePersistentEditor(currentIndex());
 
     if (CollectionHookInterface::startDrag(id(), supportedActions)) {
-        fmDebug() << "start drag by extend.";
+        fmDebug() << "Drag handled by extension interface";
         return;
     }
 
@@ -2142,8 +2154,10 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
     QModelIndexList validIndexes = selectionModel()->selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
-        if (!data)
+        if (!data) {
+            fmWarning() << "Failed to create mime data for drag operation";
             return;
+        }
 
         QPixmap pixmap = d->polymerizePixmap(validIndexes);
         QDrag *drag = new QDrag(this);
@@ -2325,8 +2339,10 @@ void CollectionView::sort(int role)
 
     d->sortRole = role;
     auto items = d->provider->items(d->id);
-    if (items.isEmpty())
+    if (items.isEmpty()) {
+        fmDebug() << "No items to sort in collection:" << d->id;
         return;
+    }
 
     std::sort(items.begin(), items.end(), [this](const QUrl &left, const QUrl &right) {
         return lessThan(left, right);

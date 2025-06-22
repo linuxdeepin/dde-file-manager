@@ -73,10 +73,6 @@ public:
     // Check if a file should be indexed based on its extension
     bool shouldIndexFile(const QString &path) const;
 
-    // Debug and error logging helpers
-    void logDebug(const QString &message) const;
-    void logError(const QString &message) const;
-
     // Normalize path for consistent handling
     QString normalizePath(const QString &dirPath, const QString &fileName) const;
 
@@ -107,9 +103,9 @@ public:
     QSet<QString> createdFilesList;
     QSet<QString> deletedFilesList;
     QSet<QString> modifiedFilesList;
-    
+
     // New: Track moved/renamed files separately for efficient index updates
-    QHash<QString, QString> movedFilesList; // fromPath -> toPath mapping
+    QHash<QString, QString> movedFilesList;   // fromPath -> toPath mapping
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

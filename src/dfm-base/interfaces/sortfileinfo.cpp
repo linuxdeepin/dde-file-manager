@@ -3,8 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <dfm-base/interfaces/private/sortfileinfo_p.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+
+#include <QtConcurrent>
+#include <QMutexLocker>
+#include <sys/stat.h>
 
 namespace dfmbase {
+
 SortFileInfo::SortFileInfo()
     : d(new SortFileInfoPrivate(this))
 {
@@ -57,6 +63,26 @@ void SortFileInfo::setWriteable(const bool writeable)
 void SortFileInfo::setExecutable(const bool executable)
 {
     d->executable = executable;
+}
+
+void SortFileInfo::setLastReadTime(const qint64 time)
+{
+    d->lastRead = time;
+}
+
+void SortFileInfo::setLastModifiedTime(const qint64 time)
+{
+    d->lastModifed = time;
+}
+
+void SortFileInfo::setCreateTime(const qint64 time)
+{
+    d->create = time;
+}
+
+void SortFileInfo::setDisplayType(const QString &displayType)
+{
+    d->displayType = displayType;
 }
 
 void SortFileInfo::setHighlightContent(const QString &content)
@@ -114,6 +140,49 @@ bool SortFileInfo::isExecutable() const
     return d->executable;
 }
 
+qint64 SortFileInfo::lastReadTime() const
+{
+    return d->lastRead;
+}
+
+qint64 SortFileInfo::lastModifiedTime() const
+{
+    return d->lastModifed;
+}
+
+qint64 SortFileInfo::createTime() const
+{
+    return d->create;
+}
+
+QString SortFileInfo::displayType() const
+{
+    return d->displayType;
+}
+
+// 信息完整性相关方法
+void SortFileInfo::setInfoCompleted(const bool completed)
+{
+    QMutexLocker locker(&d->mutex);
+    d->infoCompleted = completed;
+}
+
+void SortFileInfo::markAsCompleted()
+{
+    setInfoCompleted(true);
+}
+
+bool SortFileInfo::isInfoCompleted() const
+{
+    QMutexLocker locker(&d->mutex);
+    return d->infoCompleted;
+}
+
+bool SortFileInfo::needsCompletion() const
+{
+    return !isInfoCompleted();
+}
+
 SortFileInfoPrivate::SortFileInfoPrivate(SortFileInfo *qq)
     : q(qq)
 {
@@ -122,5 +191,6 @@ SortFileInfoPrivate::SortFileInfoPrivate(SortFileInfo *qq)
 SortFileInfoPrivate::~SortFileInfoPrivate()
 {
 }
+
 
 }

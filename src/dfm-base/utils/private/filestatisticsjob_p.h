@@ -33,7 +33,6 @@ public:
     bool checkInode(const FileInfoPointer info);
     bool checkInode(const __ino64_t innode, const QString &path);
     FileInfo::FileType fileType(const __mode_t fileMode);
-    QString resolveSymlink(const QUrl &url);
     void processDirectory(const QUrl &url, bool followLink, QQueue<QUrl> &directoryQueue);
     void processRegularFile(const QUrl &url, struct stat64 *statBuffer, bool followLink);
 

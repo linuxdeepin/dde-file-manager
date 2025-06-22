@@ -62,6 +62,8 @@ public:
     bool canDelete() const;
     QStringList getKeyWords() const;
 
+    bool checkKeyOnly(const QString &key) const;
+
 Q_SIGNALS:
     void iteratorLocalFiles(const QString &key,
                             const QList<SortInfoPointer> children,

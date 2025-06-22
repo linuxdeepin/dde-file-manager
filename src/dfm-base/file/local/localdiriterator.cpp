@@ -11,6 +11,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
@@ -248,6 +249,11 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         tmp->setReadable(sortInfo->isReadable);
         tmp->setWriteable(sortInfo->isWriteable);
         tmp->setExecutable(sortInfo->isExecutable);
+        tmp->setLastReadTime(sortInfo->lastRead);
+        tmp->setLastModifiedTime(sortInfo->lastModifed);
+        tmp->setCreateTime(sortInfo->create);
+        tmp->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(sortInfo->url.path()));
+        tmp->setInfoCompleted(true);
         wsortlist.append(tmp);
     }
     return wsortlist;

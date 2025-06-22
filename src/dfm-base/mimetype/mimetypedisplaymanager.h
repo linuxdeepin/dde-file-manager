@@ -26,6 +26,8 @@ public:
     QStringList supportArchiveMimetypes();
     QStringList supportVideoMimeTypes();
     QStringList supportAudioMimeTypes();
+    QString displayTypeFromPath(const QString &filePath);
+    FileInfo::FileType fileTypeByExtension(const QString &filePath);
 
 private:
     explicit MimeTypeDisplayManager(QObject *parent = nullptr);
@@ -44,6 +46,8 @@ private:
     QStringList imageMimeTypes;
     QStringList executableMimeTypes;
     QStringList backupMimeTypes;
+    QList<QString> sortedExtensions;
+    QMap<QString, FileInfo::FileType> extensionMap;
 };
 
 }

@@ -21,7 +21,7 @@ DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *paren
 {
     engine = SearchFactory::createEngine(type, this);
     if (!engine) {
-        fmWarning() << "Failed to create search engine";
+        fmWarning() << "Failed to create search engine for type:" << static_cast<int>(type);
         return;
     }
 
@@ -70,14 +70,20 @@ SearchQuery DFMSearcher::createSearchQuery() const
 
 bool DFMSearcher::search()
 {
+    fmInfo() << "Starting search process for keyword:" << keyword << "in URL:" << searchUrl.toString();
+
     if (!isEngineReady() || !isValidSearchParameters()) {
+        fmWarning() << "Search engine not ready or invalid parameters - engine ready:" << isEngineReady() << "valid params:" << isValidSearchParameters();
         return false;
     }
 
     QString transformedPath = realSearchPath(searchUrl);
+    fmDebug() << "Using transformed search path:" << transformedPath;
+
     SearchOptions options = configureSearchOptions(transformedPath);
 
     if (!validateSearchType(transformedPath, options)) {
+        fmWarning() << "Search type validation failed for path:" << transformedPath;
         emit finished();
         return true;   // Early exit if validation fails
     }
@@ -153,13 +159,15 @@ bool DFMSearcher::isValidSearchParameters() const
 bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
 {
     if (engine->searchType() == SearchType::Content) {
-        if (!DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
+        if (DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()
+            && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
             fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
             return false;
         } else {
             ContentOptionsAPI contentAPI(options);
             contentAPI.setMaxPreviewLength(200);
             contentAPI.setFilenameContentMixedAndSearchEnabled(true);
+            fmDebug() << "Content search options configured - max preview length: 200, mixed search enabled";
         }
     }
     return true;
@@ -179,7 +187,7 @@ SearchOptions DFMSearcher::configureSearchOptions(const QString &transformedPath
     options.setCaseSensitive(false);
 
     configureHiddenFilesOption(options, transformedPath);
-    
+
     if (options.method() == SearchMethod::Realtime) {
         configureRealtimeSearchOptions(options, transformedPath);
     }
@@ -196,15 +204,18 @@ void DFMSearcher::configureHiddenFilesOption(SearchOptions &options, const QStri
         includeHidden = true;
     }
     options.setIncludeHidden(includeHidden);
+    fmDebug() << "Hidden files option configured - include hidden:" << includeHidden;
 }
 
 void DFMSearcher::configureRealtimeSearchOptions(SearchOptions &options, const QString &transformedPath) const
 {
     options.setResultFoundEnabled(true);
-    
+
     // 判断是否需要排除索引路径
     if (shouldExcludeIndexedPaths(transformedPath)) {
         setExcludedPathsForRealtime(options);
+    } else {
+        fmDebug() << "No excluded paths needed for realtime search";
     }
 }
 
@@ -212,15 +223,16 @@ bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) cons
 {
     // 在隐藏目录中搜索时，不排除索引路径
     if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(transformedPath)) {
+        fmDebug() << "Not excluding indexed paths due to hidden directory search";
         return false;
     }
-    
+
     // 当索引目录不可用时，不排除索引路径
-    if (engine->searchType() == SearchType::FileName && 
-        !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+    if (engine->searchType() == SearchType::FileName && !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+        fmDebug() << "Not excluding indexed paths due to unavailable filename index directory";
         return false;
     }
-    
+
     // 其他情况下，排除索引路径以避免重复搜索
     return true;
 }
@@ -276,21 +288,23 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     const bool inHiddenDir = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(path);
 
     if (notInIndexDir || inHiddenDir) {
-        fmInfo() << "Use realtime method to: " << path;
+        fmInfo() << "Use realtime method to: " << path << "- not in index dir:" << notInIndexDir << "in hidden dir:" << inHiddenDir;
         return SearchMethod::Realtime;
     }
 
+    fmDebug() << "Using indexed method for filename search";
     return SearchMethod::Indexed;
 }
 
 void DFMSearcher::onSearchStarted()
 {
-    fmInfo() << "Search started for:" << keyword;
+    fmInfo() << "Search started for:" << keyword << "search type:" << static_cast<int>(getSearchType());
 }
 
 void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 {
-    fmDebug() << engine->searchType() << "search finished, results count:" << results.size();
+    fmInfo() << "Search finished for keyword:" << keyword << "search type:" << static_cast<int>(engine->searchType()) << "results count:" << results.size();
+
     if (!engine->searchOptions().resultFoundEnabled()) {
         handleRemainingResults(results);
     }
@@ -301,12 +315,12 @@ void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 void DFMSearcher::onSearchCancelled()
 {
     auto type = getSearchType();
-    fmInfo() << "Search cancelled for:" << keyword << (type == SearchType::FileName ? "File name" : "Content");
+    fmInfo() << "Search cancelled for:" << keyword << "type:" << (type == SearchType::FileName ? "File name" : "Content");
     emit finished();
 }
 
 void DFMSearcher::onSearchError(const SearchError &error)
 {
-    fmWarning() << "Search error:" << error.message() << "for query:" << keyword;
+    fmWarning() << "Search error occurred - message:" << error.message() << "query:" << keyword;
     emit finished();
 }

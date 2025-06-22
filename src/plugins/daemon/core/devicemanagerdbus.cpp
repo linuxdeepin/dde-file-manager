@@ -36,16 +36,19 @@ bool DeviceManagerDBus::IsMonotorWorking()
 
 void DeviceManagerDBus::DetachBlockDevice(QString id)
 {
+    fmInfo() << "[DeviceManagerDBus] Detaching block device:" << id;
     DevMngIns->detachBlockDev(id);
 }
 
 void DeviceManagerDBus::DetachProtocolDevice(QString id)
 {
+    fmInfo() << "[DeviceManagerDBus] Detaching protocol device:" << id;
     DevMngIns->detachProtoDev(id);
 }
 
 void DeviceManagerDBus::initialize()
 {
+    fmInfo() << "[DeviceManagerDBus] Initializing device manager";
     DevMngIns->startMonitor();
     DevMngIns->startPollingDeviceUsage();
     DevMngIns->enableBlockAutoMount();
@@ -57,15 +60,19 @@ void DeviceManagerDBus::initialize()
 void DeviceManagerDBus::initConnection()
 {
     connect(DevMngIns, &DeviceManager::blockDevUnmountAsyncFailed, this, [this](auto deviceId) {
+        fmWarning() << "[DeviceManagerDBus] Block device unmount failed:" << deviceId;
         emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kUnmount);
     });
     connect(DevMngIns, &DeviceManager::blockDevEjectAsyncFailed, this, [this](auto deviceId) {
+        fmWarning() << "[DeviceManagerDBus] Block device eject failed:" << deviceId;
         emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kEject);
     });
     connect(DevMngIns, &DeviceManager::blockDevPoweroffAysncFailed, this, [this](auto deviceId) {
+        fmWarning() << "[DeviceManagerDBus] Block device power off failed:" << deviceId;
         emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kPowerOff);
     });
     connect(DevMngIns, &DeviceManager::protocolDevUnmountAsyncFailed, this, [this](auto deviceId) {
+        fmWarning() << "[DeviceManagerDBus] Protocol device unmount failed:" << deviceId;
         emit NotifyDeviceBusy(deviceId, DeviceBusyAction::kUnmount);
     });
 
@@ -78,33 +85,41 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
     connect(DevMngIns, &DeviceManager::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
     connect(DevMngIns, &DeviceManager::blockDevPropertyChanged, this, [this](const QString &id, const QString &property, const QVariant &val) {
-        if (!val.isNull() && val.isValid())
+        if (!val.isNull() && val.isValid()) {
+            fmDebug() << "[DeviceManagerDBus] Block device property changed - ID:" << id << "property:" << property;
             emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
+        }
     });
 
     connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
     connect(DevMngIns, &DeviceManager::protocolDevMounted, this, [this](const QString &id, const QString &mpt) {
+        fmInfo() << "[DeviceManagerDBus] Protocol device mounted - ID:" << id << "mount point:" << mpt;
         emit ProtocolDeviceMounted(id, mpt);
         requestRefreshDesktopAsNeeded(mpt, "onMount");
     });
     connect(DevMngIns, &DeviceManager::protocolDevUnmounted, this, [this](const QString &id, const QString &oldMpt) {
+        fmInfo() << "[DeviceManagerDBus] Protocol device unmounted - ID:" << id << "previous mount point:" << oldMpt;
         emit ProtocolDeviceUnmounted(id, oldMpt);
         requestRefreshDesktopAsNeeded(oldMpt, "onUnmount");
     });
     connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, [this](const QString &id, const QString &oldMpt) {
+        fmInfo() << "[DeviceManagerDBus] Protocol device removed - ID:" << id << "previous mount point:" << oldMpt;
         emit ProtocolDeviceRemoved(id, oldMpt);
         requestRefreshDesktopAsNeeded(oldMpt, "onRemove");
     });
 
     connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this](const QString &id, const QString &mpt) {
+        fmInfo() << "[DeviceManagerDBus] Block device mounted - ID:" << id << "mount point:" << mpt;
         emit BlockDeviceMounted(id, mpt);
         requestRefreshDesktopAsNeeded(mpt, "onMount");
     });
     connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this](const QString &id, const QString &oldMpt) {
+        fmInfo() << "[DeviceManagerDBus] Block device unmounted - ID:" << id << "previous mount point:" << oldMpt;
         emit BlockDeviceUnmounted(id, oldMpt);
         requestRefreshDesktopAsNeeded(oldMpt, "onUnmount");
     });
     connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this](const QString &id, const QString &oldMpt) {
+        fmInfo() << "[DeviceManagerDBus] Block device removed - ID:" << id << "previous mount point:" << oldMpt;
         emit BlockDeviceRemoved(id, oldMpt);
         requestRefreshDesktopAsNeeded(oldMpt, "onRemove");
     });
@@ -113,10 +128,12 @@ void DeviceManagerDBus::initConnection()
 void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const QString &operation)
 {
     QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-    if (desktopPath.isEmpty() || path.isEmpty())
+    if (desktopPath.isEmpty() || path.isEmpty()) {
+        fmDebug() << "[DeviceManagerDBus] Skipping desktop refresh - empty desktop path or device path";
         return;
+    }
 
-    fmDebug() << "looking for link files from" << desktopPath;
+    fmDebug() << "[DeviceManagerDBus] Checking for desktop links targeting path:" << path;
     dfmio::DEnumerator enu(QUrl::fromLocalFile(desktopPath));
     auto files = enu.fileInfoList();
     bool hasFileLinkToTarget = std::any_of(files.cbegin(), files.cend(), [path](QSharedPointer<dfmio::DFileInfo> file) {
@@ -125,7 +142,9 @@ void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const
         auto target = file->attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
         return target.startsWith(path);
     });
+    
     if (hasFileLinkToTarget) {
+        fmInfo() << "[DeviceManagerDBus] Found desktop links targeting device path, scheduling desktop refresh - operation:" << operation << "path:" << path;
         // send refresh request delay 3s which walkaround the device is moounting,such as ntfs.
         QTimer::singleShot(3 * 1000, []() {
             QDBusInterface ifs("com.deepin.dde.desktop",
@@ -133,7 +152,8 @@ void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const
                                "com.deepin.dde.desktop");
             ifs.asyncCall("Refresh");
         });
-        fmInfo() << "refresh desktop async finished..." << operation << path;
+    } else {
+        fmDebug() << "[DeviceManagerDBus] No desktop links found targeting device path, skipping refresh - path:" << path;
     }
 }
 
@@ -142,6 +162,7 @@ void DeviceManagerDBus::requestRefreshDesktopAsNeeded(const QString &path, const
  */
 void DeviceManagerDBus::DetachAllMountedDevices()
 {
+    fmInfo() << "[DeviceManagerDBus] Detaching all mounted devices";
     DevMngIns->detachAllRemovableBlockDevs();
     DevMngIns->detachAllProtoDevs();
 }

@@ -42,6 +42,7 @@ CustomMode::CustomMode(QObject *parent)
     d->dataSyncTimer.setInterval(500);
     d->dataSyncTimer.setSingleShot(true);
     connect(&d->dataSyncTimer, &QTimer::timeout, this, &CustomMode::onItemsChanged);
+    fmDebug() << "CustomMode created";
 }
 
 CustomMode::~CustomMode()
@@ -53,6 +54,7 @@ CustomMode::~CustomMode()
     d->dataHandler = nullptr;
 
     delete d;
+    fmDebug() << "CustomMode destroyed";
 }
 
 OrganizerMode CustomMode::mode() const
@@ -121,8 +123,10 @@ void CustomMode::reset()
 void CustomMode::layout()
 {
     const int holderSize = d->holders.values().size();
-    if (holderSize < 1)
+    if (holderSize < 1) {
+        fmDebug() << "No collection holders to layout";
         return;
+    }
 
     QList<CollectionHolderPointer> unassigned;
     QRect *used = new QRect[holderSize];
@@ -176,8 +180,10 @@ void CustomMode::rebuild()
         d->dataHandler->check(files);
 
         // write config. do not save if no files.
-        if (!files.isEmpty())
+        if (!files.isEmpty()) {
             CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
+            fmDebug() << "Saved custom profile with" << files.size() << "files";
+        }
     }
 
     // get region name and items, then create collection.
@@ -191,6 +197,7 @@ void CustomMode::rebuild()
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
+            fmDebug() << "Creating new collection holder for" << name;
             collectionHolder.reset(new CollectionHolder(key, d->dataHandler));
             collectionHolder->createFrame(surfaces.first().data(), model);
             // set view
@@ -222,6 +229,7 @@ void CustomMode::rebuild()
             collectionHolder->setStretchable(true);
 
             d->holders.insert(key, collectionHolder);
+            fmInfo() << "Created and configured new collection holder:" << name;
         }
 
         collectionHolder->show();
@@ -240,8 +248,10 @@ void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
     Q_UNUSED(parent)
 
-    if (first < 0 || last < 0)
+    if (first < 0 || last < 0) {
+        fmWarning() << "Invalid file insertion range:" << first << "to" << last;
         return;
+    }
 
     const QList<QUrl> &files = model->files();
     if (first >= files.count() || last >= files.count()) {
@@ -323,12 +333,16 @@ bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const 
         files << url.toString();
     }
 
-    if (collectionItems.isEmpty())
+    if (collectionItems.isEmpty()) {
+        fmDebug() << "No collection items found in drop data";
         return false;
+    }
 
     QPoint gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
-    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty())
+    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty()) {
+        fmDebug() << "Drop position is not empty, cannot drop collection items";
         return false;
+    }
 
     model->take(collectionItems);
     canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
@@ -341,8 +355,10 @@ bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const 
 
 void CustomMode::onNewCollection(const QList<QUrl> &list)
 {
-    if (list.isEmpty())
+    if (list.isEmpty()) {
+        fmWarning() << "Cannot create collection with empty file list";
         return;
+    }
 
     // todo 检查数据有效性
     CollectionBaseDataPtr base(new CollectionBaseData);
@@ -368,6 +384,7 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
 
         // save the style of new collection.
         CfgPresenter->updateCustomStyle(style);
+        fmDebug() << "Set initial style for new collection on screen" << screen;
     }
 
     model->refresh(model->rootIndex(), false, 0);
@@ -391,6 +408,7 @@ void CustomMode::onDeleteCollection(const QString &key)
 
     if (urls.isEmpty()) {
         d->holders.remove(key);
+        fmInfo() << "Collection deleted (was empty):" << key;
         return;
     }
 
@@ -404,8 +422,10 @@ void CustomMode::onDeleteCollection(const QString &key)
             break;
         viewIndex++;
     }
-    if (viewIndex >= root.count())
+    if (viewIndex >= root.count()) {
         viewIndex = 1;
+        fmWarning() << "Could not find matching screen, using default view index";
+    }
 
     auto &&viewPoint = holder->frame()->geometry().topLeft();
     auto &&gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);

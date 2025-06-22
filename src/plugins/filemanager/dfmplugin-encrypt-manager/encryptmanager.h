@@ -24,6 +24,7 @@ class EncryptManager : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_EncryptByTPM)
     DPF_EVENT_REG_SLOT(slot_DecryptByTPM)
     DPF_EVENT_REG_SLOT(slot_TPMIsAvailablePro)
+    DPF_EVENT_REG_SLOT(slot_CheckTPMLockoutPro)
     DPF_EVENT_REG_SLOT(slot_GetRandomByTPMPro)
     DPF_EVENT_REG_SLOT(slot_IsTPMSupportAlgoPro)
     DPF_EVENT_REG_SLOT(slot_EncryptByTPMPro)

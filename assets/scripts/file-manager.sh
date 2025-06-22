@@ -4,4 +4,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-exec /usr/libexec/dde-file-manager $@
+exec /usr/libexec/dde-file-manager "$@"
+

@@ -34,7 +34,7 @@ Copyright: None
 License: CC0-1.0
 
 # README & DOCS
-Files: README.md README.zh_CN.md docs/*
+Files: README.md README.zh_CN.md docs/* */README.md
 Copyright: UnionTech Software Technology Co., Ltd.
 License: CC-BY-4.0
 

@@ -1127,6 +1127,22 @@ QString FileUtils::symlinkTarget(const QUrl &url)
     return QString();
 }
 
+QString FileUtils::resolveSymlink(const QUrl &url) {
+    QSet<QString> visited;
+    QString target = symlinkTarget(url);
+    while (!target.isEmpty()) {
+        if (visited.contains(target))
+            return QString();   // Cycle detected: return empty
+        visited.insert(target);
+        QUrl newUrl = QUrl::fromLocalFile(target);
+        QString nextTarget = symlinkTarget(newUrl);
+        if (nextTarget.isEmpty())
+            break;
+        target = nextTarget;
+    }
+    return target;
+}
+
 bool FileUtils::isSymbol(const QChar ch)
 {
     // 如果是高代理项，不应该单独判断

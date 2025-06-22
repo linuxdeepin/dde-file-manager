@@ -8,6 +8,7 @@
 #include <dfm-base/interfaces/sortfileinfo.h>
 
 #include <QPointer>
+#include <QMutex>
 
 namespace dfmbase {
 class SortFileInfoPrivate
@@ -27,7 +28,20 @@ public:
     bool readable { false };
     bool writeable { false };
     bool executable { false };
+
+    // time info
+    qint64 lastRead { 0 };
+    qint64 lastModifed { 0 };
+    qint64 create { 0 };
+
+    QString displayType { "" };  // 文件类型
     QString highlightContent { "" };   // 存储文件的高亮内容
+    
+    // 信息完整性标记
+    bool infoCompleted { false };   // 标记详细信息是否已获取
+    
+    // 线程安全
+    mutable QMutex mutex;
 };
 
 }

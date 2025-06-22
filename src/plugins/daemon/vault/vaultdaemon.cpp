@@ -25,20 +25,20 @@ void VaultManagerDBusWorker::launchService()
     QDBusConnection conn { QDBusConnection::sessionBus() };
     // register service
     if (!conn.registerService(kDaemonName)) {
-        fmCritical() << QString("Vault Daemon: Cannot register the \"%1\" service!!!\n").arg(kDaemonName);
+        fmCritical() << "[VaultManagerDBusWorker::launchService] Failed to register DBus service:" << kDaemonName;
         ::exit(EXIT_FAILURE);
     }
 
-    fmInfo() << "Init DBus VaultManager start";
+    fmInfo() << "[VaultManagerDBusWorker::launchService] Initializing DBus VaultManager service";
     // register object
     vaultManager.reset(new VaultManagerDBus);
     Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
     if (!conn.registerObject(kVaultManagerObjPath,
                              vaultManager.data())) {
-        fmWarning() << QString("Vault Daemon: Cannot register the \"%1\" object.\n").arg(kVaultManagerObjPath);
+        fmCritical() << "[VaultManagerDBusWorker::launchService] Failed to register DBus object:" << kVaultManagerObjPath;
         vaultManager.reset(nullptr);
     }
-    fmInfo() << "Vault Daemon: Init DBus VaultManager end";
+    fmInfo() << "[VaultManagerDBusWorker::launchService] DBus VaultManager service initialized successfully";
 }
 
 void VaultManagerDBusWorker::sendChangedVaultStateSig(const QVariantMap &map)
@@ -60,13 +60,14 @@ bool VaultDaemon::start()
 {
     QString err;
     if (!DConfigManager::instance()->addConfig(kVaultDConfigName, &err))
-        fmWarning() << "Vault: create dconfig failed: " << err;
+        fmWarning() << "[VaultDaemon::start] Failed to create vault dconfig:" << err;
 
     VaultControl::instance()->connectLockScreenDBus();
     VaultControl::instance()->transparentUnlockVault();
 
     const QVariant vRe = DConfigManager::instance()->value(kVaultDConfigName, "enableUnlockVaultInNetwork");
     if (vRe.isValid() && !vRe.toBool()) {
+        fmInfo() << "[VaultDaemon::start] Network unlock disabled, starting network monitoring";
         VaultControl::instance()->MonitorNetworkStatus();
     }
 

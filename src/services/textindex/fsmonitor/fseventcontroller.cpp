@@ -69,7 +69,7 @@ void FSEventController::setEnabled(bool enabled)
 {
     m_enabled = enabled;
 
-    fmInfo() << "FSEventController enabled: " << m_enabled;
+    fmInfo() << "FSEventController: Enabled state changed to:" << m_enabled;
     if (m_enabled) {
         m_stopTimer->stop();
         m_lastSilentlyFlag = silentlyRefreshStarted();
@@ -97,24 +97,25 @@ void FSEventController::setEnabledNow(bool enabled)
 void FSEventController::startFSMonitoring()
 {
     if (!m_fsEventCollector) {
+        fmWarning() << "FSEventController: Cannot start monitoring, FSEventCollector not initialized";
         return;
     }
 
     if (m_fsEventCollector->isActive()) {
-        fmInfo() << "FS monitoring already active";
+        fmInfo() << "FSEventController: FS monitoring already active";
         return;
     }
 
     // Initialize with default indexed directories
     QStringList indexedDirs = DFMSEARCH::Global::defaultIndexedDirectory();
     if (indexedDirs.isEmpty()) {
-        fmWarning() << "No default indexed directories found";
+        fmWarning() << "FSEventController: No default indexed directories found";
         return;
     }
 
     bool success = m_fsEventCollector->initialize(indexedDirs);
     if (!success) {
-        fmWarning() << "Failed to initialize FSEventCollector";
+        fmWarning() << "FSEventController: Failed to initialize FSEventCollector";
         return;
     }
 
@@ -124,11 +125,11 @@ void FSEventController::startFSMonitoring()
     // Start the collector
     success = m_fsEventCollector->start();
     if (!success) {
-        fmWarning() << "Failed to start FSEventCollector";
+        fmWarning() << "FSEventController: Failed to start FSEventCollector";
         return;
     }
 
-    fmInfo() << "FS monitoring started successfully with" << indexedDirs.size() << "directories";
+    fmInfo() << "FSEventController: FS monitoring started successfully with" << indexedDirs.size() << "directories";
 }
 
 void FSEventController::stopFSMonitoring()
@@ -142,7 +143,7 @@ void FSEventController::stopFSMonitoring()
     // Clear any collected events
     clearCollections();
 
-    fmInfo() << "FS monitoring stopped";
+    fmInfo() << "FSEventController: FS monitoring stopped";
 }
 
 void FSEventController::setSilentlyRefreshStarted(bool flag)
@@ -161,7 +162,7 @@ void FSEventController::onFilesCreated(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FS event: Files created -" << paths.size() << "items";
+    fmInfo() << "FSEventController: Files created event -" << paths.size() << "items";
     m_collectedCreatedFiles.append(paths);
 }
 
@@ -171,7 +172,7 @@ void FSEventController::onFilesDeleted(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FS event: Files deleted -" << paths.size() << "items";
+    fmInfo() << "FSEventController: Files deleted event -" << paths.size() << "items";
     m_collectedDeletedFiles.append(paths);
 }
 
@@ -181,7 +182,7 @@ void FSEventController::onFilesModified(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FS event: Files modified -" << paths.size() << "items";
+    fmInfo() << "FSEventController: Files modified event -" << paths.size() << "items";
     m_collectedModifiedFiles.append(paths);
 }
 
@@ -191,7 +192,7 @@ void FSEventController::onFilesMoved(const QHash<QString, QString> &movedPaths)
         return;
     }
 
-    fmInfo() << "FS event: Files moved -" << movedPaths.size() << "items";
+    fmInfo() << "FSEventController: Files moved event -" << movedPaths.size() << "items";
 
     // Merge the moved paths into our collection
     for (auto it = movedPaths.constBegin(); it != movedPaths.constEnd(); ++it) {
@@ -205,16 +206,16 @@ void FSEventController::onFlushFinished()
         return;
     }
 
-    fmInfo() << "FS event: Flush finished, processing events";
+    fmInfo() << "FSEventController: Flush finished, processing events";
 
     // Check if we have any events to process
     if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty()
         && m_collectedDeletedFiles.isEmpty() && m_collectedMovedFiles.isEmpty()) {
-        fmInfo() << "No file system events to process";
+        fmDebug() << "FSEventController: No file system events to process";
         return;
     }
 
-    fmInfo() << "Processing file changes - Created:" << m_collectedCreatedFiles.size()
+    fmInfo() << "FSEventController: Processing file changes - Created:" << m_collectedCreatedFiles.size()
              << "Modified:" << m_collectedModifiedFiles.size()
              << "Deleted:" << m_collectedDeletedFiles.size()
              << "Moved:" << m_collectedMovedFiles.size();

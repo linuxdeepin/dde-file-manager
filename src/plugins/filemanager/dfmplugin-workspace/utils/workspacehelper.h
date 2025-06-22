@@ -101,6 +101,9 @@ public:
 
     void aboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
 
+    void registerFocusFileViewDisabled(const QString &scheme);
+    bool isFocusFileViewDisabled(const QString &scheme) const;
+
     void registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy getLoadStrategy(const QString &scheme);
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
@@ -129,6 +132,7 @@ private:
     QList<QString> registeredFileViewScheme {};
     QMap<QString, CustomViewProperty> customViewPropertyMap {};
     QMap<QString, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy> loadStrategyMap {};
+    QList<QString> focusFileViewDisabledScheme {};
     QList<QUrl> undoFiles {};
 
     Q_DISABLE_COPY(WorkspaceHelper)

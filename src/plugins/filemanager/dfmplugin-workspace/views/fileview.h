@@ -176,6 +176,7 @@ protected:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
+    void showEvent(QShowEvent *event) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
@@ -239,6 +240,8 @@ private:
     bool expandOrCollapseItem(const QModelIndex &index, const QPoint &pos);
 
     void recordSelectedUrls();
+
+    void focusOnView();
 };
 
 }

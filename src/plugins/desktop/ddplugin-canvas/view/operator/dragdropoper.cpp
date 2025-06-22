@@ -147,23 +147,33 @@ bool DragDropOper::drop(QDropEvent *event)
     }
 
     // some special case.
-    if (dropFilter(event))
+    if (dropFilter(event)) {
+        fmInfo() << "Drop filtered due to special case restrictions";
         return true;
+    }
 
     // copy file by other app
-    if (dropClientDownload(event))
+    if (dropClientDownload(event)) {
+        fmInfo() << "Drop handled by client download mechanism";
         return true;
+    }
 
     // DirectSaveMode
-    if (dropDirectSaveMode(event))
+    if (dropDirectSaveMode(event)) {
+        fmInfo() << "Drop handled by DirectSave mode";
         return true;
+    }
 
     // move file on view grid.
-    if (dropBetweenView(event))
+    if (dropBetweenView(event)) {
+        fmInfo() << "Drop handled as move between canvas views";
         return true;
+    }
 
-    if (dropMimeData(event))
+    if (dropMimeData(event)) {
+        fmInfo() << "Drop handled by mime data processing";
         return true;
+    }
 
     event->ignore();
     return true;
@@ -176,14 +186,19 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         auto action = isCtrlPressed() ? Qt::CopyAction : Qt::MoveAction;
         event->setDropAction(action);
     } else if (urls.isEmpty()) {
+        fmDebug() << "No URLs to process in drop event";
         return;
     } else {
         auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
-        if (Q_UNLIKELY(!itemInfo))
+        if (Q_UNLIKELY(!itemInfo)) {
+            fmWarning() << "Failed to create file info for target URL:" << targetFileUrl;
             return;
+        }
 
-        if (event->mimeData() && !event->mimeData()->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey))
+        if (event->mimeData() && !event->mimeData()->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey)) {
+            fmDebug() << "Mime data missing DFM app type key";
             return;
+        }
 
         Qt::DropAction defaultAction = Qt::CopyAction;
         const QUrl from = urls.first();
@@ -192,21 +207,29 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         // CopyAction if ctrl key is pressed.
         if (isAltPressed()) {
             defaultAction = Qt::MoveAction;
+            fmDebug() << "Alt key pressed - using MoveAction";
         } else if (!isCtrlPressed()) {
             if (FileUtils::isSameDevice(targetFileUrl, from)) {
                 defaultAction = Qt::MoveAction;
+                fmDebug() << "Same device detected - using MoveAction";
             }
         }
 
         // is from trash
-        if (FileUtils::isTrashFile(from))
+        if (FileUtils::isTrashFile(from)) {
             defaultAction = Qt::MoveAction;
+            fmDebug() << "Source is trash file - using MoveAction";
+        }
 
         const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
-        if (event->possibleActions().testFlag(defaultAction))
-            event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
+        if (event->possibleActions().testFlag(defaultAction)) {
+            Qt::DropAction finalAction = (defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction;
+            fmDebug() << "Setting drop action:" << static_cast<int>(finalAction) << "(same user:" << sameUser << ")";
+            event->setDropAction(finalAction);
+        }
 
         if (!itemInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction())) {
+            fmDebug() << "Target does not support current drop action - checking alternatives";
             QList<Qt::DropAction> actions;
 
             actions.reserve(3);
@@ -214,19 +237,25 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
 
             for (Qt::DropAction action : actions) {
                 if (event->possibleActions().testFlag(action) && itemInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(action)) {
-                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+                    Qt::DropAction finalAction = (action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action;
+                    fmDebug() << "Alternative action found:" << static_cast<int>(finalAction);
+                    event->setDropAction(finalAction);
                     break;
                 }
             }
         }
         event->setDropAction(defaultAction);
+        fmDebug() << "Final drop action set to:" << static_cast<int>(defaultAction);
     }
 }
 
 void DragDropOper::updateTarget(const QMimeData *data, const QUrl &url)
 {
-    if (url == m_target)
+    if (url == m_target) {
+        fmDebug() << "Target URL unchanged:" << url;
         return;
+    }
+    fmDebug() << "Updating target URL from:" << m_target << "to:" << url;
     m_target = url;
     DFileDragClient::setTargetUrl(data, m_target);
 }
@@ -319,6 +348,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
                 });
 
                 if (find) {
+                    fmWarning() << "Drop filtered - attempting to drop system desktop files (computer/trash/home) to directory:" << targetItem;
                     event->setDropAction(Qt::IgnoreAction);
                     return true;
                 }
@@ -333,6 +363,7 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
 {
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
+        fmInfo() << "DFileDragClient download detected - target:" << m_target;
         event->acceptProposedAction();
         fmWarning() << "drop on" << m_target;
 
@@ -340,11 +371,14 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
         if (!urlList.isEmpty()) {
             // todo 排查哪些情况会进这里
             // Q_ASSERT(false);
+            fmDebug() << "Creating DFileDragClient for" << urlList.size() << "URLs";
             DFileDragClient *client = new DFileDragClient(data, const_cast<DragDropOper *>(this));
             fmDebug() << "dragClientDownload" << client << data << urlList;
             connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
-                if (state == Finished)
+                if (state == Finished) {
+                    fmInfo() << "DFileDragClient download finished - selecting" << urlList.size() << "items";
                     selectItems(urlList);
+                }
                 fmDebug() << "stateChanged" << state << urlList;
             });
 
@@ -352,6 +386,8 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
             connect(client, &DFileDragClient::destroyed, []() {
                 fmDebug() << "drag client deleted";
             });
+        } else {
+            fmDebug() << "No URLs in DFileDragClient data";
         }
 
         return true;
@@ -379,6 +415,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
             fmInfo() << "drop on invaild target, skip. drop:" << dropGridPos.x() << dropGridPos.y();
             return true;
         }
+        fmDebug() << "Valid drop target exists - delegating to other drop handlers";
         return false;
     }
 
@@ -409,6 +446,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
 
     if (itemfrom.size() > 1) {
         // items are from different view, using append.
+        fmInfo() << "Multi-screen drop operation - appending items from" << itemfrom.size() << "screens";
         // remove all item.
         for (auto iter = itemPos.begin(); iter != itemPos.end(); ++iter)
             GridIns->remove(iter.value().first, iter.key());
@@ -421,6 +459,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     } else if (itemfrom.size() == 1) {
         // items are from one view, using move.
         // normally, item should from the view that is event->source().
+        fmInfo() << "Single-screen drop operation - moving items within/between views";
         auto focus = fromView->d->operState().current();
         auto focusItem = fromView->model()->fileUrl(focus).toString();
         if (!focusItem.isEmpty()) {
@@ -429,6 +468,8 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
                 resetFocus(dropGridPos);
                 fmDebug() << "move items" << focusItem << itemPos.value(focusItem) << "to"
                           << view->screenNum() << dropGridPos << "count" << itemPos.size();
+            } else {
+                fmWarning() << "Failed to move items in grid system";
             }
         } else {
             fmWarning() << "can not find fcous." << focus << fromView->screenNum();
@@ -437,12 +478,15 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
         fmWarning() << "can not find drop item.";
     }
 
-    if (DispalyIns->autoAlign())
+    if (DispalyIns->autoAlign()) {
+        fmDebug() << "Auto-align enabled - arranging grid after drop operation";
         GridIns->arrange();
+    }
 
     event->setDropAction(Qt::MoveAction);
     event->accept();
     CanvasIns->update();
+    fmInfo() << "Drop between views completed successfully";
     return true;
 }
 
@@ -452,15 +496,23 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
     // in the project `linuxdeepin/qt5platform-plugins`.
     // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
+        fmInfo() << "DirectSave mode detected - processing archive extraction";
         event->setDropAction(Qt::CopyAction);
         const QModelIndex &index = view->baseIndexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
         if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).isLocalFile()) {
-            if (fileInfo->isAttributes(OptInfoType::kIsDir))
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kUrl));
-            else
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kParentUrl));
+            QUrl saveUrl;
+            if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
+                saveUrl = fileInfo->urlOf(UrlInfoType::kUrl);
+                fmDebug() << "DirectSave target is directory:" << saveUrl;
+            } else {
+                saveUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
+                fmDebug() << "DirectSave target is file - using parent directory:" << saveUrl;
+            }
+            const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", saveUrl);
+        } else {
+            fmWarning() << "DirectSave failed - invalid file info or non-local file";
         }
 
         event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.
@@ -494,8 +546,11 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
 
         if (!urls.isEmpty()) {
             const QUrl from = QUrl(urls.first());
-            if (!from.path().contains("/.deepinwine/"))
+            if (!from.path().contains("/.deepinwine/")) {
+                fmDebug() << "Wayland mode - non-wine application, skipping fallback";
                 return false;
+            }
+            fmInfo() << "Wayland mode - wine application detected, using CopyAction fallback";
             if (model->dropMimeData(event->mimeData(), Qt::CopyAction, targetIndex.row(), targetIndex.column(), targetIndex))
                 event->acceptProposedAction();
             return true;
@@ -555,8 +610,10 @@ bool DragDropOper::checkTargetEnable(const QUrl &targetUrl)
         return true;
 
     if (FileUtils::isTrashDesktopFile(targetUrl)) {
-        if (dfmmimeData.isTrashFile())
+        if (dfmmimeData.isTrashFile()) {
+            fmDebug() << "Target is trash but source is also trash file - disabled";
             return false;
+        }
         return dfmmimeData.canTrash() || dfmmimeData.canDelete();
     }
 

@@ -54,7 +54,7 @@ QIcon FileInfoModelPrivate::fileIcon(FileInfoPointer info)
 
 void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
-    fmDebug() << "to reset file, count:" << urls.size();
+    fmDebug() << "Resetting file info model data with" << urls.size() << "files";
     QList<QUrl> fileUrls;
     QMap<QUrl, FileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
@@ -82,7 +82,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         QReadLocker lk(&lock);
         if (auto cur = fileMap.value(url)) {
             lk.unlock();
-            fmInfo() << "the file to insert is existed" << url;
+            fmInfo() << "File already exists in model, refreshing:" << url;
             cur->refresh();   // refresh fileinfo.
             const QModelIndex &index = q->index(url);
             emit q->dataChanged(index, index);
@@ -93,7 +93,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
 
     auto itemInfo = FileCreator->createFileInfo(url);
     if (Q_UNLIKELY(!itemInfo)) {
-        fmWarning() << "fail to create file info" << url;
+        fmWarning() << "Failed to create file info for insertion:" << url;
         return;
     }
 
@@ -124,7 +124,7 @@ void FileInfoModelPrivate::removeData(const QUrl &url)
     }
 
     if (Q_UNLIKELY(position < 0)) {
-        fmInfo() << "file dose not exists:" << url;
+        fmDebug() << "File not found in model for removal:" << url;
         return;
     }
 
@@ -141,7 +141,7 @@ void FileInfoModelPrivate::removeData(const QUrl &url)
 void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (newUrl.isEmpty()) {
-        fmInfo() << "target url is empty, remove old" << oldUrl;
+        fmInfo() << "Target URL is empty, removing old file:" << oldUrl;
         removeData(oldUrl);
         return;
     }
@@ -150,7 +150,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
     auto cachedInfo = InfoCacheController::instance().getCacheInfo(newUrl);
     auto newInfo = FileCreator->createFileInfo(newUrl);
     if (Q_UNLIKELY(newInfo.isNull())) {
-        fmWarning() << "fail to create new file info:" << newUrl << "old" << oldUrl;
+        fmWarning() << "Failed to create new file info for replacement - old:" << oldUrl << "new:" << newUrl;
         removeData(oldUrl);
         return;
     }
@@ -161,6 +161,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
         if (Q_LIKELY(position < 0)) {
             if (!fileMap.contains(newUrl)) {
                 lk.unlock();
+                fmDebug() << "Old URL not in model, inserting new URL:" << newUrl;
                 insertData(newUrl);
                 return;
             }
@@ -168,6 +169,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
             if (fileList.contains(newUrl)) {
                 // e.g. a mv to b(b is existed)
                 //! emit replace signal first.
+                fmInfo() << "Target URL already exists, handling overwrite - old:" << oldUrl << "new:" << newUrl;
                 emit q->dataReplaced(oldUrl, newUrl);
 
                 // then remove and emit remove signal.
@@ -180,7 +182,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
 
                 // refresh file
                 cur->refresh();
-                fmInfo() << "move file" << oldUrl << "to overwritte" << newUrl;
+                fmInfo() << "File moved to overwrite existing file:" << oldUrl << "->" << newUrl;
             } else {
                 fileList.replace(position, newUrl);
                 fileMap.remove(oldUrl);
@@ -204,8 +206,10 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
 {
     {
         QReadLocker lk(&lock);
-        if (Q_UNLIKELY(!fileMap.contains(url)))
+        if (Q_UNLIKELY(!fileMap.contains(url))) {
+            fmDebug() << "File not in model for update:" << url;
             return;
+        }
 
         // Although the files cached in InfoCache will be refreshed automatically,
         // a redundant refresh is still required here, because the current variant of FileInfo
@@ -215,8 +219,10 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     }
 
     const QModelIndex &index = q->index(url);
-    if (Q_UNLIKELY(!index.isValid()))
+    if (Q_UNLIKELY(!index.isValid())) {
+        fmWarning() << "Invalid model index for file update:" << url;
         return;
+    }
 
     emit q->dataChanged(index, index, { Global::kItemCreateFileInfoRole });
 }
@@ -225,13 +231,17 @@ void FileInfoModelPrivate::dataUpdated(const QUrl &url, const bool isLinkOrg)
 {
     {
         QReadLocker lk(&lock);
-        if (Q_UNLIKELY(!fileMap.contains(url)))
+        if (Q_UNLIKELY(!fileMap.contains(url))) {
+            fmDebug() << "File not in model for data update:" << url;
             return;
+        }
     }
 
     const QModelIndex &index = q->index(url);
-    if (Q_UNLIKELY(!index.isValid()))
+    if (Q_UNLIKELY(!index.isValid())) {
+        fmWarning() << "Invalid model index for data update:" << url;
         return;
+    }
 
     auto info = q->fileInfo(index);
     if (info)
@@ -246,21 +256,30 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
     FileInfoPointer info { nullptr };
     {
         QReadLocker lk(&lock);
-        if (Q_UNLIKELY(!fileMap.contains(url)))
+        if (Q_UNLIKELY(!fileMap.contains(url))) {
+            fmDebug() << "File not in model for thumbnail update:" << url;
             return;
+        }
 
-        if (!(info = fileMap.value(url)))
+        if (!(info = fileMap.value(url))) {
+            fmWarning() << "File info not found for thumbnail update:" << url;
             return;
+        }
     }
+
     // Creating thumbnail icon in a thread may cause the program to crash
     QIcon thumbIcon(thumb);
-    if (thumbIcon.isNull())
+    if (thumbIcon.isNull()) {
+        fmWarning() << "Failed to create thumbnail icon from path:" << thumb;
         return;
+    }
 
     info->setExtendedAttributes(ExtInfoType::kFileThumbnail, thumbIcon);
     const QModelIndex &index = q->index(url);
-    if (Q_UNLIKELY(!index.isValid()))
+    if (Q_UNLIKELY(!index.isValid())) {
+        fmWarning() << "Invalid model index for thumbnail update:" << url;
         return;
+    }
 
     emit q->dataChanged(index, index, { kItemIconRole });
 }
@@ -268,6 +287,7 @@ void FileInfoModelPrivate::thumbUpdated(const QUrl &url, const QString &thumb)
 void FileInfoModelPrivate::checkAndRefreshDesktopIcon(const FileInfoPointer &info, int retryCount)
 {
     if (retryCount < 0) {
+        fmWarning() << "Desktop icon refresh retries exhausted, trying XDG fallback for:" << info->urlOf(UrlInfoType::kUrl);
         // All retries exhausted, try qtxdg-iconfinder as last resort
         DesktopFile file(info->absoluteFilePath());
         QString iconName = file.desktopIcon();
@@ -275,7 +295,7 @@ void FileInfoModelPrivate::checkAndRefreshDesktopIcon(const FileInfoPointer &inf
         // NOTE: FileUtils::findIconFromXdg is very slow!
         // Maybe cause UI blocking
         QString iconPath = FileUtils::findIconFromXdg(iconName);
-        fmWarning() << "Still can't find the icon after retrying! XDG icon path: " << iconPath;
+        fmWarning() << "XDG icon search result for" << iconName << ":" << iconPath;
         if (!iconPath.isEmpty()) {
             FileUtils::refreshIconCache();
             updateData(info->urlOf(UrlInfoType::kUrl));
@@ -284,9 +304,12 @@ void FileInfoModelPrivate::checkAndRefreshDesktopIcon(const FileInfoPointer &inf
     }
 
     DesktopFile file(info->absoluteFilePath());
-    bool isNullIcon = QIcon::fromTheme(file.desktopIcon()).isNull();
-    if (!isNullIcon)
+    QString iconName = file.desktopIcon();
+    bool isNullIcon = QIcon::fromTheme(iconName).isNull();
+    if (!isNullIcon) {
+        fmDebug() << "Desktop icon found for file:" << info->urlOf(UrlInfoType::kUrl) << "icon:" << iconName;
         return;
+    }
 
     // When installing a deb package, the desktop file may be installed before its icon resources.
     // We need to retry checking the icon multiple times to ensure it's properly loaded after
@@ -324,9 +347,12 @@ FileInfoModel::~FileInfoModel()
 
 QModelIndex FileInfoModel::setRootUrl(QUrl url)
 {
-    if (url.isEmpty())
+    if (url.isEmpty()) {
         url = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath));
+        fmDebug() << "Empty root URL provided, using default desktop path:" << url;
+    }
 
+    fmInfo() << "Setting file info model root URL to:" << url;
     d->fileProvider->setRoot(url);
 
     //! FileInfoModel should get all files
@@ -416,9 +442,12 @@ QList<QUrl> FileInfoModel::files() const
 
 void FileInfoModel::refresh(const QModelIndex &parent)
 {
-    if (parent != rootIndex())
+    if (parent != rootIndex()) {
+        fmDebug() << "Refresh requested for non-root index, ignoring";
         return;
+    }
 
+    fmInfo() << "Refreshing file info model";
     d->doRefresh();
 }
 
@@ -479,6 +508,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
 
     auto indexFileInfo = fileInfo(index);
     if (!indexFileInfo) {
+        fmWarning() << "File info not found for index row:" << index.row();
         return QVariant();
     }
     switch (itemRole) {
@@ -554,25 +584,30 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     Q_UNUSED(column);
 
     QList<QUrl> urlList = data->urls();
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        fmWarning() << "Empty URL list in drop mime data";
         return false;
+    }
 
     QUrl targetFileUrl;
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = rootUrl();
-        fmInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+        fmInfo() << "Dropping" << urlList.size() << "files to desktop:" << targetFileUrl << "action:" << action;
     } else {
         targetFileUrl = fileUrl(parent);
-        fmInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+        fmInfo() << "Dropping" << urlList.size() << "files to:" << targetFileUrl << "action:" << action;
     }
 
     auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
-    if (Q_UNLIKELY(!itemInfo))
+    if (Q_UNLIKELY(!itemInfo)) {
+        fmWarning() << "Failed to create file info for drop target:" << targetFileUrl;
         return false;
+    }
 
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
         targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
+        fmDebug() << "Drop target is symlink, resolving to:" << targetFileUrl;
     }
 
     // treeveiew drop urls
@@ -588,14 +623,17 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
+        fmInfo() << "Dropping files to trash";
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0,
                                      treeSelectUrl.isEmpty() ? urlList : treeSelectUrl,
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        fmDebug() << "Drop to computer desktop file ignored";
         // nothing to do.
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFileSuffix(targetFileUrl)) {
+        fmInfo() << "Dropping files to desktop application:" << targetFileUrl.toLocalFile();
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }

@@ -134,7 +134,7 @@ void OperationsStackProxy::initialize()
     if (!interface || !interface->isServiceRegistered(kOperationsStackService).value())
         return;
 
-    fmInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
+    fmInfo() << "Start initializing D-Bus: OperationsStackManagerInterface";
     operationsStackDbus.reset(new OperationsStackManagerInterface(kOperationsStackService,
                                                                   kOperationsStackPath,
                                                                   QDBusConnection::sessionBus(),
@@ -143,7 +143,7 @@ void OperationsStackProxy::initialize()
         dbusValid = true;
         operationsStackDbus->setTimeout(3000);
     }
-    fmInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";
+    fmInfo() << "Finished initializing D-Bus: OperationsStackManagerInterface";
 }
 
 DPFILEOPERATIONS_END_NAMESPACE

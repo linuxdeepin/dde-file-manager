@@ -84,8 +84,10 @@ void FrameManagerPrivate::clearSurface()
 SurfacePointer FrameManagerPrivate::createSurface(QWidget *root)
 {
     SurfacePointer surface = nullptr;
-    if (Q_UNLIKELY(!root))
+    if (Q_UNLIKELY(!root)) {
+        fmWarning() << "Cannot create surface for null root widget";
         return surface;
+    }
 
     surface.reset(new Surface());
     surface->setProperty(DesktopFrameProperty::kPropScreenName, root->property(DesktopFrameProperty::kPropScreenName).toString());
@@ -179,7 +181,7 @@ void FrameManagerPrivate::enableChanged(bool e)
     if (e == CfgPresenter->isEnable())
         return;
 
-    fmDebug() << "enableChanged" << e;
+    fmInfo() << "Organizer enable state changed to:" << e;
     CfgPresenter->setEnable(e);
     if (e) {
         q->turnOn();
@@ -190,11 +192,13 @@ void FrameManagerPrivate::enableChanged(bool e)
 
 void FrameManagerPrivate::enableVisibility(bool e)
 {
+    fmDebug() << "Visibility state changed to:" << e;
     CfgPresenter->setEnableVisibility(e);
 }
 
 void FrameManagerPrivate::saveHideAllSequence(const QKeySequence &seq)
 {
+    fmDebug() << "Hide all key sequence changed to:" << seq.toString();
     CfgPresenter->setHideAllKeySequence(seq);
 }
 
@@ -203,10 +207,11 @@ void FrameManagerPrivate::switchToCustom()
     Q_ASSERT(organizer);
 
     if (organizer->mode() == OrganizerMode::kCustom) {
-        fmDebug() << "reject to switch: current mode had been custom.";
+        fmDebug() << "Reject switch to custom: already in custom mode";
         return;
     }
 
+    fmInfo() << "Switching organizer to custom mode";
     CfgPresenter->setMode(kCustom);
     buildOrganizer();
 }
@@ -216,9 +221,11 @@ void FrameManagerPrivate::switchToNormalized(int cf)
     Q_ASSERT(organizer);
 
     if (organizer->mode() == OrganizerMode::kNormalized) {
+        fmInfo() << "Already in normalized mode, changing classification to:" << cf;
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         organizer->reset();
     } else {
+        fmInfo() << "Switching organizer to normalized mode with classification:" << cf;
         CfgPresenter->setMode(kNormalized);
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         buildOrganizer();
@@ -228,6 +235,7 @@ void FrameManagerPrivate::switchToNormalized(int cf)
 void FrameManagerPrivate::showOptionWindow()
 {
     if (options) {
+        fmDebug() << "Options window already exists, activating it";
         options->activateWindow();
         return;
     }
@@ -247,8 +255,11 @@ void FrameManagerPrivate::showOptionWindow()
 
 void FrameManagerPrivate::onOrganizered()
 {
-    if (organizer)
+    if (organizer) {
+        fmDebug() << "Organizer already exists, skipping reorganization";
         return;
+    }
+
     q->onBuild();
     for (const SurfacePointer &sur : surfaceWidgets.values())
         sur->show();
@@ -319,10 +330,12 @@ void FrameManager::layout()
 
 void FrameManager::switchMode(OrganizerMode mode)
 {
-    if (d->organizer)
+    if (d->organizer) {
+        fmDebug() << "Deleting existing organizer before mode switch";
         delete d->organizer;
+    }
 
-    fmInfo() << "switch to" << mode;
+    fmInfo() << "Switching organizer to mode:" << static_cast<int>(mode);
 
     d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);
@@ -331,8 +344,10 @@ void FrameManager::switchMode(OrganizerMode mode)
     connect(d->organizer, &CanvasOrganizer::hideAllKeyPressed, d, &FrameManagerPrivate::onHideAllKeyPressed);
 
     // initialize to create collection widgets
-    if (!d->surfaceWidgets.isEmpty())
+    if (!d->surfaceWidgets.isEmpty()) {
+        fmDebug() << "Setting" << d->surfaceWidgets.size() << "surfaces to organizer";
         d->organizer->setSurfaces(d->surfaces());
+    }
 
     d->organizer->setCanvasModelShell(d->canvas->canvasModel());
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
@@ -344,6 +359,8 @@ void FrameManager::switchMode(OrganizerMode mode)
 
 void FrameManager::turnOn()
 {
+    fmInfo() << "Turning on organizer framework";
+
 #ifdef QT_DEBUG
     QDBusInterface ifs("com.deepin.dde.desktop",
                        "/org/deepin/dde/desktop/canvas",
@@ -369,6 +386,8 @@ void FrameManager::turnOn()
 
 void FrameManager::turnOff()
 {
+    fmInfo() << "Turning off organizer framework";
+
 #ifdef QT_DEBUG
     QDBusInterface ifs("com.deepin.dde.desktop",
                        "/org/deepin/dde/desktop/canvas",
@@ -404,8 +423,11 @@ bool FrameManager::organizerEnabled()
 void FrameManager::onBuild()
 {
     // 1071 added, tag config file changed
-    if (CfgPresenter->version() != "2.0.0")
+    if (CfgPresenter->version() != "2.0.0") {
+        fmInfo() << "Updating config version to 2.0.0";
         CfgPresenter->setVersion("2.0.0");
+    }
+
     d->buildSurface();
 
     if (d->organizer) {
@@ -427,8 +449,10 @@ void FrameManager::onDetachWindows()
         sur->setParent(nullptr);
 
     // 解绑集合窗口
-    if (d->organizer)
+    if (d->organizer) {
+        fmDebug() << "Detaching organizer layout";
         d->organizer->detachLayout();
+    }
 }
 
 void FrameManager::onGeometryChanged()

@@ -43,16 +43,27 @@ void FileItemData::setSortFileInfo(SortInfoPointer info)
     sortInfo = info;
 }
 
+SortInfoPointer FileItemData::fileSortInfo()
+{
+    return sortInfo;
+}
+
 void FileItemData::refreshInfo()
 {
-    if (!info.isNull())
+    if (!info.isNull()) {
         info->refresh();
+    } else {
+        fmWarning() << "Cannot refresh info: info is null for URL:" << url.toString();
+    }
 }
 
 void FileItemData::clearThumbnail()
 {
-    if (!info.isNull())
+    if (!info.isNull()) {
         info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QVariant());
+    } else {
+        fmWarning() << "Cannot clear thumbnail: info is null for URL:" << url.toString();
+    }
 }
 
 FileInfoPointer FileItemData::fileInfo() const
@@ -99,13 +110,15 @@ QVariant FileItemData::data(int role) const
             const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
             if (info) {
                 info->customData(kItemFileRefreshIcon);
-                
+
                 if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() &&
                     !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool()) {
                     updateOnce = true;
                     info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
                     info->updateAttributes();
                 }
+            } else {
+                fmWarning() << "Failed to create FileInfo for URL:" << url.toString();
             }
         } else if (!updateOnce) {
             updateOnce = true;

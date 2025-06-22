@@ -203,12 +203,15 @@ void UrlPushButtonPrivate::onSelectSubDirs()
 
     // 如果已经显示则隐藏
     if (folderListWidget && folderListWidget->isVisible()) {
+        fmDebug() << "Hiding existing folder list widget";
         folderListWidget->hide();
         return;
     }
 
-    if (crumbDatas.isEmpty())
+    if (crumbDatas.isEmpty()) {
+        fmWarning() << "Cannot select subdirs: crumb data is empty";
         return;
+    }
 
     // 保存 crumbBar 的弱引用
     QPointer<CrumbBar> weakCrumbBar(crumbBar);
@@ -252,8 +255,10 @@ void UrlPushButtonPrivate::onCompletionFound(const QStringList &stringList)
 
 void UrlPushButtonPrivate::onCompletionCompleted()
 {
-    if (!folderListWidget || completionStringList.isEmpty() || crumbDatas.isEmpty())
+    if (!folderListWidget || completionStringList.isEmpty() || crumbDatas.isEmpty()) {
+        fmWarning() << "Cannot complete: missing widget, completion data, or crumb data";
         return;
+    }
     QList<CrumbData> datas;
     for (int i = 0; i < completionStringList.size(); ++i) {
         CrumbData data;
@@ -261,8 +266,8 @@ void UrlPushButtonPrivate::onCompletionCompleted()
         // 使用 DFMIO::DFMUtils::buildFilePath 正确构造路径，然后使用 QUrl::fromLocalFile 创建 URL
         // Why? 一个例子是“！殊字符#$%$............{【.,”，直接拼接会出错
         const QString parentPath = crumbDatas.last().url.toLocalFile();
-        const QString childPath = DFMIO::DFMUtils::buildFilePath(parentPath.toStdString().c_str(), 
-                                                                 completionStringList[i].toStdString().c_str(), 
+        const QString childPath = DFMIO::DFMUtils::buildFilePath(parentPath.toStdString().c_str(),
+                                                                 completionStringList[i].toStdString().c_str(),
                                                                  nullptr);
         data.url = QUrl::fromLocalFile(childPath);
         datas.append(data);

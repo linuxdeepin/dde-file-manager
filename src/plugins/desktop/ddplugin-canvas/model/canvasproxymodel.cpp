@@ -42,15 +42,17 @@ void CanvasProxyModelPrivate::sourceReset()
 {
     createMapping();
     q->endResetModel();
-    fmInfo() << "canvas model reseted, file count:" << fileList.count();
+    fmInfo() << "Canvas model reset completed, file count:" << fileList.count();
 
     sendLoadReport();
 }
 
 void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
 {
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid row range for insertion:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -80,8 +82,10 @@ void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent
 void CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
 {
     Q_UNUSED(sourceParent)
-    if ((start < 0) || (end < 0))
+    if ((start < 0) || (end < 0)) {
+        fmWarning() << "Invalid row range for removal:" << start << "to" << end;
         return;
+    }
 
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
@@ -271,8 +275,10 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     QModelIndex leftIdx = q->index(left);
     QModelIndex rightIdx = q->index(right);
 
-    if (!leftIdx.isValid() || !rightIdx.isValid())
+    if (!leftIdx.isValid() || !rightIdx.isValid()) {
+        fmWarning() << "Invalid model indices for comparison:" << left << right;
         return false;
+    }
 
     FileInfoPointer leftInfo = fileMap.value(left);
     FileInfoPointer rightInfo = fileMap.value(right);
@@ -337,8 +343,10 @@ void CanvasProxyModelPrivate::clearMapping()
 
 void CanvasProxyModelPrivate::createMapping()
 {
-    if (!srcModel)
+    if (!srcModel) {
+        fmWarning() << "No source model available for creating mapping";
         return;
+    }
 
     auto urls = srcModel->files();
 
@@ -391,7 +399,7 @@ bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
         return true;
 
     if (hookIfs && hookIfs->sortData(fileSortRole, fileSortOrder, &files)) {
-        fmDebug() << "using extend sort";
+        fmDebug() << "Using extension module sort for" << files.size() << "files";
         return true;
     }
 
@@ -423,8 +431,10 @@ void CanvasProxyModelPrivate::doRefresh(bool global, bool updateFile)
 
 void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft, const QModelIndex &sourceBottomright, const QVector<int> &roles)
 {
-    if (!sourceTopleft.isValid() || !sourceBottomright.isValid())
+    if (!sourceTopleft.isValid() || !sourceBottomright.isValid()) {
+        fmWarning() << "Invalid source model indices for data change";
         return;
+    }
 
     int begin = qMin(sourceTopleft.row(), sourceBottomright.row());
     int end = qMax(sourceTopleft.row(), sourceBottomright.row());
@@ -434,7 +444,7 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
     for (int i = begin; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
         if (hookIfs && hookIfs->dataChanged(url, roles)) {
-            fmWarning() << "invalid module: dataChanged returns true.";
+            fmWarning() << "Extension module dataChanged returned true for:" << url;
         }
 
         // canvas filter
@@ -544,8 +554,10 @@ ModelHookInterface *CanvasProxyModel::modelHook() const
 
 void CanvasProxyModel::setSourceModel(QAbstractItemModel *model)
 {
-    if (model == sourceModel())
+    if (model == sourceModel()) {
+        fmDebug() << "Source model unchanged, skipping";
         return;
+    }
 
     FileInfoModel *fileModel = dynamic_cast<FileInfoModel *>(model);
     Q_ASSERT(fileModel);
@@ -699,7 +711,7 @@ QStringList CanvasProxyModel::mimeTypes() const
 
     if (d->hookIfs) {
         d->hookIfs->mimeTypes(&list);
-        fmDebug() << "using extend mimeTypes." << list;
+        fmDebug() << "Extension module provided mime types:" << list;
     }
 
     return list;
@@ -714,7 +726,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
         urls << fileUrl(idx);
 
     if (d->hookIfs && d->hookIfs->mimeData(urls, mimedt)) {
-        fmDebug() << "using extend mimeData.";
+        fmDebug() << "Extension module handled mime data creation";
     } else {
         mimedt->setUrls(urls);
     }
@@ -732,29 +744,33 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     Q_UNUSED(column);
 
     QList<QUrl> urlList = data->urls();
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
+        fmWarning() << "Empty URL list in drop mime data";
         return false;
+    }
 
     QUrl targetFileUrl;
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = d->srcModel->rootUrl();
-        fmInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+        fmInfo() << "Dropping" << urlList.size() << "files to desktop:" << targetFileUrl << "action:" << action;
     } else {
         targetFileUrl = fileUrl(parent);
-        fmInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+        fmInfo() << "Dropping" << urlList.size() << "files to:" << targetFileUrl << "action:" << action;
     }
 
     auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
-    if (Q_UNLIKELY(!itemInfo))
+    if (Q_UNLIKELY(!itemInfo)) {
+        fmWarning() << "Failed to create file info for drop target:" << targetFileUrl;
         return false;
+    }
 
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
         targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {
-        fmInfo() << "dropMimeData by extend module.";
+        fmInfo() << "Drop operation handled by extension module";
         return true;
     }
 
@@ -797,13 +813,17 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
 bool CanvasProxyModel::sort()
 {
-    if (d->fileList.isEmpty())
+    if (d->fileList.isEmpty()) {
+        fmDebug() << "No files to sort";
         return true;
+    }
 
     QMap<QUrl, FileInfoPointer> tempFileMap;
     QList<QUrl> orderFiles = d->fileList;
-    if (!d->doSort(orderFiles))
+    if (!d->doSort(orderFiles)) {
+        fmWarning() << "Sort operation failed";
         return false;
+    }
 
     for (const QUrl &url : orderFiles)
         tempFileMap.insert(url, d->srcModel->fileInfo(d->srcModel->index(url)));
@@ -830,8 +850,10 @@ void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms, b
 {
     d->isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 
-    if (parent != rootIndex())
+    if (parent != rootIndex()) {
+        fmDebug() << "Refresh requested for non-root index, ignoring";
         return;
+    }
 
     if (d->refreshTimer.get())
         d->refreshTimer->stop();
@@ -862,18 +884,22 @@ void CanvasProxyModel::setShowHiddenFiles(bool show)
 
 bool CanvasProxyModel::fetch(const QUrl &url)
 {
-    if (d->fileMap.contains(url))
+    if (d->fileMap.contains(url)) {
+        fmDebug() << "File already exists in model:" << url;
         return true;
+    }
 
     QModelIndex idx = d->srcModel->index(url);
-    if (!idx.isValid())
+    if (!idx.isValid()) {
+        fmDebug() << "Source model has no index for URL:" << url;
         return false;
+    }
 
     auto info = d->srcModel->fileInfo(idx);
     if (info) {
         // canvas filter
         if (d->insertFilter(url)) {
-            fmDebug() << "filter it, don't add" << url;
+            fmDebug() << "File filtered during fetch, not adding:" << url;
             return false;
         }
 
@@ -887,21 +913,23 @@ bool CanvasProxyModel::fetch(const QUrl &url)
         return true;
     }
 
-    fmDebug() << "fail to add: no such file" << url;
+    fmDebug() << "Failed to fetch file info for:" << url;
     return false;
 }
 
 bool CanvasProxyModel::take(const QUrl &url)
 {
-    if (!d->fileMap.contains(url))
+    if (!d->fileMap.contains(url)) {
+        fmDebug() << "File not in model, take operation succeeded:" << url;
         return true;
+    }
 
     // canvas filter
     d->removeFilter(url);
 
     int row = d->fileList.indexOf(url);
     if (Q_UNLIKELY(row < 0)) {
-        fmCritical() << "invaild index of" << url;
+        fmCritical() << "Invalid index for file in take operation:" << url;
         return false;
     }
 

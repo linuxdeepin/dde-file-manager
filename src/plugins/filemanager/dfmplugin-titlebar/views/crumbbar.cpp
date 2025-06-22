@@ -76,7 +76,7 @@ void CrumbBarPrivate::updateController(const QUrl &url)
         crumbController = CrumbManager::instance()->createControllerByUrl(url);
         // Not found? Then nothing here...
         if (!crumbController) {
-            fmWarning() << "Unsupported url / scheme: " << url;
+            fmWarning() << "Cannot create crumb controller for URL:" << url.toString();
             // always has default controller
             crumbController = new CrumbInterface;
         }
@@ -433,8 +433,7 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
     if (updataFlag)
         update();
     if (!d->crumbController) {
-        fmWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
-        fmDebug() << "updateCrumbs (no controller) : " << url;
+        fmCritical() << "Cannot update crumbs: no controller available for URL" << url.toString();
         return;
     }
 

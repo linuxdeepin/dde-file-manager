@@ -27,6 +27,7 @@ public Q_SLOTS:
     bool decryptByTpm(const QString &keyPin, const QString &dirPath, QString *pwd);
 
     int tpmIsAvailableProcess();
+    int tpmCheckLockoutStatusProcess();
     int getRandomByTpmProcess(int size, QString *output);
     int isTpmSupportAlgoProcess(const QString &algoName, bool *support);
     int encryptByTpmProcess(const QVariantMap &encryptParams);

@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include <unistd.h>
 
@@ -114,23 +115,33 @@ static bool pluginsLoad()
     qCInfo(logAppDesktop) << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins()) {
+        qCCritical(logAppDesktop) << "Failed to read plugins from paths";
         return false;
+    }
 
     // We should make sure that the core plugin is loaded first
     auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
-    if (corePlugin.isNull())
+    if (corePlugin.isNull()) {
+        qCCritical(logAppDesktop) << "Core plugin not found:" << kPluginCore;
         return false;
+    }
+
     if (!corePlugin->fileName().contains(kLibCore)) {
         qCWarning(logAppDesktop) << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
+
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin)) {
+        qCCritical(logAppDesktop) << "Failed to load core plugin:" << kLibCore;
         return false;
+    }
 
     // load plugins without core
-    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins()) {
+        qCCritical(logAppDesktop) << "Failed to load remaining plugins";
         return false;
+    }
 
     return true;
 }
@@ -176,8 +187,10 @@ static QStringList translationDir()
 
 static void checkUpgrade()
 {
-    if (!dfm_upgrade::isNeedUpgrade())
+    if (!dfm_upgrade::isNeedUpgrade()) {
+        qCDebug(logAppDesktop) << "No upgrade needed";
         return;
+    }
 
     qCInfo(logAppDesktop) << "try to upgrade in desktop";
     QMap<QString, QString> args;
@@ -189,7 +202,7 @@ static void checkUpgrade()
 
     int ret = dfm_upgrade::tryUpgrade(lib, args);
     if (ret < 0) {
-        qCWarning(logAppDesktop) << "something error, exit current process." << qApp->applicationPid();
+        qCCritical(logAppDesktop) << "Upgrade failed with error code" << ret << ", exiting process" << qApp->applicationPid();
         _Exit(-1);
     } else if (ret == 0) {
         auto arguments = qApp->arguments();
@@ -263,14 +276,14 @@ public:
             QDBusConnection conn = QDBusConnection::sessionBus();
 
             if (!conn.registerService(kDesktopServiceName)) {
-                qCWarning(logAppDesktop) << "registerService Failed, maybe service exist" << conn.lastError();
+                qCCritical(logAppDesktop) << "registerService Failed, maybe service exist" << conn.lastError();
                 return false;
             }
 
             DesktopDBusInterface *interface = new DesktopDBusInterface(qApp);
             auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
             if (!conn.registerObject(kDesktopServicePath, kDesktopServiceInterface, interface, registerOptions)) {
-                qCWarning(logAppDesktop) << "registerObject Failed" << conn.lastError();
+                qCCritical(logAppDesktop) << "registerObject Failed" << conn.lastError();
                 return false;
             }
         }

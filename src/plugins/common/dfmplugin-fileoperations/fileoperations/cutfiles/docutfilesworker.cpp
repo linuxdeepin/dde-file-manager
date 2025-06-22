@@ -15,7 +15,7 @@
 #include <QMutex>
 #include <QStorageInfo>
 #include <QQueue>
-#include <QDebug>
+
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -186,12 +186,11 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         return false;
 
     if (toInfo.isNull()) {
-        fmWarning() << " do rename failed ! create null target Info";
+        fmWarning() << "Rename operation failed: cannot create target file info";
         return false;
     }
 
-    fmDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->uri() << " to url: "
-              << targetPathInfo->uri();
+    fmInfo() << "Rename failed, using copy and delete method: from=" << fromInfo->uri() << "to=" << targetPathInfo->uri();
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, skip))
         return false;
 
@@ -223,7 +222,7 @@ void DoCutFilesWorker::endWork()
         for (const auto &info : cutAndDeleteFiles) {
             bool ret = localFileHandler->deleteFile(info->uri());
             if (!ret) {
-                fmWarning() << "delete file error, so do not delete other files!!!!";
+                fmWarning() << "Delete file failed, stopping deletion of remaining files";
                 continue;
             }
         }
@@ -246,7 +245,7 @@ bool DoCutFilesWorker::doMergDir(const DFileInfoPointer &fromInfo, const DFileIn
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->uri(), &error);
     if (!iterator) {
-        fmCritical() << "create dir's iterator failed, case : " << error;
+        fmCritical() << "Failed to create directory iterator, error:" << error;
         doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }

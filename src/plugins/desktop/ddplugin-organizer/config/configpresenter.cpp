@@ -58,21 +58,31 @@ void ConfigPresenter::onDConfigChanged(const QString &cfg, const QString &key)
     if (key == kIsEnable) {
         bool ok = false;
         int value = DConfigManager::instance()->value(cfg, key).toInt(&ok);
-        if (!ok)
+        if (!ok) {
+            fmWarning() << "Failed to parse enable state value:" << value;
             return;
-        if (value < 0)
+        }
+        if (value < 0) {
+            fmWarning() << "Invalid enable state value:" << value;
             return;
+        }
         bool val = value == 0 ? false : true;
-        if (val != enable)
+        if (val != enable) {
+            fmInfo() << "Organizer enable state changed from" << enable << "to" << val;
             emit changeEnableState(val);
+        }
     }
 
     if (key == kOrganizeAction && organizeAction() == kAlways) {
+        fmInfo() << "Organize action changed to 'Always', triggering desktop reorganization";
         Q_EMIT reorganizeDesktop();
     }
 
-    if (key == kOrganizeMovingOptimize)
-        Q_EMIT optimizeStateChanged(optimizeMovingPerformance());
+    if (key == kOrganizeMovingOptimize) {
+        bool optimize = optimizeMovingPerformance();
+        fmInfo() << "Moving optimization setting changed to:" << optimize;
+        Q_EMIT optimizeStateChanged(optimize);
+    }
 }
 
 ConfigPresenter *ConfigPresenter::instance()
@@ -91,8 +101,10 @@ bool ConfigPresenter::initialize()
         int value = DConfigManager::instance()->value(kConfName, kIsEnable).toInt(&ok);
         if (ok && value >= 0) {
             enable = value == 0 ? false : true;
+            fmDebug() << "Enable state loaded from DConfig:" << enable;
         } else {
             enable = conf->isEnable();
+            fmDebug() << "Enable state loaded from config file:" << enable;
         }
     }
 
@@ -103,7 +115,7 @@ bool ConfigPresenter::initialize()
     {
         int m = conf->mode();
         if (m < OrganizerMode::kNormalized || m > OrganizerMode::kCustom) {
-            fmWarning() << "mode is invalid:" << m;
+            fmWarning() << "Invalid organizer mode:" << m << "using default normalized mode";
             //m = 0;
         }
         // jsut release normal mode
@@ -113,7 +125,7 @@ bool ConfigPresenter::initialize()
     {
         int cf = conf->classification();
         if (cf < Classifier::kType || cf > Classifier::kSize) {
-            fmWarning() << "classification is invalid:" << cf;
+            fmWarning() << "Invalid classification:" << cf << "using default type classification";
             //cf = 0;
         }
         // // jsut release that classified by type
@@ -224,16 +236,20 @@ void ConfigPresenter::saveNormalProfile(const QList<CollectionBaseDataPtr> &base
 
 CollectionStyle ConfigPresenter::customStyle(const QString &key) const
 {
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmWarning() << "Empty key provided for custom style lookup";
         return CollectionStyle();
+    }
 
     return conf->collectionStyle(true, key);
 }
 
 void ConfigPresenter::updateCustomStyle(const CollectionStyle &style) const
 {
-    if (style.key.isEmpty())
+    if (style.key.isEmpty()) {
+        fmWarning() << "Empty key in custom style, update ignored";
         return;
+    }
 
     conf->updateCollectionStyle(true, style);
     conf->sync();
@@ -292,16 +308,20 @@ bool ConfigPresenter::optimizeMovingPerformance() const
 
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
 {
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmWarning() << "Empty key provided for normal style lookup";
         return CollectionStyle();
+    }
 
     return conf->collectionStyle(false, key);
 }
 
 void ConfigPresenter::updateNormalStyle(const CollectionStyle &style) const
 {
-    if (style.key.isEmpty())
+    if (style.key.isEmpty()) {
+        fmWarning() << "Empty key in normal style, update ignored";
         return;
+    }
 
     conf->updateCollectionStyle(false, style);
     conf->sync();

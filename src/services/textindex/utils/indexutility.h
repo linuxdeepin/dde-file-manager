@@ -6,6 +6,8 @@
 
 #include "service_textindex_global.h"
 
+#include <QFileInfo>
+
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
@@ -23,6 +25,20 @@ void clearIndexDirectory();
 void saveIndexStatus(const QDateTime &lastUpdateTime);
 void saveIndexStatus(const QDateTime &lastUpdateTime, int version);
 
+/**
+ * @brief Check if a file size is within the allowed limit for indexing
+ * @param fileInfo QFileInfo object of the file to check
+ * @return true if file size is acceptable, false otherwise
+ */
+bool checkFileSize(const QFileInfo &fileInfo);
+
+/**
+ * @brief Check if a file is supported for indexing
+ * @param path File path to check
+ * @return true if file type is supported and meets size requirements, false otherwise
+ */
+bool isSupportedFile(const QString &path);
+
 }   // namespace IndexUtility
 
 namespace PathCalculator {
@@ -34,9 +50,9 @@ namespace PathCalculator {
  * @param toDirPath Target directory path
  * @return New calculated path
  */
-QString calculateNewPathForDirectoryMove(const QString &oldPath, 
-                                       const QString &fromDirPath, 
-                                       const QString &toDirPath);
+QString calculateNewPathForDirectoryMove(const QString &oldPath,
+                                         const QString &fromDirPath,
+                                         const QString &toDirPath);
 
 /**
  * @brief Normalize directory path by ensuring it ends with '/'

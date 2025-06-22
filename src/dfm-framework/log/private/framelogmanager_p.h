@@ -14,12 +14,8 @@ class FrameLogManagerPrivate
 {
 public:
     explicit FrameLogManagerPrivate(FrameLogManager *qq);
-    void initFilterAppender();
-    FilterAppender *filterAppender();
 
 public:
-    FilterAppender *curFilterAppender { nullptr };
-
     FrameLogManager *const q;
 };
 

@@ -261,7 +261,7 @@ void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
         // Still not found? Then nothing here...
         if (!crumbController) {
             clearCompleterModel();
-            fmDebug() << "Unsupported url / scheme for completion: " << url;
+            fmWarning() << "Cannot create completion controller for unsupported URL:" << url.toString();
             return;
         }
         crumbController->setParent(q);
@@ -306,8 +306,10 @@ void AddressBarPrivate::completeLocalPath(const QString &text, const QUrl &url, 
 {
     // Check if (now is parent) url exist.
     auto info = InfoFactory::create<FileInfo>(url);
-    if (url.isValid() && info && !info->exists())
+    if (url.isValid() && info && !info->exists()) {
+        fmWarning() << "Cannot complete path: directory does not exist" << url.toString();
         return;
+    }
 
     // Check if we should start a new completion transmission.
     if (this->completerBaseString == text.left(slashIndex + 1)

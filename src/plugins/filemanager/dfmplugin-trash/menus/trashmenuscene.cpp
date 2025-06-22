@@ -152,18 +152,23 @@ bool TrashMenuScene::triggered(QAction *action)
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == TrashActionId::kRestore) {
+            fmDebug() << "Trash: Restoring" << d->selectFiles.size() << "files from trash";
             TrashHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint);
             return true;
         } else if (actId == TrashActionId::kRestoreAll) {
+            fmDebug() << "Trash: Restoring all files from trash directory:" << d->currentDir;
             TrashHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kNoHint);
             return true;
         } else if (actId == TrashActionId::kEmptyTrash) {
+            fmDebug() << "Trash: Emptying trash";
             TrashHelper::emptyTrash();
             return true;
         } else if (actId == TrashActionId::kSourcePath) {
+            fmDebug() << "Trash: Setting sort by source path for window:" << d->windowId;
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileOriginalPath);
             return true;
         } else if (actId == TrashActionId::kTimeDeleted) {
+            fmDebug() << "Trash: Setting sort by deletion time for window:" << d->windowId;
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileDeletionDate);
             return true;
         }
@@ -182,8 +187,10 @@ bool TrashMenuScene::triggered(QAction *action)
 
 AbstractMenuScene *TrashMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        fmDebug() << "Trash: Scene requested for null action";
         return nullptr;
+    }
 
     if (!d->predicateAction.key(action).isEmpty())
         return const_cast<TrashMenuScene *>(this);

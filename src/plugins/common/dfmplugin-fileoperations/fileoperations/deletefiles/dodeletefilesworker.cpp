@@ -6,18 +6,20 @@
 #include <dfm-base/base/schemefactory.h>
 
 #include <QUrl>
-#include <QDebug>
+
 
 DPFILEOPERATIONS_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
     : AbstractWorker(parent)
 {
     jobType = AbstractJobHandler::JobType::kDeleteType;
+    fmDebug() << "Delete files worker created";
 }
 
 DoDeleteFilesWorker::~DoDeleteFilesWorker()
 {
     stop();
+    fmDebug() << "Delete files worker destroyed";
 }
 
 bool DoDeleteFilesWorker::doWork()
@@ -25,6 +27,7 @@ bool DoDeleteFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
+    fmInfo() << "Starting delete operation for" << sourceUrls.count() << "files/directories";
     deleteAllFiles();
 
     // 完成
@@ -35,6 +38,7 @@ bool DoDeleteFilesWorker::doWork()
 
 void DoDeleteFilesWorker::stop()
 {
+    fmInfo() << "Stopping delete operation";
     // ToDo::停止删除的业务逻辑
     AbstractWorker::stop();
 }
@@ -50,6 +54,7 @@ void DoDeleteFilesWorker::onUpdateProgress()
  */
 bool DoDeleteFilesWorker::deleteAllFiles()
 {
+    fmDebug() << "Delete all files - source file local:" << isSourceFileLocal;
     // sources file list is checked
     // delete files on can't remove device
     if (isSourceFileLocal) {
@@ -63,10 +68,14 @@ bool DoDeleteFilesWorker::deleteAllFiles()
  */
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
+    fmDebug() << "Deleting files on non-removable device, file count:" << allFilesList.count();
+    
     if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (info)
+        if (info) {
             deleteFirstFileSize = info->size();
+            fmDebug() << "Single file deletion, size:" << deleteFirstFileSize;
+        }
     }
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
@@ -79,8 +88,11 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
             if (!localFileHandler->deleteFile(url)) {
+                fmWarning() << "Failed to delete file:" << url << "error:" << localFileHandler->errorString();
                 action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                               localFileHandler->errorString());
+            } else {
+                fmDebug() << "Successfully deleted file:" << url;
             }
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -93,14 +105,18 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
         deleteFilesCount++;
 
-        if (action == AbstractJobHandler::SupportAction::kSkipAction)
+        if (action == AbstractJobHandler::SupportAction::kSkipAction) {
+            fmInfo() << "Skipped deleting file:" << url;
             continue;
+        }
 
         if (action != AbstractJobHandler::SupportAction::kNoAction)
             return false;
 
         emit fileDeleted(url);
     }
+    
+    fmInfo() << "Completed deletion on non-removable device, deleted count:" << deleteFilesCount;
     return true;
 }
 /*!
@@ -109,33 +125,49 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
  */
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
+    fmDebug() << "Deleting files on other device, source count:" << sourceUrls.count();
+    
     bool ok = true;
     if (sourceUrls.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(sourceUrls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
-        if (info)
+        if (info) {
             deleteFirstFileSize = info->size();
+            fmDebug() << "Single file deletion on other device, size:" << deleteFirstFileSize;
+        }
     }
+    
     for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
+            fmCritical() << "Failed to create file info for:" << url;
             // pause and emit error msg
-            if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction)
+            if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction) {
+                fmInfo() << "Skipped file due to info creation failure:" << url;
                 continue;
+            }
             return false;
         }
 
         if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
+            fmDebug() << "Deleting file/symlink:" << url;
             ok = deleteFileOnOtherDevice(url);
         } else {
+            fmDebug() << "Deleting directory:" << url;
             ok = deleteDirOnOtherDevice(info);
         }
 
-        if (!ok)
+        if (!ok) {
+            fmWarning() << "Failed to delete item:" << url;
             return false;
+        }
+        
         completeTargetFiles.append(url);
         completeSourceFiles.append(url);
         emit fileDeleted(url);
+        fmDebug() << "Successfully deleted item:" << url;
     }
+    
+    fmInfo() << "Completed deletion on other device, processed count:" << sourceUrls.count();
     return true;
 }
 /*!
@@ -154,15 +186,20 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!localFileHandler->deleteFile(url)) {
+            fmWarning() << "Failed to delete file on other device:" << url << "error:" << localFileHandler->errorString();
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                           localFileHandler->errorString());
+        } else {
+            fmDebug() << "Successfully deleted file on other device:" << url;
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     deleteFilesCount++;
 
-    if (action == AbstractJobHandler::SupportAction::kSkipAction)
+    if (action == AbstractJobHandler::SupportAction::kSkipAction) {
+        fmInfo() << "Skipped deleting file on other device:" << url;
         return true;
+    }
 
     return action == AbstractJobHandler::SupportAction::kNoAction;
 }
@@ -176,8 +213,12 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     if (!stateCheck())
         return false;
 
-    if (dir->countChildFile() < 0)
+    fmDebug() << "Deleting directory on other device:" << dir->urlOf(UrlInfoType::kUrl);
+
+    if (dir->countChildFile() < 0) {
+        fmDebug() << "Directory has no children or count failed, treating as file:" << dir->urlOf(UrlInfoType::kUrl);
         return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
+    }
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     AbstractDirIteratorPointer iterator(nullptr);
@@ -186,36 +227,50 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
         QString errorMsg;
         iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlOf(UrlInfoType::kUrl), &errorMsg);
         if (!iterator) {
+            fmWarning() << "Failed to create directory iterator for:" << dir->urlOf(UrlInfoType::kUrl) << "error:" << errorMsg;
             action = doHandleErrorAndWait(dir->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-    if (action == AbstractJobHandler::SupportAction::kSkipAction)
+    if (action == AbstractJobHandler::SupportAction::kSkipAction) {
+        fmInfo() << "Skipped deleting directory:" << dir->urlOf(UrlInfoType::kUrl);
         return true;
+    }
     if (action != AbstractJobHandler::SupportAction::kNoAction)
         return false;
 
     bool ok { true };
+    int childCount = 0;
     while (iterator->hasNext()) {
         const QUrl &url = iterator->next();
+        childCount++;
 
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);;
         if (!info) {
+            fmCritical() << "Failed to create file info for child:" << url;
             // pause and emit error msg
-            if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction)
+            if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction) {
+                fmInfo() << "Skipped child due to info creation failure:" << url;
                 continue;
+            }
             return false;
         }
 
         if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
+            fmDebug() << "Deleting child file/symlink:" << url;
             ok = deleteFileOnOtherDevice(url);
         } else {
+            fmDebug() << "Deleting child directory:" << url;
             ok = deleteDirOnOtherDevice(info);
         }
 
-        if (!ok)
+        if (!ok) {
+            fmWarning() << "Failed to delete child item:" << url;
             return false;
+        }
     }
+
+    fmDebug() << "Deleted" << childCount << "children from directory:" << dir->urlOf(UrlInfoType::kUrl);
 
     // delete self dir
     return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
@@ -235,10 +290,13 @@ DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from,
                                           const AbstractJobHandler::JobErrorType &error,
                                           const QString &errorMsg)
 {
+    fmDebug() << "Handling delete error - file:" << from << "error type:" << static_cast<int>(error) << "message:" << errorMsg;
+    
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, false, 0, errorMsg);
 
     waitCondition.wait(&mutex);
 
+    fmDebug() << "Error handling completed, action:" << static_cast<int>(currentAction);
     return currentAction;
 }

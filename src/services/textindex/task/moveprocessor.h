@@ -30,6 +30,22 @@ public:
     bool processFileMove(const QString &fromPath, const QString &toPath);
 
 private:
+    /**
+     * @brief Check if a file exists in the index
+     * @param path File path to check
+     * @return true if file exists in index, false otherwise
+     */
+    bool isFileInIndex(const QString &path);
+
+
+
+    /**
+     * @brief Process content update for a file (re-index its content)
+     * @param filePath Path of the file to re-index
+     * @return true if content updated successfully, false otherwise
+     */
+    bool processContentUpdate(const QString &filePath);
+
     Lucene::SearcherPtr m_searcher;
     Lucene::IndexWriterPtr m_writer;
 };

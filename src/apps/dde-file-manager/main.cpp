@@ -12,6 +12,7 @@
 #include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/loggerrules.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -65,6 +66,11 @@ static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
  */
 static void setEnvForRoot()
 {
+    // 管理员模式可能丢失 QT_QPA_PLATFORM
+    if (DFMBASE_NAMESPACE::WindowUtils::isX11() && qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+        qputenv("QT_QPA_PLATFORM", "dxcb");
+    }
+
     QProcess p1;
     QProcess p2;
 
@@ -202,7 +208,7 @@ static bool pluginsLoad()
         return false;
     }
     if (!corePlugin->fileName().contains(kLibCore)) {
-        qCCritical(logAppFileManager) << "pluginsLoad: Core plugin library mismatch, expected:" << kLibCore 
+        qCCritical(logAppFileManager) << "pluginsLoad: Core plugin library mismatch, expected:" << kLibCore
                                       << "actual:" << corePlugin->fileName();
         return false;
     }
@@ -254,8 +260,14 @@ static void initEnv()
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
 
-    if (SysInfoUtils::isOpenAsAdmin())
+    if (SysInfoUtils::isOpenAsAdmin()) {
+        qCInfo(logAppFileManager) << "initEnv: Running as admin, printing all environment variables:";
+        QStringList envVars = QProcess::systemEnvironment();
+        for (const QString &envVar : envVars) {
+            qCInfo(logAppFileManager) << "ENV:" << envVar;
+        }
         setEnvForRoot();
+    }
 }
 
 static void initLogFilter()
@@ -405,6 +417,10 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppFileManager) << "main: Application started successfully, PID:" << a.applicationPid();
     int ret { a.exec() };
+
+    // Immediately disable all debug logging after event loop ends to prevent unwanted debug output during shutdown
+    qCInfo(logAppFileManager) << "main: Reset log rules:" << LoggerRules::instance().rules();
+    LoggerRules::instance().setRules(LoggerRules::instance().rules());
 
     mo->unRegisterDBus();
     a.closeServer();

@@ -338,27 +338,10 @@ FileInfo::FileType FileStatisticsJobPrivate::fileType(const __mode_t fileMode)
     return fileType;
 }
 
-QString FileStatisticsJobPrivate::resolveSymlink(const QUrl &url)
-{
-    QSet<QString> visited;
-    QString target = FileUtils::symlinkTarget(url);
-    while (!target.isEmpty()) {
-        if (visited.contains(target))
-            return QString();   // Cycle detected: return empty
-        visited.insert(target);
-        QUrl newUrl = QUrl::fromLocalFile(target);
-        QString nextTarget = FileUtils::symlinkTarget(newUrl);
-        if (nextTarget.isEmpty())
-            break;
-        target = nextTarget;
-    }
-    return target;
-}
-
 void FileStatisticsJobPrivate::processDirectory(const QUrl &url, bool followLink, QQueue<QUrl> &directoryQueue)
 {
     totalProgressSize += FileUtils::getMemoryPageSize();
-    QString target = resolveSymlink(url);
+    QString target = FileUtils::resolveSymlink(url);
     if (!target.isEmpty() && !followLink) {
         ++directoryCount;
         return;
@@ -377,7 +360,7 @@ void FileStatisticsJobPrivate::processDirectory(const QUrl &url, bool followLink
 
 void FileStatisticsJobPrivate::processRegularFile(const QUrl &url, struct stat64 *statBuffer, bool followLink)
 {
-    QString target = resolveSymlink(url);
+    QString target = FileUtils::resolveSymlink(url);
     bool isSymlink = !target.isEmpty();
     if (isSymlink && !followLink) {
         ++filesCount;

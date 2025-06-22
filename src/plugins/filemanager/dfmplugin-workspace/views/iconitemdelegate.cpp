@@ -55,12 +55,17 @@ IconItemDelegate::IconItemDelegate(FileViewHelper *parent)
 {
     Q_D(IconItemDelegate);
 
+    fmDebug() << "Creating IconItemDelegate";
+
     d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
     d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
     d->expandedItem->setCanDeferredDelete(false);
     d->expandedItem->setContentsMargins(0, 0, 0, 0);
     /// prevent flash when first call show()
     d->expandedItem->setFixedWidth(0);
+
+    fmDebug() << "Created expanded item widget";
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [d]() {
         if (d->expandedIndex.isValid() && !d->expandedItem->isHidden())
@@ -71,24 +76,30 @@ IconItemDelegate::IconItemDelegate(FileViewHelper *parent)
 
     d->itemIconSize = iconSizeByIconSizeLevel();
     parent->parent()->setIconSize(d->itemIconSize);
+
+    fmDebug() << "IconItemDelegate initialization completed - icon size:" << d->itemIconSize;
 }
 
 IconItemDelegate::~IconItemDelegate()
 {
     Q_D(IconItemDelegate);
 
+    fmDebug() << "Destroying IconItemDelegate";
+
     if (d->expandedItem) {
+        fmDebug() << "Cleaning up expanded item widget";
         d->expandedItem->setParent(nullptr);
         d->expandedItem->setCanDeferredDelete(true);
         d->expandedItem->deleteLater();
     }
+
+    fmDebug() << "IconItemDelegate destruction completed";
 }
 
 void IconItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
-
     Q_D(const IconItemDelegate);
 
     if (index == d->expandedIndex && !parent()->isSelected(index))
@@ -292,8 +303,11 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_D(IconItemDelegate);
 
+    fmDebug() << "Setting icon size by level:" << level << "current level:" << iconSizeLevel();
+
     if (level == iconSizeLevel()) {
         parent()->parent()->setIconSize(iconSizeByIconSizeLevel());
+        fmDebug() << "Icon size level unchanged, refreshing view";
         return level;
     }
 
@@ -301,9 +315,12 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
         d->currentIconSizeIndex = level;
         d->itemIconSize = iconSizeByIconSizeLevel();
         parent()->parent()->setIconSize(iconSizeByIconSizeLevel());
+
+        fmInfo() << "Icon size changed to level" << d->currentIconSizeIndex << "size:" << d->itemIconSize;
         return d->currentIconSizeIndex;
     }
 
+    fmWarning() << "Invalid icon size level:" << level << "valid range:" << minimumIconSizeLevel() << "to" << maximumIconSizeLevel();
     return d->currentIconSizeIndex;
 }
 
@@ -318,9 +335,16 @@ void IconItemDelegate::setItemMinimumWidthByWidthLevel(int level)
 {
     Q_D(IconItemDelegate);
 
+    fmDebug() << "Setting item minimum width by level:" << level << "current level:" << d->currentIconGridWidthIndex;
+
     if (level >= 0 && level < d->viewDefines.iconGridDensityCount()) {
+        int oldLevel = d->currentIconGridWidthIndex;
         d->currentIconGridWidthIndex = level;
         updateItemSizeHint();
+
+        fmInfo() << "Item width level changed from" << oldLevel << "to" << level;
+    } else {
+        fmWarning() << "Invalid width level:" << level << "valid range: 0 to" << (d->viewDefines.iconGridDensityCount() - 1);
     }
 }
 
@@ -433,16 +457,23 @@ QList<QRectF> IconItemDelegate::calFileNameRect(const QString &name, const QRect
 void IconItemDelegate::editorFinished()
 {
     FileViewHelper *viewHelper = parent();
-    if (!viewHelper)
+    if (!viewHelper) {
+        fmWarning() << "Cannot process editor finished: view helper is null";
         return;
+    }
 
     FileView *fileview = viewHelper->parent();
-    if (!fileview)
+    if (!fileview) {
+        fmWarning() << "Cannot process editor finished: file view is null";
         return;
+    }
 
     auto windowId = WorkspaceHelper::instance()->windowId(fileview);
-    if (!fileview->model())
+    if (!fileview->model()) {
+        fmWarning() << "Cannot process editor finished: file view model is null";
         return;
+    }
+
     QUrl url = fileview->model()->data(d->editingIndex, kItemUrlRole).toUrl();
     WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
 }
@@ -650,9 +681,9 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
     }
 
-    // If the filename is very long, sizeHint() will set the height of the last item to maximum 
+    // If the filename is very long, sizeHint() will set the height of the last item to maximum
     // to make the scrollbar appear on the right side.
-    // However, when the last item is not a single selection target, 
+    // However, when the last item is not a single selection target,
     // we don't need to draw the filename at maximum height
     if (!isSelected || !singleSelected) {
         qreal normalHeight = lineHeight * 2;
@@ -684,7 +715,7 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
     int lineHeight = UniversalUtils::getTextLineHeight(index, parent()->parent()->fontMetrics());
     size.setHeight(size.height() + 2 * lineHeight);
 
-    // If there is one selection and the name is very long, 
+    // If there is one selection and the name is very long,
     // set the item height to maximum for the last index to make the scrollbar appear on the right side
     if (index.isValid() && parent()->isLastIndex(index) && d->expandedItem
         && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
@@ -803,8 +834,10 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
     IconItemEditor *item = qobject_cast<IconItemEditor *>(editor);
 
-    if (!item)
+    if (!item) {
+        fmWarning() << "Editor is not an IconItemEditor, cannot set data";
         return;
+    }
 
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
     const QUrl &fileUrl = index.data(kItemUrlRole).toUrl();
@@ -822,6 +855,7 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
               << "BaseNameofrename" << index.data(kItemFileBaseNameOfRenameRole).toString()
               << "suffix" << index.data(kItemFileSuffixRole).toString()
               << "suffixofrename" << suffix;
+
     if (showSuffix) {
         QString name = index.data(kItemFileNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);
@@ -829,6 +863,8 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         item->setMaxCharSize(NAME_MAX);
         item->setText(name);
         item->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
+
+        fmDebug() << "Set editor with suffix - full name:" << name << "suffix:" << suffix;
     } else {
         item->setProperty(kEidtorShowSuffix, suffix);
         item->setMaxCharSize(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
@@ -838,6 +874,8 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
         item->setText(name);
         item->select(name);
+
+        fmDebug() << "Set editor without suffix - base name:" << name << "hidden suffix:" << suffix;
     }
 }
 

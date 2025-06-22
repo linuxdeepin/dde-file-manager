@@ -38,8 +38,10 @@ bool TrashFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
     if (target.scheme() != scheme())
         return false;
 
-    if (sources.isEmpty())
+    if (sources.isEmpty()) {
+        fmDebug() << "Trash: No source files provided for cut operation";
         return true;
+    }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
                                  windowId,
@@ -67,8 +69,12 @@ bool TrashFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
     if (sources.first().scheme() != scheme())
         return false;
     // trash sub dir file do not run
-    if (!FileUtils::isTrashRootFile(sources.first()) && !FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first())))
+    bool isTrashRoot = FileUtils::isTrashRootFile(sources.first());
+    bool isParentTrashRoot = FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
+    if (!isTrashRoot && !isParentTrashRoot) {
+        fmDebug() << "Trash: Files are not in trash root directory, operation skipped";
         return true;
+    }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,
@@ -86,8 +92,12 @@ bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
     if (sources.first().scheme() != scheme())
         return false;
     // trash sub dir file do not run
-    if (!FileUtils::isTrashRootFile(sources.first()) && !FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first())))
+    bool isTrashRoot = FileUtils::isTrashRootFile(sources.first());
+    bool isParentTrashRoot = FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
+    if (!isTrashRoot && !isParentTrashRoot) {
+        fmDebug() << "Trash: Files are not in trash root directory, delete operation skipped";
         return true;
+    }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,
@@ -113,6 +123,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
         }
     }
     if (isOpenFile) {
+        fmWarning() << "Trash: Attempting to open files in trash, showing warning dialog";
         const QString &strMsg = QObject::tr("Unable to open items in the trash, please restore it first");
         DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgWarn, strMsg);
     }
@@ -127,7 +138,7 @@ bool TrashFileHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, con
 
     if (fromUrls.first().scheme() == scheme() && to.scheme() == scheme()) {
         DFMBASE_NAMESPACE::ClipBoard::clearClipboard();
-        fmDebug() << "The trash directory does not support paste!";
+        fmDebug() << "Trash: Blocking paste operation within trash directory";
         return true;
     }
     return false;

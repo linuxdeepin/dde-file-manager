@@ -85,6 +85,7 @@ void RecoveryKeyView::showAlertMessage(const QString &text, int duration)
     }
 
     if (duration < 0) {
+        fmDebug() << "Vault: Alert message set to persistent display";
         return;
     }
 
@@ -96,6 +97,8 @@ void RecoveryKeyView::showAlertMessage(const QString &text, int duration)
 void RecoveryKeyView::buttonClicked(int index, const QString &text)
 {
     if (index == 1) {   // unlock vault
+        fmInfo() << "Vault: Unlock button clicked, starting unlock process";
+
         //! 点击解锁后，灰化解锁按钮
         emit sigBtnEnabled(1, false);
 
@@ -107,14 +110,19 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
             unlockByKey = true;
             QString encryptBaseDir = PathManager::vaultLockPath();
             QString decryptFileDir = PathManager::vaultUnlockPath();
+            fmDebug() << "Vault: Vault paths - encrypted:" << encryptBaseDir << "decrypted:" << decryptFileDir;
+
             bool result = FileEncryptHandle::instance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
+            fmDebug() << "Vault: Unlock operation result:" << result;
             handleUnlockVault(result);
         } else {
+            fmWarning() << "Vault: Recovery key validation failed";
             showAlertMessage(tr("Wrong recovery key"));
         }
         emit sigBtnEnabled(1, true);
         return;
     } else {
+        fmDebug() << "Vault: Cancel button clicked, closing dialog";
         emit sigCloseDialog();
     }
 }
@@ -122,6 +130,7 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
 int RecoveryKeyView::afterRecoveryKeyChanged(QString &str)
 {
     if (str.isEmpty()) {
+        fmDebug() << "Vault: Recovery key is empty, returning position -1";
         return -1;
     }
 
@@ -198,6 +207,7 @@ void RecoveryKeyView::recoveryKeyChanged()
         recoveryKeyEdit->setPlainText(key);
         textCursor.setPosition(position - (length - maxLength));
         recoveryKeyEdit->setTextCursor(textCursor);
+        fmWarning() << "Vault: Recovery key truncated from" << length << "to" << maxLength << "characters";
 
         recoveryKeyEdit->blockSignals(false);
         return;
@@ -217,6 +227,7 @@ void RecoveryKeyView::handleUnlockVault(bool result)
 {
     if (unlockByKey) {
         if (result) {
+            fmDebug() << "Vault: Vault unlocked successfully by recovery key";
             //! success
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
                                                      VaultHelper::instance()->rootUrl());
@@ -224,6 +235,7 @@ void RecoveryKeyView::handleUnlockVault(bool result)
             VaultAutoLock::instance()->slotUnlockVault(0);
             emit sigCloseDialog();
         } else {
+            fmCritical() << "Vault: Failed to unlock vault with recovery key";
             //! others
             QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);

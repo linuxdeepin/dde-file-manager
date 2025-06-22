@@ -20,12 +20,14 @@ static const char *const kWorkSpaceScene = "WorkspaceMenu";
 
 AbstractMenuScene *VaultMenuSceneCreator::create()
 {
+    fmDebug() << "Vault: Creating VaultMenuScene";
     return new VaultMenuScene();
 }
 
 VaultMenuScenePrivate::VaultMenuScenePrivate(VaultMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
+    fmDebug() << "Vault: VaultMenuScenePrivate initialized";
 }
 
 QStringList VaultMenuScenePrivate::emptyMenuActionRule()
@@ -71,8 +73,10 @@ QStringList VaultMenuScenePrivate::normalMenuActionRule()
 void VaultMenuScenePrivate::filterMenuAction(QMenu *menu, const QStringList &actions)
 {
     QList<QAction *> actionlist = menu->actions();
-    if (actionlist.isEmpty())
+    if (actionlist.isEmpty()) {
+        fmDebug() << "Vault: Menu has no actions to filter";
         return;
+    }
 
     for (auto act : actionlist) {
         if (act->isSeparator())
@@ -110,6 +114,7 @@ VaultMenuScene::VaultMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new VaultMenuScenePrivate(this))
 {
+    fmDebug() << "Vault: VaultMenuScene initialized";
 }
 
 QString VaultMenuScene::name() const
@@ -119,6 +124,8 @@ QString VaultMenuScene::name() const
 
 bool VaultMenuScene::initialize(const QVariantHash &params)
 {
+    fmDebug() << "Vault: Initializing vault menu scene with params count:" << params.size();
+
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -128,6 +135,12 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    fmDebug() << "Vault: Current dir:" << d->currentDir.toString();
+    fmDebug() << "Vault: Selected files count:" << d->selectFiles.size();
+    fmDebug() << "Vault: On desktop:" << d->onDesktop;
+    fmDebug() << "Vault: Is empty area:" << d->isEmptyArea;
+    fmDebug() << "Vault: Window ID:" << d->windowId;
+
     if (!d->initializeParamsIsValid()) {
         fmWarning() << "Vault: menu scene:" << name() << " init failed.";
         return false;
@@ -135,12 +148,19 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
 
     if (d->selectFiles.isEmpty() && d->currentDir.isValid()) {
         d->selectFiles << d->currentDir;
+        fmDebug() << "Vault: Added current directory to selected files";
     }
 
     QList<AbstractMenuScene *> currentScene;
-    if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkSpaceScene))
+    if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkSpaceScene)) {
         currentScene.append(workspaceScene);
+        fmDebug() << "Vault: Workspace scene added to subscenes";
+    } else {
+        fmWarning() << "Vault: Failed to create workspace scene";
+    }
+
     setSubscene(currentScene);
+    fmDebug() << "Vault: Subscenes set, count:" << currentScene.size();
 
     // 初始化所有子场景
     return AbstractMenuScene::initialize(params);
@@ -148,16 +168,24 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
 
 AbstractMenuScene *VaultMenuScene::scene(QAction *action) const
 {
-    if (!action)
+    fmDebug() << "Vault: Getting scene for action:" << (action ? action->text() : "null");
+
+    if (!action) {
+        fmDebug() << "Vault: Action is null, returning null scene";
         return nullptr;
+    }
 
     return AbstractMenuScene::scene(action);
 }
 
 bool VaultMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    fmDebug() << "Vault: Creating vault menu";
+
+    if (!parent) {
+        fmWarning() << "Vault: Parent menu is null";
         return false;
+    }
 
     // 创建子场景菜单
     return AbstractMenuScene::create(parent);
@@ -167,8 +195,10 @@ void VaultMenuScene::updateState(QMenu *parent)
 {
     AbstractMenuScene::updateState(parent);
     if (d->isEmptyArea) {
+        fmDebug() << "Vault: Filtering menu for empty area";
         d->filterMenuAction(parent, d->emptyMenuActionRule());
     } else {
+        fmDebug() << "Vault: Filtering menu for normal area";
         d->filterMenuAction(parent, d->normalMenuActionRule());
     }
 }

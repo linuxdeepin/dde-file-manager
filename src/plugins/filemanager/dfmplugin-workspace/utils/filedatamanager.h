@@ -42,7 +42,6 @@ public:
 public Q_SLOTS:
     void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
     void onHandleFileDeleted(const QUrl url);
-    void removeCachedMnts(const QString &id);
 
 private:
     explicit FileDataManager(QObject *parent = nullptr);

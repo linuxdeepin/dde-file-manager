@@ -45,12 +45,6 @@ void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible
     SearchEventCaller::sendShowAdvanceSearchBar(winId, visible);
 }
 
-void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &u)
-{
-    if (u.scheme() != SearchHelper::scheme())
-        SearchEventReceiver::handleStopSearch(winId);
-}
-
 void SearchEventReceiver::handleAddressInputStr(quint64 windId, QString *str)
 {
     if (str->startsWith("search:?") && !str->contains("winId=")) {

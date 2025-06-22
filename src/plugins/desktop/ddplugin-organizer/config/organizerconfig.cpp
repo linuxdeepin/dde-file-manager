@@ -88,11 +88,15 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
     Q_ASSERT(qApp->thread() == thread());
 
     auto configPath = path();
-    fmDebug() << "OrganizerConfig: file path" << configPath;
+    fmDebug() << "OrganizerConfig initializing with path:" << configPath;
 
     QFileInfo configFile(configPath);
-    if (!configFile.exists())
-        configFile.absoluteDir().mkpath(".");
+    if (!configFile.exists()) {
+        fmInfo() << "Config file does not exist, creating directory structure";
+        if (!configFile.absoluteDir().mkpath(".")) {
+            fmCritical() << "Failed to create config directory:" << configFile.absoluteDir().path();
+        }
+    }
 
     d->settings = new QSettings(configPath, QSettings::IniFormat);
 
@@ -137,10 +141,15 @@ QList<QSize> OrganizerConfig::surfaceSizes()
     for (auto key : d->settings->allKeys()) {
         auto val = d->settings->value(key).toString();
         QStringList vals = val.split(":");
-        if (vals.count() < 2)
+        if (vals.count() < 2) {
+            fmWarning() << "Invalid screen resolution format for key" << key << ":" << val;
             continue;
-        ret.append({ vals.at(0).toInt(), vals.at(1).toInt() });
+        }
+        QSize size(vals.at(0).toInt(), vals.at(1).toInt());
+        ret.append(size);
+        fmDebug() << "Loaded screen size for" << key << ":" << size;
     }
+
     d->settings->endGroup();
     return ret;
 }
@@ -222,8 +231,11 @@ CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString
     d->settings->endGroup();
 
     if (key != base->key || base->key.isEmpty() || base->name.isEmpty()) {
-        fmWarning() << "invalid collection base" << key << base->key;
+        fmWarning() << "Invalid collection base data - expected key:" << key
+                    << "actual key:" << base->key << "name:" << base->name;
         base.clear();
+    } else {
+        fmDebug() << "Loaded collection base:" << base->name << "with" << base->items.size() << "items";
     }
     return base;
 }
@@ -345,6 +357,7 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
     d->settings->remove(kGroupCollectionStyle);
     d->settings->beginGroup(kGroupCollectionStyle);
 
+    int validCount = 0;
     for (auto iter = styles.begin(); iter != styles.end(); ++iter) {
         if (iter->key.isEmpty())
             continue;

@@ -171,6 +171,7 @@ void AdvanceSearchBarPrivate::initConnection()
 void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
 {
     if (!contains(url)) {
+        fmDebug() << "URL not found in cache, resetting form";
         q->resetForm();
         return;
     }
@@ -195,6 +196,9 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
 
     blockSignals(true);
     FilterData filter = filterInfoCache[url];
+
+    fmDebug() << "Applying cached filter data for URL:" << url.toString();
+
     // 搜索范围
     const auto &searchRange = filter[kSearchRange];
     asbCombos[kSearchRange]->setCurrentIndex(searchRange.toBool() ? 0 : 1);
@@ -203,6 +207,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     const auto &fileType = filter[kFileType];
     if (fileType.isValid()) {
         asbCombos[kFileType]->setCurrentText(fileType.toString());
+        fmDebug() << "Set file type filter to:" << fileType.toString();
     } else {
         asbCombos[kFileType]->setCurrentIndex(0);
     }
@@ -212,6 +217,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     if (sizeRange.isValid() && sizeRange.canConvert<QPair<quint64, quint64>>()) {
         auto range = sizeRange.value<QPair<quint64, quint64>>();
         asbCombos[kSizeRange]->setCurrentIndex(sizeRangeMap[range]);
+        fmDebug() << "Set size range filter:" << range.first << "KB to" << range.second << "KB";
     } else {
         asbCombos[kSizeRange]->setCurrentIndex(0);
     }
@@ -221,6 +227,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     if (dateRange.isValid()) {
         int days = dateRange.toInt();
         asbCombos[kDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
+        fmDebug() << "Set date range filter to" << days << "days";
     } else {
         asbCombos[kDateRange]->setCurrentIndex(0);
     }
@@ -230,6 +237,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     if (accessDateRange.isValid()) {
         int days = accessDateRange.toInt();
         asbCombos[kAccessDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
+        fmDebug() << "Set access date range filter to" << days << "days";
     } else {
         asbCombos[kAccessDateRange]->setCurrentIndex(0);
     }
@@ -239,6 +247,7 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
     if (createDateRange.isValid()) {
         int days = createDateRange.toInt();
         asbCombos[kCreateDateRange]->setCurrentIndex(dateRangeMap.value(days, 0));
+        fmDebug() << "Set create date range filter to" << days << "days";
     } else {
         asbCombos[kCreateDateRange]->setCurrentIndex(0);
     }
@@ -249,8 +258,10 @@ void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
 
 bool AdvanceSearchBarPrivate::contains(const QUrl &url)
 {
-    if (filterInfoCache.contains(url))
+    if (filterInfoCache.contains(url)) {
+        fmDebug() << "URL found directly in cache:" << url.toString();
         return true;
+    }
 
     // If there is an entry in `filterInfoCache `that is the same as winId and targetUrl in `url`,
     // then it is considered that `filterInfoCache` contains `url`.
@@ -263,8 +274,10 @@ bool AdvanceSearchBarPrivate::contains(const QUrl &url)
         return (tmpWinId == winId && UniversalUtils::urlEquals(tmpTargetUrl, targetUrl));
     });
 
-    if (iter == keys.end())
+    if (iter == keys.end()) {
+        fmDebug() << "URL not found in cache with winId:" << winId << "targetUrl:" << targetUrl.toString();
         return false;
+    }
 
     // update and return true
     auto cache = filterInfoCache.take(*iter);
@@ -279,8 +292,12 @@ void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
     Q_ASSERT(window);
 
     const auto &url = window->currentUrl();
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Cannot save search options: invalid current URL";
         return;
+    }
+
+    fmDebug() << "Saving search options for winId:" << winId << "URL:" << url.toString();
 
     if (!currentSearchUrl.isValid() || !SearchHelper::isSearchFile(currentSearchUrl)) {
         if (!SearchHelper::isSearchFile(url)) {
@@ -295,7 +312,7 @@ void AdvanceSearchBarPrivate::saveOptions(QMap<int, QVariant> &options)
     filterInfoCache[currentSearchUrl] = options;
 }
 
-bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVariant data)
+bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVariant data)
 {
     if (!data.isValid())
         return true;
@@ -312,6 +329,8 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
         return false;
 
     const auto &filter = parseFilterData(filterData);
+
+    // 检查搜索范围过滤
     if (SearchHelper::isSearchFile(filter.currentUrl) && filter.comboValid[kSearchRange] && !filter.includeSubDir) {
         const QUrl &parentUrl = SearchHelper::searchTargetUrl(filter.currentUrl);
         QString parentPath = CustomManager::instance()->redirectedPath(parentUrl);
@@ -321,7 +340,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
         if (!parentPath.endsWith("/"))
             parentPath += '/';
 
-        QString filePath = info->pathOf(PathInfoType::kFilePath);
+        QString filePath = info->fileUrl().path();
         int index = filePath.indexOf(parentPath);
         if (index != -1) {
             int indexWithoutParent = index + parentPath.length();
@@ -331,15 +350,17 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
         }
     }
 
+    // 检查文件类型过滤
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
+        QString fileTypeStr = info->displayType();
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }
 
+    // 检查文件大小过滤
     if (filter.comboValid[kSizeRange]) {
         // note: FileSizeInKiloByteRole is the size of Byte, not KB!
-        quint64 fileSize = static_cast<quint64>(info->size());
+        quint64 fileSize = static_cast<quint64>(info->fileSize());
         quint32 blockSize = 1 << 10;
         quint64 lower = filter.sizeRange.first * blockSize;
         quint64 upper = filter.sizeRange.second * blockSize;
@@ -348,20 +369,23 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(FileInfo *info, QVarian
             return false;
     }
 
+    // 检查修改时间过滤
     if (filter.comboValid[kDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastModifiedTime());
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
 
+    // 检查访问时间过滤
     if (filter.comboValid[kAccessDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->lastReadTime());
         if (filemtime < filter.accessDateRangeStart || filemtime > filter.accessDateRangeEnd)
             return false;
     }
 
+    // 检查创建时间过滤
     if (filter.comboValid[kCreateDateRange]) {
-        QDateTime filemtime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        QDateTime filemtime = QDateTime::fromSecsSinceEpoch(info->createTime());
         if (filemtime < filter.createDateRangeStart || filemtime > filter.createDateRangeEnd)
             return false;
     }
@@ -506,12 +530,17 @@ void AdvanceSearchBar::onResetButtonPressed()
 
 void AdvanceSearchBar::hideEvent(QHideEvent *event)
 {
+    fmDebug() << "AdvanceSearchBar hidden, cleaning up resources";
+
     auto winId = FMWindowsIns.findWindowId(this);
     auto window = FMWindowsIns.findWindowById(winId);
     if (window && !window->isMinimized()) {
+        fmDebug() << "Resetting form and clearing cache on hide";
         resetForm();
         d->filterInfoCache.clear();
         d->currentSearchUrl = QUrl();
+    } else {
+        fmDebug() << "Window minimized or not found, skipping cleanup";
     }
 
     QScrollArea::hideEvent(event);

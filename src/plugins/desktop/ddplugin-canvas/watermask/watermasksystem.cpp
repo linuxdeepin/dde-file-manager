@@ -65,13 +65,18 @@ bool WatermaskSystem::showLicenseState()
     fmInfo() << "check uos Edition" << ret;
 #endif
 
+    fmDebug() << "License state should be shown:" << ret;
     return ret;
 }
 
 void WatermaskSystem::getEditonResource(const QString &root, QString *logo, QString *text)
 {
-    if (root.isEmpty() || (logo == nullptr && text == nullptr))
+    if (root.isEmpty() || (logo == nullptr && text == nullptr)) {
+        fmWarning() << "Invalid parameters for getEditonResource, root:" << root;
         return;
+    }
+
+    fmDebug() << "Getting edition resources for root:" << root;
 
     QString lang = QLocale::system().name().simplified();
     const QString cn = "zh_CN";
@@ -106,12 +111,18 @@ void WatermaskSystem::getEditonResource(const QString &root, QString *logo, QStr
 
     if (text)
         *text = tmpText;
+
+    fmDebug() << "Edition resources found - logo:" << tmpLogo << "text:" << tmpText;
 }
 
 QPixmap WatermaskSystem::maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio)
 {
-    if (uri.isEmpty())
+    if (uri.isEmpty()) {
+        fmWarning() << "Empty URI provided for mask pixmap";
         return {};
+    }
+
+    fmDebug() << "Loading mask pixmap from:" << uri << "size:" << size << "pixelRatio:" << pixelRatio;
 
     QImageReader maskIimageReader(uri);
     const QSize &maskSize = size * pixelRatio;
@@ -120,15 +131,20 @@ QPixmap WatermaskSystem::maskPixmap(const QString &uri, const QSize &size, qreal
 
     QPixmap maskPixmap = QPixmap::fromImage(maskIimageReader.read());
     maskPixmap.setDevicePixelRatio(pixelRatio);
+
+    fmDebug() << "Successfully loaded mask pixmap from:" << uri;
     return maskPixmap;
 }
 
 void WatermaskSystem::getResource(const QString &root, const QString &lang, QString *logo, QString *text)
 {
-    if (root.isEmpty() || (logo == nullptr && text == nullptr))
+    if (root.isEmpty() || (logo == nullptr && text == nullptr)) {
+        fmWarning() << "Invalid parameters for getResource, root:" << root;
         return;
+    }
 
     QString path = QString("/usr/share/deepin/dde-desktop-watermask/") + root;
+    fmDebug() << "Getting resource from path:" << path << "language:" << lang;
 
     QString tmpLogo;
     QString tmpText;
@@ -160,6 +176,8 @@ void WatermaskSystem::stackUnder(QWidget *w)
 
 void WatermaskSystem::updatePosition()
 {
+    fmDebug() << "Updating watermask position";
+
     {
         int right = DConfigManager::instance()->value(kConfName, "logoRight", 160).toInt();
         int bottom = DConfigManager::instance()->value(kConfName, "logoBottom", 98).toInt();
@@ -168,6 +186,8 @@ void WatermaskSystem::updatePosition()
         int x = pSize.width() - right - logoLabel->width();
         int y = pSize.height() - bottom - logoLabel->height();
         logoLabel->move(x, y);
+
+        fmDebug() << "Logo position updated to:" << QPoint(x, y) << "parent size:" << pSize;
     }
 
     QPoint org = logoLabel->geometry().topLeft();
@@ -183,6 +203,8 @@ void WatermaskSystem::updatePosition()
         int x = org.x() + offsetX;
         int y = org.y() + offsetY;
         textLabel->move(x, y);
+
+        fmDebug() << "Text position updated to:" << QPoint(x, y) << "size:" << QSize(w, h);
     }
 
     emit showedOn(org);
@@ -190,28 +212,40 @@ void WatermaskSystem::updatePosition()
 
 void WatermaskSystem::findResource(const QString &dirPath, const QString &lang, QString *logo, QString *text)
 {
-    if (dirPath.isEmpty() || (logo == nullptr && text == nullptr))
+    if (dirPath.isEmpty() || (logo == nullptr && text == nullptr)) {
+        fmWarning() << "Invalid parameters for findResource, dirPath:" << dirPath;
         return;
+    }
+
+    fmDebug() << "Finding resources in directory:" << dirPath << "language:" << lang;
 
     if (logo) {
         QString path = lang.isEmpty() ? QString("logo.svg") : QString("logo_%0.svg").arg(lang);
         QFileInfo file(dirPath + "/" + path);
-        if (file.isReadable())
+        if (file.isReadable()) {
             *logo = file.absoluteFilePath();
+            fmDebug() << "Found logo resource:" << *logo;
+        } else {
+            fmDebug() << "Logo resource not found:" << file.absoluteFilePath();
+        }
     }
 
     if (text) {
         QString path = lang.isEmpty() ? QString("label.svg") : QString("label_%0.svg").arg(lang);
         QFileInfo file(dirPath + "/" + path);
-        if (file.isReadable())
+        if (file.isReadable()) {
             *text = file.absoluteFilePath();
+            fmDebug() << "Found text resource:" << *text;
+        } else {
+            fmDebug() << "Text resource not found:" << file.absoluteFilePath();
+        }
     }
 }
 
 void WatermaskSystem::stateChanged(int state, int prop)
 {
     bool showSate = showLicenseState();
-    fmInfo() << "reply ActiveState is" << state << prop << "show" << showSate <<  QLocale::system().name().simplified() << this;
+    fmInfo() << "License state changed - state:" << state << "property:" << prop << "showState:" << showSate << "locale:" << QLocale::system().name().simplified();
     static QMap<int, QString> docs = {
         {DeepinLicenseHelper::LicenseProperty::Secretssecurity, QString("secretssecurity")},
         {DeepinLicenseHelper::LicenseProperty::Government, QString("government")},
@@ -227,6 +261,7 @@ void WatermaskSystem::stateChanged(int state, int prop)
 
     if (state == DeepinLicenseHelper::Authorized) {
         const QString doc = docs.value(prop, QString(kDefaults));
+        fmInfo() << "System is authorized, using document type:" << doc;
 
         // find editon
         QString logo;
@@ -237,6 +272,8 @@ void WatermaskSystem::stateChanged(int state, int prop)
         if (showSate)
             textLabel->setPixmap(maskPixmap(text, textLabel->size(), textLabel->devicePixelRatioF()));
     } else {
+        fmInfo() << "System is not authorized, state:" << state;
+
         QString logo;
         getEditonResource(QString(kDefaults), &logo, nullptr);
         logoLabel->setPixmap(maskPixmap(logo, logoLabel->size(), logoLabel->devicePixelRatioF()));
@@ -248,15 +285,17 @@ void WatermaskSystem::stateChanged(int state, int prop)
             case DeepinLicenseHelper::TrialExpired: {
                 textLabel->setText(tr("Not authorized"));
                 textLabel->setObjectName(tr("Not authorized"));
+                fmInfo() << "Set unauthorized text for state:" << state;
             }
                 break;
             case DeepinLicenseHelper::TrialAuthorized:{
                 textLabel->setText(tr("In trial period"));
                 textLabel->setObjectName(tr("In trial period"));
+                fmInfo() << "Set trial period text";
             }
                 break;
             default:
-                fmWarning() << "unkown active state:" << state;
+                fmWarning() << "Unknown license state:" << state;
             }
         }
     }
@@ -264,6 +303,7 @@ void WatermaskSystem::stateChanged(int state, int prop)
     logoLabel->setVisible(true);
     textLabel->setVisible(showSate);
 
+    fmInfo() << "Watermask visibility updated - logo: true, text:" << showSate;
     emit showedOn(logoLabel->geometry().topLeft());
 }
 

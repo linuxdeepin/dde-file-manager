@@ -18,8 +18,10 @@ SideBarManager *SideBarManager::instance()
 
 void SideBarManager::runCd(SideBarItem *item, quint64 windowId)
 {
-    if (!item)
+    if (!item) {
+        fmWarning() << "Cannot run cd operation, item is null";
         return;
+    }
 
     auto url = item->url();
     auto info = item->itemInfo();
@@ -33,17 +35,23 @@ void SideBarManager::runCd(SideBarItem *item, quint64 windowId)
 
 void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const QPoint &globalPos)
 {
-    if (!SideBarHelper::contextMenuEnabled)
+    if (!SideBarHelper::contextMenuEnabled) {
+        fmDebug() << "Context menu is disabled";
         return;
+    }
 
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
 
-    if (!item || separatorItem)
+    if (!item || separatorItem) {
+        fmWarning() << "Cannot show context menu, invalid item or separator item";
         return;
+    }
 
     auto url = item->url();
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Cannot show context menu, invalid URL:" << url;
         return;
+    }
 
     auto info = item->itemInfo();
     if (info.contextMenuCb) {
@@ -55,13 +63,17 @@ void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const Q
 
 void SideBarManager::runRename(SideBarItem *item, quint64 windowId, const QString &name)
 {
-    if (!item)
+    if (!item) {
+        fmWarning() << "Cannot run rename operation, item is null";
         return;
+    }
 
     auto url = item->url();
     auto info = item->itemInfo();
     if (info.renameCb) {
         info.renameCb(windowId, url, name);
+    } else {
+        fmWarning() << "No rename callback available for item:" << url;
     }
 }
 

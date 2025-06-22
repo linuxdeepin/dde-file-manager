@@ -65,6 +65,7 @@ DisplayConfig::DisplayConfig(QObject *parent)
 
     QFileInfo configFile(configPath);
     if (!configFile.exists()) {
+        fmInfo() << "Config file does not exist, creating directory:" << configFile.absoluteDir().path();
         configFile.absoluteDir().mkpath(".");
     }
 
@@ -94,9 +95,9 @@ DisplayConfig::~DisplayConfig()
         workThread->quit();
         int wait = 5;
         while (workThread->isRunning() && wait--) {
-            fmInfo() << "wait DisplayConfig thread exit" << wait;
+            fmDebug() << "Waiting for DisplayConfig thread to exit, attempts left:" << wait;
             bool exited = workThread->wait(100);
-            fmInfo() << "DisplayConfig thread exited:" << exited;
+            fmDebug() << "DisplayConfig thread exited:" << exited;
         }
     }
 
@@ -140,25 +141,31 @@ bool DisplayConfig::setProfile(const QList<QString> &profile)
     // save
     if (!values.isEmpty()) {
         setValues(kKeyProfile, values);
+        fmDebug() << "Profile saved successfully with" << values.size() << "valid entries";
         return true;
     }
 
+    fmWarning() << "No valid profile entries to save";
     return false;
 }
 
 QHash<QString, QPoint> DisplayConfig::coordinates(const QString &key)
 {
     QHash<QString, QPoint> ret;
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmWarning() << "Empty key provided for coordinates lookup";
         return ret;
+    }
 
     QMutexLocker lk(&mtxLock);
     settings->beginGroup(key);
     auto posKeys = settings->childKeys();
     for (const QString &posKey : posKeys) {
         QPoint pos;
-        if (!covertPostion(posKey, pos))
+        if (!covertPostion(posKey, pos)) {
+            fmDebug() << "Invalid position format:" << posKey;
             continue;
+        }
         const QString &strValue = settings->value(posKey).toString();
         if (strValue.isEmpty())
             continue;
@@ -166,13 +173,16 @@ QHash<QString, QPoint> DisplayConfig::coordinates(const QString &key)
     }
     settings->endGroup();
 
+    fmDebug() << "Loaded" << ret.size() << "coordinates for key:" << key;
     return ret;
 }
 
 bool DisplayConfig::setCoordinates(const QString &key, const QHash<QString, QPoint> &pos)
 {
-    if (key.isEmpty())
+    if (key.isEmpty()) {
+        fmWarning() << "Empty key provided for setCoordinates";
         return false;
+    }
 
     // clear old data
     remove(key, QString());
@@ -201,8 +211,10 @@ void DisplayConfig::sortMethod(int &role, Qt::SortOrder &order)
     {
         bool ok = false;
         role = settings->value(kKeySortBy).toInt(&ok);
-        if (!ok)
+        if (!ok) {
             role = -1;
+            fmDebug() << "Sort role not found or invalid, using default";
+        }
     }
 
     // sort order
@@ -212,12 +224,17 @@ void DisplayConfig::sortMethod(int &role, Qt::SortOrder &order)
     }
 
     settings->endGroup();
+    fmDebug() << "Retrieved sort method - role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
 }
 
 bool DisplayConfig::setSortMethod(const int &role, const Qt::SortOrder &order)
 {
-    if (role < 0)
+    if (role < 0) {
+        fmWarning() << "Invalid sort role provided:" << role;
         return false;
+    }
+
+    fmInfo() << "Setting sort method - role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
 
     QHash<QString, QVariant> values;
     values.insert(kKeySortBy, role);
@@ -256,8 +273,12 @@ int DisplayConfig::iconLevel()
 
 bool DisplayConfig::setIconLevel(int lv)
 {
-    if (lv < 0)
+    if (lv < 0) {
+        fmWarning() << "Invalid icon level provided:" << lv;
         return false;
+    }
+
+    fmInfo() << "Setting icon level to:" << lv;
 
     QHash<QString, QVariant> values;
     values.insert(kKeyIconLevel, lv);
@@ -327,17 +348,23 @@ QString DisplayConfig::path() const
 bool DisplayConfig::covertPostion(const QString &strPos, QPoint &pos)
 {
     auto coords = strPos.split("_");
-    if (coords.size() != 2)
+    if (coords.size() != 2) {
+        fmDebug() << "Invalid position format, expected 'x_y':" << strPos;
         return false;
+    }
 
     bool ok = false;
     int x = coords.value(0).toInt(&ok);
-    if (!ok)
+    if (!ok) {
+        fmDebug() << "Invalid x coordinate in position:" << strPos;
         return false;
+    }
 
     int y = coords.value(1).toInt(&ok);
-    if (!ok)
+    if (!ok) {
+        fmDebug() << "Invalid y coordinate in position:" << strPos;
         return false;
+    }
 
     pos = QPoint(x, y);
     return true;
@@ -345,8 +372,10 @@ bool DisplayConfig::covertPostion(const QString &strPos, QPoint &pos)
 
 QString DisplayConfig::covertPostion(const QPoint &pos)
 {
-    if (pos.x() < 0 || pos.y() < 0)
+    if (pos.x() < 0 || pos.y() < 0) {
+        fmDebug() << "Invalid position coordinates:" << pos;
         return QString();
+    }
 
     return QString("%0_%1").arg(pos.x()).arg(pos.y());
 }

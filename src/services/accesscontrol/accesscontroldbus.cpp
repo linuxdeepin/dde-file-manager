@@ -65,17 +65,20 @@ AccessControlDBus::~AccessControlDBus()
 void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString &newPwd)
 {
     if (!checkAuthentication(kPolicyKitDiskPwdActionId)) {
-        fmDebug() << "Check authentication failed";
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Authentication failed for disk password change";
         emit DiskPasswordChecked(kAuthenticationFailed);
         return;
     }
 
     const auto &devList = DeviceUtils::encryptedDisks();
     if (devList.isEmpty()) {
+        fmInfo() << "[AccessControlDBus::ChangeDiskPassword] No encrypted disks found, operation completed";
         emit DiskPasswordChecked(kNoError);
         QTimer::singleShot(500, [this] { emit DiskPasswordChanged(kAccessDiskFailed); });
         return;
     }
+
+    fmInfo() << "[AccessControlDBus::ChangeDiskPassword] Starting password change for" << devList.size() << "encrypted disks";
 
     QString oldPwdDec = FileUtils::decryptString(oldPwd);
     QString newPwdDec = FileUtils::decryptString(newPwd);
@@ -90,17 +93,27 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
         ret = Utils::checkDiskPassword(&cd, tmpOldPwd.data(), devList[i].toLocal8Bit().data());
 
         if (ret == kPasswordWrong && i == 0) {
+            fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Password verification failed for first device:" << devList[i];
             emit DiskPasswordChecked(kPasswordWrong);
             return;
         } else if (ret == kPasswordWrong) {
+            fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Password inconsistency detected at device:" << devList[i];
             ret = kPasswordInconsistent;
             break;
         } else if (ret == kNoError) {
-            if (i == 0)
+            if (i == 0) {
+                fmInfo() << "[AccessControlDBus::ChangeDiskPassword] Password verification successful for first device";
                 emit DiskPasswordChecked(kNoError);
+            }
 
             ret = Utils::changeDiskPassword(cd, tmpOldPwd.data(), tmpNewPwd.data());
+            if (ret == kNoError) {
+                fmInfo() << "[AccessControlDBus::ChangeDiskPassword] Password changed successfully for device:" << devList[i];
+            } else {
+                fmCritical() << "[AccessControlDBus::ChangeDiskPassword] Failed to change password for device:" << devList[i] << "error code:" << ret;
+            }
         } else {
+            fmCritical() << "[AccessControlDBus::ChangeDiskPassword] Failed to check password for device:" << devList[i] << "error code:" << ret;
             break;
         }
 
@@ -112,11 +125,18 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
 
     // restore password
     if (ret != kNoError && !successList.isEmpty()) {
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Rolling back password changes for" << successList.size() << "devices due to error";
         for (const auto &device : successList) {
             struct crypt_device *cd = nullptr;
             Utils::checkDiskPassword(&cd, tmpNewPwd.data(), device.toLocal8Bit().data());
             Utils::changeDiskPassword(cd, tmpNewPwd.data(), tmpOldPwd.data());
         }
+    }
+
+    if (ret == kNoError) {
+        fmInfo() << "[AccessControlDBus::ChangeDiskPassword] Password change completed successfully for all devices";
+    } else {
+        fmCritical() << "[AccessControlDBus::ChangeDiskPassword] Password change operation failed with error code:" << ret;
     }
 
     emit DiskPasswordChanged(ret);
@@ -125,26 +145,28 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
 bool AccessControlDBus::Chmod(const QString &path, uint mode)
 {
     if (!checkAuthentication(kPolicyKitChmodActionId)) {
-        fmWarning() << "authenticate failed to change permission of" << path;
+        fmWarning() << "[AccessControlDBus::Chmod] Authentication failed for path:" << path;
         return false;
     }
 
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "[AccessControlDBus::Chmod] Empty path provided";
         return false;
+    }
 
     QFile f(path);
     if (!f.exists()) {
-        fmWarning() << "file not exists" << path;
+        fmWarning() << "[AccessControlDBus::Chmod] File does not exist:" << path;
         return false;
     }
 
-    fmInfo() << "start changing the access permission of" << path << mode;
+    fmInfo() << "[AccessControlDBus::Chmod] Changing access permission for path:" << path << "to mode:" << QString::number(mode, 8);
     int ret = ::Utils::setFileMode(path.toStdString().c_str(), mode);
     if (ret != 0) {
-        fmWarning() << "chmod for" << path << "failed due to" << strerror(errno);
+        fmCritical() << "[AccessControlDBus::Chmod] Failed to change permission for path:" << path << "error:" << strerror(errno);
         return false;
     }
-    fmInfo() << "access permission for" << path << "is modified successfully";
+    fmInfo() << "[AccessControlDBus::Chmod] Access permission changed successfully for path:" << path;
     return true;
 }
 
@@ -153,7 +175,7 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
     DFM_MOUNT_USE_NS
     auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
     if (!dev) {
-        fmWarning() << "cannot craete device handler for " << deviceId;
+        fmWarning() << "[AccessControlDBus::onBlockDevAdded] Cannot create device handler for device ID:" << deviceId;
         return;
     }
 
@@ -172,11 +194,17 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
     int policy = globalDevPolicies.value(kTypeOptical).second;
 
     if (policy == kPolicyDisable) {
+        fmInfo() << "[AccessControlDBus::onBlockDevAdded] Applying disable policy for optical device:" << deviceId;
         QtConcurrent::run([deviceId, dev]() {
             int retry = 5;
             while (retry-- && !dev->powerOff()) {
-                fmWarning() << "poweroff device failed: " << deviceId << dev->lastError().message;
+                fmWarning() << "[AccessControlDBus::onBlockDevAdded] Failed to power off optical device:" << deviceId << "error:" << dev->lastError().message << "retries left:" << retry;
                 QThread::msleep(500);
+            }
+            if (retry < 0) {
+                fmCritical() << "[AccessControlDBus::onBlockDevAdded] Failed to power off optical device after all retries:" << deviceId;
+            } else {
+                fmInfo() << "[AccessControlDBus::onBlockDevAdded] Successfully powered off optical device:" << deviceId;
             }
         });
     }
@@ -187,9 +215,11 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
     DFM_MOUNT_USE_NS
     auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
     if (!dev || dev->hintSystem()) {
-        fmWarning() << "cannot create device or device is system disk" << deviceId;
+        fmWarning() << "[AccessControlDBus::onBlockDevMounted] Cannot create device handler or device is system disk, device ID:" << deviceId;
         return;
     }
+
+    fmInfo() << "[AccessControlDBus::onBlockDevMounted] Processing mounted device:" << deviceId << "at mount point:" << mountPoint;
 
     if (globalDevPolicies.contains(kTypeBlock)) {
         QString devDesc { dev->device() };
@@ -197,10 +227,15 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
         QString source = globalDevPolicies.value(kTypeBlock).first;
         int policy = globalDevPolicies.value(kTypeBlock).second;
         QString fs { dev->fileSystem() };
+        
+        fmInfo() << "[AccessControlDBus::onBlockDevMounted] Current access mode:" << mode << "policy:" << policy << "for device:" << devDesc;
+        
         if (mode != policy) {
             if (policy == kPolicyDisable) {
+                fmInfo() << "[AccessControlDBus::onBlockDevMounted] Device should be disabled, unmounting:" << devDesc;
                 // unmount
             } else {
+                fmInfo() << "[AccessControlDBus::onBlockDevMounted] Remounting device with policy:" << policy << "from source:" << source;
                 // remount
                 QtConcurrent::run([devDesc, mountPoint, fs, policy, source]() {
                     int ret = ::mount(devDesc.toLocal8Bit().data(),
@@ -208,10 +243,11 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
                                       fs.toLocal8Bit().data(),
                                       MS_REMOUNT | (policy == kPolicyRonly ? MS_RDONLY : 0),
                                       nullptr);
-                    if (ret == 0)
-                        fmDebug() << "remount with policy " << policy << " from " << source;
-                    else
-                        fmDebug() << "remount with policy " << policy << " failed, errno: " << errno << ", errstr: " << strerror(errno);
+                    if (ret == 0) {
+                        fmInfo() << "[AccessControlDBus::onBlockDevMounted] Successfully remounted device:" << devDesc << "with policy:" << policy << "from source:" << source;
+                    } else {
+                        fmCritical() << "[AccessControlDBus::onBlockDevMounted] Failed to remount device:" << devDesc << "with policy:" << policy << "errno:" << errno << "error:" << strerror(errno);
+                    }
                 });
             }
         }
@@ -220,9 +256,11 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
     }
 
     QStringList mountOpts = dev->getProperty(Property::kBlockUserspaceMountOptions).toStringList();
-    fmDebug() << "mount opts: ==>" << mountOpts << deviceId;
-    if (mountOpts.contains("uhelper=udisks2"))   // only chmod for those devices mounted by udisks
+    fmDebug() << "[AccessControlDBus::onBlockDevMounted] Mount options for device:" << deviceId << "options:" << mountOpts;
+    if (mountOpts.contains("uhelper=udisks2")) {   // only chmod for those devices mounted by udisks
+        fmInfo() << "[AccessControlDBus::onBlockDevMounted] Setting full access permissions for udisks2 mounted device at:" << mountPoint;
         ::Utils::setFileMode(mountPoint, ACCESSPERMS);   // 777
+    }
 }
 
 void AccessControlDBus::initConnect()
@@ -237,14 +275,20 @@ void AccessControlDBus::initConnect()
 void AccessControlDBus::changeMountedOnInit()
 {
     // 在启动系统的时候对已挂载的设备执行一次策略变更（设备的接入先于 daemon 的启动）
-    fmDebug() << "start change access on init...";
-    if (globalDevPolicies.contains(kTypeBlock))
+    fmInfo() << "[AccessControlDBus::changeMountedOnInit] Starting access control policy application for mounted devices";
+    if (globalDevPolicies.contains(kTypeBlock)) {
+        fmInfo() << "[AccessControlDBus::changeMountedOnInit] Applying block device policies";
         changeMountedBlock(globalDevPolicies.value(kTypeBlock).second, "");
-    if (globalDevPolicies.contains(kTypeOptical))
+    }
+    if (globalDevPolicies.contains(kTypeOptical)) {
+        fmInfo() << "[AccessControlDBus::changeMountedOnInit] Applying optical device policies";
         changeMountedOptical(globalDevPolicies.value(kTypeOptical).second, "");
-    if (globalDevPolicies.contains(kTypeProtocol))
+    }
+    if (globalDevPolicies.contains(kTypeProtocol)) {
+        fmInfo() << "[AccessControlDBus::changeMountedOnInit] Applying protocol device policies";
         changeMountedProtocol(globalDevPolicies.value(kTypeProtocol).second, "");
-    fmDebug() << "end change access on init...";
+    }
+    fmInfo() << "[AccessControlDBus::changeMountedOnInit] Completed access control policy application for mounted devices";
 }
 
 void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
@@ -313,8 +357,12 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
     Q_UNUSED(device)
 
     // 只能主动关闭，不能主动打开；光驱只负责 DISABLE / RW
-    if (mode != kPolicyDisable)
+    if (mode != kPolicyDisable) {
+        fmInfo() << "[AccessControlDBus::changeMountedOptical] Optical device policy is not disable, no action needed";
         return;
+    }
+
+    fmInfo() << "[AccessControlDBus::changeMountedOptical] Applying disable policy to optical devices";
 
     DFM_MOUNT_USE_NS
     QStringList blockIdGroup { monitor->getDevices() };
@@ -329,16 +377,23 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
             continue;
 
         if (!dev->mountPoint().isEmpty()) {
+            fmInfo() << "[AccessControlDBus::changeMountedOptical] Unmounting optical device:" << id;
             dev->unmountAsync({}, [id, dev](bool ok, const OperationErrorInfo &err) {
                 if (!ok) {
-                    fmDebug() << "Error occured while unmount optical device: " << id << err.message;
+                    fmWarning() << "[AccessControlDBus::changeMountedOptical] Failed to unmount optical device:" << id << "error:" << err.message;
                 } else {
+                    fmInfo() << "[AccessControlDBus::changeMountedOptical] Successfully unmounted optical device:" << id;
                     QThread::msleep(500);
                     QtConcurrent::run([dev, id]() {
                         int retry = 5;
                         while (retry-- && !dev->powerOff()) {
-                            fmDebug() << "Error occured while poweroff optical device: " << id;
+                            fmWarning() << "[AccessControlDBus::changeMountedOptical] Failed to power off optical device:" << id << "retries left:" << retry;
                             QThread::msleep(500);
+                        }
+                        if (retry < 0) {
+                            fmCritical() << "[AccessControlDBus::changeMountedOptical] Failed to power off optical device after all retries:" << id;
+                        } else {
+                            fmInfo() << "[AccessControlDBus::changeMountedOptical] Successfully powered off optical device:" << id;
                         }
                     });
                 }
@@ -356,8 +411,9 @@ void AccessControlDBus::changeMountedProtocol(int mode, const QString &device)
 bool AccessControlDBus::checkAuthentication(const QString &id)
 {
     if (!PolicyKitHelper::instance()->checkAuthorization(id, message().service())) {
-        fmInfo() << "Authentication failed !!";
+        fmWarning() << "[AccessControlDBus::checkAuthentication] Authentication failed for action ID:" << id << "service:" << message().service();
         return false;
     }
+    fmInfo() << "[AccessControlDBus::checkAuthentication] Authentication successful for action ID:" << id;
     return true;
 }

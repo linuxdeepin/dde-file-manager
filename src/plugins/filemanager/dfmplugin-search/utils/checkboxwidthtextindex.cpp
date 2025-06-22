@@ -107,8 +107,11 @@ QPixmap TextIndexStatusBar::iconPixmap(const QString &iconName, int size)
 
 void TextIndexStatusBar::updateUI(Status status)
 {
-    if (!boxLayout)
+    if (!boxLayout) {
+        fmWarning() << "Cannot update TextIndex status bar UI: boxLayout is null";
         return;
+    }
+
     int index = boxLayout->indexOf(msgLabel);
     if (status == Status::Inactive || status == Status::Indexing) {
         boxLayout->setStretch(index, 1);
@@ -146,10 +149,12 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
     updateUI(status);
     switch (status) {
     case Status::Indexing:
+        fmDebug() << "Setting TextIndex status to Indexing";
         setRunning(true);
         updateIndexingProgress(0, 0);
         break;
     case Status::Completed: {
+        fmDebug() << "TextIndex completed successfully";
         setRunning(false);
         iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
         msgLabel->clear();
@@ -161,6 +166,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         break;
     }
     case Status::Failed: {
+        fmWarning() << "TextIndex failed";
         setRunning(false);
         setFormattedTextWithLink(
                 tr("Index update failed, please"),
@@ -170,6 +176,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         break;
     }
     case Status::Inactive:
+        fmDebug() << "Setting TextIndex status to Inactive";
         spinner->hide();
         spinner->stop();
         iconLabel->hide();
@@ -182,6 +189,7 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
 void TextIndexStatusBar::updateIndexingProgress(qlonglong count, qlonglong total)
 {
     if (currentStatus != Status::Indexing) {
+        fmDebug() << "Ignoring progress update: status is not Indexing";
         return;
     }
 
@@ -237,6 +245,7 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
 
     connect(SearchManager::instance(), &SearchManager::enableFullTextSearchChanged,
             this, [this](bool enable) {
+                fmInfo() << "Full text search enabled state changed to:" << enable;
                 setChecked(enable);
             });
 
@@ -262,8 +271,10 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                     // 预防在首次自动更新前执行reset时，目录还未监控
                     client->setEnable(true);
                     if (exists) {
+                        fmDebug() << "Starting TextIndex update task";
                         client->startTask(TextIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
                     } else {
+                        fmDebug() << "Starting TextIndex create task";
                         client->startTask(TextIndexClient::TaskType::Create, DFMSEARCH::Global::defaultIndexedDirectory());
                     }
                     statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
@@ -285,6 +296,8 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                     tr("Index update completed, last update time: %1").arg(time),
                     tr("Update index now"),
                     "update");
+        } else {
+            fmWarning() << "Failed to get TextIndex last update time, success:" << success;
         }
     });
 
@@ -299,8 +312,10 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                 // 初始化状态栏特定处理逻辑
                 if (checkBox->isChecked()) {
                     if (running) {
+                        fmDebug() << "TextIndex task is running, setting status to Indexing";
                         statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
                     } else {
+                        fmDebug() << "No running TextIndex task, checking if index exists";
                         // 异步检查索引是否存在，并设置上下文以指示这是初始化检查
                         currentIndexCheckContext = IndexCheckContext::InitStatus;
                         TextIndexClient::instance()->checkIndexExists();
@@ -323,7 +338,8 @@ void CheckBoxWidthTextIndex::connectToBackend()
 
     connect(client, &TextIndexClient::taskProgressChanged,
             this, [this](TextIndexClient::TaskType type, const QString &path, qlonglong count, qlonglong total) {
-                fmDebug() << "Index task changed:" << type << path << count << total;
+                fmDebug() << "TextIndex task progress changed - type:" << static_cast<int>(type)
+                          << "path:" << path << "progress:" << count << "/" << total;
                 if (shouldHandleIndexEvent(path, type)) {
                     if (statusBar->status() != TextIndexStatusBar::Status::Indexing) {
                         statusBar->setStatus(TextIndexStatusBar::Status::Indexing);
@@ -334,6 +350,8 @@ void CheckBoxWidthTextIndex::connectToBackend()
 
     connect(client, &TextIndexClient::taskFinished,
             this, [this](TextIndexClient::TaskType type, const QString &path, bool success) {
+                fmDebug() << "TextIndex task finished - type:" << static_cast<int>(type)
+                          << "path:" << path << "success:" << success;
                 if (shouldHandleIndexEvent(path, type)) {
                     statusBar->setStatus(success ? TextIndexStatusBar::Status::Completed : TextIndexStatusBar::Status::Failed);
                 }
@@ -341,6 +359,8 @@ void CheckBoxWidthTextIndex::connectToBackend()
 
     connect(client, &TextIndexClient::taskFailed,
             this, [this](TextIndexClient::TaskType type, const QString &path, const QString &error) {
+                fmWarning() << "TextIndex task failed - type:" << static_cast<int>(type)
+                            << "path:" << path << "error:" << error;
                 if (shouldHandleIndexEvent(path, type)) {
                     statusBar->setStatus(TextIndexStatusBar::Status::Failed);
                 }

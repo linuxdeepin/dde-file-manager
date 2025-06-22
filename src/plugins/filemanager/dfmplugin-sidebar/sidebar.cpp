@@ -36,7 +36,7 @@ bool SideBar::start()
 {
     QString err;
     if (!DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err)) {
-        fmDebug() << "register dconfig failed: " << err;
+        fmWarning() << "Failed to register sidebar dconfig:" << err;
         return false;
     }
 
@@ -119,7 +119,7 @@ bool SideBar::onAboutToShowSettingDialog(quint64 winId)
 {
     auto win { FMWindowsIns.findWindowById(winId) };
     if (!win) {
-        fmWarning() << "Invalid window id";
+        fmWarning() << "Invalid window id for setting dialog:" << winId;
         return false;
     }
 

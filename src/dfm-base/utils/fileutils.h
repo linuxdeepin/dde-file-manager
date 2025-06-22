@@ -97,6 +97,7 @@ public:
     static bool isFullWidthChar(const QChar ch, QChar &normalized);
     static QString makeQString(const QString::const_iterator &it, uint unicode);
     static QString symlinkTarget(const QUrl &url);
+    static QString resolveSymlink(const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

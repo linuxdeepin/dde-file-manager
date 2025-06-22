@@ -68,6 +68,7 @@ void CollectionViewMenu::emptyAreaMenu()
     }
 
     if (!canvasScene->initialize(params)) {
+        fmWarning() << "Failed to initialize canvas menu scene";
         delete canvasScene;
         return;
     }
@@ -131,6 +132,7 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     if (!canvasScene->initialize(params)) {
+        fmWarning() << "Failed to initialize canvas menu scene for normal menu";
         delete canvasScene;
         return;
     }
@@ -193,7 +195,7 @@ QWidget *CollectionViewMenu::getCanvasView()
             QString type = wid->property(DesktopFrameProperty::kPropWidgetName).toString();
             if (type == "canvas") {
                 canvas = wid;
-                fmDebug() << "CollectionViewMenu find canvas" << wid << screen;
+                fmDebug() << "Canvas found for menu operations on screen:" << screen;
                 break;
             }
         }

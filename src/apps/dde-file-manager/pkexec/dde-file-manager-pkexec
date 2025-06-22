@@ -17,9 +17,17 @@ function get_scale_factor() {
 }
 
 function run_pkexec() {
+        # 创建临时文件保存原始会话类型
+        TEMP_SESSION_FILE="/tmp/.dde-fm-session-$$"
+        echo "$XDG_SESSION_TYPE" > "$TEMP_SESSION_FILE"
+        
         xhost +SI:localuser:root
         echo "run in pkexec: $@"
-        pkexec --disable-internal-agent "$@" `id -u`
+        pkexec --disable-internal-agent "$@" `id -u` "$TEMP_SESSION_FILE"
+        
+        # 清理临时文件
+        rm -f "$TEMP_SESSION_FILE"
+        
         xhost -SI:localuser:root
         xhost
 }
@@ -29,13 +37,35 @@ function run_app() {
         user_name=$(logname)
         uid=$(id -u "$user_name")
         echo "runner uid: $uid"
+        
+        # 获取原始会话类型
+        ORIGINAL_SESSION_TYPE=""
+        TEMP_SESSION_FILE="$2"  # 第二个参数是临时文件路径
+        if [ -f "$TEMP_SESSION_FILE" ]; then
+            ORIGINAL_SESSION_TYPE=$(cat "$TEMP_SESSION_FILE")
+            echo "Read original session type: $ORIGINAL_SESSION_TYPE"
+        else
+            ORIGINAL_SESSION_TYPE="$XDG_SESSION_TYPE"
+            echo "Using current session type: $ORIGINAL_SESSION_TYPE"
+        fi
+        
         export XDG_RUNTIME_DIR=/run/user/$uid
-        export WAYLAND_DISPLAY=wayland-0
-        export DISPLAY=:0
-        export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
-        export XDG_SESSION_TYPE=wayland
-        export QT_QPA_PLATFORM=
-        export GDK_BACKEND=x11
+        
+        # Set environment variables based on session type
+        if [ "$ORIGINAL_SESSION_TYPE" == "x11" ]; then
+            export DISPLAY=:0
+            export QT_QPA_PLATFORM=xcb
+            export GDK_BACKEND=x11
+            export XDG_SESSION_TYPE=x11
+        else
+            export WAYLAND_DISPLAY=wayland-0
+            export DISPLAY=:0
+            export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
+            export XDG_SESSION_TYPE=wayland
+            export QT_QPA_PLATFORM=
+            export GDK_BACKEND=x11
+        fi
+        
         export $(dbus-launch)
 
         scale_factor=$(get_scale_factor)
@@ -44,19 +74,15 @@ function run_app() {
             export QT_SCALE_FACTOR=$scale_factor
         fi
 
-        dde-file-manager "$1" -w "$(pwd)"
+        file-manager.sh "$1" -w "$(pwd)"
 }
 
 echo "run dde-file-manager in $XDG_SESSION_TYPE"
-if [ "$XDG_SESSION_TYPE" == "x11" ];then
-        pkexec dde-file-manager "$@" -w `pwd`
-else
-        echo "current file: $0"
-        if [ x$(id -u) != "x0" ];then
-                run_pkexec "$0" "$@"
-                exit 0
-        fi
-
-        echo "run app: $@"
-        run_app "$@"
+echo "current file: $0"
+if [ x$(id -u) != "x0" ];then
+        run_pkexec "$0" "$@"
+        exit 0
 fi
+
+echo "run app: $@"
+run_app "$@"

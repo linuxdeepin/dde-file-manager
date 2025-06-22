@@ -20,7 +20,7 @@ TextIndexConfig::TextIndexConfig(QObject *parent)
 {
     QString err;
     if (!DFMBASE_NAMESPACE::DConfigManager::instance()->addConfig(Defines::DConf::kTextIndexSchema, &err))
-        fmWarning() << "load dconfiog failed: " << err;
+        fmWarning() << "TextIndexConfig: Failed to load DConfig schema:" << err;
 
     loadAllConfigs();
     setupConnections();
@@ -33,7 +33,7 @@ void TextIndexConfig::setupConnections()
     connect(m_dconfigManager, &DConfigManager::valueChanged, this,
             [this](const QString &schema, const QString &key) {
                 if (schema == Defines::DConf::kTextIndexSchema) {
-                    qDebug() << "DConfig changed for schema:" << schema << "key:" << key;
+                    fmDebug() << "TextIndexConfig: DConfig changed for schema:" << schema << "key:" << key;
                     // You could be more granular and only reload the specific key,
                     // but reloading all is simpler and often acceptable.
                     loadAllConfigs();
@@ -45,7 +45,7 @@ void TextIndexConfig::setupConnections()
 void TextIndexConfig::loadAllConfigs()
 {
     QMutexLocker locker(&m_mutex);
-    qDebug() << "Loading text index configurations...";
+    fmDebug() << "TextIndexConfig: Loading text index configurations";
 
     // Auto Index Update Interval
     m_autoIndexUpdateInterval = m_dconfigManager->value(
@@ -123,9 +123,9 @@ void TextIndexConfig::loadAllConfigs()
         m_inotifyWatchesCoefficient = DEFAULT_INOTIFY_WATCHES_COEFFICIENT;
     }
 
-    qDebug() << "Text index configurations loaded.";
+    fmDebug() << "TextIndexConfig: Text index configurations loaded successfully";
     // You might want to print the loaded values here for debugging if needed
-    // qDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
+    // fmDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
     // ... and so on
 }
 

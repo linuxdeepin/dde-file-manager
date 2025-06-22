@@ -1,3 +1,71 @@
+dde-file-manager (6.5.66) unstable; urgency=medium
+
+  * fix bugs
+  * enhance logging
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 20 Jun 2025 14:26:49 +0800
+
+dde-file-manager (6.5.65) unstable; urgency=medium
+
+  * fix some bugs. 
+
+ -- Liuyangming <liuyangming@uniontech.com>  Wed, 18 Jun 2025 18:40:08 +0800
+
+dde-file-manager (6.5.64) unstable; urgency=medium
+
+  * fix some bugs.
+
+ -- Liuyangming <liuyangming@uniontech.com>  Wed, 18 Jun 2025 11:28:55 +0800
+
+dde-file-manager (6.5.63) unstable; urgency=medium
+
+  * unknown
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 12 Jun 2025 21:25:25 +0800
+
+dde-file-manager (6.5.62) unstable; urgency=medium
+
+  * fix info and debug level logs are still printed
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 12 Jun 2025 20:36:48 +0800
+
+dde-file-manager (6.5.61) unstable; urgency=medium
+
+  * fix some bugs.
+
+ -- Liuyangming <liuyangming@uniontech.com>  Thu, 12 Jun 2025 19:10:11 +0800
+
+dde-file-manager (6.5.60) unstable; urgency=medium
+
+  * fix a full-text index update problem
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 14:50:50 +0800
+
+dde-file-manager (6.5.59) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Jun 2025 12:23:30 +0800
+
+dde-file-manager (6.5.58) unstable; urgency=medium
+
+  * fix bugs
+  * 
+
+ -- Liuyangming <liuyangming@uniontech.com>  Thu, 05 Jun 2025 21:14:11 +0800
+
+dde-file-manager (6.5.57) unstable; urgency=medium
+
+  * fix bugs 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Jun 2025 19:46:23 +0800
+
+dde-file-manager (6.5.56) unstable; urgency=medium
+
+  * fix bugs and add logs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 29 May 2025 17:38:45 +0800
+
 dde-file-manager (6.5.55) unstable; urgency=medium
 
   * fix bugs

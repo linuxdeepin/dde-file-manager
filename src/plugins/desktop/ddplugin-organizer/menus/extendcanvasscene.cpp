@@ -63,7 +63,7 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
 void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 {
     if (Q_UNLIKELY(selectFiles.isEmpty())) {
-        fmWarning() << "no files for normal menu.";
+        fmWarning() << "No files selected for normal menu creation";
         return;
     }
 
@@ -87,8 +87,7 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
         // net one
         int pos { (it != actions.end()) ? int(std::distance(actions.begin(), it)) + 1 : -1 };
         if (pos == -1 || pos >= actions.size()) {
-            fmWarning() << "can not find action:"
-                        << "display-settings";
+            fmWarning() << "Cannot find sort action for menu positioning";
         } else {
             QAction *indexAction = actions[pos];
             parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeEnable]);
@@ -216,10 +215,12 @@ bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
 
     if (sortRole.contains(actionId)) {
         Global::ItemRoles role = sortRole.value(actionId);
-        if (view)
+        if (view) {
+            fmDebug() << "Triggering sort by" << actionId << "for collection view";
             view->sort(role);
-        else
-            fmCritical() << "invaild view to sort.";
+        } else {
+            fmCritical() << "Invalid view for sorting operation";
+        }
         return true;
     }
 
@@ -231,7 +232,7 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
 {
     d->predicateName[ActionID::kOrganizeEnable] = tr("Enable desktop organization");
     d->predicateName[ActionID::kOrganizeTrigger] = tr("Organize desktop");
-    d->predicateName[ActionID::kOrganizeOptions] = tr("View options");
+    d->predicateName[ActionID::kOrganizeOptions] = tr("Desktop Settings");
     d->predicateName[ActionID::kOrganizeBy] = tr("Organize by");
 
     // organize by subactions
@@ -278,8 +279,10 @@ AbstractMenuScene *ExtendCanvasScene::scene(QAction *action) const
 
 bool ExtendCanvasScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot create menu - parent menu is null";
         return false;
+    }
 
     if (d->isEmptyArea) {
         d->emptyMenu(parent);
@@ -306,7 +309,8 @@ bool ExtendCanvasScene::triggered(QAction *action)
 {
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
-        fmDebug() << "organizer for canvas:" << actionId;
+        fmDebug() << "Organizer action triggered:" << actionId;
+
         if (actionId == ActionID::kOrganizeEnable) {
             emit CfgPresenter->changeEnableState(action->isChecked());
         } else if (actionId == ActionID::kOrganizeByCustom) {
@@ -334,13 +338,16 @@ bool ExtendCanvasScene::triggered(QAction *action)
 
 bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
 {
-    if (!caller || !action)
+    if (!caller || !action) {
+        fmWarning() << "Invalid parameters for action filter - caller or action is null";
         return false;
+    }
 
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
 
     if (dfmplugin_menu::ActionID::kRename == actionId) {
         // cheat, use canvas event to trigger batch rename.
+        fmDebug() << "Triggering canvas rename hook";
         if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasView_KeyPress",
                                  0, int(Qt::Key_F2), int(Qt::NoModifier), nullptr))
             return true;
@@ -350,9 +357,9 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         bool isCanvas = caller->name() == "CanvasMenu";
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
         if (isCanvas) {
-            fmDebug() << "filter action" << actionId;
+            fmDebug() << "Filtering action on collection:" << actionId;
             if (Q_UNLIKELY(!d->view)) {
-                fmWarning() << "warning:can not get collection view, and filter action failed.";
+                fmWarning() << "Cannot get collection view, action filter failed";
                 return false;
             }
 
@@ -364,10 +371,11 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
             } else if (dfmplugin_menu::ActionID::kRename == actionId) {
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
-                    if (Q_UNLIKELY(!index.isValid()))
-                        fmWarning() << "can not rename: invaild file" << d->focusFile;
-                    else
+                    if (Q_UNLIKELY(!index.isValid())) {
+                        fmWarning() << "Cannot rename - invalid file:" << d->focusFile;
+                    } else {
                         d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+                    }
                 } else {
                     RenameDialog renameDlg(d->selectFiles.count());
                     renameDlg.moveToCenter();

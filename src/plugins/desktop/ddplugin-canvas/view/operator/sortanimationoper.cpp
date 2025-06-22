@@ -25,8 +25,10 @@ SortAnimationOper::SortAnimationOper(CanvasView *parent)
 
 void SortAnimationOper::setMoveValue(const QStringList &moveItems)
 {
-    if (moveItems.isEmpty())
+    if (moveItems.isEmpty()) {
+        fmDebug() << "Empty move items list - ignoring";
         return;
+    }
 
     this->moveItems = moveItems;
 }
@@ -46,12 +48,16 @@ QPixmap SortAnimationOper::findPixmap(const QString &item) const
 
 void SortAnimationOper::tryMove()
 {
-    if (moveAnimationing)
+    if (moveAnimationing) {
+        fmDebug() << "Move animation already in progress - ignoring";
         return;
+    }
 
     QPair<int, QPoint> originPos;
-    if (moveItems.isEmpty() || !GridIns->point(moveItems.first(), originPos))
+    if (moveItems.isEmpty() || !GridIns->point(moveItems.first(), originPos)) {
+        fmDebug() << "No move items or invalid origin position";
         return;
+    }
 
     if (originPos.first == view->screenNum())
         startDelayMove();
@@ -100,10 +106,12 @@ void SortAnimationOper::startMoveAnimation()
     case CanvasGrid::Mode::Custom:
         duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortCustomDuration, true).toInt();
         curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortCustomCurve).toInt());
+        fmDebug() << "Custom mode animation - duration:" << duration << "curve:" << static_cast<int>(curve);
         break;
     case CanvasGrid::Mode::Align:
         duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortAlignDuration, true).toInt();
         curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortAlignCurve).toInt());
+        fmDebug() << "Align mode animation - duration:" << duration << "curve:" << static_cast<int>(curve);
         break;
     default:
         duration = 366;
@@ -132,8 +140,10 @@ void SortAnimationOper::moveAnimationFinished()
     moveAnimationing = false;
     CanvasIns->update();
 
-    if (!oper.get())
+    if (!oper.get()) {
+        fmWarning() << "No grid operation available after animation finished";
         return;
+    }
 
     GridIns->core().applay(oper.get());
     GridIns->requestSync();

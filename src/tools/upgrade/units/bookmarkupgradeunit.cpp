@@ -67,8 +67,10 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
         qCInfo(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "success";
 
     QFile file(kConfigurationPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << kConfigurationPath;
         return false;
+    }
 
     QByteArray data = file.readAll();
     file.close();
@@ -86,7 +88,7 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 
 bool BookMarkUpgradeUnit::upgrade()
 {
-    qCInfo(logToolUpgrade) << "upgrading";
+    qCInfo(logToolUpgrade) << "Starting bookmark upgrading process";
     const QVariantList &quickAccessItems = initData();
     doUpgrade(quickAccessItems);   // generate quick access field to configuration
 
@@ -179,7 +181,7 @@ QVariantList BookMarkUpgradeUnit::initData() const
         QString readableStr = data.value("url").toUrl().toString();   // convert url to human readable string.
         data.insert("url", readableStr);
         quickAccessItemList.append(data);
-        qCInfo(logToolUpgrade) << "Bookmark raw data is sorded to quickAccessItemList";
+        qCInfo(logToolUpgrade) << "Added sorted bookmark to final list:" << data.value("name").toString();
     }
     qCInfo(logToolUpgrade) << "after: quickAccessItemList.count = " << quickAccessItemList.count();
     return quickAccessItemList;
@@ -188,8 +190,10 @@ QVariantList BookMarkUpgradeUnit::initData() const
 bool BookMarkUpgradeUnit::doUpgrade(const QVariantList &quickAccessDatas)
 {
     QFile file(kConfigurationPath);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCCritical(logToolUpgrade) << "Failed to open configuration file for writing:" << kConfigurationPath;
         return false;
+    }
 
     QJsonObject quickAccess;
     quickAccess.insert(kConfigKeyName, QJsonArray::fromVariantList(quickAccessDatas));

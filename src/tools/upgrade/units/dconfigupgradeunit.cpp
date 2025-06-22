@@ -165,13 +165,17 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
 {
     static constexpr auto kOldKey { "AlwaysShowOfflineRemoteConnections" };
     // 0. check old
-    if (checkOldGeneric(kOldKey))
+    if (checkOldGeneric(kOldKey)) {
+        qCDebug(logToolUpgrade) << "SMB configuration already processed, skipping";
         return true;
+    }
 
     // 1. read main config value
     auto oldVal = UpgradeUtils::genericAttribute(kOldKey);
-    if (!oldVal.isValid())
+    if (!oldVal.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old SMB configuration found, skipping";
         return true;
+    }
 
     auto alwaysShowSamba = oldVal.toBool();
     // 2. write to dconfig
@@ -197,17 +201,23 @@ bool DConfigUpgradeUnit::upgradeRecentConfigs()
     static constexpr auto kOldKey { "ShowRecentFileEntry" };
 
     // 0. check old
-    if (checkOldGeneric(kOldKey))
+    if (checkOldGeneric(kOldKey)) {
+        qCDebug(logToolUpgrade) << "Recent file configuration already processed, skipping";
         return true;
+    }
 
     // 1. read main config value
     auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
-    if (!oldValue.isValid())
+    if (!oldValue.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old recent file configuration found, skipping";
         return true;
+    }
 
     const QString &configFile { "org.deepin.dde.file-manager.sidebar" };
-    if (!DConfigManager::instance()->addConfig(configFile))
+    if (!DConfigManager::instance()->addConfig(configFile)) {
+        qCCritical(logToolUpgrade) << "Failed to add sidebar configuration file:" << configFile;
         return false;
+    }
 
     // 2. write to dconfig
     bool showRecent = oldValue.toBool();
@@ -228,17 +238,23 @@ bool DConfigUpgradeUnit::upgradeSearchConfigs()
     static constexpr auto kOldKey { "IndexFullTextSearch" };
 
     // 0. check old
-    if (checkOldGeneric(kOldKey))
+    if (checkOldGeneric(kOldKey)) {
+        qCInfo(logToolUpgrade) << "Search configuration already processed, skipping";
         return true;
+    }
 
     // 1. read main config value
     auto oldValue = UpgradeUtils::genericAttribute(kOldKey);
-    if (!oldValue.isValid())
+    if (!oldValue.isValid()) {
+        qCDebug(logToolUpgrade) << "No valid old search configuration found, skipping";
         return true;
+    }
 
     const QString &configFile { "org.deepin.dde.file-manager.search" };
-    if (!DConfigManager::instance()->addConfig(configFile))
+    if (!DConfigManager::instance()->addConfig(configFile)) {
+        qCCritical(logToolUpgrade) << "Failed to add search configuration file:" << configFile;
         return false;
+    }
 
     bool ftsEnabled = oldValue.toBool();
     // 2. write to dconfig
@@ -265,8 +281,10 @@ void DConfigUpgradeUnit::addOldGenericSettings()
 bool DConfigUpgradeUnit::checkOldGeneric(const QString &key)
 {
     auto oldGeneric = UpgradeUtils::genericAttribute("OldAttributes");
-    if (oldGeneric.isValid() && oldGeneric.toStringList().contains(key))
+    if (oldGeneric.isValid() && oldGeneric.toStringList().contains(key)) {
+        qCDebug(logToolUpgrade) << "Old generic key already processed:" << key;
         return true;
+    }
 
     return false;
 }

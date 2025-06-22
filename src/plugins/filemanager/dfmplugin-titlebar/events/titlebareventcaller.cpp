@@ -25,7 +25,7 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     if (id < 1) {
-        fmWarning() << "Invalid window id: " << id;
+        fmWarning() << "Cannot send detail view state: invalid window id" << id;
         return;
     }
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
@@ -37,7 +37,7 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
     if (!url.isValid()) {
-        fmWarning() << "Invalid url: " << url;
+        fmWarning() << "Cannot change directory: invalid URL" << url;
         return;
     }
 
@@ -47,24 +47,31 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
 void TitleBarEventCaller::sendChangeCurrentUrl(QWidget *sender, const QUrl &url)
 {
     quint64 id = TitleBarHelper::windowId(sender);
-    if (id > 0 && url.isValid())
+    if (id > 0 && url.isValid()) {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+    } else {
+        fmWarning() << "Cannot send URL change: invalid window id or URL, id:" << id << "URL:" << url;
+    }
 }
 
 void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
+
+    fmInfo() << "Sending open file signal, window id:" << id << "file:" << url.toString();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, id, QList<QUrl>() << url);
 }
 
 void TitleBarEventCaller::sendOpenWindow(const QUrl &url)
 {
+    fmInfo() << "Sending open new window signal, URL:" << url.toString();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void TitleBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
+    fmInfo() << "Sending open new tab signal, window id:" << windowId << "URL:" << url.toString();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, windowId, url);
 }
 
@@ -72,6 +79,8 @@ void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
+
+    fmInfo() << "Sending search start signal, window id:" << id << "keyword:" << keyword;
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Start", id, keyword);
 }
 

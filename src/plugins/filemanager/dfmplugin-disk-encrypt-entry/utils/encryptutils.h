@@ -18,6 +18,7 @@ namespace dfmplugin_diskenc {
 
 namespace tpm_utils {
 int checkTPM();
+int checkTPMLockoutStatus();
 int getRandomByTPM(int size, QString *output);
 int isSupportAlgoByTPM(const QString &algoName, bool *support);
 int encryptByTPM(const QVariantMap &map);

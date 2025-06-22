@@ -17,7 +17,7 @@ bool executeSystemctlCommand(const QStringList &arguments, QString *errorMsg)
     QString command = "systemctl";
 
     // 打印将要执行的命令，方便调试
-    fmDebug() << "Executing:" << command << arguments.join(" ");
+    fmDebug() << "SystemdCpuUtils: Executing command:" << command << arguments.join(" ");
 
     process.start(command, arguments);
 
@@ -46,8 +46,11 @@ bool executeSystemctlCommand(const QStringList &arguments, QString *errorMsg)
         return false;
     }
 
-    fmDebug() << "Command executed successfully.";
-    fmDebug() << "Output:" << QString::fromUtf8(process.readAllStandardOutput());
+    fmDebug() << "SystemdCpuUtils: Command executed successfully";
+    const QString output = QString::fromUtf8(process.readAllStandardOutput());
+    if (!output.isEmpty()) {
+        fmDebug() << "SystemdCpuUtils: Command output:" << output;
+    }
     return true;
 }
 

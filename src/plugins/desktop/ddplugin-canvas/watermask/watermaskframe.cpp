@@ -33,6 +33,7 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)
     : QFrame(parent)
     , configFile(fileName)
 {
+    fmInfo() << "Initializing WaterMaskFrame with config file:" << fileName;
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     DeepinLicenseHelper::instance()->init();
@@ -53,7 +54,7 @@ void WaterMaskFrame::refresh()
 {
     loadConfig();
 
-    fmInfo() << "request state..";
+    fmDebug() << "Requesting license state update";
     DeepinLicenseHelper::instance()->delayGetState();
 }
 
@@ -64,6 +65,7 @@ void WaterMaskFrame::updatePosition()
         int y = wid->height() - curRightBottom.y() - curMaskSize.height();
         move(x, y);
 
+        fmDebug() << "Water mask position updated to:" << QPoint(x, y);
         emit showMask(QPoint(x, y));
     }
 }
@@ -71,15 +73,14 @@ void WaterMaskFrame::updatePosition()
 void WaterMaskFrame::stateChanged(int state, int prop)
 {
     if (!maskAlwaysOn) {
-        fmDebug() << "do not show water mask.";
+        fmDebug() << "Water mask disabled - hiding frame";
         hide();
         return;
     }
 
     bool showSate = showLicenseState();
     bool cn = usingCn();
-    fmInfo() << "reply ActiveState is" << state << prop << "show" << showSate
-            << "cn" << cn << this;
+    fmInfo() << "Processing license state - show:" << showSate << "locale_cn:" << cn;
     curState = state;
     curProperty = static_cast<DeepinLicenseHelper::LicenseProperty>(prop);
 
@@ -88,29 +89,29 @@ void WaterMaskFrame::stateChanged(int state, int prop)
         if (prop == DeepinLicenseHelper::LicenseProperty::Secretssecurity) {
             auto cfg = configInfos.value(cn ? CfgSecCn : CfgSecEn);
             if (cfg.valid) {
-                fmInfo() << "update logo sec" << cn;
+                fmInfo() << "Applying secrets security configuration - locale_cn:" << cn;
                 update(cfg, false);
                 return;
             } else {
-                fmWarning() << "invalid config info sec" << cn;
+                fmWarning() << "Invalid secrets security config - locale_cn:" << cn;
             }
         } else if (prop == DeepinLicenseHelper::LicenseProperty::Government) {   //gov
             auto cfg = configInfos.value(cn ? CfgGovCn : CfgGovEn);
             if (cfg.valid) {
-                fmInfo() << "update logo gov" << cn;
+                fmInfo() << "Applying government configuration - locale_cn:" << cn;
                 update(cfg, false);
                 return;
             } else {
-                fmWarning() << "invalid config info gov" << cn;
+                fmWarning() << "Invalid government config - locale_cn:" << cn;
             }
         } else if (prop == DeepinLicenseHelper::LicenseProperty::Enterprise) {   // com
             auto cfg = configInfos.value(cn ? CfgEntCn : CfgEntEn);
             if (cfg.valid) {
-                fmInfo() << "update logo ent" << cn;
+                fmInfo() << "Applying enterprise configuration - locale_cn:" << cn;
                 update(cfg, false);
                 return;
             } else {
-                fmWarning() << "invalid config info ent" << cn;
+                fmWarning() << "Invalid enterprise config - locale_cn:" << cn;
             }
         }
     }
@@ -120,7 +121,7 @@ void WaterMaskFrame::stateChanged(int state, int prop)
 
    if (!showSate) {
        textLabel->setText("");
-       fmInfo() << "disable show state text";
+       fmDebug() << "License state display disabled";
        return;
    }
 
@@ -141,7 +142,7 @@ void WaterMaskFrame::stateChanged(int state, int prop)
     }
         break;
     default:
-        fmWarning() << "unkown active state:" << state;
+        fmWarning() << "Unknown license state:" << state;
     }
 }
 
@@ -196,7 +197,7 @@ bool WaterMaskFrame::showLicenseState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    fmInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+    fmDebug() << "System info - deepinType:" << static_cast<int>(deepinType) << "uosEdition:" << static_cast<int>(uosEdition);
 
     bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
                 || DSysInfo::DeepinType::DeepinPersonal == deepinType
@@ -206,9 +207,10 @@ bool WaterMaskFrame::showLicenseState()
     // 教育版
     ret = ret || (DSysInfo::UosEdition::UosEducation == uosEdition ||
                   DSysInfo::UosEdition::UosMilitary == uosEdition);
-    fmInfo() << "check uos Edition" << ret;
+    fmDebug() << "Extended edition check result:" << ret;
 #endif
 
+    fmDebug() << "License state display enabled:" << ret;
     return ret;
 }
 
@@ -231,9 +233,10 @@ bool WaterMaskFrame::usingCn()
 
 void WaterMaskFrame::loadConfig()
 {
+    fmDebug() << "Loading water mask configuration from:" << configFile;
     QFile file(configFile);
     if (!file.open(QFile::ReadOnly)) {
-        fmWarning() << "WaterMask config file doesn't exist!";
+        fmWarning() << "Water mask config file doesn't exist:" << configFile;
         return ;
     }
     configInfos.clear();
@@ -243,15 +246,18 @@ void WaterMaskFrame::loadConfig()
     if (error.error == QJsonParseError::NoError) {
         auto jsonObject = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         configInfos = parseJson(&jsonObject);
+        fmInfo() << "Water mask configuration loaded successfully";
     } else {
         // defalut
         configInfos.insert(CfgDefault, ConfigInfo());
-        fmCritical() << "config file is invailid" << configFile << error.errorString();
+        fmCritical() << "Invalid water mask config file" << configFile << "- error:" << error.errorString();
     }
 }
 
 void WaterMaskFrame::update(const ConfigInfo &configs, bool normal)
 {
+    fmDebug() << "Updating water mask display - normal mode:" << normal;
+
     // remove old layout
     {
         auto mainLayout = this->layout();
@@ -268,8 +274,10 @@ void WaterMaskFrame::update(const ConfigInfo &configs, bool normal)
     // add logo at left
     logoLabel->setPixmap(maskPixmap(configs.maskLogoUri, QSize(configs.maskLogoWidth, configs.maskLogoHeight)
                                     , logoLabel->devicePixelRatioF()));
-    if (configs.maskLogoUri.length() != 0)
+    if (configs.maskLogoUri.length() != 0) {
         addWidget(mainLayout, logoLabel, "left");
+        fmDebug() << "Logo added - URI:" << configs.maskLogoUri << "size:" << QSize(configs.maskLogoWidth, configs.maskLogoHeight);
+    }
 
     // space
     mainLayout->addSpacing(configs.maskLogoTextSpacing);
@@ -298,8 +306,10 @@ void WaterMaskFrame::update(const ConfigInfo &configs, bool normal)
     curRightBottom = QPoint(configs.xRightBottom, configs.yRightBottom);
     updatePosition();
 
-    if (maskAlwaysOn)
+    if (maskAlwaysOn) {
         show();
+        fmDebug() << "Water mask frame displayed";
+    }
 }
 
 void WaterMaskFrame::setTextAlign(const QString &maskTextAlign)
@@ -315,6 +325,7 @@ void WaterMaskFrame::setTextAlign(const QString &maskTextAlign)
 
 WaterMaskFrame::ConfigInfo WaterMaskFrame::defaultCfg(QJsonObject *configs)
 {
+    fmDebug() << "Loading default configuration";
     ConfigInfo cfg;
     {
         QString maskLogoUri;
@@ -329,6 +340,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::defaultCfg(QJsonObject *configs)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         cfg.maskLogoUri = maskLogoUri;
+        fmDebug() << "Default logo URI:" << maskLogoUri;
     }
 
     if (configs->contains("maskLogoWidth"))
@@ -356,6 +368,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::defaultCfg(QJsonObject *configs)
 
 WaterMaskFrame::ConfigInfo WaterMaskFrame::govCfg(QJsonObject *configs, bool cn)
 {
+    fmDebug() << "Loading government configuration - locale_cn:" << cn;
     ConfigInfo cfg;
     {
         const QString urlKey = cn ? "maskLogoGovernmentCnUri" : "maskLogoGovernmentEnUri";
@@ -367,11 +380,12 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::govCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            fmWarning() << "can not get logo for gov" << cn;
+            fmWarning() << "Cannot get government logo - locale_cn:" << cn;
             cfg.valid = false;
             return cfg;
         } else {
             cfg.maskLogoUri = maskLogoUri;
+            fmDebug() << "Government logo URI:" << maskLogoUri;
         }
     }
 
@@ -402,6 +416,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::govCfg(QJsonObject *configs, bool cn)
 
 WaterMaskFrame::ConfigInfo WaterMaskFrame::entCfg(QJsonObject *configs, bool cn)
 {
+    fmDebug() << "Loading enterprise configuration - locale_cn:" << cn;
     ConfigInfo cfg;
     {
         const QString urlKey = cn ? "maskLogoEnterpriseCnUri" : "maskLogoEnterpriseEnUri";
@@ -413,11 +428,12 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::entCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            fmWarning() << "can not get logo for com" << cn;
+            fmWarning() << "Cannot get enterprise logo - locale_cn:" << cn;
             cfg.valid = false;
             return cfg;
         } else {
             cfg.maskLogoUri = maskLogoUri;
+            fmDebug() << "Enterprise logo URI:" << maskLogoUri;
         }
     }
 
@@ -448,6 +464,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::entCfg(QJsonObject *configs, bool cn)
 
 WaterMaskFrame::ConfigInfo WaterMaskFrame::secCfg(QJsonObject *configs, bool cn)
 {
+    fmDebug() << "Loading secrets security configuration - locale_cn:" << cn;
     ConfigInfo cfg;
     {
         const QString urlKey = cn ? "maskLogoSecretesSecurityCnUri" : "maskLogoSecretesSecurityEnUri";
@@ -459,11 +476,12 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::secCfg(QJsonObject *configs, bool cn)
             maskLogoUri.replace(0, 1, QDir::homePath());
 
         if (maskLogoUri.isEmpty()) {
-            fmWarning() << "can not get logo for SecretesSecurity" << cn;
+            fmWarning() << "Cannot get secrets security logo - locale_cn:" << cn;
             cfg.valid = false;
             return cfg;
         } else {
             cfg.maskLogoUri = maskLogoUri;
+            fmDebug() << "Secrets security logo URI:" << maskLogoUri;
         }
     }
 
@@ -494,6 +512,7 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::secCfg(QJsonObject *configs, bool cn)
 
 QPixmap WaterMaskFrame::maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio)
 {
+    fmDebug() << "Creating mask pixmap - URI:" << uri << "size:" << size << "ratio:" << pixelRatio;
     QImageReader maskIimageReader(uri);
     const QSize &maskSize = size * pixelRatio;
     const QSize &maskImageSize = maskIimageReader.size();

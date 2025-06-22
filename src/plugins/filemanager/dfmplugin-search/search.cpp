@@ -102,6 +102,7 @@ void Search::regSearchToWorkspace()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SearchHelper::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterLoadStrategy", SearchHelper::scheme(), DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kPreserve);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFocusFileViewDisabled", SearchHelper::scheme());
 
     QVariantMap propertise {
         { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode, false },
@@ -177,8 +178,6 @@ void Search::bindEvents()
                                    SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_FilterView_Show",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
-                                   SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleAddressInputStr);
 

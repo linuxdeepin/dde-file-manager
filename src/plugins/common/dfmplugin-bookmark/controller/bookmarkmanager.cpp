@@ -306,7 +306,7 @@ bool BookMarkManager::bookMarkRename(const QUrl &url, const QString &newName)
     QVariantList list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
-        if (map.value(kKeyName).toString() == quickAccessDataMap[url].name) {
+        if (quickAccessDataMap.contains(url) && url == map.value(kKeyUrl).toUrl()) {
             QString oldName = quickAccessDataMap[url].name;
             map[kKeyName] = newName;
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
@@ -543,7 +543,7 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     QVariantList list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
-        if (map.value(kKeyName).toString() == quickAccessDataMap.value(oldUrl).name) {
+        if (quickAccessDataMap.contains(oldUrl) && oldUrl == map.value(kKeyUrl).toUrl()) {
             map[kKeyUrl] = newUrl;
             list[i] = map;
 

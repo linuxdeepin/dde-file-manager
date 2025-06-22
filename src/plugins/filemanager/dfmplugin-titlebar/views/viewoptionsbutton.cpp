@@ -67,8 +67,10 @@ void ViewOptionsButton::switchMode(ViewMode mode, const QUrl &url)
 void ViewOptionsButton::setVisible(bool visible)
 {
     DToolButton::setVisible(visible);
-    if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
+    if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool()) {
+        fmDebug() << "Display preview is disabled in config, skipping preview visibility change";
         return;
+    }
     QTimer::singleShot(200, [this, visible]() {
         Q_EMIT displayPreviewVisibleChanged(visible);
     });

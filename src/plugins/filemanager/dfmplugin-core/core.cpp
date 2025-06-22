@@ -156,7 +156,7 @@ void Core::onWindowOpened(quint64 winid)
         // TODO: freeze 5s, fix it!
         QTimer::singleShot(2000, []() {
             // init clipboard
-            ClipBoard::instance()->readFirstClipboard();
+            ClipBoard::instance()->onClipboardDataChanged();
         });
     });
 }

@@ -15,16 +15,19 @@
 #    define BluetoothService "com.deepin.daemon.Bluetooth"
 #    define BluetoothPath "/com/deepin/daemon/Bluetooth"
 #    define BluetoothInterface "com.deepin.daemon.Bluetooth"
+#    define ControlcenterService "com.deepin.dde.ControlCenter"
+#    define ControlcenterPath "/com/deepin/dde/ControlCenter"
+#    define ControlcenterInterface "com.deepin.dde.ControlCenter"
 #else
 #    define BluetoothService "org.deepin.dde.Bluetooth1"
 #    define BluetoothPath "/org/deepin/dde/Bluetooth1"
 #    define BluetoothInterface "org.deepin.dde.Bluetooth1"
+#    define ControlcenterService "org.deepin.dde.ControlCenter1"
+#    define ControlcenterPath "/org/deepin/dde/ControlCenter1"
+#    define ControlcenterInterface "org.deepin.dde.ControlCenter1"
 #endif
 
 #define BluetoothPage "bluetooth"
-#define ControlcenterService "com.deepin.dde.ControlCenter"
-#define ControlcenterPath "/com/deepin/dde/ControlCenter"
-#define ControlcenterInterface "com.deepin.dde.ControlCenter"
 
 using namespace dfmplugin_utils;
 
@@ -35,6 +38,22 @@ BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
 {
     initInterface();
     initConnects();
+}
+
+BluetoothManagerPrivate::~BluetoothManagerPrivate()
+{
+    if (bluetoothInter) {
+        delete bluetoothInter;
+        bluetoothInter = nullptr;
+    }
+    
+    if (watcher) {
+        if (watcher->isRunning()) {
+            watcher->future().cancel();
+        }
+        delete watcher;
+        watcher = nullptr;
+    }
 }
 
 /**
@@ -424,7 +443,7 @@ QMap<QString, const BluetoothAdapter *> BluetoothManager::getAdapters() const
 }
 
 /**
- * @brief 打开控制中心的‘蓝牙’界面
+ * @brief 打开控制中心的'蓝牙'界面
  */
 void BluetoothManager::showBluetoothSettings()
 {

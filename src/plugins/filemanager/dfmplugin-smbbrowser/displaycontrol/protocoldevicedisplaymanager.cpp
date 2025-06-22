@@ -52,9 +52,9 @@ static constexpr char kCptHookListFilter[] { "hook_View_ItemListFilter" };
 ProtocolDeviceDisplayManager::ProtocolDeviceDisplayManager(QObject *parent)
     : QObject { parent }, d(new ProtocolDeviceDisplayManagerPrivate(this))
 {
-    fmDebug() << "init";
+    fmInfo() << "Initializing ProtocolDeviceDisplayManager";
     d->init();
-    fmDebug() << "init finished";
+    fmInfo() << "ProtocolDeviceDisplayManager initialization completed";
 }
 
 ProtocolDeviceDisplayManager::~ProtocolDeviceDisplayManager()
@@ -79,13 +79,15 @@ bool ProtocolDeviceDisplayManager::isShowOfflineItem() const
 
 bool ProtocolDeviceDisplayManager::hookItemInsert(const QUrl &entryUrl)
 {
-    if (!d->isSupportVEntry(entryUrl))
+    if (!d->isSupportVEntry(entryUrl)) {
+        fmDebug() << "Entry not supported for virtual entry:" << entryUrl.toString();
         return false;
+    }
 
-    fmDebug() << entryUrl << "about to be inserted";
+    fmDebug() << "Hooking item insert for supported entry:" << entryUrl.toString();
 
     if (displayMode() == kAggregation) {
-        fmDebug() << "add aggregation item, ignore seperated item";
+        fmDebug() << "Display mode is aggregation, adding aggregated item for separated online item";
         QTimer::singleShot(0, this, [=] { addAggregatedItemForSeperatedOnlineItem(entryUrl); });
         return true;
     }
@@ -96,11 +98,15 @@ bool ProtocolDeviceDisplayManager::hookItemInsert(const QUrl &entryUrl)
 bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
 {
     if (displayMode() == kSeperate) {
-        if (isShowOfflineItem())
+        fmDebug() << "Display mode is separated, processing separated items";
+        if (isShowOfflineItem()) {
+            fmInfo() << "Show offline is enabled, adding separated offline items";
             QTimer::singleShot(0, this, [=] { addSeperatedOfflineItems(); });
+        }
         return false;
     }
 
+    fmInfo() << "Display mode is aggregated, removing all SMB entries and adding aggregated items";
     d->removeAllSmb(entryUrls);
     QTimer::singleShot(0, this, [=] { addAggregatedItems(); });
     return true;
@@ -108,11 +114,15 @@ bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
 
 void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString &)
 {
-    if (!ProtocolUtils::isSMBFile(QUrl(id)))
+    if (!ProtocolUtils::isSMBFile(QUrl(id))) {
+        fmDebug() << "Device is not SMB file, ignoring:" << id;
         return;
+    }
 
-    if (!isShowOfflineItem())
+    if (!isShowOfflineItem()) {
+        fmDebug() << "Show offline is disabled, skipping offline entry processing";
         return;
+    }
 
     // obtain the display name of `id`
     const QString &displayName = getDisplayNameOf(id);
@@ -125,15 +135,20 @@ void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString
 
 void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
 {
-    if (!ProtocolUtils::isSMBFile(QUrl(id)))
+    if (!ProtocolUtils::isSMBFile(QUrl(id))) {
+        fmDebug() << "Device is not SMB file, ignoring:" << id;
         return;
+    }
 
     if (displayMode() == SmbDisplayMode::kSeperate && isShowOfflineItem()) {
         const QString &stdSmbPath = getStandardSmbPath(id);
         // persistent data will be removed if "forget password" is triggered.
         // in this case, do not show the virtual entry.
-        if (!VirtualEntryDbHandler::instance()->hasOfflineEntry(stdSmbPath))
+        if (!VirtualEntryDbHandler::instance()->hasOfflineEntry(stdSmbPath)) {
+            fmDebug() << "No offline entry found for unmounted device, skipping virtual entry addition:" << stdSmbPath;
             return;
+        }
+
         const QUrl &vEntryUrl = makeVEntryUrl(stdSmbPath);
         callItemAdd(vEntryUrl);
     } else {
@@ -145,16 +160,23 @@ void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
         const auto &allMountedStdSmb = getStandardSmbPaths(getMountedSmb());
         bool hasMountedOfHost = std::any_of(allMountedStdSmb.cbegin(), allMountedStdSmb.cend(),
                                             [=](const QString &smb) { return smb.startsWith(removedHost); });
+
         if (hasMountedOfHost) {
+            fmDebug() << "Host still has mounted shares, not removing aggregated entry:" << removedHost;
             return;
         } else {
+            fmDebug() << "Host has no more mounted shares, forgetting password and processing entry removal:" << removedHost;
             secret_utils::forgetPasswordInSession(host);
         }
 
-        if (isShowOfflineItem())
+        if (isShowOfflineItem()) {
+            fmDebug() << "Show offline is enabled, keeping virtual entry:" << removedHost;
             return;
+        }
+
         QUrl entryUrl = makeVEntryUrl(removedHost);
         callItemRemove(entryUrl);
+        fmInfo() << "Removed aggregated virtual entry:" << entryUrl.toString();
     }
 }
 
@@ -162,9 +184,10 @@ void ProtocolDeviceDisplayManager::onDConfigChanged(const QString &g, const QStr
 {
     using namespace dfm_dconfig;
     if (g == kDefaultCfgPath && k == dfm_dconfig::kShowOffline) {
+        bool oldValue = d->showOffline;
         d->showOffline = DConfigManager::instance()->value(kDefaultCfgPath, kShowOffline).toBool();
         d->onShowOfflineChanged();
-        fmDebug() << "showOffline changed: " << d->showOffline;
+        fmInfo() << "Show offline setting changed from" << oldValue << "to" << d->showOffline;
     }
 }
 
@@ -172,9 +195,10 @@ void ProtocolDeviceDisplayManager::onJsonConfigChanged(const QString &g, const Q
 {
     using namespace dfm_json_config;
     if (g == kGenericAttribute && k == kSmbAggregation) {
+        SmbDisplayMode oldMode = d->displayMode;
         d->displayMode = v.toBool() ? kAggregation : kSeperate;
         d->onDisplayModeChanged();
-        fmDebug() << "displayMode changed: " << d->displayMode;
+        fmInfo() << "Display mode changed from" << oldMode << "to" << d->displayMode;
     }
 }
 
@@ -182,6 +206,7 @@ void ProtocolDeviceDisplayManager::onMenuSceneAdded(const QString &scene)
 {
     if (scene != plugin_events::kComputerMenu)
         return;
+
     bool ok = dfmplugin_menu_util::menuSceneBind(VirtualEntryMenuCreator::name(), scene);
     fmInfo() << "bind virtual entry menu to computer: " << ok;
 }
@@ -231,24 +256,29 @@ void ProtocolDeviceDisplayManagerPrivate::onShowOfflineChanged()
 {
     const QStringList &allMounted = getMountedSmb();
     if (showOffline) {
+        fmInfo() << "Show offline enabled, saving mounted devices as virtual entries";
         std::for_each(allMounted.cbegin(), allMounted.cend(), [=](const QString &devId) {
             const QString &displayName = getDisplayNameOf(devId);
             const QString &stdSmb = getStandardSmbPath(devId);
             VirtualEntryDbHandler::instance()->saveAggregatedAndSperated(stdSmb, displayName);
         });
     } else {
+        fmInfo() << "Show offline disabled, removing virtual entries";
+
         // remove all visible virtual entry
         const QStringList &allStdSmb = getStandardSmbPaths(allMounted);
         QStringList allAggregated, allSeperated;
         VirtualEntryDbHandler::instance()->allSmbIDs(&allAggregated, &allSeperated);
 
         if (displayMode == SmbDisplayMode::kSeperate) {
+            fmInfo() << "Separated mode: removing all offline separated entries";
             // if in seperated mode, remove all offline item
             std::for_each(allSeperated.cbegin(), allSeperated.cend(), [=](const QString &seperated) {
                 auto entryUrl = makeVEntryUrl(seperated);
                 callItemRemove(entryUrl);
             });
         } else {
+            fmInfo() << "Aggregated mode: removing orphan host entries";
             // else in aggregated mode, remove the entry which is just a virtual entry, no mounted share of the host
             QStringList pureVirtualEntry;
             auto hasMountedShareOf = [&allStdSmb](const QString &host) {
@@ -268,26 +298,39 @@ void ProtocolDeviceDisplayManagerPrivate::onShowOfflineChanged()
         }
 
         VirtualEntryDbHandler::instance()->clearData();
+        fmInfo() << "Cleared all virtual entry data from database";
     }
 }
 
 bool ProtocolDeviceDisplayManagerPrivate::isSupportVEntry(const QUrl &entryUrl)
 {
-    if (!showOffline && displayMode == kSeperate)
+    if (!showOffline && displayMode == kSeperate) {
+        fmDebug() << "Not supported: show offline disabled and display mode is separated";
         return false;
-    if (!ProtocolUtils::isSMBFile(entryUrl.path()))
+    }
+    if (!ProtocolUtils::isSMBFile(entryUrl.path())) {
+        fmDebug() << "Not supported: not an SMB file:" << entryUrl.path();
         return false;
-    if (!entryUrl.path().endsWith(kComputerProtocolSuffix))
+    }
+    if (!entryUrl.path().endsWith(kComputerProtocolSuffix)) {
+        fmDebug() << "Not supported: does not end with computer protocol suffix:" << entryUrl.path();
         return false;
+    }
+
     return true;
 }
 
 bool ProtocolDeviceDisplayManagerPrivate::isSupportVEntry(const QString &devId)
 {
-    if (!showOffline && displayMode == kSeperate)
+    if (!showOffline && displayMode == kSeperate) {
+        fmDebug() << "Not supported: show offline disabled and display mode is separated";
         return false;
-    if (!ProtocolUtils::isSMBFile(devId))
+    }
+    if (!ProtocolUtils::isSMBFile(devId)) {
+        fmDebug() << "Not supported: not an SMB file:" << devId;
         return false;
+    }
+
     return true;
 }
 

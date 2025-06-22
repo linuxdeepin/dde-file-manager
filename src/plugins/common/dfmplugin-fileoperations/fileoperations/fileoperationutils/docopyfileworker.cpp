@@ -722,7 +722,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
         } while (sizeWrite > 0 && sizeWrite < surplusSize);
 
         if (toDevice->lastError().code() != DFMIOErrorCode::DFM_IO_ERROR_NONE)
-            qCritical() << " ====== write size = " << sizeWrite << toDevice->lastError().errorMsg();
+            fmCritical() << "Write operation failed - size:" << sizeWrite << "error:" << toDevice->lastError().errorMsg();
 
         // 表示全部数据写入完成
         if (sizeWrite >= 0 && sizeWrite == surplusSize && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE)

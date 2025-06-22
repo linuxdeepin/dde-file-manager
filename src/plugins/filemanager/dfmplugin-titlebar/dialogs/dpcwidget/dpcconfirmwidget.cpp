@@ -146,11 +146,15 @@ void DPCConfirmWidget::initConnect()
 
 void DPCConfirmWidget::initLibrary()
 {
+    fmDebug() << "Loading deepin password check library:" << DeepinPwdCheck::kLibraryName;
+
     QLibrary lib(DeepinPwdCheck::kLibraryName);
     if (lib.load()) {
         deepinPwCheck = reinterpret_cast<DeepinPwCheckFunc>(lib.resolve(DeepinPwdCheck::kInterfacePwdCheck));
         getPasswdLevel = reinterpret_cast<GetPasswdLevelFunc>(lib.resolve(DeepinPwdCheck::kInterfaceGetPwdLevel));
         errToString = reinterpret_cast<ErrToStringFunc>(lib.resolve(DeepinPwdCheck::kInterfaceErrToString));
+    } else {
+        fmWarning() << "Failed to load deepin password check library:" << lib.errorString();
     }
 }
 
@@ -168,6 +172,7 @@ bool DPCConfirmWidget::checkRepeatPassword()
     const QString &newPwd = newPwdEdit->text();
 
     if (repeatPwd != newPwd) {
+        fmDebug() << "Password repeat validation failed: passwords do not match";
         repeatPwdEdit->setAlert(true);
         showToolTips(tr("Passwords do not match"), repeatPwdEdit);
         return false;
@@ -184,6 +189,7 @@ bool DPCConfirmWidget::checkNewPassword()
     const QString &newPwd = newPwdEdit->text();
 
     if (oldPwd == newPwd) {
+        fmDebug() << "New password validation failed: new password is same as current password";
         newPwdEdit->setAlert(true);
         showToolTips(tr("New password should differ from the current one"), newPwdEdit);
         return false;
@@ -191,6 +197,7 @@ bool DPCConfirmWidget::checkNewPassword()
 
     QString msg;
     if (!checkPasswdComplexity(newPwd, &msg)) {
+        fmDebug() << "New password validation failed: complexity check failed";
         newPwdEdit->setAlert(true);
         showToolTips(msg, newPwdEdit);
         return false;
@@ -205,39 +212,52 @@ bool DPCConfirmWidget::checkPasswdComplexity(const QString &pwd, QString *msg)
 
     // the password complexity check is for 1060 and v23 and later
     DSysInfo::UosEdition edition = DSysInfo::uosEditionType();
+    fmDebug() << "Checking password complexity for UOS edition:" << edition;
+
     switch (edition) {
     case DSysInfo::UosProfessional: {
         const auto &minorVer = DSysInfo::minorVersion();
-        if (minorVer < "1060")
+        if (minorVer < "1060") {
+            fmDebug() << "Skipping password complexity check for UOS Professional version:" << minorVer;
             return true;
+        }
     } break;
     case DSysInfo::UosCommunity: {
         const auto &majorVer = DSysInfo::majorVersion();
-        if (majorVer < "23")
+        if (majorVer < "23") {
+            fmDebug() << "Skipping password complexity check for UOS Community version:" << majorVer;
             return true;
+        }
     } break;
     default:
         return true;
     }
 
     // not loaded libdeepin_pw_check.so
-    if (!getPasswdLevel || !deepinPwCheck || !errToString)
+    if (!getPasswdLevel || !deepinPwCheck || !errToString) {
+        fmWarning() << "Password complexity check library not available, skipping check";
         return true;
+    }
 
     const auto &userName = SysInfoUtils::getUser();
     const auto &newPwdArray = pwd.toLocal8Bit();
     auto level = getPasswdLevel(newPwdArray.data());
+    fmDebug() << "Password complexity level:" << level;
+
     if (level < 3 || userName == pwd) {
+        fmDebug() << "Password complexity check failed: level too low or same as username";
         msg->append(tr("Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username."));
         return false;
     }
 
     int type = deepinPwCheck(userName.toLocal8Bit().data(), newPwdArray.data(), 3, nullptr);
     if (type != 0) {
+        fmDebug() << "Password complexity check failed with error type:" << type;
         msg->append(errToString(type));
         return false;
     }
 
+    fmDebug() << "Password complexity check passed";
     return true;
 }
 
@@ -260,6 +280,7 @@ void DPCConfirmWidget::onEditingFinished()
 {
     DPasswordEdit *pwdEdit = qobject_cast<DPasswordEdit *>(sender());
     if (pwdEdit && pwdEdit->text().length() > kPasswordMaxLength) {
+        fmDebug() << "Password length validation failed: length exceeds maximum" << kPasswordMaxLength;
         pwdEdit->setAlert(true);
         showToolTips(tr("Password must be no more than %1 characters").arg(kPasswordMaxLength), pwdEdit);
     }
@@ -268,28 +289,36 @@ void DPCConfirmWidget::onEditingFinished()
 void DPCConfirmWidget::onSaveBtnClicked()
 {
     if (oldPwdEdit->text().isEmpty()) {
+        fmDebug() << "Validation failed: current password is empty";
         oldPwdEdit->setAlert(true);
         showToolTips(tr("Password cannot be empty"), oldPwdEdit);
         return;
     } else if (newPwdEdit->text().isEmpty()) {
+        fmDebug() << "Validation failed: new password is empty";
         newPwdEdit->setAlert(true);
         showToolTips(tr("Password cannot be empty"), newPwdEdit);
         return;
     } else if (repeatPwdEdit->text().isEmpty()) {
+        fmDebug() << "Validation failed: repeat password is empty";
         repeatPwdEdit->setAlert(true);
         showToolTips(tr("Password cannot be empty"), repeatPwdEdit);
         return;
     }
 
-    if (!checkNewPassword() || !checkRepeatPassword())
+    if (!checkNewPassword() || !checkRepeatPassword()) {
+        fmDebug() << "Password validation failed, aborting password change";
         return;
+    }
 
     if (accessControlInter->isValid()) {
+        fmInfo() << "Sending password change request to daemon service";
         setEnabled(false);
         QString oldPass(oldPwdEdit->text().trimmed()), newPass(newPwdEdit->text().trimmed());
         QString oldPassEnc = FileUtils::encryptString(oldPass);
         QString newPassEnc = FileUtils::encryptString(newPass);
         accessControlInter->asyncCall(DaemonServiceIFace::kFuncChangePwd, oldPassEnc, newPassEnc);
+    } else {
+        fmCritical() << "Access control interface is invalid, cannot change password";
     }
 }
 
@@ -297,12 +326,15 @@ void DPCConfirmWidget::onPasswordChecked(int result)
 {
     switch (result) {
     case kNoError:
+        fmInfo() << "Password change completed successfully";
         emit sigConfirmed();
         break;
     case kAuthenticationFailed:
+        fmWarning() << "Password change failed: authentication failed";
         setEnabled(true);
         break;
     case kPasswordWrong:
+        fmWarning() << "Password change failed: wrong current password";
         setEnabled(true);
         oldPwdEdit->setAlert(true);
         showToolTips(tr("Wrong password"), oldPwdEdit);

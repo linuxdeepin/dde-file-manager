@@ -70,6 +70,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCheckSchemeViewIsFileView);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RefreshDir",
                             WorkspaceHelper::instance(), &WorkspaceHelper::handleRefreshDir);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterFocusFileViewDisabled",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterFocusFileViewDisabled);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_SetCustomViewProperty",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetCustomViewProperty);
@@ -427,4 +429,9 @@ void WorkspaceEventReceiver::handleTabChanged(const quint64 windowId, const QStr
 void WorkspaceEventReceiver::handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
 {
     WorkspaceHelper::instance()->registerLoadStrategy(scheme, strategy);
+}
+
+void WorkspaceEventReceiver::handleRegisterFocusFileViewDisabled(const QString &scheme)
+{
+    WorkspaceHelper::instance()->registerFocusFileViewDisabled(scheme);
 }

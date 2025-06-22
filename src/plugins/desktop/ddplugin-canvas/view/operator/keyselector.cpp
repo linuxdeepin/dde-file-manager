@@ -25,12 +25,16 @@ KeySelector::KeySelector(CanvasView *parent)
 void KeySelector::keyPressed(QKeyEvent *event)
 {
     // Do not allow move when hold ctrl.
-    if (event->modifiers() == Qt::ControlModifier)
+    if (event->modifiers() == Qt::ControlModifier) {
+        fmDebug() << "Key press ignored - Ctrl modifier held";
         return;
+    }
 
     QPersistentModelIndex newCurrent = moveCursor(event);
-    if (!newCurrent.isValid())
+    if (!newCurrent.isValid()) {
+        fmDebug() << "Key press ignored - no valid cursor movement for key:" << event->key();
         return;
+    }
 
     const OperState &state = view->d->operState();
     auto begin = state.getContBegin();
@@ -67,19 +71,27 @@ QList<Qt::Key> KeySelector::filterKeys() const
 
 void KeySelector::keyboardSearch(const QString &search)
 {
-    if (search.isEmpty())
+    if (search.isEmpty()) {
+        fmDebug() << "Empty search string - ignoring keyboard search";
         return;
+    }
 
-    if (view->d->hookIfs && view->d->hookIfs->keyboardSearch(view->screenNum(), search))
+    if (view->d->hookIfs && view->d->hookIfs->keyboardSearch(view->screenNum(), search)) {
+        fmDebug() << "Keyboard search handled by extension hook for query:" << search;
         return;
+    }
 
     bool reverseOrder = isShiftPressed();
     searchKeys.append(search);
     QModelIndex current = view->currentIndex();
     QModelIndex index = view->d->findIndex(searchKeys, true, current, reverseOrder, !searchTimer->isActive());
 
-    if (index.isValid())
+    if (index.isValid()) {
+        fmDebug() << "Search result found - selecting index";
         singleSelect(index);
+    } else {
+        fmDebug() << "No search result found for query:" << searchKeys;
+    }
 
     searchTimer->start();
 }
@@ -150,13 +162,17 @@ void KeySelector::clearSearchKey()
 void KeySelector::toggleSelect()
 {
     auto currentSelected = view->selectionModel()->selectedIndexesCache();
-    if (currentSelected.isEmpty())
+    if (currentSelected.isEmpty()) {
+        fmDebug() << "Toggle select ignored - no current selection";
         return;
+    }
 
     auto m = view->model();
     int rowCount = m->rowCount(m->rootIndex());
-    if (rowCount < 1)
+    if (rowCount < 1) {
+        fmDebug() << "Toggle select ignored - no items in model";
         return;
+    }
 
     QItemSelection sel(m->index(0), m->index(rowCount - 1));
     view->selectionModel()->select(sel, QItemSelectionModel::Toggle);

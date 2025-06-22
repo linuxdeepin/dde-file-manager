@@ -68,6 +68,7 @@ private:
     void initializeConnect();
     void updateLayout();
     void updateComboxViewWidth();
+    void setAppropriateWidgetFocus();
 
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;

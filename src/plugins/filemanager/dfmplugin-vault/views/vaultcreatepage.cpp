@@ -12,6 +12,7 @@
 #include "utils/vaulthelper.h"
 
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -32,6 +33,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
 {
     setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
     if (dfmbase::WindowUtils::isWayLand()) {
+        fmDebug() << "Vault: Setting Wayland window properties";
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
@@ -87,14 +89,17 @@ void VaultActiveView::slotNextWidget()
         if (nIndex < nCount - 1) {
             if (nIndex == 1) {   // set encryption method view
                 if (encryptInfo.mode == EncryptMode::kKeyMode) {
+                    fmDebug() << "Vault: Switching to key mode configuration view";
                     stackedWidget->setCurrentIndex(++nIndex);
                 } else if (encryptInfo.mode == EncryptMode::kTransparentMode) {
+                    fmDebug() << "Vault: Switching to transparent mode configuration view";
                     stackedWidget->setCurrentIndex(nIndex + 2);
                 }
                 return;
             }
             stackedWidget->setCurrentIndex(++nIndex);
         } else {
+            fmDebug() << "Vault: Reached final step, completing vault creation process";
             setBeginingState();
             accept();
         }
@@ -105,6 +110,7 @@ void VaultActiveView::encryptVault()
 {
     auto ret = OperatorCenter::getInstance()->createDirAndFile();
     if (!ret.result) {
+        fmWarning() << "Vault: Failed to create directory and file:" << ret.message;
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return;
     }
@@ -113,15 +119,21 @@ void VaultActiveView::encryptVault()
     bool result = false;
     switch (encryptInfo.mode) {
     case EncryptMode::kKeyMode:
+        fmInfo() << "Vault: Processing key mode encryption";
         result = handleKeyModeEncryption();
         break;
     case EncryptMode::kTransparentMode:
+        fmInfo() << "Vault: Processing transparent mode encryption";
         result = handleTransparentModeEncryption();
         break;
     }
-    if (!result)
-        return;
 
+    if (!result) {
+        fmWarning() << "Vault: Encryption setup failed for mode:" << static_cast<int>(encryptInfo.mode);
+        return;
+    }
+
+    fmInfo() << "Vault: Encryption setup completed, starting async vault creation";
     asyncCreateVault();
 }
 
@@ -138,8 +150,12 @@ void VaultActiveView::asyncCreateVault()
     auto watcher = new QFutureWatcher<Result>();
     connect(watcher, &QFutureWatcherBase::finished, this, [watcher, this]() {
         auto ret = watcher->result();
-        if (!ret.result)
+        if (!ret.result) {
+            fmWarning() << "Vault: Async vault creation failed:" << ret.message;
             activeVaultFinishedWidget->encryptFinished(false, ret.message);
+        } else {
+            fmInfo() << "Vault: Async vault creation completed successfully";
+        }
         watcher->deleteLater();
     });
     watcher->setFuture(QtConcurrent::run(&VaultActiveView::createVault, this));
@@ -153,25 +169,34 @@ Result VaultActiveView::createVault()
         fmWarning() << "Vault: Get encryption method failed!";
         return { false, tr("Failed to create vault: Get encryption method failed!") };
     }
+    fmDebug() << "Vault: Using encryption method:" << encrypitonMethod;
 
     metaObject()->invokeMethod(activeVaultFinishedWidget, "setProgressValue",
                                Qt::QueuedConnection, Q_ARG(int, 40));
+
     QString password { "" };
     if (encrypitonMethod == QString(kConfigValueMethodKey)) {
+        fmDebug() << "Vault: Retrieving password cipher for key method";
         password = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
     } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
+        fmDebug() << "Vault: Retrieving password from keyring for transparent method";
         password = OperatorCenter::getInstance()->passwordFromKeyring();
     } else {
-        fmWarning() << "Vault: Get encryption method failed, can't create vault!";
+        fmWarning() << "Vault: Unknown encryption method:" << encrypitonMethod << ", can't create vault!";
+        return { false, tr("Failed to create vault: Unknown encryption method!") };
     }
 
     metaObject()->invokeMethod(activeVaultFinishedWidget, "setProgressValue",
                                Qt::QueuedConnection, Q_ARG(int, 50));
+
     if (!password.isEmpty()) {
+        fmInfo() << "Vault: Initiating vault creation with retrieved password";
         VaultHelper::instance()->createVault(password);
         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
+        fmDebug() << "Vault: Cleared password cipher from memory";
     } else {
-        fmWarning() << "Vault: Get password is empty, failed to create the vault!";
+        fmWarning() << "Vault: Retrieved password is empty, failed to create the vault!";
+        return { false, tr("Failed to create vault: Retrieved password is empty!") };
     }
 
     return { true };
@@ -179,26 +204,34 @@ Result VaultActiveView::createVault()
 
 bool VaultActiveView::handleKeyModeEncryption()
 {
+    {
+        // save configure
+        fmDebug() << "Vault: Saving key mode configuration";
+        VaultConfig config;
+        config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
+        config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
+    }
+
     auto ret = OperatorCenter::getInstance()->savePasswordAndPasswordHint(encryptInfo.password, encryptInfo.hint);
     if (!ret.result) {
+        fmWarning() << "Vault: Failed to save password and hint:" << ret.message;
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return false;
     }
 
     ret = OperatorCenter::getInstance()->createKeyNew(encryptInfo.password);
     if (!ret.result) {
+        fmWarning() << "Vault: Failed to create new key:" << ret.message;
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return false;
     }
-    VaultConfig config;
-    config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
-    config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
     activeVaultFinishedWidget->setProgressValue(20);
 
     //! 获取密钥字符串
     QString pubKey = OperatorCenter::getInstance()->getPubKey();
     ret = OperatorCenter::getInstance()->saveKey(pubKey, encryptInfo.keyPath);
     if (!ret.result) {
+        fmWarning() << "Vault: Failed to save key to path" << encryptInfo.keyPath << ":" << ret.message;
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return false;
     }
@@ -218,6 +251,7 @@ bool VaultActiveView::handleTransparentModeEncryption()
     // save password to keyring
     auto ret = OperatorCenter::getInstance()->savePasswordToKeyring(password);
     if (!ret.result) {
+        fmWarning() << "Vault: Failed to save password to keyring:" << ret.message;
         activeVaultFinishedWidget->encryptFinished(false, ret.message);
         return false;
     }

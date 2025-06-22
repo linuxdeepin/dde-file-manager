@@ -70,6 +70,8 @@ void CustomWaterMaskLabel::loadConfig()
         maskLogoUri.replace(0, 1, QDir::homePath());
     }
 
+    fmDebug() << "Config loaded - enabled:" << maskEnabled << "size:" << maskSize << "offset:" << maskOffset;
+
     return;
 }
 
@@ -95,6 +97,7 @@ void CustomWaterMaskLabel::onConfigChanged(const QString &cfg, const QString &ke
     if (cfg != QString(kConfName))
         return;
 
+    fmDebug() << "Water mask config changed - key:" << key;
     refresh();
     return;
 }
@@ -102,6 +105,7 @@ void CustomWaterMaskLabel::onConfigChanged(const QString &cfg, const QString &ke
 void CustomWaterMaskLabel::update()
 {
     if (!maskEnabled) {
+        fmDebug() << "Water mask disabled - hiding";
         hide();
         return;
     }

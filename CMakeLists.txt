@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-typ
 # options
 option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
-option(OPT_ENABLE_BUILD_UT "Buld unit tests" OFF)
+option(OPT_ENABLE_BUILD_UT "Buld unit tests" ON)
 
 # if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
@@ -81,6 +81,7 @@ if(OPT_ENABLE_BUILD_UT)
     message(STATUS "Enable testing: ${BUILD_TESTING}")
     if(BUILD_TESTING)
         enable_testing()
-        add_subdirectory(tests)
+        add_subdirectory(tests2)
     endif()
 endif()
+

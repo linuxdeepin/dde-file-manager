@@ -38,6 +38,7 @@ DeepinLicenseHelper::~DeepinLicenseHelper()
 void DeepinLicenseHelper::init()
 {
     std::call_once(initFlag, [this](){
+        fmDebug() << "Starting background interface creation";
         work = QtConcurrent::run(&DeepinLicenseHelper::createInterface);
     });
 }
@@ -65,21 +66,21 @@ void DeepinLicenseHelper::initFinshed(void *interface)
     connect(licenseInterface, &ComDeepinLicenseInterface::LicenseStateChange,
                      this, &DeepinLicenseHelper::requestLicenseState);
     work.waitForFinished();
-    fmInfo() << "interface inited";
+    fmInfo() << "License interface initialized and connected successfully";
 
     requestLicenseState();
 }
 
 void DeepinLicenseHelper::createInterface()
 {
-    fmInfo() << "create ComDeepinLicenseInterface...";
+    fmInfo() << "Creating ComDeepinLicenseInterface for service: com.deepin.license";
     auto licenseInterface = new ComDeepinLicenseInterface(
             "com.deepin.license",
             "/com/deepin/license/Info",
             QDBusConnection::systemBus());
 
     licenseInterface->moveToThread(qApp->thread());
-    fmInfo() << "create /com/deepin/license/Info ...";
+    fmInfo() << "License interface created successfully, moved to main thread";
 
     QMetaObject::invokeMethod(DeepinLicenseHelper::instance(), "initFinshed", Q_ARG(void *, licenseInterface));
 }
@@ -88,16 +89,16 @@ void DeepinLicenseHelper::getLicenseState(DeepinLicenseHelper *self)
 {
     Q_ASSERT(self);
     Q_ASSERT(self->licenseInterface);
-    fmInfo() << "get active state from com.deepin.license.Info";
+    fmDebug() << "Starting license state retrieval from com.deepin.license.Info";
     int state = self->licenseInterface->authorizationState();
     LicenseProperty prop = self->getServiceProperty();
 
     if (prop == LicenseProperty::Noproperty) {
-        fmInfo() << "no service property obtained,try to get AuthorizetionProperty";
+        fmInfo() << "No service property obtained, trying to get AuthorizationProperty";
         prop = self->getAuthorizationProperty();
     }
 
-    fmInfo() << "Get AuthorizationState" << state << prop;
+    fmInfo() << "License state retrieved - AuthorizationState:" << state << ", Property:" << static_cast<int>(prop);
     emit self->postLicenseState(state, prop);
 }
 
@@ -107,12 +108,12 @@ DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getServiceProperty()
     LicenseProperty prop = LicenseProperty::Noproperty;
     QVariant servProp = licenseInterface->property("ServiceProperty");
     if (!servProp.isValid()) {
-        fmInfo() << "no such property: ServiceProperty in license";
+        fmDebug() << "ServiceProperty not available in license interface";
     } else {
         bool ok = false;
         prop = servProp.toInt(&ok) ? LicenseProperty::Secretssecurity : LicenseProperty::Noproperty;
         if (!ok) {
-            fmWarning() << "invalid value of serviceProperty" << servProp;
+            fmWarning() << "Invalid ServiceProperty value - cannot convert to integer:" << servProp;
             prop = LicenseProperty::Noproperty;
         }
     }
@@ -125,7 +126,7 @@ DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getAuthorizationProper
     LicenseProperty prop = LicenseProperty::Noproperty;
     QVariant authprop = licenseInterface->property("AuthorizationProperty");
     if (!authprop.isValid()) {
-        fmInfo() << "no such property: AuthorizationProperty in license.";
+        fmDebug() << "AuthorizationProperty not available in license interface";
     } else {
         bool ok = false;
         int value = authprop.toInt(&ok);
@@ -139,7 +140,7 @@ DeepinLicenseHelper::LicenseProperty DeepinLicenseHelper::getAuthorizationProper
 
         prop = licenseProperty.value(value, LicenseProperty::Noproperty);
         if (!ok) {
-            fmWarning() << "invalid value of AuthorizationProperty" << authprop;
+            fmWarning() << "Unknown AuthorizationProperty value:" << value << "- defaulting to Noproperty";
             prop = LicenseProperty::Noproperty;
         }
     }
