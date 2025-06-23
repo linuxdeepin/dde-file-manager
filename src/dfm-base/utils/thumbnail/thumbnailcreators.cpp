@@ -21,6 +21,10 @@
 #include <QDebug>
 #include <QTemporaryDir>
 
+#include <libheif/heif.h>
+#include <QImage>
+#include <QBuffer>
+
 // use original poppler api
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-image.h>
@@ -31,6 +35,55 @@ static constexpr char kFormat[] { ".png" };
 
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
+
+QImage decodeHeifThumbnail(const QString &filePath, int maxSize)
+{
+    heif_context* ctx = heif_context_alloc();
+    heif_error err = heif_context_read_from_file(ctx, filePath.toUtf8().constData(), nullptr);
+
+    if (err.code != heif_error_Ok) {
+        qCWarning(logDFMBase) << "libheif: failed to read file:" << err.message;
+        heif_context_free(ctx);
+        return {};
+    }
+
+    heif_image_handle* handle;
+    err = heif_context_get_primary_image_handle(ctx, &handle);
+    if (err.code != heif_error_Ok) {
+        qCWarning(logDFMBase) << "libheif: failed to get primary image:" << err.message;
+        heif_context_free(ctx);
+        return {};
+    }
+
+    heif_image* img;
+    err = heif_decode_image(handle, &img, heif_colorspace_RGB, heif_chroma_interleaved_RGB, nullptr);
+    if (err.code != heif_error_Ok) {
+        qCWarning(logDFMBase) << "libheif: decode failed:" << err.message;
+        heif_image_handle_release(handle);
+        heif_context_free(ctx);
+        return {};
+    }
+
+    int width = heif_image_get_width(img, heif_channel_interleaved);
+    int height = heif_image_get_height(img, heif_channel_interleaved);
+
+    const uint8_t* data = heif_image_get_plane_readonly(img, heif_channel_interleaved, nullptr);
+    int stride = width * 3;  // RGB888 = 3 bytes per pixel
+
+    QImage image(data, width, height, stride, QImage::Format_RGB888);
+
+    if (width > maxSize || height > maxSize) {
+        image = image.scaled(maxSize, maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    QImage result = image.copy();  // Detach from libheif buffer
+
+    heif_image_release(img);
+    heif_image_handle_release(handle);
+    heif_context_free(ctx);
+
+    return result;
+}
 
 QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
@@ -232,6 +285,17 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     //! fix bug #53200 QImageReader构造时不传format参数，会造成没有读取不了真实的文件 类型比如将png图标后缀修改为jpg，读取的类型不对
 
     QString mimeType = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath), QMimeDatabase::MatchContent).name();
+
+    if (mimeType == "image/heif" || mimeType == "image/heic") {
+    	QImage heifImage = decodeHeifThumbnail(filePath, size);
+    	if (!heifImage.isNull()) {
+        	qCDebug(logDFMBase) << "thumbnail: HEIF thumbnail decoded natively for:" << filePath;
+        	return heifImage;
+    	} else {
+        	qCWarning(logDFMBase) << "thumbnail: native HEIF decoding failed for:" << filePath;
+    	}
+	}
+
     const QString &suffix = mimeType.replace("image/", "");
 
     QImageReader reader(filePath, suffix.toLatin1());
