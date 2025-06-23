@@ -7,6 +7,7 @@ find_package(dfm${DTK_VERSION_MAJOR}-burn REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(gio REQUIRED gio-unix-2.0 IMPORTED_TARGET)
 pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
+pkg_check_modules(LIBHEIF REQUIRED libheif)
 
 pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
 if(${QT_VERSION_MAJOR} EQUAL "6")
@@ -100,6 +101,7 @@ target_link_libraries(${BIN_NAME}
         PkgConfig::X11
         poppler-cpp
         ${DFM_EXTRA_LIBRARIES}
+        ${LIBHEIF_LIBRARIES}
 )
 
 target_include_directories(${BIN_NAME} 
@@ -111,6 +113,9 @@ target_include_directories(${BIN_NAME}
         ${DFM_MOUNT_HEADERS}
         ${DFM_BURN_HEADERS}
     )
+
+include_directories(${LIBHEIF_INCLUDE_DIRS})
+link_directories(${LIBHEIF_LIBRARY_DIRS})
 
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install
 target_compile_definitions(
