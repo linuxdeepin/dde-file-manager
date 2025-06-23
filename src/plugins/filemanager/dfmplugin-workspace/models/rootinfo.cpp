@@ -4,6 +4,7 @@
 
 #include "rootinfo.h"
 #include "fileitemdata.h"
+#include "utils/keywordextractor.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -26,17 +27,11 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
 {
     fmInfo() << "RootInfo created for URL:" << url.toString() << "canCache:" << canCache;
 
-    QUrlQuery query(url.query());
-    if (query.hasQueryItem("keyword")) {
-        QString keywordValue = query.queryItemValue("keyword");
-        // 先对URL编码的字符进行解码，确保能处理所有空白字符
-        keywordValue = QUrl::fromPercentEncoding(keywordValue.toUtf8());
-
-        // 使用\s+匹配所有空白字符（空格、换行、制表符等）
-        static const QRegularExpression kWhitespaceDelimiter("\\s+");
-        keyWords = keywordValue.split(kWhitespaceDelimiter, Qt::SkipEmptyParts);
-
-        fmDebug() << "Parsed keywords for search:" << keyWords;
+    // 使用关键字提取器来处理关键字解析
+    keyWords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
+    
+    if (!keyWords.isEmpty()) {
+        fmDebug() << "Extracted keywords for search:" << keyWords;
     }
 
     hiddenFileUrl.setScheme(url.scheme());

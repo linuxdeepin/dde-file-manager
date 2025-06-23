@@ -6,6 +6,7 @@
 #define DFMSEARCHER_H
 
 #include "searchmanager/searcher/abstractsearcher.h"
+#include "querystrategies.h"
 #include <dfm-search/searchengine.h>
 #include <dfm-search/searchquery.h>
 #include <dfm-search/searchoptions.h>
@@ -56,9 +57,12 @@ private slots:
     void onSearchError(const DFMSEARCH::SearchError &error);
 
 private:
-    DFMSEARCH::SearchEngine *engine { nullptr };
-    DFMSearchResultMap allResults;
+    DFMSEARCH::SearchEngine *engine = nullptr;
     mutable QMutex mutex;
+    DFMSearchResultMap allResults;
+    
+    // 查询类型选择器，负责根据关键词和搜索类型选择合适的策略
+    QueryTypeSelector querySelector;
 
     // 批处理大小，每找到这么多个结果就通知一次
     static constexpr int kBatchSize = 10;
