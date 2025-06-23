@@ -7,6 +7,7 @@
 #include <DApplication>
 #include <QDir>
 #include <QIcon>
+#include <QTimer>
 
 #include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -177,7 +178,8 @@ static void handleSIGTERM(int sig)
 
     if (qApp) {
         qApp->setProperty("SIGTERM", true);
-        qApp->quit();
+        // 重启或关闭系统时，信号处理会阻塞进程
+        QTimer::singleShot(0, qApp, &QApplication::quit);
     }
 }
 
@@ -217,10 +219,10 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppDialogWayland) << "main: Application initialization completed successfully";
     int ret { a.exec() };
-    
+
     qCInfo(logAppDialogWayland) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
-    
+
     if (qApp->property("SIGTERM").toBool()) {
         qCWarning(logAppDialogWayland) << "main: Application terminated by SIGTERM, exit code:" << ret;
         _Exit(ret);

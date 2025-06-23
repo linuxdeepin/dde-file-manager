@@ -14,6 +14,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QTimer>
 
 #include <signal.h>
 #include <unistd.h>
@@ -86,7 +87,7 @@ static bool pluginsLoad()
         return false;
     }
     if (!corePlugin->fileName().contains(kLibCore)) {
-        qCCritical(logAppDaemon) << "pluginsLoad: Core plugin library mismatch, expected:" << kLibCore 
+        qCCritical(logAppDaemon) << "pluginsLoad: Core plugin library mismatch, expected:" << kLibCore
                                  << "actual:" << corePlugin->fileName();
         return false;
     }
@@ -112,7 +113,8 @@ static void handleSIGTERM(int sig)
     qCWarning(logAppDaemon) << "handleSIGTERM: Received SIGTERM signal:" << sig;
 
     if (qApp) {
-        qApp->quit();
+        // 重启或关闭系统时，信号处理会阻塞进程
+        QTimer::singleShot(0, qApp, &QApplication::quit);
     }
 }
 
@@ -157,9 +159,9 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppDaemon) << "main: Daemon initialization completed successfully";
     int ret { a.exec() };
-    
+
     qCInfo(logAppDaemon) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
-    
+
     return ret;
 }
