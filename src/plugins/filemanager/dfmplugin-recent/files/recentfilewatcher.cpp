@@ -36,7 +36,7 @@ void RecentFileWatcherPrivate::initFileWatcher()
     proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
 
     if (!proxy) {
-        fmWarning("watcher create failed.");
+        fmCritical() << "Watcher create failed for path:" << path;
         abort();
     }
 }
@@ -50,10 +50,11 @@ void RecentFileWatcherPrivate::initConnect()
 
     auto onParentDeleted = [=](const QString &, const QString &deletedPath) {
         if (path.startsWith(deletedPath) && !deletedPath.isEmpty()) {
-            fmInfo() << "recent: watched: " << path << ", deleted: " << deletedPath;
+            fmInfo() << "Recent file parent directory deleted - watched:" << path << "deleted:" << deletedPath;
             Q_EMIT q->fileDeleted(QUrl::fromLocalFile(path));
         }
     };
+
     connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, onParentDeleted);
     connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, onParentDeleted);
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, onParentDeleted);
@@ -90,8 +91,11 @@ void RecentFileWatcher::addWatcher(const QUrl &url)
     }
 
     AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(url);
-    if (!watcher)
+    if (!watcher) {
+        fmWarning() << "Failed to create watcher for URL:" << url;
         return;
+    }
+
     watcher->moveToThread(qApp->thread());
 
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
@@ -110,6 +114,7 @@ void RecentFileWatcher::removeWatcher(const QUrl &url)
     AbstractFileWatcherPointer watcher = dptr->urlToWatcherMap.take(url);
 
     if (!watcher) {
+        fmDebug() << "No watcher found to remove for URL:" << url;
         return;
     }
 }

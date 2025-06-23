@@ -74,6 +74,7 @@ QString RecentManager::getRecentOriginPaths(const QUrl &url) const
     if (it != recentItems.end())
         return it.value().originPath;
 
+    fmDebug() << "No origin path found for URL:" << url;
     return QString();
 }
 
@@ -103,7 +104,7 @@ void RecentManager::resetRecentNodes()
             auto modified = map.value(RecentProperty::kModified).toLongLong();
             onItemAdded(path, href, modified);
         } else {
-            qWarning() << "Map is empty or could not be converted!";
+            fmWarning() << "Map is empty or could not be converted from DBus argument";
         }
     }
 }
@@ -128,7 +129,7 @@ void RecentManager::init()
 
     connect(recentDBusInterce.data(), &RecentManagerDBusInterface::ReloadFinished,
             this, [this](qint64 timestamp) {
-                fmDebug() << "reload finieshed: " << timestamp;
+                fmDebug() << "DBus reload finished, timestamp:" << timestamp;
                 if (timestamp != 0)
                     resetRecentNodes();
                 static std::once_flag flag;
@@ -148,36 +149,41 @@ void RecentManager::init()
 
 void RecentManager::reloadRecent()
 {
-    fmDebug() << "reload recent..";
+    fmDebug() << "Reloading recent files from DBus service";
     recentDBusInterce->Reload();
 }
 
 void RecentManager::onItemAdded(const QString &path, const QString &href, qint64 modified)
 {
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "Item added with empty path, ignoring";
         return;
+    }
 
     const QUrl &url { RecentHelper::recentUrl(path) };
     if (!url.isValid()) {
-        fmWarning() << "Add node failed, invliad url";
+        fmWarning() << "Add node failed, invalid URL for path:" << path;
         return;
     }
 
-    if (recentItems.contains(url))
+    if (recentItems.contains(url)) {
+        fmDebug() << "Item already exists in cache, skipping:" << url;
         return;
+    }
 
     auto info = InfoFactory::create<FileInfo>(url);
     if (info.isNull()) {
-        fmWarning() << "Add node failed, nullptr fileinfo";
+        fmWarning() << "Add node failed, could not create FileInfo for URL:" << url;
         return;
     }
 
-    fmDebug() << "recent item added:" << url;
+    fmDebug() << "Adding recent item to cache:" << url;
     RecentItem item;
     item.fileInfo = info;
     item.originPath = href;
     recentItems.insert(url, item);
     item.fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+
     QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
     if (watcher)
         emit watcher->subfileCreated(url);
@@ -187,10 +193,12 @@ void RecentManager::onItemsRemoved(const QStringList &paths)
 {
     for (const auto &path : paths) {
         const QUrl &url { RecentHelper::recentUrl(path) };
-        if (!recentItems.contains(url))
+        if (!recentItems.contains(url)) {
+            fmDebug() << "Item not found in cache for removal:" << url;
             break;
+        }
 
-        fmDebug() << "recent item removed:" << url;
+        fmDebug() << "Removing recent item from cache:" << url;
         recentItems.remove(url);
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
         if (watcher)
@@ -200,16 +208,21 @@ void RecentManager::onItemsRemoved(const QStringList &paths)
 
 void RecentManager::onItemChanged(const QString &path, qint64 modified)
 {
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "Item changed with empty path, ignoring";
         return;
+    }
 
     const QUrl &url { RecentHelper::recentUrl(path) };
-    if (!recentItems.contains(url))
+    if (!recentItems.contains(url)) {
+        fmDebug() << "Item not found in cache for update:" << url;
         return;
+    }
 
-    fmDebug() << "recent item changed: " << path << modified;
+    fmDebug() << "Updating recent item access time - path:" << path << "timestamp:" << modified;
     QDateTime dateTime { QDateTime::fromSecsSinceEpoch(modified) };
     recentItems[url].fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+
     QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
     if (watcher)
         emit watcher->fileAttributeChanged(url);
@@ -285,7 +298,7 @@ void RecentHelper::openFileLocation(const QList<QUrl> &urls)
 {
     for (const QUrl &url : urls) {
         if (!openFileLocation(url))
-            fmWarning() << "failed to open: " << url.path();
+            fmWarning() << "Failed to open file location for:" << url.path();
     }
 }
 
@@ -308,6 +321,7 @@ void RecentHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
     });
     QAction *act = menu->exec(globalPos);
     if (act) {
+        fmDebug() << "Context menu action executed:" << act->text();
         QList<QUrl> urls { url };
         dpfSignalDispatcher->publish("dfmplugin_recent", "signal_ReportLog_MenuData", act->text(), urls);
     }

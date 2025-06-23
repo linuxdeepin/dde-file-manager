@@ -65,7 +65,10 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
-        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "Menu scene initialization failed - invalid parameters"
+                    << "selectFiles isEmpty:" << d->selectFiles.isEmpty()
+                    << "focusFile:" << d->focusFile
+                    << "currentDir:" << d->currentDir;
         return false;
     }
 
@@ -74,7 +77,7 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(d->focusFile, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (d->focusFileInfo.isNull()) {
-            fmWarning() << "focusFileInfo isNull :" << errString;
+            fmWarning() << "Failed to create focusFileInfo:" << errString;
             return false;
         }
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
@@ -102,8 +105,11 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
 
 bool RecentMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmWarning() << "Cannot create menu scene with null parent menu";
         return false;
+    }
+
     if (!d->isEmptyArea) {
         auto actRemove = parent->addAction(d->predicateName[RecentActionID::kRemove]);
         actRemove->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);
@@ -150,7 +156,7 @@ bool RecentMenuScene::triggered(QAction *action)
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
-        fmWarning() << "action not found, id: " << actId;
+        fmWarning() << "Unknown action triggered, actionId:" << actId;
         return false;
     }
 
