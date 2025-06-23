@@ -146,7 +146,7 @@ bool DFMSearcher::isValidSearchParameters() const
 bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
 {
     if (engine->searchType() == SearchType::Content) {
-        if (DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()
+        if (DFMSEARCH::Global::isFileNameIndexReadyForSearch()
             && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
             fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
             return false;
@@ -215,7 +215,7 @@ bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) cons
     }
 
     // 当索引目录不可用时，不排除索引路径
-    if (engine->searchType() == SearchType::FileName && !DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+    if (engine->searchType() == SearchType::FileName && !DFMSEARCH::Global::isFileNameIndexReadyForSearch()) {
         fmDebug() << "Not excluding indexed paths due to unavailable filename index directory";
         return false;
     }
@@ -265,7 +265,7 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
         return SearchMethod::Indexed;
 
     // 对于文件名搜索，首先检查文件名索引目录是否可用
-    if (!DFMSEARCH::Global::isFileNameIndexDirectoryAvailable()) {
+    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch()) {
         fmWarning() << "File name index directory is not available, falling back to realtime search for path:" << path;
         return SearchMethod::Realtime;
     }

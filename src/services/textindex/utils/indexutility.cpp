@@ -15,7 +15,7 @@ namespace IndexUtility {
 
 bool isIndexWithAnything(const QString &path)
 {
-    if (!DFMSEARCH::Global::isFileNameIndexDirectoryAvailable())
+    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
         return false;
 
     return isDefaultIndexedDirectory(path);
