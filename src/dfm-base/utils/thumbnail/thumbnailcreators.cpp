@@ -36,29 +36,39 @@ static constexpr char kFormat[] { ".png" };
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
-QImage decodeHeifThumbnail(const QString &filePath, int maxSize)
+QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
 {
     heif_context* ctx = heif_context_alloc();
-    heif_error err = heif_context_read_from_file(ctx, filePath.toUtf8().constData(), nullptr);
+    if (!ctx) {
+        qWarning() << "HEIF: Failed to allocate context.";
+        return {};
+    }
 
+    heif_error err = heif_context_read_from_file(ctx, filePath.toUtf8().constData(), nullptr);
     if (err.code != heif_error_Ok) {
-        qCWarning(logDFMBase) << "libheif: failed to read file:" << err.message;
+        qWarning() << "HEIF: Failed to read file:" << filePath << "Error:" << err.message;
         heif_context_free(ctx);
         return {};
     }
 
-    heif_image_handle* handle;
+    heif_image_handle* handle = nullptr;
     err = heif_context_get_primary_image_handle(ctx, &handle);
     if (err.code != heif_error_Ok) {
-        qCWarning(logDFMBase) << "libheif: failed to get primary image:" << err.message;
+        qWarning() << "HEIF: Failed to get image handle:" << filePath << "Error:" << err.message;
         heif_context_free(ctx);
         return {};
     }
 
-    heif_image* img;
-    err = heif_decode_image(handle, &img, heif_colorspace_RGB, heif_chroma_interleaved_RGB, nullptr);
-    if (err.code != heif_error_Ok) {
-        qCWarning(logDFMBase) << "libheif: decode failed:" << err.message;
+    heif_image* img = nullptr;
+
+    // Check for alpha channel and decode appropriately
+    bool hasAlpha = heif_image_handle_has_alpha_channel(handle);
+    heif_colorspace cs = heif_colorspace_RGB;
+    heif_chroma chroma = hasAlpha ? heif_chroma_interleaved_RGBA : heif_chroma_interleaved_RGB;
+
+    err = heif_decode_image(handle, &img, cs, chroma, nullptr);
+    if (err.code != heif_error_Ok || !img) {
+        qWarning() << "HEIF: Failed to decode image:" << filePath << "Error:" << err.message;
         heif_image_handle_release(handle);
         heif_context_free(ctx);
         return {};
@@ -67,24 +77,42 @@ QImage decodeHeifThumbnail(const QString &filePath, int maxSize)
     int width = heif_image_get_width(img, heif_channel_interleaved);
     int height = heif_image_get_height(img, heif_channel_interleaved);
 
-    const uint8_t* data = heif_image_get_plane_readonly(img, heif_channel_interleaved, nullptr);
-    int stride = width * 3;  // RGB888 = 3 bytes per pixel
-
-    QImage image(data, width, height, stride, QImage::Format_RGB888);
-
-    if (width > maxSize || height > maxSize) {
-        image = image.scaled(maxSize, maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    if (width <= 0 || height <= 0) {
+        qWarning() << "HEIF: Invalid image dimensions:" << width << "x" << height;
+        heif_image_release(img);
+        heif_image_handle_release(handle);
+        heif_context_free(ctx);
+        return {};
     }
 
-    QImage result = image.copy();  // Detach from libheif buffer
+    int stride = 0;
+    const uint8_t* data = heif_image_get_plane_readonly(img, heif_channel_interleaved, &stride);
+    if (!data || stride <= 0) {
+        qWarning() << "HEIF: Failed to get image plane data.";
+        heif_image_release(img);
+        heif_image_handle_release(handle);
+        heif_context_free(ctx);
+        return {};
+    }
+
+    QImage::Format format = hasAlpha ? QImage::Format_RGBA8888 : QImage::Format_RGB888;
+    QImage image(data, width, height, stride, format);
+
+
+    // Copy image to detach from HEIF buffer
+    QImage finalImage = image.copy();
+
+    // Optionally scale if larger than requested thumbnail size
+    if (finalImage.width() > maxSize || finalImage.height() > maxSize) {
+        finalImage = finalImage.scaled(maxSize, maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
 
     heif_image_release(img);
     heif_image_handle_release(handle);
     heif_context_free(ctx);
 
-    return result;
+    return finalImage;
 }
-
 QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: using default creator for:" << filePath << "size:" << size;
