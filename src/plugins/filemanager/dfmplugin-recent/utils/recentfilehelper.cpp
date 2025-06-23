@@ -39,8 +39,10 @@ RecentFileHelper *RecentFileHelper::instance()
 
 bool RecentFileHelper::setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, bool *ok, QString *error)
 {
-    if (Global::Scheme::kRecent != url.scheme())
+    if (Global::Scheme::kRecent != url.scheme()) {
+        fmDebug() << "URL scheme is not recent, ignoring permission request";
         return false;
+    }
 
     Q_UNUSED(windowId)
 
@@ -48,8 +50,10 @@ bool RecentFileHelper::setPermissionHandle(const quint64 windowId, const QUrl ur
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
 
     bool succ = fileHandler.setPermissions(localUrl, permissions);
-    if (!succ && error)
+    if (!succ && error) {
         *error = fileHandler.errorString();
+        fmWarning() << "Failed to set permissions for file:" << localUrl << "error:" << *error;
+    }
 
     if (ok)
         *ok = succ;
@@ -73,10 +77,15 @@ bool RecentFileHelper::copyFile(const quint64, const QList<QUrl>, const QUrl tar
 
 bool RecentFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
-    if (sources.isEmpty())
+    if (sources.isEmpty()) {
+        fmWarning() << "Move to trash failed - empty sources list";
         return false;
-    if (sources.first().scheme() != RecentHelper::scheme())
+    }
+
+    if (sources.first().scheme() != RecentHelper::scheme()) {
+        fmDebug() << "Move to trash ignored - first source is not recent scheme:" << sources.first().scheme();
         return false;
+    }
 
     Q_UNUSED(windowId)
     Q_UNUSED(flags)
@@ -88,10 +97,15 @@ bool RecentFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sou
 
 bool RecentFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
 {
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmWarning() << "Open file in plugin failed - empty URLs list";
         return false;
-    if (urls.first().scheme() != RecentHelper::scheme())
+    }
+
+    if (urls.first().scheme() != RecentHelper::scheme()) {
+        fmDebug() << "Open file in plugin ignored - first URL is not recent scheme:" << urls.first().scheme();
         return false;
+    }
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
@@ -104,8 +118,10 @@ bool RecentFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
 
 bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence)
 {
-    if (url.scheme() != RecentHelper::scheme())
+    if (url.scheme() != RecentHelper::scheme()) {
+        fmDebug() << "Link file ignored - source URL is not recent scheme:" << url.scheme();
         return false;
+    }
 
     Q_UNUSED(windowId)
 
@@ -143,10 +159,16 @@ bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QU
 
 bool RecentFileHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmWarning() << "Write to clipboard failed - empty URLs list";
         return false;
-    if (urls.first().scheme() != RecentHelper::scheme())
+    }
+
+    if (urls.first().scheme() != RecentHelper::scheme()) {
+        fmDebug() << "Write to clipboard ignored - first URL is not recent scheme:" << urls.first().scheme();
         return false;
+    }
+
     if (action == ClipBoard::ClipboardAction::kCutAction)
         return true;
 
@@ -161,10 +183,15 @@ bool RecentFileHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBo
 
 bool RecentFileHelper::openFileInTerminal(const quint64 windowId, const QList<QUrl> urls)
 {
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmWarning() << "Open in terminal failed - empty URLs list";
         return false;
-    if (urls.first().scheme() != RecentHelper::scheme())
+    }
+
+    if (urls.first().scheme() != RecentHelper::scheme()) {
+        fmDebug() << "Open in terminal ignored - first URL is not recent scheme:" << urls.first().scheme();
         return false;
+    }
 
     Q_UNUSED(windowId);
 
