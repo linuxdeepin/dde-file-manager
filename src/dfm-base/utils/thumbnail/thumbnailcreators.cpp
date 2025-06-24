@@ -322,7 +322,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     	} else {
         	qCWarning(logDFMBase) << "thumbnail: native HEIF decoding failed for:" << filePath;
     	}
-	}
+    }
 
     const QString &suffix = mimeType.replace("image/", "");
 
