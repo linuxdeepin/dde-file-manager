@@ -28,6 +28,7 @@ inline const QString kTextIndexSchema = QLatin1String("org.deepin.dde.file-manag
 inline const QString kAutoIndexUpdateInterval = QLatin1String("autoIndexUpdateInterval");
 inline const QString kInotifyResourceCleanupDelay = QLatin1String("inotifyResourceCleanupDelay");
 inline const QString kMaxIndexFileSizeMB = QLatin1String("maxIndexFileSizeMB");
+inline const QString kMaxIndexFileTruncationSizeMB = QLatin1String("maxIndexFileTruncationSizeMB");
 inline const QString kSupportedFileExtensions = QLatin1String("supportedFileExtensions");
 inline const QString kIndexHiddenFiles = QLatin1String("indexHiddenFiles");
 inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters");

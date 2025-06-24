@@ -5,6 +5,7 @@
 #include "moveprocessor.h"
 #include "utils/docutils.h"
 #include "utils/indexutility.h"
+#include "utils/textindexconfig.h"
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -136,7 +137,11 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file contents
-        const auto &contentOpt = DocUtils::extractFileContent(filePath);
+        const TextIndexConfig &config = TextIndexConfig::instance();
+        const int truncationSizeMB = config.maxIndexFileTruncationSizeMB();
+        const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
+        
+        const auto &contentOpt = DocUtils::extractFileContent(filePath, maxBytes);
         if (contentOpt) {
             const QString &contents = contentOpt.value().trimmed();
             newDoc->add(newLucene<Field>(L"contents", contents.toStdWString(),

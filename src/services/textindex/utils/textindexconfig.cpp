@@ -68,6 +68,18 @@ void TextIndexConfig::loadAllConfigs()
                                                    DEFAULT_MAX_INDEX_FILE_SIZE_MB)
                                    .toInt();
 
+    // Max Index File Truncation Size MB
+    m_maxIndexFileTruncationSizeMB = m_dconfigManager->value(
+                                                             Defines::DConf::kTextIndexSchema,
+                                                             Defines::DConf::kMaxIndexFileTruncationSizeMB,
+                                                             DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB)
+                                             .toInt();
+    // Validate and apply default if value is invalid (negative, zero, or too large)
+    if (m_maxIndexFileTruncationSizeMB <= 0 || m_maxIndexFileTruncationSizeMB > 1024) {
+        fmWarning() << "TextIndexConfig: Invalid maxIndexFileTruncationSizeMB value:" << m_maxIndexFileTruncationSizeMB << ", using default:" << DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB;
+        m_maxIndexFileTruncationSizeMB = DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB;
+    }
+
     // Supported File Extensions
     const QStringList defaultSupportedExtensions = {
         "rtf", "odt", "ods", "odp", "odg", "docx",
@@ -152,6 +164,12 @@ int TextIndexConfig::maxIndexFileSizeMB() const
 {
     QMutexLocker locker(&m_mutex);
     return m_maxIndexFileSizeMB;
+}
+
+int TextIndexConfig::maxIndexFileTruncationSizeMB() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_maxIndexFileTruncationSizeMB;
 }
 
 QStringList TextIndexConfig::supportedFileExtensions() const

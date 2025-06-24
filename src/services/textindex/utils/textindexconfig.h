@@ -27,6 +27,7 @@ public:
     int autoIndexUpdateInterval() const;
     qint64 inotifyResourceCleanupDelayMs() const;
     int maxIndexFileSizeMB() const;
+    int maxIndexFileTruncationSizeMB() const;
     QStringList supportedFileExtensions() const;
     bool indexHiddenFiles() const;
     QStringList folderExcludeFilters() const;
@@ -52,6 +53,7 @@ private:
     int m_autoIndexUpdateInterval;
     qint64 m_inotifyResourceCleanupDelayMs;
     int m_maxIndexFileSizeMB;
+    int m_maxIndexFileTruncationSizeMB;
     QStringList m_supportedFileExtensions;
     bool m_indexHiddenFiles;
     QStringList m_folderExcludeFilters;
@@ -64,6 +66,7 @@ private:
     static const int DEFAULT_AUTO_INDEX_UPDATE_INTERVAL = 180;
     static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800LL;   // 30 * 60 * 1000
     static const int DEFAULT_MAX_INDEX_FILE_SIZE_MB = 50;
+    static const int DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB = 10;
     static const bool DEFAULT_INDEX_HIDDEN_FILES = false;
     static const int DEFAULT_CPU_USAGE_LIMIT_PERCENT = 50;
     static constexpr double DEFAULT_INOTIFY_WATCHES_COEFFICIENT = 0.5;
