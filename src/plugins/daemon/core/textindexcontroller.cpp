@@ -79,7 +79,6 @@ TextIndexController::TextIndexController(QObject *parent)
         } else {
             fmWarning() << "[TextIndexController] Index task failed, disabling service";
             updateState(State::Disabled);
-            isConfigEnabled = false;
         }
     };
 }
@@ -95,10 +94,10 @@ void TextIndexController::initialize()
         fmWarning() << "[TextIndexController] Failed to register search config:" << err;
         return;
     }
-    
+
     isConfigEnabled = DConfigManager::instance()->value(kSearchCfgPath, kEnableFullTextSearch).toBool();
     fmInfo() << "[TextIndexController] Search config registered successfully, full text search enabled:" << isConfigEnabled;
-    
+
     keepAliveTimer->setInterval(5 * 60 * 1000);   // 5 min
     updateKeepAliveTimer();
 
@@ -188,12 +187,12 @@ void TextIndexController::updateKeepAliveTimer()
 void TextIndexController::setupDBusConnections()
 {
     fmDebug() << "[TextIndexController] Setting up DBus connections to text index service";
-    
+
     // 先确保服务已启动
     QDBusConnectionInterface *sessionBusIface = QDBusConnection::sessionBus().interface();
     if (sessionBusIface)
         sessionBusIface->startService("org.deepin.Filemanager.TextIndex");
-    
+
     interface.reset(new OrgDeepinFilemanagerTextIndexInterface(
             "org.deepin.Filemanager.TextIndex",
             "/org/deepin/Filemanager/TextIndex",
@@ -220,7 +219,7 @@ void TextIndexController::setupDBusConnections()
                     interface->StopCurrentTask();
                 }
             });
-    
+
     fmInfo() << "[TextIndexController] DBus connections established successfully";
 }
 
