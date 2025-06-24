@@ -53,6 +53,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     }
 
     if (mnt.isEmpty() && !isBlank) {
+        fmWarning() << "Mount point is empty for non-blank disc, handling error mount for URL:" << url;
         handleErrorMount();
         return false;
     }
@@ -60,6 +61,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     // Acquire blank disc info
     curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
     if (!retry && isBlank && curAvial == 0) {
+        fmDebug() << "Blank disc with 0 available space, attempting to mount device:" << devId;
         DevMngIns->mountBlockDevAsync(devId, {}, [this, url](bool, const DFMMOUNT::OperationErrorInfo &, const QString &) {
             this->updateDiscInfo(url, true);
         });
@@ -161,6 +163,7 @@ void OpticalMediaWidget::updateUi()
     lbAvailable->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(curAvial)));
 
     if (curFS.toLower() == "udf" && !isSupportedUDF()) {
+        fmInfo() << "UDF filesystem detected but not supported - Type:" << curMediaTypeStr << "Version:" << curFSVersion;
         if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional) {   // for other version, show normal unsupported writtings
             lbUDFSupport->setText(tr("%1 burning is not supported").arg("UDF"));
             iconCaution->setVisible(true);
@@ -178,20 +181,23 @@ void OpticalMediaWidget::updateUi()
     }
 
     if (curAvial == 0) {
+        fmInfo() << "No available space on disc, disabling burn functionality";
         lbUDFSupport->setVisible(false);
         iconCaution->setVisible(false);
         pbBurn->setEnabled(false);
     }
 
     if (isBlank) {
-        fmInfo() << "Empty disc, disballe dump iso";
+        fmInfo() << "Empty disc, disable dump iso";
         pbDump->setEnabled(false);
     } else {
         pbDump->setEnabled(true);
     }
 
-    if (!OpticalHelper::isBurnEnabled())
+    if (!OpticalHelper::isBurnEnabled()) {
+        fmInfo() << "Burn functionality is disabled globally";
         pbBurn->setEnabled(false);
+    }
 }
 
 void OpticalMediaWidget::handleErrorMount()
@@ -204,6 +210,7 @@ void OpticalMediaWidget::handleErrorMount()
     }
 
     if (disableNotify) {
+        fmDebug() << "Notification disabled, skipping error dialog";
         disableNotify = false;
         return;
     }
@@ -215,12 +222,18 @@ void OpticalMediaWidget::handleErrorMount()
 
 bool OpticalMediaWidget::isSupportedUDF()
 {
-    if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional))
+    if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional)) {
+        fmDebug() << "UDF not supported - not professional edition";
         return false;
-    if (!OpticalHelper::isSupportedUDFMedium(curMediaType))
+    }
+    if (!OpticalHelper::isSupportedUDFMedium(curMediaType)) {
+        fmDebug() << "UDF not supported - media type not compatible: " << curMediaType;
         return false;
-    if (!curFS.isEmpty() && !OpticalHelper::isSupportedUDFVersion(curFSVersion))
+    }
+    if (!curFS.isEmpty() && !OpticalHelper::isSupportedUDFVersion(curFSVersion)) {
+        fmDebug() << "UDF not supported - filesystem version not compatible: " << curFSVersion;
         return false;
+    }
 
     return true;
 }
@@ -252,6 +265,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
     QDir::Filters filter { QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden | QDir::NoSymLinks };
     QFileInfoList listFilesInStage = dirStage.entryInfoList(filter);
     if (listFilesInStage.count() == 0) {
+        fmInfo() << "No files found in staging folder, showing warning dialog";
         DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
         return;
     }
@@ -261,6 +275,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
 
 void OpticalMediaWidget::onDumpButtonClicked()
 {
+    fmInfo() << "Dump button clicked, opening dump ISO dialog for device:" << devId;
     OpticalEventCaller::sendOpenDumpISODlg(devId);
 }
 
@@ -270,6 +285,7 @@ void OpticalMediaWidget::onStagingFileStatisticsFinished()
     qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
     qint64 total { statisticWorker->totalSize() };
     if (avil == 0 || total > avil) {
+        fmWarning() << "Insufficient space for burn operation - Available:" << avil << "Required:" << total;
         DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, tr("Unable to burn. Not enough free space on the target disk."));
         return;
     }
@@ -281,8 +297,10 @@ void OpticalMediaWidget::onStagingFileStatisticsFinished()
 
 void OpticalMediaWidget::onDiscUnmounted(const QUrl &url)
 {
-    if (UniversalUtils::urlEquals(curUrl, url))
+    if (UniversalUtils::urlEquals(curUrl, url)) {
+        fmInfo() << "Current disc was unmounted, disabling notifications: " << url;
         disableNotify = true;
-    else
+    } else {
         disableNotify = false;
+    }
 }

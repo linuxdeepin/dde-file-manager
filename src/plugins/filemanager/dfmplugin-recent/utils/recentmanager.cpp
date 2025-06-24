@@ -195,7 +195,7 @@ void RecentManager::onItemsRemoved(const QStringList &paths)
         const QUrl &url { RecentHelper::recentUrl(path) };
         if (!recentItems.contains(url)) {
             fmDebug() << "Item not found in cache for removal:" << url;
-            break;
+            continue;
         }
 
         fmDebug() << "Removing recent item from cache:" << url;

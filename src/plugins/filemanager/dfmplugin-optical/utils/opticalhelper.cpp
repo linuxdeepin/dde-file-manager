@@ -68,8 +68,10 @@ QUrl OpticalHelper::localStagingRoot()
 
 QUrl OpticalHelper::localStagingFile(const QUrl &dest)
 {
-    if (burnDestDevice(dest).isEmpty())
+    if (burnDestDevice(dest).isEmpty()) {
+        fmWarning() << "Cannot get staging file - no destination device for:" << dest;
         return {};
+    }
 
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
@@ -89,12 +91,16 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
     using namespace GlobalServerDefines;
 
     QString &&devFile { OpticalHelper::burnDestDevice(dest) };
-    if (devFile.isEmpty())
+    if (devFile.isEmpty()) {
+        fmWarning() << "Cannot get disc file - no destination device for:" << dest;
         return {};
+    }
 
     QString &&mntPoint { DeviceUtils::getMountInfo(devFile) };
-    if (mntPoint.isEmpty())
+    if (mntPoint.isEmpty()) {
+        fmWarning() << "Cannot get disc file - no mount point for device:" << devFile;
         return {};
+    }
 
     QString suffix { burnFilePath(dest) };
     return QUrl::fromLocalFile(mntPoint + suffix);
@@ -103,16 +109,20 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
 QString OpticalHelper::burnDestDevice(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m)) {
+        fmDebug() << "URL is not a valid burn destination:" << url;
         return {};
+    }
     return m.captured(1);
 }
 
 QString OpticalHelper::burnFilePath(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m)) {
+        fmDebug() << "URL is not a valid burn URL for file path extraction:" << url;
         return {};
+    }
     return m.captured(3);
 }
 
@@ -129,6 +139,7 @@ bool OpticalHelper::burnIsOnStaging(const QUrl &url)
 {
     QRegularExpressionMatch m;
     if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m)) {
+        fmDebug() << "URL is not a valid burn URL for staging check:" << url;
         return false;
     }
     return m.captured(2) == BURN_SEG_STAGING;
@@ -158,8 +169,10 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 
 QUrl OpticalHelper::transDiscRootById(const QString &id)
 {
-    if (!id.contains(QRegularExpression("sr[0-9]*$")))
+    if (!id.contains(QRegularExpression("sr[0-9]*$"))) {
+        fmWarning() << "Invalid device ID format for disc root transformation:" << id;
         return {};
+    }
     const QString &&volTag { id.mid(id.lastIndexOf("/") + 1) };
     return QUrl(QString("burn:///dev/%1/disc_files/").arg(volTag));
 }
@@ -185,12 +198,16 @@ bool OpticalHelper::isSupportedUDFMedium(int type)
 
 void OpticalHelper::createStagingFolder(const QString &dev)
 {
-    if (!dev.startsWith("/dev/sr"))
+    if (!dev.startsWith("/dev/sr")) {
+        fmDebug() << "Device is not an optical device, skipping staging folder creation:" << dev;
         return;
+    }
     // Make sure the staging folder exists. Otherwise the staging watcher won't work.
     auto &&url { OpticalHelper::localStagingFile(dev) };
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Invalid staging URL, cannot create folder for device:" << dev;
         return;
+    }
     auto path { url.toLocalFile() };
     QFileInfo fileInfo(path);
     if (!fileInfo.exists())
@@ -200,11 +217,15 @@ void OpticalHelper::createStagingFolder(const QString &dev)
 bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
 {
     auto info { InfoFactory::create<FileInfo>(url) };
-    if (!info || path.isEmpty())
+    if (!info || path.isEmpty()) {
+        fmDebug() << "Cannot check duplicate - invalid info or empty path";
         return false;
+    }
     QDir dir { path };
-    if (!dir.exists())
+    if (!dir.exists()) {
+        fmDebug() << "Directory does not exist for duplicate check:" << path;
         return false;
+    }
 
     QFileInfoList fileInfoList { dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs) };
     QString fileName { info->nameOf(NameInfoType::kFileName) };
@@ -241,10 +262,13 @@ QString OpticalHelper::findMountPoint(const QString &path)
 {
     const auto &mnts { OpticalHelper::allOpticalDiscMountPoints() };
     for (const auto &mnt : mnts) {
-        if (path.startsWith(mnt))
+        if (path.startsWith(mnt)) {
+            fmDebug() << "Found mount point:" << mnt << "for path:" << path;
             return mnt;
+        }
     }
 
+    fmDebug() << "No mount point found for path:" << path;
     return {};
 }
 

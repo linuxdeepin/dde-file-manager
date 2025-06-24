@@ -33,6 +33,7 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     QString id { DeviceUtils::getBlockDeviceId(devFile) };
     auto &&map = DevProxyMng->queryBlockInfo(id);
     mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
+    fmDebug() << "Mount point for device" << devFile << "is:" << mntPoint;
 
     QString stagingPath { OpticalHelper::localStagingFile(url).path() };
     OpticalHelper::createStagingFolder(devFile);
@@ -43,6 +44,7 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
 
     bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
     if (opticalBlank) {
+        fmInfo() << "Optical disc is blank, using staging iterator only for device:" << devFile;
         discIterator.clear();
         return;
     }
