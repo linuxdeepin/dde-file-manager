@@ -48,7 +48,8 @@ Build-Depends:
  libxcb-xfixes0-dev (>= 1.10~),
  libopenjp2-7-dev,
  liblcms2-dev,
- libdeepin-service-framework-dev
+ libdeepin-service-framework-dev,
+ libheif-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -95,7 +96,8 @@ Conflicts: dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins
+ dde-file-manager-common-plugins,
+ libheif1
 Recommends: avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
