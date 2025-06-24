@@ -54,7 +54,7 @@ function run_app() {
         # Set environment variables based on session type
         if [ "$ORIGINAL_SESSION_TYPE" == "x11" ]; then
             export DISPLAY=:0
-            export QT_QPA_PLATFORM=xcb
+            export QT_QPA_PLATFORM=dxcb;xcb
             export GDK_BACKEND=x11
             export XDG_SESSION_TYPE=x11
         else
