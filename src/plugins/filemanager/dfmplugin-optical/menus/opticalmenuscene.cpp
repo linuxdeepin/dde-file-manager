@@ -54,7 +54,9 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
         d->isBlankDisc = true;
 
     if (!d->initializeParamsIsValid()) {
-        fmWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        fmWarning() << "Menu scene initialization failed - invalid parameters:" << name()
+                    << "selectFiles empty:" << d->selectFiles.isEmpty()
+                    << "focusFile:" << d->focusFile << "currentDir:" << d->currentDir;
         return false;
     }
 
@@ -173,13 +175,17 @@ QString OpticalMenuScenePrivate::findSceneName(QAction *act) const
 
 bool OpticalMenuScenePrivate::enablePaste() const
 {
-    if (!OpticalHelper::isBurnEnabled())
+    if (!OpticalHelper::isBurnEnabled()) {
+        fmDebug() << "Paste disabled - burn functionality not enabled";
         return false;
+    }
 
     const QString &dev { OpticalHelper::burnDestDevice(currentDir) };
     const QUrl &rootUrl { OpticalHelper::discRoot(dev) };
-    if (!UniversalUtils::urlEquals(rootUrl, currentDir))
+    if (!UniversalUtils::urlEquals(rootUrl, currentDir)) {
+        fmDebug() << "Paste disabled - current dir is not disc root, root:" << rootUrl << "current:" << currentDir;
         return false;
+    }
 
     auto &&clipboard { ClipBoard::instance() };
     return clipboard->clipboardAction() != ClipBoard::kUnknownAction

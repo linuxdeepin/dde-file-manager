@@ -32,6 +32,8 @@ bool OpticalFileHelper::cutFile(const quint64 windowId, const QList<QUrl> source
 
     Q_UNUSED(windowId)
     Q_UNUSED(flags)
+
+    fmDebug() << "Processing cut operation for" << sources.size() << "files to target:" << target;
     pasteFilesHandle(sources, target, false);
 
     return true;
@@ -47,6 +49,8 @@ bool OpticalFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sourc
 
     Q_UNUSED(windowId)
     Q_UNUSED(flags)
+
+    fmDebug() << "Processing copy operation for" << sources.size() << "files to target:" << target;
     pasteFilesHandle(sources, target);
     return true;
 }
@@ -61,8 +65,10 @@ bool OpticalFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> so
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : sources) {
         QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
-        if (backer.isEmpty())
+        if (backer.isEmpty()) {
+            fmDebug() << "Skipped file without backer information:" << url;
             continue;
+        }
         if (!OpticalHelper::burnIsOnDisc(url))
             redirectedFileUrls.push_back(QUrl::fromLocalFile(backer));
     }
@@ -92,10 +98,13 @@ bool OpticalFileHelper::linkFile(const quint64 windowId, const QUrl url, const Q
         return false;
 
     QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
-    if (backer.isEmpty())
+    if (backer.isEmpty()) {
+        fmWarning() << "Link file operation failed - no backer information for:" << url;
         return false;
+    }
 
     QUrl redirectedFileUrl { QUrl::fromLocalFile(backer) };
+    fmDebug() << "Creating symlink via redirection:" << url << "-> " << redirectedFileUrl << "link:" << link;
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link, force, silence);
     return true;
 }
@@ -107,8 +116,11 @@ bool OpticalFileHelper::writeUrlsToClipboard(const quint64 windowId, const DFMBA
     if (urls.first().scheme() != scheme())
         return false;
 
-    if (action != DFMBASE_NAMESPACE::ClipBoard::ClipboardAction::kCopyAction)
+    if (action != DFMBASE_NAMESPACE::ClipBoard::ClipboardAction::kCopyAction) {
+        fmWarning() << "Write URLs to clipboard rejected - unsupported action:" << static_cast<int>(action);
         return false;
+    }
+
     // only write file on disc
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : urls) {
@@ -133,8 +145,10 @@ bool OpticalFileHelper::openFileInTerminal(const quint64 windowId, const QList<Q
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : urls) {
         QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
-        if (backer.isEmpty())
+        if (backer.isEmpty()) {
+            fmWarning() << "File without backer information cannot be opened in terminal:" << url;
             return false;
+        }
         redirectedFileUrls << QUrl::fromLocalFile(backer);
     }
 
