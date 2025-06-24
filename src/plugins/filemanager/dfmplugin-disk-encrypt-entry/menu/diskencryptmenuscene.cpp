@@ -6,6 +6,7 @@
 #include "diskencryptmenuscene.h"
 #include "gui/decryptparamsinputdialog.h"
 #include "gui/chgpassphrasedialog.h"
+#include "gui/unlockpartitiondialog.h"
 #include "events/eventshandler.h"
 #include "utils/encryptutils.h"
 
@@ -235,7 +236,12 @@ void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
             dialog_utils::showDialog(tr("Error"),
                                      tr("Cannot resolve passphrase from TPM"),
                                      dialog_utils::DialogType::kError);
-            return;
+            UnlockPartitionDialog dlg(UnlockPartitionDialog::kRec);
+            int ret = dlg.exec();
+            if (ret != QDialog::Accepted)
+                return;
+
+            inputs.key = dlg.getUnlockKey().second;
         }
         doDecryptDevice(inputs);
         return;
