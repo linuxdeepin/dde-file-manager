@@ -34,6 +34,7 @@ inline const QString kIndexHiddenFiles = QLatin1String("indexHiddenFiles");
 inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters");
 inline const QString kCpuUsageLimitPercent = QLatin1String("cpuUsageLimitPercent");
 inline const QString kInotifyWatchesCoefficient = QLatin1String("inotifyWatchesCoefficient");
+inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval");
 
 }   // namesapce DConf
 

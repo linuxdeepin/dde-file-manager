@@ -135,6 +135,16 @@ void TextIndexConfig::loadAllConfigs()
         m_inotifyWatchesCoefficient = DEFAULT_INOTIFY_WATCHES_COEFFICIENT;
     }
 
+    // Batch commit interval
+    m_batchCommitInterval = m_dconfigManager->value(
+                                                    Defines::DConf::kTextIndexSchema,
+                                                    Defines::DConf::kBatchCommitInterval,
+                                                    DEFAULT_BATCH_COMMIT_INTERVAL)
+                                    .toInt();
+    if (m_batchCommitInterval < 100 || m_batchCommitInterval > 10000) {
+        m_batchCommitInterval = DEFAULT_BATCH_COMMIT_INTERVAL;
+    }
+
     fmDebug() << "TextIndexConfig: Text index configurations loaded successfully";
     // You might want to print the loaded values here for debugging if needed
     // fmDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
@@ -200,6 +210,12 @@ double TextIndexConfig::inotifyWatchesCoefficient() const
 {
     QMutexLocker locker(&m_mutex);
     return m_inotifyWatchesCoefficient;
+}
+
+int TextIndexConfig::batchCommitInterval() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_batchCommitInterval;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

@@ -179,10 +179,6 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
 
     // Check if extension is supported for content search
     bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
-    if (!supported) {
-        fmDebug() << "FSEventCollector: Skipping file with unsupported extension:" << path << "suffix:" << suffix;
-    }
-
     return supported;
 }
 
