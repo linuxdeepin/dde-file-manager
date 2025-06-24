@@ -69,7 +69,7 @@ bool isHtmlStyleDocument(const QString &filePath)
     return kHtmlStyleExtensions.contains(fileInfo.suffix().toLower());
 }
 
-std::optional<QString> extractHtmlContent(const QString &filePath)
+std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxBytes)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -77,7 +77,22 @@ std::optional<QString> extractHtmlContent(const QString &filePath)
         return std::nullopt;
     }
 
-    const QByteArray &htmlBytes = file.readAll();
+    QByteArray htmlBytes;
+    if (maxBytes > 0) {
+        // Check file size first
+        qint64 fileSize = file.size();
+        if (fileSize <= static_cast<qint64>(maxBytes)) {
+            // File is smaller than or equal to maxBytes, read all content
+            htmlBytes = file.readAll();
+        } else {
+            // File is larger than maxBytes, truncate
+            htmlBytes = file.read(static_cast<qint64>(maxBytes));
+            fmDebug() << "DocUtils: HTML file truncated from" << fileSize << "to" << maxBytes << "bytes:" << filePath;
+        }
+    } else {
+        // Read all content when maxBytes is 0 (no limit)
+        htmlBytes = file.readAll();
+    }
     file.close();
 
     // Get file encoding (text files: detected, non-text files: UTF-8)
@@ -99,11 +114,11 @@ std::optional<QString> extractHtmlContent(const QString &filePath)
     return plainText;
 }
 
-std::optional<QString> extractFileContent(const QString &filePath)
+std::optional<QString> extractFileContent(const QString &filePath, size_t maxBytes)
 {
     // First try HTML extraction for HTML-style documents
     if (isHtmlStyleDocument(filePath)) {
-        auto htmlContent = extractHtmlContent(filePath);
+        auto htmlContent = extractHtmlContent(filePath, maxBytes);
         if (htmlContent) {
             return htmlContent;
         }
@@ -115,8 +130,15 @@ std::optional<QString> extractFileContent(const QString &filePath)
         // Get file encoding (text files: detected, non-text files: UTF-8)
         QString fromEncoding = getFileEncoding(filePath);
 
-        // Convert file content
-        const std::string &stdContents = DocParser::convertFile(filePath.toStdString());
+        // Convert file content using the new DocParser interface with maxBytes support
+        std::string stdContents;
+        if (maxBytes > 0) {
+            // Use the new convertFile interface with maxBytes parameter
+            stdContents = DocParser::convertFile(filePath.toStdString(), maxBytes);
+        } else {
+            // Use the original convertFile interface without truncation
+            stdContents = DocParser::convertFile(filePath.toStdString());
+        }
 
         QByteArray contentBytes(stdContents.c_str(), stdContents.length());
         return convertToUtf8(contentBytes, fromEncoding);
@@ -129,10 +151,10 @@ std::optional<QString> extractFileContent(const QString &filePath)
 }
 
 Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
-                                    const Lucene::String &excludeFieldName)
+                                     const Lucene::String &excludeFieldName)
 {
     using namespace Lucene;
-    
+
     if (!sourceDoc) {
         return nullptr;
     }

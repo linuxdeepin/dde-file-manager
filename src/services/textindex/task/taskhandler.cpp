@@ -110,7 +110,11 @@ DocumentPtr createFileDocument(const QString &file)
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file contents
-        const auto &contentOpt = DocUtils::extractFileContent(file);
+        const TextIndexConfig &config = TextIndexConfig::instance();
+        const int truncationSizeMB = config.maxIndexFileTruncationSizeMB();
+        const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
+        
+        const auto &contentOpt = DocUtils::extractFileContent(file, maxBytes);
 
         if (!contentOpt) {
             fmWarning() << "[createFileDocument] Failed to extract content from file:" << file;

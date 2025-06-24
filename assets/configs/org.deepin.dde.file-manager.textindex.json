@@ -25,13 +25,24 @@
 			"visibility": "public"
 		},
 		"maxIndexFileSizeMB": {
-			"value": 50,
+			"value": 512,
 			"serial": 0,
 			"flags": [],
 			"name": "Max index file size (MB)",
 			"name[zh_CN]": "最大索引文件大小（MB）",
 			"description[zh_CN]": "单个索引文件的最大大小，单位为兆字节（MB）。",
 			"description": "Maximum size for an individual index file in Megabytes (MB).",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"maxIndexFileTruncationSizeMB": {
+			"value": 10,
+			"serial": 0,
+			"flags": [],
+			"name": "Maximum Index File Truncation Size (MB)",
+			"name[zh_CN]": "最大索引文件截断大小 (MB)",
+			"description[zh_CN]": "单个索引文件的最大大截断大小，超过此大小的文件内容将被截断无法索引，单位为兆字节（MB）。",
+			"description": "The maximum size limit for individual index files. Content exceeding this size will be truncated and cannot be indexed. Unit: megabytes (MB).",
 			"permissions": "readwrite",
 			"visibility": "public"
 		},

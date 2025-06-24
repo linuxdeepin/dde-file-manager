@@ -48,9 +48,10 @@ std::optional<QString> convertToUtf8(const QByteArray &content, const QString &f
 /**
  * @brief Extracts text content from a file
  * @param filePath Path to the file
+ * @param maxBytes Maximum number of bytes to process (0 means no limit)
  * @return Extracted text content or empty optional if extraction failed
  */
-std::optional<QString> extractFileContent(const QString &filePath);
+std::optional<QString> extractFileContent(const QString &filePath, size_t maxBytes = 0);
 
 /**
  * @brief Checks if a file is an HTML-style document
@@ -62,9 +63,10 @@ bool isHtmlStyleDocument(const QString &filePath);
 /**
  * @brief Extracts text from HTML-style documents using QTextDocument
  * @param filePath Path to the file
+ * @param maxBytes Maximum number of bytes to process from the file (0 means no limit)
  * @return Extracted text content or empty optional if extraction failed
  */
-std::optional<QString> extractHtmlContent(const QString &filePath);
+std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxBytes = 0);
 
 /**
  * @brief Gets the encoding of a file. If it's a text file, detects the encoding; otherwise returns UTF-8
