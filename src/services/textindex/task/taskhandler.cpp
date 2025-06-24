@@ -35,10 +35,12 @@ namespace {
 class ProgressReporter
 {
 public:
-    explicit ProgressReporter()
-        : processedCount(0), toltalCount(0), lastReportTime(QDateTime::currentDateTime())
+    explicit ProgressReporter(IndexWriterPtr writer = nullptr)
+        : processedCount(0), toltalCount(0), lastReportTime(QDateTime::currentDateTime()),
+          m_writer(writer), m_batchCommitInterval(TextIndexConfig::instance().batchCommitInterval()),
+          m_lastCommitCount(0)
     {
-        fmDebug() << "[ProgressReporter] Initialized progress reporter";
+        fmDebug() << "[ProgressReporter] Initialized progress reporter with batch commit interval:" << m_batchCommitInterval;
     }
 
     ~ProgressReporter()
@@ -47,6 +49,18 @@ public:
         emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
         fmDebug() << "[ProgressReporter] Final progress report - processed:" << processedCount 
                  << "total:" << toltalCount;
+        
+        // 如果有未提交的更改，进行最后一次提交
+        if (m_writer && processedCount > m_lastCommitCount) {
+            try {
+                m_writer->commit();
+                fmInfo() << "[ProgressReporter] Final batch commit completed - processed:" << processedCount;
+            } catch (const std::exception &e) {
+                fmWarning() << "[ProgressReporter] Final batch commit failed:" << e.what();
+            } catch (...) {
+                fmWarning() << "[ProgressReporter] Final batch commit failed with unknown exception";
+            }
+        }
     }
 
     void setTotal(qint64 count)
@@ -58,6 +72,20 @@ public:
     void increment()
     {
         ++processedCount;
+
+        // 检查是否需要批量提交
+        if (m_writer && (processedCount - m_lastCommitCount) >= m_batchCommitInterval) {
+            try {
+                m_writer->commit();
+                m_lastCommitCount = processedCount;
+                fmInfo() << "[ProgressReporter::increment] Batch commit completed at count:" << processedCount;
+            } catch (const std::exception &e) {
+                fmWarning() << "[ProgressReporter::increment] Batch commit failed at count:" << processedCount 
+                           << "error:" << e.what();
+            } catch (...) {
+                fmWarning() << "[ProgressReporter::increment] Batch commit failed with unknown exception at count:" << processedCount;
+            }
+        }
 
         // 检查是否经过了足够的时间间隔(1秒)
         QDateTime now = QDateTime::currentDateTime();
@@ -76,6 +104,9 @@ private:
     qint64 processedCount;
     qint64 toltalCount;
     QDateTime lastReportTime;
+    IndexWriterPtr m_writer;
+    int m_batchCommitInterval;
+    qint64 m_lastCommitCount;
 };
 
 // 目录遍历相关函数
@@ -577,7 +608,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                 fmInfo() << "[CreateIndexHandler] Using ANYTHING for file discovery";
             }
 
-            ProgressReporter reporter;
+            ProgressReporter reporter(writer);
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmInfo() << "[CreateIndexHandler] Starting file processing, estimated total files:" << totalCount;
@@ -595,6 +626,11 @@ TaskHandler TaskHandlers::CreateIndexHandler()
                 return result;
             }
 
+            // ProgressReporter的析构函数会处理最后的commit，但为了确保在optimize前所有更改都已提交
+            // 我们显式调用一次commit
+            fmInfo() << "[CreateIndexHandler] Ensuring all changes are committed before optimization";
+            writer->commit();
+            
             fmInfo() << "[CreateIndexHandler] Starting index optimization";
             writer->optimize();
             fmInfo() << "[CreateIndexHandler] Index optimization completed";
@@ -678,7 +714,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 fmInfo() << "[UpdateIndexHandler] Using ANYTHING for file discovery";
             }
 
-            ProgressReporter reporter;
+            ProgressReporter reporter(writer);
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmInfo() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
@@ -691,6 +727,11 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 fmWarning() << "[UpdateIndexHandler] Index update was interrupted by user request";
                 result.interrupted = true;
             }
+
+            // ProgressReporter的析构函数会处理最后的commit，但为了确保在optimize前所有更改都已提交
+            // 我们显式调用一次commit
+            fmInfo() << "[UpdateIndexHandler] Ensuring all changes are committed before optimization";
+            writer->commit();
 
             fmInfo() << "[UpdateIndexHandler] Starting index optimization";
             writer->optimize();
@@ -767,7 +808,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
                 return result;
             }
 
-            ProgressReporter reporter;
+            ProgressReporter reporter(writer);
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmInfo() << "[CreateOrUpdateFileListHandler] Starting file list processing, total files:" << totalCount;
@@ -781,8 +822,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
                 result.interrupted = true;
             }
 
-            fmInfo() << "[CreateOrUpdateFileListHandler] Committing index changes";
-            writer->commit();
+            // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
             fmInfo() << "[CreateOrUpdateFileListHandler] File list index update completed successfully";
 
@@ -849,7 +889,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
 
             fmInfo() << "[RemoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
-            ProgressReporter reporter;
+            ProgressReporter reporter(writer);
             fmInfo() << "[RemoveFileListHandler] Starting file removal processing, total items:" << fileList.size();
 
             int filesRemoved = 0;
@@ -887,8 +927,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
                 result.interrupted = true;
             }
 
-            fmInfo() << "[RemoveFileListHandler] Committing index changes";
-            writer->commit();
+            // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
             fmInfo() << "[RemoveFileListHandler] File removal completed successfully - files:" << filesRemoved 
                     << "directories:" << directoriesRemoved;
@@ -950,7 +989,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
 
             fmInfo() << "[MoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
-            ProgressReporter reporter;
+            ProgressReporter reporter(writer);
             reporter.setTotal(movedFiles.size());
             fmInfo() << "[MoveFileListHandler] Starting file move processing, total moves:" << movedFiles.size();
 
@@ -1005,8 +1044,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
                 result.interrupted = true;
             }
 
-            fmInfo() << "[MoveFileListHandler] Committing index changes";
-            writer->commit();
+            // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
             fmInfo() << "[MoveFileListHandler] File move processing completed successfully - file moves:" << fileMoves 
                     << "directory moves:" << directoryMoves << "failed moves:" << failedMoves;
