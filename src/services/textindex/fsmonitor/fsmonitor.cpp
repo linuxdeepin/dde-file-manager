@@ -471,7 +471,6 @@ void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &nam
 
     if (isDirectory(path, name)) {
         // It's a directory, add to watch and emit signal
-        fmDebug() << "FSMonitor: Directory created:" << path << "/" << name;
         Q_EMIT q_ptr->directoryCreated(path, name);
 
         // Add new directory to watch recursively
@@ -480,7 +479,6 @@ void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &nam
         }
     } else {
         // It's a file, emit signal
-        fmDebug() << "FSMonitor: File created:" << path << "/" << name;
         Q_EMIT q_ptr->fileCreated(path, name);
     }
 }
@@ -500,7 +498,6 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
 
     if (watchedDirectories.contains(fullPath)) {
         // It was a watched directory
-        fmDebug() << "FSMonitor: Directory deleted:" << path << "/" << name;
         Q_EMIT q_ptr->directoryDeleted(path, name);
 
         // Remove from watch
@@ -509,7 +506,6 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
     } else {
         // Regular file deleted
         if (!name.isEmpty()) {
-            fmDebug() << "FSMonitor: File deleted:" << path << "/" << name;
             Q_EMIT q_ptr->fileDeleted(path, name);
         }
     }
@@ -526,7 +522,6 @@ void FSMonitorPrivate::handleFileModified(const QString &path, const QString &na
         return;
     }
 
-    fmDebug() << "FSMonitor: File modified:" << path << "/" << name;
     Q_EMIT q_ptr->fileModified(path, name);
 }
 

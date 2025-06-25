@@ -216,8 +216,6 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
                     removeRedundantEntries(createdFilesList);
                 }
             }
-        } else {
-            fmDebug() << "FSEventCollector: Skipped adding to created list, parent directory already added:" << fullPath;
         }
     }
 
@@ -257,8 +255,6 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
         if (shouldIndexFile(fullPath)) {
             deletedFilesList.insert(fullPath);
             fmDebug() << "FSEventCollector: Added to deleted list:" << fullPath;
-        } else {
-            fmDebug() << "FSEventCollector: Skipped adding to deleted list, parent directory already added:" << fullPath;
         }
     }
 
@@ -294,8 +290,6 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
                 modifiedFilesList.insert(fullPath);
                 fmDebug() << "FSEventCollector: Added to modified list:" << fullPath;
             }
-        } else {
-            fmDebug() << "FSEventCollector: Skipped adding to modified list, directory or parent directory already in lists:" << fullPath;
         }
     }
 
@@ -334,7 +328,6 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
 
     // Only track moves for files that should be indexed
     if (!shouldIndexFile(fullFromPath) && !shouldIndexFile(fullToPath)) {
-        fmDebug() << "FSEventCollector: Skipped move tracking for unsupported file types:" << fullFromPath << "->" << fullToPath;
         return;
     }
 
