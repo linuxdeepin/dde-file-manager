@@ -112,10 +112,7 @@ target_include_directories(${BIN_NAME}
         ${DFM_IO_HEADERS}
         ${DFM_MOUNT_HEADERS}
         ${DFM_BURN_HEADERS}
-    )
-
-include_directories(${LIBHEIF_INCLUDE_DIRS})
-link_directories(${LIBHEIF_LIBRARY_DIRS})
+)
 
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager) # also use for install
 target_compile_definitions(
