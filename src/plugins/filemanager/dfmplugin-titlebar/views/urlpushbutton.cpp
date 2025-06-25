@@ -351,7 +351,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
         updateWidth();
     }
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
 
     // 绘制悬停或菜单状态
     if (d->hoverFlag || d->popupVisible()) {
