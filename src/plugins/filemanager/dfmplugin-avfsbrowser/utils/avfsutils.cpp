@@ -33,7 +33,11 @@ AvfsUtils *AvfsUtils::instance()
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
     auto info = InfoFactory::create<FileInfo>(url);
-    if (!info) return false;
+    if (!info) {
+        fmDebug() << "Failed to create FileInfo for URL:" << url;
+        return false;
+    }
+
     return supportedArchives().contains(info->nameOf(NameInfoType::kMimeTypeName));
 }
 

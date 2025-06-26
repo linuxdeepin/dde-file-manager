@@ -18,10 +18,12 @@ using namespace dfmplugin_myshares;
 MyShareMenuScene::MyShareMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new MyShareMenuScenePrivate(this))
 {
+    fmDebug() << "MyShareMenuScene constructed";
 }
 
 MyShareMenuScene::~MyShareMenuScene()
 {
+    fmDebug() << "MyShareMenuScene destructed";
 }
 
 QString MyShareMenuScene::name() const
@@ -31,6 +33,8 @@ QString MyShareMenuScene::name() const
 
 bool MyShareMenuScene::initialize(const QVariantHash &params)
 {
+    fmDebug() << "Initializing MyShareMenuScene with parameters";
+
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
@@ -44,11 +48,14 @@ bool MyShareMenuScene::initialize(const QVariantHash &params)
     setSubscene(currentScene);
     AbstractMenuScene::initialize(params);
 
+    fmDebug() << "MyShareMenuScene initialization completed";
     return true;
 }
 
 bool MyShareMenuScene::create(QMenu *parent)
 {
+    fmDebug() << "Creating MyShareMenuScene menu";
+
     d->createFileMenu(parent);
     AbstractMenuScene::create(parent);
     QList<QAction *> list = parent->actions();
@@ -65,6 +72,7 @@ bool MyShareMenuScene::create(QMenu *parent)
         parent->insertAction(actProperty, actPinToQuickAccess);
     }
 
+    fmDebug() << "MyShareMenuScene menu creation completed";
     return true;
 }
 
@@ -76,8 +84,10 @@ void MyShareMenuScene::updateState(QMenu *parent)
 bool MyShareMenuScene::triggered(QAction *action)
 {
     do {
-        if (!action)
+        if (!action) {
+            fmWarning() << "Null action triggered in MyShareMenuScene";
             return false;
+        }
 
         QString id = action->property(ActionPropertyKey::kActionID).toString();
         if (!d->predicateAction.contains(id))
@@ -90,8 +100,10 @@ bool MyShareMenuScene::triggered(QAction *action)
 
 AbstractMenuScene *MyShareMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        fmDebug() << "Scene requested for null action";
         return nullptr;
+    }
 
     if (!d->predicateAction.key(action).isEmpty())
         return const_cast<MyShareMenuScene *>(this);
@@ -116,11 +128,17 @@ MyShareMenuScenePrivate::MyShareMenuScenePrivate(AbstractMenuScene *qq)
 
 void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
 {
-    if (isEmptyArea)
-        return;
+    fmDebug() << "Creating file menu for MyShares";
 
-    if (!parent)
+    if (isEmptyArea) {
+        fmDebug() << "Empty area detected, skipping file menu creation";
         return;
+    }
+
+    if (!parent) {
+        fmWarning() << "Null parent menu provided, cannot create file menu";
+        return;
+    }
 
     auto act = parent->addAction(predicateName[MySharesActionId::kOpenShareFolder]);
     act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareFolder);
@@ -155,23 +173,35 @@ void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
 
 bool MyShareMenuScenePrivate::triggered(const QString &id)
 {
-    if (!predicateAction.contains(id))
+    fmDebug() << "Processing triggered action:" << id;
+
+    if (!predicateAction.contains(id)) {
+        fmWarning() << "Action ID not found in predicate actions:" << id;
         return false;
+    }
 
     if (id == MySharesActionId::kOpenShareFolder) {
         auto mode = selectFiles.count() > 1 ? ShareEventsCaller::kOpenInNewWindow : ShareEventsCaller::kOpenInCurrentWindow;
+        fmInfo() << "Opening share folder(s) for" << selectFiles.count() << "files, mode:" << (mode == ShareEventsCaller::kOpenInNewWindow ? "new window" : "current window");
         ShareEventsCaller::sendOpenDirs(windowId, selectFiles, mode);
     } else if (id == MySharesActionId::kOpenShareInNewWin) {
+        fmInfo() << "Opening share in new window for" << selectFiles.count() << "files";
         ShareEventsCaller::sendOpenDirs(windowId, selectFiles, ShareEventsCaller::kOpenInNewWindow);
     } else if (id == MySharesActionId::kOpenShareInNewTab) {
+        fmInfo() << "Opening share in new tab for" << selectFiles.count() << "files";
         ShareEventsCaller::sendOpenDirs(windowId, selectFiles, ShareEventsCaller::kOpenInNewTab);
     } else if (id == MySharesActionId::kCancleSharing) {
-        if (selectFiles.count() == 0)
+        if (selectFiles.count() == 0) {
+            fmWarning() << "No files selected for cancel sharing operation";
             return false;
+        }
+        fmInfo() << "Canceling sharing for file:" << selectFiles.first();
         ShareEventsCaller::sendCancelSharing(selectFiles.first());
     } else if (id == MySharesActionId::kShareProperty) {
+        fmInfo() << "Showing properties for" << selectFiles.count() << "selected files";
         ShareEventsCaller::sendShowProperty(selectFiles);
     } else {
+        fmWarning() << "Unknown action ID triggered:" << id;
         return false;
     }
     return true;

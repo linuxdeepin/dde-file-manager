@@ -4,6 +4,7 @@
 
 #include "encryptprogressdialog.h"
 #include "utils/encryptutils.h"
+#include "dfmplugin_disk_encrypt_global.h"
 
 #include <QCoreApplication>
 #include <QVBoxLayout>
@@ -75,11 +76,15 @@ void EncryptProgressDialog::showExportPage()
 
 void EncryptProgressDialog::onCicked(int idx, const QString &btnTxt)
 {
-    if (btnTxt != tr("Re-export the recovery key"))
+    if (btnTxt != tr("Re-export the recovery key")) {
+        fmDebug() << "Non-export button clicked, ignoring";
         return;
+    }
+
     QUrl url = DFileDialog::getExistingDirectoryUrl(this);
     QString msg;
     if (!validateExportPath(url.toLocalFile(), &msg)) {
+        fmWarning() << "Export path validation failed:" << msg;
         dialog_utils::showDialog(tr("Error"), msg, dialog_utils::DialogType::kError);
     } else {
         saveRecKey(url.toLocalFile());
@@ -146,17 +151,20 @@ bool EncryptProgressDialog::validateExportPath(const QString &path, QString *msg
     }
 
     if (!QDir(path).exists()) {
+        fmWarning() << "Export path does not exist:" << path;
         setMsg(tr("Recovery key export path is not exists!"));
         return false;
     }
 
     QStorageInfo storage(path);
     if (storage.isReadOnly()) {
+        fmWarning() << "Export path is read-only:" << path;
         setMsg(tr("This partition is read-only, please export to a writable "
                   "partition"));
         return false;
     }
 
+    // Check if the export path itself is encrypted
     using namespace dfmmount;
     auto monitor = DDeviceManager::instance()->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
     Q_ASSERT(monitor);
@@ -165,6 +173,7 @@ bool EncryptProgressDialog::validateExportPath(const QString &path, QString *msg
         auto objPath = devObjPaths.constFirst();
         auto devPtr = monitor->createDeviceById(objPath);
         if (devPtr && devPtr->getProperty(Property::kBlockCryptoBackingDevice).toString() != "/") {
+            fmWarning() << "Export path is on an encrypted partition:" << path;
             setMsg(tr("The partition is encrypted, please export to a non-encrypted "
                       "partition or external device such as a USB flash drive."));
             return false;
@@ -181,11 +190,12 @@ void EncryptProgressDialog::saveRecKey(const QString &path)
                                   .arg(device.mid(5));
     QFile f(recFileName);
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        fmCritical() << "Failed to create recovery key file:" << recFileName << "error:" << f.errorString();
         dialog_utils::showDialog(tr("Error"), tr("Cannot create recovery key file!"), dialog_utils::DialogType::kError);
         return;
     }
     f.write(recKey.toLocal8Bit());
     f.close();
     accept();
-    qInfo() << "recovery key has been wrote to" << recFileName;
+    fmInfo() << "Recovery key successfully saved to:" << recFileName;
 }

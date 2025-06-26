@@ -168,10 +168,8 @@ void OptionButtonBox::updateOptionButtonBox(int parentWidth)
 {
     // If the current url scheme has no button visibility state set, do not hide buttons
     if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
-        && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
-        fmDebug() << "All buttons hidden for scheme:" << d->currentUrl.scheme();
+        && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn)
         return;
-    }
 
     if (parentWidth <= kCompactModeThreshold) {
         if (!d->isCompactMode) {

@@ -21,7 +21,7 @@ UserEntryFileEntity::UserEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kUserDir)) {
-        fmWarning() << "wrong suffix:" << url;
+        fmCritical() << "Invalid user directory URL suffix:" << url;
         abort();
     }
 
@@ -66,8 +66,11 @@ DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder UserEntryFileEntity::orde
 QUrl UserEntryFileEntity::targetUrl() const
 {
     QString path = DFMBASE_NAMESPACE::StandardPaths::location(dirName);
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "No path found for user directory:" << dirName;
         return QUrl();
+    }
+
     QUrl targetUrl;
     targetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     targetUrl.setPath(path);

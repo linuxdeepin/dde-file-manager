@@ -63,18 +63,25 @@ int ComputerModel::columnCount(const QModelIndex &parent) const
 
 QVariant ComputerModel::data(const QModelIndex &index, int role) const
 {
-    if (items.count() <= index.row())
+    if (items.count() <= index.row()) {
+        fmWarning() << "ComputerModel::data invalid index row:" << index.row() << "items count:" << items.count();
         return {};
+    }
+
     const auto item = &items[index.row()];
-    if (!item)
+    if (!item) {
+        fmCritical() << "ComputerModel::data null item at row:" << index.row();
         return {};
+    }
 
     switch (role) {
     case Qt::DisplayRole: {
         if (item->shape == ComputerItemData::kSplitterItem)
             return item->itemName;
-        if (!item->info)
+        if (!item->info) {
+            fmWarning() << "ComputerModel::data null info for display role at row:" << index.row();
             return "";
+        }
 
         QString &&itemName = item->info->displayName();
         if (itemName != item->itemName)
@@ -92,8 +99,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? QVariant::fromValue<qulonglong>(item->info->sizeUsage()) : 0;
 
     case kFileSystemRole: {
-        if (!item->info)
+        if (!item->info) {
+            fmWarning() << "ComputerModel::data null info for filesystem role at row:" << index.row();
             return "";
+        }
         if (item->info->targetUrl().isValid()) {
             auto properties = item->info->extraProperties();
             if (properties.value(DeviceProperty::kIsEncrypted).toBool()
@@ -178,13 +187,18 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     int row = index.row();
-    if (row < 0 || row >= items.count())
+    if (row < 0 || row >= items.count()) {
+        fmWarning() << "ComputerModel::setData invalid row:" << row << "items count:" << items.count();
         return false;
+    }
 
     auto &item = items[row];
     if (role == Qt::EditRole) {
-        if (!item.info || !item.info->renamable())
+        if (!item.info || !item.info->renamable()) {
+            fmWarning() << "ComputerModel::setData item not renamable at row:" << row;
             return false;
+        }
+
         ComputerControllerInstance->doRename(0, item.url, value.toString());
         return true;
     } else if (role == DataRoles::kItemIsEditingRole) {
@@ -267,19 +281,24 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     int pos = -1;
     if (shape == ComputerItemData::kSplitterItem) {
         pos = findSplitter(data.itemName);
-        if (pos >= 0)
+        if (pos >= 0) {
+            fmDebug() << "ComputerModel::onItemAdded splitter already exists:" << data.itemName;
             return;
+        }
     }
 
     pos = findItem(data.url);
     fmInfo() << "item added: devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
     if (pos > 0) {   // update the item
+        fmDebug() << "ComputerModel::onItemAdded updating existing item at position:" << pos;
         onItemUpdated(data.url);
     } else {
         if (shape == ComputerItemData::kSplitterItem) {
+            fmDebug() << "ComputerModel::onItemAdded adding new splitter group:" << data.itemName;
             addGroup(data);
             return;
         }
+
         int row = 0;
         for (; row < items.count(); row++) {
             const auto &item = items.at(row);
@@ -348,8 +367,11 @@ void ComputerModel::onItemUpdated(const QUrl &url)
 
 void ComputerModel::updateItemInfo(int pos)
 {
-    if (pos < 0 || pos >= items.count())
+    if (pos < 0 || pos >= items.count()) {
+        fmWarning() << "ComputerModel::updateItemInfo invalid position:" << pos << "items count:" << items.count();
         return;
+    }
+
     auto &info = items.at(pos);
     QString oldName = info.info->displayName();
     info.info->refresh();
@@ -370,6 +392,7 @@ void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglon
     auto &info = items.at(pos);
     if (!info.info)
         return;
+
     auto entryInfo = info.info;
 
     if (foundEncryptedDev) {
@@ -394,12 +417,17 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
         pos = findItemByClearDeviceId(ComputerUtils::getBlockDevIdByUrl(url));
         foundEncryptedDev = true;
     }
-    if (pos < 0 || pos >= items.count())
+    if (pos < 0 || pos >= items.count()) {
+        fmWarning() << "ComputerModel::onItemPropertyChanged item not found for URL:" << url;
         return;
+    }
 
     auto &info = items.at(pos);
-    if (!info.info)
+    if (!info.info) {
+        fmWarning() << "ComputerModel::onItemPropertyChanged null info at position:" << pos;
         return;
+    }
+
     auto entryInfo = info.info;
 
     if (foundEncryptedDev) {
@@ -434,8 +462,10 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
  */
 void ComputerModel::addGroup(const ComputerItemData &data)
 {
-    if (data.shape != ComputerItemData::kSplitterItem)
+    if (data.shape != ComputerItemData::kSplitterItem) {
+        fmWarning() << "ComputerModel::addGroup called with non-splitter item:" << data.url;
         return;
+    }
 
     const QString &name = data.itemName;
     if (name == ComputerItemWatcher::userDirGroup()) {   // insert at 0

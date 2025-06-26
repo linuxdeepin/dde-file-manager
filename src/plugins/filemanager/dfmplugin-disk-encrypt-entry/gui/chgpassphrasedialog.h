@@ -4,6 +4,8 @@
 #ifndef CHGPASSPHRASEDIALOG_H
 #define CHGPASSPHRASEDIALOG_H
 
+#include "dfmplugin_disk_encrypt_global.h"
+
 #include <ddialog.h>
 #include <dpasswordedit.h>
 #include <dcommandlinkbutton.h>

@@ -27,19 +27,24 @@ bool EventReceiver::tpmIsAvailable()
 bool EventReceiver::getRandomByTpm(int size, QString *output)
 {
     TPMWork tpm;
-    if (!tpm.getRandom(size, output))
+    if (!tpm.getRandom(size, output)) {
+        fmWarning() << "Failed to generate random data by TPM";
         return false;
+    }
 
     // Determine whether the password is a hexadecimal character
     QString out = *output;
     int count = out.size();
     if (count != size) {
         qCritical() << "Vault: random password create error! The error password is %1" << out;
+        fmCritical() << "Random password size mismatch - expected:" << size << "actual:" << count;
         return false;
     }
+
     for (int i = 0; i < count; ++i) {
         if (!((out[i] >= '0' && out[i] <= '9') || (out[i] >= 'a' && out[i] <= 'f'))) {
             qCritical() << "Vault: random password create error! The error password is %1" << out;
+            fmCritical() << "Random password contains invalid characters at position:" << i;
             return false;
         }
     }
@@ -48,8 +53,10 @@ bool EventReceiver::getRandomByTpm(int size, QString *output)
 
 bool EventReceiver::isTpmSupportAlgo(const QString &algoName, bool *support)
 {
-    if (algoName.isEmpty())
+    if (algoName.isEmpty()) {
+        fmWarning() << "Empty algorithm name provided for TPM support check";
         return false;
+    }
 
     TPMWork tpm;
     return tpm.isSupportAlgo(algoName, support);
@@ -92,12 +99,16 @@ int EventReceiver::isTpmSupportAlgoProcess(const QString &algoName, bool *suppor
 
 int EventReceiver::encryptByTpmProcess(const QVariantMap &encryptParams)
 {
-    if (!encryptParams.contains(PropertyKey::kEncryptType))
+    if (!encryptParams.contains(PropertyKey::kEncryptType)) {
+        fmWarning() << "Missing encrypt type in parameters";
         return -1;
+    }
 
     int type = encryptParams.value(PropertyKey::kEncryptType).toInt();
-    if (type != 1 && type != 2 && type != 3)
+    if (type != 1 && type != 2 && type != 3) {
+        fmWarning() << "Invalid encrypt type:" << type;
         return -1;
+    }
 
     if (!encryptParams.contains(PropertyKey::kSessionHashAlgo)
         || !encryptParams.contains(PropertyKey::kSessionKeyAlgo)
@@ -107,22 +118,26 @@ int EventReceiver::encryptByTpmProcess(const QVariantMap &encryptParams)
         || !encryptParams.contains(PropertyKey::kMinorKeyAlgo)
         || !encryptParams.contains(PropertyKey::kDirPath)
         || !encryptParams.contains(PropertyKey::kPlain)) {
+        fmWarning() << "Missing required encryption parameters";
         return -1;
     }
 
     if (type == 1) {
         if (!encryptParams.contains(PropertyKey::kPcr)
             || !encryptParams.contains(PropertyKey::kPcrBank)) {
+            fmWarning() << "Missing PCR parameters for type 1 encryption";
             return -1;
         }
     } else if (type == 2) {
         if (!encryptParams.contains(PropertyKey::kPinCode)) {
+            fmWarning() << "Missing PIN code for type 2 encryption";
             return -1;
         }
     } else if (type == 3) {
         if (!encryptParams.contains(PropertyKey::kPcr)
             || !encryptParams.contains(PropertyKey::kPcrBank)
             || !encryptParams.contains(PropertyKey::kPinCode)) {
+            fmWarning() << "Missing PCR or PIN parameters for type 3 encryption";
             return -1;
         }
     }
@@ -140,49 +155,61 @@ int EventReceiver::encryptByTpmProcess(const QVariantMap &encryptParams)
         params.type = kTpmAndPcr;
         params.pcr = encryptParams.value(PropertyKey::kPcr).toString();
         params.pcr_bank = encryptParams.value(PropertyKey::kPcrBank).toString();
+        fmDebug() << "Type 1 encryption (TPM+PCR) - PCR:" << params.pcr << "PCR Bank:" << params.pcr_bank;
     } else if (type == 2) {
         params.type = kTpmAndPin;
         params.pinCode = encryptParams.value(PropertyKey::kPinCode).toString();
+        fmDebug() << "Type 2 encryption (TPM+PIN)";
     } else if (type == 3) {
         params.type = kTpmAndPcrAndPin;
         params.pcr = encryptParams.value(PropertyKey::kPcr).toString();
         params.pcr_bank = encryptParams.value(PropertyKey::kPcrBank).toString();
         params.pinCode = encryptParams.value(PropertyKey::kPinCode).toString();
+        fmDebug() << "Type 3 encryption (TPM+PCR+PIN) - PCR:" << params.pcr << "PCR Bank:" << params.pcr_bank;
     }
+
     TPMWork tpm;
     return tpm.encryptByTools(params);
 }
 
 int EventReceiver::decryptByTpmProcess(const QVariantMap &decryptParams, QString *pwd)
 {
-    if (!decryptParams.contains(PropertyKey::kEncryptType))
+    if (!decryptParams.contains(PropertyKey::kEncryptType)) {
+        fmWarning() << "Missing encrypt type in decryption parameters";
         return -1;
+    }
 
     int type = decryptParams.value(PropertyKey::kEncryptType).toInt();
-    if (type != 1 && type != 2 && type != 3)
+    if (type != 1 && type != 2 && type != 3) {
+        fmWarning() << "Invalid decrypt type:" << type;
         return -1;
+    }
 
     if (!decryptParams.contains(PropertyKey::kSessionHashAlgo)
         || !decryptParams.contains(PropertyKey::kSessionKeyAlgo)
         || !decryptParams.contains(PropertyKey::kPrimaryHashAlgo)
         || !decryptParams.contains(PropertyKey::kPrimaryKeyAlgo)
         || !decryptParams.contains(PropertyKey::kDirPath)) {
+        fmWarning() << "Missing required decryption parameters";
         return false;
     }
 
     if (type == 1) {
         if (!decryptParams.contains(PropertyKey::kPcr)
             || !decryptParams.contains(PropertyKey::kPcrBank)) {
+            fmWarning() << "Missing PCR parameters for type 1 decryption";
             return false;
         }
     } else if (type == 2) {
         if (!decryptParams.contains(PropertyKey::kPinCode)) {
+            fmWarning() << "Missing PIN code for type 2 decryption";
             return false;
         }
     } else if (type == 3) {
         if (!decryptParams.contains(PropertyKey::kPcr)
             || !decryptParams.contains(PropertyKey::kPcrBank)
             || !decryptParams.contains(PropertyKey::kPinCode)) {
+            fmWarning() << "Missing PCR or PIN parameters for type 3 decryption";
             return false;
         }
     }
@@ -197,14 +224,17 @@ int EventReceiver::decryptByTpmProcess(const QVariantMap &decryptParams, QString
         params.type = kTpmAndPcr;
         params.pcr = decryptParams.value(PropertyKey::kPcr).toString();
         params.pcr_bank = decryptParams.value(PropertyKey::kPcrBank).toString();
+        fmDebug() << "Type 1 decryption (TPM+PCR) - PCR:" << params.pcr << "PCR Bank:" << params.pcr_bank;
     } else if (type == 2) {
         params.type = kTpmAndPin;
         params.pinCode = decryptParams.value(PropertyKey::kPinCode).toString();
+        fmDebug() << "Type 2 decryption (TPM+PIN)";
     } else if (type == 3) {
         params.type = kTpmAndPcrAndPin;
         params.pcr = decryptParams.value(PropertyKey::kPcr).toString();
         params.pcr_bank = decryptParams.value(PropertyKey::kPcrBank).toString();
         params.pinCode = decryptParams.value(PropertyKey::kPinCode).toString();
+        fmDebug() << "Type 3 decryption (TPM+PCR+PIN) - PCR:" << params.pcr << "PCR Bank:" << params.pcr_bank;
     }
 
     TPMWork tpm;
@@ -219,11 +249,14 @@ int EventReceiver::ownerAuthStatus()
 EventReceiver::EventReceiver(QObject *parent)
     : QObject(parent)
 {
+    fmDebug() << "EventReceiver constructed";
     initConnection();
 }
 
 void EventReceiver::initConnection()
 {
+    fmDebug() << "Initializing EventReceiver connections";
+
     // slot event
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_TPMIsAvailable", this, &EventReceiver::tpmIsAvailable);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_GetRandomByTPM", this, &EventReceiver::getRandomByTpm);
@@ -238,4 +271,6 @@ void EventReceiver::initConnection()
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_EncryptByTPMPro", this, &EventReceiver::encryptByTpmProcess);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_DecryptByTPMPro", this, &EventReceiver::decryptByTpmProcess);
     dpfSlotChannel->connect("dfmplugin_encrypt_manager", "slot_OwnerAuthStatus", this, &EventReceiver::ownerAuthStatus);
+
+    fmDebug() << "EventReceiver slot connections established - 12 slots connected";
 }

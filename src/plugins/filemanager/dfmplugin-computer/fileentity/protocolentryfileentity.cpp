@@ -29,7 +29,7 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kProtocol)) {
-        fmWarning() << "wrong suffix:" << url;
+        fmCritical() << "Invalid protocol device URL suffix:" << url;
         abort();
     }
 
@@ -62,6 +62,8 @@ QIcon ProtocolEntryFileEntity::icon() const
             continue;
         return iconObj;
     }
+
+    fmWarning() << "No valid icon found for protocol device:" << entryUrl << "available icons:" << icons;
     return {};
 }
 
@@ -126,8 +128,11 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
 {
     auto mpt = datas.value(DeviceProperty::kMountPoint).toString();
     QUrl target;
-    if (mpt.isEmpty())
+    if (mpt.isEmpty()) {
+        fmDebug() << "No mount point found for protocol device:" << entryUrl;
         return target;
+    }
+
     target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
     if (DFMBASE_NAMESPACE::ProtocolUtils::isSMBFile(target))

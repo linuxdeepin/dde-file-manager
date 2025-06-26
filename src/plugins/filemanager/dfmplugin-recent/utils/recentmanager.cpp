@@ -166,10 +166,8 @@ void RecentManager::onItemAdded(const QString &path, const QString &href, qint64
         return;
     }
 
-    if (recentItems.contains(url)) {
-        fmDebug() << "Item already exists in cache, skipping:" << url;
+    if (recentItems.contains(url))
         return;
-    }
 
     auto info = InfoFactory::create<FileInfo>(url);
     if (info.isNull()) {

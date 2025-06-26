@@ -23,8 +23,10 @@ QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
 
 DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
 {
-    if (!kDetailSpaceMap.contains(windowId))
+    if (!kDetailSpaceMap.contains(windowId)) {
+        fmDebug() << "No detail space found for window ID:" << windowId;
         return nullptr;
+    }
 
     return kDetailSpaceMap[windowId];
 }
@@ -115,8 +117,10 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
 void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url)
 {
     if (w) {
-        if (!w->isVisible())
+        if (!w->isVisible()) {
+            fmDebug() << "Widget not visible, skipping content update";
             return;
+        }
 
         w->setCurrentUrl(url);
         QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(w->currentUrl());
@@ -126,6 +130,8 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
                 w->insterExpandControl(index, widgetMap.value(index));
             }
         }
+    } else {
+        fmWarning() << "Cannot set detail view content - widget is null";
     }
 }
 

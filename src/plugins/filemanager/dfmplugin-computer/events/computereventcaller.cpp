@@ -30,10 +30,16 @@ namespace dfmplugin_computer {
  */
 void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
 {
-    if (!url.isValid())
+    if (!url.isValid()) {
+        fmWarning() << "Invalid URL provided for navigation:" << url;
         return;
+    }
 
     quint64 winId = FMWindowsIns.findWindowId(sender);
+    if (winId == 0) {
+        fmWarning() << "Failed to find window ID for sender widget";
+        return;
+    }
 
     cdTo(winId, url);
 }
@@ -45,15 +51,18 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
  */
 void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
 {
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "Empty path provided for navigation";
         return;
+    }
+
     cdTo(sender, ComputerUtils::makeLocalUrl(path));
 }
 
 void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 {
     if (!ComputerUtils::checkGvfsMountExist(url)) {
-        fmInfo() << "gvfs url not exists" << url;
+        fmWarning() << "GVFS mount does not exist for URL:" << url;
         return;
     }
 
@@ -70,15 +79,18 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 {
-    if (path.isEmpty())
+    if (path.isEmpty()) {
+        fmWarning() << "Empty path provided for navigation with window ID:" << winId;
         return;
+    }
+
     cdTo(winId, ComputerUtils::makeLocalUrl(path));
 }
 
 void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url, const bool isNew)
 {
     if (!ComputerUtils::checkGvfsMountExist(url)) {
-        fmInfo() << "gvfs url not exists" << url;
+        fmWarning() << "GVFS mount does not exist for new window URL:" << url;
         return;
     }
 
@@ -88,7 +100,7 @@ void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url, const bool isNew
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
 {
     if (!ComputerUtils::checkGvfsMountExist(url)) {
-        fmInfo() << "gvfs url not exists" << url;
+        fmWarning() << "GVFS mount does not exist for new tab URL:" << url;
         return;
     }
 
@@ -98,19 +110,19 @@ void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
 void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 {
     dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_Operation_OpenItem", winId, url);
-    fmDebug() << "send open item: " << url;
+    fmDebug() << "Published open item signal for URL:" << url;
 }
 
 void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
 {
     dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlN", winId, url);
-    fmDebug() << "send ctrl N at item: " << url;
+    fmDebug() << "Published Ctrl+N shortcut signal for URL:" << url;
 }
 
 void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 {
     dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlT", winId, url);
-    fmDebug() << "send ctrl T at item: " << url;
+    fmDebug() << "Published Ctrl+T shortcut signal for URL:" << url;
 }
 
 void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)

@@ -138,6 +138,7 @@ int EventsHandler::deviceEncryptStatus(const QString &device)
     QDBusReply<int> reply = iface.call("DeviceStatus", device);
     if (reply.isValid())
         return reply.value();
+    fmWarning() << "Failed to get encryption status for device:" << device;
     return -1;
 }
 
@@ -159,6 +160,7 @@ QString EventsHandler::holderDevice(const QString &device)
     QDBusReply<QString> reply = iface.call("HolderDevice", device);
     if (reply.isValid())
         return reply.value();
+    fmWarning() << "Failed to get holder device for:" << device << "using original device";
     return device;
 }
 
@@ -171,9 +173,10 @@ void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
     auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
 
     if (code == -kRebootRequired) {
-        qInfo() << "ask user to reboot machine.";
+        fmInfo() << "Reboot required for device:" << dev << "requesting reboot";
         requestReboot();
     } else if (code < 0) {
+        fmWarning() << "Pre-encrypt error for device:" << dev << "code:" << code;
         showPreEncryptError(dev, name, code);
         return;
     }
@@ -200,6 +203,7 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
     bool success = false;
     switch (-code) {
     case kUserCancelled:
+        fmInfo() << "Encryption cancelled by user for device:" << device;
         ignoreParamRequest();
         return;
     case kSuccess:
@@ -207,12 +211,14 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
         title = tr("Encrypt done");
         msg = tr("Device %1 has been encrypted").arg(device);
         success = true;
+        fmInfo() << "Encryption completed successfully for device:" << device;
         break;
     default:
         title = tr("Encrypt failed");
         msg = tr("Device %1 encrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
+        fmWarning() << "Encryption failed for device:" << device << "with code:" << code;
         break;
     }
 
@@ -234,7 +240,7 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
     auto configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     auto autoStartFilePath = configPath + "/autostart/dfm-reencrypt.desktop";
     int ret = ::remove(autoStartFilePath.toStdString().c_str());
-    qInfo() << "autostart file has been removed:" << ret;
+    fmDebug() << "Autostart file removal result:" << ret << "for path:" << autoStartFilePath;
 }
 
 void EventsHandler::onDecryptFinished(const QVariantMap &result)
@@ -246,6 +252,7 @@ void EventsHandler::onDecryptFinished(const QVariantMap &result)
     auto name = result.value(encrypt_param_keys::kKeyDeviceName).toString();
 
     if (code == -kRebootRequired) {
+        fmInfo() << "Reboot required after decryption for device:" << dev;
         requestReboot();
     } else {
         showDecryptError(dev, name, code);
@@ -254,7 +261,7 @@ void EventsHandler::onDecryptFinished(const QVariantMap &result)
         auto configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
         auto autoStartFilePath = configPath + "/autostart/dfm-reencrypt.desktop";
         int ret = ::remove(autoStartFilePath.toStdString().c_str());
-        qInfo() << "autostart file has been removed:" << ret;
+        fmDebug() << "Autostart file removal result:" << ret << "for path:" << autoStartFilePath;
     }
 }
 
@@ -274,12 +281,14 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 
     QString devPath = devInfo.value(encrypt_param_keys::kKeyDevice).toString();
     if (devPath.isEmpty()) {
-        qWarning() << "invalid encrypt config!" << devInfo;
+        fmWarning() << "Invalid encrypt config, missing device path:" << devInfo;
         return;
     }
 
-    if (encryptInputs.value(devPath, nullptr))
+    if (encryptInputs.value(devPath, nullptr)) {
+        fmDebug() << "Input dialog already exists for device:" << devPath;
         return;
+    }
 
     QString objPath = "/org/freedesktop/UDisks2/block_devices/" + devPath.mid(5);
     auto blkDev = device_utils::createBlockDevice(objPath);
@@ -288,9 +297,11 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 
     connect(dlg, &DDialog::finished, this, [=](auto ret) {
         if (ret != QDialog::Accepted) {
+            fmInfo() << "User cancelled auth input for device:" << devPath;
             ignoreParamRequest();
             encryptInputs.take(devPath)->deleteLater();   // also will be deleted when encryption started.
         } else {
+            fmInfo() << "User provided auth input for device:" << devPath << "proceeding with re-encryption";
             DiskEncryptMenuScene::doReencryptDevice(dlg->getInputs());
         }
     });
@@ -299,12 +310,13 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 
 void EventsHandler::ignoreParamRequest()
 {
+    fmDebug() << "Ignoring parameter request";
     QDBusInterface iface(kDaemonBusName,
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
     iface.asyncCall("IgnoreAuthSetup");
-    qInfo() << "ignore param request...";
+    fmInfo() << "Parameter request ignored";
 }
 
 void EventsHandler::onEncryptProgress(const QString &dev, const QString &devName, double progress)
@@ -348,20 +360,24 @@ void EventsHandler::onDecryptProgress(const QString &dev, const QString &devName
 
 bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *cancelled)
 {
-    if (!pwd || !cancelled)
+    if (!pwd || !cancelled) {
+        fmWarning() << "Invalid parameters for password acquisition - pwd or cancelled is null";
         return false;
+    }
 
     if (!canUnlock(dev)) {
+        fmWarning() << "Device cannot be unlocked:" << dev;
         *cancelled = true;
         return true;
     }
 
     int type = device_utils::encKeyType(dev);
+    fmDebug() << "Device" << dev << "encryption key type:" << type;
 
     // test tpm
     bool testTPM = (type == kPin || type == kTpm);
     if (testTPM && tpm_utils::checkTPM() != 0) {
-        qWarning() << "TPM service is not available.";
+        fmWarning() << "TPM service is not available for device:" << dev;
         int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"),
                                            dialog_utils::DialogType::kError);
         // unlock by recovery key.
@@ -373,19 +389,24 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
 
     switch (type) {
     case SecKeyType::kPin:
+        fmDebug() << "Acquiring passphrase by PIN for device:" << dev;
         *pwd = acquirePassphraseByPIN(dev, *cancelled);
         break;
     case SecKeyType::kTpm:
+        fmDebug() << "Acquiring passphrase by TPM for device:" << dev;
         *pwd = acquirePassphraseByTPM(dev, *cancelled);
         break;
     case SecKeyType::kPwd:
+        fmDebug() << "Acquiring passphrase by password for device:" << dev;
         *pwd = acquirePassphrase(dev, *cancelled);
         break;
     default:
+        fmWarning() << "Unknown encryption key type:" << type << "for device:" << dev;
         return false;
     }
 
     if (pwd->isEmpty() && !*cancelled) {
+        fmWarning() << "Failed to acquire password for device:" << dev << "type:" << type;
         QString title;
         if (type == kPin)
             title = tr("Wrong PIN");
@@ -409,6 +430,7 @@ QString EventsHandler::acquirePassphrase(const QString &dev, bool &cancelled)
     int ret = dlg.exec();
     if (ret != 1) {
         cancelled = true;
+        fmInfo() << "Password dialog cancelled for device:" << dev;
         return "";
     }
     return dlg.getUnlockKey().second;
@@ -420,13 +442,17 @@ QString EventsHandler::acquirePassphraseByPIN(const QString &dev, bool &cancelle
     int ret = dlg.exec();
     if (ret != 1) {
         cancelled = true;
+        fmInfo() << "PIN dialog cancelled for device:" << dev;
         return "";
     }
     auto keys = dlg.getUnlockKey();
-    if (keys.first == UnlockPartitionDialog::kPin)
+    if (keys.first == UnlockPartitionDialog::kPin) {
+        fmDebug() << "Getting passphrase from TPM using PIN for device:" << dev;
         return tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(dev, keys.second);
-    else
+    } else {
+        fmDebug() << "Using recovery key directly for device:" << dev;
         return keys.second;
+    }
 }
 
 QString EventsHandler::acquirePassphraseByTPM(const QString &dev, bool &)
@@ -440,6 +466,7 @@ QString EventsHandler::acquirePassphraseByRec(const QString &dev, bool &cancelle
     int ret = dlg.exec();
     if (ret != 1) {
         cancelled = true;
+        fmInfo() << "Recovery key dialog cancelled for device:" << dev;
         return "";
     }
     auto keys = dlg.getUnlockKey();
@@ -458,8 +485,10 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
         title = tr("Preencrypt done");
         msg = tr("Device %1 has been preencrypt, please reboot to finish encryption.")
                       .arg(device);
+        fmInfo() << "Pre-encryption successful for device:" << device;
         break;
     case kUserCancelled:
+        fmInfo() << "Pre-encryption cancelled by user for device:" << device;
         return;
     default:
         title = tr("Preencrypt failed");
@@ -467,6 +496,7 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
                       .arg(device)
                       .arg(code);
         showError = true;
+        fmWarning() << "Pre-encryption failed for device:" << device << "code:" << code;
         break;
     }
 
@@ -486,23 +516,28 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
         title = tr("Decrypt done");
         msg = tr("Device %1 has been decrypted").arg(device);
         showFailed = false;
+        fmInfo() << "Decryption successful for device:" << device;
         break;
     case kUserCancelled:
+        fmInfo() << "Decryption cancelled by user for device:" << device;
         return;
     case kErrorWrongPassphrase:
         title = tr("Decrypt disk");
         msg = tr("Wrong passpharse or PIN");
+        fmWarning() << "Wrong passphrase/PIN for device:" << device;
         break;
     case kErrorNotFullyEncrypted:
         title = tr("Decrypt failed");
         msg = tr("Device %1 is under encrypting, please decrypt after encryption finished.")
                       .arg(device);
+        fmWarning() << "Device not fully encrypted:" << device;
         break;
     default:
         title = tr("Decrypt failed");
         msg = tr("Device %1 Decrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
+        fmWarning() << "Decryption failed for device:" << device << "code:" << code;
         break;
     }
 
@@ -539,13 +574,16 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
     case (kSuccess):
         title = tr("Change %1 done").arg(codeType);
         msg = tr("%1's %2 has been changed").arg(device).arg(codeType);
+        fmInfo() << "Password change successful for device:" << device << "type:" << codeType;
         break;
     case kUserCancelled:
+        fmInfo() << "Password change cancelled by user for device:" << device;
         return;
     case kErrorChangePassphraseFailed:
         title = tr("Change %1 failed").arg(codeType);
         msg = tr("Wrong %1").arg(codeType);
         showError = true;
+        fmWarning() << "Wrong" << codeType << "for device:" << device;
         break;
     default:
         title = tr("Change %1 failed").arg(codeType);
@@ -554,6 +592,7 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
                       .arg(codeType)
                       .arg(code);
         showError = true;
+        fmWarning() << "Password change failed for device:" << device << "type:" << codeType << "code:" << code;
         break;
     }
 
@@ -563,7 +602,7 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
 
 void EventsHandler::requestReboot()
 {
-    qWarning() << "reboot is confirmed...";
+    fmInfo() << "Requesting system reboot";
     QDBusInterface sessMng(APP_MANAGER_SERVICE,
                            APP_MANAGER_PATH,
                            APP_MANAGER_INTERFACE);
@@ -573,10 +612,12 @@ void EventsHandler::requestReboot()
 bool EventsHandler::canUnlock(const QString &device)
 {
     if (EventsHandler::instance()->isUnderOperating(device)) {
+        fmWarning() << "Device is under operation, cannot unlock:" << device;
         return false;
     }
 
     if (device == unfinishedDecryptJob()) {
+        fmWarning() << "Device has unfinished decryption job:" << device;
         dialog_utils::showDialog(tr("Error"),
                                  tr("Device is not fully decrypted, please finish decryption before access."),
                                  dialog_utils::DialogType::kInfo);
@@ -585,6 +626,7 @@ bool EventsHandler::canUnlock(const QString &device)
 
     int states = EventsHandler::instance()->deviceEncryptStatus(device);
     if ((states & kStatusOnline) && (states & kStatusEncrypt)) {
+        fmWarning() << "Device is online and encrypting, cannot unlock:" << device << "status:" << states;
         dialog_utils::showDialog(tr("Unlocking device failed"),
                                  tr("Please click the right disk menu \"Continue partition encryption\" to complete partition encryption."),
                                  dialog_utils::DialogType::kError);
@@ -596,7 +638,7 @@ bool EventsHandler::canUnlock(const QString &device)
 
 void EventsHandler::autoStartDFM()
 {
-    qInfo() << "autostart is going to added...";
+    fmInfo() << "Adding file manager to autostart";
     QDBusInterface sessMng(APP_MANAGER_SERVICE,
                            APP_MANAGER_PATH,
                            APP_MANAGER_INTERFACE);

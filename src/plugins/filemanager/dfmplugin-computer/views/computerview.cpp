@@ -256,11 +256,15 @@ void ComputerView::connectShortcut(QKeySequence seq, std::function<void(DFMEntry
 void ComputerView::onMenuRequest(const QPoint &pos)
 {
     QModelIndex index = indexAt(pos);
-    if (!index.isValid())
+    if (!index.isValid()) {
+        fmDebug() << "Menu request at invalid index position:" << pos;
         return;
+    }
 
-    if (index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt() == ComputerItemData::kSplitterItem)
+    if (index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt() == ComputerItemData::kSplitterItem) {
+        fmDebug() << "Menu request on splitter item, ignoring";
         return;
+    }
 
     auto url = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
     ComputerControllerInstance->onMenuRequest(ComputerUtils::getWinId(this), url, false);
@@ -268,12 +272,16 @@ void ComputerView::onMenuRequest(const QPoint &pos)
 
 void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
 {
-    if (winId != ComputerUtils::getWinId(this))
+    if (winId != ComputerUtils::getWinId(this)) {
+        fmDebug() << "Rename request for different window, ignoring";
         return;
+    }
 
     auto model = qobject_cast<ComputerModel *>(this->model());
-    if (!model)
+    if (!model) {
+        fmWarning() << "Failed to get ComputerModel for rename operation";
         return;
+    }
 
     int r = model->findItem(url);
     auto idx = model->index(r, 0);
@@ -407,6 +415,7 @@ void ComputerView::cdTo(const QModelIndex &index)
 {
     int r = index.row();
     if (r < 0 || r >= model()->rowCount()) {
+        fmWarning() << "Invalid row index for navigation:" << r;
         return;
     }
 

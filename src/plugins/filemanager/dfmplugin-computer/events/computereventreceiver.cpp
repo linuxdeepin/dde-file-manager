@@ -73,6 +73,7 @@ bool ComputerEventReceiver::handleSetTabName(const QUrl &url, QString *tabName)
         auto info = InfoFactory::create<EntryFileInfo>(ComputerUtils::makeBlockDevUrl(dev));
         if (info && UniversalUtils::urlEquals(info->targetUrl(), url)) {
             *tabName = info->displayName();
+            fmInfo() << "Set tab name to:" << *tabName << "for URL:" << url;
             return true;
         }
     }
@@ -99,20 +100,22 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
             break;
         }
 
-        fmInfo() << "start checking if path should be writable" << url;
+        fmInfo() << "Start checking if path should be writable:" << url;
         SyncFileInfo fileInfo(url);
         if (fileInfo.isAttributes(FileInfo::FileIsType::kIsWritable)
             && fileInfo.isAttributes(FileInfo::FileIsType::kIsExecutable)
             && fileInfo.isAttributes(FileInfo::FileIsType::kIsReadable)) {
-            fmInfo() << "file for current user is full permission, ignore prehandle" << url;
+            fmInfo() << "File has full permissions for current user, ignoring prehandle:" << url;
             break;
         }
 
         QString deviceID;
         if (!DevProxyMng->isMptOfDevice(path, deviceID)) {
-            fmInfo() << "path is not mountpoint of device, ignore prehandle" << url;
+            fmDebug() << "Path is not mountpoint of device, ignoring prehandle:" << url;
             break;
         }
+
+        fmDebug() << "Found device ID for path:" << deviceID << "path:" << path;
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         QString devDesc = deviceID.split("/", QString::SkipEmptyParts).last();
@@ -120,7 +123,7 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
         QString devDesc = deviceID.split("/", Qt::SkipEmptyParts).last();
 #endif
         if (devDesc.isEmpty() || !deviceID.startsWith("/org/freedesktop/UDisks")) {
-            fmInfo() << "cannot get the device description, ignore prehandle" << url << deviceID;
+            fmWarning() << "Cannot get device description or invalid device ID, ignoring prehandle. URL:" << url << "deviceID:" << deviceID;
             break;
         }
 
@@ -129,23 +132,23 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
                                              .arg(devDesc);
         QFile ignoreFlagFile(ignoreFlagFilePath);
         if (ignoreFlagFile.exists()) {
-            fmInfo() << "user has ignored prehandle before" << url << deviceID;
+            fmInfo() << "User has ignored permission request before for device:" << devDesc;
             break;
         }
 
         auto info = DevProxyMng->queryBlockInfo(deviceID);
         if (!info.value(GlobalServerDefines::DeviceProperty::kHintSystem).toBool()) {
-            fmInfo() << "not system disk, ignore prehandle" << url << deviceID;
+            fmDebug() << "Not system disk, ignoring prehandle for device:" << deviceID;
             break;
         }
 
         if (info.value(GlobalServerDefines::DeviceProperty::kFileSystem).toString().toLower() == "vfat") {
-            fmInfo() << "chmod for vfat is useless, give up prehandle" << url << deviceID;
+            fmInfo() << "VFAT filesystem detected, chmod operation not effective, skipping prehandle:" << deviceID;
             break;
         }
 
         if (info.value(GlobalServerDefines::DeviceProperty::kIsLoopDevice).toBool()) {
-            fmInfo() << "chmod for readonly loop device doesn't work, give up prehandle" << url << deviceID;
+            fmInfo() << "Loop device detected, chmod operation not effective, skipping prehandle:" << deviceID;
             break;
         }
 
@@ -154,12 +157,12 @@ void ComputerEventReceiver::dirAccessPrehandler(quint64, const QUrl &url, std::f
         if (!askForConfirmChmod(deviceName)) {
             ignoreFlagFile.open(QIODevice::NewOnly);
             ignoreFlagFile.close();
-            fmInfo() << "user dismissed for chmod" << url << deviceID;
+            fmInfo() << "User dismissed chmod request for device:" << deviceName;
             break;
         }
 
         // do chmod
-        fmInfo() << "start invoking Chmod" << url << deviceID;
+        fmInfo() << "Starting chmod operation for device:" << deviceName << "path:" << path;
         QDBusInterface daemonIface("org.deepin.Filemanager.AccessControlManager",
                                    "/org/deepin/Filemanager/AccessControlManager",
                                    "org.deepin.Filemanager.AccessControlManager",

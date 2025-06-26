@@ -7,6 +7,8 @@
 
 #include "services/diskencrypt/globaltypesdefine.h"
 
+#include <dfm-base/dfm_log_defines.h>
+
 #include <QtCore/qglobal.h>
 #include <QDir>
 #include <QString>
@@ -16,6 +18,10 @@
 #else
 #    define DFMPLUGIN_DISK_ENCRYPT_EXPORT Q_DECL_IMPORT
 #endif
+
+namespace dfmplugin_diskenc {
+DFM_LOG_USE_CATEGORY(dfmplugin_diskenc)
+}
 
 enum TPMModuleEncType {
     kUnknow = 0,

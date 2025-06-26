@@ -46,8 +46,10 @@ QString config_utils::cipherType()
     cfg->deleteLater();
     auto cipher = cfg->value("encryptAlgorithm", "sm4").toString();
     QStringList supportedCipher { "sm4", "aes" };
-    if (!supportedCipher.contains(cipher))
+    if (!supportedCipher.contains(cipher)) {
+        fmWarning() << "Unsupported cipher type:" << cipher << ", falling back to sm4";
         return "sm4";
+    }
     return cipher;
 }
 
@@ -94,9 +96,15 @@ int device_utils::encKeyType(const QString &dev)
                          QDBusConnection::systemBus());
     if (iface.isValid()) {
         QDBusReply<QString> reply = iface.call("TpmToken", dev);
-        if (!reply.isValid()) return 0;
+        if (!reply.isValid()) {
+            fmWarning() << "Failed to get TPM token via D-Bus for device:" << dev;
+            return 0;
+        }
         QString tokenJson = reply.value();
-        if (tokenJson.isEmpty()) return 0;
+        if (tokenJson.isEmpty()) {
+            fmDebug() << "Empty TPM token for device:" << dev;
+            return 0;
+        }
 
         QJsonDocument doc = QJsonDocument::fromJson(tokenJson.toLocal8Bit());
         QJsonObject obj = doc.object();
@@ -106,6 +114,8 @@ int device_utils::encKeyType(const QString &dev)
         if (usePin == "1") return 1;
         if (usePin == "0") return 2;
     }
+
+    fmWarning() << "Invalid D-Bus interface for device:" << dev;
     return 0;
 }
 
@@ -115,21 +125,23 @@ int tpm_passphrase_utils::genPassphraseFromTPM(const QString &dev, const QString
 
     if ((tpm_utils::getRandomByTPM(kPasswordSize, passphrase) != 0)
         || passphrase->isEmpty()) {
-        qCritical() << "TPM get random number failed!";
+        fmCritical() << "TPM get random number failed!";
         return kTPMNoRandomNumber;
     }
 
     const QString dirPath = kGlobalTPMConfigPath + dev;
     QDir dir(dirPath);
-    if (!dir.exists())
+    if (!dir.exists()) {
+        fmDebug() << "Creating TPM config directory:" << dirPath;
         dir.mkpath(dirPath);
+    }
 
     QString sessionHashAlgo, sessionKeyAlgo, primaryHashAlgo, primaryKeyAlgo, minorHashAlgo, minorKeyAlgo, pcr, pcrbank;
     if (!getAlgorithm(&sessionHashAlgo, &sessionKeyAlgo,
                       &primaryHashAlgo, &primaryKeyAlgo,
                       &minorHashAlgo, &minorKeyAlgo,
                       &pcr, &pcrbank)) {
-        qCritical() << "TPM algo choice failed!";
+        fmCritical() << "TPM algo choice failed!";
         return kTPMMissingAlog;
     }
 
@@ -147,14 +159,16 @@ int tpm_passphrase_utils::genPassphraseFromTPM(const QString &dev, const QString
     };
     if (pin.isEmpty()) {
         map.insert("PropertyKey_EncryptType", kUseTpmAndPcr);
+        fmDebug() << "Using TPM and PCR encryption";
     } else {
         map.insert("PropertyKey_EncryptType", kUseTpmAndPcrAndPin);
         map.insert("PropertyKey_PinCode", pin);
+        fmDebug() << "Using TPM, PCR and PIN encryption";
     }
 
     int err = tpm_utils::encryptByTPM(map);
     if (err != 0) {
-        qCritical() << "save to TPM failed!!!";
+        fmCritical() << "save to TPM failed!!!";
         return TPMError(err);
     }
 
@@ -167,7 +181,7 @@ QString tpm_passphrase_utils::getPassphraseFromTPM(const QString &dev, const QSt
     QString tokenDocPath = dirPath + QDir::separator() + "token.json";
     QFile file(tokenDocPath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << "Failed to open token.json!";
+        fmCritical() << "Failed to open token.json!";
         return "";
     }
     QJsonDocument tokenDoc = QJsonDocument::fromJson(file.readAll());
@@ -177,7 +191,7 @@ QString tpm_passphrase_utils::getPassphraseFromTPM(const QString &dev, const QSt
     if (!obj.contains("session-hash-alg") || !obj.contains("session-key-alg")
         || !obj.contains("primary-hash-alg") || !obj.contains("primary-key-alg")
         || !obj.contains("pcr") || !obj.contains("pcr-bank")) {
-        qCritical() << "Failed to get tpm algo from token.json!";
+        fmCritical() << "Failed to get tpm algo from token.json!";
         return "";
     }
 
@@ -204,8 +218,8 @@ QString tpm_passphrase_utils::getPassphraseFromTPM(const QString &dev, const QSt
     QString passphrase;
     int ok = tpm_utils::decryptByTPM(map, &passphrase);
     if (ok != 0) {
-        qWarning() << "cannot acquire passphrase from TPM for device"
-                   << dev;
+        fmWarning() << "cannot acquire passphrase from TPM for device"
+                    << dev << "error code:" << ok;
     }
 
     return passphrase;
@@ -247,7 +261,7 @@ bool tpm_passphrase_utils::getAlgorithm(QString *sessionHashAlgo, QString *sessi
                                              minorHashAlgo, minorKeyAlgo,
                                              pcr, pcrbank))
             return true;
-
+        fmWarning() << "Failed to retrieve algorithms from DConfig";
         return false;
     }
 
@@ -276,6 +290,7 @@ bool tpm_passphrase_utils::getAlgorithm(QString *sessionHashAlgo, QString *sessi
         return true;
     }
 
+    fmWarning() << "No supported TPM algorithms found";
     return false;
 }
 
@@ -285,8 +300,10 @@ QString recovery_key_utils::formatRecoveryKey(const QString &raw)
     QString formatted = raw;
     formatted.remove("-");
     int len = formatted.length();
-    if (len > 24)
+    if (len > 24) {
+        fmDebug() << "Truncating recovery key from" << len << "to 24 characters";
         formatted = formatted.mid(0, 24);
+    }
 
     len = formatted.length();
     int dashCount = len / kSectionLen;
@@ -332,6 +349,7 @@ int dialog_utils::showDialog(const QString &title, const QString &msg, DialogTyp
 void device_utils::cacheToken(const QString &device, const QVariantMap &token)
 {
     if (token.isEmpty()) {
+        fmDebug() << "Empty token, removing cached files for device:" << device;
         QDir tmp("/tmp");
         tmp.rmpath(kGlobalTPMConfigPath + device);
         return;
@@ -340,7 +358,7 @@ void device_utils::cacheToken(const QString &device, const QVariantMap &token)
     auto makeFile = [](const QString &fileName, const QByteArray &content) {
         QFile f(fileName);
         if (!f.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
-            qWarning() << "cannot cache token!" << fileName;
+            fmWarning() << "cannot cache token!" << fileName;
             return false;
         }
 
@@ -352,8 +370,10 @@ void device_utils::cacheToken(const QString &device, const QVariantMap &token)
 
     QString devTpmConfigPath = kGlobalTPMConfigPath + device;
     QDir tpmPath(devTpmConfigPath);
-    if (!tpmPath.exists())
+    if (!tpmPath.exists()) {
+        fmDebug() << "Creating TPM config path:" << devTpmConfigPath;
         tpmPath.mkpath(devTpmConfigPath);
+    }
 
     QJsonObject obj = QJsonObject::fromVariantMap(token);
     QJsonDocument doc(obj);
@@ -394,6 +414,7 @@ void dialog_utils::showTPMError(const QString &title, tpm_passphrase_utils::TPME
         msg = QObject::tr("TPM is locked.");
         break;
     default:
+        fmWarning() << "Unknown TPM error code:" << err;
         break;
     }
     if (!msg.isEmpty())
