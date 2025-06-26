@@ -19,18 +19,19 @@ class MimeTypeDisplayManager : public QObject
 public:
     static MimeTypeDisplayManager *instance();
 
-    QString displayName(const QString &mimeType);
-    FileInfo::FileType displayNameToEnum(const QString &mimeType);
-    QString defaultIcon(const QString &mimeType);
-    QMap<FileInfo::FileType, QString> displayNames();
-    QStringList supportArchiveMimetypes();
-    QStringList supportVideoMimeTypes();
-    QStringList supportAudioMimeTypes();
-    QString displayTypeFromPath(const QString &filePath);
-    FileInfo::FileType fileTypeByExtension(const QString &filePath);
+    QString displayName(const QString &mimeType) const;
+    FileInfo::FileType displayNameToEnum(const QString &mimeType) const;
+    QString defaultIcon(const QString &mimeType) const;
+    QMap<FileInfo::FileType, QString> displayNames() const;
+    QStringList supportArchiveMimetypes() const;
+    QStringList supportVideoMimeTypes() const;
+    QStringList supportAudioMimeTypes() const;
+    QString displayTypeFromPath(const QString &filePath) const;
+    FileInfo::FileType fileTypeByExtension(const QString &filePath) const;
 
 private:
     explicit MimeTypeDisplayManager(QObject *parent = nullptr);
+    ~MimeTypeDisplayManager();
     void initData();
     void loadSupportMimeTypes();
     QStringList readlines(const QString &path);

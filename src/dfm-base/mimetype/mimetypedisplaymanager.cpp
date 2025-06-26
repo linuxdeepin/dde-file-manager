@@ -9,7 +9,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <algorithm> // Required for std::sort
+#include <algorithm>   // Required for std::sort
 
 using namespace dfmbase;
 
@@ -17,6 +17,10 @@ MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent)
     : QObject(parent)
 {
     initData();
+}
+
+MimeTypeDisplayManager::~MimeTypeDisplayManager()
+{
 }
 
 void MimeTypeDisplayManager::initData()
@@ -50,21 +54,23 @@ void MimeTypeDisplayManager::initData()
 
     // Videos
     QStringList videoExts = {
-        "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "m4v", "3gp", 
-        "ts", "mts", "m2ts", "vob", "ogv", "rm", "rmvb", "asf", "divx", "f4v", "mk3d", 
+        "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "m4v", "3gp",
+        "ts", "mts", "m2ts", "vob", "ogv", "rm", "rmvb", "asf", "divx", "f4v", "mk3d",
         "mxf", "nsv", "ogm", "qt", "tp", "vid", "yuv", "h264", "h265", "hevc", "264", "265",
         "swf", "dv", "mod", "tod", "dvr", "mjpeg", "mjpg"
     };
-    for (const QString &ext : videoExts) extensionMap[ext.toLower()] = FileInfo::FileType::kVideos;
+    for (const QString &ext : videoExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kVideos;
 
     // Audios
     QStringList audioExts = {
-        "mp3", "wav", "ogg", "flac", "aac", "m4a", "wma", "ac3", "amr", "ape", "au", 
+        "mp3", "wav", "ogg", "flac", "aac", "m4a", "wma", "ac3", "amr", "ape", "au",
         "cda", "dts", "mka", "mid", "midi", "mpc", "oga", "opus", "ra", "snd", "spx",
-        "aiff", "aifc", "alac", "pcm", "dsf", "dff", "wv", "it", "s3m", "xm", "mod", 
+        "aiff", "aifc", "alac", "pcm", "dsf", "dff", "wv", "it", "s3m", "xm", "mod",
         "mpa", "mp2", "voc", "3ga", "m3u", "m3u8", "pls", "cue", "shn", "tak", "tta", "webm"
     };
-    for (const QString &ext : audioExts) extensionMap[ext.toLower()] = FileInfo::FileType::kAudios;
+    for (const QString &ext : audioExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kAudios;
 
     // Images
     QStringList imageExts = {
@@ -74,7 +80,8 @@ void MimeTypeDisplayManager::initData()
         "jpm", "mj2", "ppm", "pgm", "pbm", "pnm", "avif", "jxl", "pcx", "crw", "exr", "fpx", "tga",
         "dds", "hdr", "img", "mng", "pict", "sgi", "xbm", "xpm", "wmf", "emf", "djvu", "ani", "apng", "flif"
     };
-    for (const QString &ext : imageExts) extensionMap[ext.toLower()] = FileInfo::FileType::kImages;
+    for (const QString &ext : imageExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kImages;
 
     // Archives (including compound extensions)
     QStringList archiveExts = {
@@ -84,8 +91,9 @@ void MimeTypeDisplayManager::initData()
         "xar", "alz", "egg", "ar", "par", "par2", "xpi", "crx", "taz", "tar.lzma", "tar.zst", "tar.lz", "tar.lz4", "shar", "vhd", "vmdk",
         "pkg", "hfs", "ipsw", "dar", "bz", "tbz", "qcow", "qcow2", "pacman", "ova", "gem", "whl", "nupkg", "cab"
     };
-    for (const QString &ext : archiveExts) extensionMap[ext.toLower()] = FileInfo::FileType::kArchives;
-    
+    for (const QString &ext : archiveExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kArchives;
+
     // Documents (including text, source code, markup, etc.)
     QStringList docExts = {
         // Common document formats
@@ -109,24 +117,27 @@ void MimeTypeDisplayManager::initData()
         "gemfile", "rakefile", "procfile", "sbt", "flake", "bzl", "bazel", "spec", "thrift", "eslintrc", "prettierrc", "stylelintrc",
         "babelrc", "npmrc", "yarnrc", "classpath", "htaccess", "htpasswd", "lock"
     };
-    for (const QString &ext : docExts) extensionMap[ext.toLower()] = FileInfo::FileType::kDocuments;
-    
+    for (const QString &ext : docExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kDocuments;
+
     // Executables (specific binary executable formats only, not scripts)
     QStringList execExts = {
         "appimage", "run", "exe", "com", "msi", "pyc", "pyo", "flatpakref", "snap",
         "app", "bin", "out", "elf", "so", "o", "a", "dll", "sys", "scr", "ocx", "pyd", "dylib", "bundle",
         "msc", "cpl", "gadget", "msp", "action", "workflow", "xbe", "nexe", "wasm", "pex"
     };
-    for (const QString &ext : execExts) extensionMap[ext.toLower()] = FileInfo::FileType::kExecutable;
+    for (const QString &ext : execExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kExecutable;
 
     // Backups
     QStringList backupExts = {
-        "bak", "old", "backup", "~", "swp", "swo", "tmp", "temp", "orig", 
+        "bak", "old", "backup", "~", "swp", "swo", "tmp", "temp", "orig",
         "save", "back", "copy", "sav", "autosave", "gho", "gbk", "bkp", "bk", "wbk", "vbk", "bck",
         "bkf", "abk", "dbk", ".git", "crdownload", "part", "partial", "cache", "log.1", "log.old", "timemachine",
         "000", "001", "002", "003", "dtapart", "dta", "timeshift", "sbk"
     };
-    for (const QString &ext : backupExts) extensionMap[ext.toLower()] = FileInfo::FileType::kBackups;
+    for (const QString &ext : backupExts)
+        extensionMap[ext.toLower()] = FileInfo::FileType::kBackups;
 
     // Populate sortedExtensions (keys of extensionMap, sorted by length descending)
     sortedExtensions = extensionMap.keys();
@@ -138,7 +149,7 @@ void MimeTypeDisplayManager::initData()
     loadSupportMimeTypes();
 }
 
-QString MimeTypeDisplayManager::displayName(const QString &mimeType)
+QString MimeTypeDisplayManager::displayName(const QString &mimeType) const
 {
 #ifdef QT_DEBUG
     return displayNamesMap.value(displayNameToEnum(mimeType)) + " (" + mimeType + ")";
@@ -146,7 +157,7 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
     return displayNamesMap.value(displayNameToEnum(mimeType));
 }
 
-FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
+FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType) const
 {
     if (mimeType == "application/x-desktop") {
         return FileInfo::FileType::kDesktopApplication;
@@ -172,7 +183,7 @@ FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mime
 }
 
 // New method to determine FileType by extension (revised)
-FileInfo::FileType MimeTypeDisplayManager::fileTypeByExtension(const QString &filePath)
+FileInfo::FileType MimeTypeDisplayManager::fileTypeByExtension(const QString &filePath) const
 {
     if (filePath.isEmpty()) {
         return FileInfo::FileType::kUnknown;
@@ -192,7 +203,7 @@ FileInfo::FileType MimeTypeDisplayManager::fileTypeByExtension(const QString &fi
 
     // Handle hidden files like ".bashrc" (single dot at the beginning, no other dots)
     if (filenameLc.startsWith('.') && filenameLc.indexOf('.', 1) == -1) {
-        QString hiddenId = filenameLc.mid(1); // Get "bashrc" from ".bashrc"
+        QString hiddenId = filenameLc.mid(1);   // Get "bashrc" from ".bashrc"
         if (extensionMap.contains(hiddenId)) {
             return extensionMap.value(hiddenId);
         } else {
@@ -222,16 +233,16 @@ FileInfo::FileType MimeTypeDisplayManager::fileTypeByExtension(const QString &fi
     return FileInfo::FileType::kUnknown;
 }
 
-QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
+QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType) const
 {
     return defaultIconNames.value(displayNameToEnum(mimeType));
 }
 
-QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath)
+QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath) const
 {
     // Use the existing fileTypeByExtension to determine file type from the path
     FileInfo::FileType fileType = fileTypeByExtension(filePath);
-    
+
     // If the type is unknown, check if it's a directory
     if (fileType == FileInfo::FileType::kUnknown) {
         QFileInfo fileInfo(filePath);
@@ -239,12 +250,12 @@ QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath)
             fileType = FileInfo::FileType::kDirectory;
         }
     }
-    
+
     // Return the display name for this file type
     return displayNamesMap.value(fileType);
 }
 
-QMap<FileInfo::FileType, QString> MimeTypeDisplayManager::displayNames()
+QMap<FileInfo::FileType, QString> MimeTypeDisplayManager::displayNames() const
 {
     return displayNamesMap;
 }
@@ -288,23 +299,23 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     backupMimeTypes = readlines(backupPath);
 }
 
-QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
+QStringList MimeTypeDisplayManager::supportArchiveMimetypes() const
 {
     return archiveMimeTypes;
 }
 
-QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
+QStringList MimeTypeDisplayManager::supportVideoMimeTypes() const
 {
     return videoMimeTypes;
 }
 
 MimeTypeDisplayManager *MimeTypeDisplayManager::instance()
 {
-    static MimeTypeDisplayManager ins;
-    return &ins;
+    static MimeTypeDisplayManager *ins = new MimeTypeDisplayManager();
+    return ins;
 }
 
-QStringList MimeTypeDisplayManager::supportAudioMimeTypes()
+QStringList MimeTypeDisplayManager::supportAudioMimeTypes() const
 {
     return audioMimeTypes;
 }
