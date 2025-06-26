@@ -187,8 +187,10 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 void FileBaseInfoView::basicFill(const QUrl &url)
 {
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info.isNull())
+    if (info.isNull()) {
+        fmWarning() << "Failed to create file info for URL:" << url.toString();
         return;
+    }
 
     if (fileName && fileName->RightValue().isEmpty())
         fileName->setRightValue(info->displayOf(DisPlayInfoType::kFileDisplayName), Qt::ElideMiddle, Qt::AlignLeft, true);
@@ -297,16 +299,21 @@ void FileBaseInfoView::audioExtenInfoReceiver(const QStringList &properties)
 
 QString FileBaseInfoView::getDateTimeFormatStr(const QDateTime &time) const
 {
-    if (time.toMSecsSinceEpoch() == 0)
+    if (time.toMSecsSinceEpoch() == 0) {
+        fmDebug() << "DateTime is epoch zero, returning dash";
         return "-";
+    }
 
     return time.toString(FileUtils::dateTimeFormat());
 }
 
 void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
 {
-    if (properties.isEmpty() || properties.first().startsWith("0x0"))
+    if (properties.isEmpty() || properties.first().startsWith("0x0")) {
+        fmDebug() << "Invalid image properties, skipping";
         return;
+    }
+
     if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
         fileViewSize->setVisible(true);
         fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);

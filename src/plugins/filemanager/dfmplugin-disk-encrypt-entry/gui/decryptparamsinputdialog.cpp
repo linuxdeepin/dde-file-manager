@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "decryptparamsinputdialog.h"
 #include "utils/encryptutils.h"
+#include "dfmplugin_disk_encrypt_global.h"
 
 #include <QVBoxLayout>
 
@@ -18,8 +19,10 @@ DecryptParamsInputDialog::DecryptParamsInputDialog(const QString &device, QWidge
     connect(this, &DecryptParamsInputDialog::buttonClicked,
             this, &DecryptParamsInputDialog::onButtonClicked);
     updateUserHints();
-    if (dialog_utils::isWayland())
+    if (dialog_utils::isWayland()) {
+        fmDebug() << "Running on Wayland, setting window stay on top flag";
         setWindowFlag(Qt::WindowStaysOnTopHint);
+    }
 }
 
 QString DecryptParamsInputDialog::getKey()
@@ -50,11 +53,13 @@ void DecryptParamsInputDialog::onRecSwitchClicked()
         editor->setEchoButtonIsVisible(false);
         editor->setPlaceholderText(tr("Please input recovery key to decrypt device"));
         recSwitch->setText(tr("Validate with %1").arg(requestPIN ? tr("PIN") : tr("passphrase")));
+        fmDebug() << "Switched to recovery key mode";
     } else {
         editor->setEchoMode(QLineEdit::Password);
         editor->setEchoButtonIsVisible(true);
         editor->setPlaceholderText(tr("Please input %1 to decrypt device").arg(requestPIN ? tr("PIN") : tr("passphrase")));
         recSwitch->setText(tr("Validate with recovery key"));
+        fmDebug() << "Switched to" << (requestPIN ? "PIN" : "passphrase") << "mode";
     }
     editor->setFocus();
 }
@@ -71,6 +76,7 @@ void DecryptParamsInputDialog::onKeyChanged(const QString &key)
 void DecryptParamsInputDialog::onButtonClicked(int idx)
 {
     if (idx != 0) {
+        fmInfo() << "Non-confirm button clicked, rejecting dialog";
         reject();
         return;
     }
@@ -80,11 +86,13 @@ void DecryptParamsInputDialog::onButtonClicked(int idx)
         if (usingRecKey())
             keyType = tr("Recovery key");
         editor->showAlertMessage(tr("%1 cannot be empty!").arg(keyType));
+        fmWarning() << "Validation failed: empty" << keyType << "field";
         return;
     }
 
     else if (usingRecKey() && getKey().length() != 24) {
         editor->showAlertMessage(tr("Recovery key is not valid!"));
+        fmWarning() << "Validation failed: invalid recovery key length:" << getKey().length() << "(expected 24)";
         return;
     }
 

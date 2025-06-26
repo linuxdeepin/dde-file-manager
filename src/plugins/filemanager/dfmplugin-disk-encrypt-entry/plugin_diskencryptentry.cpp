@@ -46,12 +46,16 @@ bool DiskEncryptEntry::start()
 
 void DiskEncryptEntry::initEncryptEvents()
 {
-    if (!config_utils::enableEncrypt())
+    if (!config_utils::enableEncrypt()) {
+        fmInfo() << "Disk encryption is disabled in configuration, skipping event initialization";
         return;
+    }
 
     static bool inited = false;
-    if (inited)
+    if (inited) {
+        fmDebug() << "Encrypt events already initialized, skipping";
         return;
+    }
 
     dpfSlotChannel->push(kMenuPluginName, "slot_MenuScene_RegisterScene",
                          DiskEncryptMenuCreator::name(), new DiskEncryptMenuCreator);
@@ -91,8 +95,10 @@ void DiskEncryptEntry::processUnfinshedDecrypt(const QString &device)
 {
     QString dev(device);
     QString ignoreFile = "/tmp/dfm_ignore_decrypt_auto_reqeust_" + dev.replace("/", "_");
-    if (QFile(ignoreFile).exists())
+    if (QFile(ignoreFile).exists()) {
+        fmInfo() << "Ignore file exists for device, skipping auto-decrypt:" << ignoreFile;
         return;
+    }
 
     QMenu *menu = new QMenu();
     DiskEncryptMenuScene *scene = new DiskEncryptMenuScene();
@@ -112,8 +118,10 @@ void DiskEncryptEntry::processUnfinshedDecrypt(const QString &device)
         qWarning() << act->property(dfmbase::ActionPropertyKey::kActionID).toString();
         return act->property(dfmbase::ActionPropertyKey::kActionID).toString() == "de_1_decrypt";
     });
-    if (ret == actions.cend())
+    if (ret == actions.cend()) {
+        fmWarning() << "Decrypt action not found in menu for device:" << device;
         return;
+    }
 
     scene->triggered(*ret);
     delete scene;

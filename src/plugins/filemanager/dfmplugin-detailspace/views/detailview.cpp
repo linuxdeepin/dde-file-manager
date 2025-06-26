@@ -106,8 +106,11 @@ void DetailView::setUrl(const QUrl &url, int widgetFilter)
 
 void DetailView::initUiForSizeMode()
 {
-    if (!scrollArea)
+    if (!scrollArea) {
+        fmWarning() << "Scroll area not initialized, skipping size mode setup";
         return;
+    }
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
     scrollArea->setFixedWidth(DSizeModeHelper::element(254, 282));
     scrollArea->setContentsMargins(DSizeModeHelper::element(2, 0), 0, DSizeModeHelper::element(0, 6), 0);
@@ -146,8 +149,10 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         return;
     } else {
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (info.isNull())
+        if (info.isNull()) {
+            fmWarning() << "Failed to create file info for URL:" << url.toString();
             return;
+        }
 
         if (iconLabel) {
             vLayout->removeWidget(iconLabel);

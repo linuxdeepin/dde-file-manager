@@ -57,7 +57,7 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 
 void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
 {
-    fmInfo("Start load plugins at runtime: ");
+    fmInfo() << "Start load plugins at runtime";
     std::for_each(names.begin(), names.end(), [](const QString &name) {
         Q_ASSERT(qApp->thread() == QThread::currentThread());
         // TODO(zhangs): refactor search

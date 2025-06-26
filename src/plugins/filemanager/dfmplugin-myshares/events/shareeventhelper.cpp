@@ -71,6 +71,8 @@ bool ShareEventHelper::hookSendChangeCurrentUrl(quint64 winId, const QUrl &url)
         auto u(url);
         u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
         QList<QUrl> urls { u };
+
+        fmDebug() << "Hooking change current URL operation - redirecting from" << url << "to file scheme:" << u;
         ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::kOpenInCurrentWindow);
         return true;
     }

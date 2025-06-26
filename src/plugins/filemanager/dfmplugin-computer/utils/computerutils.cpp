@@ -51,6 +51,7 @@ QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 {
     if (url.scheme() != Global::Scheme::kEntry)
         return "";
+
     if (!url.path().endsWith(SuffixInfo::kBlock))
         return "";
 
@@ -70,10 +71,15 @@ QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::Scheme::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry) {
+        fmDebug() << "ComputerUtils::getProtocolDevIdByUrl URL scheme is not entry:" << url.scheme();
         return "";
-    if (!url.path().endsWith(SuffixInfo::kProtocol))
+    }
+
+    if (!url.path().endsWith(SuffixInfo::kProtocol)) {
+        fmDebug() << "ComputerUtils::getProtocolDevIdByUrl URL path does not end with protocol suffix:" << url.path();
         return "";
+    }
 
     QString suffix = QString(".%1").arg(SuffixInfo::kProtocol);
     return url.path().remove(suffix);
@@ -81,10 +87,15 @@ QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
 
 QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
 {
-    if (!filePath.startsWith(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)))
+    if (!filePath.startsWith(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath))) {
+        fmDebug() << "ComputerUtils::makeAppEntryUrl file path not in expected directory:" << filePath;
         return {};
-    if (!filePath.endsWith(".desktop"))
+    }
+
+    if (!filePath.endsWith(".desktop")) {
+        fmDebug() << "ComputerUtils::makeAppEntryUrl file path does not end with .desktop:" << filePath;
         return {};
+    }
 
     QString fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
     fileName.remove(".desktop");
@@ -98,10 +109,15 @@ QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
 
 QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 {
-    if (!entryUrl.isValid())
+    if (!entryUrl.isValid()) {
+        fmWarning() << "ComputerUtils::getAppEntryFileUrl called with invalid entry URL:" << entryUrl;
         return {};
-    if (!entryUrl.path().endsWith(SuffixInfo::kAppEntry))
+    }
+
+    if (!entryUrl.path().endsWith(SuffixInfo::kAppEntry)) {
+        fmDebug() << "ComputerUtils::getAppEntryFileUrl URL path does not end with app entry suffix:" << entryUrl.path();
         return {};
+    }
 
     QString fileName = entryUrl.path().remove("." + QString(SuffixInfo::kAppEntry));
     QUrl origUrl;
@@ -204,6 +220,7 @@ bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
 
     if (!exist) {
         auto dirName = url.path().mid(url.path().lastIndexOf("/") + 1);
+        fmWarning() << "ComputerUtils::checkGvfsMountExist GVFS mount not accessible:" << url << "directory:" << dirName;
         DialogManagerInstance->showErrorDialog(QObject::tr("Cannot access"), dirName);
     }
 
@@ -222,18 +239,20 @@ QStringList ComputerUtils::allValidBlockUUIDs()
 {
     const auto blockList = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kNotIgnored);
     QSet<QString> allBlocks(blockList.begin(), blockList.end());
-    
+
     QSet<QString> uuids;
     std::for_each(allBlocks.begin(), allBlocks.end(), [&](const QString &devId) {
         const auto &&data = DevProxyMng->queryBlockInfo(devId);
         const auto &&uuid = data.value(GlobalServerDefines::DeviceProperty::kUUID).toString();
         // optical item not hidden by dconfig, its uuid might be empty.
-        if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
+        if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool()) {
+            fmDebug() << "ComputerUtils::allValidBlockUUIDs skipping optical drive:" << devId;
             return;
+        }
         if (!uuid.isEmpty())
             uuids << uuid;
     });
-    
+
     return QStringList(uuids.begin(), uuids.end());
 }
 
@@ -305,8 +324,10 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 {
     QUrl devUrl = convertToDevUrl(url);
-    if (devUrl.isEmpty())
+    if (devUrl.isEmpty()) {
+        fmWarning() << "ComputerUtils::devicePropertyDialog failed to convert URL to device URL:" << url;
         return nullptr;
+    }
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     DevicePropertyDialog *dialog = new DevicePropertyDialog;

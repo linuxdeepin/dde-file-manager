@@ -99,7 +99,9 @@ void CoreHelper::loadPlugin(const QString &name)
     if (plugin) {
         auto result { DPF_NAMESPACE::LifeCycle::loadPlugin(plugin) };
         fmInfo() << "Load result: " << result
-                 << "State: " << plugin->pluginState();
+                 << "State: " << plugin->pluginState() << "for plugin:" << name;
+    } else {
+        fmWarning() << "Plugin meta object not found for:" << name;
     }
 }
 
@@ -112,6 +114,7 @@ FileManagerWindow *CoreHelper::defaultWindow()
             return window;
     }
 
+    fmDebug() << "No default window available";
     return {};
 }
 
@@ -133,7 +136,7 @@ FileManagerWindow *CoreHelper::findExistsWindow(const QUrl &url)
     fmWarning() << "Cannot find exists window for:" << url;
     auto oldWindow { defaultWindow() };
     if (oldWindow) {
-        fmInfo() << "Close cached default window";
+        fmInfo() << "Close cached default window with ID:" << oldWindow->winId();
         oldWindow->setProperty("_dfm_isDefaultWindow", true);
         oldWindow->close();
     }
@@ -174,7 +177,7 @@ bool CoreHelper::eventFilter(QObject *watched, QEvent *event)
     }
 
     if (type == QEvent::Paint) {
-        fmDebug() << "Show empty window";
+        fmDebug() << "Show empty window for ID:" << window->winId();
         window->removeEventFilter(this);
         QMetaObject::invokeMethod(window, "aboutToOpen", Qt::QueuedConnection);
         return ret;

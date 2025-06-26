@@ -31,6 +31,7 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
     QString protocol = url.scheme();
 
     if (protocol == DFMBASE_NAMESPACE::Global::Scheme::kSmb) {
+        fmDebug() << "Clearing SMB password for server:" << server;
         secret_password_clear(smbSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               //                              "domain", domain.toStdString().c_str(),
@@ -38,11 +39,14 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
                               "protocol", protocol.toStdString().c_str(),
                               nullptr);
     } else if (protocol.endsWith(DFMBASE_NAMESPACE::Global::Scheme::kFtp)) {   // ftp && sftp
+        fmDebug() << "Clearing FTP/SFTP password for server:" << server;
         secret_password_clear(ftpSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               "server", server.toStdString().c_str(),
                               "protocol", protocol.toStdString().c_str(),
                               nullptr);
+    } else {
+        fmWarning() << "Unsupported protocol for password clearing:" << protocol;
     }
 }
 
@@ -96,5 +100,5 @@ void RemotePasswdManager::onPasswdCleared(GObject *obj, GAsyncResult *res, gpoin
     bool ret = secret_password_clear_finish(res, &err);
     fmInfo() << "on password cleared: " << ret;
     if (err)
-        fmInfo() << "error while clear saved password: " << err->message;
+        fmCritical() << "Error occurred while clearing saved password:" << err->message;
 }

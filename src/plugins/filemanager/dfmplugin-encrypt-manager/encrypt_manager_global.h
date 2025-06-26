@@ -10,9 +10,12 @@
 #define DPENCRYPTMANAGER_END_NAME }
 #define DPENCRYPTMANAGER_USE_NAMESPACE using namespace dfmplugin_encrypt_manager;
 
+#include <dfm-base/dfm_log_defines.h>
 #include <QString>
 
 namespace dfmplugin_encrypt_manager {
+
+DFM_LOG_USE_CATEGORY(DPENCRYPTMANAGER_NAMESPACE)
 
 enum TPMType {
     kUnknow = 0,

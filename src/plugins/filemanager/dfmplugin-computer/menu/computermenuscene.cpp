@@ -47,8 +47,10 @@ bool ComputerMenuScene::initialize(const QVariantHash &params)
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->isEmptyArea = false;
 
-    if (d->selectFiles.count() == 0)
+    if (d->selectFiles.count() == 0) {
+        fmWarning() << "ComputerMenuScene initialization failed: no files selected";
         return false;
+    }
 
     d->info.reset(new EntryFileInfo(d->selectFiles.first()));
 
@@ -65,8 +67,10 @@ bool ComputerMenuScene::initialize(const QVariantHash &params)
 
 bool ComputerMenuScene::create(QMenu *parent)
 {
-    if (!parent)
+    if (!parent) {
+        fmCritical() << "ComputerMenuScene create failed: null parent menu";
         return false;
+    }
 
     using namespace ContextMenuAction;
 
@@ -101,13 +105,17 @@ bool ComputerMenuScene::create(QMenu *parent)
 
 void ComputerMenuScene::updateState(QMenu *parent)
 {
-    if (d->selectFiles.count() == 0)
+    if (!parent) {
+        fmWarning() << "ComputerMenuScene updateState called with null parent menu";
         return;
+    }
 
     using namespace ContextMenuAction;
     using namespace GlobalServerDefines;
-    if (!d->info)
+    if (!d->info) {
+        fmCritical() << "ComputerMenuScene updateState called with null info object";
         return;
+    }
 
     QStringList disabled, keeped;
     switch (d->info->order()) {
@@ -230,8 +238,10 @@ bool ComputerMenuScene::triggered(QAction *action)
 
 AbstractMenuScene *ComputerMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        fmDebug() << "ComputerMenuScene::scene called with null action";
         return nullptr;
+    }
 
     if (!d->predicateAction.key(action).isEmpty())
         return const_cast<ComputerMenuScene *>(this);
@@ -259,8 +269,10 @@ ComputerMenuScenePrivate::ComputerMenuScenePrivate(ComputerMenuScene *qq)
 
 void ComputerMenuScenePrivate::updateMenu(QMenu *menu, const QStringList &disabled, const QStringList &keeps)
 {
-    if (!menu)
+    if (!menu) {
+        fmWarning() << "ComputerMenuScenePrivate::updateMenu called with null menu";
         return;
+    }
 
     std::for_each(disabled.cbegin(), disabled.cend(), [this](const QString &act) {
         if (predicateAction.value(act))

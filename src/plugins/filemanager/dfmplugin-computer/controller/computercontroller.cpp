@@ -73,11 +73,14 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     } else {
         QString suffix = info->nameOf(NameInfoType::kSuffix);
         if (suffix == SuffixInfo::kBlock) {
+            fmDebug() << "Block device, mounting";
             mountDevice(winId, info);
         } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
+            fmDebug() << "App entry, executing command:" << cmd;
             QProcess::startDetached(cmd);
         } else {
+            fmDebug() << "Other type, sending open item event";
             ComputerEventCaller::sendOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
         }
     }
@@ -85,8 +88,10 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 
 void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool triggerFromSidebar)
 {
-    if (!ComputerUtils::contextMenuEnabled)
+    if (!ComputerUtils::contextMenuEnabled) {
+        fmDebug() << "Context menu disabled, ignoring request";
         return;
+    }
 
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(ComputerUtils::menuSceneName());
     if (!scene) {
@@ -102,6 +107,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     };
 
     if (!scene->initialize(params)) {
+        fmWarning() << "Failed to initialize menu scene";
         delete scene;
         scene = nullptr;
         return;
@@ -115,9 +121,11 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     auto act = m.exec(QCursor::pos());
     if (act) {
         QList<QUrl> urls { url };
+        fmDebug() << "Menu action triggered:" << act->text();
         dpfSignalDispatcher->publish("dfmplugin_computer", "signal_ReportLog_MenuData", act->text(), urls);
         scene->triggered(act);
     }
+
     delete scene;
     scene = nullptr;
 }
@@ -133,15 +141,21 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     }
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    if (!info)
+    if (!info) {
+        fmWarning() << "Failed to create entry file info for URL:" << url.toString();
         return;
+    }
+
     QList<AbstractEntryFileEntity::EntryOrder> typesCanSetAlias { AbstractEntryFileEntity::kOrderSysDiskData,
                                                                   AbstractEntryFileEntity::kOrderSysDiskRoot,
                                                                   AbstractEntryFileEntity::kOrderSysDisks };
     bool shouldSetAlias = typesCanSetAlias.contains(info->order());
     auto rename = [info, url, name]() {
-        if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kBlock || info->displayName() == name)
+        if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kBlock || info->displayName() == name) {
+            fmDebug() << "Skipping rename - not block device or name unchanged";
             return;
+        }
+
         ComputerUtils::setCursorState(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
         DevMngIns->renameBlockDevAsync(devId, name, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
@@ -175,8 +189,10 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
 
 void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
 {
-    if (!info)
+    if (!info) {
+        fmWarning() << "Cannot set alias - info pointer is null";
         return;
+    }
 
     QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
     auto clearDevInfo = info->extraProperty(BlockAdditionalProperty::kClearBlockProperty).toMap();
@@ -260,8 +276,10 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     }
 
     bool isOptical = info->extraProperty(DeviceProperty::kOptical).toBool();
-    if (isOpticalDrive && !isOptical)
+    if (isOpticalDrive && !isOptical) {
+        fmDebug() << "Optical drive without optical media, skipping mount";
         return;
+    }
 
     if (isEncrypted) {
         if (!isUnlocked) {
@@ -284,6 +302,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
             }
 
             if (passwd.isEmpty()) {
+                fmDebug() << "No password provided, cancelling unlock";
                 ComputerUtils::setCursorState();
                 return;
             }
@@ -308,10 +327,12 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                 }
             });
         } else {
+            fmDebug() << "Device already unlocked, using cleartext device";
             auto realDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
             mountDevice(winId, realDevId, shellId, act);
         }
     } else {
+        fmDebug() << "Device not encrypted, mounting directly";
         auto realId = shellId;
         mountDevice(winId, realId, "", act);
     }
@@ -322,15 +343,20 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
     auto cdTo = [](const QString &id, const QUrl &u, quint64 winId, ActionAfterMount act) {
         ComputerItemWatcherInstance->insertUrlMapper(id, u);
 
-        if (act == kEnterDirectory)
+        if (act == kEnterDirectory) {
+            fmDebug() << "Entering directory";
             ComputerEventCaller::cdTo(winId, u);
-        else if (act == kEnterInNewWindow)
+        } else if (act == kEnterInNewWindow) {
+            fmDebug() << "Opening in new window";
             ComputerEventCaller::sendEnterInNewWindow(u);
-        else if (act == kEnterInNewTab)
+        } else if (act == kEnterInNewTab) {
+            fmDebug() << "Opening in new tab";
             ComputerEventCaller::sendEnterInNewTab(winId, u);
+        }
     };
 
     if (DeviceUtils::isWorkingOpticalDiscId(id)) {
+        fmDebug() << "Working optical disc detected, using burn URL";
         cdTo(id, ComputerUtils::makeBurnUrl(id), winId, act);
         return;
     }
@@ -338,6 +364,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
     const auto &&data = DevProxyMng->queryBlockInfo(id);
     if (data.value(DeviceProperty::kOpticalDrive).toBool() && data.value(DeviceProperty::kOpticalBlank).toBool()) {
         if (!data.value(DeviceProperty::kOpticalWriteSpeed).toStringList().isEmpty()) {   // already load data from xorriso.
+            fmDebug() << "Optical drive with blank disc and write speed data available";
             cdTo(id, ComputerUtils::makeBurnUrl(id), winId, act);
             return;
         }
@@ -348,6 +375,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
         if (!ok) {
             ComputerUtils::setCursorState();
             if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
+                fmDebug() << "Mount cancelled by user authorization";
                 return;
             }
             fmInfo() << "mount device failed: " << id << err.message << err.code;
@@ -356,13 +384,17 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
         }
 
         bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*$"));
-        if (isOpticalDevice)
+        if (isOpticalDevice) {
+            fmDebug() << "Optical device mounted, waiting for UDisks2 data";
             this->waitUDisks2DataReady(id);
+        }
 
         QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
         ComputerItemWatcherInstance->insertUrlMapper(id, ComputerUtils::makeLocalUrl(mpt));
-        if (!shellId.isEmpty())
+        if (!shellId.isEmpty()) {
             ComputerItemWatcherInstance->insertUrlMapper(shellId, QUrl::fromLocalFile(mpt));
+            fmDebug() << "Mapped shell ID:" << shellId << "to mount point:" << mpt;
+        }
 
         cdTo(id, u, winId, act);
         ComputerUtils::setCursorState();
@@ -375,8 +407,10 @@ void ComputerController::actEject(const QUrl &url)
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
         DevMngIns->detachBlockDev(id, [](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            if (!ok && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+            if (!ok && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
+                fmWarning() << "Block device eject failed:" << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
+            }
         });
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
@@ -394,8 +428,10 @@ void ComputerController::actEject(const QUrl &url)
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->order() == AbstractEntryFileEntity::kOrderApps) {
+        fmDebug() << "App entry, using onOpenItem";
         onOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else if (info->order() > AbstractEntryFileEntity::kOrderCustom) {
+        fmDebug() << "Custom entry, sending Ctrl+N event";
         ComputerEventCaller::sendCtrlNOnItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else {
         auto target = info->targetUrl();
@@ -412,8 +448,10 @@ void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPoint
 void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->order() == AbstractEntryFileEntity::kOrderApps) {
+        fmDebug() << "App entry, using onOpenItem";
         onOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else if (info->order() > AbstractEntryFileEntity::kOrderCustom) {
+        fmDebug() << "Custom entry, sending Ctrl+T event";
         ComputerEventCaller::sendCtrlTOnItem(winId, info->urlOf(UrlInfoType::kUrl));
     } else {
         auto target = info->targetUrl();
@@ -513,6 +551,7 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
     QString cmd = "dde-device-formatter";
     QStringList args;
     args << "-m=" + QString::number(winId) << devDesc;
+    fmDebug() << "Format command:" << cmd << "args:" << args;
 
     auto callback = [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
         if (ok) {
@@ -541,13 +580,18 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
 {
     Q_UNUSED(winId);
-    if (!info)
+    if (!info) {
+        fmWarning() << "Cannot show properties - info pointer is null";
         return;
+    }
 
-    if (info->order() == AbstractEntryFileEntity::EntryOrder::kOrderApps)
+    if (info->order() == AbstractEntryFileEntity::EntryOrder::kOrderApps) {
+        fmDebug() << "App entry, skipping properties";
         return;
+    }
 
     if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kUserDir) {
+        fmDebug() << "User directory, showing properties for target URL";
         ComputerEventCaller::sendShowPropertyDialog({ info->targetUrl() });
         return;
     }
@@ -577,6 +621,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
         uri = temUrl.toString();
     }
 
+    fmDebug() << "Clearing password for URI:" << uri;
     RemotePasswdManagerInstance->clearPasswd(uri);
 
     // 2. unmount
@@ -628,8 +673,10 @@ void ComputerController::waitUDisks2DataReady(const QString &id)
 
 void ComputerController::handleUnAccessableDevCdCall(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    if (!info)
+    if (!info) {
+        fmWarning() << "Cannot handle unAccessable device - info pointer is null";
         return;
+    }
 
     fmDebug() << "cannot access device: " << info->urlOf(UrlInfoType::kUrl);
     bool needAskForFormat = info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock
@@ -654,18 +701,24 @@ void ComputerController::handleNetworkCdCall(quint64 winId, DFMEntryFileInfoPoin
         fmWarning() << "parse ip address failed: " << target;
         ComputerEventCaller::cdTo(winId, target);
     } else {
+        fmDebug() << "Parsed network info - IP:" << ip << "port:" << port;
         QStringList ports { port };
         static const QStringList &defaultSmbPorts { "445", "139" };
-        if (target.scheme() == "smb" && defaultSmbPorts.contains(port))
+        if (target.scheme() == "smb" && defaultSmbPorts.contains(port)) {
             ports = defaultSmbPorts;
+            fmDebug() << "Using default SMB ports:" << ports;
+        }
 
         ComputerUtils::setCursorState(true);
         NetworkUtils::instance()->doAfterCheckNet(ip, ports, [winId, target, ip](bool ok) {
             ComputerUtils::setCursorState(false);
-            if (ok)
+            if (ok) {
+                fmInfo() << "Network check successful, navigating to:" << target.toString();
                 ComputerEventCaller::cdTo(winId, target);
-            else
+            } else {
+                fmWarning() << "Network check failed for IP:" << ip;
                 DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
+            }
         });
     }
 }

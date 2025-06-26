@@ -27,8 +27,10 @@ ChgPassphraseDialog::ChgPassphraseDialog(const QString &device, QWidget *parent)
             this, &ChgPassphraseDialog::onRecSwitchClicked);
     connect(oldPass, &Dtk::Widget::DPasswordEdit::textChanged,
             this, &ChgPassphraseDialog::onOldKeyChanged);
-    if (dialog_utils::isWayland())
+    if (dialog_utils::isWayland()) {
+        fmDebug() << "Running on Wayland, setting window stay on top flag";
         setWindowFlag(Qt::WindowStaysOnTopHint);
+    }
 }
 
 QPair<QString, QString> ChgPassphraseDialog::getPassphrase()
@@ -99,6 +101,7 @@ bool ChgPassphraseDialog::validatePasswd()
         if (!pwd.isEmpty()) return true;
 
         editor->showAlertMessage(tr("%1 cannot be empty").arg(keyTypeStr));
+        fmWarning() << "Validation failed: empty" << keyTypeStr << "field";
         return false;
     };
 
@@ -110,15 +113,19 @@ bool ChgPassphraseDialog::validatePasswd()
         else
             msg = msg.arg(encType);
         oldPass->showAlertMessage(msg);
+        fmWarning() << "Validation failed: empty old key field, using recovery key:" << usingRecKey;
         return false;
     } else if (usingRecKey && oldKey.remove("-").length() != 24) {
         oldPass->showAlertMessage(tr("Recovery key is not valid!"));
+        fmWarning() << "Validation failed: invalid recovery key length:" << oldKey.length() << "(expected 24)";
         return false;
     }
 
     if (!(nonEmpty(newPass1)
-          && nonEmpty(newPass2)))
+          && nonEmpty(newPass2))) {
+        fmWarning() << "Validation failed: empty new password fields";
         return false;
+    }
 
     QList<QRegularExpression> regx {
         QRegularExpression { R"([A-Z])" },
@@ -138,11 +145,13 @@ bool ChgPassphraseDialog::validatePasswd()
 
     if (factor < 3 || pwd1.length() < 8) {
         newPass1->showAlertMessage(tr("At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols"));
+        fmWarning() << "Validation failed: password complexity insufficient - length:" << pwd1.length() << "factor:" << factor;
         return false;
     }
 
     if (pwd1 != pwd2) {
         newPass2->showAlertMessage(tr("%1 inconsistency").arg(keyTypeStr));
+        fmWarning() << "Validation failed: password mismatch for" << keyTypeStr;
         return false;
     }
 
@@ -170,12 +179,14 @@ void ChgPassphraseDialog::onRecSwitchClicked()
         oldPass->setEchoButtonIsVisible(false);
         recSwitch->setText(tr("Validate with %1").arg(encType));
         oldPass->setPlaceholderText(tr("Please input recovery key"));
+        fmDebug() << "Switched to recovery key mode";
     } else {
         oldKeyHint->setText(tr("Old %1").arg(encType));
         oldPass->setEchoMode(QLineEdit::Password);
         oldPass->setEchoButtonIsVisible(true);
         recSwitch->setText(tr("Validate with recovery key"));
         oldPass->setPlaceholderText(tr("At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols"));
+        fmDebug() << "Switched to" << encType << "mode";
     }
     newPass1->setPlaceholderText(tr("At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols"));
     oldPass->setFocus();

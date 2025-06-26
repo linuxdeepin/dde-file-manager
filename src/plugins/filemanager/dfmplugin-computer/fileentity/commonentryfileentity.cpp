@@ -233,18 +233,28 @@ bool CommonEntryFileEntity::reflection() const
     if (reflectionObj)
         return true;
     int type = QMetaType::type(reflectionObjName.toLocal8Bit().data());
-    if (type == QMetaType::UnknownType)
+    if (type == QMetaType::UnknownType) {
+        fmWarning() << "Unknown meta type for reflection object:" << reflectionObjName;
         return false;
+    }
+
     auto metaObj = QMetaType::metaObjectForType(type);
-    if (!metaObj)
+    if (!metaObj) {
+        fmWarning() << "No meta object found for reflection type:" << reflectionObjName;
         return false;
+    }
+
     reflectionObj = metaObj->newInstance();
     return reflectionObj;
 }
+
 bool CommonEntryFileEntity::hasMethod(const QString &methodName) const
 {
-    if (!reflectionObj)
+    if (!reflectionObj) {
+        fmDebug() << "No reflection object available for method check:" << methodName;
         return false;
+    }
+
     QString fullMethod { methodName + "()" };
     return reflectionObj->metaObject()->indexOfMethod(fullMethod.toLocal8Bit().data()) > 0;
 }

@@ -42,8 +42,10 @@ EncryptParamsInputDialog::EncryptParamsInputDialog(const QVariantMap &args,
     exportRecKeyEnabled = config_utils::exportKeyEnabled();
     initUi();
     initConn();
-    if (dialog_utils::isWayland())
+    if (dialog_utils::isWayland()) {
+        fmDebug() << "Running on Wayland, setting window stay on top flag";
         setWindowFlag(Qt::WindowStaysOnTopHint);
+    }
 }
 
 DeviceEncryptParam EncryptParamsInputDialog::getInputs()
@@ -52,8 +54,10 @@ DeviceEncryptParam EncryptParamsInputDialog::getInputs()
     if (kPin == encType->currentIndex() || kTpm == encType->currentIndex()) {
         password = tpmPassword;
         tpmPassword.clear();
+        fmDebug() << "Using TPM-generated password, clearing temporary storage";
     } else if (kPwd == encType->currentIndex()) {
         password = encKeyEdit1->text();
+        fmDebug() << "Using user-entered passphrase";
     }
 
     DeviceEncryptParam encArgs;
@@ -143,7 +147,9 @@ QWidget *EncryptParamsInputDialog::createPasswordPage()
 
         encType->setCurrentIndex(kPwd);
         onEncTypeChanged(kPwd);
+        fmDebug() << "Set encryption type to passphrase only due to TPM unavailability";
     } else {
+        fmDebug() << "TPM available, setting default encryption type to PIN";
         encType->setCurrentIndex(kPin);
         onEncTypeChanged(kPin);
     }
@@ -180,11 +186,15 @@ QWidget *EncryptParamsInputDialog::createExportPage()
 
 bool EncryptParamsInputDialog::validatePassword()
 {
-    if (pagesLay->currentIndex() != kPasswordInputPage)
+    if (pagesLay->currentIndex() != kPasswordInputPage) {
+        fmWarning() << "Password validation called but not on password input page";
         return false;
+    }
 
-    if (encType->currentIndex() == kTpm)
+    if (encType->currentIndex() == kTpm) {
+        fmDebug() << "TPM-only encryption selected, no password validation needed";
         return true;
+    }
 
     QString pwd1 = encKeyEdit1->text().trimmed();
     QString pwd2 = encKeyEdit2->text().trimmed();
@@ -198,15 +208,18 @@ bool EncryptParamsInputDialog::validatePassword()
     QString hint = tr("%1 cannot be empty").arg(keyType);
 
     if (pwd1.isEmpty()) {
+        fmWarning() << "First password field is empty";
         encKeyEdit1->showAlertMessage(hint);
         return false;
     }
 
     if (pwd2.isEmpty()) {
+        fmWarning() << "Second password field is empty";
         encKeyEdit2->showAlertMessage(hint);
         return false;
     }
 
+    // Check password complexity
     QList<QRegularExpression> regx {
         QRegularExpression { R"([A-Z])" },
         QRegularExpression { R"([a-z])" },
@@ -221,11 +234,13 @@ bool EncryptParamsInputDialog::validatePassword()
     });
 
     if (factor < 3 || pwd1.length() < 8) {
+        fmWarning() << "Password does not meet complexity requirements";
         encKeyEdit1->showAlertMessage(tr("At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols"));
         return false;
     }
 
     if (pwd1 != pwd2) {
+        fmWarning() << "Password confirmation does not match";
         encKeyEdit2->showAlertMessage(tr("%1 inconsistency").arg(keyType));
         return false;
     }
@@ -242,6 +257,7 @@ bool EncryptParamsInputDialog::validateExportPath(const QString &path, QString *
     }
 
     if (!QDir(path).exists()) {
+        fmWarning() << "Export path does not exist:" << path;
         setMsg(tr("Recovery key export path is not exists!"));
         return false;
     }
@@ -259,16 +275,20 @@ bool EncryptParamsInputDialog::validateExportPath(const QString &path, QString *
         }
     }
 
-    if (associatedDevs.contains(args.value(encrypt_param_keys::kKeyDevice).toString())) {
+    QString targetDevice = args.value(encrypt_param_keys::kKeyDevice).toString();
+    if (associatedDevs.contains(targetDevice)) {
+        fmWarning() << "Export path is on the same device being encrypted:" << targetDevice;
         setMsg(tr("Please export to an external device such as a non-encrypted partition or USB flash drive."));
         return false;
     }
 
     if (storage.isReadOnly()) {
+        fmWarning() << "Export path is read-only:" << path;
         setMsg(tr("This partition is read-only, please export to a writable partition"));
         return false;
     }
 
+    // Check if the export path itself is encrypted
     using namespace dfmmount;
     auto monitor = DDeviceManager::instance()->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
     Q_ASSERT(monitor);
@@ -277,6 +297,7 @@ bool EncryptParamsInputDialog::validateExportPath(const QString &path, QString *
         auto objPath = devObjPaths.constFirst();
         auto devPtr = monitor->createDeviceById(objPath);
         if (devPtr && devPtr->getProperty(Property::kBlockCryptoBackingDevice).toString() != "/") {
+            fmWarning() << "Export path is on an encrypted partition:" << path;
             setMsg(tr("The partition is encrypted, please export to a non-encrypted "
                       "partition or external device such as a USB flash drive."));
             return false;
@@ -296,17 +317,21 @@ void EncryptParamsInputDialog::setPasswordInputVisible(bool visible)
 
 void EncryptParamsInputDialog::onButtonClicked(int idx)
 {
-    qDebug() << "button clicked:" << idx << "page: " << pagesLay->currentIndex();
+    fmDebug() << "Button clicked with index:" << idx << "current page:" << pagesLay->currentIndex();
 
     int currPage = pagesLay->currentIndex();
     if (currPage == kPasswordInputPage) {
-        if (!validatePassword())
+        if (!validatePassword()) {
+            fmWarning() << "Password validation failed";
             return;
+        }
 
         if (exportRecKeyEnabled) {
+            fmInfo() << "Moving to export key page";
             pagesLay->setCurrentIndex(kExportKeyPage);
             onExpPathChanged(keyExportInput->text(), true);
         } else {
+            fmInfo() << "Recovery key export disabled, proceeding to encrypt";
             confirmEncrypt();
         }
     } else if (currPage == kExportKeyPage) {
@@ -320,20 +345,24 @@ void EncryptParamsInputDialog::onButtonClicked(int idx)
 void EncryptParamsInputDialog::onPageChanged(int page)
 {
     if (page > kExportKeyPage && page < kPasswordInputPage) {
-        qWarning() << "invalid page index!" << page;
+        fmWarning() << "Invalid page index:" << page;
         return;
     }
 
     pagesLay->setCurrentIndex(page);
     clearButtons();
+
     if (page == kPasswordInputPage) {
         auto displayName = args.value(encrypt_param_keys::kKeyDeviceName).toString();
         auto devName = args.value(encrypt_param_keys::kKeyDevice).toString();
         devName = QString("%1(%2)").arg(displayName).arg(devName.mid(5));
+
+        fmDebug() << "Setting up password input page for device:" << devName;
         setTitle(tr("Please continue to encrypt partition %1").arg(devName));
         exportRecKeyEnabled ? addButton(tr("Next")) : addButton(tr("Confirm encrypt"));
         encKeyEdit1->setFocus();
     } else if (page == kExportKeyPage) {
+        fmDebug() << "Setting up export key page";
         setTitle(tr("Export Recovery Key"));
         addButton(tr("Previous"));
         addButton(tr("Confirm encrypt"), true, ButtonType::ButtonRecommend);
@@ -349,6 +378,7 @@ void EncryptParamsInputDialog::onEncTypeChanged(int type)
     QString placeholder2 = tr("Please enter the %1 again");
 
     if (type == kPwd) {
+        fmInfo() << "Setting up passphrase encryption mode";
         setPasswordInputVisible(true);
         keyHint1->setText(filed1.arg(tr("passphrase")));
         keyHint2->setText(filed2.arg(tr("passphrase")));
@@ -356,6 +386,7 @@ void EncryptParamsInputDialog::onEncTypeChanged(int type)
         encKeyEdit2->setPlaceholderText(placeholder2.arg(tr("Passphrase")));
         unlockTypeHint->setText(tr("Access to the partition will be unlocked using a passphrase."));
     } else if (type == kPin) {
+        fmInfo() << "Setting up TPM+PIN encryption mode";
         setPasswordInputVisible(true);
         keyHint1->setText(filed1.arg(tr("PIN")));
         keyHint2->setText(filed2.arg(tr("PIN")));
@@ -363,22 +394,25 @@ void EncryptParamsInputDialog::onEncTypeChanged(int type)
         encKeyEdit2->setPlaceholderText(placeholder2.arg(tr("PIN")));
         unlockTypeHint->setText(tr("Access to the partition will be unlocked using the TPM security chip and PIN."));
     } else if (type == kTpm) {
+        fmInfo() << "Setting up TPM-only encryption mode";
         setPasswordInputVisible(false);
         unlockTypeHint->setText(tr("Access to the partition will be automatically unlocked using the TPM security chip, "
                                    "no passphrase checking is required."));
     } else {
-        qWarning() << "wrong encrypt type!" << type;
+        fmWarning() << "Invalid encryption type:" << type;
     }
 }
 
 void EncryptParamsInputDialog::onExpPathChanged(const QString &path, bool silent)
 {
     auto btnNext = getButton(1);
-    if (!btnNext)
+    if (!btnNext) {
+        fmWarning() << "Next button not found";
         return;
+    }
+
     QString msg;
     btnNext->setEnabled(validateExportPath(path, &msg));
-    if (!msg.isEmpty() && !silent)
         keyExportInput->showAlertMessage(msg);
 }
 
@@ -403,7 +437,7 @@ bool EncryptParamsInputDialog::encryptByTpm(const QString &deviceName)
             : "";
     int exitCode = tpm_passphrase_utils::genPassphraseFromTPM_NonBlock(deviceName, pin, &tpmPassword);
     if (exitCode != 0) {
-        qCritical() << "TPM encrypt failed!";
+        fmCritical() << "TPM encryption failed with exit code:" << exitCode;
         // dialog_utils::showTPMError(tr("Encrypt failed"),
         //                            static_cast<tpm_passphrase_utils::TPMError>(exitCode));
         return false;
@@ -414,17 +448,23 @@ bool EncryptParamsInputDialog::encryptByTpm(const QString &deviceName)
 void EncryptParamsInputDialog::confirmEncrypt()
 {
     if (encType->currentIndex() == kPwd) {
+        fmInfo() << "Using passphrase encryption, accepting dialog";
         accept();
         return;
     }
-    if (!encryptByTpm(args.value(encrypt_param_keys::kKeyDevice).toString())) {
-        qWarning() << "encrypt by TPM failed!";
+
+    QString deviceName = args.value(encrypt_param_keys::kKeyDevice).toString();
+    if (!encryptByTpm(deviceName)) {
+        fmWarning() << "TPM encryption failed for device:" << deviceName;
         if (tpm_utils::ownerAuthStatus() == 1) {
+            fmWarning() << "TPM is locked, showing lockout error";
             QString msg = tr("TPM is locked and cannot be used for partition encryption. "
                              "Please cancel the TPM password or choose another unlocking method.");
             dialog_utils::showDialog(tr("TPM error"), msg, dialog_utils::DialogType::kError);
             return;
         }
+
+        fmCritical() << "TPM status error occurred";
         dialog_utils::showDialog(tr("TPM error"), tr("TPM status error!"), dialog_utils::DialogType::kError);
         return;
     }

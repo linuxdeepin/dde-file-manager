@@ -45,7 +45,7 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     if (!url.path().endsWith(SuffixInfo::kBlock)) {
-        fmWarning() << "wrong suffix:" << url;
+        fmCritical() << "Invalid block device URL suffix:" << url;
         abort();
     }
 
@@ -226,15 +226,21 @@ bool BlockEntryFileEntity::isAccessable() const
 
 bool BlockEntryFileEntity::renamable() const
 {
-    if (datas.value(DeviceProperty::kOpticalDrive).toBool())
+    if (datas.value(DeviceProperty::kOpticalDrive).toBool()) {
+        fmDebug() << "Device not renamable (optical drive):" << entryUrl;
         return false;
+    }
 
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()
-        && datas.value(DeviceProperty::kCleartextDevice).toString() == "/")
+        && datas.value(DeviceProperty::kCleartextDevice).toString() == "/") {
+        fmDebug() << "Device not renamable (encrypted root device):" << entryUrl;
         return false;
+    }
 
-    if (datas.value(DeviceProperty::kIsLoopDevice, false).toBool())
+    if (datas.value(DeviceProperty::kIsLoopDevice, false).toBool()) {
+        fmDebug() << "Device not renamable (loop device):" << entryUrl;
         return false;
+    }
 
     return isAccessable();
 }
@@ -244,6 +250,7 @@ QVariant BlockEntryFileEntity::getProperty(const char *const key) const
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
         if (datas.contains(BlockAdditionalProperty::kClearBlockProperty))
             return datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().value(key);
+        fmDebug() << "No clear block property available for encrypted device:" << entryUrl;
         return {};
     }
     return datas.value(key);
@@ -251,16 +258,23 @@ QVariant BlockEntryFileEntity::getProperty(const char *const key) const
 
 bool BlockEntryFileEntity::showSizeAndProgress() const
 {
-    if (getProperty(DeviceProperty::kMountPoint).toString().isEmpty())
+    if (getProperty(DeviceProperty::kMountPoint).toString().isEmpty()) {
+        fmDebug() << "No mount point, not showing size/progress for device:" << entryUrl;
         return false;
+    }
 
     if (getProperty(DeviceProperty::kOpticalDrive).toBool()
-        && !getProperty(DeviceProperty::kMediaAvailable).toBool())
+        && !getProperty(DeviceProperty::kMediaAvailable).toBool()) {
+        fmDebug() << "Optical drive without media, not showing size/progress for device:" << entryUrl;
         return false;
+    }
 
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
-        if (datas.contains(BlockAdditionalProperty::kClearBlockProperty))
+        if (datas.contains(BlockAdditionalProperty::kClearBlockProperty)) {
+            fmDebug() << "Encrypted device with clear property, showing size/progress for device:" << entryUrl;
             return true;
+        }
+        fmDebug() << "Encrypted device without clear property, not showing size/progress for device:" << entryUrl;
         return false;
     }
 
@@ -272,8 +286,10 @@ QUrl BlockEntryFileEntity::mountPoint() const
     const auto &mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
     QUrl target;
 
-    if (mptList.isEmpty())
+    if (mptList.isEmpty()) {
+        fmDebug() << "No mount points found for device:" << entryUrl;
         return target;
+    }
 
     if (DeviceUtils::isSystemDisk(datas))
         return QUrl::fromLocalFile(QDir::rootPath());
@@ -305,10 +321,13 @@ void BlockEntryFileEntity::loadDiskInfo()
         datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 
-    if (mountPoint().isValid())
+    if (mountPoint().isValid()) {
+        fmDebug() << "Device is mounted, loading Windows volume tag for:" << entryUrl;
         loadWindowsVoltag();
-    else
+    } else {
+        fmDebug() << "Device not mounted, resetting Windows volume tag for:" << entryUrl;
         resetWindowsVolTag();
+    }
 }
 
 void BlockEntryFileEntity::loadWindowsVoltag()
@@ -322,13 +341,15 @@ void BlockEntryFileEntity::loadWindowsVoltag()
     QUrl cfgUrl = QUrl::fromLocalFile(mountPoint().path() + kWinVolInfoConfig);
 
     DFMIO::DFile f(cfgUrl);
-    if (!f.exists())
+    if (!f.exists()) {
+        fmDebug() << "Windows volume config file does not exist:" << cfgUrl;
         return;
+    }
 
     QJsonParseError err;
     auto doc = QJsonDocument::fromJson(f.readAll(), &err);
     if (doc.isNull() || err.error != QJsonParseError::NoError) {
-        fmDebug() << "Cannot parse file: " << cfgUrl << err.errorString() << err.error;
+        fmWarning() << "Cannot parse Windows volume config file:" << cfgUrl << "error:" << err.errorString();
         return;
     }
 
@@ -347,6 +368,8 @@ void BlockEntryFileEntity::loadWindowsVoltag()
                     datas.insert(WinVolTagKeys::kWinLabel, itemObj.value(kLabelKey).toString());
             }
         }
+    } else {
+        fmWarning() << "Windows volume config file is not a JSON object:" << cfgUrl;
     }
 }
 
