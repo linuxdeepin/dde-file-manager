@@ -421,11 +421,12 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         IndexUtility::removeIndexStatusFile();
     }
 
-    if (result.success && !result.interrupted) {
-        fmInfo() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
-        IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
+    if (result.success) {
+        if (!result.interrupted || type == IndexTask::Type::Create) {
+            fmInfo() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
+            IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
+        }
     }
-
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
 
