@@ -100,7 +100,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
         }
 
         const QString currentStatus = status.value();
-        if (currentStatus != "monitoring" && currentStatus != "closed") {
+        if (currentStatus != "monitoring") {
             fmWarning() << "FSMonitorWorker: Cannot use fast directory scan, index status is:" << currentStatus;
             return {};
         }
