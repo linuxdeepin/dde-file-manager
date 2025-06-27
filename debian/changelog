@@ -1,3 +1,10 @@
+dde-file-manager (6.5.69) unstable; urgency=medium
+
+  * fix bugs
+  * update translations
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 27 Jun 2025 17:03:00 +0800
+
 dde-file-manager (6.5.68) unstable; urgency=medium
 
   * wildcard support
