@@ -15,8 +15,6 @@
 
 namespace dfmplugin_encrypt_manager {
 
-DFM_LOG_USE_CATEGORY(DPENCRYPTMANAGER_NAMESPACE)
-
 enum TPMType {
     kUnknow = 0,
     kTpmAndPcr,
@@ -73,5 +71,7 @@ inline constexpr char kPcrBank[] { "PropertyKey_PcrBank" };
 }
 
 }
+
+DFM_LOG_USE_CATEGORY(DPENCRYPTMANAGER_NAMESPACE)
 
 #endif   // ENCRYPT_MANAGER_GLOBAL_H
