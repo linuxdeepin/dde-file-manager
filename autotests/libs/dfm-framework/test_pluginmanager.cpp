@@ -11,6 +11,9 @@
 #include <QTest>
 #include <QDir>
 #include <QTemporaryDir>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QFile>
 
 // 包含待测试的类
 #include <dfm-framework/lifecycle/pluginmanager.h>
@@ -147,4 +150,115 @@ TEST_F(PluginManagerTest, BasicFunctionality)
     // 验证初始状态
     EXPECT_FALSE(manager->isAllPluginsInitialized());
     EXPECT_FALSE(manager->isAllPluginsStarted());
+}
+
+/**
+ * @brief 测试插件黑名单管理
+ * 验证黑名单的添加和获取
+ */
+TEST_F(PluginManagerTest, BlackList)
+{
+    // 初始黑名单应为空
+    EXPECT_TRUE(manager->blackList().isEmpty());
+
+    // 添加插件到黑名单
+    const QString pluginName1 = "plugin1";
+    manager->addBlackPluginName(pluginName1);
+    EXPECT_EQ(manager->blackList().size(), 1);
+    EXPECT_TRUE(manager->blackList().contains(pluginName1));
+
+    // 添加另一个插件
+    const QString pluginName2 = "plugin2";
+    manager->addBlackPluginName(pluginName2);
+    EXPECT_EQ(manager->blackList().size(), 2);
+    EXPECT_TRUE(manager->blackList().contains(pluginName2));
+
+    // 添加重复插件，黑名单不应改变
+    manager->addBlackPluginName(pluginName1);
+    EXPECT_EQ(manager->blackList().size(), 2);
+}
+
+/**
+ * @brief 测试懒加载列表管理
+ * 验证懒加载列表的添加和获取
+ */
+TEST_F(PluginManagerTest, LazyLoadList)
+{
+    // 初始懒加载列表应为空
+    EXPECT_TRUE(manager->lazyLoadList().isEmpty());
+
+    // 添加插件到懒加载列表
+    const QString pluginName1 = "lazy_plugin1";
+    manager->addLazyLoadPluginName(pluginName1);
+    EXPECT_EQ(manager->lazyLoadList().size(), 1);
+    EXPECT_TRUE(manager->lazyLoadList().contains(pluginName1));
+
+    // 添加另一个插件
+    const QString pluginName2 = "lazy_plugin2";
+    manager->addLazyLoadPluginName(pluginName2);
+    EXPECT_EQ(manager->lazyLoadList().size(), 2);
+    EXPECT_TRUE(manager->lazyLoadList().contains(pluginName2));
+
+    // 添加重复插件，列表不应改变
+    manager->addLazyLoadPluginName(pluginName1);
+    EXPECT_EQ(manager->lazyLoadList().size(), 2);
+}
+
+/**
+ * @brief 测试插件IID管理
+ * 验证插件IID的添加和获取
+ */
+TEST_F(PluginManagerTest, PluginIIDs)
+{
+    // 初始IID列表应为空
+    EXPECT_TRUE(manager->pluginIIDs().isEmpty());
+
+    // 添加IID
+    const QString iid1 = "org.deepin.TestPlugin1";
+    manager->addPluginIID(iid1);
+    EXPECT_EQ(manager->pluginIIDs().size(), 1);
+    EXPECT_TRUE(manager->pluginIIDs().contains(iid1));
+
+    // 添加另一个IID
+    const QString iid2 = "org.deepin.TestPlugin2";
+    manager->addPluginIID(iid2);
+    EXPECT_EQ(manager->pluginIIDs().size(), 2);
+    EXPECT_TRUE(manager->pluginIIDs().contains(iid2));
+
+    // 添加重复IID，列表不应改变
+    manager->addPluginIID(iid1);
+    EXPECT_EQ(manager->pluginIIDs().size(), 2);
+}
+
+/**
+ * @brief 测试设置不敏感Qt版本的插件名
+ */
+TEST_F(PluginManagerTest, QtVersionInsensitive)
+{
+    QStringList names;
+    names << "pluginA" << "pluginB";
+    // 这个函数没有返回值和getter，我们只能测试它是否能被调用而不崩溃
+    manager->setQtVersionInsensitivePluginNames(names);
+    SUCCEED(); // If it runs without crashing, we consider it a success.
+}
+
+/**
+ * @brief 测试过滤器设置
+ * 验证黑名单和懒加载过滤器的设置
+ */
+TEST_F(PluginManagerTest, SetFilters)
+{
+    // 设置黑名单过滤器
+    manager->setBlackListFilter([](const QString &pluginName) {
+        return pluginName.startsWith("blacklisted");
+    });
+    // 没有getter，我们只能测试调用不崩溃
+    SUCCEED();
+
+    // 设置懒加载过滤器
+    manager->setLazyLoadFilter([](const QString &pluginName) {
+        return pluginName.startsWith("lazy");
+    });
+    // 没有getter，我们只能测试调用不崩溃
+    SUCCEED();
 }

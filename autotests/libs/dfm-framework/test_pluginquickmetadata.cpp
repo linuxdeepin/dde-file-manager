@@ -445,3 +445,52 @@ TEST_F(PluginQuickMetadataTest, ComprehensiveTest)
     // 清理
     metadataList.clear();
 }
+
+/**
+ * @brief 测试 PluginQuickMetaDataCreator
+ * 目的：覆盖 PluginQuickMetaDataCreator 的所有代码路径
+ */
+TEST_F(PluginQuickMetadataTest, CreatorTest)
+{
+    PluginQuickMetaDataCreator creator;
+
+    // 在 create() 之前调用 setter，应该不产生任何效果，并覆盖警告分支
+    creator.setType("should_not_be_set");
+    creator.setParent("should_not_be_set");
+    creator.setApplet("should_not_be_set");
+
+    // 创建元数据
+    QUrl testUrl("qrc:/creator.qml");
+    QString testId = "creator_id";
+    QString testPlugin = "creator_plugin";
+    creator.create(testPlugin, testId, testUrl);
+
+    // 设置其他属性
+    QString testType = "creator_type";
+    QString testParent = "creator_parent";
+    QString testApplet = "creator_applet";
+    creator.setType(testType);
+    creator.setParent(testParent);
+    creator.setApplet(testApplet);
+
+    // 获取元数据指针
+    PluginQuickMetaPtr metaPtr = creator.take();
+
+    // 验证获取到的元数据
+    ASSERT_NE(metaPtr, nullptr);
+    EXPECT_EQ(metaPtr->url(), testUrl);
+    EXPECT_EQ(metaPtr->id(), testId);
+    EXPECT_EQ(metaPtr->plugin(), testPlugin);
+    EXPECT_EQ(metaPtr->type(), testType);
+    EXPECT_EQ(metaPtr->parent(), testParent);
+    EXPECT_EQ(metaPtr->applet(), testApplet);
+
+    // 再次调用 take() 应该返回空指针
+    PluginQuickMetaPtr nullPtr = creator.take();
+    EXPECT_EQ(nullPtr, nullptr);
+
+    // 在 take() 之后调用 setter，同样应该不产生任何效果，并覆盖警告分支
+    creator.setType("should_not_be_set_either");
+    creator.setParent("should_not_be_set_either");
+    creator.setApplet("should_not_be_set_either");
+}
