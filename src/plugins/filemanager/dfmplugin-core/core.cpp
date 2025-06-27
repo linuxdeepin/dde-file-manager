@@ -37,7 +37,7 @@ namespace dfmplugin_core {
 namespace GlobalPrivate {
 static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
-DFM_LOG_REISGER_CATEGORY(DPCORE_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPCORE_NAMESPACE)
 
 #define DAPP_ATT_WIDGETS 14
 #define DAPP_USING_ATT(VAL, dappVal) \

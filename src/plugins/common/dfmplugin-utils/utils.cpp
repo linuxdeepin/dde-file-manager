@@ -13,7 +13,7 @@
 #include "testing/virtualtestingplugin.h"
 
 namespace dfmplugin_utils {
-DFM_LOG_REISGER_CATEGORY(DPUTILS_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPUTILS_NAMESPACE)
 
 static constexpr char kReportLog[] { "dfmplugin-reportlog" };
 static constexpr char kAppendcompress[] { "dfmplugin-appendcompress" };

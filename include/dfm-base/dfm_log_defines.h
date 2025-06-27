@@ -8,9 +8,10 @@
 #include <QLoggingCategory>
 
 // ====== Log API Statement ======
-// e.g. DFM_REISGER_LOG_CATEGORY(fmplugin-optical)
+// e.g. DFM_REGISTER_LOG_CATEGORY(fmplugin-optical)
 // Written in the plugin's meta cpp file
-#define DFM_LOG_REISGER_CATEGORY(name)
+#define DFM_LOG_REGISTER_CATEGORY(name)
+#define DFM_LOG_REISGER_CATEGORY(name)   // error typo: compat
 // Written in the plugin's global header file
 #define DFM_LOG_USE_CATEGORY(name)
 // Use fmDebug() instead of qCDebug(categoty, ...)
@@ -39,14 +40,17 @@
 // ====== Log API Defines ======
 // Wrap qCDebug for all plugins
 // Note: Used in the plugin's namespace!!!
-#undef DFM_LOG_REISGER_CATEGORY
-#define DFM_LOG_REISGER_CATEGORY2(name)                                                     \
+#undef DFM_LOG_REGISTER_CATEGORY
+#define DFM_LOG_REGISTER_CATEGORY2(name)                                                    \
     const QLoggingCategory &__log##name()                                                   \
     {                                                                                       \
         static const QLoggingCategory category("org.deepin.dde.filemanager.plugin." #name); \
         return category;                                                                    \
     }
-#define DFM_LOG_REISGER_CATEGORY(nameMacro) DFM_LOG_REISGER_CATEGORY2(nameMacro)
+#define DFM_LOG_REGISTER_CATEGORY(nameMacro) DFM_LOG_REGISTER_CATEGORY2(nameMacro)
+
+#undef DFM_LOG_REISGER_CATEGORY
+#define DFM_LOG_REISGER_CATEGORY(nameMacro) DFM_LOG_REGISTER_CATEGORY(nameMacro)
 
 // Note: Used in the plugin's namespace!!!
 #undef DFM_LOG_USE_CATEGORY

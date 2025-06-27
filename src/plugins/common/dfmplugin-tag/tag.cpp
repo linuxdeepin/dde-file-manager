@@ -42,7 +42,7 @@ Q_DECLARE_METATYPE(dfmbase::ElideTextLayout *)
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_tag {
-DFM_LOG_REISGER_CATEGORY(DPTAG_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPTAG_NAMESPACE)
 
 void Tag::initialize()
 {

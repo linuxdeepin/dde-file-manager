@@ -31,7 +31,7 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(ContextMenuCallback);
 
 namespace dfmplugin_myshares {
-DFM_LOG_REISGER_CATEGORY(DPMYSHARES_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPMYSHARES_NAMESPACE)
 
 void MyShares::initialize()
 {

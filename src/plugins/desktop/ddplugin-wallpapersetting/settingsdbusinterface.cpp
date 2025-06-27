@@ -6,7 +6,7 @@
 #include "wlsetplugin.h"
 
 namespace ddplugin_wallpapersetting {
-DFM_LOG_REISGER_CATEGORY(DDP_WALLPAERSETTING_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DDP_WALLPAERSETTING_NAMESPACE)
 
 SettingsDBusInterface::SettingsDBusInterface(EventHandle *parent)
     : QObject(parent), QDBusContext(), handle(parent)

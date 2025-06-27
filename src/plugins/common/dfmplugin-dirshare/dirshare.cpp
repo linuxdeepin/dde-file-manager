@@ -19,7 +19,7 @@ using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 
 namespace dfmplugin_dirshare {
-DFM_LOG_REISGER_CATEGORY(DPDIRSHARE_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPDIRSHARE_NAMESPACE)
 
 void DirShare::initialize()
 {

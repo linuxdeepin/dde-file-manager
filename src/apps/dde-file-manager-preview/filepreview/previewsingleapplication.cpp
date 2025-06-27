@@ -21,7 +21,6 @@
 #include <linux/limits.h>
 
 DFMBASE_USE_NAMESPACE
-// DFM_LOG_REISGER_CATEGORY(DFMPREVIEW_LOG_CG)
 
 PreviewSingleApplication::PreviewSingleApplication(int &argc, char **argv, int)
     : DApplication(argc, argv), localServer(new QLocalServer)
@@ -95,7 +94,7 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
     }
     QList<QUrl> dirUrls = QUrl::fromStringList(dirUrlStrs);
 
-    fmInfo() << "PreviewSingleApplication::processArgs: Processing preview request for window:" << winId 
+    fmInfo() << "PreviewSingleApplication::processArgs: Processing preview request for window:" << winId
              << "with" << selectUrls.size() << "selected URLs and" << dirUrls.size() << "directory URLs";
 
     // Delete temporary file

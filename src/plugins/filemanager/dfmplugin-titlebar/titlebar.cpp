@@ -19,7 +19,7 @@
 #include <dfm-framework/dpf.h>
 
 namespace dfmplugin_titlebar {
-DFM_LOG_REISGER_CATEGORY(DPTITLEBAR_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPTITLEBAR_NAMESPACE)
 
 void TitleBar::initialize()
 {
