@@ -25,7 +25,7 @@ class TestEventHandler : public QObject
 
 public:
     explicit TestEventHandler(QObject *parent = nullptr)
-        : QObject(parent), handleCount(0) { }
+        : QObject(parent) { reset(); }
 
     int handleCount;
     QString lastEventData;
@@ -42,6 +42,13 @@ public:
         handleCount++;
         lastEventData = data;
         return true;
+    }
+
+    bool filterEvent(const QString &data)
+    {
+        handleCount++;
+        lastEventData = data;
+        return data == "filter_me";
     }
 
     void reset()
@@ -96,9 +103,16 @@ TEST_F(EventDispatcherTest, Constructor)
     // 验证对象创建成功
     EXPECT_NE(dispatcher, nullptr);
 
-    // 验证初始状态 - 根据实际实现调整期望值，主要目的是覆盖代码路径
+    // 验证初始状态 - dispatch with no handlers should work
     bool result = dispatcher->dispatch();
-    EXPECT_TRUE(true);   // 无论返回true还是false，都表示代码路径被覆盖
+    EXPECT_TRUE(result);
+
+    // Add a handler and see if it's called by no-arg dispatch
+    dispatcher->append(handler1, &TestEventHandler::handleEventWithReturn);
+    result = dispatcher->dispatch();
+    EXPECT_TRUE(result);
+    EXPECT_EQ(handler1->handleCount, 1);
+    EXPECT_EQ(handler1->lastEventData, "");
 }
 
 /**
@@ -136,13 +150,14 @@ TEST_F(EventDispatcherTest, UninstallHandler)
     // 重置状态
     handler1->reset();
 
-    // 移除处理器（注意：当前API可能不支持直接移除）
-    // bool uninstallResult = dispatcher->remove(handler1, &TestEventHandler::handleEvent);
-    // EXPECT_TRUE(uninstallResult);
+    // 移除处理器
+    bool uninstallResult = dispatcher->remove(handler1, &TestEventHandler::handleEvent);
+    EXPECT_TRUE(uninstallResult);
 
-    // 由于当前API限制，我们只能测试基本功能
+    // 再次分发，处理器不应被调用
     result = dispatcher->dispatch(QString("uninstall_test"));
     EXPECT_TRUE(result);
+    EXPECT_EQ(handler1->handleCount, 0);
 }
 
 /**
@@ -258,10 +273,19 @@ TEST_F(EventDispatcherTest, DuplicateInstall)
     // 分发事件
     bool result = dispatcher->dispatch(testData);
 
-    // 验证处理器被调用（可能被调用多次）
+    // 验证处理器被调用两次
     EXPECT_TRUE(result);
-    EXPECT_GE(handler1->handleCount, 1);   // 至少被调用一次
+    EXPECT_EQ(handler1->handleCount, 2);
     EXPECT_EQ(handler1->lastEventData, testData);
+
+    // 重置并移除
+    handler1->reset();
+    bool removeResult = dispatcher->remove(handler1, &TestEventHandler::handleEvent);
+    EXPECT_TRUE(removeResult);
+
+    // 再次分发，不应被调用
+    dispatcher->dispatch(testData);
+    EXPECT_EQ(handler1->handleCount, 0);
 }
 
 /**
@@ -270,19 +294,90 @@ TEST_F(EventDispatcherTest, DuplicateInstall)
  */
 TEST_F(EventDispatcherTest, HandlerExecutionOrder)
 {
-    // 安装多个处理器
-    dispatcher->append(handler1, &TestEventHandler::handleEvent);
+    QList<int> executionOrder;
+
+    class OrderHandler : public QObject
+    {
+    public:
+        OrderHandler(QList<int> &orderList, int id) : m_orderList(orderList), m_id(id) { }
+        void handleEvent()
+        {
+            m_orderList.append(m_id);
+        }
+
+    private:
+        QList<int> &m_orderList;
+        int m_id;
+    };
+
+    OrderHandler h1(executionOrder, 1);
+    OrderHandler h2(executionOrder, 2);
+
+    dispatcher->append(&h1, &OrderHandler::handleEvent);
+    dispatcher->append(&h2, &OrderHandler::handleEvent);
+
+    dispatcher->dispatch();
+
+    QList<int> expected = { 1, 2 };
+    EXPECT_EQ(executionOrder, expected);
+}
+
+/**
+ * @brief 测试事件过滤器
+ * 验证过滤器的添加、移除和执行逻辑
+ */
+TEST_F(EventDispatcherTest, EventFilters)
+{
+    // 1. 测试过滤器阻止事件
+    handler1->reset();
+    dispatcher->appendFilter(handler1, &TestEventHandler::filterEvent);
     dispatcher->append(handler2, &TestEventHandler::handleEvent);
 
-    const QString testData = "order_test";
+    // This data will be filtered. filterEvent returns true for it.
+    bool result = dispatcher->dispatch(QString("filter_me"));
 
-    // 分发事件
-    bool result = dispatcher->dispatch(testData);
+    EXPECT_FALSE(result);                    // Dispatch should return false when filtered
+    EXPECT_EQ(handler1->handleCount, 1);     // Filter is called
+    EXPECT_EQ(handler1->lastEventData, "filter_me");
+    EXPECT_EQ(handler2->handleCount, 0);     // Handler should be blocked
 
-    // 验证所有处理器都被调用
+    // 2. 测试过滤器不阻止事件
+    handler1->reset();
+    handler2->reset();
+
+    // This data will not be filtered. filterEvent returns false for it.
+    result = dispatcher->dispatch(QString("dont_filter_me"));
+
     EXPECT_TRUE(result);
+    EXPECT_EQ(handler1->handleCount, 1);     // Filter is called
+    EXPECT_EQ(handler2->handleCount, 1);     // Handler is also called
+    EXPECT_EQ(handler2->lastEventData, "dont_filter_me");
+
+    // 3. 测试移除过滤器
+    handler1->reset();
+    handler2->reset();
+    dispatcher->removeFilter(handler1, &TestEventHandler::filterEvent);
+
+    result = dispatcher->dispatch(QString("filter_me"));     // Should not be filtered anymore
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(handler1->handleCount, 0);     // Filter was removed
+    EXPECT_EQ(handler2->handleCount, 1);     // Handler is called
+}
+
+/**
+ * @brief 测试使用QVariantList分发
+ */
+TEST_F(EventDispatcherTest, DispatchWithVariantList)
+{
+    dispatcher->append(handler1, &TestEventHandler::handleEvent);
+
+    QVariantList args;
+    args << "variant_list_test";
+    dispatcher->dispatch(args);
+
     EXPECT_EQ(handler1->handleCount, 1);
-    EXPECT_EQ(handler2->handleCount, 1);
+    EXPECT_EQ(handler1->lastEventData, "variant_list_test");
 }
 
 /**
@@ -332,6 +427,38 @@ TEST_F(EventDispatcherTest, AsyncDispatch)
 }
 
 /**
+ * @brief 测试异步分发(无参数)
+ */
+TEST_F(EventDispatcherTest, AsyncDispatchNoArgs)
+{
+    dispatcher->append(handler1, &TestEventHandler::handleEventWithReturn);
+
+    QFuture<bool> future = dispatcher->asyncDispatch();
+    future.waitForFinished();
+
+    EXPECT_TRUE(future.result());
+    EXPECT_EQ(handler1->handleCount, 1);
+    EXPECT_EQ(handler1->lastEventData, "");
+}
+
+/**
+ * @brief 测试异步分发(QVariantList)
+ */
+TEST_F(EventDispatcherTest, AsyncDispatchWithVariantList)
+{
+    dispatcher->append(handler1, &TestEventHandler::handleEvent);
+
+    QVariantList args;
+    args << "async_variant_list_test";
+    QFuture<bool> future = dispatcher->asyncDispatch(args);
+    future.waitForFinished();
+
+    EXPECT_TRUE(future.result());
+    EXPECT_EQ(handler1->handleCount, 1);
+    EXPECT_EQ(handler1->lastEventData, "async_variant_list_test");
+}
+
+/**
  * @brief 测试性能
  * 验证事件分发器的性能
  */
@@ -357,6 +484,50 @@ TEST_F(EventDispatcherTest, Performance)
     // 验证性能（这里只是确保测试完成）
     EXPECT_LT(elapsed, 10000);   // 应该在10秒内完成
     EXPECT_EQ(handler1->handleCount, performanceCount);
+}
+
+/**
+ * @brief EventDispatcherManager类单元测试
+ */
+class EventDispatcherManagerTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        manager = new EventDispatcherManager();
+        ASSERT_NE(manager, nullptr);
+
+        handler1 = new TestEventHandler(nullptr);
+        handler2 = new TestEventHandler(nullptr);
+        ASSERT_NE(handler1, nullptr);
+        ASSERT_NE(handler2, nullptr);
+    }
+
+    void TearDown() override
+    {
+        delete manager;
+        delete handler1;
+        delete handler2;
+    }
+
+    EventDispatcherManager *manager;
+    TestEventHandler *handler1;
+    TestEventHandler *handler2;
+
+    const dpf::EventType testEventType = 1;
+    const QString testSpace = "test_space";
+    const QString testTopic = "sig_test_topic"; // Must start with "sig_"
+};
+
+TEST_F(EventDispatcherManagerTest, AsyncPublish)
+{
+    manager->subscribe(testEventType, handler1, &TestEventHandler::handleEvent);
+    QFuture<bool> future = manager->asyncPublish(testEventType, "async_data");
+
+    future.waitForFinished();
+    EXPECT_TRUE(future.result());
+    EXPECT_EQ(handler1->handleCount, 1);
+    EXPECT_EQ(handler1->lastEventData, "async_data");
 }
 
 #include "test_eventdispatcher.moc"
