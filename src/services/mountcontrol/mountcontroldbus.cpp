@@ -15,7 +15,7 @@
 static constexpr char kMountControlObjPath[] { "/org/deepin/Filemanager/MountControl" };
 
 namespace service_mountcontrol {
-DFM_LOG_REISGER_CATEGORY(SERVICEMOUNTCONTROL_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(SERVICEMOUNTCONTROL_NAMESPACE)
 }
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE

@@ -9,7 +9,7 @@
 DPF_USE_NAMESPACE
 
 namespace ddplugin_background {
-DFM_LOG_REISGER_CATEGORY(DDP_BACKGROUND_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DDP_BACKGROUND_NAMESPACE)
 
 void BackgroundPlugin::initialize()
 {

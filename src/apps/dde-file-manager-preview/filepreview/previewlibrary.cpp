@@ -8,7 +8,7 @@
 #include <QLibrary>
 #include <QDir>
 
-DFM_LOG_REISGER_CATEGORY(DFMPREVIEW_LOG_CG)
+DFM_LOG_REGISTER_CATEGORY(DFMPREVIEW_LOG_CG)
 
 PreviewLibrary::PreviewLibrary(QObject *parent)
     : QObject(parent)

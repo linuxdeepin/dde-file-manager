@@ -19,7 +19,7 @@ static constexpr char kUserShareObjPath[] { "/org/deepin/Filemanager/UserShareMa
 static constexpr char kPolicyKitActionId[] { "org.deepin.Filemanager.UserShareManager" };
 
 namespace service_sharecontrol {
-DFM_LOG_REISGER_CATEGORY(SERVICESHARECONTROL_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(SERVICESHARECONTROL_NAMESPACE)
 }
 
 SERVICESHARECONTROL_USE_NAMESPACE

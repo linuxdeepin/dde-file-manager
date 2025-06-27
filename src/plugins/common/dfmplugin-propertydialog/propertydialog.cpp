@@ -10,7 +10,7 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 namespace dfmplugin_propertydialog {
-DFM_LOG_REISGER_CATEGORY(DPPROPERTYDIALOG_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPPROPERTYDIALOG_NAMESPACE)
 
 void PropertyDialog::initialize()
 {

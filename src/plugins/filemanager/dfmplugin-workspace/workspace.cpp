@@ -31,7 +31,7 @@ DFMBASE_USE_NAMESPACE
 using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_workspace {
-DFM_LOG_REISGER_CATEGORY(DPWORKSPACE_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPWORKSPACE_NAMESPACE)
 
 /*!
  * \brief 视图相关配置项

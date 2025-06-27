@@ -15,7 +15,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 namespace dfmplugin_bookmark {
-DFM_LOG_REISGER_CATEGORY(DPBOOKMARK_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPBOOKMARK_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
 

@@ -9,7 +9,7 @@
 #include <QDBusConnection>
 
 DAEMONPTAG_BEGIN_NAMESPACE
-DFM_LOG_REISGER_CATEGORY(DAEMONPTAG_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DAEMONPTAG_NAMESPACE)
 
 static constexpr char kTagManagerObjPath[] { "/org/deepin/Filemanager/Daemon/TagManager" };
 

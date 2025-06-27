@@ -54,7 +54,7 @@ int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const
 }
 #endif
 
-DFM_LOG_REISGER_CATEGORY(DPFILEPREVIEW_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPFILEPREVIEW_NAMESPACE)
 void FilePreview::initialize()
 {
     qCInfo(logLibFilePreview) << "FilePreview: starting initialization process";

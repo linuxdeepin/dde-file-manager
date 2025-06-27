@@ -8,7 +8,7 @@
 DFMBASE_USE_NAMESPACE
 namespace plugin_filepreview {
 
-DFM_LOG_REISGER_CATEGORY(PREVIEW_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(PREVIEW_NAMESPACE)
 
 AbstractBasePreview *TextPreviewPlugin::create(const QString &key)
 {

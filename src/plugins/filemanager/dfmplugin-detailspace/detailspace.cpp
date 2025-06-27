@@ -9,7 +9,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 namespace dfmplugin_detailspace {
-DFM_LOG_REISGER_CATEGORY(DPDETAILSPACE_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPDETAILSPACE_NAMESPACE)
 DFMBASE_USE_NAMESPACE
 
 void DetailSpace::initialize()

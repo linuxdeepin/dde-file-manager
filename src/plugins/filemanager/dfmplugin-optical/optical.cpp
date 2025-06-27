@@ -36,7 +36,7 @@ Q_DECLARE_METATYPE(QString *);
 // using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
 
 namespace dfmplugin_optical {
-DFM_LOG_REISGER_CATEGORY(DPOPTICAL_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DPOPTICAL_NAMESPACE)
 
 DFMBASE_USE_NAMESPACE
 

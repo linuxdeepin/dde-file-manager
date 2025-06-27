@@ -47,7 +47,7 @@ DFMBASE_USE_NAMESPACE
     dpfHookSequence->unfollow(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 namespace ddplugin_core {
-DFM_LOG_REISGER_CATEGORY(DDPCORE_NAMESPACE)
+DFM_LOG_REGISTER_CATEGORY(DDPCORE_NAMESPACE)
 
 static void registerFileSystem()
 {
