@@ -213,7 +213,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool *hasNewItem)
             insertUrlMapper(dev, info->targetUrl());
 
         if (!hiddenByDConfig.contains(devUrl))   // do not show item which hidden by dconfig
-            sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
+            pendingSidebarDevUrls.append(devUrl);  // Record devUrl, delay makeSidebarItem execution to main thread
     }
     fmInfo() << "end querying block info";
 
@@ -248,7 +248,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool *hasNewItem)
         ret.push_back(data);
         *hasNewItem = true;
 
-        sidebarInfos.insert(info->urlOf(UrlInfoType::kUrl), makeSidebarItem(info));
+        pendingSidebarDevUrls.append(devUrl);  // Record devUrl, delay makeSidebarItem execution to main thread
     }
 
     fmInfo() << "end querying protocol devices info";
@@ -772,6 +772,7 @@ void ComputerItemWatcher::startQueryItems(bool async)
 {
     isItemQueryFinished = false;
     sidebarInfos.clear();
+    pendingSidebarDevUrls.clear();  // Clear pending URL list
 
     auto afterQueryFunc = [this]() {
         QList<QUrl> computerItems;
@@ -787,8 +788,11 @@ void ComputerItemWatcher::startQueryItems(bool async)
                 removeSidebarItem(url);
                 sidebarInfos.remove(url);
                 initedDatas.removeAt(i);
+            } else if (pendingSidebarDevUrls.contains(url)) {
+                sidebarInfos.insert(url, makeSidebarItem(initedDatas[i].info));
             }
         }
+        pendingSidebarDevUrls.clear();  // Clear the list
 
         for (const auto &key : sidebarInfos.keys()) {
             const auto &value = sidebarInfos.value(key);

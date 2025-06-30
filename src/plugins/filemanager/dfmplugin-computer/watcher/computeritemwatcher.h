@@ -131,6 +131,7 @@ private:
 
     QMultiMap<QUrl, QUrl> routeMapper;
     QPointer<QFutureWatcher<ComputerDataList>> fw{ nullptr };
+    QList<QUrl> pendingSidebarDevUrls;  // Store pending device URLs to execute makeSidebarItem in main thread
 };
 }
 #endif   // COMPUTERITEMWATCHER_H
