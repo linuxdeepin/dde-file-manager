@@ -749,7 +749,7 @@ void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoP
         return;
 
     if (!updateRefresh) {
-        updateRefresh = new QTimer(this); // 设置parent，确保在对象销毁时自动清理
+        updateRefresh = new QTimer(this);   // 设置parent，确保在对象销毁时自动清理
         connect(updateRefresh, &QTimer::timeout, this, &FileSortWorker::handleUpdateRefreshFiles, Qt::QueuedConnection);
     }
     updateRefresh->setSingleShot(true);
@@ -1686,7 +1686,7 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
     case kItemFileDisplayNameRole:
         return info->fileUrl().fileName();
     case kItemFileMimeTypeRole:
-        return info->displayType();
+        return info->fastMimeType();
     case kItemFileSizeRole:
         return info->fileSize();
     default:
@@ -1972,6 +1972,7 @@ void FileSortWorker::doCompleteFileInfo(SortInfoPointer sortInfo)
 
     // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
     sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
+    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
 
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
