@@ -8,6 +8,8 @@
 
 #include <dfm-base/utils/windowutils.h>
 
+#include <QAbstractTextDocumentLayout>
+
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
@@ -94,6 +96,7 @@ void TagEditor::initializeWidgets()
     crumbEdit = new DCrumbEdit;
     promptLabel = new QLabel(tr("Input tag info, such as work, family. A comma is used between two tags."));
     totalLayout = new QVBoxLayout;
+    totalLayout->setSizeConstraint(QLayout::SetFixedSize);
     backgroundFrame = new QFrame;
 }
 
@@ -104,6 +107,7 @@ void TagEditor::initializeParameters()
     crumbEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbEdit->setCrumbReadOnly(true);
     crumbEdit->setCrumbRadius(2);
+    setupEditHeight();
 
     promptLabel->setFixedWidth(140);
     promptLabel->setWordWrap(true);
@@ -140,6 +144,24 @@ void TagEditor::initializeConnect()
             if (!crumbEdit->property("updateCrumbsColor").toBool())
                 processTags();
         });
+    }
+}
+
+void TagEditor::setupEditHeight()
+{
+    QTextEdit *edit = qobject_cast<QTextEdit *>(crumbEdit);
+    if (edit) {
+        auto doc = edit->document();
+        doc->setDocumentMargin(doc->documentMargin() + 5);
+        auto layout = edit->document()->documentLayout();
+        connect(layout, &QAbstractTextDocumentLayout::documentSizeChanged,
+                this, [this, edit] {
+                    qreal docHeight = edit->document()->size().height();
+                    QMargins margins = edit->contentsMargins();
+                    int totalHeight = qCeil(docHeight) + margins.top() + margins.bottom();
+                    edit->setFixedHeight(totalHeight);
+                    QTimer::singleShot(0, this, &TagEditor::resizeWithContent);
+                });
     }
 }
 
