@@ -16,6 +16,8 @@
 
 using namespace dfmplugin_diskenc;
 
+DFM_LOG_REGISTER_CATEGORY(DISKENC_NAMESPACE)
+
 static constexpr char kEncryptDConfig[] { "org.deepin.dde.file-manager.diskencrypt" };
 
 bool hasComputerMenuRegisted()
