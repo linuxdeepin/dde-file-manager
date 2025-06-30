@@ -19,9 +19,7 @@
 #    define DFMPLUGIN_DISK_ENCRYPT_EXPORT Q_DECL_IMPORT
 #endif
 
-namespace dfmplugin_diskenc {
-DFM_LOG_USE_CATEGORY(dfmplugin_diskenc)
-}
+#define DISKENC_NAMESPACE dfmplugin_diskenc
 
 enum TPMModuleEncType {
     kUnknow = 0,
@@ -57,5 +55,7 @@ inline constexpr char kTCMMinorKeyAlgo[] { "sm4" };
 inline constexpr char kPcr[] { "0,7" };
 inline constexpr char kTPMPcrBank[] { "sha256" };
 inline constexpr char kTCMPcrBank[] { "sm3_256" };
+
+DFM_LOG_USE_CATEGORY(DISKENC_NAMESPACE)
 
 #endif   // DFMPLUGIN_DISK_ENCRYPT_GLOBAL_H
