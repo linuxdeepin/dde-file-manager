@@ -200,25 +200,25 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
     // 时间复杂度：O(n)，空间复杂度：O(n)，性能优于stable_partition
     QList<QSharedPointer<SortFileInfo>> dirs;
     QList<QSharedPointer<SortFileInfo>> files;
-    
+
     // 预分配空间以提高性能（可选优化）
     const int totalCount = results.size();
-    dirs.reserve(totalCount / 4);  // 估算文件夹占比约25%
-    files.reserve(totalCount);     // 文件可能占大部分
-    
+    dirs.reserve(totalCount / 4);   // 估算文件夹占比约25%
+    files.reserve(totalCount);   // 文件可能占大部分
+
     for (auto it = results.begin(); it != results.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
         doCompleteSortInfo(sortInfo);
-        
+
         if (sortInfo->isDir()) {
             dirs.append(sortInfo);
         } else {
             files.append(sortInfo);
         }
     }
-    
+
     // 合并结果：文件夹在前，文件在后
     result = std::move(dirs);
     result.append(files);
@@ -298,6 +298,7 @@ void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
 
     // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
     sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
+    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
 
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
