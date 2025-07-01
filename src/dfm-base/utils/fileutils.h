@@ -70,12 +70,6 @@ public:
     static bool containsCopyingFileUrl(const QUrl &url);
 
     static void notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType type, const QUrl &url);
-    static bool isNumOrChar(const QChar ch);
-    static bool isNumber(const QChar ch);
-    static bool isSymbol(const QChar ch);
-    static bool compareByStringEx(const QString &str1, const QString &str2);
-    static QString numberStr(const QString &str, int pos);
-    static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
     static QString encryptString(const QString &str);
     static QString decryptString(const QString &str);
@@ -94,8 +88,6 @@ public:
     static QString normalPathToTrash(const QString &normal);
     static bool supportLongName(const QUrl &url);
 
-    static bool isFullWidthChar(const QChar ch, QChar &normalized);
-    static QString makeQString(const QString::const_iterator &it, uint unicode);
     static QString symlinkTarget(const QUrl &url);
     static QString resolveSymlink(const QUrl &url);
 

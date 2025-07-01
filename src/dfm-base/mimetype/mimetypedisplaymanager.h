@@ -20,6 +20,7 @@ public:
     static MimeTypeDisplayManager *instance();
 
     QString displayName(const QString &mimeType) const;
+    QString fullMimeName(const QString &mimeType) const;
     FileInfo::FileType displayNameToEnum(const QString &mimeType) const;
     QString defaultIcon(const QString &mimeType) const;
     QMap<FileInfo::FileType, QString> displayNames() const;
@@ -35,10 +36,10 @@ private:
     void initData();
     void loadSupportMimeTypes();
     QStringList readlines(const QString &path);
-    QMimeType getMimeTypeForFile(const QString &filePath) const;
 
 private:
     QMimeDatabase mimeTypeDatabase;
+    QMap<FileInfo::FileType, QString> namesMap;
     QMap<FileInfo::FileType, QString> displayNamesMap;
     QMap<FileInfo::FileType, QString> defaultIconNames;
     QStringList archiveMimeTypes;
