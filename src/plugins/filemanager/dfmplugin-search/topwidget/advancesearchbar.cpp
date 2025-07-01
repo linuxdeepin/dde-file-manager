@@ -6,11 +6,11 @@
 #include "advancesearchbar_p.h"
 #include "utils/searchhelper.h"
 #include "utils/custommanager.h"
-#include "events/searcheventcaller.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/sortutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -352,7 +352,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
 
     // 检查文件类型过滤
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = info->displayType();
+        QString fileTypeStr = SortUtils::displayType(info->fileUrl());
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }

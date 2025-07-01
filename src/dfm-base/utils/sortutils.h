@@ -8,7 +8,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/sortfileinfo.h>
 
-DFMGLOBAL_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 namespace SortUtils {
 bool compareStringDefault(const QString &str1, const QString &str2);
@@ -18,6 +18,10 @@ bool compareStringForTime(const QString &str1, const QString &str2);
 bool compareStringForMimeType(const QString &str1, const QString &str2);
 bool compareForSize(const SortInfoPointer info1, const SortInfoPointer info2);
 
+QString displayType(const QUrl &url);
+QString fastMimeType(const QUrl &url);
+
+// private
 bool isNumOrChar(const QChar ch);
 bool isNumber(const QChar ch);
 bool isSymbol(const QChar ch);
@@ -25,8 +29,9 @@ QString numberStr(const QString &str, int pos);
 bool isFullWidthChar(const QChar ch, QChar &normalized);
 QString makeQString(const QString::const_iterator &it, uint unicode);
 qint64 getEffectiveSize(const SortInfoPointer &info);
+QString getLocalPath(const QUrl &url);
 }   // namespace SortUtils
 
-DFMGLOBAL_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif   // SORTUTILS_H

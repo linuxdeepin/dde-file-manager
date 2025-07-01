@@ -296,10 +296,6 @@ void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
     sortInfo->setLastModifiedTime(statBuffer.st_mtime);
     sortInfo->setCreateTime(statBuffer.st_ctime);
 
-    // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
-    sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
-    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
-
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
 }

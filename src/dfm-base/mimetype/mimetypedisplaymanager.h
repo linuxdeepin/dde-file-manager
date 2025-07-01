@@ -36,6 +36,7 @@ private:
     void initData();
     void loadSupportMimeTypes();
     QStringList readlines(const QString &path);
+    QMimeType determineMimeType(const QString &filePath) const;
 
 private:
     QMimeDatabase mimeTypeDatabase;

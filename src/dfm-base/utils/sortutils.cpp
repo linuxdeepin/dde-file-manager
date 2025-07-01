@@ -5,10 +5,11 @@
 #include "sortutils.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <QCollator>
 
-DFMGLOBAL_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 namespace SortUtils {
 
@@ -485,6 +486,33 @@ bool compareForSize(const SortInfoPointer info1, const SortInfoPointer info2)
     return size1 < size2;
 }
 
+QString displayType(const QUrl &url)
+{
+    const QString path = getLocalPath(url);
+    return MimeTypeDisplayManager::instance()->displayTypeFromPath(path);
+}
+
+QString fastMimeType(const QUrl &url)
+{
+    const QString path = getLocalPath(url);
+    return MimeTypeDisplayManager::instance()->fastMimeTypeName(path);
+}
+
+QString getLocalPath(const QUrl &url)
+{
+    QString path;
+    if (url.isLocalFile()) {
+        path = url.toLocalFile();
+    } else {
+        auto info { InfoFactory::create<FileInfo>(url) };
+        if (info && info->canAttributes(FileInfo::FileCanType::kCanRedirectionFileUrl)) {
+            path = info->urlOf(UrlInfoType::kRedirectedFileUrl).toLocalFile();
+        }
+    }
+
+    return path;
+}
+
 }   // namespace SortUtils
 
-DFMGLOBAL_END_NAMESPACE
+DFMBASE_END_NAMESPACE

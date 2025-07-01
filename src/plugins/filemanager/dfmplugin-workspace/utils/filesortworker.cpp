@@ -1186,8 +1186,6 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
     sortInfo->setLastReadTime(fileInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setLastModifiedTime(fileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
-    sortInfo->setDisplayType(fileInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
-    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
     fileInfo->fileMimeType();
 
     return true;
@@ -1705,7 +1703,7 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
     case kItemFileDisplayNameRole:
         return info->fileUrl().fileName();
     case kItemFileMimeTypeRole:
-        return info->fastMimeType();
+        return SortUtils::fastMimeType(info->fileUrl());
     case kItemFileSizeRole:
         return info->fileSize();
     default:
@@ -1988,10 +1986,6 @@ void FileSortWorker::doCompleteFileInfo(SortInfoPointer sortInfo)
     sortInfo->setLastReadTime(statBuffer.st_atime);
     sortInfo->setLastModifiedTime(statBuffer.st_mtime);
     sortInfo->setCreateTime(statBuffer.st_ctime);
-
-    // 设置 MIME 类型显示名称（这个不需要额外的文件系统调用）
-    sortInfo->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(url.path()));
-    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
 
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
