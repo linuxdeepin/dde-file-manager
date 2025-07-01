@@ -13,6 +13,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/utils/sortutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -1186,6 +1187,7 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
     sortInfo->setLastModifiedTime(fileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setCreateTime(fileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setDisplayType(fileInfo->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
+    sortInfo->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(url.path()));
     fileInfo->fileMimeType();
 
     return true;
@@ -1585,32 +1587,47 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     QVariant leftData = data(leftSortInfo, orgSortRole);
     QVariant rightData = data(rightSortInfo, orgSortRole);
 
+    if (!leftData.isValid()) {
+        const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
+                ? leftItem->fileInfo()
+                : InfoFactory::create<FileInfo>(left);
+        leftData = data(leftInfo, orgSortRole);
+    }
+
+    if (!rightData.isValid()) {
+        const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
+                ? rightItem->fileInfo()
+                : InfoFactory::create<FileInfo>(right);
+        rightData = data(rightInfo, orgSortRole);
+    }
+
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = data(leftSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
-        QString rightName = data(rightSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
-        return FileUtils::compareByStringEx(leftName, rightName);
+        QString leftName = leftSortInfo->fileUrl().fileName();
+        QString rightName = rightSortInfo->fileUrl().fileName();
+        if (orgSortRole == kItemFileDisplayNameRole)
+            return SortUtils::compareStringForFileName(leftName, rightName);
+        else
+            return SortUtils::compareStringDefault(leftName, rightName);
     }
 
     switch (orgSortRole) {
     case kItemFileDisplayNameRole:
+        return SortUtils::compareStringForFileName(leftData.toString(), rightData.toString());
     case kItemFileLastModifiedRole:
+        [[fallthrough]];
     case kItemFileCreatedRole:
+        [[fallthrough]];
+    case kItemFileDeletionDate:
+        [[fallthrough]];
+    case kItemFileLastReadRole:
+        return SortUtils::compareStringForTime(leftData.toString(), rightData.toString());
     case kItemFileMimeTypeRole:
-        return FileUtils::compareByStringEx(leftData.toString(), rightData.toString());
-    case kItemFileSizeRole: {
-        // 文件夹不参与按文件大小的排序
-        qint64 sizel = isDirLeft ? -1 : leftSortInfo->fileSize();
-        qint64 sizer = isDirRight ? -1 : rightSortInfo->fileSize();
-        if (sizel == sizer) {
-            QString leftName = data(leftSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
-            QString rightName = data(rightSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
-            return FileUtils::compareByStringEx(leftName, rightName);
-        }
-        return sizel < sizer;
-    }
+        return SortUtils::compareStringForMimeType(leftData.toString(), rightData.toString());
+    case kItemFileSizeRole:
+        return SortUtils::compareForSize(leftSortInfo, rightSortInfo);
     default:
-        return FileUtils::compareByStringEx(leftData.toString(), rightData.toString());
+        return SortUtils::compareStringDefault(leftData.toString(), rightData.toString());
     }
 }
 

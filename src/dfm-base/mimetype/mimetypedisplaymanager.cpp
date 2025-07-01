@@ -38,6 +38,17 @@ void MimeTypeDisplayManager::initData()
     displayNamesMap[FileInfo::FileType::kBackups] = tr("Backup file");
     displayNamesMap[FileInfo::FileType::kUnknown] = tr("Unknown");
 
+    namesMap[FileInfo::FileType::kDirectory] = "Directory";
+    namesMap[FileInfo::FileType::kDesktopApplication] = "Application";
+    namesMap[FileInfo::FileType::kVideos] = "Video";
+    namesMap[FileInfo::FileType::kAudios] = "Audio";
+    namesMap[FileInfo::FileType::kImages] = "Image";
+    namesMap[FileInfo::FileType::kArchives] = "Archive";
+    namesMap[FileInfo::FileType::kDocuments] = "Text";
+    namesMap[FileInfo::FileType::kExecutable] = "Executable";
+    namesMap[FileInfo::FileType::kBackups] = "Backup file";
+    namesMap[FileInfo::FileType::kUnknown] = "Unknown";
+
     defaultIconNames[FileInfo::FileType::kDirectory] = "folder";
     defaultIconNames[FileInfo::FileType::kDesktopApplication] = "application-default-icon";
     defaultIconNames[FileInfo::FileType::kVideos] = "video";
@@ -52,28 +63,17 @@ void MimeTypeDisplayManager::initData()
     loadSupportMimeTypes();
 }
 
-QMimeType MimeTypeDisplayManager::getMimeTypeForFile(const QString &filePath) const
-{
-    QMimeType mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
-    if (mimeType.isValid()) {
-        return mimeType;
-    }
-
-    mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
-    if (mimeType.isValid()) {
-        qCWarning(logDFMBase) << "MimeTypeDisplayManager::getMimeTypeForFile: get mimetype by MatchContent";
-        return mimeType;
-    }
-
-    return QMimeType();
-}
-
 QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath) const
 {
     if (filePath.isEmpty())
         return displayNamesMap[FileInfo::FileType::kUnknown];
 
-    QMimeType mimeType = getMimeTypeForFile(filePath);
+    QMimeType mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+
+    if (mimeType.isValid())
+        return displayName(mimeType.name());
+
+    mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
     if (mimeType.isValid())
         return displayName(mimeType.name());
 
@@ -90,11 +90,25 @@ QString MimeTypeDisplayManager::fastMimeTypeName(const QString &filePath) const
     if (filePath.isEmpty())
         return displayNamesMap[FileInfo::FileType::kUnknown];
 
-    QMimeType mimeType = getMimeTypeForFile(filePath);
-    if (mimeType.isValid()) {
-        const QString name = mimeType.name();
-        return displayNamesMap.value(displayNameToEnum(name)) + " (" + name + ")";
+    QMimeType mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+    QString mimeName = mimeType.name();
+    if (mimeType.isValid() && mimeName != "application/octet-stream") {
+        return fullMimeName(mimeName);
     }
+
+    // Fallback: Check if it's a directory
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isDir()) {
+        mimeName = "inode/directory";
+        return fullMimeName(mimeName);
+    }
+
+    // Fallback
+    mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
+    mimeName = mimeType.name();
+    if (mimeType.isValid())
+        return fullMimeName(mimeName);
+
     return displayNamesMap[FileInfo::FileType::kUnknown];
 }
 
@@ -104,6 +118,11 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType) const
     return displayNamesMap.value(displayNameToEnum(mimeType)) + " (" + mimeType + ")";
 #endif   // Q_DEBUG
     return displayNamesMap.value(displayNameToEnum(mimeType));
+}
+
+QString MimeTypeDisplayManager::fullMimeName(const QString &mimeType) const
+{
+    return namesMap.value(displayNameToEnum(mimeType)) + " (" + mimeType + ")";
 }
 
 FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType) const

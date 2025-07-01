@@ -22,6 +22,7 @@
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/sortutils.h>
 
 #include <DApplication>
 #include <DFileDragClient>
@@ -1640,7 +1641,7 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     auto compareByName = [fileSortOrder, m, leftIdx, rightIdx]() {
         QString leftName = m->data(leftIdx, kItemFileDisplayNameRole).toString();
         QString rightName = m->data(rightIdx, kItemFileDisplayNameRole).toString();
-        return FileUtils::compareString(leftName, rightName, fileSortOrder);
+        return SortUtils::compareString(leftName, rightName, fileSortOrder);
     };
 
     switch (fileSortRole) {
@@ -1649,7 +1650,7 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     case kItemFileDisplayNameRole: {
         QString leftString = leftData.toString();
         QString rightString = rightData.toString();
-        return leftString == rightString ? compareByName() : FileUtils::compareString(leftString, rightString, fileSortOrder);
+        return leftString == rightString ? compareByName() : SortUtils::compareString(leftString, rightString, fileSortOrder);
     }
     case kItemFileSizeRole: {
         qint64 leftSize = leftData.toLongLong();

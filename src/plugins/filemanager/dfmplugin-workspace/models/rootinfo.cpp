@@ -29,7 +29,7 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
 
     // 使用关键字提取器来处理关键字解析
     keyWords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
-    
+
     if (!keyWords.isEmpty()) {
         fmDebug() << "Extracted keywords for search:" << keyWords;
     }
@@ -656,6 +656,7 @@ SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
     sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
     sortInfo->setDisplayType(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
+    sortInfo->setFastMimeType(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName));
     sortInfo->setInfoCompleted(true);
     return sortInfo;
 }
