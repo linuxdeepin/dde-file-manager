@@ -30,6 +30,11 @@ class CanvasViewPrivate : public QObject
 {
     Q_OBJECT
 public:
+    enum class ClickedAction : uint8_t {
+        kClicked = 0,
+        kDoubleClicked
+    };
+
     struct CanvasInfo
     {
         CanvasInfo() { }
@@ -58,6 +63,8 @@ public:
     QString visualItem(const QPoint &gridPos) const;
     bool itemGridpos(const QString &item, QPoint &gridPos) const;
     bool isWaterMaskOn();
+    void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
+    void openIndex(const QModelIndex &index);
 
 public:
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;

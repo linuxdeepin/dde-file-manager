@@ -40,6 +40,11 @@ class CollectionViewPrivate : public QObject
 {
     Q_OBJECT
 public:
+    enum class ClickedAction : uint8_t {
+        kClicked = 0,
+        kDoubleClicked
+    };
+
     explicit CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent = nullptr);
     ~CollectionViewPrivate();
 
@@ -92,6 +97,8 @@ public:
     void updateDFMMimeData(QDropEvent *event);
     void redoFiles();
     bool checkTargetEnable(QDropEvent *event, const QUrl &targetUrl);
+    void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
+    void openIndex(const QModelIndex &index);
 
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
