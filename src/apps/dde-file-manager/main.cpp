@@ -418,10 +418,6 @@ int main(int argc, char *argv[])
     qCInfo(logAppFileManager) << "main: Application started successfully, PID:" << a.applicationPid();
     int ret { a.exec() };
 
-    // Immediately disable all debug logging after event loop ends to prevent unwanted debug output during shutdown
-    qCInfo(logAppFileManager) << "main: Reset log rules:" << LoggerRules::instance().rules();
-    LoggerRules::instance().setRules(LoggerRules::instance().rules());
-
     mo->unRegisterDBus();
     a.closeServer();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
