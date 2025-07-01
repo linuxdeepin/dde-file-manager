@@ -34,13 +34,11 @@ public:
     qint64 lastModifed { 0 };
     qint64 create { 0 };
 
-    QString displayType { "" };  // 文件类型
     QString highlightContent { "" };   // 存储文件的高亮内容
-    QString fastMimetype { "" }; // 快速获取文件类型(基于文件后缀)
-    
+
     // 信息完整性标记
     bool infoCompleted { false };   // 标记详细信息是否已获取
-    
+
     // 线程安全
     mutable QMutex mutex;
 };

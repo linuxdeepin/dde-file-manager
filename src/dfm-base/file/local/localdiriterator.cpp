@@ -252,8 +252,6 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         tmp->setLastReadTime(sortInfo->lastRead);
         tmp->setLastModifiedTime(sortInfo->lastModifed);
         tmp->setCreateTime(sortInfo->create);
-        tmp->setDisplayType(MimeTypeDisplayManager::instance()->displayTypeFromPath(sortInfo->url.path()));
-        tmp->setFastMimeType(MimeTypeDisplayManager::instance()->fastMimeTypeName(sortInfo->url.path()));
         tmp->setInfoCompleted(true);
         wsortlist.append(tmp);
     }

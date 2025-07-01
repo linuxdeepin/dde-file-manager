@@ -37,10 +37,8 @@ public:
     void setLastReadTime(const qint64 time);
     void setLastModifiedTime(const qint64 time);
     void setCreateTime(const qint64 time);
-    void setDisplayType(const QString &displayType);
-    void setFastMimeType(const QString &mimeType);
     void setHighlightContent(const QString &content);
-    
+
     // 信息完整性相关方法
     void setInfoCompleted(const bool completed);
     void markAsCompleted();
@@ -57,10 +55,8 @@ public:
     qint64 lastReadTime() const;
     qint64 lastModifiedTime() const;
     qint64 createTime() const;
-    QString displayType() const;
-    QString fastMimeType() const;
     QString highlightContent() const;
-    
+
     // 信息完整性查询方法
     bool isInfoCompleted() const;
     bool needsCompletion() const;
@@ -74,4 +70,4 @@ typedef QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo> SortInfoPointer;
 Q_DECLARE_METATYPE(SortInfoPointer)
 Q_DECLARE_METATYPE(QList<SortInfoPointer>)
 
-#endif // SORTFILEINFO_H
+#endif   // SORTFILEINFO_H

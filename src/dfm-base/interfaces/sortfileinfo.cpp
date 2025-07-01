@@ -80,15 +80,6 @@ void SortFileInfo::setCreateTime(const qint64 time)
     d->create = time;
 }
 
-void SortFileInfo::setDisplayType(const QString &displayType)
-{
-    d->displayType = displayType;
-}
-
-void SortFileInfo::setFastMimeType(const QString &mimeType)
-{
-    d->fastMimetype = mimeType;
-}
 void SortFileInfo::setHighlightContent(const QString &content)
 {
     d->highlightContent = content;
@@ -157,16 +148,6 @@ qint64 SortFileInfo::lastModifiedTime() const
 qint64 SortFileInfo::createTime() const
 {
     return d->create;
-}
-
-QString SortFileInfo::displayType() const
-{
-    return d->displayType;
-}
-
-QString SortFileInfo::fastMimeType() const
-{
-    return d->fastMimetype;
 }
 
 // 信息完整性相关方法
