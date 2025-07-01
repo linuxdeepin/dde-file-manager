@@ -15,6 +15,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/dpf.h>
+#include <dfm-base/base/application/application.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -717,9 +718,14 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
     d->viewSetting->checkTouchDrag(event);
     QAbstractItemView::mousePressEvent(event);
 
-    if (!index.isValid() && event->button() == Qt::LeftButton) {   // empty area
-        BoxSelIns->beginSelect(event->globalPos(), true);
-        setState(DragSelectingState);
+    if (event->button() == Qt::LeftButton) {
+        if (itemDelegate())
+            itemDelegate()->commitDataAndCloseEditor();
+
+        if (!index.isValid()) {   // empty area
+            BoxSelIns->beginSelect(event->globalPos(), true);
+            setState(DragSelectingState);
+        }
     }
 
     d->clickSelector->click(index);
@@ -739,41 +745,6 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 
     auto releaseIndex = indexAt(event->pos());
     d->clickSelector->release(releaseIndex);
-}
-
-void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton)
-        return;
-
-    auto pos = event->pos();
-    const QModelIndex &index = indexAt(pos);
-    if (!index.isValid())
-        return;
-    if (isPersistentEditorOpen(index)) {
-        itemDelegate()->commitDataAndCloseEditor();
-        QTimer::singleShot(200, this, [this, pos]() {
-            // file info and url changed,but pos will not change
-            const QModelIndex &renamedIndex = indexAt(pos);
-            if (!renamedIndex.isValid()) {
-                fmWarning() << "renamed index is invalid.";
-                return;
-            }
-            const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
-            FileOperatorProxyIns->openFiles(this, { renamedUrl });
-        });
-        return;
-    }
-    // process in QAbstractItemView::mouseDoubleClickEvent
-    // this can prevent opening editor by calling edit.
-    QPersistentModelIndex persistent = index;
-    if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
-        && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this))
-        emit activated(persistent);
-
-    const QUrl &url = model()->fileUrl(index);
-    FileOperatorProxyIns->openFiles(this, { url });
-    event->accept();
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)
@@ -859,6 +830,10 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 #ifdef QT_DEBUG
     showGrid = true;
 #endif
+
+    using namespace std::placeholders;
+    connect(q, &CanvasView::clicked, this, std::bind(&CanvasViewPrivate::openIndexByClicked, this, ClickedAction::kClicked, _1));
+    connect(q, &CanvasView::doubleClicked, this, std::bind(&CanvasViewPrivate::openIndexByClicked, this, ClickedAction::kDoubleClicked, _1));
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
@@ -984,6 +959,33 @@ bool CanvasViewPrivate::isWaterMaskOn()
         return desktopSettings.get("waterMask").toBool();
 #endif
     return true;
+}
+
+void CanvasViewPrivate::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
+{
+    ClickedAction configAction = static_cast<ClickedAction>(Application::instance()->appAttribute(Application::kOpenFileMode).toInt());
+    if (action == configAction) {
+        Qt::ItemFlags flags = q->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+
+        if (!WindowUtils::keyCtrlIsPressed() && !WindowUtils::keyShiftIsPressed())
+            openIndex(index);
+    }
+}
+
+void CanvasViewPrivate::openIndex(const QModelIndex &index)
+{
+    const FileInfoPointer &info = q->model()->fileInfo(index);
+
+    if (!info) {
+        fmWarning() << "Cannot open index: file info is null";
+        return;
+    }
+
+    QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "Opening file:" << fileUrl;
+    FileOperatorProxyIns->openFiles(q, { fileUrl });
 }
 
 QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const

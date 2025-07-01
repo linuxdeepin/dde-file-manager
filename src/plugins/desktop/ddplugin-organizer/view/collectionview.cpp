@@ -23,6 +23,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/sortutils.h>
+#include <dfm-base/base/application/application.h>
 
 #include <DApplication>
 #include <DFileDragClient>
@@ -96,6 +97,10 @@ void CollectionViewPrivate::initConnect()
     connect(searchTimer, &QTimer::timeout, this, [this]() {
         searchKeys.clear();
     });
+
+    using namespace std::placeholders;
+    connect(q, &CollectionView::clicked, this, std::bind(&CollectionViewPrivate::openIndexByClicked, this, ClickedAction::kClicked, _1));
+    connect(q, &CollectionView::doubleClicked, this, std::bind(&CollectionViewPrivate::openIndexByClicked, this, ClickedAction::kDoubleClicked, _1));
 }
 
 QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index) const
@@ -1066,6 +1071,33 @@ bool CollectionViewPrivate::checkTargetEnable(QDropEvent *event, const QUrl &tar
     return true;
 }
 
+void CollectionViewPrivate::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
+{
+    ClickedAction configAction = static_cast<ClickedAction>(Application::instance()->appAttribute(Application::kOpenFileMode).toInt());
+    if (action == configAction) {
+        Qt::ItemFlags flags = q->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+
+        if (!WindowUtils::keyCtrlIsPressed() && !WindowUtils::keyShiftIsPressed())
+            openIndex(index);
+    }
+}
+
+void CollectionViewPrivate::openIndex(const QModelIndex &index)
+{
+    const FileInfoPointer &info = q->model()->fileInfo(index);
+
+    if (!info) {
+        fmWarning() << "Cannot open index: file info is null";
+        return;
+    }
+
+    QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "Opening file:" << fileUrl;
+    FileOperatorIns->openFiles(q, { fileUrl });
+}
+
 void CollectionViewPrivate::redoFiles()
 {
     FileOperatorIns->undoFiles(q);
@@ -1809,8 +1841,10 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
     d->checkTouchDarg(event);
 
     auto index = indexAt(pos);
-    if (index.isValid() && isPersistentEditorOpen(index))
+    if (index.isValid() && isPersistentEditorOpen(index)) {
+        itemDelegate()->commitDataAndCloseEditor();
         return;
+    }
 
     d->pressedModifiers = event->modifiers();
     d->pressedAlreadySelected = selectionModel()->isSelected(index);
@@ -1882,45 +1916,6 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
     } else {
         d->elasticBand = QRect();
     }
-}
-
-void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton)
-        return;
-
-    auto pos = event->pos();
-    const QModelIndex &index = indexAt(pos);
-    if (!index.isValid()) {
-        fmDebug() << "Double click on empty area";
-        return;
-    }
-
-    if (isPersistentEditorOpen(index)) {
-        itemDelegate()->commitDataAndCloseEditor();
-        QTimer::singleShot(200, this, [this, pos]() {
-            // file info and url changed,but pos will not change
-            const QModelIndex &renamedIndex = indexAt(pos);
-            if (!renamedIndex.isValid()) {
-                fmWarning() << "renamed index is invalid.";
-                return;
-            }
-            const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
-            FileOperatorIns->openFiles(this, { renamedUrl });
-        });
-        return;
-    }
-    // process in QAbstractItemView::mouseDoubleClickEvent
-    // this can prevent opening editor by calling edit.
-    QPersistentModelIndex persistent = index;
-    if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
-        && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this))
-        emit activated(persistent);
-
-    const QUrl &url = model()->fileUrl(index);
-    fmInfo() << "Double click detected, opening file:" << url.toString();
-    FileOperatorIns->openFiles(this, { url });
-    event->accept();
 }
 
 void CollectionView::resizeEvent(QResizeEvent *event)
