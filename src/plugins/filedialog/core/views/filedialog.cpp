@@ -406,10 +406,15 @@ void FileDialog::setNameFilters(const QStringList &filters)
 {
     d->nameFilters = filters;
 
-    if (testOption(QFileDialog::HideNameFilterDetails)) {
+    QVariant isGtk = qApp->property("GTK");
+    if (isGtk.isValid() && isGtk.toBool()) {
         statusBar()->setComBoxItems(CoreHelper::stripFilters(filters));
     } else {
-        statusBar()->setComBoxItems(filters);
+        if (testOption(QFileDialog::HideNameFilterDetails)) {
+            statusBar()->setComBoxItems(CoreHelper::stripFilters(filters));
+        } else {
+            statusBar()->setComBoxItems(filters);
+        }
     }
 
     if (modelCurrentNameFilter().isEmpty())
@@ -520,9 +525,6 @@ QString FileDialog::labelText(QFileDialog::DialogLabel label) const
 
 void FileDialog::setOptions(QFileDialog::Options options)
 {
-    if (!d->isFileView)
-        return;
-
     // （此处修改比较特殊，临时方案）与产品沟通后，使用uos文管保存框保存文件时，如果当前目录下有同名文件，
     // 必须要弹出提示框 "是否覆盖重名文件"。
     // 所以options中的QFileDialog::DontConfirmOverwrite标志位将失去意义，
@@ -530,6 +532,9 @@ void FileDialog::setOptions(QFileDialog::Options options)
     options &= ~QFileDialog::DontConfirmOverwrite;
 
     d->options = options;
+
+    if (!d->isFileView)
+        return;
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetReadOnly",
                          internalWinId(), options.testFlag(QFileDialog::ReadOnly));
@@ -796,10 +801,15 @@ void FileDialog::selectNameFilter(const QString &filter)
 {
     QString key;
 
-    if (testOption(QFileDialog::HideNameFilterDetails)) {
+    QVariant isGtk = qApp->property("GTK");
+    if (isGtk.isValid() && isGtk.toBool()) {
         key = CoreHelper::stripFilters(QStringList(filter)).first();
     } else {
-        key = filter;
+        if (testOption(QFileDialog::HideNameFilterDetails)) {
+            key = CoreHelper::stripFilters(QStringList(filter)).first();
+        } else {
+            key = filter;
+        }
     }
 
     int index = statusBar()->comboBox()->findText(key);
