@@ -69,7 +69,6 @@ protected:
 private:
     int iteratorOneByOne(const QElapsedTimer &timere);
     QList<SortInfoPointer> iteratorAll();
-    void createFileInfo(const QList<SortInfoPointer> &list);
 };
 }
 
