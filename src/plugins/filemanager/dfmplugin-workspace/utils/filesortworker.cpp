@@ -1587,11 +1587,13 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
 
     // 1. 符号链接需要直接获取指向的文件的信息排序
     // 2. 类型排序必须使用 fastMimeType 保证一致性
+    bool useFileInfo = false;
     if (!leftData.isValid() || (leftSortInfo->isSymLink() && orgSortRole != kItemFileMimeTypeRole)) {
         const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
                 ? leftItem->fileInfo()
                 : InfoFactory::create<FileInfo>(left);
         leftData = data(leftInfo, orgSortRole);
+        useFileInfo = true;
     }
 
     if (!rightData.isValid() || (rightSortInfo->isSymLink() && orgSortRole != kItemFileMimeTypeRole)) {
@@ -1599,6 +1601,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
                 ? rightItem->fileInfo()
                 : InfoFactory::create<FileInfo>(right);
         rightData = data(rightInfo, orgSortRole);
+        useFileInfo = true;
     }
 
     // When the selected sort attribute value is the same, sort by file name
@@ -1625,7 +1628,9 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     case kItemFileMimeTypeRole:
         return SortUtils::compareStringForMimeType(leftData.toString(), rightData.toString());
     case kItemFileSizeRole:
-        return SortUtils::compareForSize(leftSortInfo, rightSortInfo);
+        // 这里的 useFileInfo 指的是使用 FileInfo 得到的 size 的数据，而非使用 sortFileInfo
+        return useFileInfo ? SortUtils::compareForSize(leftData.toLongLong(), rightData.toLongLong())
+                           : SortUtils::compareForSize(leftSortInfo, rightSortInfo);
     default:
         return SortUtils::compareStringDefault(leftData.toString(), rightData.toString());
     }
@@ -1654,7 +1659,7 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
     case kItemIconRole:
         return info->fileIcon();
     case kItemFileSizeRole:
-        return info->displayOf(DisPlayInfoType::kSizeDisplayName);
+        return info->size();
     case kItemFileMimeTypeRole:
         return info->displayOf(DisPlayInfoType::kFileTypeDisplayName);
     case kItemNameRole:
@@ -1684,7 +1689,8 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 
 QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles role)
 {
-    if (info.isNull())
+    // 非本地文件的搜索结果不会进行sortinfo的填充，因此直接返回
+    if (info.isNull() || !info->fileUrl().isLocalFile())
         return QVariant();
 
     switch (role) {

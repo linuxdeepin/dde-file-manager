@@ -486,6 +486,11 @@ bool compareForSize(const SortInfoPointer info1, const SortInfoPointer info2)
     return size1 < size2;
 }
 
+bool compareForSize(const qint64 size1, const qint64 size2)
+{
+    return size1 < size2;
+}
+
 QString displayType(const QUrl &url)
 {
     const QString path = getLocalPath(url);
