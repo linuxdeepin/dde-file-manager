@@ -112,7 +112,7 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
         return false;
 
     actionEntry.clear();
-
+    QStringList cfgList;
     topActionCount = 0;
     for (auto dirPath : dirPaths) {
 
@@ -122,6 +122,11 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
 
         //以时间先后遍历
         for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
+            const auto &cfgName = actionFileInfo.fileName();
+            if (cfgList.contains(cfgName))
+                continue;
+
+            cfgList << cfgName;
             //解析文件字段
             QSettings actionSetting(actionFileInfo.filePath(), customFormat);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
