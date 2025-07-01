@@ -1,3 +1,10 @@
+dde-file-manager (6.5.70) unstable; urgency=medium
+
+  * Fix some sorting bugs
+  * Fix filedialog not working
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 01 Jul 2025 21:20:46 +0800
+
 dde-file-manager (6.5.69) unstable; urgency=medium
 
   * fix bugs
