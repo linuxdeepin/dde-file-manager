@@ -1585,6 +1585,20 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     QVariant leftData = data(leftSortInfo, orgSortRole);
     QVariant rightData = data(rightSortInfo, orgSortRole);
 
+    if (!leftData.isValid()) {
+        const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
+                ? leftItem->fileInfo()
+                : InfoFactory::create<FileInfo>(left);
+        leftData = data(leftInfo, orgSortRole);
+    }
+
+    if (!rightData.isValid()) {
+        const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
+                ? rightItem->fileInfo()
+                : InfoFactory::create<FileInfo>(right);
+        rightData = data(rightInfo, orgSortRole);
+    }
+
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
         QString leftName = data(leftSortInfo, dfmbase::Global::kItemFileDisplayNameRole).toString();
