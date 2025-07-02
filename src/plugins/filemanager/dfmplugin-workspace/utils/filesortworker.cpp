@@ -1608,10 +1608,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     if (leftData == rightData) {
         QString leftName = leftSortInfo->fileUrl().fileName();
         QString rightName = rightSortInfo->fileUrl().fileName();
-        if (orgSortRole == kItemFileDisplayNameRole)
-            return SortUtils::compareStringForFileName(leftName, rightName);
-        else
-            return SortUtils::compareStringDefault(leftName, rightName);
+        return SortUtils::compareStringForFileName(leftName, rightName);
     }
 
     switch (orgSortRole) {
@@ -1632,7 +1629,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
         return useFileInfo ? SortUtils::compareForSize(leftData.toLongLong(), rightData.toLongLong())
                            : SortUtils::compareForSize(leftSortInfo, rightSortInfo);
     default:
-        return SortUtils::compareStringDefault(leftData.toString(), rightData.toString());
+        return SortUtils::compareStringForFileName(leftData.toString(), rightData.toString());
     }
 }
 

@@ -11,7 +11,6 @@
 DFMBASE_BEGIN_NAMESPACE
 
 namespace SortUtils {
-bool compareStringDefault(const QString &str1, const QString &str2);
 bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 bool compareStringForFileName(const QString &str1, const QString &str2);
 bool compareStringForTime(const QString &str1, const QString &str2);
@@ -28,7 +27,6 @@ bool isNumber(const QChar ch);
 bool isSymbol(const QChar ch);
 QString numberStr(const QString &str, int pos);
 bool isFullWidthChar(const QChar ch, QChar &normalized);
-QString makeQString(const QString::const_iterator &it, uint unicode);
 qint64 getEffectiveSize(const SortInfoPointer &info);
 QString getLocalPath(const QUrl &url);
 }   // namespace SortUtils
