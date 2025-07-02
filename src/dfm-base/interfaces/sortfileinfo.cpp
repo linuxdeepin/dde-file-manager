@@ -85,9 +85,19 @@ void SortFileInfo::setHighlightContent(const QString &content)
     d->highlightContent = content;
 }
 
+void SortFileInfo::setCustomData(const QString &key, const QVariant &value)
+{
+    d->customData.insert(key, value);
+}
+
 QString SortFileInfo::highlightContent() const
 {
     return d->highlightContent;
+}
+
+QVariant SortFileInfo::customData(const QString &key) const
+{
+    return d->customData.value(key);
 }
 
 QUrl SortFileInfo::fileUrl() const

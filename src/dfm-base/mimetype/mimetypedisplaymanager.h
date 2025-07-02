@@ -51,6 +51,9 @@ private:
     QStringList imageMimeTypes;
     QStringList executableMimeTypes;
     QStringList backupMimeTypes;
+
+    mutable int contentBasedFallbackCount = 0;
+    static const int kMaxContentBasedFallback = 1000;
 };
 
 }

@@ -78,12 +78,16 @@ QMimeType MimeTypeDisplayManager::determineMimeType(const QString &filePath) con
         return mimeTypeDatabase.mimeTypeForName("inode/directory");
     }
 
-    // Fallback to content-based detection
-    mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
-    if (mimeType.isValid())
-        return mimeType;
+    // Fallback to content-based detection limited by threshold
+    if (contentBasedFallbackCount < kMaxContentBasedFallback) {
+        ++contentBasedFallbackCount;
+        qCWarning(logDFMBase) << "Fallback to content-based mime detection, attempt" << contentBasedFallbackCount << "for file:" << filePath;
+        mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
+        if (mimeType.isValid())
+            return mimeType;
+    }
 
-    return QMimeType();   // Unknown
+    return mimeType;   // May be invalid, but we skip further MatchContent
 }
 
 QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath) const
