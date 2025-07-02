@@ -71,7 +71,8 @@ function run_app() {
         scale_factor=$(get_scale_factor)
         if [ "$scale_factor" != "1" ]; then
             echo "export scaling: $scale_factor"
-            export QT_SCALE_FACTOR=$scale_factor
+            # 暂时屏蔽，v25 下造成缩放异常
+            # export QT_SCALE_FACTOR=$scale_factor
         fi
 
         file-manager.sh "$1" -w "$(pwd)"
