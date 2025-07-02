@@ -26,6 +26,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/viewdefines.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
@@ -128,6 +129,9 @@ void Search::regSearchToWorkspace()
 
 void Search::regSearchSettingConfig()
 {
+    if (SysInfoUtils::isOpenAsAdmin())
+        return;
+
     QString err;
     auto ret = DConfigManager::instance()->addConfig(DConfig::kSearchCfgPath, &err);
     if (!ret)
