@@ -38,6 +38,7 @@ public:
     void setLastModifiedTime(const qint64 time);
     void setCreateTime(const qint64 time);
     void setHighlightContent(const QString &content);
+    void setCustomData(const QString &key, const QVariant &value);
 
     // 信息完整性相关方法
     void setInfoCompleted(const bool completed);
@@ -56,6 +57,7 @@ public:
     qint64 lastModifiedTime() const;
     qint64 createTime() const;
     QString highlightContent() const;
+    QVariant customData(const QString &key) const;
 
     // 信息完整性查询方法
     bool isInfoCompleted() const;

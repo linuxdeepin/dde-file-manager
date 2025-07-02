@@ -28,6 +28,7 @@ public:
     bool readable { false };
     bool writeable { false };
     bool executable { false };
+    QVariantMap customData;
 
     // time info
     qint64 lastRead { 0 };

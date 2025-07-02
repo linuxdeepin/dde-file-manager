@@ -1708,8 +1708,16 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
     }
     case kItemFileDisplayNameRole:
         return info->fileUrl().fileName();
-    case kItemFileMimeTypeRole:
-        return SortUtils::fastMimeType(info->fileUrl());
+    case kItemFileMimeTypeRole: {
+        // perf: SortUtils::fastMimeType 的成本较高，缓存减少调用
+        // 避免 CPU 密集任务中出现大规模 IO 影响性能
+        if (info->customData("fast_mime_type").isValid()) {
+            return info->customData("fast_mime_type");
+        }
+        const QString &type = SortUtils::fastMimeType(info->fileUrl());
+        const_cast<SortInfoPointer &>(info)->setCustomData("fast_mime_type", type);
+        return type;
+    }
     case kItemFileSizeRole:
         return info->fileSize();
     default:
