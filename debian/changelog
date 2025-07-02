@@ -1,3 +1,10 @@
+dde-file-manager (6.5.71) unstable; urgency=medium
+
+  * optimize mime type detection and reduce content-based fallback
+  * disable QT_SCALE_FACTOR in pkexec mode to resolve scaling issues
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 02 Jul 2025 10:46:05 +0800
+
 dde-file-manager (6.5.70) unstable; urgency=medium
 
   * Fix some sorting bugs
