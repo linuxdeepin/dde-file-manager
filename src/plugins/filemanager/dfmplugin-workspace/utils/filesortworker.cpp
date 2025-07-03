@@ -1689,8 +1689,18 @@ QVariant FileSortWorker::data(const FileInfoPointer &info, ItemRoles role)
 
 QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles role)
 {
-    // 非本地文件的搜索结果不会进行sortinfo的填充，因此直接返回
-    if (info.isNull() || !info->fileUrl().isLocalFile())
+    auto isContainInHomeDir = [info, role]() {
+        if (!info->isDir() || role != kItemFileDisplayNameRole)
+            return false;
+        const QUrl &url = info->fileUrl();
+        static const QString kHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        const auto &path = QDir::cleanPath(url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash).toLocalFile());
+        return path == kHomePath;
+    };
+
+    // 1. 非本地文件的搜索结果不会进行sortinfo的填充，因此直接返回
+    // 2. Home 目录下由于 XDG 目录进行了转译，使用 fileinfo 的 displayname 更
+    if (info.isNull() || !info->fileUrl().isLocalFile() || isContainInHomeDir())
         return QVariant();
 
     switch (role) {
