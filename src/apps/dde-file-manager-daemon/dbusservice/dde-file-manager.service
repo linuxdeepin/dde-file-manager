@@ -12,6 +12,7 @@ Before=dde-session-initialized.target
 Type=dbus
 BusName=org.deepin.Filemanager.Daemon
 ExecStart=/usr/bin/dde-file-manager-daemon
+TimeoutStopSec=10
 
 [Install]
 WantedBy=graphical-session.target
