@@ -224,6 +224,11 @@ bool TagDbUpgradeUnit::checkOldDatabase()
                                                   kTagOldDbName1,
                                                   nullptr);
 
+    if (!QFile(dbPath1).exists()) {
+        qCDebug(logToolUpgrade) << "No old tag data, no compatibility issues";
+        return true;
+    }
+
     QSqlDatabase db1 { SqliteConnectionPool::instance().openConnection(dbPath1) };
     if (!db1.isValid() || db1.isOpenError()) {
         qCDebug(logToolUpgrade) << "Main database not accessible:" << dbPath1;
