@@ -83,21 +83,24 @@ FileSortWorker::~FileSortWorker()
 
 FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
 {
+    // 强制树形模式下 isMixDirAndFile 为 false
+    bool mixDirAndFile = istree ? false : isMixDirAndFile;
+
     FileSortWorker::SortOpt opt { FileSortWorker::SortOpt::kSortOptNone };
-    if (sortOrder == order && orgSortRole == sortRole && this->isMixDirAndFile == isMixDirAndFile)
+    if (sortOrder == order && orgSortRole == sortRole && this->isMixDirAndFile == mixDirAndFile)
         return opt;
-    if (orgSortRole != sortRole || this->isMixDirAndFile != isMixDirAndFile) {
+    if (orgSortRole != sortRole || this->isMixDirAndFile != mixDirAndFile) {
         opt = FileSortWorker::SortOpt::kSortOptOtherChanged;
     } else {
         opt = FileSortWorker::SortOpt::kSortOptOnlyOrderChanged;
     }
 
     fmInfo() << "Setting sort arguments - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-             << "role:" << static_cast<int>(sortRole) << "mix dir and file:" << isMixDirAndFile;
+             << "role:" << static_cast<int>(sortRole) << "mix dir and file:" << mixDirAndFile;
 
     sortOrder = order;
     orgSortRole = sortRole;
-    this->isMixDirAndFile = isMixDirAndFile;
+    this->isMixDirAndFile = mixDirAndFile;
     switch (sortRole) {
     case Global::ItemRoles::kItemFileDisplayNameRole:
         this->sortRole = DEnumerator::SortRoleCompareFlag::kSortRoleCompareFileName;
