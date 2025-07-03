@@ -168,7 +168,7 @@ void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::Show) {
-        //在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
+        // 在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
         if (!setEditorData(qobject_cast<ListItemEditor *>(object)))
             return false;
     } else if (event->type() == QEvent::KeyPress) {
@@ -346,7 +346,7 @@ void ListItemDelegate::setItemMinimumHeightByHeightLevel(int level)
     d->currentHeightLevel = level;
     updateItemSizeHint();
     int iconHeight = d->itemSizeHint.height() * 0.75;
-    parent()->parent()->setIconSize(QSize(iconHeight, iconHeight)); // 设置 iconSize 为行高的 0.75
+    parent()->parent()->setIconSize(QSize(iconHeight, iconHeight));   // 设置 iconSize 为行高的 0.75
 }
 
 int ListItemDelegate::minimumHeightLevel() const
@@ -522,8 +522,8 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
     const QString previewContent = index.data(kItemFileContentPreviewRole).toString();
     // 检查是否支持并需要显示内容预览
-    bool showContentPreview = d->paintProxy && d->paintProxy->supportContentPreview() && !previewContent.isEmpty() && index != editingIndex() &&
-            d->itemSizeHint.height() >= d->viewDefines.listHeight(d->viewDefines.listHeightCount() - 1); // 检查是否为最大高度
+    bool showContentPreview = d->paintProxy && d->paintProxy->supportContentPreview() && !previewContent.isEmpty() && index != editingIndex()
+            && d->itemSizeHint.height() >= d->viewDefines.listHeight(d->viewDefines.listHeightCount() - 1);   // 检查是否为最大高度
 
     QRectF textRect = rect;
     if (showContentPreview) {
@@ -546,13 +546,13 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
         nameLayout->setHighlightEnabled(!isSelected);
         nameLayout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
-        nameLayout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
+        nameLayout->setHighlightColor(QColor("#0081FF"));
         nameLayout->layout(textRect, Qt::ElideRight, painter);
 
         // 绘制文件内容预览(下半部分)
         painter->save();
         QFont previewFont = painter->font();
-        previewFont.setPointSize(previewFont.pointSize() - 2);  // Reduce font size by 2
+        previewFont.setPointSize(previewFont.pointSize() - 2);   // Reduce font size by 2
 
         QRectF contentRect = rect;
         int contentHeight = QFontMetrics(previewFont).height();
@@ -572,7 +572,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
         contentLayout->setHighlightEnabled(!isSelected);
         contentLayout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
-        contentLayout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
+        contentLayout->setHighlightColor(QColor("#0081FF"));
         contentLayout->layout(contentRect, Qt::ElideRight, painter);
         painter->restore();
     } else {
@@ -589,7 +589,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
         layout->setHighlightEnabled(!isSelected);
         layout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
-        layout->setHighlightColor(option.palette.color(QPalette::Active, QPalette::Highlight));
+        layout->setHighlightColor(QColor("#0081FF"));
         layout->layout(textRect, Qt::ElideRight, painter);
     }
 }
