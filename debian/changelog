@@ -1,3 +1,10 @@
+dde-file-manager (6.5.72) unstable; urgency=medium
+
+  * update translations
+  * Optimize file name sorting
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 03 Jul 2025 15:47:40 +0800
+
 dde-file-manager (6.5.71) unstable; urgency=medium
 
   * optimize mime type detection and reduce content-based fallback
