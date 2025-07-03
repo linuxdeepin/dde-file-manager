@@ -121,7 +121,20 @@ void Core::exitOnShutdown(bool shutdown)
 {
     if (shutdown) {
         fmInfo() << "PrepareForShutdown is emitted, exit...";
-        qApp->exit(0);
+        // 设置一个5秒的看门狗定时器。
+        // 如果5秒后我们还“活着”，就强制退出。
+        const int watchdogTimeout = 5000;
+        QTimer::singleShot(watchdogTimeout, [=]() {
+            // 如果这段代码被执行，说明优雅退出失败了。
+            // 记录一条日志是至关重要的，这样你就知道是看门狗触发了退出。
+            fmWarning() << "Graceful shutdown timed out after" << watchdogTimeout << "ms. Forcing exit with _Exit(0).";
+
+            // 立即终止进程
+            ::_Exit(0);
+        });
+
+        // 尝试正常、优雅地退出
+        qApp->quit();
     }
 }
 
