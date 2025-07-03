@@ -44,7 +44,8 @@ bool compareStringForFileName(const QString &str1, const QString &str2)
     };
 
     auto getCharType = [](uint unicode) -> CharType {
-        if (QChar(unicode).isDigit()) return NumberType;
+        // 使用静态 QChar 函数，它们可以安全地处理32位Unicode码点
+        if (QChar::isDigit(unicode)) return NumberType;
         // isNumber() 辅助函数可以处理全角数字，但 QChar::isDigit 更高效
         // 我们的 isNumber 仍需在 numberStr 中使用
 
@@ -125,9 +126,10 @@ bool compareStringForFileName(const QString &str1, const QString &str2)
 
                 // 规则3平局决胜: a A b B
                 if (QChar::isLetter(unicode1) && QChar::isLetter(unicode2)) {
-                    if (QChar(unicode1).toLower() == QChar(unicode2).toLower()) {
-                        if (QChar(unicode1).isLower() != QChar(unicode2).isLower()) {
-                            return QChar(unicode1).isLower() ? -1 : 1;
+                    if (QChar::toLower(unicode1) == QChar::toLower(unicode2)) {
+                        // 如果小写形式相同，小写字母排在前面
+                        if (QChar::isLower(unicode1) != QChar::isLower(unicode2)) {
+                            return QChar::isLower(unicode1) ? -1 : 1;
                         }
                     }
                 }
