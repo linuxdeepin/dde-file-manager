@@ -1,3 +1,9 @@
+dde-file-manager (6.5.73) unstable; urgency=medium
+
+  * Revert 4a3e8474a4bd3b3
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 03 Jul 2025 16:10:58 +0800
+
 dde-file-manager (6.5.72) unstable; urgency=medium
 
   * update translations
