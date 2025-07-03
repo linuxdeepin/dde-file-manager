@@ -6570,7 +6570,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>

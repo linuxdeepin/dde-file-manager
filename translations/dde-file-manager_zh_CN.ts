@@ -66,7 +66,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <source>Can't access file!</source>
-        <translation type="unfinished">不能访问当前文件</translation>
+        <translation>不能访问当前文件</translation>
     </message>
 </context>
 <context>
@@ -123,22 +123,22 @@
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
         <source>Time modified</source>
-        <translation type="unfinished">修改时间</translation>
+        <translation>修改时间</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
         <source>Size</source>
-        <translation type="unfinished">大小</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
         <source>Type</source>
-        <translation type="unfinished">类型</translation>
+        <translation>类型</translation>
     </message>
 </context>
 <context>
@@ -177,7 +177,7 @@
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
         <source>Encrypt</source>
-        <translation type="unfinished">加密保险箱</translation>
+        <translation>加密保险箱</translation>
     </message>
     <message>
         <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
@@ -1652,7 +1652,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="481"/>
         <source>Confirm</source>
-        <translation type="unfinished">确 定</translation>
+        <translation>确 定</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="491"/>
@@ -1672,42 +1672,42 @@
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
         <source>Permission error</source>
-        <translation type="unfinished">权限错误</translation>
+        <translation>权限错误</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
         <source>The action is denied</source>
-        <translation type="unfinished">文件不支持此操作</translation>
+        <translation>文件不支持此操作</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished">目标磁盘剩余空间不足</translation>
+        <translation>目标磁盘剩余空间不足</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
         <source>The target device is read only</source>
-        <translation type="unfinished">目标设备为只读</translation>
+        <translation>目标设备为只读</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished">目标文件夹位于源文件夹内</translation>
+        <translation>目标文件夹位于源文件夹内</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
         <source>The action is not supported</source>
-        <translation type="unfinished">不支持该操作</translation>
+        <translation>不支持该操作</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished">还原失败，无法找到原路径</translation>
+        <translation>还原失败，无法找到原路径</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished">解析trash的url失败</translation>
+        <translation>解析trash的url失败</translation>
     </message>
     <message>
         <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
@@ -4284,7 +4284,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
         <source>Confirm</source>
-        <translation type="unfinished">确 定</translation>
+        <translation>确 定</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
@@ -4392,7 +4392,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Confirm</source>
-        <translation type="unfinished">确 定</translation>
+        <translation>确 定</translation>
     </message>
 </context>
 <context>
@@ -4435,7 +4435,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
         <source>Error</source>
-        <translation type="unfinished">错误信息</translation>
+        <translation>错误信息</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
@@ -4455,7 +4455,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="501"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished">解锁设备失败</translation>
+        <translation>解锁设备失败</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="502"/>
@@ -4470,7 +4470,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
         <source>unmount</source>
-        <translation type="unfinished">卸载</translation>
+        <translation>卸载</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
@@ -4661,7 +4661,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
         <source>Confirm</source>
-        <translation type="unfinished">确 定</translation>
+        <translation>确 定</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
@@ -4676,7 +4676,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
         <source>Error</source>
-        <translation type="unfinished">错误信息</translation>
+        <translation>错误信息</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
@@ -4749,7 +4749,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
         <source>Error</source>
-        <translation type="unfinished">错误信息</translation>
+        <translation>错误信息</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
@@ -4892,7 +4892,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
         <source>Unlock</source>
-        <translation type="unfinished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>

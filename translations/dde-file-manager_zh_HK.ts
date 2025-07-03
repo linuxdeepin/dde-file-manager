@@ -67,7 +67,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished">無法存取檔案！</translation>
+        <translation>無法存取檔案！</translation>
     </message>
 </context>
 <context>
@@ -1923,7 +1923,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished">創建時間</translation>
+        <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -4682,7 +4682,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
         <source>unmount</source>
-        <translation type="unfinished">卸載</translation>
+        <translation>卸載</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
@@ -5748,7 +5748,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation type="unfinished">時長</translation>
+        <translation>時長</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
@@ -6555,27 +6555,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation type="unfinished">修改時間</translation>
+        <translation>修改時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished">創建時間</translation>
+        <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished">大小</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished">類型</translation>
+        <translation>類型</translation>
     </message>
 </context>
 <context>
@@ -6588,7 +6588,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
-        <translation type="unfinished">圖標大小</translation>
+        <translation>圖標大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
@@ -7668,7 +7668,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
         <source>Time created</source>
-        <translation type="unfinished">創建時間</translation>
+        <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
@@ -7730,7 +7730,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation type="unfinished">創建時間</translation>
+        <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
