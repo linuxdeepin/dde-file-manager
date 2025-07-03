@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-disk-encrypt LANGUAGES CXX)
 set(BIN_NAME dfm-disk-encrypt-plugin)

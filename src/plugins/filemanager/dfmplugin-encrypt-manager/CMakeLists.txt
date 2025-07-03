@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 project(dfmplugin-encrypt-manager)
 set(BIN_NAME dfm-encrypt-plugin)
