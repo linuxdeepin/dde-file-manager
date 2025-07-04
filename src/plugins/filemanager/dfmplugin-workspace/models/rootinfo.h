@@ -166,6 +166,7 @@ private:
     QStringList connectedTokens;
 
     QStringList keyWords {};
+    std::atomic_bool isDying { false };
 };
 }
 
