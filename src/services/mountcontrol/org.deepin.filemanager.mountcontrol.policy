@@ -9,6 +9,8 @@
     <description>Mount control</description>
     <message>Authentication is required to unmount the device mounted by other user</message>
     <message xml:lang="zh_CN">需要授权以卸载其他用户挂载的设备</message>
+    <message xml:lang="zh_HK">需要授權以卸載其他用戶掛載的設備</message>
+    <message xml:lang="zh_TW">需要授權以卸載其他用戶掛載的設備</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>

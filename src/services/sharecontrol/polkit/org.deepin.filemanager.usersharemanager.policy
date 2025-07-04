@@ -9,6 +9,8 @@
     <description>User share manager</description>
     <message>Authentication is required to change your user share data</message>
     <message xml:lang="zh_CN">修改您的共享信息需要认证</message>
+    <message xml:lang="zh_HK">修改您的共享資訊需要認證</message>
+    <message xml:lang="zh_TW">修改您的共享資訊需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
