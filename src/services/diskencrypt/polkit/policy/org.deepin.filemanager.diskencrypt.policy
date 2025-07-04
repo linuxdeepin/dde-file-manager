@@ -35,6 +35,8 @@
     <description>Disk encryption</description>
     <message>Authentication is required to change the passphrase of disk</message>
     <message xml:lang="zh_CN">修改磁盘密码需要认证</message>
+    <message xml:lang="zh_HK">修改磁碟密碼需要認證</message>
+    <message xml:lang="zh_TW">修改磁碟密碼需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
