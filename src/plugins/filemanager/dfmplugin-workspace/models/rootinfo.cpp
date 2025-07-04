@@ -331,10 +331,14 @@ void RootInfo::doFileUpdated(const QUrl &url)
 
 void RootInfo::doWatcherEvent()
 {
-    if (processFileEventRuning)
-        return;
+    // 使用原子性的 test_and_set 操作
+    bool expected = false;
+    // 如果 processFileEventRuning 是 false，则将其设置为 true，并返回 true
+    // 如果已经是 true，则什么都不做，并返回 false
+    if (!processFileEventRuning.compare_exchange_strong(expected, true)) {
+        return;   // 已经有其他线程在运行，直接返回
+    }
 
-    processFileEventRuning = true;
     QElapsedTimer timer;
     timer.start();
     QList<QUrl> adds, updates, removes;
@@ -422,7 +426,7 @@ void RootInfo::doWatcherEvent()
             removes.append(fileUrl);
         }
     }
-    processFileEventRuning = false;
+    processFileEventRuning.store(false);   // 运行完毕，重置标志
 
     // 处理添加文件
     if (!removes.isEmpty())
