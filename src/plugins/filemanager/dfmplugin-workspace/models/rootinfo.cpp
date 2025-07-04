@@ -40,6 +40,7 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
 
 RootInfo::~RootInfo()
 {
+    isDying.store(true);
     fmInfo() << "RootInfo destructor started for URL:" << url.toString();
 
     disconnect();
@@ -439,7 +440,7 @@ void RootInfo::doWatcherEvent()
 
 void RootInfo::doThreadWatcherEvent()
 {
-    if (processFileEventRuning)
+    if (isDying.load() || processFileEventRuning)
         return;
     for (auto it = watcherEventFutures.begin(); it != watcherEventFutures.end();) {
         if (it->isFinished()) {
@@ -450,7 +451,7 @@ void RootInfo::doThreadWatcherEvent()
     }
 
     watcherEventFutures << QtConcurrent::run([&]() {
-        if (cancelWatcherEvent)
+        if (cancelWatcherEvent || isDying.load())
             return;
         doWatcherEvent();
     });
