@@ -157,7 +157,7 @@ private:
 
     QQueue<QPair<QUrl, EventType>> watcherEvent {};
     QMutex watcherEventMutex;
-    QAtomicInteger<bool> processFileEventRuning = false;
+    std::atomic_bool processFileEventRuning { false };
 
     QList<TraversalThreadPointer> discardedThread {};
     QList<QSharedPointer<QThread>> threads {};
