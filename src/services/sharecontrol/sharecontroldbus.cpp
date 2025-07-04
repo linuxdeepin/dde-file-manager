@@ -46,7 +46,7 @@ ShareControlDBus::~ShareControlDBus()
 bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
 {
     fmInfo() << "[ShareControlDBus::CloseSmbShareByShareName] Request to close SMB share:" << name << "show:" << show;
-    
+
     if (!show) {
         fmInfo() << "[ShareControlDBus::CloseSmbShareByShareName] Show parameter is false, operation skipped for share:" << name;
         return true;
@@ -68,9 +68,9 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     QString sharePath = "/var/lib/samba/usershares/";
     QString filePath = QString("%1%2").arg(sharePath).arg(name.toLower());   // 文件名小写
     QFileInfo info(filePath);
-    
+
     fmInfo() << "[ShareControlDBus::CloseSmbShareByShareName] Checking share file permissions - path:" << filePath << "caller UID:" << suid << "file owner UID:" << info.ownerId();
-    
+
     if ((suid != 0 && suid != info.ownerId())   // 对比文件属主与调用总线进程属主;
         || info.isSymLink()   // 禁止使用符合链接
         || !info.absoluteFilePath().startsWith(sharePath)) {   // 禁止使用../等
@@ -91,17 +91,17 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     } else {
         fmCritical() << "[ShareControlDBus::CloseSmbShareByShareName] Failed to close SMB share:" << name << "process output:" << p.readAll() << "stderr:" << p.readAllStandardError();
     }
-    
+
     fmDebug() << "[ShareControlDBus::CloseSmbShareByShareName] Command output for share:" << name << "stdout:" << p.readAllStandardOutput() << "stderr:" << p.readAllStandardError();
     return ret;
 }
 
 bool ShareControlDBus::SetUserSharePassword(const QDBusUnixFileDescriptor &credentialsFd)
 {
-    fmInfo() << "[ShareControlDBus::SetUserSharePassword] Request to set password for user:" << name;
-    
+    fmInfo() << "[ShareControlDBus::SetUserSharePassword] Request to set password";
+
     if (!checkAuthentication()) {
-        fmWarning() << "[ShareControlDBus::SetUserSharePassword] Authentication failed for user:" << name;
+        fmWarning() << "[ShareControlDBus::SetUserSharePassword] Authentication failed";
         return false;
     }
 
@@ -154,7 +154,7 @@ bool ShareControlDBus::SetUserSharePassword(const QDBusUnixFileDescriptor &crede
     QStringList args;
     args << "-a" << username << "-s";
     QProcess p;
-    fmInfo() << "[ShareControlDBus::SetUserSharePassword] Executing smbpasswd command for user:" << name;
+    fmInfo() << "[ShareControlDBus::SetUserSharePassword] Executing smbpasswd command";
     p.start("smbpasswd", args);
     if (!p.waitForStarted()) {
         fmInfo() << "Failed to start smbpasswd process";
@@ -167,21 +167,22 @@ bool ShareControlDBus::SetUserSharePassword(const QDBusUnixFileDescriptor &crede
     p.closeWriteChannel();
 
     bool r = p.waitForFinished();
-    
+
     if (r) {
-        fmInfo() << "[ShareControlDBus::SetUserSharePassword] Successfully set password for user:" << name;
+        fmInfo() << "[ShareControlDBus::SetUserSharePassword] Successfully set password";
     } else {
-        fmCritical() << "[ShareControlDBus::SetUserSharePassword] Failed to set password for user:" << name;
+        fmCritical() << "[ShareControlDBus::SetUserSharePassword] Failed to set password";
     }
-    
-    fmDebug() << "[ShareControlDBus::SetUserSharePassword] smbpasswd output for user:" << name << "stdout:" << p.readAllStandardOutput() << "stderr:" << p.readAllStandardError();
+
+    fmDebug() << "[ShareControlDBus::SetUserSharePassword] smbpasswd output. stdout:"
+              << p.readAllStandardOutput() << "stderr:" << p.readAllStandardError();
     return r;
 }
 
 bool ShareControlDBus::EnableSmbServices()
 {
     fmInfo() << "[ShareControlDBus::EnableSmbServices] Request to enable SMB services";
-    
+
     if (!checkAuthentication()) {
         fmWarning() << "[ShareControlDBus::EnableSmbServices] Authentication failed for enabling SMB services";
         return false;
@@ -205,7 +206,7 @@ bool ShareControlDBus::EnableSmbServices()
     } else {
         fmCritical() << "[ShareControlDBus::EnableSmbServices] Failed to enable nmbd service";
     }
-    
+
     fmInfo() << "[ShareControlDBus::EnableSmbServices] SMB services enablement completed with result:" << ret;
     return ret;
 }
@@ -213,16 +214,16 @@ bool ShareControlDBus::EnableSmbServices()
 bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
 {
     fmInfo() << "[ShareControlDBus::IsUserSharePasswordSet] Checking if password is set for user:" << username;
-    
+
     QProcess p;
     p.start("pdbedit", { "-L" });
     auto ret = p.waitForFinished();
-    
+
     if (!ret) {
         fmCritical() << "[ShareControlDBus::IsUserSharePasswordSet] Failed to execute pdbedit command for user:" << username;
         return false;
     }
-    
+
     QStringList resultLines = QString::fromUtf8(p.readAllStandardOutput()).split('\n');
     bool isPasswordSet = false;
     foreach (const QString &line, resultLines) {
