@@ -7,7 +7,6 @@
 #include <QSharedPointer>
 
 namespace dfmbase {
-Q_GLOBAL_STATIC(WatcherCache, _watcherCacheManager)
 
 /*!
  * \class DFMWatcherCachesManager
@@ -40,6 +39,7 @@ WatcherCache::~WatcherCache()
  */
 WatcherCache &WatcherCache::instance()
 {
+    static WatcherCache *_watcherCacheManager = new WatcherCache;
     return *_watcherCacheManager;
 }
 /*!
@@ -109,16 +109,14 @@ void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
         return;
 
     Q_D(WatcherCache);
-    auto keys = d->watchers.keys();
-    QList<QUrl> removeUrls;
-    for (const auto &url : keys) {
-        if (url.scheme() == parent.scheme() && url.path().startsWith(parent.path())) {
-            d->watchers.remove(url);
-            removeUrls.append(url);
-        }
-    }
 
-    emit updateWatcherTime(removeUrls, false);
+    auto removedUrls = d->watchers.removeIf([&](const QUrl &url, const QSharedPointer<AbstractFileWatcher> & /*watcher*/) {
+        return url.scheme() == parent.scheme() && url.path().startsWith(parent.path());
+    });
+
+    if (!removedUrls.isEmpty()) {
+        emit updateWatcherTime(removedUrls, false);
+    }
 }
 
 bool WatcherCache::cacheDisable(const QString &scheme)

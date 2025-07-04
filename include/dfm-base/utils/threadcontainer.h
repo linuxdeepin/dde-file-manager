@@ -344,6 +344,22 @@ public:
         QMutexLocker lk(&mutex);
         myHash.remove(key);
     }
+
+    inline QList<DKey> removeIf(std::function<bool(const DKey &, const DValue &)> predicate)
+    {
+        QMutexLocker lk(&mutex);
+        QList<DKey> removedKeys;
+        for (auto it = myHash.begin(); it != myHash.end();) {
+            if (predicate(it.key(), it.value())) {
+                removedKeys.append(it.key());
+                it = myHash.erase(it);   // erase返回下一个有效的迭代器
+            } else {
+                ++it;
+            }
+        }
+        return removedKeys;
+    }
+
     /*!
      * \brief contains map中是否包含key对应的键值对
      *
