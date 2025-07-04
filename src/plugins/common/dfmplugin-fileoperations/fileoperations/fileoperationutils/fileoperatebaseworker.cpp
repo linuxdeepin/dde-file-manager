@@ -378,7 +378,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         }
         if (ok)
             cutAndDeleteFiles.append(fromInfo);
-        OperatorsFileUtils::instance()->delayRemoveCopyingFile(url);
+        FileUtils::removeCopyingFileUrl(url);
     }
 
     toInfo->initQuerier();
@@ -910,7 +910,7 @@ bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, 
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
-    OperatorsFileUtils::instance()->delayRemoveCopyingFile(targetUrl);
+    FileUtils::removeCopyingFileUrl(targetUrl);
     return nextDo == DoCopyFileWorker::NextDo::kDoCopyNext;
 }
 
@@ -938,7 +938,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     }
     if (ok)
         syncFiles.append(targetUrl);
-    OperatorsFileUtils::instance()->delayRemoveCopyingFile(targetUrl);
+    FileUtils::removeCopyingFileUrl(targetUrl);
 
     return ok;
 }

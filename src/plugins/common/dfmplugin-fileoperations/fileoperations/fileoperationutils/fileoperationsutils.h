@@ -76,27 +76,6 @@ private:
     static QSet<QString> fileNameUsing;
     static QMutex mutex;
 };
-
-class OperatorsFileUtils : public QObject {
-    Q_OBJECT
-    explicit OperatorsFileUtils(QObject *parent = nullptr)
-        : QObject(parent) {}
-public:
-    ~OperatorsFileUtils() override {}
-
-    void delayRemoveCopyingFile(const QUrl &url) {
-        QTimer::singleShot(500, this, [url](){
-            dfmbase::FileUtils::removeCopyingFileUrl(url);
-        });
-    }
-
-    static OperatorsFileUtils *instance() {
-        static OperatorsFileUtils in;
-        return &in;
-    }
-
-};
-
 DPFILEOPERATIONS_END_NAMESPACE
 
 #endif   // FILEOPERATIONSUTILS_H
