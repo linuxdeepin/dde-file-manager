@@ -97,7 +97,7 @@ void InfoCache::removeCache(const QUrl url)
  */
 bool InfoCache::cacheDisable(const QString &scheme)
 {
-    return d->disableCahceSchemes.contains(scheme);
+    return d->disableCahceSchemes.containsByLock(scheme);
 }
 /*!
  * \brief setCacheDisbale 设置scheme是否可以缓存
@@ -110,11 +110,11 @@ bool InfoCache::cacheDisable(const QString &scheme)
  */
 void InfoCache::setCacheDisbale(const QString &scheme, bool disable)
 {
-    if (!d->disableCahceSchemes.contains(scheme) && disable) {
+    if (!d->disableCahceSchemes.containsByLock(scheme) && disable) {
         d->disableCahceSchemes.push_backByLock(scheme);
         return;
     }
-    if (d->disableCahceSchemes.contains(scheme) && !disable) {
+    if (d->disableCahceSchemes.containsByLock(scheme) && !disable) {
         d->disableCahceSchemes.removeOneByLock(scheme);
         return;
     }
@@ -146,13 +146,13 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
             return;
     }
 
-    //获取监视器，监听当前的file的改变 当没有缓存加入监视器后，这里的watcher就会析构，如果启动了就要停止监控，这个是代理
-    // 代理就将启动的缓存了监视关闭了。本来没有缓存的监视器监视就没有意义
-    // if (!WatcherCache::instance().cacheDisable(url.scheme())) {
-    //     auto parentUrl = UrlRoute::urlParent(url);
-    //     auto parentPath = parentUrl.path();
-    //     if (parentPath != QDir::separator() && !parentPath.endsWith(QDir::separator()))
-    //         parentUrl.setPath(parentPath + QDir::separator());
+    // 获取监视器，监听当前的file的改变 当没有缓存加入监视器后，这里的watcher就会析构，如果启动了就要停止监控，这个是代理
+    //  代理就将启动的缓存了监视关闭了。本来没有缓存的监视器监视就没有意义
+    //  if (!WatcherCache::instance().cacheDisable(url.scheme())) {
+    //      auto parentUrl = UrlRoute::urlParent(url);
+    //      auto parentPath = parentUrl.path();
+    //      if (parentPath != QDir::separator() && !parentPath.endsWith(QDir::separator()))
+    //          parentUrl.setPath(parentPath + QDir::separator());
 
     //     auto watcher = WatcherFactory::create<AbstractFileWatcher>(parentUrl);
     //     if (watcher) {
@@ -313,7 +313,7 @@ void InfoCache::addWatcherTimeInfo(const QList<QUrl> &urls)
     if (d->timeToUrlWatcherMap.count() <= kCacheFileWatcherCount)
         return;
 
-             // 超出限制移除先进入的watcher
+    // 超出限制移除先进入的watcher
     auto it = d->timeToUrlWatcherMap.begin();
     while (d->urlTimeSortWatcherHash.size() > kCacheFileWatcherCount
            && it != d->timeToUrlWatcherMap.end()) {
@@ -456,9 +456,7 @@ FileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
 }
 
 InfoCacheController::InfoCacheController(QObject *parent)
-    : QObject(parent), thread(new QThread), worker(new CacheWorker), removeTimer(new QTimer)
-    , threadUpdate(new QThread)
-    , workerUpdate(new TimeToUpdateCache)
+    : QObject(parent), thread(new QThread), worker(new CacheWorker), removeTimer(new QTimer), threadUpdate(new QThread), workerUpdate(new TimeToUpdateCache)
 {
     init();
 }
@@ -487,7 +485,6 @@ void InfoCacheController::init()
 
 TimeToUpdateCache::~TimeToUpdateCache()
 {
-
 }
 
 void TimeToUpdateCache::updateInfoTime(const QUrl url)
@@ -509,11 +506,11 @@ void TimeToUpdateCache::updateWatcherTime(const QList<QUrl> &urls, const bool ad
     InfoCache::instance().updateSortTimeWatcherWorker(urls, add);
 }
 
-TimeToUpdateCache::TimeToUpdateCache(QObject *parent) : QObject (parent)
+TimeToUpdateCache::TimeToUpdateCache(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 }
 
-//开线程移除缓存和同步缓存操作
+// 开线程移除缓存和同步缓存操作

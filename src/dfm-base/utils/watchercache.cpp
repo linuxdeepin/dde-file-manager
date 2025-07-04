@@ -56,7 +56,7 @@ WatcherCache &WatcherCache::instance()
 QSharedPointer<AbstractFileWatcher> WatcherCache::getCacheWatcher(const QUrl &url)
 {
     Q_D(WatcherCache);
-    emit updateWatcherTime({url}, true);
+    emit updateWatcherTime({ url }, true);
     return d->watchers.value(url);
 }
 /*!
@@ -79,7 +79,7 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
         return;
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &WatcherCache::fileDelete);
     d->watchers.insert(url, watcher);
-    emit updateWatcherTime({url}, true);
+    emit updateWatcherTime({ url }, true);
 }
 /*!
  * \brief removCacheWatcher 根据Url移除当前缓存的watcher
@@ -100,7 +100,7 @@ void WatcherCache::removeCacheWatcher(const QUrl &url, const bool isEmit)
     emit fileDelete(url);
     d->watchers.remove(url);
     if (isEmit)
-        emit updateWatcherTime({url}, false);
+        emit updateWatcherTime({ url }, false);
 }
 
 void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
@@ -123,16 +123,16 @@ void WatcherCache::removeCacheWatcherByParent(const QUrl &parent)
 
 bool WatcherCache::cacheDisable(const QString &scheme)
 {
-    return d->disableCahceSchemes.contains(scheme);
+    return d->disableCahceSchemes.containsByLock(scheme);
 }
 
 void WatcherCache::setCacheDisbale(const QString &scheme, bool disbale)
 {
-    if (!d->disableCahceSchemes.contains(scheme) && disbale) {
+    if (!d->disableCahceSchemes.containsByLock(scheme) && disbale) {
         d->disableCahceSchemes.push_backByLock(scheme);
         return;
     }
-    if (d->disableCahceSchemes.contains(scheme) && !disbale) {
+    if (d->disableCahceSchemes.containsByLock(scheme) && !disbale) {
         d->disableCahceSchemes.removeOneByLock(scheme);
         return;
     }
