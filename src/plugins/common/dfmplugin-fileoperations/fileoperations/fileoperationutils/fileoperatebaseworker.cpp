@@ -1107,7 +1107,7 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
 
 void FileOperateBaseWorker::setAllDirPermisson()
 {
-    for (auto info : dirPermissonList.list()) {
+    for (auto info : dirPermissonList.listByLock()) {
         if (info->permission && supportSetPermission)
             localFileHandler->setPermissions(info->target, info->permission);
     }
