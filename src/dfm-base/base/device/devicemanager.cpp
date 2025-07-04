@@ -1103,6 +1103,14 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     static const QString kCustomMessagePrefix = "need authorization to access";
     if (msg.startsWith(kCustomMessagePrefix))
         msg.replace(kCustomMessagePrefix, QObject::tr("need authorization to access"));
+    static const QString kAuthMessagePrefix = "Authentication Required\nEnter user and password for";
+    if (msg.startsWith(kAuthMessagePrefix)) {
+        QString hostOrIp = msg.mid(kAuthMessagePrefix.length()).trimmed();
+        // 去除末尾冒号
+        if (hostOrIp.endsWith(':') || hostOrIp.endsWith("："))
+            hostOrIp.chop(1);
+        msg = QObject::tr("Authentication Required\nEnter user and password for %1").arg(hostOrIp) + QString("：");
+    }
 
     dlg.setTitle(msg);
     dlg.setDomain(domainDefault);
