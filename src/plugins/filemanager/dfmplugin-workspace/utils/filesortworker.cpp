@@ -1851,12 +1851,12 @@ bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
             auto blkInfo = DevProxyMng->queryBlockInfo(blk);
             const QStringList &mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
             for (const auto &mpt : mountPoints) {
-                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
-                defaultHiddenUrls.push_back(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
             }
         }
     });
-    return defaultHiddenUrls.contains(fileUrl);
+    return defaultHiddenUrls.containsByLock(fileUrl);
 }
 
 QUrl FileSortWorker::parantUrl(const QUrl &url)

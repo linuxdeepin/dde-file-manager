@@ -23,7 +23,7 @@ class DThreadList : public QSharedData
 {
 public:
     DThreadList<T>()
-        : myList(new QList<T>) {}
+        : myList(new QList<T>) { }
     ~DThreadList()
     {
         QMutexLocker lk(&mutex);
@@ -38,10 +38,6 @@ public:
      *
      * \return
      */
-    inline void push_back(const T &t)
-    {
-        myList->push_back(t);
-    }
     inline void push_backByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
@@ -78,10 +74,6 @@ public:
      *
      * \return const QList<T> &获取链表
      */
-    inline const QList<T> &list()
-    {
-        return *myList;
-    }
     inline const QList<T> &listByLock()
     {
         QMutexLocker lk(&mutex);
@@ -97,10 +89,6 @@ public:
     inline void removeAllByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
-        myList->removeAll(t);
-    }
-    inline void removeAll(const T &t)
-    {
         myList->removeAll(t);
     }
     /*!
@@ -123,10 +111,6 @@ public:
      *
      * \return bool 是否包含模板
      */
-    inline bool contains(const T &t)
-    {
-        return myList->contains(t);
-    }
     inline bool containsByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
@@ -163,6 +147,7 @@ public:
      */
     inline int size() const
     {
+        QMutexLocker lk(&mutex);
         return myList->size();
     }
     /*!
@@ -174,29 +159,10 @@ public:
      */
     inline const T &at(int i) const
     {
+        QMutexLocker lk(&mutex);
         return myList->at(i);
     }
-    /*!
-     * \brief first 如果链表为空，返回一个nullptr，否则返回第一个的地址
-     *
-     * \param
-     *
-     * \return T * 返回第一个地址
-     */
-    inline const T &first()
-    {
-        QMutexLocker lk(&mutex);
-        if (myList->isEmpty())
-            return nullptr;
-        return myList->first();
-    }
-    inline T takeByLock()
-    {
-        QMutexLocker lk(&mutex);
-        if (myList->isEmpty())
-            return nullptr;
-        return myList->takeFirst();
-    }
+
     /*!
      * \brief count 链表的总个数
      *
@@ -223,14 +189,6 @@ public:
     {
         QMutexLocker lk(&mutex);
         return myList->indexOf(t, from);
-    }
-    void lock()
-    {
-        mutex.lock();
-    }
-    void unlock()
-    {
-        mutex.unlock();
     }
 
 private:
@@ -301,30 +259,7 @@ public:
         QMutexLocker lk(&mutex);
         return myMap.contains(key);
     }
-    /*!
-     * \brief begin 当前map的开始迭代器
-     *
-     * \param null
-     *
-     * \return QMap<Key, Value>::iterator 当前map的开始迭代器
-     */
-    inline typename QMap<DKey, DValue>::iterator begin()
-    {
-        QMutexLocker lk(&mutex);
-        return myMap.begin();
-    }
-    /*!
-     * \brief begin 当前map的结束迭代器
-     *
-     * \param null
-     *
-     * \return QMap<Key, Value>::iterator 当前map的结束迭代器
-     */
-    inline typename QMap<DKey, DValue>::iterator end()
-    {
-        QMutexLocker lk(&mutex);
-        return myMap.end();
-    }
+
     /*!
      * \brief erase 去掉map中当前的迭代器
      *
