@@ -6951,17 +6951,17 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="195"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation>Échec de l&apos;enregistrement du fichier de texte crypté RSA : %1</translation>
+        <translation>Échec de la sauvegarde du fichier de texte crypté RSA : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="211"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation>Échec de l&apos;enregistrement du fichier de clé publique : la clé publique est vide.</translation>
+        <translation>Échec de la sauvegarde du fichier de clé publique : la clé publique est vide.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="219"/>
         <source>Failed to save public key file: %1</source>
-        <translation>Échec de l&apos;enregistrement du fichier de clé publique : %1</translation>
+        <translation>Échec de la sauvegarde du fichier de clé publique : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="293"/>
@@ -6976,22 +6976,22 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="332"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du fichier de texte crypté RSA : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="343"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du fichier d&apos;indices : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="375"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la sauvegarde des indications : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="728"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la sauvegarde du mot de passe : %1</translation>
     </message>
 </context>
 <context>
@@ -7236,7 +7236,7 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
@@ -7400,27 +7400,27 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du coffre-fort : %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du coffre-fort : échec de l&apos;obtention de la méthode de cryptage !</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du coffre-fort : méthode de cryptage inconnue !</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la création du coffre-fort : le mot de passe récupéré est vide !</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la génération automatique du mot de passe !</translation>
     </message>
 </context>
 <context>
@@ -7667,7 +7667,7 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Heure de création</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
@@ -7729,7 +7729,7 @@ veuillez effacer les fichiers de ce répertoire et essayez à nouveau de déverr
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Heure de création</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
