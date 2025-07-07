@@ -1177,10 +1177,13 @@ bool FileUtils::fileCanTrash(const QUrl &url)
 {
     // gio does not support root user to move ordinary user files to trash
     auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (SysInfoUtils::isRootUser()) {
+    if (SysInfoUtils::isRootUser() || SysInfoUtils::isOpenAsAdmin()) {
+        int currentEffectiveUid = SysInfoUtils::getUserId();
         int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
-        if (ownerId != 0)
+        if (ownerId != currentEffectiveUid) {
+            qCWarning(logDFMBase) << "a root process is trying to trash a non-root file, predicting failure.";
             return false;
+        }
     }
 
     if (!info)
