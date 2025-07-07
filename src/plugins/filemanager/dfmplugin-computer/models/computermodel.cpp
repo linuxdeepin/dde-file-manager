@@ -515,6 +515,10 @@ void ComputerModel::removeOrphanGroup()
 
     for (int i = aboutToRemovedGroup.count() - 1; i >= 0; i--) {
         int removeAt { aboutToRemovedGroup.at(i) };
+        auto groupName = items.at(removeAt).itemName;
+        auto groupRemoved = ComputerItemWatcherInstance->removeGroup(groupName);
+        fmInfo() << groupName << "removed? (true if group exists.)" << groupRemoved;
+
         beginRemoveRows(QModelIndex(), removeAt, removeAt);
         items.removeAt(removeAt);
         endRemoveRows();
