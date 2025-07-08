@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="he">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="he">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -32,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
         <source>Initialize encryption </source>
-        <translation>הפעלה של הצפנה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -65,8 +63,9 @@
     <name>DoCopyFileWorker</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
-        <source>Can't access file!</source>
-        <translation>לא ניתן לגשת לקובץ!</translation>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
+        <source>Can&apos;t access file!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -88,6 +87,7 @@
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="182"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="187"/>
         <source>remove</source>
         <translation>הסרה</translation>
     </message>
@@ -119,34 +119,11 @@
     </message>
 </context>
 <context>
-    <name>FileViewModel</name>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="270"/>
-        <source>Name</source>
-        <translation type="unfinished">שם</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="272"/>
-        <source>Time modified</source>
-        <translation>זמן שינוי</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="274"/>
-        <source>Size</source>
-        <translation type="unfinished">גודל</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/filemanager/core/dfmplugin-workspace/models/ut_fileviewmodel.cpp" line="276"/>
-        <source>Type</source>
-        <translation type="unfinished">סוג</translation>
-    </message>
-</context>
-<context>
     <name>FstabDecryptWorker</name>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
         <source>Decrypting </source>
-        <translation>מפעילה את ההצפנה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -154,55 +131,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
-        <translation>הפעלה של הצפנה</translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
-        <source>Check TPM</source>
-        <translation>הchecking TPM</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
-        <source>Get Random</source>
-        <translation>קבל אקראי</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
-        <source>Check Algo</source>
-        <translation>הchecking האלגו</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
-        <source>Encrypt</source>
-        <translation type="unfinished">הצפנה</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
-        <source>Decrypt</source>
-        <translation>הצפנה</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
-        <source>EncryptInProcess</source>
-        <translation>הצפנה בפעולה</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
-        <source>DecryptInProcess</source>
-        <translation>הצפנה בפעולה</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
-        <source>EncryptByCommand</source>
-        <translation>הצנה על ידי הפקודה</translation>
-    </message>
-    <message>
-        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
-        <source>DecryptByCommand</source>
-        <translation>הצנה על ידי הפקודה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -218,7 +147,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
         <source>Decrypting </source>
-        <translation>מפעילה את ההצפנה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -226,13 +155,15 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
         <source>Initialize encryption </source>
-        <translation>הפעלה של הצפנה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PathManager</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
         <translation>סל המחזור</translation>
     </message>
@@ -245,27 +176,36 @@
         <translation>יש צורך בתשומת לב כדי לגשת</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1176"/>
-        <source>Can't verify the identity of %1.</source>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
+        <source>Authentication Required
+Enter user and password for %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1184"/>
+        <source>Can&apos;t verify the identity of %1.</source>
         <translation>לא ניתן לה Púb את זהות של %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1177"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1185"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>זה קורה כאשר אתה הולך למחשב לראשונה.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1178"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1186"/>
         <source>The identity sent by the remote computer is</source>
         <translation>זהות שהועלתה מהמחשב המרחק היא</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1180"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1188"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>אם אתה רוצה להיות בטוח לחלוטין שאפשר להמשיך, פנה למנהל מערכת.</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <source>System Disk</source>
         <translation>דיסק מערכת</translation>
     </message>
@@ -281,23 +221,28 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>לא ידוע</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
         <source>%1 Drive</source>
-        <translation>'%1 דראיב',</translation>
+        <translation>&apos;%1 דראיב&apos;,</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
         <source>%1 Encrypted</source>
-        <translation>'%1 מוצפן',</translation>
+        <translation>&apos;%1 מוצפן&apos;,</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="105"/>
         <source>%1 Volume</source>
-        <translation>'%1 נפח',</translation>
+        <translation>&apos;%1 נפח&apos;,</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
@@ -316,61 +261,103 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="114"/>
         <source>%1 on %2</source>
-        <translation>'%1 על %2',</translation>
+        <translation>&apos;%1 על %2&apos;,</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="203"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="18"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
         <source>Home</source>
         <translation>בית</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="326"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
         <source>Desktop</source>
         <translation>שולחן העבודה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="207"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="327"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
         <source>Videos</source>
         <translation>סרטי וידאו</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="209"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="328"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
         <source>Music</source>
         <translation>מוזיקה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="211"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="329"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
         <source>Pictures</source>
         <translation>תמונות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="213"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="330"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
         <source>Documents</source>
         <translation>מסמכים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="215"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
         <source>Downloads</source>
         <translation>הורדות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="217"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="31"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
         <source>Trash</source>
         <translation>סל המחזור</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="219"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
         <translation>אחרונים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
         <source>Auto mount</source>
         <translation>עיגון אוטומטי</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
         <source>Open after auto mount</source>
         <translation>פתח אחרי עיגון אוטומטי</translation>
     </message>
@@ -382,7 +369,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="787"/>
         <source>%1 item</source>
-        <translation>'%1 פריט',</translation>
+        <translation>&apos;%1 פריט&apos;,</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="788"/>
@@ -396,21 +383,26 @@
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
         <source>File has been moved or deleted</source>
         <translation>הקובץ שונה או הוסר</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
         <source>You do not have permission to access this folder</source>
         <translation>אין לך הרשאה לגשת לתיקייה זו</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>אין לך הרשאה לעבור דרך קבצים בו</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>התיקייה ריקה</translation>
     </message>
@@ -421,316 +413,455 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
         <source>Executable</source>
         <translation>נושק</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="7"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>استخدام תפריט בחירת קבצים של מנהל קבצים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="8"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="8"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>תבקש אישורתי בעת מחיקת קבצים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="9"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="9"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="9"/>
         <source>Index external storage device after connected to computer</source>
         <translation>הצג את הממוצע של מכשיר הגישה חיצוני לאחר חיבור למחשב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="10"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="10"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="10"/>
         <source>Auto index internal disk</source>
         <translation>הצג אינדקס אוטומטי של דיסק פנימי</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="11"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
         <translation>חיפוש בכל הטקסט</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
         <source>Built-in disks</source>
         <translation>דיסקים פנימיים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
         <source>Computer</source>
         <translation>מחשב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="46"/>
         <source>Computers in LAN</source>
         <translation>מחשבים ב-LAN</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
         <source>Loop partitions</source>
         <translation>חלונות חישוב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
         <source>Mounted sharing folders</source>
         <translation>תיקיות משותפות מותקנות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
         <translation>תיקים שלי</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <source>Network</source>
         <translation>רשת</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
         <source>Mounted partitions and discs</source>
         <translation>חלונות ועטיפות מותקנות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
         <source>Partitions</source>
         <translation>חלונות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
         <source>Quick access</source>
         <translation>גישה מהירה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
         <source>Tag</source>
         <translation>תג</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
         <source>Added tags</source>
         <translation>תגים נמצאים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
         <translation>כספת</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="181"/>
         <source>Keep showing the mounted Samba shares</source>
         <translation>הצג תמיד את התיקיות המותקנות של Samba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="37"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="37"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>לכבות את הכניסות של תיקיות משותפות של Samba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="38"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
         <translation>הצג את מספר האיברים והגודל בנתיב של מתקני MTP מותקנים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
         <translation>הרחבה של סימנים בimen קבצים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide built-in disks on the Computer page</source>
         <translation>הסתר דיסקים פנימיים בעמוד המחשב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Hide loop partitions on the Computer page</source>
         <translation>הסתר חלונות חישוב בעמוד המחשב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="42"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="42"/>
         <source>Show crumb bar clickable area</source>
         <translation>הצג את שטח הקישור של בר הגרגרים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
         <source>Show file system on disk icon</source>
         <translation>הצג את מערכת הקבצים על סמל הדיסק</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="45"/>
         <source>Compressed file preview</source>
         <translation>תצוגת קובץ מضغות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="46"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="45"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="46"/>
         <source>Document preview</source>
         <translation>תצוגה מקדימה של המסמך</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="47"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="46"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="47"/>
         <source>Image preview</source>
         <translation>תצוגה מקדימה של התמונה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>הסביבה המרחק מציגה תבניות צילום מINI</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
         <source>Text preview</source>
         <translation>תצוגה מקדימה של הטקסט</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>תצוגה מקדימה של הוידאו</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation>גודל סמל מוגדר:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Music preview</source>
         <translation>תצוגה מקדימה של המוזיקה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
         <source>Show hidden files in search results</source>
         <translation>הצגת קבצים מוסתרים בתוצאות החיפוש</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
         <source>Extra small</source>
         <translation>מאוד קטן</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
         <source>Small</source>
         <translation>קטן</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
         <source>Medium</source>
         <translation>בינוני</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
         <source>Large</source>
         <translation>גדול</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
         <source>Extra large</source>
         <translation>מאוד גדול</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
         <source>Mix sorting of files and folders</source>
         <translation>תבנית מ vermישינג של קבצים ותיקיות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
         <source>Default view:</source>
         <translation>תצוגה ברירת מחדל:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
         <source>Show hidden files</source>
         <translation>הצג קבצים נסתרים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
         <source>Show file extensions</source>
         <translation>הצג פיצורי קבצים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
         <source>Open from default window:</source>
         <translation>פתח מחלון ברירת מחדל:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
         <source>Open in new tab:</source>
         <translation>פתח ב_Tab חדש:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
         <source>Always open folder in new window</source>
         <translation>פתח תיקייה בחלון חדש תמיד</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
         <source>Open file:</source>
         <translation>פתיחת קובץ:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
         <source>Click</source>
         <translation>לחץ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
         <source>Double click</source>
         <translation>DOUBLE_CLICK</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
         <source>Advanced</source>
         <translation>תקלה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
         <source>Dialog</source>
         <translation>диלוג</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
         <source>Index</source>
         <translation>אינדקס</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
         <source>Items on sidebar pane</source>
         <translation>פריטים בפאנל siderbar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>עיגון</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
         <source>Other</source>
         <translation>אחר</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
         <source>Preview</source>
         <translation>תצוגה מקדימה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
         <source>Basic</source>
         <translation>בסיסי</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
         <source>View</source>
         <translation>פאנל</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
         <source>Hidden files</source>
         <translation>קבצים מוסתרים</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
         <source>New window and tab</source>
         <translation>חלון חדש ובתא новой вкладки</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
         <translation>התנהגותפתיחה</translation>
     </message>
@@ -752,7 +883,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation>הפעלת תצוגת הקטג'ורית עלול לגרום לתיקייה מרוחקת להטעים ביעילות או להסס את הפעולה</translation>
+        <translation>הפעלת תצוגת הקטג&apos;ורית עלול לגרום לתיקייה מרוחקת להטעים ביעילות או להסס את הפעולה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
@@ -761,6 +892,17 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
+        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="132"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
@@ -777,24 +919,26 @@
         <translation>קיצור־דרך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1348"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1070"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>ה bastion של המערכת מופעל. אנא התאם למנהל שלך.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1406"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1128"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (העתק)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1407"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1129"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (העתק %1)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -815,22 +959,42 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>IENTATION</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
         <source>Open in new window</source>
         <translation>פתח בחלון חדש</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>פתח בכרטיסייה חדשה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="574"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>שנה שם</translation>
     </message>
@@ -841,6 +1005,10 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <source>Properties</source>
         <translation>מאפיינים</translation>
     </message>
@@ -881,21 +1049,25 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="541"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="635"/>
         <source>Compress</source>
         <translation>דחוס</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
         <source>Write only</source>
         <translation>לכתיבה בלבד</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
         <source>Read only</source>
         <translation>לקריאה בלבד</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read-write</source>
         <translation>קריאה-כתיבה</translation>
     </message>
@@ -911,6 +1083,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
         <translation>אחרים</translation>
     </message>
@@ -932,6 +1105,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="193"/>
         <source>Maximum</source>
         <translation>מקסימום</translation>
     </message>
@@ -947,6 +1121,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>הוצא</translation>
     </message>
@@ -1025,6 +1200,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="340"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>סגור</translation>
@@ -1033,10 +1209,11 @@
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp" line="39"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>פתח</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="138"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="157"/>
         <source>Size: %1</source>
         <translation>גודל: %1</translation>
     </message>
@@ -1058,7 +1235,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="298"/>
         <source>Orange</source>
-        <translation>בננה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="299"/>
@@ -1073,7 +1250,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="301"/>
         <source>Navy-blue</source>
-        <translation>אפור-כחול</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="302"/>
@@ -1102,31 +1279,33 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
         <source>Rename</source>
         <comment>button</comment>
-        <translation>שנה שם</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
-        <source>This file will be hidden if the file name starts with '.'. Do you want to hide it?</source>
-        <translation type="unfinished">הקובץ י�藏起来 如果文件名以'.'开始。你想要隐藏它？</translation>
+        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="74"/>
         <source>Hide</source>
         <comment>button</comment>
-        <translation type="unfinished">הסתר</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="104"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation>%1 כבר קיים, האם אתה רוצה להחליף אותו?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="107"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>החלף</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="24"/>
@@ -1141,98 +1320,102 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="44"/>
         <source>Format</source>
-        <translation type="unfinished">פורמט</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished">הסר סיסמה נשמרה ו拔出</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="267"/>
         <source>Open</source>
         <translation>פתח</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="56"/>
         <source>Erase</source>
-        <translation type="unfinished">מחק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="224"/>
         <source>Cannot access</source>
-        <translation>לא ניתן לגשת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="299"/>
         <source>User directory</source>
-        <translation>ספריית המשתמש</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="303"/>
         <source>Local disk</source>
         <translation>דיסק מקומי</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="305"/>
         <source>Removable disk</source>
         <translation>דיסק נשלף</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="307"/>
         <source>DVD</source>
-        <translation>דיווד</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="291"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="310"/>
         <source>Network shared directory</source>
-        <translation>ספריית רשת משותפת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="316"/>
         <source>Android mobile device</source>
         <translation>מכשיר אנדרואיד נייד</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
         <source>Apple mobile device</source>
         <translation>מכשיר אפל נייד</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
         <source>Unknown device</source>
         <translation>מכשיר לא מזוהה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>העיף</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
-        <source>Do you want to remove this item?</source>
-        <translation>אתה רוצה להעיף את הפריט הזה?</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
-        <source>Do yout want to remove %1 items?</source>
-        <translation>אתה רוצה להעיף %1 פריטים?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
+        <source>Do you want to remove this item?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
+        <source>Do yout want to remove %1 items?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <source>It does not delete the original files</source>
-        <translation>לא מוחקים את הקבצים המקוריים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
         <source>Clear recent history</source>
-        <translation>lös recent history</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
-        <translation>נתיב המקור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
@@ -1242,22 +1425,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
         <source>New tab</source>
-        <translation type="unfinished">ATAB חדשה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
         <source>Connect to Server</source>
-        <translation>соедините к серверу</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Set share password</source>
-        <translation> установить пароль для общей папки</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
         <source>Change disk password</source>
-        <translation> изменить пароль диска</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="114"/>
@@ -1267,7 +1450,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="296"/>
         <source>Copy path</source>
-        <translation>скопировать путь</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
@@ -1286,6 +1469,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Location</source>
         <translation>מיקום</translation>
     </message>
@@ -1311,6 +1495,9 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
         <source>Required</source>
         <translation>נדרש</translation>
     </message>
@@ -1356,16 +1543,18 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.cpp" line="30"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/utils/shareutils.cpp" line="32"/>
         <source>My Shares</source>
         <translation>מאתריי</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="163"/>
         <source>Free Space %1</source>
         <translation>מקום פנוי %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="88"/>
         <source>Search</source>
         <translation>חיפוש</translation>
     </message>
@@ -1378,11 +1567,6 @@
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="101"/>
         <source>Searching...</source>
         <translation>מחפש...</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="303"/>
-        <source>My Vault</source>
-        <translation>חביי</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
@@ -1451,7 +1635,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="13"/>
-        <source>File is a directory that isn't empty</source>
+        <source>File is a directory that isn&apos;t empty</source>
         <translation>קובץ הוא גלישה לא ריקה</translation>
     </message>
     <message>
@@ -1506,7 +1690,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
-        <source>File isn't mounted</source>
+        <source>File isn&apos;t mounted</source>
         <translation>הקובץ לא מותקן</translation>
     </message>
     <message>
@@ -1581,143 +1765,102 @@
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
+        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
         <translation>או</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="385"/>
         <source>Clear search history</source>
-        <translation>очистить историю поиска</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation>לא ידוע</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
         <source>search</source>
-        <translation>поиск</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
         <source>advanced search</source>
-        <translation>расширенный поиск</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
         <source>Cannot generate random number by TPM</source>
-        <translation>לא ניתן ליצור מספר אקראי באמצעות TPM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="388"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
         <source>No available encrypt algorithm.</source>
-        <translation>אין אלגוריתם הצפנה זמין.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>TPM encrypt failed.</source>
-        <translation>הצפנה TPM נכשלה.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>TPM is locked.</source>
-        <translation>TPM נעול.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="458"/>
-        <source>Confirm encrypt %1?</source>
-        <translation>אשר הצפנה %1?</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="461"/>
-        <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation>החלקה הנוכחית תצפנה ותנעל במהלך תהליך הצפנה, מומלץ לאשר את הצפנה.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="468"/>
-        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation>* לאחר הצפנה של החלקה, לא ניתן להחזיר את النظام לגרסה נמוכה יותר, מומלץ לאשר את הצפנה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
+        <source>Confirm encrypt %1?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
+        <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
+        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="515"/>
         <source>Cancel</source>
-        <translation>בטל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="480"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="501"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
         <source>Confirm and Reboot</source>
-        <translation>אשר והפעל מחדש</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="481"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="502"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
         <source>Confirm</source>
-        <translation>אשר</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="512"/>
         <source>Decrypt %1?</source>
-        <translation>למdecrypt %1?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="492"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation>המdecrypt יכול לקחת זמן ארוך, לכן תأكد שהпитר קיים עד סיום המdecrypt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
-        <translation>עדכון grub...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="117"/>
-        <source>Permission error</source>
-        <translation type="unfinished">שגיאת הרשאות</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="118"/>
-        <source>The action is denied</source>
-        <translation type="unfinished">הפעולה נדחתה</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="134"/>
-        <source>Not enough free space on the target disk</source>
-        <translation type="unfinished">אין מספיק מקום פנוי בדיסק המטרה</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="135"/>
-        <source>The target device is read only</source>
-        <translation type="unfinished">הDEVICE המטרה הוא רק עבור קריאה</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="136"/>
-        <source>Target folder is inside the source folder</source>
-        <translation type="unfinished">הMAPטפוח המטרה נמצא בתיקיה המקור</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="137"/>
-        <source>The action is not supported</source>
-        <translation type="unfinished">הפעולה לא נתמכת</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="138"/>
-        <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished">ההחזרה נכשלה, לא נמצאה דרכו המקורית</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="140"/>
-        <source>Failed to parse the url of trash</source>
-        <translation type="unfinished">נכשל בהצגת הכתובת של מגרש הגרילה</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="141"/>
-        <source>Failed to obtain the trash original file</source>
-        <translation>נכשל בקבלת קובץ המקור בקופסא</translation>
-    </message>
-    <message>
-        <location filename="../tests/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperations/fileoperationutils/ut_errormessageandaction.cpp" line="143"/>
-        <source>Copy or Cut File failed!</source>
-        <translation>העתקה או חיתוך קובץ נכשלה!</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="303"/>
+        <source>File Vault</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1725,7 +1868,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
         <source>Encrypting </source>
-        <translation>הצפנה </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1763,10 +1906,11 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
-        <translation>התאמה אישית</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Set Wallpaper</source>
         <translation>הגדר את התמונה ל Żyור רקע</translation>
     </message>
@@ -1783,7 +1927,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished">זמן יצירה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -1866,6 +2010,9 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="76"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>נדרש</translation>
     </message>
@@ -1914,11 +2061,13 @@
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="133"/>
         <source>Not authorized</source>
         <translation>לא מורשה</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="141"/>
         <source>In trial period</source>
         <translation>בתקופה ניסיון</translation>
     </message>
@@ -1927,11 +2076,13 @@
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="286"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="287"/>
         <source>Not authorized</source>
         <translation>לא מורשה</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="292"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="293"/>
         <source>In trial period</source>
         <translation>בתקופה ניסיון</translation>
     </message>
@@ -1940,13 +2091,13 @@
     <name>ddplugin_organizer::AlertHideAllDialog</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
-        <source>The hortcut key "%1" to show collection</source>
-        <translation>השאלה "%1" להצגת אוסף</translation>
+        <source>The hortcut key &quot;%1&quot; to show collection</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation>אין הודעה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1981,6 +2132,7 @@
     <name>ddplugin_organizer::CollectionTitleBarPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
         <translation>גודל קבוצת</translation>
     </message>
@@ -1997,7 +2149,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
-        <translation>אזור מרכזי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
@@ -2028,12 +2180,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Enable desktop organization</source>
-        <translation>הפעלה ארגון שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation>הגדרות שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2075,28 +2227,28 @@
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
-        <source>To disable the One-Click Hide feature, invoke the "View Options" window in the desktop context menu and turn off the "One-Click Hide Collection".</source>
-        <translation>כדי לנטרל את תכונת "הסתרה בלחיצה אחת", קרא את החלון "אפשרויות הצגת" בתפריט הקשר של שולחן העבודה ולנתק את "הסתרה בלחיצה אחת".</translation>
+        <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
         <source>Desktop organizer</source>
-        <translation>מנהל ארגון שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
-        <source>Shortcut "%1" to show collections</source>
-        <translation>קיצור לפקודת "%1" להצגת קבוצות</translation>
+        <source>Shortcut &quot;%1&quot; to show collections</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>Close</source>
-        <translation type="unfinished">סגור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>No more prompts</source>
-        <translation>לא להציג עוד התראות</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2120,7 +2272,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation>הגדרות שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -2130,7 +2282,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
-        <translation>הפעלה ארגון שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2148,12 +2300,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation>הסתרת כל הקבוצות בלחיצת עכבר אחת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation>קצרcuts להצגת/הסתרת קבוצות</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2193,6 +2345,9 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="76"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="103"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>נדרש</translation>
     </message>
@@ -2234,7 +2389,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation type="unfinished">התחל מ:</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2242,7 +2397,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="87"/>
         <source>Icon size</source>
-        <translation type="unfinished">גודל סמל</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2250,37 +2405,37 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="68"/>
         <source>Apps</source>
-        <translation>יישומים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="69"/>
         <source>Documents</source>
-        <translation>מסמכים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="70"/>
         <source>Pictures</source>
-        <translation type="unfinished">תמונות</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="71"/>
         <source>Videos</source>
-        <translation>סרטונים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="72"/>
         <source>Music</source>
-        <translation>موسيقى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="73"/>
         <source>Folders</source>
-        <translation>תיקיות</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
         <source>Other</source>
-        <translation type="unfinished">אחר</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2288,32 +2443,32 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="20"/>
         <source>Apps</source>
-        <translation>יישומים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
         <source>Documents</source>
-        <translation>מסמכים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="22"/>
         <source>Pictures</source>
-        <translation type="unfinished">תמונות</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="23"/>
         <source>Videos</source>
-        <translation>סרטונים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="24"/>
         <source>Music</source>
-        <translation>موسيقى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
         <source>Folders</source>
-        <translation>תיקיות</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2321,28 +2476,29 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1064"/>
         <source>Loading wallpapers...</source>
-        <translation>טוען תמונות רקע...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1066"/>
         <source>Loading screensavers...</source>
-        <translation>טוען אפליקציות שמירת...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1126"/>
         <source>Custom Screensaver</source>
-        <translation>שמירת מותאמת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1127"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1129"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation>החל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1202"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished">ה bastion של המערכת מופעל. אנא התאם למנהל שלך.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2350,29 +2506,29 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="142"/>
         <source>Wallpaper</source>
-        <translation>רקע</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="152"/>
         <source>Screensaver</source>
-        <translation>שמירת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="377"/>
         <source>Desktop</source>
         <comment>button</comment>
-        <translation>שולחן העבודה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="378"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation>נעל 화면</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
         <source>Both</source>
-        <translation>שניהם</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="579"/>
@@ -2446,6 +2602,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
         <source>%1 item selected</source>
         <translation>%1 פריט הוחלט</translation>
     </message>
@@ -2484,6 +2641,11 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>אישור</translation>
@@ -2556,7 +2718,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="150"/>
         <source>Authentication failed</source>
-        <translation>האימות נכשל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="152"/>
@@ -2585,17 +2747,21 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
-        <source>Sorry, you don't have permission to operate the following %1 file/folder(s)!</source>
+        <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>מצטער, אין לך הרשאה��作以下%1文件/文件夹！</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="233"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
         <source>Operation failed!</source>
         <translation>הפעולה נכשלה！</translation>
     </message>
@@ -2611,6 +2777,14 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="665"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
@@ -2638,12 +2812,15 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>הריץ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>הצג ב терמינל</translation>
@@ -2676,11 +2853,14 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
-        <source>Cannot move "%1" to the trash. Do you want to permanently delete it?</source>
-        <translation>לא ניתן לירות "%1" לסל מחסנית. האם אתה רצינון למחוק אותו באופן קבוע？</translation>
+        <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
+        <translation>לא ניתן לירות &quot;%1&quot; לסל מחסנית. האם אתה רצינון למחוק אותו באופן קבוע？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>מחק</translation>
@@ -2692,6 +2872,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
         <source>This action cannot be undone</source>
         <translation>הפעולה הזו לא ניתן לבטל</translation>
     </message>
@@ -2747,8 +2928,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="566"/>
-        <source>"%1" already exists, please use another name.</source>
-        <translation>"%1" כבר קיים, אנא השתמש בשמ אחר.</translation>
+        <source>&quot;%1&quot; already exists, please use another name.</source>
+        <translation>&quot;%1&quot; כבר קיים, אנא השתמש בשמ אחר.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
@@ -2757,8 +2938,8 @@
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="593"/>
-        <source>This file will be hidden if the file name starts with '.'. Do you want to hide it?</source>
-        <translation>הקובץ י�藏起来 如果文件名以'.'开始。你想要隐藏它？</translation>
+        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
+        <translation>הקובץ י�藏起来 如果文件名以&apos;.&apos;开始。你想要隐藏它？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="594"/>
@@ -2778,7 +2959,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="635"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>'%1 שהקצאתה מתארת נUARTר או נלהב</translation>
+        <translation>&apos;%1 שהקצאתה מתארת נUARTר או נלהב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="639"/>
@@ -2799,52 +2980,52 @@
 <context>
     <name>dfmbase::MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="24"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
         <source>Directory</source>
         <translation>קATALOG</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="25"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
         <source>Application</source>
         <translation>המארח</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="26"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
         <source>Video</source>
         <translation>וידאו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="27"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
         <source>Audio</source>
         <translation>음을</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="28"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="34"/>
         <source>Image</source>
         <translation>תמונה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="29"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="35"/>
         <source>Archive</source>
         <translation>ארכיון</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="36"/>
         <source>Text</source>
         <translation>טקסט</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="37"/>
         <source>Executable</source>
         <translation>הריץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="38"/>
         <source>Backup file</source>
         <translation>קובץ גיבוי</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="39"/>
         <source>Unknown</source>
         <translation>לא ידוע</translation>
     </message>
@@ -2961,41 +3142,49 @@
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Computer</source>
         <translation>מחשב</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Home</source>
         <translation>בית</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Desktop</source>
         <translation>שולחן עבודה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Videos</source>
         <translation>וידאו</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>Music</source>
         <translation>מוזיקה</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Pictures</source>
         <translation>תמונות</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>Documents</source>
         <translation>filer</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Downloads</source>
         <translation>ה Téléchargements</translation>
     </message>
@@ -3042,12 +3231,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
         <source>Default icon grid density:</source>
-        <translation>كثافة الشبكة الرمزية الافتراضية:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
         <source>Default list height:</source>
-        <translation>الارتفاع الافتراضي للقائمة:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
@@ -3067,12 +3256,12 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
-        <translation>تفعيل النافذة الحالية عند إعادة打ertura المجلد</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Default icon size:</source>
-        <translation>حجم الرمز الافتراضي:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
@@ -3270,12 +3459,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation>استعادة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation>إعادة التكرار</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -3500,6 +3689,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="448"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="781"/>
         <source>In data statistics ...</source>
         <translation>בסטטיסטיקות הנתונים ...</translation>
     </message>
@@ -3532,6 +3722,7 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="662"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>החלף</translation>
@@ -3637,6 +3828,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="164"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="170"/>
         <source>Data verification successful.</source>
         <translation>ה eksamen של הנתונים בהצלחה.</translation>
     </message>
@@ -3788,7 +3980,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
-        <source>Optical device %1 doesn't exist</source>
+        <source>Optical device %1 doesn&apos;t exist</source>
         <translation>מכשיר תלת-מימדי %1 לא קיים</translation>
     </message>
 </context>
@@ -3858,80 +4050,80 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="60"/>
         <source>Computer</source>
-        <translation type="unfinished">מחשב</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="184"/>
         <source>Computer display items</source>
-        <translation>عناصر عرض الكمبيوتر</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished">הסתר דיסקים פנימיים בעמוד המחשב</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished">הסתר חלונות חישוב בעמוד המחשב</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="191"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished">הצג את מערכת הקבצים על סמל הדיסק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="195"/>
         <source>Hide My Directories on the Computer page</source>
-        <translation>إخفاء دليلي الخاص على صفحة الكمبيوتر</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="211"/>
         <source>Hide 3rd party entries on the Computer page</source>
-        <translation>إخفاء العناصر من الطرف الثالث على صفحة الكمبيوتر</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
         <source>Unlock device failed</source>
-        <translation>فشل فك القفل عن الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
         <source>Wrong password</source>
-        <translation>كلمة المرور غير صحيحة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
         <source>Rename failed</source>
-        <translation>فشل إعادة تسمية الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
         <source>The device is busy and cannot be renamed now</source>
-        <translation>الجهاز مشغول ولا يمكن إعادة تسميته الآن</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
         <source>Format failed</source>
-        <translation>فشل تنسيق الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
         <source>The device is busy and cannot be formatted now</source>
-        <translation>الجهاز مشغول ولا يمكن تنسيقه الآن</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
         <source>Mount error</source>
-        <translation>خطأ في تثبيت الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
         <source>Cannot access %1</source>
-        <translation>لا يمكن الوصول إلى %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3939,27 +4131,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
         <source>Computer</source>
-        <translation type="unfinished">מחשב</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
-        <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation>'%1 فقط للقراءة. هل ترغب في تمكين الصلاحيات القراءة/الكتابة له؟</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
-        <source>Once enabled, read/write permission will be granted permanently</source>
-        <translation>بعد تمكينها، ستتم الموافقة على الصلاحيات القراءة/الكتابة بشكل دائم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
-        <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <source>Once enabled, read/write permission will be granted permanently</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="233"/>
+        <source>Cancel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
         <source>Enable Now</source>
-        <translation>تمكين الآن</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3967,12 +4159,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="370"/>
         <source>My Directories</source>
-        <translation>دليلي الخاص</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="375"/>
         <source>Disks</source>
-        <translation type="unfinished">כוננים</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3980,7 +4172,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
         <source>Basic info</source>
-        <translation type="unfinished">מידע בסיסי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
@@ -4021,7 +4213,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="200"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
         <source>%1 on %2</source>
         <translation>%1 ב־%2</translation>
     </message>
@@ -4041,7 +4234,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation>الدقة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4056,12 +4249,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
         <source>Accessed</source>
-        <translation>تم الوصول إليه</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
         <source>Modified</source>
-        <translation>تم تعديله</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4131,6 +4324,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="260"/>
         <source>Copy</source>
         <translation>העתקה</translation>
     </message>
@@ -4141,16 +4335,20 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="292"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
         <source>None</source>
         <translation>ללא</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
         <source>Set password</source>
         <translation>הגדרת סיסמה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
         <source>Change password</source>
         <translation>החלפת סיסמה</translation>
     </message>
@@ -4200,7 +4398,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation>اسم المشاركة طويل جدًا وسيتم حذفه.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4217,12 +4415,13 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="525"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>שם ההצגה לא יכול להכיל %1, ולא יכול להתחיל עם נקודה מinus (-) או רווח, או להסתיים ברווח.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="513"/>
-        <source>Share folder can't be named after the current username</source>
+        <source>Share folder can&apos;t be named after the current username</source>
         <translation>לא ניתן להגדיר את תיקון ההצגה בשם המשתמש הנוכחי</translation>
     </message>
     <message>
@@ -4232,13 +4431,15 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="547"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
         <source>Sharing failed</source>
         <translation>החלפתה נכשלה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation>منفذ SMB محظور، من فضلك فحص استراتيجية جدار الحماية.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
@@ -4250,691 +4451,719 @@
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>passphrase</source>
-        <translation>كلمة المرور</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <source>PIN</source>
-        <translation>PIN</translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="97"/>
+        <source>PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="58"/>
         <source>Modify %1</source>
-        <translation>تعديل %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="69"/>
         <source>Please enter %1 again</source>
-        <translation>אנא הזן %1 שוב</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="72"/>
         <source>New %1</source>
-        <translation>חדש %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="73"/>
         <source>Repeat %1</source>
-        <translation>חזור %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
         <source>Cancel</source>
-        <translation>בטל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="345"/>
         <source>Confirm</source>
-        <translation>אשר</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="110"/>
         <source>%1 cannot be empty</source>
-        <translation>'%1 אינו יכול להיות ריק'</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <source>Recovery key</source>
-        <translation>מפתח שחזור</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
-        <source>Recovery key is not valid!</source>
-        <translation>מפתח השחזור אינו תקף!</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation>לפחות 8 ביטים, כולל 3 סוגים של אותיות A-Z, a-z, 0-9 וסמלים</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
-        <source>%1 inconsistency</source>
-        <translation>'%1 אי התאמה'</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
-        <source>Validate with %1</source>
-        <translation>אמת עם %1</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
-        <source>Please input recovery key</source>
-        <translation>אנא הזן מפתח שחזור</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
-        <source>Old %1</source>
-        <translation>ה%1 ישן</translation>
-    </message>
-    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="112"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
+        <source>Recovery key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
+        <source>Recovery key is not valid!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="191"/>
+        <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
+        <source>%1 inconsistency</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
+        <source>Validate with %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
+        <source>Please input recovery key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
+        <source>Old %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
         <source>Validate with recovery key</source>
-        <translation>אמת עם מפתח שחזור</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::DecryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation>אנא הזן מפתח שחזור כדי לשבץ את התקן</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <source>Validate with %1</source>
-        <translation>אמת עם %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>PIN</source>
-        <translation>PIN</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>passphrase</source>
-        <translation>מילת סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt device</source>
-        <translation>אנא הזן %1 כדי לשבץ את התקן</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <source>Validate with recovery key</source>
-        <translation>אמת עם מפתח שחזור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>Passphrase</source>
-        <translation>מילת סיסמה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
-        <source>Recovery key</source>
-        <translation>מפתח שחזור</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
-        <source>%1 cannot be empty!</source>
-        <translation>'%1 אינו יכול להיות ריק!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
-        <source>Recovery key is not valid!</source>
-        <translation>מפתח השחזור אינו תקף!</translation>
+        <source>Recovery key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
-        <source>Decrypt device</source>
-        <translation>שבץ את התקן</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="88"/>
+        <source>%1 cannot be empty!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="94"/>
+        <source>Recovery key is not valid!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
+        <source>Decrypt device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
         <source>Confirm</source>
-        <translation>אשר</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
         <source>Unlock encrypted partition</source>
-        <translation>הסר את הצופן מהחלקה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
         <source>Cancel partition encryption</source>
-        <translation>בטל את הצופן מהחלקה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
         <source>passphrase</source>
-        <translation>מילת סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="176"/>
         <source>Changing the encryption %1</source>
-        <translation>שינוי הצופן %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="180"/>
         <source>Continue partition encryption</source>
-        <translation>להמשיך את הצפנת החלק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
         <source>Continue partition decryption</source>
-        <translation>להמשיך את הפענוח של החלק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
         <source>Enable partition encryption</source>
-        <translation>הפעלת הצפנת החלק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
         <source>Error</source>
-        <translation type="unfinished">שגיאה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation>לא ניתן לזהות את הסיסמה מה-TPM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
         <source>PIN error</source>
-        <translation>טעות ב-PIN</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
         <source>Change passphrase failed</source>
-        <translation>החלפת הסיסמה נכשלה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="501"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="571"/>
         <source>Unlock device failed</source>
-        <translation>פתיחת התקן נכשלה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="502"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="572"/>
         <source>Wrong passphrase</source>
-        <translation>סיסמה שגויה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="592"/>
         <source>Mount device failed</source>
-        <translation>התקנת התקן נכשלה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
         <source>unmount</source>
-        <translation type="unfinished">הסרת התקנה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
         <source>lock</source>
-        <translation>סגור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="564"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="642"/>
         <source>Encrypt failed</source>
-        <translation>הצפנת התקן נכשלה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
         <source>Cannot %1 device %2</source>
-        <translation>לא ניתן %1 התקן %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="647"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="728"/>
         <source>Reboot to continue encrypt</source>
-        <translation>אתחל את המערכת כדי להמשיך בצופן</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="648"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="729"/>
         <source>Reboot to finish decrypt</source>
-        <translation>אתחל את המערכת כדי להסתיים בפענוח</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EncryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="118"/>
         <source>Unlock type</source>
-        <translation>סוג פקיעת הצפנת התקן</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="138"/>
         <source>Unlocked by passphrase</source>
-        <translation>פותח באמצעות סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="139"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation>לבחור ב-TPM+PIN כדי לפתוח את התקן על המחשב הזה (מומלץ)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="140"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation>פתיחת התקן אוטומטית על המחשב הזה באמצעות TPM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="167"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation>אנא פיקח לתקן חיצוני כמו חלק שאינו מוצפן או USB flash drive.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="182"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation>החלק הזה הוא קרוא-רק, אנא פיקח לחלק כתיבה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="386"/>
         <source>Passphrase</source>
-        <translation>החלק מוצפן, אנא פיקח לחלק שאינו מוצפן או התקן חיצוני כמו USB flash drive.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="208"/>
         <source>%1 cannot be empty</source>
-        <translation>אנא ממשיכים להצפין את החלק %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="377"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="255"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="261"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="281"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="287"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
         <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
         <source>Next</source>
-        <translation>הבא</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="368"/>
         <source>Confirm encrypt</source>
-        <translation>אשר הצפנה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="366"/>
         <source>Export Recovery Key</source>
-        <translation> экспорט מפתח הקישור</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
-        <source>Previous</source>
-        <translation>הקודם</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
-        <source>Set %1</source>
-        <translation>הגדר %1</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
-        <source>Repeat %1</source>
-        <translation>השאלה %1</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="349"/>
-        <source>Please enter the %1 again</source>
-        <translation>אנא הכנס את %1 שוב</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="353"/>
-        <source>passphrase</source>
-        <translation>מילת סיסמה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="357"/>
-        <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation>הגישה לחלוקה תיפתח באמצעות מילת סיסמה.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="360"/>
-        <source>PIN</source>
-        <translation>קוד PIN</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="364"/>
-        <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation>הגישה לחלוקה תיפתח באמצעות מודל האבטחה TPM וקוד PIN.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
+        <source>Previous</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="375"/>
+        <source>Set %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="376"/>
+        <source>Repeat %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="378"/>
+        <source>Please enter the %1 again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="384"/>
+        <source>passphrase</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="387"/>
+        <source>Access to the partition will be unlocked using a passphrase.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="392"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="394"/>
+        <source>PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="395"/>
+        <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="399"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation>הגישה לחלוקה תיפתח אוטומטית באמצעות מודל האבטחה TPM, אין צורך בבדיקה של מילת סיסמה.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="461"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation>TPM נעול ואינו יכול להיות משמש להצפנה של חלוקה. אנא ביטל את סיסמת TPM או בחר שיטה להפעלה אחרת.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="425"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <source>TPM error</source>
-        <translation>שגיאה ב-TPM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="428"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <source>TPM status error!</source>
-        <translation>שגיאה במצב TPM!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EncryptProgressDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="56"/>
         <source>Confirm</source>
-        <translation>אשר</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="79"/>
         <source>Re-export the recovery key</source>
-        <translation> экспорט מחדש של מפתח הקישור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="69"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation>האחסון של מפתח הקישור נכשלה, אנא אחסן מחדש את מפתח הקישור לחלוקה לא מוצפנת והחזיק אותו במקום בטוח!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
         <source>Error</source>
-        <translation type="unfinished">שגיאה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
-        <source>Recovery key export path cannot be empty!</source>
-        <translation>נתיב האקספורט של מפתח הקישור לא יכול להיות ריק!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
-        <source>Recovery key export path is not exists!</source>
-        <translation>נתיב האקספורט של מפתח הקישור לא קיים!</translation>
+        <source>Recovery key export path cannot be empty!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
+        <source>Recovery key export path is not exists!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation>החלוקה זו קרנית, אנא экспорט לחלוקהقابلת לכתיבה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation>החלוקה מוצפנת, אנא экспорט לחלוקה לא מוצפנת או ל장치 חיצוני כמו USB flash drive.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
         <source>Cannot create recovery key file!</source>
-        <translation>לא ניתן ליצור קובץ מפתח הקישור!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="211"/>
         <source>Encrypt done</source>
-        <translation>הצפנה הושלמה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="208"/>
-        <source>Device %1 has been encrypted</source>
-        <translation>התקן %1 הונוצף</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="212"/>
+        <source>Device %1 has been encrypted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="217"/>
         <source>Encrypt failed</source>
-        <translation>הצפנה נכשלה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="218"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation>התקן %1 הצפנת נכשלה, אנא בדוק את ההיסטוריה למידע נוסף (%2)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
         <source>%1 is under encrypting...</source>
-        <translation>%1 נמצא תחת הצפנת...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="330"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation>הعملية של הצפנת יכולה לגרום לדפקת מערכות, אנא מינימיזה את פעילות המערכת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="350"/>
         <source>%1 is under decrypting...</source>
-        <translation>%1 נמצא תחת פירוק...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="351"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation>ROC Proces של פסיקת הצפנה עלול לגרום לקשה במערכת, אנא מינימיזו את פעילות המערכת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
         <source>Error</source>
-        <translation type="unfinished">שגיאה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation>מצב TPM לא תקין, אנא השתמש במפתח שחזור כדי להפעילו</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
         <source>Wrong PIN</source>
-        <translation>קוד PIN שגוי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="393"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>Wrong passphrase</source>
-        <translation>סיסמה שגוייה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="395"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>TPM error</source>
-        <translation>שגיאת TPM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="397"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation>אנא השתמש במפתח שחזור כדי להפעילו</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="485"/>
         <source>Preencrypt done</source>
-        <translation>הצפנה מקדמת הושלמה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
-        <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation>הустройה %1 הונענת הצפנה מקדמת, אנא הפעל מחדש כדי להשלים את הצפינה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="465"/>
-        <source>Preencrypt failed</source>
-        <translation>הצפנה מקדמת נכשלה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="466"/>
-        <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation>הустройה %1 הצפנה מקדמת נכשלה, אנא בדוק את ההיסטוריה להמשך מידע נוסף (%2)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
-        <source>Decrypt done</source>
-        <translation>הצפנה הושלמה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
-        <source>Device %1 has been decrypted</source>
-        <translation>הустройה %1 הונענת</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
-        <source>Decrypt disk</source>
-        <translation>הפעלה של דיסק</translation>
+        <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="494"/>
+        <source>Preencrypt failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="516"/>
+        <source>Decrypt done</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <source>Device %1 has been decrypted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="525"/>
+        <source>Decrypt disk</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="526"/>
         <source>Wrong passpharse or PIN</source>
-        <translation>סיסма שגוייה או קוד PIN שגוי</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
-        <source>Decrypt failed</source>
-        <translation>הפעלה נכשלה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="498"/>
-        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation>הустройה %1 בהליך הצפינה, אנא הפעלה לאחר סיום הצפינה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="503"/>
-        <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation>הустройה %1 הפעלה נכשלה, אנא בדוק את ההיסטוריה להמשך מידע נוסף (%2)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
+        <source>Decrypt failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
+        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
+        <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>passphrase</source>
-        <translation>סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
         <source>PIN</source>
-        <translation>קוד PIN</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="540"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
         <source>Change %1 done</source>
-        <translation>تغيير %1 הושלם</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
-        <source>%1's %2 has been changed</source>
-        <translation>%1's %2 שונה</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
+        <source>%1&apos;s %2 has been changed</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
-        <source>Change %1 failed</source>
-        <translation>تغيير %1 נכשלה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
-        <source>Wrong %1</source>
-        <translation>%1 שגוי</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="552"/>
-        <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation>تغيير %2 של הустройה %1 נכשלה, אנא בדוק את ההיסטוריה להמשך מידע נוסף (%3)</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
-        <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation>הустройה אינה מונענת לחלוטין, אנא סיים את ההפעלה לפני גישה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
-        <source>Unlocking device failed</source>
-        <translation>פתיחת ה device נכשלה</translation>
-    </message>
-    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
-        <source>Please click the right disk menu "Continue partition encryption" to complete partition encryption.</source>
-        <translation>אנא לחץ על תפרת הדיסק "продолжить шифрование раздела" כדי завершить шифрование раздела.</translation>
+        <source>Change %1 failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
+        <source>Wrong %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="590"/>
+        <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
+        <source>Device is not fully decrypted, please finish decryption before access.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
+        <source>Unlocking device failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
+        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::UnlockPartitionDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="55"/>
         <source>Cancel</source>
-        <translation>לסיים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="56"/>
         <source>Unlock</source>
-        <translation>פתיחה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
-        <source>Unlock encryption partition</source>
-        <translation>פתיחה של חלון הצפינה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <source>Unlock by recovery key</source>
-        <translation>افتح باستخدام مفتاح الاستعادة</translation>
+        <source>Unlock encryption partition</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
-        <source>Unlock by passphrase</source>
-        <translation>افتح باستخدام كلمة المرور</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
-        <source>Unlock by PIN</source>
-        <translation>افتح باستخدام الرمز السري</translation>
-    </message>
-    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
+        <source>Unlock by recovery key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="95"/>
+        <source>Unlock by passphrase</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="96"/>
+        <source>Unlock by PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation>الرجاء إدخال مفتاح الاستعادة بطول 24 رقم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock device</source>
-        <translation>الرجاء إدخال كلمة المرور لفك تشفير الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock device</source>
-        <translation>الرجاء إدخال الرمز السري لفك تشفير الجهاز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
         <source>Recovery key is not valid!</source>
-        <translation>مفتاح الاستعادة غير صحيح!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4946,11 +5175,14 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
         <source>to %1</source>
         <translation>ל%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
         <source>Deleting %1</source>
         <translation>מחיקת %1</translation>
     </message>
@@ -4971,21 +5203,25 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
         <translation>שגיאת הרשאות</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>The action is denied</source>
         <translation>הפעולה נדחתה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
         <translation>קובץ的目的地%1已存在</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
         <translation>תיקיה的目的地%1已存在</translation>
     </message>
@@ -5026,16 +5262,19 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Original file %1 does not exist</source>
         <translation>קובץ מקור%1 לא קיים</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
-        <translation>נכשל, Размер файла %1 חייב להיות קטן מ-4 ג'יגהביט</translation>
+        <translation>נכשל, Размер файла %1 חייב להיות קטן מ-4 ג&apos;יגהביט</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
         <translation>אין מספיק מקום פנוי בדיסק המטרה</translation>
     </message>
@@ -5046,26 +5285,31 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
         <translation>הDEVICE המטרה הוא רק עבור קריאה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
         <translation>הMAPטפוח המטרה נמצא בתיקיה המקור</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
         <translation>הפעולה לא נתמכת</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>אין לך הרשאות לעבור בקבצים בתיקיה %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
         <translation>ההחזרה נכשלה, לא נמצאה דרכו המקורית</translation>
     </message>
@@ -5087,12 +5331,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation>فشل نسخ أو قطع الملف! جرّب نسخ هذا الملف مرة أخرى!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
-        <source>Can't access file!</source>
-        <translation>لا يمكن الوصول إلى الملف!</translation>
+        <source>Can&apos;t access file!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
@@ -5147,12 +5391,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation>فشل نسخ أو قطع الملف، السبب: %1. جرّب نسخ هذا الملف مرة أخرى!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>فشل نسخ أو قطع الملف، السبب: %1.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
@@ -5161,11 +5405,17 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Original path %1</source>
         <translation>דרכו המקורית %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="251"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
         <source>Target path %1</source>
         <translation>דרכו המטרה %1</translation>
     </message>
@@ -5199,6 +5449,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1286"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1295"/>
         <source>Failed to modify file permissions</source>
         <translation>השינויים הרשאות הקובץ נכשלו</translation>
     </message>
@@ -5315,12 +5566,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="36"/>
         <source>Open in terminal</source>
-        <translation type="unfinished">פתור בtáרמיפל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
-        <translation>اختر عكسياً</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5328,12 +5579,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="39"/>
         <source>Open with</source>
-        <translation type="unfinished">פתח באמצעות</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="40"/>
         <source>Select default program</source>
-        <translation>اختر البرنامج الافتراضي</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5341,22 +5592,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="263"/>
         <source>Send to</source>
-        <translation>أرسل إلى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
         <source>Bluetooth</source>
-        <translation>بلوتوث</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="265"/>
         <source>Create link</source>
-        <translation>أنشئ رابط</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="266"/>
         <source>Send to desktop</source>
-        <translation>أرسل إلى سطح المكتب</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5364,35 +5615,35 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="117"/>
         <source>Share</source>
-        <translation>شارك</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_myshares::MyShareMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="122"/>
         <source>&amp;Open</source>
-        <translation>(&amp;فتح)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="123"/>
         <source>Open in new window</source>
-        <translation>افتح في نافذة جديدة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="124"/>
         <source>Open in new tab</source>
-        <translation>افتح في علامة تبويب جديدة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="125"/>
         <source>Cancel sharing</source>
-        <translation type="unfinished">ביטול שיתוף</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="126"/>
         <source>P&amp;roperties</source>
-        <translation>خصائص (&amp;)</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5400,53 +5651,51 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="201"/>
         <source>My Shares</source>
-        <translation type="unfinished">מאתריי</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_optical::OpticalMediaWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="107"/>
         <source>It does not support burning UDF discs</source>
-        <translation>لا يدعم حرق أقراص UDF</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="113"/>
         <source>Save as Image File</source>
-        <translation type="unfinished">שמור כקובץ תמונה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="114"/>
         <source>Burn</source>
-        <translation type="unfinished">העתק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="168"/>
         <source>%1 burning is not supported</source>
-        <translation>%1 حرق لا يدعم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="172"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation>|-
-1. إنه لا يُعتبر %1;
-2. إصدار هذا النظام الملفي لا يدعم إضافة ملفات بعد.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="219"/>
         <source>Mounting failed</source>
-        <translation>فشل تثبيت الأقراص</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="251"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="264"/>
         <source>No files to burn</source>
-        <translation>لا توجد ملفات للحرق</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished">לא ניתן להכנת дисק. אין足夠的磁盘空间在目标磁盘上。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5454,12 +5703,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
         <source>Basic info</source>
-        <translation type="unfinished">מידע בסיסי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Size</source>
-        <translation type="unfinished">גודל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
@@ -5479,17 +5728,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Created</source>
-        <translation>تم إنشاؤه</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Accessed</source>
-        <translation>تم الوصول إليه</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="109"/>
         <source>Modified</source>
-        <translation>تم تعديله</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="113"/>
@@ -5499,15 +5748,16 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Resolution</source>
-        <translation>الدقة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation type="unfinished">משך</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="421"/>
         <source>%1 item</source>
         <translation>%1 פריט</translation>
     </message>
@@ -5656,6 +5906,8 @@
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="302"/>
         <source>Allow to execute as program</source>
         <translation>היתר להריץ כrogram</translation>
     </message>
@@ -5686,38 +5938,38 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation>المسار</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished">אחרון גישה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
         <source>Recent</source>
-        <translation>الأخير</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_recent::RecentMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="180"/>
         <source>Remove</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="181"/>
         <source>Open file location</source>
         <translation>פתח את מיקום הקבצים</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="182"/>
         <source>Path</source>
         <translation>נתיב</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="183"/>
         <source>Last access</source>
         <translation>אחרון גישה</translation>
     </message>
@@ -5757,97 +6009,97 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Reset</source>
-        <translation>إعادة الضبط</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
         <source>All subdirectories</source>
-        <translation>جميع الاقتباسات الفرعية</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
         <source>Current directory</source>
-        <translation>الدليل الحالي</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
         <source>Application</source>
-        <translation type="unfinished">המארח</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>Video</source>
-        <translation type="unfinished">וידאו</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Audio</source>
-        <translation type="unfinished">음을</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Image</source>
-        <translation type="unfinished">תמונה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
         <source>Archive</source>
-        <translation type="unfinished">ארכיון</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
         <source>Text</source>
-        <translation type="unfinished">טקסט</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
         <source>Executable</source>
-        <translation>قابل للتنفيذ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
         <source>Backup file</source>
-        <translation type="unfinished">קובץ גיבוי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
         <source>Today</source>
-        <translation>اليوم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
         <source>Yesterday</source>
-        <translation>أمس</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>This week</source>
-        <translation>هذا الأسبوع</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Last week</source>
-        <translation>الأسبوع الماضي</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>This month</source>
-        <translation>هذا الشهر</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>Last month</source>
-        <translation>الشهر الماضي</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
         <source>This year</source>
-        <translation>هذا العام</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
         <source>Last year</source>
-        <translation>العام الماضي</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5855,25 +6107,26 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="296"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>اكتمل تحديث الوب، آخر وقت تحديث: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="297"/>
         <source>Update index now</source>
-        <translation>تحديث الوب الآن</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="140"/>
         <source>Search</source>
-        <translation type="unfinished">חיפוש</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="146"/>
         <source>Full-Text search</source>
-        <translation type="unfinished">חיפוש בכל הטקסט</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5881,7 +6134,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="168"/>
         <source>Path</source>
-        <translation>المسار</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5889,7 +6142,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="171"/>
         <source>Open file location</source>
-        <translation>فتح مكان الملف</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="172"/>
@@ -5907,32 +6160,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Index update failed, please</source>
-        <translation>فشل تحديث الوب، من فضلك</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="173"/>
         <source>try updating again</source>
-        <translation>حاول تحديثه مرة أخرى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation>تمكين البحث في محتوى الملف. قد يستغرق التفهرس بضع دقائق</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="198"/>
         <source>Building index</source>
-        <translation>التفهرس يتم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="204"/>
         <source>Building index, %1 files indexed</source>
-        <translation>التفهرس يتم، %1 ملفات مُفهرسة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="209"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>التفهرس يتم، %1/%2 عناصر مُفهرسة</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6038,7 +6291,7 @@
 <context>
     <name>dfmplugin_tag::TagEditor</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="97"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>הכנס מידע לתג, כמו עבודה או משפחה. נקודה ופסיק מופיעה בין שני תגים</translation>
     </message>
@@ -6052,13 +6305,13 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="198"/>
-        <source>Remove tag "%1"</source>
-        <translation>מחק את התג "%1" </translation>
+        <source>Remove tag &quot;%1&quot;</source>
+        <translation>מחק את התג &quot;%1&quot; </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="200"/>
-        <source>Add tag "%1"</source>
-        <translation>הוסף תג "%1" </translation>
+        <source>Add tag &quot;%1&quot;</source>
+        <translation>הוסף תג &quot;%1&quot; </translation>
     </message>
 </context>
 <context>
@@ -6074,7 +6327,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation>أدخل العنوان</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6082,64 +6335,66 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="70"/>
         <source>Connect to Server</source>
-        <translation>اتصال بخادم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="393"/>
         <source>Clear History</source>
-        <translation>مسح السجل</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Unfavorite</source>
-        <translation>إزالة المفضلة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Error</source>
-        <translation type="unfinished">שגיאה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation>لا يمكن إضافة مفضلة لعنوان غير قانوني!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>ל ביטול</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="368"/>
         <source>Connect</source>
         <comment>button</comment>
-        <translation type="unfinished">התחבר</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
         <source>Charset Encoding</source>
-        <translation>การเข้ารหัสชาร์เซต</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="416"/>
         <source>Default</source>
-        <translation>ค่าเริ่มต้น</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="475"/>
         <source>My Favorites</source>
-        <translation>รายการของฉัน</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="462"/>
         <source>No favorites yet</source>
-        <translation>ยังไม่มีรายการโปรด</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Favorite</source>
-        <translation>รายการโปรด</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6147,64 +6402,66 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
         <source>Change disk password</source>
-        <translation>เปลี่ยนรหัสผ่านดิสก์</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
         <source>Current password:</source>
-        <translation>รหัสผ่านปัจจุบัน:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
         <source>New password:</source>
-        <translation>รหัสผ่านใหม่:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>Repeat password:</source>
-        <translation>กรอกรหัสผ่านอีกครั้ง:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
         <source>Save</source>
         <comment>button</comment>
-        <translation type="unfinished">שמור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="106"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>ל ביטול</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="177"/>
         <source>Passwords do not match</source>
-        <translation>รหัสผ่านไม่ตรงกัน</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="194"/>
         <source>New password should differ from the current one</source>
-        <translation>รหัสผ่านใหม่ควรต่างจากรหัสผ่านปัจจุบัน</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="249"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
-        <translation>ต้องมีอย่างน้อย 8 ตัวอักษร ประเภทอย่างน้อย 3 ประเภท: 0-9, a-z, A-Z และสัญลักษณ์ ต้องไม่เหมือนกับชื่อผู้ใช้</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="285"/>
         <source>Password must be no more than %1 characters</source>
-        <translation>รหัสผ่านต้องไม่เกิน %1 ตัวอักษร</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="304"/>
         <source>Password cannot be empty</source>
-        <translation>รหัสผ่านไม่สามารถว่างได้</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="340"/>
         <source>Wrong password</source>
-        <translation>รหัสผ่านผิด</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6212,27 +6469,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
         <source>Changing disk password...</source>
-        <translation>กำลังเปลี่ยนรหัสผ่านดิสก์...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
         <source>The window cannot be closed during the process</source>
-        <translation>ไม่สามารถปิดหน้าต่างขณะดำเนินการได้</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
         <source>Passwords of disks are different</source>
-        <translation>รหัสผ่านของดิสก์ต่างกัน</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
         <source>Unable to get the encrypted disk list</source>
-        <translation>ไม่สามารถดึงรายการดิสก์ที่เข้ารหัสได้</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
         <source>Initialization failed</source>
-        <translation>การเริ่มต้นล้มเหลว</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6240,18 +6497,18 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="29"/>
         <source>Disk password changed</source>
-        <translation>เปลี่ยนรหัสผ่านดิสก์แล้ว</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
         <source>Failed to change the disk password</source>
-        <translation>ล้มเหลวในการเปลี่ยนรหัสผ่านดิสก์</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="58"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished">סגור</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6259,40 +6516,43 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
         <source>back</source>
-        <translation>ย้อนกลับ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
         <source>forward</source>
-        <translation>ไปข้างหน้า</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="344"/>
         <source>Icon view</source>
-        <translation>การแสดงผลแบบไอคอน</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="348"/>
         <source>List view</source>
-        <translation>การแสดงผลแบบรายการ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="282"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="352"/>
         <source>Tree view</source>
-        <translation>การแสดงผลแบบต้นไม้</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
         <source>Sort by</source>
-        <translation>จัดเรียงตาม</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="310"/>
         <source>View options</source>
-        <translation>אפשרויות הצפייה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6300,27 +6560,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished">שם</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation>זמן שינוי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished">זמן יצירה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished">גודל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished">סוג</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6328,27 +6588,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
         <source>View Options</source>
-        <translation>אפשרויות הצפייה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
         <source>Icon size</source>
-        <translation type="unfinished">גודל סמל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
         <source>Grid density</source>
-        <translation>צפיפות 격자</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
         <source>List height</source>
-        <translation>גובה רשימה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
         <source>Display preview</source>
-        <translation>הצגת תצוגה מוקדמת</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6356,17 +6616,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
         <source>Trash</source>
-        <translation>סל المهملات</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="33"/>
         <source>Empty</source>
-        <translation type="unfinished">מחק</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <source>Empty Trash</source>
-        <translation>הסרה של المهملות</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6374,12 +6634,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="274"/>
         <source>Source Path</source>
-        <translation>נתיב המקור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
         <source>Time deleted</source>
-        <translation>זמן מחיקה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6387,27 +6647,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="204"/>
         <source>Restore</source>
-        <translation>استعادة</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="205"/>
         <source>Restore all</source>
-        <translation>استعادة כל</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
         <source>Empty trash</source>
-        <translation>הסרה של المهملות</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
         <source>Source path</source>
-        <translation>נתיב המקור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="208"/>
         <source>Time deleted</source>
-        <translation>זמן מחיקה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6460,18 +6720,18 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="43"/>
-        <source>Sending files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
-        <translation>שליחת קבצים ל"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"...</translation>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>שליחת קבצים ל&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="44"/>
-        <source>Failed to send files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
-        <translation>הפקת שליחת קבצים ל"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" נכשלה</translation>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>הפקת שליחת קבצים ל&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; נכשלה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="45"/>
-        <source>Sent to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" successfully</source>
-        <translation>הושלו קבצים ל"&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" בהצלחה</translation>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
+        <translation>הושלו קבצים ל&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; בהצלחה</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="46"/>
@@ -6506,7 +6766,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="52"/>
         <source>Unable to send the file more than 2 GB</source>
-        <translation>לא ניתן לשלוח קבצים יותר מ-2 ג'יבל</translation>
+        <translation>לא ניתן לשלוח קבצים יותר מ-2 ג&apos;יבל</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="53"/>
@@ -6515,7 +6775,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="54"/>
-        <source>File doesn't exist</source>
+        <source>File doesn&apos;t exist</source>
         <translation>קובץ לא קיים</translation>
     </message>
     <message>
@@ -6692,52 +6952,52 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="187"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation>ה创建 של מפתח ציבורי נכשלה: אורך המפתח ארוך מדי!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="195"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation>השמירה של קובץ RSA ciphertext נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="211"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation>השמירה של קובץ מפתח ציבורי נכשלה: המפתח הציבורי ריק.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="219"/>
         <source>Failed to save public key file: %1</source>
-        <translation>השמירה של קובץ מפתח ציבורי נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="293"/>
         <source>Failed to create config dir: %1</source>
-        <translation>ה创建 של כותרת הקובץ נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="321"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation>ה创建 של קובץ מפתח פרטי RSA נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="332"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation>ה创建 של קובץ RSA ciphertext נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="343"/>
         <source>Failed to create hint file: %1</source>
-        <translation>ה创建 של קובץ תلمוד נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="375"/>
         <source>Failed to save hint info: %1</source>
-        <translation>השמירה של מידע תلمוד נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="728"/>
         <source>Save password failed: %1</source>
-        <translation>השמירה של סיסמה נכשלה: %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6824,11 +7084,17 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="206"/>
         <source>Select a path</source>
         <translation>בחר נתיב</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="202"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="239"/>
         <source>Unable to get the key file</source>
         <translation>לא ניתן להשיג את קובץ המפתח</translation>
     </message>
@@ -6909,7 +7175,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="119"/>
-        <source>Can't unlock the vault under the networking!</source>
+        <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>לא ניתן לפתוח את המגמה דרך רשת!
 </translation>
     </message>
@@ -6935,11 +7201,13 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="228"/>
         <source>Wrong password</source>
         <translation>סיסמה שגויה</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="239"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
@@ -6959,8 +7227,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
-        <source>Click 'Encrypt' and input the user password.</source>
-        <translation>לחץ על 'הצפנה' וכנס את סיסמה המשתמש</translation>
+        <source>Click &apos;Encrypt&apos; and input the user password.</source>
+        <translation>לחץ על &apos;הצפנה&apos; וכנס את סיסמה המשתמש</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
@@ -6975,15 +7243,20 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
         <source>Close</source>
-        <translation type="unfinished">סגור</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="226"/>
         <source>Encrypt</source>
         <translation>הצפנה</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="182"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="241"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
@@ -7028,7 +7301,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="105"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation>נתיב הافتراضי לא נראים למשתמשים אחרים, והמידע על הנתיב לא יוצג.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7036,67 +7309,69 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Set Vault Password</source>
-        <translation>הגדר סיסמה Vault</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
         <source>Encryption method</source>
-        <translation>שיטה 암호</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="51"/>
         <source>Key encryption</source>
-        <translation>암호 המפתח</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Transparent encryption</source>
-        <translation>암호 שקוף</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
         <source>Password</source>
-        <translation type="unfinished">סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="221"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation>≥ 8 תווים, מכיל א-Z, z-a, 0-9 וסמלים</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Repeat password</source>
-        <translation>שחזור סיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Input the password again</source>
-        <translation>הכנס את הסיסמה שוב</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
         <source>Password hint</source>
-        <translation>הסבר לסיסמה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
         <source>Optional</source>
-        <translation>אופציונלי</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="76"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation>הvault של הקוביות יתנשא אוטומטית כאשר יוגד, ללא אימות הסיסמה. קבצים בתו תהיינה בלתי מוע접ים תחת חسابי משתמשים אחרים.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Next</source>
-        <translation>הבא</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="266"/>
         <source>Passwords do not match</source>
-        <translation>הסיסמאות לא תואמות</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7104,27 +7379,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="31"/>
         <source>File Vault</source>
-        <translation type="unfinished"> tüף קובץ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Create your secure private space</source>
-        <translation>צור את המרחב הפרטי והבטוח שלך</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Advanced encryption technology</source>
-        <translation>הצפנה מתקדמת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Convenient and easy to use</source>
-        <translation>רלוונטי וקל למשתמש</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="41"/>
         <source>Create</source>
-        <translation>צור</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7132,35 +7407,35 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation>ביצוע יצירת vault נכשל: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation>ביצוע יצירת vault נכשל: קבלת שיטת הצפנה נכשלה!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation>ביצוע יצירת vault נכשל: שיטת הצפנה לא ידועה!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation>ביצוע יצירת vault נכשל: הסיסמה שודרה ריקה!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation>הצגת סיסמה אוטומטית נכשלה!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEntryFileEntity</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
-        <source>My Vault</source>
-        <translation>vault שלי</translation>
+        <source>File Vault</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7168,38 +7443,39 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
         <source>Vault</source>
-        <translation type="unfinished">כספת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation>vault אינו זמין בגלל שלא התק portion cryfs!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
         <source>Vault</source>
-        <translation type="unfinished">כספת</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation>작업 מתבצעת, ולכן לא ניתן לבצע את הפעולה שלך</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation>שגיאה בפריסה</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultPropertyDialog</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
-        <source>My Vault</source>
-        <translation>תא בריט.onDestroy</translation>
+        <source>File Vault</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7353,10 +7629,6 @@
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
-        <source>My Vault</source>
-        <translation> tüף שלי</translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="114"/>
         <source>File Vault</source>
         <translation> tüף קובץ</translation>
@@ -7375,12 +7647,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2195"/>
         <source>Mount error</source>
-        <translation>凭证 של שרת הכניסה לא תקינים. אנא עלה מהות ותפס מחדש</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2196"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7398,7 +7670,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
         <source>Time created</source>
-        <translation type="unfinished">זמן יצירה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
@@ -7424,7 +7696,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
         <source>%1 are not allowed</source>
-        <translation>'%1 אינם מותרים</translation>
+        <translation>&apos;%1 אינם מותרים</translation>
     </message>
 </context>
 <context>
@@ -7432,7 +7704,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
         <source>%1 are not allowed</source>
-        <translation>'%1 אינם מותרים</translation>
+        <translation>&apos;%1 אינם מותרים</translation>
     </message>
 </context>
 <context>
@@ -7460,7 +7732,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation type="unfinished">זמן יצירה</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
@@ -7499,7 +7771,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1015"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1025"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>שמור</translation>
@@ -7543,6 +7815,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
