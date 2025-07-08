@@ -111,8 +111,7 @@ QVariant FileItemData::data(int role) const
             if (info) {
                 info->customData(kItemFileRefreshIcon);
 
-                if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() &&
-                    !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool()) {
+                if (info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool() && !info->extendAttributes(ExtInfoType::kFileNeedUpdate).toBool()) {
                     updateOnce = true;
                     info->setExtendedAttributes(ExtInfoType::kFileNeedUpdate, false);
                     info->updateAttributes();
@@ -133,18 +132,24 @@ QVariant FileItemData::data(int role) const
             return info->displayOf(DisPlayInfoType::kFileDisplayPath);
         return url.path();
     case kItemFileLastModifiedRole: {
+        QDateTime lastModified;
+        if (sortInfo && sortInfo->isInfoCompleted()) {
+            lastModified = QDateTime::fromSecsSinceEpoch(sortInfo->lastModifiedTime());
+        }
         if (info) {
             auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
-            return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
         }
-        return "-";
+        return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemFileCreatedRole: {
-        if (info) {
-            auto created = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
-            return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
+        QDateTime created;
+        if (sortInfo && sortInfo->isInfoCompleted()) {
+            created = QDateTime::fromSecsSinceEpoch(sortInfo->createTime());
         }
-        return "-";
+        if (info) {
+            created = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        }
+        return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemIconRole:
         return fileIcon();
@@ -261,10 +266,10 @@ QVariant FileItemData::data(int role) const
         }
         return QVariant();
     case kItemFileContentPreviewRole:
-    if (sortInfo)
-        return sortInfo->highlightContent();
+        if (sortInfo)
+            return sortInfo->highlightContent();
 
-    return QString();
+        return QString();
     default:
         return QVariant();
     }
@@ -287,14 +292,13 @@ void FileItemData::setDepth(const int8_t depth)
 
 void FileItemData::transFileInfo()
 {
-    if (info.isNull() ||
-            !info->extendAttributes(ExtInfoType::kFileNeedTransInfo).toBool())
+    if (info.isNull() || !info->extendAttributes(ExtInfoType::kFileNeedTransInfo).toBool())
         return;
     info->setExtendedAttributes(ExtInfoType::kFileNeedTransInfo, false);
     auto infoTrans = InfoFactory::transfromInfo(url.scheme(), info);
     if (infoTrans != info) {
         info = infoTrans;
-        emit InfoCacheController::instance().removeCacheFileInfo({url});
+        emit InfoCacheController::instance().removeCacheFileInfo({ url });
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
     }
 }

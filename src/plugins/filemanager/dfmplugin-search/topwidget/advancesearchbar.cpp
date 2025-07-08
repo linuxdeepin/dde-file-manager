@@ -14,6 +14,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QFileInfo>
+
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
 #include <DLabel>
@@ -319,13 +321,17 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
 
     auto filterData = data.value<FilterData>();
     // 如果是重置过滤条件，则都显示
-    const auto &iter = std::find_if(filterData.begin() + 1, filterData.begin() + kLabelCount, [](const QVariant &value) {
+    const auto &iter = std::find_if(std::next(filterData.begin()), std::next(filterData.begin(), kLabelCount), [](const QVariant &value) {
         return value.isValid();
     });
-    if (filterData[kSearchRange].toBool() && (iter == filterData.begin() + kLabelCount || iter == filterData.end()))
+    if (filterData[kSearchRange].toBool() && (iter == std::next(filterData.begin(), kLabelCount) || iter == filterData.end()))
         return true;
 
     if (!info)
+        return false;
+    // 检查文件是否存在，如果不存在则直接过滤掉
+    const auto &fileUrl = info->fileUrl();
+    if (fileUrl.isLocalFile() && !QFileInfo(fileUrl.toLocalFile()).exists())
         return false;
 
     const auto &filter = parseFilterData(filterData);
