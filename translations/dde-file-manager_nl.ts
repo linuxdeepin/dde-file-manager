@@ -7435,7 +7435,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Bestandskluis</translation>
     </message>
 </context>
 <context>
@@ -7475,7 +7475,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Bestandskluis</translation>
     </message>
 </context>
 <context>
