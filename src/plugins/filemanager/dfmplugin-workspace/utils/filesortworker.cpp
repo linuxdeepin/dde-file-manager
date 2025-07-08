@@ -386,7 +386,7 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
             return;
         }
 
-        if (this->children.value(parantUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl())) {
+        if (this->children.value(makeParentUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl())) {
             auto data = childData(sortInfo->fileUrl());
             if (data && data->fileInfo())
                 data->fileInfo()->updateAttributes();
@@ -411,7 +411,7 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &c
 
     fmDebug() << "Handling watcher remove children - count:" << children.size();
 
-    auto parentUrl = parantUrl(children.first()->fileUrl());
+    auto parentUrl = makeParentUrl(children.first()->fileUrl());
 
     for (const auto &sortInfo : children) {
         if (isCanceled) {
@@ -476,7 +476,7 @@ bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
     if (!child)
         return false;
 
-    if (!child->fileUrl().isValid() || !this->children.value(parantUrl(child->fileUrl())).contains(child->fileUrl()))
+    if (!child->fileUrl().isValid() || !this->children.value(makeParentUrl(child->fileUrl())).contains(child->fileUrl()))
         return false;
 
     FileInfoPointer info;
@@ -519,7 +519,7 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
     if (!hiddenFileInfo)
         return;
     auto hidlist = DFMUtils::hideListFromUrl(QUrl::fromLocalFile(hiddenFileInfo->pathOf(PathInfoType::kFilePath)));
-    auto parentUrl = parantUrl(hidUrl);
+    auto parentUrl = makeParentUrl(hidUrl);
     for (const auto &child : children.value(parentUrl)) {
         if (isCanceled)
             return;
@@ -589,7 +589,7 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    SortInfoPointer sortInfo = children.value(parantUrl(url)).value(url);
+    SortInfoPointer sortInfo = children.value(makeParentUrl(url)).value(url);
     if (!sortInfo)
         return false;
 
@@ -617,7 +617,7 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
 
     bool added = false;
     if (checkFilters(sortInfo, true)) {
-        auto parentUrl = parantUrl(sortInfo->fileUrl());
+        auto parentUrl = makeParentUrl(sortInfo->fileUrl());
         int showIndex = findStartPos(parentUrl);
 
         // 插入到每个目录下的显示目录
@@ -726,7 +726,7 @@ void FileSortWorker::handleClearThumbnail()
 void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
     Q_UNUSED(isLinkOrg);
-    if (!children.value(parantUrl(url)).contains(url))
+    if (!children.value(makeParentUrl(url)).contains(url))
         return;
 
     auto itemdata = childData(url);
@@ -827,7 +827,7 @@ void FileSortWorker::handleAddChildren(const QString &key,
 
     // In the home, it is necessary to sort by display name.
     // So, using `sortAllFiles` to reorder
-    auto parentUrl = parantUrl(children.first()->fileUrl());
+    auto parentUrl = makeParentUrl(children.first()->fileUrl());
     bool isHome = parentUrl.path() == StandardPaths::location(StandardPaths::kHomePath);
     if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
@@ -861,7 +861,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
         return true;
 
     // Clear old data when receiving first batch of items in kPreserve mode
-    if (isFirstBatch) {
+    if (isFirstBatch && !istree) {
         visibleTreeChildren.clear();
         // Clear the existing children data when we're about to insert the first batch
         QWriteLocker lk(&childrenDataLocker);
@@ -877,7 +877,7 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     QList<QUrl> newChildren;
     childrenDataLastMap.clear();
 
-    auto parentUrl = parantUrl(children.first()->fileUrl());
+    auto parentUrl = makeParentUrl(children.first()->fileUrl());
     // 获取当前的插入的位置
     auto childUrls = visibleTreeChildren.take(parentUrl);
     auto startPos = findStartPos(parentUrl);
@@ -1034,7 +1034,7 @@ QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byIn
                 return {};
             if (!UniversalUtils::urlEquals(parent, current) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
-            auto sortInfo = children.value(parantUrl(parent)).value(parent);
+            auto sortInfo = children.value(makeParentUrl(parent)).value(parent);
             if (sortInfo && sortInfo->needsCompletion())
                 doCompleteFileInfo(sortInfo);
             if (!UniversalUtils::urlEquals(parent, current) && !checkFilters(sortInfo, byInfo)) {
@@ -1088,7 +1088,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     if (isCanceled || sortInfo.isNull())
         return false;
 
-    auto parentUrl = parantUrl(sortInfo->fileUrl());
+    auto parentUrl = makeParentUrl(sortInfo->fileUrl());
     auto depth = findDepth(parentUrl);
     if (depth < 0)
         return false;
@@ -1169,7 +1169,7 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
         return false;
 
     auto url = fileInfo->fileUrl();
-    auto parentUrl = parantUrl(url);
+    auto parentUrl = makeParentUrl(url);
     if (!children.value(parentUrl).contains(url))
         return false;
 
@@ -1290,7 +1290,7 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
     if (isCanceled || children.isEmpty())
         return {};
 
-    auto parentUrl = parantUrl(children.first());
+    auto parentUrl = makeParentUrl(children.first());
     if (orgSortRole == Global::ItemRoles::kItemDisplayRole) {
         visibleTreeChildren.insert(parentUrl, children);
         return {};
@@ -1408,13 +1408,13 @@ int FileSortWorker::findEndPos(const QUrl &dir)
     if (UniversalUtils::urlEquals(dir, current))
         return childrenCount();
 
-    const auto &parentUrl = parantUrl(dir);
+    const auto &parentUrl = makeParentUrl(dir);
     auto index = visibleTreeChildren.value(parentUrl).indexOf(dir);
     if (index < 0)
         return -1;
 
     if (index == visibleTreeChildren.value(parentUrl).length() - 1)
-        return findEndPos(parantUrl(dir));
+        return findEndPos(makeParentUrl(dir));
 
     return getChildShowIndex(visibleTreeChildren.value(parentUrl).at(index + 1));
 }
@@ -1859,12 +1859,12 @@ bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
     return defaultHiddenUrls.containsByLock(fileUrl);
 }
 
-QUrl FileSortWorker::parantUrl(const QUrl &url)
+QUrl FileSortWorker::makeParentUrl(const QUrl &url)
 {
     if (!currentSupportTreeView)
         return current;
-    auto parent = UrlRoute::urlParent(url);
-    if (UniversalUtils::urlEquals(current, parent) || UniversalUtils::isParentUrl(current, parent)
+    auto parent = url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash);
+    if (UniversalUtils::urlEquals(current, parent) || UniversalUtils::isParentUrl(parent, current)
         || !childData(parent).isNull())
         return parent;
 
