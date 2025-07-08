@@ -55,7 +55,7 @@ The main interface of the file manager is simple, user-friendly, and feature-ric
 | 7    | Menu Bar       | Create new windows, switch themes, set sharing passwords, configure settings, view help/about, or exit. |
 | 8    | Status Bar     | Displays total files or selected file count.                 |
 
-> ![tips](/home/jiangwanying/common/tips.svg) Tip: Drag the divider on the right side of the left navigation bar to adjust its width.
+> ![tips](../common/tips.svg)Tip: Drag the divider on the right side of the left navigation bar to adjust its width.
 
 ---
 
@@ -125,7 +125,7 @@ Click ![](../common/view_options.svg) to adjust view styles:
 
 ### Sorting
 
-1. Right-click in the file manager or click ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/sorting.svg) in the title bar.
+1. Right-click in the file manager or click ![](../common/sorting.svg) in the title bar.
 2. Select **Sort by** > *Name*, *Modified*, *Created*, *Size*, or *Type*.
 
 Enable **Mix files and folders** in **Main Menu > Settings > Basic Settings > Files and Directories** to sort them together.
@@ -197,18 +197,7 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 > ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
-### Virus Scan
 
-1. On File Manager interface, right-click a file(folder). 
-
-2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
-   
-   > ![notes](../common/notes.svg) Notes: 
-   > 
-   > - If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
-   > - **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
-   
-   
 
 ## Common Operations
 
@@ -221,42 +210,51 @@ The address bar combines history navigation, breadcrumbs, and a path input field
 ![0|addressbar](fig/addressbar1.png)
 
 - **History Navigation**: Use arrows to browse forward/backward.
+
 - **Breadcrumbs**: Click any level to jump directly. Hover and click ▼ to see full path hierarchy.  
+
   ![](fig/addressbar2.png)
+
 - **Path Input**: Click the blank area to enter/edit a path. Click outside to revert to breadcrumbs.  
+
   <img src="fig/addressbar3.png" alt="0|addressbar" style="zoom:67%;" />
 
 ### Search Files
 
 Press **Ctrl + F** or click the search icon in the address bar to search.  
-![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search_button.png)
+
+![](fig/search_button.png)
 
 Search supports basic (name/content) and advanced filters (type/size/time).
 
 - Search within a directory by navigating there first.
 - Use spaces to separate multiple keywords.
 
-> ![notes](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
+> ![notes](../common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
 
 #### Full-Text Search
 
 Search by file content keywords.  
-![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search1.png)  
+
+![](fig/search1.png)
+
 To enable:
 
-1. Go to ![icon_menu](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/icon_menu.svg) > **Settings**.
+1. Go to ![icon_menu](../common/icon_menu.svg) > **Settings**.
 2. Check **Full-text search** under *Advanced Settings > Search*.  
-   ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search2.png)
+
+![](fig/search2.png)
 
 #### Advanced Search
 
-Click ![filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/filter.svg) after entering keywords to narrow results by:  
+Click ![filter](../common/filter.svg) after entering keywords to narrow results by:  
 
 - Scope
 - File Size
 - File Type
 - Modification/Access/Creation Time  
-  ![0|filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_filter.png)
+
+![0|filter](fig/p_filter.png)
 
 ### Recent Files
 
@@ -268,13 +266,15 @@ By default, there is a **Recent** entry on left panel. Click it to view the rece
 
 - Click **+** in the tab bar to open a new tab.
 - Click **×** or middle-click a tab to close it.  
-  ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/tab1.png)
+
+![1|tab](fig/tab1.png)
 
 **Open folders in new tabs**:
 
 1. Right-click a folder.
 2. Select **Open in new tab**.  
-   ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_tab.png)
+
+![1|tab](fig/p_tab.png)
 
 ### Manage Bookmarks
 
@@ -546,72 +546,7 @@ For example, to add 4 corner markers to a file/folder icon, you can input:
 
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
 
-## File Vault
 
-File Vault is designed to create a secure space for your files and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
-
-### Set Vault Password
-
-You have to encrypt File Vault when you use it for the first time. File Vault provides two encryption methods, namely **key encryption** and **transparent encryption**. The newly added **transparent encryption** allows you to directly access File Vault without setting and entering the password.
-
-#### Transparent Encryption
-
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
-2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
-
-![0|encrypt](fig/transparent_encryption.png)
-
-#### Key Encryption
-
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
-2. The "Encryption method" is set to **key encryption** by default. After setting a password and a password hint, Click **Next**. 
-
-![0|encrypt](fig/key_encryption.png)
-
-> ![notes](../common/notes.svg) Notes: The password must contain uppercase letters, lowercase letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
-
-3. In the pop up window, set the storage location of the key file, which helps you to retrieve password if you forget it. Click **Next**. 
-
-![encrypt](fig/save.png)
-
-4. Click **Encrypt**; enter your login password in the pop-up authentication window and click **Confirm**. 
-
-5. Click **OK** when encryption finishes.
-
-![encrypt](fig/finish.png)
-
-### Lock File Vault
-
-After you put files into File Vault, right-click![file_vault](../common/file_vault.svg) in the left panel or right-click **My Vault** in the **Computer** interface. 
-
-- Select **Lock** to lock File Vault. 
-- Select **Auto lock** and select in the sub-menu:
-  + Select "Never", which means the file vault remains unlock until the screen is locked or the computer is shutdown. 
-  + Select "5 minutes", "10 minutes" or "20 minutes", which means File Vault will be locked automatically in corresponding time. 
-
-![0|right](fig/right.png)
-
-
-
-### Unlock File Vault
-
-1. Click![file_vault](../common/file_vault.svg) or double-click **My Vault** in the **Computer** interface. 
-2. Input password in the pop-up window and click **Unlock**. 
-3. If you forget the vault password, click **Forgot Password?**, select the location where the key file is stored, and then click **Verify Key** to retrieve the password.
-
-![encrypt](fig/unlock.png)
-
-> ![tips](../common/tips.svg) Tips: You can also right-click ![file_vault](../common/file_vault.svg) in the left panel or **My Vault** in the **Computer** interface and select **Unlock**. 
-
-### Delete File Vault
-
-You can delete a vault only after unlocking it.
-
-1. Right-click ![file_vault](../common/file_vault.svg) in the left panel  or right-click **My Vault** in the **Computer** interface and select **Remove File Vault**. 
-2. Input file vault password in the pop-up window and click **Remove**. 
-3. Input your login password in the pop-up window and click **Confirm** to finish this operation.
-
-> ![attention](../common/attention.svg) Attention: Files inside the vault would be deleted as you remove the file vault. Please backup them before you remove the file vault if needed. 
 
 ## Disk Management
 
@@ -723,7 +658,7 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 - **New Windows/Tabs**: Set default actions for opening directories.
 - **Files & Directories**: Toggle *Show hidden files*, *Show extensions*, or *Mix files/folders in sorting*.  
 
-![setting](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/basic_setting.png)
+![setting](fig/basic_setting.png)
 
 #### Sidebar
 

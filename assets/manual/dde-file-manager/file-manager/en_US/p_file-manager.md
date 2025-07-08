@@ -55,7 +55,7 @@ The main interface of the file manager is simple, user-friendly, and feature-ric
 | 7    | Menu Bar       | Create new windows, switch themes, set sharing passwords, configure settings, view help/about, or exit. |
 | 8    | Status Bar     | Displays total files or selected file count.                 |
 
-> ![tips](/home/jiangwanying/common/tips.svg) Tip: Drag the divider on the right side of the left navigation bar to adjust its width.
+> ![tips](../common/tips.svg)Tip: Drag the divider on the right side of the left navigation bar to adjust its width.
 
 ---
 
@@ -125,7 +125,7 @@ Click ![](../common/view_options.svg) to adjust view styles:
 
 ### Sorting
 
-1. Right-click in the file manager or click ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/sorting.svg) in the title bar.
+1. Right-click in the file manager or click ![](../common/sorting.svg) in the title bar.
 2. Select **Sort by** > *Name*, *Modified*, *Created*, *Size*, or *Type*.
 
 Enable **Mix files and folders** in **Main Menu > Settings > Basic Settings > Files and Directories** to sort them together.
@@ -197,18 +197,7 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 > ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
-### Virus Scan
 
-1. On File Manager interface, right-click a file(folder). 
-
-2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
-   
-   > ![notes](../common/notes.svg) Notes: 
-   > 
-   > - If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
-   > - **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
-   
-   
 
 ## Common Operations
 
@@ -221,42 +210,51 @@ The address bar combines history navigation, breadcrumbs, and a path input field
 ![0|addressbar](fig/addressbar1.png)
 
 - **History Navigation**: Use arrows to browse forward/backward.
+
 - **Breadcrumbs**: Click any level to jump directly. Hover and click ▼ to see full path hierarchy.  
+
   ![](fig/addressbar2.png)
+
 - **Path Input**: Click the blank area to enter/edit a path. Click outside to revert to breadcrumbs.  
+
   <img src="fig/addressbar3.png" alt="0|addressbar" style="zoom:67%;" />
 
 ### Search Files
 
 Press **Ctrl + F** or click the search icon in the address bar to search.  
-![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search_button.png)
+
+![](fig/search_button.png)
 
 Search supports basic (name/content) and advanced filters (type/size/time).
 
 - Search within a directory by navigating there first.
 - Use spaces to separate multiple keywords.
 
-> ![notes](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
+> ![notes](../common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
 
 #### Full-Text Search
 
 Search by file content keywords.  
-![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search1.png)  
+
+![](fig/search1.png)
+
 To enable:
 
-1. Go to ![icon_menu](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/icon_menu.svg) > **Settings**.
+1. Go to ![icon_menu](../common/icon_menu.svg) > **Settings**.
 2. Check **Full-text search** under *Advanced Settings > Search*.  
-   ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/search2.png)
+
+![](fig/search2.png)
 
 #### Advanced Search
 
-Click ![filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/filter.svg) after entering keywords to narrow results by:  
+Click ![filter](../common/filter.svg) after entering keywords to narrow results by:  
 
 - Scope
 - File Size
 - File Type
 - Modification/Access/Creation Time  
-  ![0|filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_filter.png)
+
+![0|filter](fig/p_filter.png)
 
 ### Recent Files
 
@@ -268,13 +266,15 @@ By default, there is a **Recent** entry on left panel. Click it to view the rece
 
 - Click **+** in the tab bar to open a new tab.
 - Click **×** or middle-click a tab to close it.  
-  ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/tab1.png)
+
+![1|tab](fig/tab1.png)
 
 **Open folders in new tabs**:
 
 1. Right-click a folder.
 2. Select **Open in new tab**.  
-   ![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/p_tab.png)
+
+![1|tab](fig/p_tab.png)
 
 ### Manage Bookmarks
 
@@ -723,7 +723,7 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 - **New Windows/Tabs**: Set default actions for opening directories.
 - **Files & Directories**: Toggle *Show hidden files*, *Show extensions*, or *Mix files/folders in sorting*.  
 
-![setting](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/en_US/fig/basic_setting.png)
+![setting](fig/basic_setting.png)
 
 #### Sidebar
 
