@@ -38,14 +38,6 @@ DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
-static constexpr char kEmptyRecentFile[] =
-        R"|(<?xml version="1.0" encoding="UTF-8"?>
-        <xbel version="1.0"
-        xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
-        xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
-        >
-        </xbel>)|";
-
 RecentManager *RecentManager::instance()
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
