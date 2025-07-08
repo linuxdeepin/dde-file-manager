@@ -1184,7 +1184,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     // gio does not support root user to move ordinary user files to trash
     if (SysInfoUtils::isRootUser()) {
         int currentEffectiveUid = SysInfoUtils::getUserId();
-        int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
+        int ownerId = info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
         if (ownerId != currentEffectiveUid) {
             qCWarning(logDFMBase) << "A root process is trying to trash a non-root file, predicting failure.";
             return false;
@@ -1199,7 +1199,21 @@ bool FileUtils::fileCanTrash(const QUrl &url)
             qCWarning(logDFMBase) << "Invalid path detected: originalHomePath or canonicalFilePath is empty.";
             return false;   // 路径无效
         }
-        if (canonicalFilePath.startsWith(originalHomePath)) {
+
+        // Use more reliable path comparison to handle symlinks and mount points
+        QString normalizedOriginalHome = QDir::cleanPath(originalHomePath);
+        QString normalizedFilePath = QDir::cleanPath(canonicalFilePath);
+        
+        // Ensure proper path boundary comparison
+        if (!normalizedOriginalHome.endsWith('/')) {
+            normalizedOriginalHome += '/';
+        }
+        
+        // Check if file is within the original user's home directory
+        bool isInHomeDir = (normalizedFilePath.startsWith(normalizedOriginalHome) || 
+                           normalizedFilePath == normalizedOriginalHome.chopped(1));
+        
+        if (isInHomeDir) {
             // 文件位于原始用户的主目录中。
             // 这是 GIO 会拒绝的“领域冲突”场景。
             qCWarning(logDFMBase) << " A root process is trying to trash a file inside another user's home directory ("
