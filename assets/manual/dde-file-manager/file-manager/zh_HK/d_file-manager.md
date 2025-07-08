@@ -46,7 +46,7 @@
 | 1    | 導覽列     | 點擊圖示快速存取本機檔案、磁碟、網絡鄰居、書籤、標記等。     |
 | 2    | 分頁欄     | 新增、移除分頁或調整分頁順序。                               |
 | 3    | 網址列     | 切換瀏覽紀錄、上下級目錄導覽或輸入路徑。                     |
-| 4    | 檢視與選項 | 點擊 ![icon_view](../common/icon_view.svg)/![list_view](../common/list_view.svg)/![treelist_view](../common/treelist_view.svg) 切換圖示/列表/樹狀列表檢視。點擊 ![](../common/view_options.svg) 調整圖示大小、網格密度或預覽設定。 |
+| 4    | 檢視與選項 | 點擊 ![icon_view](../common/icon_view.svg) ![list_view](../common/list_view.svg) ![treelist_view](../common/treelist_view.svg) 切換圖示/列表/樹狀列表檢視。點擊 ![](../common/view_options.svg) 調整圖示大小、網格密度或預覽設定。 |
 | 5    | 排序       | 點擊 ![](../common/sorting.svg) 變更排序方式。               |
 | 6    | 搜尋       | 搜尋目前目錄的檔案。                                         |
 | 7    | 選單列     | 新增視窗、切換主題、設定共享密碼、設定選項、檢視說明或結束程式。 |
@@ -98,7 +98,7 @@
 
 ### 查看文件
 
-點擊選單列圖示 ![icon_view](../common/icon_view.svg)/![list_view](../common/list_view.svg)/![treelist_view](../common/treelist_view.svg) 或使用快速鍵 **Ctrl + 1**/**Ctrl + 2**/**Ctrl + 3** 切換檢視模式。
+點擊選單列圖示 ![icon_view](../common/icon_view.svg) ![list_view](../common/list_view.svg) ![treelist_view](../common/treelist_view.svg) 或使用快速鍵 **Ctrl + 1**  **Ctrl + 2**  **Ctrl + 3** 切換檢視模式。
 
 - **圖示檢視**：以圖示/縮圖平鋪顯示檔案名稱。  
 
@@ -124,12 +124,12 @@
 
 ### 排序文件
 
-1. 在檔案管理員右鍵點擊或點擊標題列 ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/sorting.svg)。
+1. 在檔案管理員右鍵點擊或點擊標題列![](../common/sorting.svg)。
 2. 選擇 **排序方式** > *名稱*、*修改時間*、*建立時間*、*大小* 或 *類型*。
 
 於 **主選單 > 設定 > 基礎設定 > 檔案與目錄** 勾選 **檔案和資料夾混合排序** 可合併排序。
 
-> ![tips](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/tips.svg) 貼士：列表檢視中點擊欄位標題切換升冪/降冪排序。
+> ![notes](../common/notes.svg)貼士：列表檢視中點擊欄位標題切換升冪/降冪排序。
 
 ### 打開文件
 
@@ -193,15 +193,7 @@
 
 > ![notes](../common/notes.svg) 說明：查看多個文件屬性會顯示文件總大小和數量；查看快捷方式的屬性將會額外顯示源文件地址。您還可以使用 **Ctrl + I** 組合鍵查看文件屬性。
 
-### 病毒查殺
 
-1. 在檔案管理員界面，右鍵單擊文件（夾）。
-2. 選擇 **病毒查殺**，彈出安全中心病毒查殺界面，您可以對該文件（夾）進行安全掃描，具體操作請參閱安全中心 [病毒查殺](dman:///deepin-defender#病毒查殺)。
-
-> ![notes](../common/notes.svg) 說明：
-> 
-> - 如果當前安全中心有查殺任務，則在彈出的對話框中單擊 **查看** 進入安全中心病毒查殺界面進行查看。
-> - 安全中心默認開啟 **加入「病毒查殺」到文件右鍵菜單** 的功能，您也可以進入安全中心設置界面，取消勾選該功能。取消勾選後檔案管理員右鍵菜單中不會顯示病毒查殺的選項。
 
 ## 常用操作
 
@@ -211,13 +203,13 @@
 
 網址列整合瀏覽紀錄、路徑階層與輸入框，預設顯示路徑階層。
 
-![0|addressbar](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/addressbar1.png)
+<img src="fig/addressbar1.png">
 
 - **瀏覽紀錄**：使用箭頭切換前後瀏覽位置。
 
 - **路徑階層**：點擊任一層級快速跳轉。懸停點擊 ▼ 展開完整路徑。 
 
-  ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/addressbar2.png)
+  <img src="fig/addressbar2.png">
 
 - **路徑輸入**：點擊空白處輸入/編輯路徑，點擊外部返回路徑階層。  
   
@@ -225,36 +217,39 @@
 
 ### 搜索文件
 
-按 **Ctrl + F** 或點擊網址列搜尋圖示開始搜尋。  ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/search_button.png)
+按 **Ctrl + F** 或點擊網址列搜尋圖示開始搜尋。<img src="fig/search_button.png">
 
 支援關鍵字（名稱/內容）及進階篩選（類型/大小/時間）。
 
 - 先進入目標目錄再搜尋可限定範圍。
 - 用空格分隔多組關鍵字。
 
-> ![notes](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/notes.svg) 說明：設定中預設啟用 **自動索引內置磁碟**，勾選 **連接後索引外置裝置** 可加速外部裝置搜尋。
+> ![](../common/notes.svg) 說明：設定中預設啟用 **自動索引內置磁碟**，勾選 **連接後索引外置裝置** 可加速外部裝置搜尋。
 
 #### 全文搜尋
 
-以檔案內容關鍵字搜尋。  ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/search1.png)  
+以檔案內容關鍵字搜尋。
+
+<img src="fig/search1.png">
+
 啟用方式：
 
-1. 前往 ![icon_menu](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/icon_menu.svg) > **設定**。
+1. 前往 ![](../common/icon_menu.svg)> **設定**。
 
 2. 於 **進階設定 > 搜尋** 勾選 **全文搜尋**。  
 
-   ![](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/search2.png)
+   <img src="fig/search2.png">
 
 #### 進階搜尋
 
-輸入關鍵字後點擊 ![filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/common/filter.svg)，依條件篩選：  
+輸入關鍵字後點擊 ![](../common/filter.svg) ，依條件篩選：  
 
 - 範圍
 - 檔案大小
 - 檔案類型
 - 修改/存取/建立時間  
 
-![0|filter](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/p_filter.png)
+<img src="fig/p_filter.png">
 
 ### 最近使用
 
@@ -267,14 +262,14 @@
 - 點擊分頁欄 **+** 新增分頁。
 - 點擊 **×** 或中鍵點擊分頁關閉。  
 
-![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/tab1.png)
+![1|tab](fig/tab1.png)
 
 **在新分頁開啟資料夾**：
 
 1. 右鍵點擊資料夾。
 2. 選擇 **在新分頁中開啟**。  
 
-![1|tab](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/p_tab.png)
+![1|tab](fig/p_tab.png)
 
 ### 書籤管理
 
@@ -535,72 +530,7 @@
 
 在終端中輸入命令 **gio set xxx(文件路徑) -t stringv metadata::emblems ""** 撤銷文件（夾）上所有的角標。
 
-## 文件保險箱
 
-文件保險箱旨在為您打造專屬的安全空間，為您的私隱保駕護航。
-
-### 加密保險箱
-
-保險箱現提供兩種加密方式，分別為 **密鑰加密** 和 **透明加密** ，新增的 **透明加密** 提供了無需輸入保險箱密碼，即可訪問保險箱的便捷加密方式，該加密方式同樣確保了保險箱內文件的安全。
-
-#### 透明加密
-
-1. 單擊導航欄中的保險箱圖標![file_vault](../common/file_vault.svg) ，或者在計算機界面雙擊 “我的保險箱”，在彈出的對話框中單擊 **開啟**。
-2. 在“加密方式”下，選擇 **透明加密** 後單擊 **下一步**，直接加密保險箱。
-
-![encrypt](fig/transparent_encryption.png)
-
-#### 密鑰加密
-
-1. 單擊導航欄中的保險箱圖標 ![file_vault](../common/file_vault.svg)，或者在計算機界面雙擊 “我的保險箱”，在彈出的對話框中單擊 **開啟**。 
-2. 加密方式默認為 **密鑰加密**，可設置保險箱密碼和密碼提示訊息，單擊 **下一步**。
-
-![encrypt](fig/key_encryption.png)
-
-> ![notes](../common/notes.svg) 說明: 密碼必須同時包含大寫字母、小寫字母、數字和符號，且字符不小於8位，否則無法進入下一步。
-
-3. 在保存密鑰文件窗口中，設置密鑰文件的存儲位置，單擊 **下一步**。如果您忘記了保險箱密碼，可使用密鑰文件找回密碼。
-
-![encrypt](fig/save.png)
-
-4. 單擊 **加密保險箱**，彈出認證窗口，輸入用戶登錄密碼後單擊 **確定**。
-
-5. 加密完成後在彈窗中單擊 **確定**，完成保險箱密碼設置。
-
-![encrypt](fig/finish.png)
-
-### 鎖定保險箱
-
-將文件放入保險箱後，右鍵單擊 ![file_vault](../common/file_vault.svg) 或者在計算機界面右鍵單擊 **我的保險箱**。
-
-- 選擇 **立即上鎖**，立即將文件保險箱鎖上。
-- 選擇 **自動上鎖**，在其下拉選項中：
-  + 選擇「從不」，計算機在鎖屏或關機前一直保持未上鎖狀態。
-  + 選擇「5分鐘」、「10分鐘」或者「20分鐘」後自動上鎖保險箱。
-
-![0|right](fig/right.png)
-
-### 解鎖保險箱
-
-1. 單擊 ![file_vault](../common/file_vault.svg) 或者在計算機界面雙擊 **我的保險箱**。
-2. 在解鎖保險箱窗口中，輸入保險箱密碼，單擊 **解鎖**。
-3. 如果忘記了保險箱密碼，單擊 **忘記密碼**，選擇密鑰文件的存儲位置後，單擊 **驗證密鑰** 找回密碼。
-
-![encrypt](fig/unlock.png)
-
-> ![0|tips](../common/tips.svg) 竅門：您也可以右鍵單擊 ![file_vault](../common/file_vault.svg) 或者 **我的保險箱**，選擇 **解鎖**，解鎖保險箱。
-
-### 刪除保險箱
-
-刪除保險箱需要提前解鎖保險箱。
-
-1. 右鍵單擊 ![file_vault](../common/file_vault.svg) 或者 **我的保險箱**，選擇 **刪除保險箱**。
-
-2. 彈出刪除保險箱窗口，輸入保險箱密碼，單擊 **刪除**。
-
-3. 在密碼認證窗口中輸入用戶登錄密碼，單擊 **確定** 完成操作。
-   
-   > ![attention](../common/attention.svg) 注意：刪除保險箱會將裏面的文件永久刪除。在進行刪除操作前，請將保險箱中的文件備份。
 
 ## 磁盤管理
 
@@ -709,7 +639,7 @@
 - **新視窗與分頁**：設定開啟目錄的預設行為。
 - **檔案與目錄**：切換 *顯示隱藏檔案*、*顯示副檔名* 或 *混合排序檔案/資料夾*。  
 
-![setting](/media/jiangwanying/00036DAB9160BC70/产品/工作2025/文管帮助手册V25/file-manager-V25/zh_HK/fig/basic_setting.png)
+![setting](fig/basic_setting.png)
 
 #### 側邊欄
 
