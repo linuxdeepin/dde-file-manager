@@ -1508,10 +1508,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
         } else if (WindowUtils::keyCtrlIsPressed() && selectionModel()->isSelected(index)) {
             d->selectHelper->setSelection(selectionModel()->selection());
             d->lastMousePressedIndex = index;
-
             DListView::mousePressEvent(event);
-
-            selectionModel()->select(index, QItemSelectionModel::Select);
 
             return;
         } else if (WindowUtils::keyShiftIsPressed()) {
