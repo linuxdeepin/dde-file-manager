@@ -1175,19 +1175,38 @@ int FileUtils::dirFfileCount(const QUrl &url)
 
 bool FileUtils::fileCanTrash(const QUrl &url)
 {
-    // gio does not support root user to move ordinary user files to trash
     auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (SysInfoUtils::isRootUser() || SysInfoUtils::isOpenAsAdmin()) {
+    if (!info) {
+        qCWarning(logDFMBase) << "Failed to create file info for URL:" << url;
+        return false;
+    }
+
+    // gio does not support root user to move ordinary user files to trash
+    if (SysInfoUtils::isRootUser()) {
         int currentEffectiveUid = SysInfoUtils::getUserId();
         int ownerId = info.isNull() ? -1 : info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
         if (ownerId != currentEffectiveUid) {
-            qCWarning(logDFMBase) << "a root process is trying to trash a non-root file, predicting failure.";
+            qCWarning(logDFMBase) << "A root process is trying to trash a non-root file, predicting failure.";
             return false;
         }
     }
 
-    if (!info)
-        return false;
+    // 检查文件是否位于原始用户的“领域”（主目录）内
+    if (SysInfoUtils::isOpenAsAdmin()) {
+        const QString &originalHomePath = SysInfoUtils::getOriginalUserHome();
+        const QString &canonicalFilePath = info->pathOf(PathInfoType::kCanonicalPath);   // 获取文件所在目录的规范路径
+        if (originalHomePath.isEmpty() || canonicalFilePath.isEmpty()) {
+            qCWarning(logDFMBase) << "Invalid path detected: originalHomePath or canonicalFilePath is empty.";
+            return false;   // 路径无效
+        }
+        if (canonicalFilePath.startsWith(originalHomePath)) {
+            // 文件位于原始用户的主目录中。
+            // 这是 GIO 会拒绝的“领域冲突”场景。
+            qCWarning(logDFMBase) << " A root process is trying to trash a file inside another user's home directory ("
+                                  << url << "). Predicting GIO failure.";
+            return false;
+        }
+    }
 
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
     if (alltotrash)

@@ -10,10 +10,12 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDir>
+#include <QProcessEnvironment>
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <mutex>
+#include <pwd.h>
 
 DCORE_USE_NAMESPACE
 using namespace dfmbase;
@@ -71,7 +73,8 @@ bool SysInfoUtils::isDesktopSys()
 
 bool SysInfoUtils::isOpenAsAdmin()
 {
-    return SysInfoUtils::isRootUser() && SysInfoUtils::isDesktopSys();
+    const QProcessEnvironment &env = QProcessEnvironment::systemEnvironment();
+    return SysInfoUtils::isRootUser() && SysInfoUtils::isDesktopSys() && env.contains("PKEXEC_UID");
 }
 
 bool SysInfoUtils::isDeveloperModeEnabled()
@@ -181,4 +184,26 @@ float SysInfoUtils::getMemoryUsage(int pid)
     }
 
     return usage;
+}
+
+QString SysInfoUtils::getOriginalUserHome()
+{
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    if (!env.contains("PKEXEC_UID")) {
+        return QDir::homePath();
+    }
+
+    bool ok;
+    uid_t originalUid = env.value("PKEXEC_UID").toUInt(&ok);
+    if (!ok || originalUid == 0) {
+        return QDir::homePath();
+    }
+
+    struct passwd *pw = getpwuid(originalUid);
+    if (!pw) {
+        qCWarning(logDFMBase) << "Could not find user for original UID" << originalUid;
+        return QDir::homePath();
+    }
+
+    return QDir(QString::fromStdString(pw->pw_dir)).canonicalPath();
 }
