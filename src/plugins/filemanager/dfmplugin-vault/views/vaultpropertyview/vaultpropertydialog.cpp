@@ -67,7 +67,7 @@ void VaultPropertyDialog::createHeadUI(const QUrl &url)
     if (!info.isNull())
         fileIconLabel->setPixmap(info->fileIcon().pixmap(128, 128));
 
-    fileNameLabel = new QLabel(tr("My Vault"), this);
+    fileNameLabel = new QLabel(tr("File Vault"), this);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(10, 10, 10, 10);

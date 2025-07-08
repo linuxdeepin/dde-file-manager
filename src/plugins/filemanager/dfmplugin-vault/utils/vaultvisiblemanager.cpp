@@ -49,7 +49,7 @@ VaultVisibleManager::VaultVisibleManager(QObject *parent)
 void VaultVisibleManager::infoRegister()
 {
     if (!infoRegisterState) {
-        UrlRoute::regScheme(VaultHelper::instance()->scheme(), "/", VaultHelper::instance()->icon(), true, tr("My Vault"));
+        UrlRoute::regScheme(VaultHelper::instance()->scheme(), "/", VaultHelper::instance()->icon(), true, tr("File Vault"));
 
         // 注册Scheme为"vault"的扩展的文件信息
         InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());

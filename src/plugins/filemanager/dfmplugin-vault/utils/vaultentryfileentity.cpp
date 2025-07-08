@@ -28,7 +28,7 @@ VaultEntryFileEntity::~VaultEntryFileEntity()
 
 QString VaultEntryFileEntity::displayName() const
 {
-    return tr("My Vault");
+    return tr("File Vault");
 }
 
 QIcon VaultEntryFileEntity::icon() const
