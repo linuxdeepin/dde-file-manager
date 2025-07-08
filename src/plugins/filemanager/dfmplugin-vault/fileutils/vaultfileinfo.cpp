@@ -300,7 +300,7 @@ QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
     switch (type) {
     case DisPlayInfoType::kFileDisplayName:
         if (d->isRoot)
-            return QObject::tr("My Vault");
+            return QObject::tr("File Vault");
         if (proxy)
             return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
         return ProxyFileInfo::displayOf(type);
