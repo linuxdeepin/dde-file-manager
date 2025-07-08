@@ -1,3 +1,9 @@
+dde-file-manager (6.5.75.1) unstable; urgency=medium
+
+  * Improve dbus security
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 08 Jul 2025 09:21:57 +0800
+
 dde-file-manager (6.5.75) unstable; urgency=medium
 
   * Revert a bug commit
