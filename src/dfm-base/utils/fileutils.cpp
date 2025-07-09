@@ -971,6 +971,8 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
             return true;
         if (ProtocolUtils::isFTPFile(url))
             return true;
+        if (ProtocolUtils::isNFSFile(url))
+            return true;
 
         return false;
     };
@@ -982,7 +984,7 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
     if (!urlParent.isValid())
         return;
 
-    AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(DFMIO::DFMUtils::directParentUrl(url));
+    AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(urlParent);
     if (!watcher)
         return;
 
