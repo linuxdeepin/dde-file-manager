@@ -2021,6 +2021,10 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         break;
     }
 
+    if (obj == d->headerWidget && event->type() == QEvent::Resize) {
+            d->headerView->adjustSize();
+    }
+
     return DListView::eventFilter(obj, event);
 }
 
