@@ -53,6 +53,7 @@ static constexpr char kLibCore[] { "libdfm-core-plugin.so" };
 
 static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
 static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
+static bool sigtermFlag { false };
 
 /* Within an SSH session, I can use gvfs-mount provided that
  * dbus-daemon is launched first and the environment variable DBUS_SESSION_BUS_ADDRESS is set.
@@ -234,13 +235,11 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCWarning(logAppFileManager) << "handleSIGTERM: Received SIGTERM signal:" << sig << "PID:" << getpid();
-
+    // 这里处理时不能有任何的内存分配，可能会出现卡死，或者崩溃
     if (qApp) {
         // Don't use headless if SIGTERM, cause system shutdown blocked
-        qApp->setProperty("SIGTERM", true);
-        // 重启或关闭系统时，信号处理会阻塞进程
-        QTimer::singleShot(0, qApp, &QApplication::quit);
+        ::sigtermFlag = true;
+        qApp->quit();
     }
 }
 
@@ -423,8 +422,7 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
-    bool isSigterm { qApp->property("SIGTERM").toBool() };
-    if (!isSigterm && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
+    if (!::sigtermFlag && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
         qCInfo(logAppFileManager) << "main: Starting headless process for background operation";
         QProcess::startDetached(QString(argv[0]), { "-d" });
     }
