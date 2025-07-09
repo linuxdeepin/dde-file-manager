@@ -69,10 +69,10 @@ void HeaderView::updateColumnWidth()
             break;
         }
 
-    for (; j > 0; --j) {
-        int logicalIndex = this->logicalIndex(j);
-        if (isSectionHidden(logicalIndex))
-            continue;
+        for (; j > 0; --j) {
+            int logicalIndex = this->logicalIndex(j);
+            if (isSectionHidden(logicalIndex))
+                continue;
 
             resizeSection(logicalIndex, model->getColumnWidth(j) + kRightPadding + kListModeRightMargin + 2 * kColumnPadding);
             break;
