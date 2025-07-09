@@ -282,10 +282,6 @@ void DeviceProxyManagerPrivate::connectToDBus()
 {
     if (currentConnectionType == kDBusConnecting)
         return;
-    if (qApp->property("SIGTERM").toBool()) {
-        qCWarning(logDFMBase) << "Application is in SIGTERM state, skipping DBus connection";
-        return;
-    }
 
     disconnCurrentConnections();
 

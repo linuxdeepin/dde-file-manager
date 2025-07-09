@@ -171,12 +171,9 @@ static bool pluginsLoad()
 
 static void handleSIGTERM(int sig)
 {
-    qCWarning(logAppDialog) << "handleSIGTERM: Received SIGTERM signal:" << sig;
-
+    // 这里处理时不能有任何的内存分配，可能会出现卡死，或者崩溃
     if (qApp) {
-        qApp->setProperty("SIGTERM", true);
-        // 重启或关闭系统时，信号处理会阻塞进程
-        QTimer::singleShot(0, qApp, &QApplication::quit);
+        qApp->quit();
     }
 }
 
@@ -218,11 +215,6 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppDialog) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
-
-    if (qApp->property("SIGTERM").toBool()) {
-        qCWarning(logAppDialog) << "main: Application terminated by SIGTERM, exit code:" << ret;
-        _Exit(ret);
-    }
 
     qCInfo(logAppDialog) << "main: Application exiting normally with code:" << ret;
     return ret;
