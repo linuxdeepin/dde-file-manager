@@ -678,7 +678,7 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
 bool DeviceUtils::isBuiltInDisk(const QVariantHash &devInfo)
 {
     // 如果是可移除设备，则不是内置磁盘
-    if (devInfo.value(kCanPowerOff).toBool())
+    if (devInfo.value(kCanPowerOff).toBool() && !isSiblingOfRoot(devInfo))
         return false;
 
     // 如果是光驱设备，则不是内置磁盘
@@ -732,7 +732,7 @@ bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
 bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
 {
     // 如果是可移除设备，则不是数据盘
-    if (devInfo.value(kCanPowerOff).toBool())
+    if (devInfo.value(kCanPowerOff).toBool() && !isSiblingOfRoot(devInfo))
         return false;
 
     // 如果是根目录，则不是数据盘
