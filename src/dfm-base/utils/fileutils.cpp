@@ -961,7 +961,6 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     return copyingUrl.contains(url);
 }
 
-// TODO: remove it!
 void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url)
 {
     if (!url.isValid())
@@ -1001,18 +1000,6 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
         return;
     }
 }
-// fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
-// QCollator sortCollator;
-class DCollator : public QCollator
-{
-public:
-    DCollator()
-        : QCollator()
-    {
-        setNumericMode(true);
-        setCaseSensitivity(Qt::CaseInsensitive);
-    }
-};
 
 QString FileUtils::symlinkTarget(const QUrl &url)
 {
@@ -1203,16 +1190,15 @@ bool FileUtils::fileCanTrash(const QUrl &url)
         // Use more reliable path comparison to handle symlinks and mount points
         QString normalizedOriginalHome = QDir::cleanPath(originalHomePath);
         QString normalizedFilePath = QDir::cleanPath(canonicalFilePath);
-        
+
         // Ensure proper path boundary comparison
         if (!normalizedOriginalHome.endsWith('/')) {
             normalizedOriginalHome += '/';
         }
-        
+
         // Check if file is within the original user's home directory
-        bool isInHomeDir = (normalizedFilePath.startsWith(normalizedOriginalHome) || 
-                           normalizedFilePath == normalizedOriginalHome.chopped(1));
-        
+        bool isInHomeDir = (normalizedFilePath.startsWith(normalizedOriginalHome) || normalizedFilePath == normalizedOriginalHome.chopped(1));
+
         if (isInHomeDir) {
             // 文件位于原始用户的主目录中。
             // 这是 GIO 会拒绝的“领域冲突”场景。
