@@ -89,6 +89,15 @@ bool isLocalFile(const QUrl &url)
     return true;
 }
 
+bool isNFSFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    static const QString nfsMatch { R"((^/run/user/\d+/gvfs/nfs|^/root/.gvfs/nfs))" };
+    return hasMatch(url.path(), nfsMatch);
+}
+
 }   // namespace ProtocolUtils
 
 DFMBASE_END_NAMESPACE

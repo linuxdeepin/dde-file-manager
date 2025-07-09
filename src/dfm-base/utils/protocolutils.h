@@ -15,6 +15,7 @@ bool isGphotoFile(const QUrl &url);
 bool isFTPFile(const QUrl &url);
 bool isSFTPFile(const QUrl &url);
 bool isSMBFile(const QUrl &url);
+bool isNFSFile(const QUrl &url);
 }   // namespace ProtocolUtils
 
 DFMBASE_END_NAMESPACE
