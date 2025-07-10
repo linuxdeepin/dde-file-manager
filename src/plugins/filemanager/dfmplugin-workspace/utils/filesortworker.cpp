@@ -1588,10 +1588,10 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
     QVariant leftData = data(leftSortInfo, orgSortRole);
     QVariant rightData = data(rightSortInfo, orgSortRole);
 
-    // 1. 符号链接需要直接获取指向的文件的信息排序
+    // 1. 符号链接的大小需要直接获取指向的文件的信息排序
     // 2. 类型排序必须使用 fastMimeType 保证一致性
     bool useFileInfo = false;
-    if (!leftData.isValid() || (leftSortInfo->isSymLink() && orgSortRole != kItemFileMimeTypeRole)) {
+    if (!leftData.isValid() || (leftSortInfo->isSymLink() && orgSortRole == kItemFileSizeRole)) {
         const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
                 ? leftItem->fileInfo()
                 : InfoFactory::create<FileInfo>(left);
@@ -1599,7 +1599,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
         useFileInfo = true;
     }
 
-    if (!rightData.isValid() || (rightSortInfo->isSymLink() && orgSortRole != kItemFileMimeTypeRole)) {
+    if (!rightData.isValid() || (rightSortInfo->isSymLink() && orgSortRole == kItemFileSizeRole)) {
         const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
                 ? rightItem->fileInfo()
                 : InfoFactory::create<FileInfo>(right);
