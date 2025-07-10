@@ -1826,9 +1826,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
             selectionModel()->select(index, QItemSelectionModel::Select);
         }
-        auto info = model()->fileInfo(index);
-        if (info)
-            info->updateAttributes();
+
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
     }
 }
