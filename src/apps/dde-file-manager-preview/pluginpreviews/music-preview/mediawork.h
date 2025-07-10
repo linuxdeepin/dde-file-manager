@@ -7,6 +7,9 @@
 
 #include <QObject>
 #include <QMediaPlayer>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include <QAudioOutput>
+#endif
 
 namespace plugin_filepreview {
 class MediaWork : public QObject
@@ -41,7 +44,10 @@ Q_SIGNALS:
     void playerPositionChanged(qint64 duration);
 
 private:
-    QMediaPlayer *mediaPlayer;
+    QMediaPlayer *mediaPlayer { nullptr };
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QAudioOutput *audioOutput { nullptr };
+#endif
 };
 }
 
