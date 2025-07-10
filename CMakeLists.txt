@@ -81,7 +81,7 @@ if(OPT_ENABLE_BUILD_UT)
     message(STATUS "Enable testing: ${BUILD_TESTING}")
     if(BUILD_TESTING)
         enable_testing()
-        add_subdirectory(tests2)
+        add_subdirectory(autotests)
     endif()
 endif()
 
