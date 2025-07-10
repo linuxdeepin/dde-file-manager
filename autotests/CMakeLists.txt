@@ -1,12 +1,12 @@
-# tests2/CMakeLists.txt - DDE文件管理器新测试架构根配置
+# autotests/CMakeLists.txt - DDE文件管理器新测试架构根配置
 # 基于零侵入自动文件发现的现代化测试基础设施
 
 cmake_minimum_required(VERSION 3.16)
 
 # 设置项目信息
-project(dfm-tests2 
+project(dfm-autotests
     VERSION 1.0.0
-    DESCRIPTION "DDE File Manager Modern Test Infrastructure"
+    DESCRIPTION "DDE File Manager Test Infrastructure"
     LANGUAGES CXX
 )
 

@@ -1,4 +1,4 @@
-# tests2/units/dfm-framework/CMakeLists.txt - dfm-framework组件测试配置
+# autotests/units/dfm-framework/CMakeLists.txt - dfm-framework组件测试配置
 # 使用零侵入架构，仅需一行配置即可完成整个组件的测试设置
 
 message(STATUS "配置dfm-framework组件测试...")
