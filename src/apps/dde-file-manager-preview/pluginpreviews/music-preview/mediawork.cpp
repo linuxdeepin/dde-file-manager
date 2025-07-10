@@ -17,6 +17,9 @@ void MediaWork::createMediaPlayer()
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(mediaPlayer, &QMediaPlayer::stateChanged, this, &MediaWork::playerStateChanged);
 #else
+    // Qt6需要显式设置音频输出
+    audioOutput = new QAudioOutput(this);
+    mediaPlayer->setAudioOutput(audioOutput);
     connect(mediaPlayer, &QMediaPlayer::playbackStateChanged, this, &MediaWork::playerStateChanged);
 #endif
     connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MediaWork::playerStatusChanged);
