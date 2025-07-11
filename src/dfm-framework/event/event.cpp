@@ -29,28 +29,64 @@ DPF_END_NAMESPACE
 
 DPF_USE_NAMESPACE
 
+/*!
+ * \brief Get the global Event instance
+ * \details Uses Leaky Singleton pattern to avoid static destruction order issues.
+ * The instance is created once and never destroyed, which is safe for system-level
+ * event managers that need to exist throughout the entire program lifecycle.
+ * \return Pointer to the global Event instance
+ */
 Event *Event::instance()
 {
-    static Event ins;
-    return &ins;
+    // C++11 guarantees thread-safe initialization of function static variables
+    // The instance is created on first call and never destroyed
+    static Event *instance = new Event();
+    return instance;
 }
 
+/*!
+ * \brief Get the global EventDispatcherManager instance
+ * \details Uses Leaky Singleton pattern to avoid static destruction order issues.
+ * The instance is created once and never destroyed, which is safe for system-level
+ * dispatcher managers that need to exist throughout the entire program lifecycle.
+ * \return Pointer to the global EventDispatcherManager instance
+ */
 EventDispatcherManager *Event::dispatcher()
 {
-    static EventDispatcherManager ins;
-    return &ins;
+    // C++11 guarantees thread-safe initialization of function static variables
+    // The instance is created on first call and never destroyed
+    static EventDispatcherManager *instance = new EventDispatcherManager();
+    return instance;
 }
 
+/*!
+ * \brief Get the global EventSequenceManager instance
+ * \details Uses Leaky Singleton pattern to avoid static destruction order issues.
+ * The instance is created once and never destroyed, which is safe for system-level
+ * sequence managers that need to exist throughout the entire program lifecycle.
+ * \return Pointer to the global EventSequenceManager instance
+ */
 EventSequenceManager *Event::sequence()
 {
-    static EventSequenceManager ins;
-    return &ins;
+    // C++11 guarantees thread-safe initialization of function static variables
+    // The instance is created on first call and never destroyed
+    static EventSequenceManager *instance = new EventSequenceManager();
+    return instance;
 }
 
+/*!
+ * \brief Get the global EventChannelManager instance
+ * \details Uses Leaky Singleton pattern to avoid static destruction order issues.
+ * The instance is created once and never destroyed, which is safe for system-level
+ * channel managers that need to exist throughout the entire program lifecycle.
+ * \return Pointer to the global EventChannelManager instance
+ */
 EventChannelManager *Event::channel()
 {
-    static EventChannelManager ins;
-    return &ins;
+    // C++11 guarantees thread-safe initialization of function static variables
+    // The instance is created on first call and never destroyed
+    static EventChannelManager *instance = new EventChannelManager();
+    return instance;
 }
 
 void Event::registerEventType(EventStratege stratege, const QString &space, const QString &topic)
