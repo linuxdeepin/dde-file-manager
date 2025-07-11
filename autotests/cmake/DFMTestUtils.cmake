@@ -220,6 +220,8 @@ function(dfm_auto_link_dependencies TARGET_NAME COMPONENT_NAME)
             Qt6::Core
         )
         
+        message(STATUS "    ✅ dfm-extension组件依赖配置完成")
+        
     else()
         # 未知组件，使用默认依赖
         message(STATUS "    使用默认依赖配置（仅Qt6::Core）")
