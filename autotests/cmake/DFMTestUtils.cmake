@@ -230,12 +230,12 @@ endfunction()
 
 #[[
 函数: dfm_discover_test_files
-用途: 发现当前目录下的测试文件并创建可执行目标
+用途: 发现当前目录下的测试文件并创建统一的可执行目标
 参数: COMPONENT_NAME - 组件名称
       TEST_OBJ_NAME - 测试对象库名称
 功能: 
-  1. 发现当前目录下的test_*.cpp文件
-  2. 为每个测试文件创建可执行目标
+  1. 发现当前目录下的所有test_*.cpp文件
+  2. 为整个组件创建一个统一的可执行目标
   3. 链接到对应的test-objects库
   4. 链接测试框架
   5. 注册到CTest
@@ -256,91 +256,97 @@ function(dfm_discover_test_files COMPONENT_NAME TEST_OBJ_NAME)
     endif()
     
     message(STATUS "    发现 ${TEST_COUNT} 个测试文件:")
-    
-    # 为每个测试文件创建可执行目标
     foreach(TEST_SOURCE ${TEST_SOURCES})
-        # 获取测试名称（去掉扩展名）
-        get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
-        set(FULL_TEST_NAME "${COMPONENT_NAME}-${TEST_NAME}")
-        
-        message(STATUS "      ${TEST_SOURCE} -> ${FULL_TEST_NAME}")
-        
-        # 创建测试可执行文件
-        add_executable(${FULL_TEST_NAME}
-            ${TEST_SOURCE}
-            $<TARGET_OBJECTS:${TEST_OBJ_NAME}>  # 包含带覆盖率的源码对象
-        )
-        
-        # 创建testutils库（如果不存在）
-        if(NOT TARGET testutils)
-            add_library(testutils STATIC
-                ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext/stub-shadow.cpp
-            )
-            target_include_directories(testutils PUBLIC
-                ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub
-                ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext
-            )
-        endif()
-
-        # 链接测试框架和覆盖率库
-        target_link_libraries(${FULL_TEST_NAME} PRIVATE
-            Qt6::Test           # Qt6测试框架
-            GTest::GTest        # Google Test框架
-            GTest::Main         # Google Test主函数
-            gcov                # 覆盖率库
-            testutils           # 测试工具库
-        )
-        
-        # 继承对象库的依赖 - 这很重要！
-        target_link_libraries(${FULL_TEST_NAME} PRIVATE
-            $<TARGET_PROPERTY:${TEST_OBJ_NAME},LINK_LIBRARIES>
-        )
-        
-        # 手动添加组件特定的依赖
-        if(${COMPONENT_NAME} STREQUAL "dfm-framework")
-            target_link_libraries(${FULL_TEST_NAME} PRIVATE 
-                Qt6::Core 
-                Qt6::Concurrent
-                Dtk6::Core
-            )
-        elseif(${COMPONENT_NAME} STREQUAL "dfm-base")
-            target_link_libraries(${FULL_TEST_NAME} PRIVATE 
-                Qt6::Core 
-                Qt6::Widgets 
-                Qt6::DBus
-                Dtk6::Core
-            )
-        endif()
-        
-        # 继承对象库的include目录和编译选项
-        target_include_directories(${FULL_TEST_NAME} PRIVATE
-            ${DFM_SOURCE_DIR}/src
-            ${DFM_SOURCE_DIR}/include
-            ${DFM_SOURCE_DIR}/src/${COMPONENT_NAME}
-            ${CMAKE_CURRENT_SOURCE_DIR}  # 测试文件所在目录
-            ${CMAKE_CURRENT_SOURCE_DIR}/../../framework  # 测试框架头文件
-            ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub  # stub.h头文件
-            ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext  # stubext.h头文件
-        )
-        
-        # 设置测试运行时属性
-        set_target_properties(${FULL_TEST_NAME} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/${COMPONENT_NAME}"
-        )
-        
-        # 注册到CTest
-        add_test(NAME ${FULL_TEST_NAME} 
-                 COMMAND ${FULL_TEST_NAME}
-                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-        
-        # 设置测试标签，便于分组运行
-        set_tests_properties(${FULL_TEST_NAME} PROPERTIES
-            LABELS "${COMPONENT_NAME}"
-            TIMEOUT 300  # 5分钟超时
-        )
+        message(STATUS "      ${TEST_SOURCE}")
     endforeach()
     
-    message(STATUS "  ✅ 测试文件发现完成")
+    # 创建统一的测试目标名称
+    set(UNIFIED_TEST_NAME "${COMPONENT_NAME}-tests")
+    
+    # 将所有测试文件转换为绝对路径
+    set(ABSOLUTE_TEST_SOURCES "")
+    foreach(TEST_SOURCE ${TEST_SOURCES})
+        get_filename_component(ABS_PATH ${TEST_SOURCE} ABSOLUTE BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+        list(APPEND ABSOLUTE_TEST_SOURCES ${ABS_PATH})
+    endforeach()
+    
+    message(STATUS "    创建统一测试目标: ${UNIFIED_TEST_NAME}")
+    
+    # 创建统一的测试可执行文件，包含所有测试文件
+    add_executable(${UNIFIED_TEST_NAME}
+        ${ABSOLUTE_TEST_SOURCES}
+        $<TARGET_OBJECTS:${TEST_OBJ_NAME}>  # 包含带覆盖率的源码对象
+    )
+    
+    # 创建testutils库（如果不存在）
+    if(NOT TARGET testutils)
+        add_library(testutils STATIC
+            ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext/stub-shadow.cpp
+        )
+        target_include_directories(testutils PUBLIC
+            ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub
+            ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext
+        )
+    endif()
+
+    # 链接测试框架和覆盖率库
+    target_link_libraries(${UNIFIED_TEST_NAME} PRIVATE
+        Qt6::Test           # Qt6测试框架
+        GTest::GTest        # Google Test框架
+        GTest::Main         # Google Test主函数
+        gcov                # 覆盖率库
+        testutils           # 测试工具库
+    )
+    
+    # 继承对象库的依赖 - 这很重要！
+    target_link_libraries(${UNIFIED_TEST_NAME} PRIVATE
+        $<TARGET_PROPERTY:${TEST_OBJ_NAME},LINK_LIBRARIES>
+    )
+    
+    # 手动添加组件特定的依赖
+    if(${COMPONENT_NAME} STREQUAL "dfm-framework")
+        target_link_libraries(${UNIFIED_TEST_NAME} PRIVATE 
+            Qt6::Core 
+            Qt6::Concurrent
+            Dtk6::Core
+        )
+    elseif(${COMPONENT_NAME} STREQUAL "dfm-base")
+        target_link_libraries(${UNIFIED_TEST_NAME} PRIVATE 
+            Qt6::Core 
+            Qt6::Widgets 
+            Qt6::DBus
+            Dtk6::Core
+        )
+    endif()
+    
+    # 继承对象库的include目录和编译选项
+    target_include_directories(${UNIFIED_TEST_NAME} PRIVATE
+        ${DFM_SOURCE_DIR}/src
+        ${DFM_SOURCE_DIR}/include
+        ${DFM_SOURCE_DIR}/src/${COMPONENT_NAME}
+        ${CMAKE_CURRENT_SOURCE_DIR}  # 测试文件所在目录
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../framework  # 测试框架头文件
+        ${DFM_SOURCE_DIR}/3rdparty/testutils/cpp-stub  # stub.h头文件
+        ${DFM_SOURCE_DIR}/3rdparty/testutils/stub-ext  # stubext.h头文件
+    )
+    
+    # 设置测试运行时属性
+    set_target_properties(${UNIFIED_TEST_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/${COMPONENT_NAME}"
+    )
+    
+    # 注册到CTest - 只有一个测试目标
+    add_test(NAME ${UNIFIED_TEST_NAME} 
+             COMMAND ${UNIFIED_TEST_NAME}
+             WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    
+    # 设置测试标签，便于分组运行
+    set_tests_properties(${UNIFIED_TEST_NAME} PROPERTIES
+        LABELS "${COMPONENT_NAME}"
+        TIMEOUT 300  # 5分钟超时
+    )
+    
+    message(STATUS "  ✅ 统一测试目标创建完成: ${UNIFIED_TEST_NAME}")
 endfunction()
 
 #[[

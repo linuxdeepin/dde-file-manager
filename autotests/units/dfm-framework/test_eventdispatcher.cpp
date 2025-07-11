@@ -18,8 +18,9 @@
 
 using namespace dpf;
 
+namespace {
 /**
- * @brief 测试事件处理器类
+ * @brief 测试事件处理器类 - EventDispatcher专用
  */
 class TestEventHandler : public QObject
 {
@@ -52,6 +53,7 @@ public:
         lastEventData.clear();
     }
 };
+} // anonymous namespace
 
 /**
  * @brief EventDispatcher类单元测试
