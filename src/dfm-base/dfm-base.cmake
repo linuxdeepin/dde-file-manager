@@ -100,8 +100,8 @@ target_link_libraries(${BIN_NAME}
         PkgConfig::gio
         PkgConfig::X11
         poppler-cpp
-        ${DFM_EXTRA_LIBRARIES}
         ${LIBHEIF_LIBRARIES}
+        ${DFM_EXTRA_LIBRARIES}  
 )
 
 target_include_directories(${BIN_NAME} 
