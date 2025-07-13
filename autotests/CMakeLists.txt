@@ -60,9 +60,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-inline -fno-access-control -O0 -fpr
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_DEBUG")
 
 # add_subdirectory(apps)
-add_subdirectory(dfm-base)
-add_subdirectory(dfm-extension)
-add_subdirectory(dfm-framework)
+add_subdirectory(libs)
+add_subdirectory(plugins)
 # add_subdirectory(external)
-# add_subdirectory(plugins)
 # add_subdirectory(tools)
