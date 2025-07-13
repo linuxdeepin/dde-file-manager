@@ -20,10 +20,18 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # 设置源代码根目录
 set(DFM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+# 设置D-Bus XML目录 - 与主项目保持一致
+set(DFM_DBUS_XML_DIR "${DFM_SOURCE_DIR}/assets/dbus")
+
+# 兼容
+set(COMPILE_ON_V2X TRUE)
+add_definitions(-DCOMPILE_ON_V2X)    # TODO: remove it
+
 message(STATUS "========================================")
 message(STATUS "DDE文件管理器测试系统 v${PROJECT_VERSION}")
 message(STATUS "========================================")
 message(STATUS "源代码目录: ${DFM_SOURCE_DIR}")
+message(STATUS "D-Bus XML目录: ${DFM_DBUS_XML_DIR}")
 message(STATUS "测试目录: ${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "构建目录: ${CMAKE_BINARY_DIR}")
 message(STATUS "========================================")
@@ -105,6 +113,9 @@ endif()
 include(cmake/DFMTestUtils.cmake)
 include(cmake/TestDiscovery.cmake)
 include(cmake/CoverageTargets.cmake)
+include(cmake/DFMBaseTestUtils.cmake)
+
+set(DFM_AUTOTEST_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE INTERNAL "Path to the autotest cmake directory")
 
 # 设置CTest
 enable_testing()

@@ -173,61 +173,132 @@ endfunction()
 功能: 根据组件名自动推导并链接所需的依赖库
 ]]
 function(dfm_auto_link_dependencies TARGET_NAME COMPONENT_NAME)
-    message(STATUS "  配置 ${COMPONENT_NAME} 组件依赖...")
-    
-    # 通用依赖 - 所有组件都需要
-    target_link_libraries(${TARGET_NAME} PRIVATE
-        Qt6::Core
-    )
-    
-    # 根据组件名自动推导特定依赖关系
+    message(STATUS "  Configuring dependencies for component: ${COMPONENT_NAME}...")
+
+    # Common dependencies for all components
+    target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Core)
+
+    # Component-specific dependency logic
     if(${COMPONENT_NAME} STREQUAL "dfm-framework")
-        # dfm-framework 组件依赖
-        target_link_libraries(${TARGET_NAME} PRIVATE 
-            Qt6::Core 
+        # dfm-framework dependencies
+        target_link_libraries(${TARGET_NAME} PRIVATE
             Qt6::Concurrent
         )
-        
-        # 查找并链接Dtk6::Core - 使用更强制的方式
         find_package(Dtk6 COMPONENTS Core REQUIRED)
-        if(Dtk6_FOUND)
-            target_link_libraries(${TARGET_NAME} PRIVATE Dtk6::Core)
-            message(STATUS "    ✅ 链接 Dtk6::Core")
-        else()
-            message(FATAL_ERROR "❌ 未找到 Dtk6::Core，dfm-framework组件需要此依赖")
-        endif()
-        
+        target_link_libraries(${TARGET_NAME} PRIVATE Dtk6::Core)
+        message(STATUS "    -> Linked dfm-framework specific dependencies")
+
     elseif(${COMPONENT_NAME} STREQUAL "dfm-base")
-        # dfm-base 组件依赖
-        target_link_libraries(${TARGET_NAME} PRIVATE 
-            Qt6::Core 
-            Qt6::Widgets 
-            Qt6::DBus
-        )
-        
-        # 查找并链接Dtk6::Core
-        find_package(Dtk6 COMPONENTS Core REQUIRED)
-        if(Dtk6_FOUND)
-            target_link_libraries(${TARGET_NAME} PRIVATE Dtk6::Core)
-            message(STATUS "    ✅ 链接 Dtk6::Core")
-        else()
-            message(FATAL_ERROR "❌ 未找到 Dtk6::Core，dfm-base组件需要此依赖")
-        endif()
-        
+        # dfm-base component requires special, extensive configuration
+        dfm_configure_dfm_base_dependencies(${TARGET_NAME})
+        dfm_handle_dfm_base_resources(${TARGET_NAME})
+        message(STATUS "    -> Applied special dependency configuration for dfm-base")
+
     elseif(${COMPONENT_NAME} STREQUAL "dfm-extension")
-        # dfm-extension 组件依赖
-        target_link_libraries(${TARGET_NAME} PRIVATE 
-            Qt6::Core
-        )
-        
-        message(STATUS "    ✅ dfm-extension组件依赖配置完成")
-        
+        # dfm-extension dependencies (currently just Qt6::Core)
+        message(STATUS "    -> Linked dfm-extension specific dependencies")
+
     else()
-        # 未知组件，使用默认依赖
-        message(STATUS "    使用默认依赖配置（仅Qt6::Core）")
+        # Default for other components
+        message(STATUS "    -> Using default dependency configuration (Qt6::Core)")
     endif()
-    
-    message(STATUS "  ✅ 依赖配置完成")
+
+    message(STATUS "  ✅ Dependency configuration complete for ${COMPONENT_NAME}")
+endfunction()
+
+#[[
+Function: dfm_configure_dfm_base_dependencies
+Purpose: Configures the extensive build dependencies required by the dfm-base component.
+          This is a direct port of the logic from src/dfm-base/dfm-base.cmake
+          to be used exclusively for the dfm-base unit test target.
+Params:   TARGET_NAME - The name of the test object library to link against.
+]]
+function(dfm_configure_dfm_base_dependencies TARGET_NAME)
+    message(STATUS "    Configuring dfm-base specific dependencies for ${TARGET_NAME}...")
+
+    # Find required Qt and DTK packages
+    find_package(Qt6 COMPONENTS Core Widgets Gui Concurrent DBus Sql Network REQUIRED)
+    find_package(Dtk6 COMPONENTS Core Widget Gui REQUIRED)
+    find_package(dfm6-io REQUIRED)
+    find_package(dfm6-mount REQUIRED)
+    find_package(dfm6-burn REQUIRED)
+
+    # Find system libraries via PkgConfig
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GIO REQUIRED gio-unix-2.0 IMPORTED_TARGET)
+    pkg_check_modules(MOUNT REQUIRED mount IMPORTED_TARGET)
+    pkg_check_modules(LIBHEIF REQUIRED libheif)
+    pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
+
+    # Link libraries
+    target_link_libraries(${TARGET_NAME} PRIVATE 
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::Concurrent
+        Qt6::DBus
+        Qt6::Sql
+        Qt6::Network
+        Dtk6::Core
+        Dtk6::Widget
+        Dtk6::Gui
+        dfm6-io
+        dfm6-mount
+        dfm6-burn
+        PkgConfig::MOUNT
+        PkgConfig::GIO
+        PkgConfig::X11
+        ${LIBHEIF_LIBRARIES}
+    )
+
+    # Configure include directories
+    target_include_directories(${TARGET_NAME} PRIVATE
+        ${dfm6-io_INCLUDE_DIR}
+        ${dfm6-mount_INCLUDE_DIR}
+        ${dfm6-burn_INCLUDE_DIR}
+    )
+
+    # Add required compile definitions
+    target_compile_definitions(${TARGET_NAME} PRIVATE 
+        DFM_BASE_INTERNAL_USE=1
+        APPSHAREDIR="${CMAKE_INSTALL_PREFIX}/share/dde-file-manager"
+    )
+
+    message(STATUS "    ✅ dfm-base dependencies configured")
+endfunction()
+
+#[[
+Function: dfm_handle_dfm_base_resources
+Purpose:  Handles QRC resource compilation and D-Bus interface generation for dfm-base.
+Params:   TARGET_NAME - The test object library to add the generated sources to.
+]]
+function(dfm_handle_dfm_base_resources TARGET_NAME)
+    message(STATUS "    Handling dfm-base resources (QRC, D-Bus)...")
+
+    # Define QRC files
+    set(DFM_BASE_QRC_FILES
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/skin/skin.qrc
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/skin/filemanager.qrc
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/themes/themes.qrc
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/configure.qrc
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/resources/resources.qrc
+        ${DFM_SOURCE_DIR}/src/dfm-base/qrc/chinese2pinyin/chinese2pinyin.qrc
+    )
+
+    # Compile QRC resources
+    qt_add_resources(QRC_SOURCES ${DFM_BASE_QRC_FILES})
+
+    # Generate D-Bus interface
+    set(DFM_DBUS_XML_FILE "${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml")
+    qt6_add_dbus_interface(DBUS_SOURCES ${DFM_DBUS_XML_FILE} devicemanager_interface_qt6)
+
+    # Add generated sources to the test object library
+    target_sources(${TARGET_NAME} PRIVATE 
+        ${QRC_SOURCES}
+        ${DBUS_SOURCES}
+    )
+
+    message(STATUS "    ✅ dfm-base resources handled")
 endfunction()
 
 #[[

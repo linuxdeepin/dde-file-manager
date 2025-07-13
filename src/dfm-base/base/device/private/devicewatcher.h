@@ -8,6 +8,8 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
+#include <QSharedPointer>
+#include <QVariantMap>
 
 #include <dfm-mount/base/dmount_global.h>
 

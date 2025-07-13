@@ -5,6 +5,8 @@
 #ifndef DEVICEPROXYMANAGER_P_H
 #define DEVICEPROXYMANAGER_P_H
 
+#include <QtCore/qglobal.h>
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #    include "devicemanager_interface.h"
 #else
