@@ -8,6 +8,8 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <DMainWindow>
+#include <QList>
+#include <QUrl>
 
 DWIDGET_USE_NAMESPACE
 

@@ -9,8 +9,11 @@
 
 #include <QObject>
 #include <QSharedPointer>
-#include <QVariant>
+#include <QList>
+#include <QUrl>
 #include <QMutex>
+
+class QWidget;
 
 typedef QSharedPointer<QMap<quint8, QVariant>> JobInfoPointer;
 Q_DECLARE_METATYPE(JobInfoPointer);
