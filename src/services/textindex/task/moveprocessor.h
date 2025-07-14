@@ -10,6 +10,7 @@
 
 #include <lucene++/LuceneHeaders.h>
 #include <QString>
+#include <QSet>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -31,9 +32,9 @@ public:
 
 private:
     /**
-     * @brief Check if a file exists in the index
+     * @brief Check if a file exists in the index or has been processed in current batch
      * @param path File path to check
-     * @return true if file exists in index, false otherwise
+     * @return true if file exists in index or processed cache, false otherwise
      */
     bool isFileInIndex(const QString &path);
 
@@ -46,8 +47,17 @@ private:
      */
     bool processContentUpdate(const QString &filePath);
 
+    /**
+     * @brief Process content update with cache management
+     * @param filePath Path of the file to re-index
+     * @param operation Description of the operation for logging
+     * @return true if content updated successfully, false otherwise
+     */
+    bool processContentUpdateWithCache(const QString &filePath, const QString &operation);
+
     Lucene::SearcherPtr m_searcher;
     Lucene::IndexWriterPtr m_writer;
+    QSet<QString> m_processedPaths; ///< Cache of paths processed in current batch (not yet committed)
 };
 
 /**
