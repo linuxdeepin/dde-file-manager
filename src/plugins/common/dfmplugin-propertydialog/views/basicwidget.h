@@ -75,7 +75,7 @@ private:
     QGridLayout *layoutMain { nullptr };
     QUrl currentUrl;
 
-    QThread *fetchThread { nullptr };
+    QThread fetchThread;
     MediaInfoFetchWorker *infoFetchWorker { nullptr };
 };
 }

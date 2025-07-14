@@ -288,7 +288,7 @@ void ConnectToServerDialog::initServerDatas()
         processUrl(urlStr, opt);
     }
 
-    completer->setModel(new QStringListModel(hosts));
+    completer->setModel(new QStringListModel(hosts, completer));
 
     if (!hosts.isEmpty())
         onCurrentInputChanged(hosts.last());

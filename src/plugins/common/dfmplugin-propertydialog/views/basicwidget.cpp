@@ -48,7 +48,6 @@ using namespace dfmplugin_propertydialog;
 
 BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent),
-      fetchThread(new QThread),
       infoFetchWorker(new MediaInfoFetchWorker)
 
 {
@@ -56,16 +55,17 @@ BasicWidget::BasicWidget(QWidget *parent)
     fileCalculationUtils = new FileStatisticsJob;
     fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
 
-    infoFetchWorker->moveToThread(fetchThread);
-    fetchThread->start();
+    connect(&fetchThread, &QThread::finished, infoFetchWorker, &QObject::deleteLater);
+    infoFetchWorker->moveToThread(&fetchThread);
+    fetchThread.start();
 }
 
 BasicWidget::~BasicWidget()
 {
     fileCalculationUtils->deleteLater();
-    if (fetchThread->isRunning()) {
-        fetchThread->quit();
-        fetchThread->wait(5000);
+    if (fetchThread.isRunning()) {
+        fetchThread.quit();
+        fetchThread.wait(5000);
     }
 }
 
