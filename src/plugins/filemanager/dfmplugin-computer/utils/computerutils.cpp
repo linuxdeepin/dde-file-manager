@@ -365,7 +365,7 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
         auto devIds = DevProxyMng->getAllBlockIds();
         for ( auto id : devIds) {
             QUrl devUrl(makeBlockDevUrl(id));
-            auto entryInfo = new EntryFileInfo(devUrl);
+            DFMEntryFileInfoPointer entryInfo(new EntryFileInfo(devUrl));
             if (UniversalUtils::urlEquals(converted, entryInfo->targetUrl())) {
                 fmDebug() << "convert url from" << url << "to" << devUrl;
                 return devUrl;

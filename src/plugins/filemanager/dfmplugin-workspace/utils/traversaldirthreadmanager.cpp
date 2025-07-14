@@ -173,10 +173,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     if (!future)
         Q_EMIT iteratorInitFinished();
 
-    if (!timer)
-        timer = new QElapsedTimer();
-
-    timer->restart();
+    timer.restart();
 
     QList<FileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     QSet<QUrl> urls;
@@ -211,9 +208,9 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
         childrenList.append(fileInfo);
         filecount++;
 
-        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling) {
+        if (timer.elapsed() > timeCeiling || childrenList.count() > countCeiling) {
             emit updateChildrenManager(childrenList, traversalToken);
-            timer->restart();
+            timer.restart();
             childrenList.clear();
         }
     }
