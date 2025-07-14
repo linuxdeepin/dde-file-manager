@@ -9,6 +9,7 @@
 
 #include <QFileInfo>
 #include <QDateTime>
+#include <QLoggingCategory>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
@@ -32,12 +33,23 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         if (!searchResult || searchResult->totalHits == 0) {
             fmDebug() << "[FileMoveProcessor::processFileMove] Source file not found in index:" << fromPath;
 
-            // Smart detection: Check if this is an editor save pattern
-            // (temporary file renamed to target file that should be indexed)
-            if (IndexUtility::isSupportedFile(toPath) && isFileInIndex(toPath)) {
-                fmInfo() << "[FileMoveProcessor::processFileMove] Detected editor save pattern - temporary file" 
-                        << fromPath << "renamed to indexed file" << toPath << "- updating content";
-                return processContentUpdate(toPath);
+            // Check if target file should be indexed
+            if (IndexUtility::isSupportedFile(toPath) && QFileInfo(toPath).exists()) {
+                if (isFileInIndex(toPath)) {
+                    // Smart detection: Editor save pattern (temporary file renamed to indexed file)
+                    fmInfo() << "[FileMoveProcessor::processFileMove] Detected editor save pattern - temporary file" 
+                            << fromPath << "renamed to indexed file" << toPath << "- updating content";
+                    return processContentUpdateWithCache(toPath, "editor save pattern");
+                } else {
+                    // Fallback: Create new index entry for supported file not in index
+                    // This handles cases like:
+                    // 1. Files moved from unindexed directories
+                    // 2. Index corruption or incomplete indexing
+                    // 3. External file operations
+                    fmInfo() << "[FileMoveProcessor::processFileMove] Fallback indexing for supported file not in index:" 
+                            << toPath;
+                    return processContentUpdateWithCache(toPath, "fallback indexing");
+                }
             }
 
             fmDebug() << "[FileMoveProcessor::processFileMove] Target file not in index or not supported, skipping move operation";
@@ -65,6 +77,10 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         TermPtr oldTerm = newLucene<Term>(L"path", fromPath.toStdWString());
         m_writer->updateDocument(oldTerm, newDoc);
 
+        // Update processed paths cache
+        m_processedPaths.remove(fromPath);  // Remove old path
+        m_processedPaths.insert(toPath);    // Add new path
+
         fmInfo() << "[FileMoveProcessor::processFileMove] Successfully updated file document path:" 
                 << fromPath << "->" << toPath;
         return true;
@@ -82,6 +98,13 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
 bool FileMoveProcessor::isFileInIndex(const QString &path)
 {
     try {
+        // First check if the file has been processed in current batch (but not yet committed)
+        if (m_processedPaths.contains(path)) {
+            fmDebug() << "[FileMoveProcessor::isFileInIndex] File found in processed cache:" << path;
+            return true;
+        }
+
+        // Then check in the actual index
         TermQueryPtr pathQuery = newLucene<TermQuery>(
                 newLucene<Term>(L"path", path.toStdWString()));
 
@@ -170,6 +193,19 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with unknown exception:" << filePath;
         return false;
     }
+}
+
+bool FileMoveProcessor::processContentUpdateWithCache(const QString &filePath, const QString &operation)
+{
+    bool success = processContentUpdate(filePath);
+    if (success) {
+        // Update processed paths cache
+        m_processedPaths.insert(filePath);
+        fmInfo() << "[FileMoveProcessor::processContentUpdateWithCache] Successfully completed" << operation << "for:" << filePath;
+    } else {
+        fmWarning() << "[FileMoveProcessor::processContentUpdateWithCache] Failed" << operation << "for:" << filePath;
+    }
+    return success;
 }
 
 // DirectoryMoveProcessor implementation
