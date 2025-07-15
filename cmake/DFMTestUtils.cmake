@@ -175,20 +175,18 @@ function(dfm_create_library_test lib_name)
     if(lib_name STREQUAL "dfm-base")
         set(SRC_HEADER_PATH "${DFM_INCLUDE_DIR}/dfm-base/")
         set(SRC_PATH "${DFM_SOURCE_DIR}/dfm-base/")
-        set(EXTRA_LIBS Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Concurrent Qt6::DBus Qt6::Sql Qt6::Network
-                      Dtk6::Core Dtk6::Widget Dtk6::Gui dfm6-io dfm6-mount dfm6-burn
-                      PkgConfig::mount PkgConfig::gio PkgConfig::X11 poppler-cpp ${LIBHEIF_LIBRARIES})
     elseif(lib_name STREQUAL "dfm-framework")
         set(SRC_HEADER_PATH "${DFM_INCLUDE_DIR}/dfm-framework/")
         set(SRC_PATH "${DFM_SOURCE_DIR}/dfm-framework/")
-        set(EXTRA_LIBS Qt6::Core Qt6::Concurrent Dtk6::Core ${CMAKE_DL_LIBS})
     elseif(lib_name STREQUAL "dfm-extension")
         set(SRC_HEADER_PATH "${DFM_INCLUDE_DIR}/dfm-extension/")
         set(SRC_PATH "${DFM_SOURCE_DIR}/dfm-extension/")
-        set(EXTRA_LIBS Qt6::Core ${CMAKE_DL_LIBS})
     else()
         message(FATAL_ERROR "DFM: Unknown library name: ${lib_name}")
     endif()
+    
+    # Get library dependencies using unified configuration
+    dfm_get_library_test_dependencies(${lib_name} EXTRA_LIBS)
     
     # Find test files
     file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
@@ -200,20 +198,6 @@ function(dfm_create_library_test lib_name)
         "${SRC_PATH}/*.cpp"
     )
     
-    # Special handling for dfm-base
-    if(lib_name STREQUAL "dfm-base")
-        find_package(Qt6 COMPONENTS DBus REQUIRED)
-        # Add DBus interface
-        qt6_add_dbus_interface(Qt6App_dbus
-            ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml
-            devicemanager_interface_qt6)
-
-        # Additional definitions
-        add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
-        add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
-        add_compile_definitions(APPSHAREDIR="${CMAKE_INSTALL_PREFIX}/share/dde-file-manager")
-    endif()
-
     # Create test executable
     dfm_create_test_executable(${test_name}
         SOURCES ${UT_CXX_FILE} ${SRC_FILES}
@@ -221,8 +205,18 @@ function(dfm_create_library_test lib_name)
         LINK_LIBRARIES ${EXTRA_LIBS}
     )
 
+    # Special handling for dfm-base - configure using unified function
     if(lib_name STREQUAL "dfm-base")
-        target_sources(${test_name} PRIVATE ${Qt6App_dbus})
+        # Set required variables for dfm-base configuration
+        set(QT_VERSION_MAJOR 6)
+        set(DTK_VERSION_MAJOR 6)
+        
+        # Configure the test target using the same function as the library
+        dfm_configure_base_library(${test_name})
+        
+        # Additional test-specific definitions
+        add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
+        add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
     endif()
     
     target_include_directories(${test_name} PRIVATE "${SRC_PATH}")

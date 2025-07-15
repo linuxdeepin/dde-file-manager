@@ -39,7 +39,6 @@ set(QRC_FILES
     qrc/chinese2pinyin/chinese2pinyin.qrc
 )
 
-include(dfm-base-qt5.cmake)
 include(dfm-base-qt6.cmake)
 
 # install resources files
