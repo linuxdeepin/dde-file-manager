@@ -35,7 +35,7 @@ print_warning() {
 # Get directories
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BUILD_DIR="$SCRIPT_DIR/build"
+BUILD_DIR="$PROJECT_ROOT/build-autotests"
 REPORT_DIR="$BUILD_DIR/test-reports"
 
 echo "========================================"
