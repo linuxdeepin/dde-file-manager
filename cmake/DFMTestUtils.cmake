@@ -3,6 +3,12 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+# Global variable to store stub source files
+set(CPP_STUB_SRC "" CACHE INTERNAL "Stub source files for testing")
+
+# Global test compilation flags
+set(DFM_TEST_CXX_FLAGS "" CACHE INTERNAL "Test-specific CXX flags")
+
 # Function to setup test environment
 function(dfm_setup_test_environment)
     message(STATUS "DFM: Setting up test environment...")
@@ -10,7 +16,7 @@ function(dfm_setup_test_environment)
     # Test dependencies
     find_package(GTest REQUIRED)
     find_package(Qt6 COMPONENTS Test REQUIRED)
-    
+
     # Include GTest
     include_directories(${GTEST_INCLUDE_DIRS})
     
@@ -27,13 +33,32 @@ endfunction()
 function(dfm_setup_test_stubs)
     dfm_get_test_utils_path(TEST_UTILS_PATH)
     
+    # Debug output
+    message(STATUS "DFM: Setting up test stubs...")
+    message(STATUS "  - Test utils path: ${TEST_UTILS_PATH}")
+    
+    # Check if test utils path exists
+    if(NOT EXISTS "${TEST_UTILS_PATH}")
+        message(WARNING "DFM: Test utils path does not exist: ${TEST_UTILS_PATH}")
+        return()
+    endif()
+    
     # Stub source files
-    file(GLOB CPP_STUB_SRC 
+    file(GLOB STUB_SRC_FILES 
         "${TEST_UTILS_PATH}/cpp-stub/*.h"
         "${TEST_UTILS_PATH}/cpp-stub/*.hpp"
         "${TEST_UTILS_PATH}/stub-ext/*.h"
         "${TEST_UTILS_PATH}/stub-ext/*.cpp"
     )
+    
+    # Debug output
+    message(STATUS "DFM: Found stub files:")
+    foreach(stub_file ${STUB_SRC_FILES})
+        message(STATUS "    ${stub_file}")
+    endforeach()
+    
+    # Set global variable
+    set(CPP_STUB_SRC ${STUB_SRC_FILES} CACHE INTERNAL "Stub source files for testing")
     
     # Include stub directories
     include_directories(
@@ -41,40 +66,40 @@ function(dfm_setup_test_stubs)
         "${TEST_UTILS_PATH}/stub-ext"
     )
     
-    # Make stub sources available to parent scope
-    set(CPP_STUB_SRC ${CPP_STUB_SRC} PARENT_SCOPE)
-    
     message(STATUS "DFM: Test stubs configured")
-    message(STATUS "  - Stub path: ${TEST_UTILS_PATH}")
 endfunction()
 
 # Function to setup coverage settings
 function(dfm_setup_coverage)
+    # Base test compilation flags - always needed for testing
+    set(TEST_FLAGS "-fno-inline;-fno-access-control;-O0")
+    
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(CMAKE_VERBOSE_MAKEFILE ON)
         add_compile_definitions(ENABLE_TSAN_TOOL)
         
         message(STATUS "DFM: Debug build - enabling sanitizers")
-        set(SANITIZER_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+        set(SANITIZER_FLAGS "-fsanitize=undefined,address,leak;-fno-omit-frame-pointer")
+        list(APPEND TEST_FLAGS ${SANITIZER_FLAGS})
         
-        # Make flags available to parent scope
-        set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} PARENT_SCOPE)
-        set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} PARENT_SCOPE)
-        set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} PARENT_SCOPE)
+        # Set global flags for parent scope
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined,address,leak -fno-omit-frame-pointer" PARENT_SCOPE)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined,address,leak -fno-omit-frame-pointer" PARENT_SCOPE)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined,address,leak -fno-omit-frame-pointer" PARENT_SCOPE)
     endif()
     
     # Coverage compilation flags
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-inline -fno-access-control -O0 -fprofile-arcs -ftest-coverage -lgcov")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_DEBUG")
+    list(APPEND TEST_FLAGS "-fprofile-arcs;-ftest-coverage;-lgcov")
     
-    # Make flags available to parent scope
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} PARENT_SCOPE)
-    set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} PARENT_SCOPE)
+    # Store test flags globally
+    set(DFM_TEST_CXX_FLAGS ${TEST_FLAGS} CACHE INTERNAL "Test-specific CXX flags")
+    
+    # Set global flags for parent scope
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-inline -fno-access-control -O0 -fprofile-arcs -ftest-coverage -lgcov" PARENT_SCOPE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_DEBUG" PARENT_SCOPE)
     
     message(STATUS "DFM: Coverage settings configured")
+    message(STATUS "  - Test flags: ${TEST_FLAGS}")
 endfunction()
 
 # Function to create a DFM test executable
@@ -84,11 +109,30 @@ function(dfm_create_test_executable test_name)
     set(multiValueArgs SOURCES HEADERS DEPENDENCIES LINK_LIBRARIES)
     cmake_parse_arguments(TEST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     
-    # Collect all source files
-    set(ALL_SOURCES ${TEST_SOURCES} ${TEST_HEADERS} ${CPP_STUB_SRC})
+    # Debug output
+    message(STATUS "DFM: Creating test executable: ${test_name}")
     
+    # Collect all source files
+    set(ALL_SOURCES ${TEST_SOURCES})
+    
+    # Add headers if provided
+    if(TEST_HEADERS)
+        list(APPEND ALL_SOURCES ${TEST_HEADERS})
+    endif()
+    
+    # Add stub sources if available
+    if(CPP_STUB_SRC)
+        list(APPEND ALL_SOURCES ${CPP_STUB_SRC})
+    endif()
+
     # Create executable
     add_executable(${test_name} ${ALL_SOURCES})
+    
+    # Apply test-specific compilation flags to this target
+    if(DFM_TEST_CXX_FLAGS)
+        target_compile_options(${test_name} PRIVATE ${DFM_TEST_CXX_FLAGS})
+        message(STATUS "DFM: Applied test flags to ${test_name}: ${DFM_TEST_CXX_FLAGS}")
+    endif()
     
     # Setup include directories
     target_include_directories(${test_name} PRIVATE
@@ -101,6 +145,22 @@ function(dfm_create_test_executable test_name)
         target_link_libraries(${test_name} PRIVATE ${TEST_LINK_LIBRARIES})
     endif()
     
+    # Add sanitizer and coverage link libraries if in debug mode
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_libraries(${test_name} PRIVATE 
+            -fsanitize=undefined,address,leak 
+            -fprofile-arcs 
+            -ftest-coverage 
+            -lgcov
+        )
+    else()
+        target_link_libraries(${test_name} PRIVATE 
+            -fprofile-arcs 
+            -ftest-coverage 
+            -lgcov
+        )
+    endif()
+    
     # Add test
     add_test(NAME ${test_name} COMMAND ${test_name})
     
@@ -110,7 +170,7 @@ endfunction()
 # Function to create a DFM library test
 function(dfm_create_library_test lib_name)
     set(test_name "test-${lib_name}")
-    
+
     # Determine source paths based on library name
     if(lib_name STREQUAL "dfm-base")
         set(SRC_HEADER_PATH "${DFM_INCLUDE_DIR}/dfm-base/")
@@ -140,28 +200,33 @@ function(dfm_create_library_test lib_name)
         "${SRC_PATH}/*.cpp"
     )
     
-    # Create test executable
-    dfm_create_test_executable(${test_name}
-        SOURCES ${UT_CXX_FILE} ${SRC_FILES} ${HEADER_FILES}
-        LINK_LIBRARIES ${EXTRA_LIBS}
-    )
-    
     # Special handling for dfm-base
     if(lib_name STREQUAL "dfm-base")
+        find_package(Qt6 COMPONENTS DBus REQUIRED)
         # Add DBus interface
         qt6_add_dbus_interface(Qt6App_dbus
             ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.DeviceManager.xml
             devicemanager_interface_qt6)
-        target_sources(${test_name} PRIVATE ${Qt6App_dbus})
-        
+
         # Additional definitions
-        target_compile_definitions(${test_name} PRIVATE
-            QT_NO_SIGNALS_SLOTS_KEYWORDS
-            THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}"
-            APPSHAREDIR="${CMAKE_INSTALL_PREFIX}/share/dde-file-manager"
-        )
+        add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
+        add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
+        add_compile_definitions(APPSHAREDIR="${CMAKE_INSTALL_PREFIX}/share/dde-file-manager")
+    endif()
+
+    # Create test executable
+    dfm_create_test_executable(${test_name}
+        SOURCES ${UT_CXX_FILE} ${SRC_FILES}
+        HEADERS ${HEADER_FILES}
+        LINK_LIBRARIES ${EXTRA_LIBS}
+    )
+
+    if(lib_name STREQUAL "dfm-base")
+        target_sources(${test_name} PRIVATE ${Qt6App_dbus})
     endif()
     
+    target_include_directories(${test_name} PRIVATE "${SRC_PATH}")
+
     message(STATUS "DFM: Created library test: ${test_name} for ${lib_name}")
 endfunction()
 
@@ -181,7 +246,7 @@ function(dfm_create_plugin_test plugin_name plugin_path)
     # Create test executable
     dfm_create_test_executable(${test_name}
         SOURCES ${UT_CXX_FILE} ${SRC_FILES}
-        LINK_LIBRARIES DFM6::base DFM6::framework Dtk6::Widget
+        LINK_LIBRARIES DFM6::base DFM6::framework Dtk6::Widget Dtk6::Core
     )
     
     # Include plugin path

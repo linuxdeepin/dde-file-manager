@@ -76,6 +76,9 @@ function(dfm_setup_paths)
         message(STATUS "  - Project root: ${DFM_PROJECT_ROOT}")
         message(STATUS "  - Source dir: ${DFM_SOURCE_DIR}")
         message(STATUS "  - Include dir: ${DFM_INCLUDE_DIR}")
+        message(STATUS "  - DFM_ASSETS_DIR dir: ${DFM_ASSETS_DIR}")
+        message(STATUS "  - DFM_3RDPARTY_DIR dir: ${DFM_3RDPARTY_DIR}")
+
     else()
         # Integrated mode - main project is the root
         set(DFM_PROJECT_ROOT "${CMAKE_SOURCE_DIR}" CACHE PATH "Project root directory")
