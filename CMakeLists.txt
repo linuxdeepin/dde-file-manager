@@ -24,7 +24,7 @@ message(STATUS "==============================")
 # options
 option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
-option(OPT_ENABLE_BUILD_UT "Build unit tests" OFF)
+option(OPT_ENABLE_BUILD_UT "Build unit tests" ON)
 
 
 include(install_dconfig)
