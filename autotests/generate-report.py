@@ -74,21 +74,8 @@ class TestReportGenerator:
                     "component": component
                 })
             
-            # 解析各个测试的执行时间
-            test_times = re.findall(r'Test #\d+: ([\w-]+) \.+ Passed\s+([\d.]+) sec', content)
-            for test_name, duration in test_times:
-                test_info["test_summary"][test_name] = {
-                    "status": "PASSED",
-                    "duration": float(duration)
-                }
-                
-            # 解析失败测试的时间
-            failed_times = re.findall(r'Test #\d+: ([\w-]+) \.+\*\*\*Failed\s+([\d.]+) sec', content)
-            for test_name, duration in failed_times:
-                test_info["test_summary"][test_name] = {
-                    "status": "FAILED", 
-                    "duration": float(duration)
-                }
+            # 改进测试执行详情解析 - 支持更多格式
+            self._parse_test_execution_details(content, test_info)
             
             # 解析详细的失败信息
             test_info["detailed_failures"] = self._parse_detailed_failures(content)
@@ -97,6 +84,51 @@ class TestReportGenerator:
             print(f"解析测试输出时出错: {e}")
             
         return test_info
+    
+    def _parse_test_execution_details(self, content: str, test_info: Dict):
+        """解析测试执行详情，支持多种格式"""
+        # 格式1: Test #N: test_name .+ Passed/Failed X.XXX sec
+        test_pattern1 = re.findall(r'Test #\d+: ([\w-]+) \.+ (Passed|Failed|\*\*\*Failed)\s+([\d.]+) sec', content)
+        for test_name, status, duration in test_pattern1:
+            status_normalized = "PASSED" if status == "Passed" else "FAILED"
+            test_info["test_summary"][test_name] = {
+                "status": status_normalized,
+                "duration": float(duration)
+            }
+        
+        # 格式2: Test #N: test_name .+ Passed/FAILED X.XXX sec
+        test_pattern2 = re.findall(r'Test #\d+: ([\w-]+) \.+ (PASSED|FAILED)\s+([\d.]+) sec', content)
+        for test_name, status, duration in test_pattern2:
+            if test_name not in test_info["test_summary"]:  # 避免重复
+                test_info["test_summary"][test_name] = {
+                    "status": status,
+                    "duration": float(duration)
+                }
+        
+        # 格式3: 从ctest输出中提取更多信息
+        # 查找所有测试开始的标记
+        start_test_pattern = re.findall(r'Start\s+\d+:\s+([\w-]+)', content)
+        for test_name in start_test_pattern:
+            if test_name not in test_info["test_summary"]:
+                # 如果没有找到执行时间，设置默认值
+                test_info["test_summary"][test_name] = {
+                    "status": "UNKNOWN",
+                    "duration": 0.0
+                }
+        
+        # 格式4: 从GoogleTest输出中解析
+        # [==========] Running X tests from Y test suites.
+        gtest_summary = re.search(r'\[==========\] Running (\d+) tests from (\d+) test suites?\.', content)
+        if gtest_summary:
+            total_gtest_tests = int(gtest_summary.group(1))
+            # 查找每个测试的结果
+            gtest_results = re.findall(r'\[\s*(OK|FAILED)\s*\]\s+(\w+)\.(\w+)\s+\((\d+)\s+ms\)', content)
+            for status, suite, test_case, duration_ms in gtest_results:
+                full_test_name = f"{suite}.{test_case}"
+                test_info["test_summary"][full_test_name] = {
+                    "status": "PASSED" if status == "OK" else "FAILED",
+                    "duration": float(duration_ms) / 1000.0  # 转换为秒
+                }
     
     def _parse_detailed_failures(self, content: str) -> List[Dict]:
         """解析详细的失败信息"""
@@ -325,8 +357,89 @@ class TestReportGenerator:
         return {
             "details": details,
             "files_covered": len([d for d in details if d["lines_hit"] > 0]),
-            "total_files": len(details)
+            "total_files": len(details),
+            "tree_structure": self._build_coverage_tree(details)
         }
+    
+    def _build_coverage_tree(self, details: List[Dict]) -> Dict:
+        """构建简化的两级覆盖率结构：项目 -> 文件列表"""
+        # 按模块分组文件
+        modules = {}
+        
+        for detail in details:
+            file_path = detail["file"]
+            # 移除项目根目录前缀，获取相对路径
+            if file_path.startswith(str(self.project_root)):
+                relative_path = file_path[len(str(self.project_root)):].lstrip('/')
+            else:
+                relative_path = file_path
+            
+            # 跳过非源码文件
+            if not self._is_source_file(relative_path):
+                continue
+            
+            # 获取模块名（第一级目录）
+            path_parts = relative_path.split('/')
+            if len(path_parts) > 1:
+                module_name = path_parts[0]  # 如 "src", "include", "tests"
+                if module_name == "src" and len(path_parts) > 2:
+                    module_name = path_parts[1]  # 如 "dfm-base", "dfm-framework"
+            else:
+                module_name = "根目录"
+            
+            if module_name not in modules:
+                modules[module_name] = {
+                    "name": module_name,
+                    "files": [],
+                    "stats": {
+                        "lines_found": 0,
+                        "lines_hit": 0,
+                        "functions_found": 0,
+                        "functions_hit": 0,
+                        "line_coverage": 0.0,
+                        "function_coverage": 0.0
+                    }
+                }
+            
+            # 添加文件到模块
+            modules[module_name]["files"].append({
+                "name": os.path.basename(relative_path),
+                "path": relative_path,
+                "stats": {
+                    "lines_found": detail["lines_found"],
+                    "lines_hit": detail["lines_hit"],
+                    "functions_found": detail["functions_found"],
+                    "functions_hit": detail["functions_hit"],
+                    "line_coverage": detail["line_coverage"],
+                    "function_coverage": detail["function_coverage"]
+                }
+            })
+            
+            # 累加模块统计
+            modules[module_name]["stats"]["lines_found"] += detail["lines_found"]
+            modules[module_name]["stats"]["lines_hit"] += detail["lines_hit"]
+            modules[module_name]["stats"]["functions_found"] += detail["functions_found"]
+            modules[module_name]["stats"]["functions_hit"] += detail["functions_hit"]
+        
+        # 计算每个模块的覆盖率
+        for module in modules.values():
+            stats = module["stats"]
+            if stats["lines_found"] > 0:
+                stats["line_coverage"] = (stats["lines_hit"] / stats["lines_found"]) * 100
+            if stats["functions_found"] > 0:
+                stats["function_coverage"] = (stats["functions_hit"] / stats["functions_found"]) * 100
+            
+            # 按覆盖率排序文件
+            module["files"].sort(key=lambda x: x["stats"]["line_coverage"], reverse=True)
+        
+        return modules
+    
+    def _is_source_file(self, file_path: str) -> bool:
+        """判断是否为源码文件"""
+        source_extensions = ['.cpp', '.cc', '.cxx', '.c', '.h', '.hpp', '.hxx']
+        return any(file_path.endswith(ext) for ext in source_extensions)
+    
+
     
     def collect_build_info(self) -> Dict:
         """收集构建信息"""
@@ -423,44 +536,16 @@ class TestReportGenerator:
             
             failed_tests_html += "</div>"
         
-        # 生成覆盖率详情
+        # 生成覆盖率详情 - 模块化卡片布局
         coverage_details_html = ""
-        if coverage_info["success"] and coverage_info.get("details"):
+        if coverage_info["success"] and coverage_info.get("tree_structure"):
             coverage_details_html = """
             <div class="mt-4">
-                <h5>📁 文件覆盖率详情</h5>
-                <div class="table-responsive">
-                    <table class="table table-sm table-striped">
-                        <thead>
-                            <tr>
-                                <th>文件</th>
-                                <th>行覆盖率</th>
-                                <th>函数覆盖率</th>
-                                <th>行数</th>
-                                <th>函数数</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <h5>📁 模块覆盖率详情</h5>
+                <div class="coverage-modules">
             """
-            
-            for detail in sorted(coverage_info["details"], key=lambda x: x["line_coverage"], reverse=True)[:20]:  # 只显示前20个
-                file_name = os.path.basename(detail["file"])
-                line_coverage_color = self._get_coverage_color(detail["line_coverage"])
-                func_coverage_color = self._get_coverage_color(detail["function_coverage"])
-                
-                coverage_details_html += f"""
-                    <tr>
-                        <td><code>{file_name}</code></td>
-                        <td><span class="badge" style="background-color: {line_coverage_color}">{detail['line_coverage']:.1f}%</span></td>
-                        <td><span class="badge" style="background-color: {func_coverage_color}">{detail['function_coverage']:.1f}%</span></td>
-                        <td>{detail['lines_hit']}/{detail['lines_found']}</td>
-                        <td>{detail['functions_hit']}/{detail['functions_found']}</td>
-                    </tr>
-                """
-            
+            coverage_details_html += self._generate_coverage_modules_html(coverage_info["tree_structure"])
             coverage_details_html += """
-                        </tbody>
-                    </table>
                 </div>
             </div>
             """
@@ -534,6 +619,126 @@ class TestReportGenerator:
         .timestamp {{
             color: #6c757d;
             font-size: 0.875rem;
+        }}
+        
+        /* 现代化模块覆盖率样式 */
+        .coverage-modules {{
+            max-height: 800px;
+            overflow-y: auto;
+        }}
+        
+        .module-card {{
+            border: 1px solid #e3e6f0;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: all 0.15s ease-in-out;
+        }}
+        
+        .module-card:hover {{
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }}
+        
+        .module-card .card-header {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            padding: 0.75rem 1rem;
+        }}
+        
+        .module-icon {{
+            font-size: 1.1rem;
+        }}
+        
+        .module-name {{
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            color: white;
+        }}
+        
+        .module-stats .badge {{
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }}
+        
+        .coverage-metric {{
+            margin-bottom: 1rem;
+        }}
+        
+        .coverage-metric .progress {{
+            border-radius: 0.25rem;
+            background-color: #f1f3f4;
+        }}
+        
+        .coverage-metric .progress-bar {{
+            border-radius: 0.25rem;
+            transition: width 0.6s ease;
+        }}
+        
+        .files-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }}
+        
+        .file-item {{
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+        }}
+        
+        .file-item:hover {{
+            background: #e9ecef;
+            border-color: #dee2e6;
+            transform: translateY(-1px);
+        }}
+        
+        .file-header {{
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }}
+        
+        .file-icon {{
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }}
+        
+        .file-name {{
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #495057;
+            flex-grow: 1;
+        }}
+        
+        .file-stats {{
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
+        }}
+        
+        .file-stats .badge {{
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.2rem;
+            font-weight: 500;
+        }}
+        
+        .file-details {{
+            font-size: 0.75rem;
+            color: #6c757d;
+        }}
+        
+        .badge-sm {{
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
         }}
     </style>
 </head>
@@ -720,11 +925,142 @@ class TestReportGenerator:
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 模块卡片动画效果
+        document.addEventListener('DOMContentLoaded', function() {{
+            // 为进度条添加动画效果
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(function(bar) {{
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(function() {{
+                    bar.style.width = width;
+                }}, 100);
+            }});
+            
+            // 为模块卡片添加渐入效果
+            const moduleCards = document.querySelectorAll('.module-card');
+            moduleCards.forEach(function(card, index) {{
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(function() {{
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }}, index * 100);
+            }});
+        }});
+    </script>
 </body>
 </html>
         """
         
         return html_content
+    
+    def _generate_coverage_modules_html(self, modules: Dict) -> str:
+        """生成现代化的模块覆盖率卡片HTML"""
+        html = ""
+        
+        # 按覆盖率排序模块
+        sorted_modules = sorted(modules.values(), key=lambda x: x["stats"]["line_coverage"], reverse=True)
+        
+        for module in sorted_modules:
+            stats = module["stats"]
+            line_coverage_color = self._get_coverage_color(stats["line_coverage"])
+            func_coverage_color = self._get_coverage_color(stats["function_coverage"])
+            
+            # 模块图标
+            module_icon = "📦"
+            if "dfm" in module["name"].lower():
+                module_icon = "🔧"
+            elif "test" in module["name"].lower():
+                module_icon = "🧪"
+            elif "include" in module["name"].lower():
+                module_icon = "📋"
+            
+            html += f"""
+            <div class="module-card card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <span class="module-icon me-2">{module_icon}</span>
+                        <h6 class="mb-0 module-name">{module["name"]}</h6>
+                        <span class="badge ms-2 text-muted">{len(module["files"])} 文件</span>
+                    </div>
+                    <div class="module-stats">
+                        <span class="badge me-1" style="background-color: {line_coverage_color}">{stats['line_coverage']:.1f}%</span>
+                        <span class="badge" style="background-color: {func_coverage_color}">函数 {stats['function_coverage']:.1f}%</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="coverage-metric">
+                                <div class="d-flex justify-content-between">
+                                    <span>代码行覆盖率</span>
+                                    <span class="fw-bold">{stats['line_coverage']:.1f}%</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar" style="width: {stats['line_coverage']:.1f}%; background-color: {line_coverage_color};"></div>
+                                </div>
+                                <small class="text-muted">{stats['lines_hit']}/{stats['lines_found']} 行</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="coverage-metric">
+                                <div class="d-flex justify-content-between">
+                                    <span>函数覆盖率</span>
+                                    <span class="fw-bold">{stats['function_coverage']:.1f}%</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar" style="width: {stats['function_coverage']:.1f}%; background-color: {func_coverage_color};"></div>
+                                </div>
+                                <small class="text-muted">{stats['functions_hit']}/{stats['functions_found']} 函数</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="files-grid">
+            """
+            
+            # 生成文件列表
+            for file_info in module["files"]:
+                file_stats = file_info["stats"]
+                file_line_color = self._get_coverage_color(file_stats["line_coverage"])
+                file_func_color = self._get_coverage_color(file_stats["function_coverage"])
+                
+                # 文件图标
+                file_icon = "📄"
+                if file_info["name"].endswith(('.cpp', '.cc', '.cxx')):
+                    file_icon = "⚙️"
+                elif file_info["name"].endswith(('.h', '.hpp', '.hxx')):
+                    file_icon = "📋"
+                
+                html += f"""
+                        <div class="file-item">
+                            <div class="file-header">
+                                <span class="file-icon">{file_icon}</span>
+                                <span class="file-name">{file_info['name']}</span>
+                            </div>
+                            <div class="file-stats">
+                                <span class="badge badge-sm" style="background-color: {file_line_color}">{file_stats['line_coverage']:.1f}%</span>
+                                <span class="badge badge-sm" style="background-color: {file_func_color}">F:{file_stats['function_coverage']:.1f}%</span>
+                            </div>
+                            <div class="file-details">
+                                <small class="text-muted">
+                                    {file_stats['lines_hit']}/{file_stats['lines_found']} 行 | 
+                                    {file_stats['functions_hit']}/{file_stats['functions_found']} 函数
+                                </small>
+                            </div>
+                        </div>
+                """
+            
+            html += """
+                    </div>
+                </div>
+            </div>
+            """
+        
+        return html
     
     def _get_coverage_color(self, percentage: float) -> str:
         """根据覆盖率百分比返回对应的颜色"""
