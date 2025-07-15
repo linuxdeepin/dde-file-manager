@@ -1,9 +1,6 @@
 # Resource files
-if(${QT_VERSION_MAJOR} EQUAL "6")
-    qt_add_resources(QRC_RESOURCES ${QRC_FILES})
-else()
-    qt5_add_resources(QRC_RESOURCES ${QRC_FILES})
-endif()
+find_package(Qt6 COMPONENTS Core REQUIRED) # for qt_add_resources
+qt_add_resources(QRC_RESOURCES ${QRC_FILES})
 
 # for generating middle source files of SettingsTemplate to translate.
 set(TRANS_OF_SETTINGS_CPP)
