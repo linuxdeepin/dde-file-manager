@@ -19,8 +19,8 @@ add_library(${BIN_NAME} SHARED
     ${SRCS}
 )
 
-target_include_directories(${BIN_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include)
+# Configure library using unified configuration function
+dfm_configure_extension_library(${BIN_NAME})
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -37,7 +37,7 @@ set_target_properties(${BIN_NAME} PROPERTIES
 
 add_library(DFM::extension ALIAS ${BIN_NAME})
 
-target_compile_definitions(${BIN_NAME} PRIVATE VERSION="${CMAKE_PROJECT_VERSION}")
+
 
 # install dev
 install(TARGETS ${BIN_NAME} LIBRARY DESTINATION ${LIB_INSTALL_DIR})

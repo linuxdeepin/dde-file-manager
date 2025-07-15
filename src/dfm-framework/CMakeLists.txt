@@ -13,29 +13,13 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.cpp"
 )
 
-# Qt6 依赖
-find_package(Qt6 COMPONENTS 
-    Core 
-    Concurrent
-    REQUIRED
-)
-find_package(Dtk6 COMPONENTS Core REQUIRED)
-find_package(PkgConfig REQUIRED)
-
 add_library(${BIN_NAME} SHARED
     ${INCLUDE_FILES}
     ${SRCS}
 )
 
-target_link_libraries(${BIN_NAME} PUBLIC
-    Qt6::Core
-    Qt6::Concurrent
-    Dtk6::Core
-)
-
-target_include_directories(${BIN_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-)
+# Configure library using unified configuration function
+dfm_configure_framework_library(${BIN_NAME})
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -52,11 +36,6 @@ set_target_properties(${BIN_NAME} PROPERTIES
 
 # 创建 ALIAS 目标，这样其他组件可以使用 DFM6::framework 来引用这个库
 add_library(DFM6::framework ALIAS ${BIN_NAME})
-
-target_compile_definitions(${BIN_NAME}
-    PRIVATE VERSION="${CMAKE_PROJECT_VERSION}"
-    PRIVATE DPF_INTERNAL_USE=1
-    )
 
 # install headers
 install(DIRECTORY

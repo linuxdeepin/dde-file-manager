@@ -214,4 +214,7 @@ function(dfm_create_library_target target_name)
     # In integrated mode, targets are created by the main build system
 endfunction()
 
+# Include library configuration module
+include(DFMLibraryConfig)
+
 message(STATUS "DFM: Common CMake module loaded") 
