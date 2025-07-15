@@ -16,7 +16,7 @@ sys_ver=$(grep "^MajorVersion=" /etc/os-version | cut -d'=' -f2)
 # So, after opening a directory with xdg-open,
 # the application's cgroup can be categorized into the file manager as expected.
 
-if [ "$sys_name" = "Deepin" ] && [ "$sys_ver" = "23" ]; then
+if [ "$sys_name" = "Deepin" ] && [ "$sys_ver" -ge "23" ]; then
 	echo "open $1 with xdg-open."
 	xdg-open $1
 else
