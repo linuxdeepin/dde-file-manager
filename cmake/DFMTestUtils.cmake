@@ -3,6 +3,9 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+# Include plugin configuration module
+include(${CMAKE_CURRENT_LIST_DIR}/DFMPluginConfig.cmake)
+
 # Global variable to store stub source files
 set(CPP_STUB_SRC "" CACHE INTERNAL "Stub source files for testing")
 
@@ -233,9 +236,17 @@ function(dfm_create_library_test lib_name)
     message(STATUS "DFM: Created library test: ${test_name} for ${lib_name}")
 endfunction()
 
-# Function to create a DFM plugin test
+# Function to create a DFM plugin test (backward compatibility)
 function(dfm_create_plugin_test plugin_name plugin_path)
+    # Call the enhanced version for backward compatibility
+    dfm_create_plugin_test_enhanced(${plugin_name} ${plugin_path})
+endfunction()
+
+# Enhanced function to create a DFM plugin test with intelligent configuration
+function(dfm_create_plugin_test_enhanced plugin_name plugin_path)
     set(test_name "test-${plugin_name}")
+    
+    message(STATUS "DFM: Creating enhanced plugin test: ${test_name} for ${plugin_name}")
     
     # Find test files
     file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
@@ -246,16 +257,18 @@ function(dfm_create_plugin_test plugin_name plugin_path)
         "${plugin_path}/*.h"
     )
     
-    # Create test executable
+    # Create test executable with basic configuration
     dfm_create_test_executable(${test_name}
         SOURCES ${UT_CXX_FILE} ${SRC_FILES}
-        LINK_LIBRARIES DFM6::base DFM6::framework Dtk6::Widget Dtk6::Core
     )
+    
+    # Apply plugin-specific configuration using new system
+    dfm_configure_plugin_dependencies(${test_name} ${plugin_name} ${plugin_path})
     
     # Include plugin path
     target_include_directories(${test_name} PRIVATE "${plugin_path}")
     
-    message(STATUS "DFM: Created plugin test: ${test_name} for ${plugin_name}")
+    message(STATUS "DFM: Created enhanced plugin test: ${test_name} for ${plugin_name}")
 endfunction()
 
 # Function to setup DFM library targets for testing

@@ -5,8 +5,8 @@ set(BIN_NAME dfm-search-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 REQUIRED COMPONENTS DBus)
-find_package(dfm6-search REQUIRED)
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -18,41 +18,16 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
     ADD_DEFINITIONS(-DARM_PROCESSOR)
 endif()
 
-find_package(PkgConfig REQUIRED)
-
-#full-text search dependences
-pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
-pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
-pkg_check_modules(GLIB REQUIRED glib-2.0)
-
-# use TextIndex interface
-set(DBUS_INTERFACE_FILE "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.TextIndex.xml")
-qt_add_dbus_interface(INTERFACE_SOURCES ${DBUS_INTERFACE_FILE} textindex_interface)
-
 add_library(${BIN_NAME}
     SHARED
     ${SRC_FILES}
-    ${INTERFACE_SOURCES}
 )
 
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_include_directories(${BIN_NAME}
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}/3rdparty
-        ${GLIB_INCLUDE_DIRS}
-        ${dfm6-search_INCLUDE_DIR}
-)
-
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-    ${GLIB_LIBRARIES}
-    PkgConfig::Lucene
-    PkgConfig::Docparser
-    dfm6-search
-)
+# Apply search plugin specific configuration
+dfm_setup_search_dependencies(${BIN_NAME})
 
 #install library file
 install(TARGETS
