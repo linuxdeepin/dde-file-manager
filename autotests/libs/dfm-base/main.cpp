@@ -5,8 +5,8 @@
 #include <dfm-base/base/application/application.h>
 
 #include <gtest/gtest.h>
-#include <sanitizer/asan_interface.h>
 #include <QApplication>
+#include "dfm_asan_helper.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,9 +20,7 @@ int main(int argc, char *argv[])
 
     delete appins;
 
-#ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_base.log");
-#endif
+    DFM_SETUP_ASAN_REPORT(dfm_base);
 
     return ret;
 }

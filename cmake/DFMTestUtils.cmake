@@ -43,6 +43,14 @@ function(dfm_setup_test_stubs)
         return()
     endif()
     
+    # Define ASAN report absolute path
+    set(ASAN_REPORT_DIR "${CMAKE_BINARY_DIR}/asan-reports")
+    add_definitions(-DDFM_ASAN_REPORT_DIR="${ASAN_REPORT_DIR}")
+    
+    # Create ASAN report directory
+    file(MAKE_DIRECTORY "${ASAN_REPORT_DIR}")
+    message(STATUS "DFM: ASAN report directory: ${ASAN_REPORT_DIR}")
+    
     # Stub source files
     file(GLOB STUB_SRC_FILES 
         "${TEST_UTILS_PATH}/cpp-stub/*.h"
@@ -60,13 +68,14 @@ function(dfm_setup_test_stubs)
     # Set global variable
     set(CPP_STUB_SRC ${STUB_SRC_FILES} CACHE INTERNAL "Stub source files for testing")
     
-    # Include stub directories
+    # Include stub directories and ASAN helper
     include_directories(
         "${TEST_UTILS_PATH}/cpp-stub"
         "${TEST_UTILS_PATH}/stub-ext"
+        "${TEST_UTILS_PATH}"
     )
     
-    message(STATUS "DFM: Test stubs configured")
+    message(STATUS "DFM: Test stubs and ASAN helper configured")
 endfunction()
 
 # Function to setup coverage settings
