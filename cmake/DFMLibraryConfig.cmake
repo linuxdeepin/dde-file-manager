@@ -95,7 +95,7 @@ function(dfm_configure_base_library target_name)
         PRIVATE APPSHAREDIR="${ShareDir}"
         PRIVATE DFM_BASE_INTERNAL_USE=1
     )
-    
+
     message(STATUS "DFM: dfm-base library configured successfully")
 endfunction()
 

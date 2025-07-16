@@ -42,6 +42,9 @@ add_library(${BIN_NAME}
 # Configure library using unified configuration function
 dfm_configure_base_library(${BIN_NAME})
 
+set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
+set(AssetsPath ${DFM_PROJECT_ROOT}/assets)
+
 add_library(DFM${DTK_VERSION_MAJOR}::base ALIAS ${BIN_NAME})
 
 set_target_properties(${BIN_NAME} PROPERTIES
@@ -55,6 +58,13 @@ install(TARGETS ${BIN_NAME} EXPORT ${BIN_NAME}Targets
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# install header files
+install(DIRECTORY
+    ${PROJECT_SOURCE_DIR}/include/${OLD_BIN_NAME}
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
 )
 
 install(EXPORT ${BIN_NAME}Targets
@@ -75,5 +85,51 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}.pc DESTINATION ${CMAKE_INS
 # config cmake file
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
+
+FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
+install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
+install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
+
+set(DLNFS_SCRIPT ${AssetsPath}/scripts/dfm-dlnfs-automount)
+install(FILES ${DLNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
+
+set(DLNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-dlnfs-automount)
+install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
+
+set(DFM_DLNFS_SCRIPT_LAUNCHER
+    ${AssetsPath}/scripts/dde-file-manager
+    ${AssetsPath}/scripts/file-manager.sh)
+install(PROGRAMS ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
+
+set(Mimetypes "${ShareDir}/mimetypes")
+FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
+install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
+
+set(MimetypeAssociations "${ShareDir}/mimetypeassociations")
+FILE(GLOB MIMETYPEASSOCIATIONS_FILES ${AssetsPath}/mimetypeassociations/*)
+install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
+
+set(Templates "${ShareDir}/templates")
+FILE(GLOB TEMPLATES_FILES ${AssetsPath}/templates/*)
+install(FILES ${TEMPLATES_FILES} DESTINATION ${Templates})
+
+set(OemMenuDir "${CMAKE_INSTALL_PREFIX}/share/deepin/dde-file-manager/oem-menuextensions")
+install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
+
+set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
+install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
+
+# log viewer
+set(LogViewerConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d")
+install(FILES ${AssetsPath}/log/viewer/dde-file-manager.json DESTINATION ${LogViewerConfDir})
+
+# log debug
+set(LogDebugConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d")
+install(FILES ${AssetsPath}/log/debug/org.deepin.file-manager.json DESTINATION ${LogDebugConfDir})
+
+INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")
+INSTALL_DCONFIG("org.deepin.dde.file-manager.animation.json")
 
 
