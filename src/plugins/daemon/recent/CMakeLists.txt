@@ -17,11 +17,11 @@ find_package(Qt6 COMPONENTS
     DBus
     REQUIRED)
 
-qt6_generate_dbus_interface(
-    recentmanagerdbus.h
-    ${RecentManager_XML}
-    OPTIONS -M -S
-)
+# qt6_generate_dbus_interface(
+#     recentmanagerdbus.h
+#     ${RecentManager_XML}
+#     OPTIONS -M -S
+# )
 
 qt6_add_dbus_adaptor(SRC_FILES ${RecentManager_XML}
     recentmanagerdbus.h RecentManagerDBus)

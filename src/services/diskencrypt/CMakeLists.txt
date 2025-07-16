@@ -4,57 +4,21 @@ set(BIN_NAME "deepin-diskencrypt-service")
 project(${BIN_NAME})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(DiskEncrypt_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.DiskEncrypt.xml)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Concurrent DBus)
-find_package(deepin-qdbus-service REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(CryptSetup REQUIRED libcryptsetup)
-pkg_check_modules(DevMapper REQUIRED devmapper)
-pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1 IMPORTED_TARGET)
-pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1 IMPORTED_TARGET)
-
-add_definitions(-DSERVICE_CONFIG_DIR="${CMAKE_INSTALL_PREFIX}/share/deepin-service-manager/")
+# Include service configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 file(GLOB_RECURSE SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-# generate dbus xml and adaptor
-# DBus: DiskEncryptDBus
-qt6_generate_dbus_interface(
-   dbus/diskencryptsetup.h
-   ${DiskEncrypt_XML}
-   OPTIONS -M -S
-)
-qt6_add_dbus_adaptor(SRCS
-                     ${DiskEncrypt_XML}
-                     dbus/diskencryptsetup.h
-                     DiskEncryptSetup)
-
-
 add_executable(${BIN_NAME}
     ${SRCS}
 )
 
-target_link_libraries(${BIN_NAME} PRIVATE
-    Qt6::Core
-    Qt6::Concurrent
-    Qt6::DBus
-    DFM6::base
-    PkgConfig::PolkitAgent
-    PkgConfig::PolkitQt6
-    deepin-qdbus-service
-    ${CryptSetup_LIBRARIES}
-    ${DevMapper_LIBRARIES}
-)
-
-target_include_directories(${BIN_NAME}
-    PUBLIC
-    ${PROJECT_SOURCE_DIR}
-    ${CryptSetup_INCLUDE_DIRS}
-)
+# Apply service configuration using shared dependencies
+dfm_setup_diskencrypt_dependencies(${PROJECT_NAME})
 
 install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/other/)
