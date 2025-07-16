@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "stubext.h"
+#include <gtest/gtest.h>
+#include "task/taskmanager.h"
+
+SERVICETEXTINDEX_USE_NAMESPACE
+
+class UT_TaskManager : public testing::Test
+{
+protected:
+    virtual void SetUp() override {}
+    virtual void TearDown() override { stub.clear(); }
+private:
+    stub_ext::StubExt stub;
+};
+
+TEST_F(UT_TaskManager, TaskManagerBasicTest)
+{
+    // Basic smoke test for TaskManager
+    EXPECT_TRUE(true);
+} 

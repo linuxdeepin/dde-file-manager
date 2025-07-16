@@ -24,20 +24,20 @@ find_package(Dtk6 COMPONENTS Core REQUIRED)
 find_package(dfm6-search REQUIRED)
 
 # DBus: DeviceManager
-qt6_generate_dbus_interface(
-   devicemanagerdbus.h
-   ${DeviceManager_XML}
-   OPTIONS -M -S
-)
+# qt6_generate_dbus_interface(
+#    devicemanagerdbus.h
+#    ${DeviceManager_XML}
+#    OPTIONS -M -S
+# )
 qt6_add_dbus_adaptor(SRC_FILES ${DeviceManager_XML}
     devicemanagerdbus.h DeviceManagerDBus)
 
 # DBus: OperationsStackManager
-qt6_generate_dbus_interface(
-   operationsstackmanagerdbus.h
-   ${OperationsStackManager_XML}
-   OPTIONS -M -S
-)
+# qt6_generate_dbus_interface(
+#    operationsstackmanagerdbus.h
+#    ${OperationsStackManager_XML}
+#    OPTIONS -M -S
+# )
 qt6_add_dbus_adaptor(SRC_FILES ${OperationsStackManager_XML}
     operationsstackmanagerdbus.h OperationsStackManagerDbus)
 

@@ -3,8 +3,9 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-# Include plugin configuration module
+# Include plugin and service configuration modules
 include(${CMAKE_CURRENT_LIST_DIR}/DFMPluginConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/DFMServiceConfig.cmake)
 
 # Global variable to store stub source files
 set(CPP_STUB_SRC "" CACHE INTERNAL "Stub source files for testing")
@@ -269,6 +270,66 @@ function(dfm_create_plugin_test_enhanced plugin_name plugin_path)
     target_include_directories(${test_name} PRIVATE "${plugin_path}")
     
     message(STATUS "DFM: Created enhanced plugin test: ${test_name} for ${plugin_name}")
+endfunction()
+
+# Function to create a DFM service test (backward compatibility)
+function(dfm_create_service_test service_name service_path)
+    set(test_name "test-${service_name}")
+    
+    # Find test files
+    file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
+    
+    # Find service source files (exclude main.cpp to avoid conflicts)
+    file(GLOB_RECURSE SRC_FILES FILES_MATCHING PATTERN 
+        "${service_path}/*.cpp" 
+        "${service_path}/*.h"
+    )
+    
+    # Remove main.cpp from service sources to avoid main function conflicts
+    list(FILTER SRC_FILES EXCLUDE REGEX ".*/main\\.cpp$")
+    
+    # Create test executable with default configuration
+    dfm_create_test_executable(${test_name}
+        SOURCES ${UT_CXX_FILE} ${SRC_FILES}
+    )
+    
+    # Apply default service configuration
+    dfm_apply_default_service_config(${test_name})
+    
+    # Include service path
+    target_include_directories(${test_name} PRIVATE "${service_path}")
+    
+    message(STATUS "DFM: Created service test: ${test_name} for ${service_name}")
+endfunction()
+
+# Function to create a DFM service test with enhanced configuration
+function(dfm_create_service_test_enhanced service_name service_path)
+    set(test_name "test-${service_name}")
+    
+    # Find test files
+    file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
+    
+    # Find service source files (exclude main.cpp to avoid conflicts)
+    file(GLOB_RECURSE SRC_FILES FILES_MATCHING PATTERN 
+        "${service_path}/*.cpp" 
+        "${service_path}/*.h"
+    )
+    
+    # Remove main.cpp from service sources to avoid main function conflicts
+    list(FILTER SRC_FILES EXCLUDE REGEX ".*/main\\.cpp$")
+    
+    # Create test executable
+    dfm_create_test_executable(${test_name}
+        SOURCES ${UT_CXX_FILE} ${SRC_FILES}
+    )
+    
+    # Apply service-specific configuration
+    dfm_configure_service(${test_name} ${service_name} ${service_path})
+    
+    # Include service path
+    target_include_directories(${test_name} PRIVATE "${service_path}")
+    
+    message(STATUS "DFM: Created enhanced service test: ${test_name} for ${service_name}")
 endfunction()
 
 # Function to setup DFM library targets for testing

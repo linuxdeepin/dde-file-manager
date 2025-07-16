@@ -32,6 +32,7 @@ enable_testing()
 # Add subdirectories
 add_subdirectory(libs)
 add_subdirectory(plugins)
+add_subdirectory(services)
 
 # Optional: add other test directories if they exist
 # add_subdirectory(apps)

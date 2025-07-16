@@ -17,11 +17,11 @@ FILE(GLOB_RECURSE SRC_FILES
     )
 
 # DBus: VaultManager
-qt6_generate_dbus_interface(
-   dbus/vaultmanagerdbus.h
-   ${VaultManager_XML}
-   OPTIONS -M -S
-)
+# qt6_generate_dbus_interface(
+#    dbus/vaultmanagerdbus.h
+#    ${VaultManager_XML}
+#    OPTIONS -M -S
+# )
 qt6_add_dbus_adaptor(SRC_FILES ${VaultManager_XML}
     dbus/vaultmanagerdbus.h VaultManagerDBus)
 

@@ -17,11 +17,11 @@ find_package(Qt6 COMPONENTS
     Sql
     REQUIRED)
 
-qt6_generate_dbus_interface(
-   tagmanagerdbus.h
-   ${TagManager_XML}
-   OPTIONS -M -S
-)
+# qt6_generate_dbus_interface(
+#    tagmanagerdbus.h
+#    ${TagManager_XML}
+#    OPTIONS -M -S
+# )
 
 qt6_add_dbus_adaptor(SRC_FILES ${TagManager_XML}
     tagmanagerdbus.h TagManagerDBus)
