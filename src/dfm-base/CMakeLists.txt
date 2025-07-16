@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 # If do't define version number, specify the version number
 set (VERSION "1.0.0" CACHE STRING "define project version")
+set(BIN_NAME dfm6-base) # Qt6
+set(OLD_BIN_NAME dfm-base)
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -40,53 +42,4 @@ set(QRC_FILES
 )
 
 include(dfm-base-qt6.cmake)
-
-# install resources files
-set(AssetsPath ${PROJECT_SOURCE_DIR}/assets)
-
-FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
-install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
-install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
-
-set(DLNFS_SCRIPT ${AssetsPath}/scripts/dfm-dlnfs-automount)
-install(FILES ${DLNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
-
-set(DLNFS_SCRIPT_LAUNCHER ${AssetsPath}/scripts/99dfm-dlnfs-automount)
-install(FILES ${DLNFS_SCRIPT_LAUNCHER} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/X11/Xsession.d)
-
-set(DFM_DLNFS_SCRIPT_LAUNCHER
-    ${AssetsPath}/scripts/dde-file-manager
-    ${AssetsPath}/scripts/file-manager.sh)
-install(PROGRAMS ${DFM_DLNFS_SCRIPT_LAUNCHER} DESTINATION bin)
-
-set(Mimetypes "${ShareDir}/mimetypes")
-FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
-install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
-
-set(MimetypeAssociations "${ShareDir}/mimetypeassociations")
-FILE(GLOB MIMETYPEASSOCIATIONS_FILES ${AssetsPath}/mimetypeassociations/*)
-install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
-
-set(Templates "${ShareDir}/templates")
-FILE(GLOB TEMPLATES_FILES ${AssetsPath}/templates/*)
-install(FILES ${TEMPLATES_FILES} DESTINATION ${Templates})
-
-set(OemMenuDir "${CMAKE_INSTALL_PREFIX}/share/deepin/dde-file-manager/oem-menuextensions")
-install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
-
-set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
-install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
-
-# log viewer
-set(LogViewerConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d")
-install(FILES ${AssetsPath}/log/viewer/dde-file-manager.json DESTINATION ${LogViewerConfDir})
-
-# log debug
-set(LogDebugConfDir "${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d")
-install(FILES ${AssetsPath}/log/debug/org.deepin.file-manager.json DESTINATION ${LogDebugConfDir})
-
-INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
-INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
-INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")
-INSTALL_DCONFIG("org.deepin.dde.file-manager.animation.json")
 
