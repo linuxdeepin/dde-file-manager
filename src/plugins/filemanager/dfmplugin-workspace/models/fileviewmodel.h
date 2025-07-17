@@ -176,6 +176,7 @@ private:
     QList<QSharedPointer<QObject>> discardedObjects {};
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
+    bool isTree { false };
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;

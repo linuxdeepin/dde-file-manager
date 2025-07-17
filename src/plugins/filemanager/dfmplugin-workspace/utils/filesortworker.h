@@ -206,7 +206,7 @@ private:
     int findRealShowIndex(const QUrl &preItemUrl);
     int indexOfVisibleChild(const QUrl &itemUrl);
     int setVisibleChildren(const int startPos, const QList<QUrl> &filterUrls,
-                            const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
+                           const InsertOpt opt = InsertOpt::kInsertOptAppend, const int endPos = -1);
     bool checkAndUpdateFileInfoUpdate();
     void checkAndSortBytMimeType(const QUrl &url);
     void doCompleteFileInfo(SortInfoPointer sortInfo);
@@ -233,13 +233,13 @@ private:
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
     char placeholderMemory[4];
-    QHash<QUrl, QList<QUrl>> visibleTreeChildren{};
+    QHash<QUrl, QList<QUrl>> visibleTreeChildren {};
     QMultiMap<int8_t, QUrl> depthMap;
-    std::atomic_bool istree;
-    std::atomic_bool currentSupportTreeView {false};
+    std::atomic_bool istree { false };
+    std::atomic_bool currentSupportTreeView { false };
     QList<QUrl> fileInfoRefresh;
-    QTimer *updateRefresh {nullptr};
-    std::atomic_bool mimeSorting{ false };
+    QTimer *updateRefresh { nullptr };
+    std::atomic_bool mimeSorting { false };
     QSet<QUrl> waitUpdatedFiles;
 };
 
