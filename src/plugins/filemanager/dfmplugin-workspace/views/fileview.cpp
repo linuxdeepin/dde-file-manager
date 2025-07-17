@@ -221,6 +221,7 @@ bool FileView::setRootUrl(const QUrl &url)
     d->statusBar->itemCounted(0);
 
     const QUrl &fileUrl = parseSelectedUrl(url);
+
     const QModelIndex &index = model()->setRootUrl(fileUrl);
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
@@ -2022,7 +2023,7 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
     }
 
     if (obj == d->headerWidget && event->type() == QEvent::Resize) {
-            d->headerView->adjustSize();
+        d->headerView->adjustSize();
     }
 
     return DListView::eventFilter(obj, event);

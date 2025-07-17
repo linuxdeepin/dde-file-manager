@@ -66,7 +66,7 @@ FileViewModel::~FileViewModel()
 
     // 清理废弃的对象，确保没有资源泄漏
     for (auto obj : discardedObjects) {
-        if (auto thread = qobject_cast<QThread*>(obj.data())) {
+        if (auto thread = qobject_cast<QThread *>(obj.data())) {
             if (thread->isRunning()) {
                 thread->quit();
                 if (!thread->wait(1000)) {
@@ -162,7 +162,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                     // 预处理完成后执行加载
                     this->executeLoad();
                 });
-                return rootIndex(); // 返回当前索引，保持UI状态
+                return rootIndex();   // 返回当前索引，保持UI状态
             }
         }
 
@@ -175,7 +175,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     fmDebug() << "Using create new strategy for URL:" << url.toString();
     beginResetModel();
     closeCursorTimer();
-    discardFilterSortObjects(); // 确保清理旧的资源
+    discardFilterSortObjects();   // 确保清理旧的资源
 
     // create root by url
     dirRootUrl = url;
@@ -830,6 +830,7 @@ void FileViewModel::updateThumbnailIcon(const QModelIndex &index, const QString 
 
 void FileViewModel::setTreeView(const bool isTree)
 {
+    this->isTree = isTree;
     Q_EMIT requestTreeView(isTree);
 }
 
@@ -905,7 +906,7 @@ void FileViewModel::executeLoad()
         const QModelIndex &index = rootIndex();
         canFetchFiles = true;
         fetchingUrl = urlToLoad;
-        fetchMore(index); // 这是关键 - 触发目录数据迭代逻辑
+        fetchMore(index);   // 这是关键 - 触发目录数据迭代逻辑
 
         break;
     }
@@ -1110,7 +1111,7 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, rootInfo)));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    filterSortWorker->setTreeView(DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
+    filterSortWorker->setTreeView(this->isTree
                                   && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
 
