@@ -18,8 +18,10 @@ bool compareStringForMimeType(const QString &str1, const QString &str2);
 bool compareForSize(const SortInfoPointer info1, const SortInfoPointer info2);
 bool compareForSize(const qint64 size1, const qint64 size2);
 
-QString displayType(const QUrl &url);
+QString fastDisplayType(const QUrl &url);
 QString fastMimeType(const QUrl &url);
+QString accurateDisplayType(const QUrl &url);
+QString accurateLocalMimeType(const QUrl &url);
 
 // private
 bool isNumOrChar(const QChar ch);

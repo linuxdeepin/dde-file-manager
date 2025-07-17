@@ -63,7 +63,7 @@ void MimeTypeDisplayManager::initData()
     loadSupportMimeTypes();
 }
 
-QMimeType MimeTypeDisplayManager::determineMimeType(const QString &filePath) const
+QMimeType MimeTypeDisplayManager::fastDetermineMimeType(const QString &filePath) const
 {
     if (filePath.isEmpty())
         return QMimeType();
@@ -90,9 +90,16 @@ QMimeType MimeTypeDisplayManager::determineMimeType(const QString &filePath) con
     return mimeType;   // May be invalid, but we skip further MatchContent
 }
 
-QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath) const
+QMimeType MimeTypeDisplayManager::accurateLocalMimeType(const QString &filePath) const
 {
-    QMimeType mimeType = determineMimeType(filePath);
+    Q_ASSERT(!filePath.isEmpty());
+
+    return mimeTypeDatabase.mimeTypeForFile(filePath);
+}
+
+QString MimeTypeDisplayManager::fastDisplayTypeFromPath(const QString &filePath) const
+{
+    QMimeType mimeType = fastDetermineMimeType(filePath);
     if (!mimeType.isValid())
         return displayNamesMap[FileInfo::FileType::kUnknown];
 
@@ -101,7 +108,25 @@ QString MimeTypeDisplayManager::displayTypeFromPath(const QString &filePath) con
 
 QString MimeTypeDisplayManager::fastMimeTypeName(const QString &filePath) const
 {
-    QMimeType mimeType = determineMimeType(filePath);
+    QMimeType mimeType = fastDetermineMimeType(filePath);
+    if (!mimeType.isValid())
+        return displayNamesMap[FileInfo::FileType::kUnknown];
+
+    return fullMimeName(mimeType.name());
+}
+
+QString MimeTypeDisplayManager::accurateDisplayTypeFromPath(const QString &filePath) const
+{
+    QMimeType mimeType = accurateLocalMimeType(filePath);
+    if (!mimeType.isValid())
+        return displayNamesMap[FileInfo::FileType::kUnknown];
+
+    return displayName(mimeType.name());
+}
+
+QString MimeTypeDisplayManager::accurateLocalMimeTypeName(const QString &filePath) const
+{
+    QMimeType mimeType = accurateLocalMimeType(filePath);
     if (!mimeType.isValid())
         return displayNamesMap[FileInfo::FileType::kUnknown];
 
