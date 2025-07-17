@@ -47,7 +47,6 @@ public:
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void setFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
-    void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     void setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode);
     void setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes);
     void setViewDragEnabled(const quint64 windowID, const bool enable);
@@ -106,8 +105,8 @@ public:
 
     void registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy getLoadStrategy(const QString &scheme);
-    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
-    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
+    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   // ###: for creating new file.
+    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   // ###: rename a file which must be existance.
 
 public Q_SLOTS:
     void installWorkspaceWidgetToWindow(const quint64 windowID);
