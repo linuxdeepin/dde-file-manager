@@ -103,7 +103,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                          .toBool();
     QList<QUrl> dirListOpenInNewWindow {};
     for (const QUrl &url : urls) {
-        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (fileInfoPtr) {
             if (!fileInfoPtr->exists()) {
                 // show alert
