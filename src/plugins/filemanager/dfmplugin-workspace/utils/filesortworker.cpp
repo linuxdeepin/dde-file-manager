@@ -1870,7 +1870,7 @@ bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
 
 QUrl FileSortWorker::makeParentUrl(const QUrl &url)
 {
-    if (!currentSupportTreeView || !istree || !url.isLocalFile())
+    if (!currentSupportTreeView || !istree)
         return current;
 
     auto parent = url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash);
