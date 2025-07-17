@@ -5,16 +5,14 @@ set(BIN_NAME dfm-smbbrowser-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Include DFM plugin configuration module
+include(DFMPluginConfig)
+
 file(GLOB_RECURSE BROWSER_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
-
-find_package(Qt6 COMPONENTS Network REQUIRED)
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(LibSecret REQUIRED libsecret-1 IMPORTED_TARGET)
 
 add_library(${BIN_NAME}
     SHARED
@@ -24,13 +22,9 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(
-    ${BIN_NAME}
-    Qt6::Network
-    DFM6::base
-    DFM6::framework
-    PkgConfig::LibSecret
-)
+# Use DFM plugin configuration system
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+dfm_setup_smbbrowser_dependencies(${BIN_NAME})
 
 #install library file
 install(TARGETS

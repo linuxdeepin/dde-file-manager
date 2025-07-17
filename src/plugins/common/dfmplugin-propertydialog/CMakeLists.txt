@@ -4,6 +4,9 @@ project(dfmplugin-propertydialog)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Include plugin configuration
+include(DFMPluginConfig)
+
 # 设置二进制文件名
 set(BIN_NAME dfm-propertydialog-plugin)
 
@@ -31,11 +34,8 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-# 链接必要的库
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-)
+# Use default plugin configuration
+dfm_apply_default_plugin_config(${BIN_NAME})
 
 # 安装库文件
 install(TARGETS

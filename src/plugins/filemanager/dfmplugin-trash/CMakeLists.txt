@@ -5,13 +5,14 @@ set(BIN_NAME dfm-trash-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Include DFM plugin configuration module
+include(DFMPluginConfig)
+
 FILE(GLOB_RECURSE TRASH_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
-
-find_package(Qt6 COMPONENTS Xml REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
@@ -21,10 +22,9 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-)
+# Use DFM plugin configuration system
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+dfm_setup_trash_dependencies(${BIN_NAME})
 
 #install library file
 install(TARGETS

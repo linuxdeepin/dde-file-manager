@@ -4,6 +4,9 @@ project(dfmplugin-emblem)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Include plugin configuration
+include(DFMPluginConfig)
+
 # 设置二进制文件名
 set(BIN_NAME dfm-emblem-plugin)
 
@@ -12,9 +15,6 @@ FILE(GLOB_RECURSE EMBLEM_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
-
-# Qt6 依赖
-find_package(Qt6 COMPONENTS Core REQUIRED)
 
 # 创建共享库
 add_library(${BIN_NAME}
@@ -25,11 +25,8 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-# 链接必要的库
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-)
+# Use default plugin configuration
+dfm_apply_default_plugin_config(${BIN_NAME})
 
 # 安装库文件
 install(TARGETS
