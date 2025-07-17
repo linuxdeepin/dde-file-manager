@@ -407,16 +407,28 @@ bool compareForSize(const qint64 size1, const qint64 size2)
     return size1 < size2;
 }
 
-QString displayType(const QUrl &url)
+QString fastDisplayType(const QUrl &url)
 {
     const QString path = getLocalPath(url);
-    return MimeTypeDisplayManager::instance()->displayTypeFromPath(path);
+    return MimeTypeDisplayManager::instance()->fastDisplayTypeFromPath(path);
 }
 
 QString fastMimeType(const QUrl &url)
 {
     const QString path = getLocalPath(url);
     return MimeTypeDisplayManager::instance()->fastMimeTypeName(path);
+}
+
+QString accurateDisplayType(const QUrl &url)
+{
+    const QString path = getLocalPath(url);
+    return MimeTypeDisplayManager::instance()->accurateDisplayTypeFromPath(path);
+}
+
+QString accurateLocalMimeType(const QUrl &url)
+{
+    const QString path = getLocalPath(url);
+    return MimeTypeDisplayManager::instance()->accurateLocalMimeTypeName(path);
 }
 
 QString getLocalPath(const QUrl &url)

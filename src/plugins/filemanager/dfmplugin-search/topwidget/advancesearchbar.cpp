@@ -358,7 +358,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
 
     // 检查文件类型过滤
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = SortUtils::displayType(info->fileUrl());
+        QString fileTypeStr = SortUtils::accurateDisplayType(info->fileUrl());
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }

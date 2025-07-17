@@ -14,6 +14,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 #include <dfm-base/utils/sortutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -1719,12 +1720,20 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
     case kItemFileDisplayNameRole:
         return info->fileUrl().fileName();
     case kItemFileMimeTypeRole: {
-        // perf: SortUtils::fastMimeType 的成本较高，缓存减少调用
-        // 避免 CPU 密集任务中出现大规模 IO 影响性能
+        // perf: MIME type detection cost is high, use caching to reduce calls
+        // Avoid large-scale IO operations in CPU-intensive tasks affecting performance
         if (info->customData("fast_mime_type").isValid()) {
             return info->customData("fast_mime_type");
         }
-        const QString &type = SortUtils::fastMimeType(info->fileUrl());
+        QString type;
+        if (ProtocolUtils::isRemoteFile(info->fileUrl())) {
+            // For remote files, use fast extension-based detection
+            type = SortUtils::fastMimeType(info->fileUrl());
+        } else {
+            // For local files, use accurate content-based detection for proper sorting
+            type = SortUtils::accurateLocalMimeType(info->fileUrl());
+        }
+
         const_cast<SortInfoPointer &>(info)->setCustomData("fast_mime_type", type);
         return type;
     }
