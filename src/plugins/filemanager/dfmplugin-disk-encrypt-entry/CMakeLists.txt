@@ -5,7 +5,8 @@ set(BIN_NAME dfm-disk-encrypt-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Concurrent LinguistTools)
+# Include DFM plugin configuration module
+include(DFMPluginConfig)
 
 # 源文件
 file(GLOB_RECURSE SRC
@@ -17,20 +18,19 @@ file(GLOB_RECURSE SRC
 
 add_library(${BIN_NAME} SHARED ${SRC})
 
-target_link_libraries(${BIN_NAME} PRIVATE
-    DFM6::base
-    DFM6::framework
-)
-
-target_compile_definitions(${BIN_NAME} PRIVATE DFMPLUGIN_DISK_ENCRYPT_LIBRARY)
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
+
+# Use DFM plugin configuration system
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+dfm_setup_disk_encrypt_entry_dependencies(${BIN_NAME})
 
 # 设置翻译文件目录
 set(TS_DIR "${CMAKE_SOURCE_DIR}/translations/disk-encrypt-plugin")
 file(GLOB TS_FILES "${TS_DIR}/disk-encrypt*.ts")
 
 # 直接使用qt6_add_translation并指定输出路径
+find_package(Qt6 REQUIRED LinguistTools)
 set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}")
 qt6_add_translation(QM_FILES ${TS_FILES})
 

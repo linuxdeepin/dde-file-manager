@@ -5,7 +5,8 @@ set(BIN_NAME dfm-encrypt-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+# Include DFM plugin configuration module
+include(DFMPluginConfig)
 
 file(GLOB_RECURSE SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h
@@ -17,10 +18,7 @@ add_library(${BIN_NAME} SHARED
 
 set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(${BIN_NAME} PUBLIC
-    Qt6::Core
-    DFM6::base
-    DFM6::framework
-)
+# Use DFM plugin configuration system
+dfm_apply_default_plugin_config(${BIN_NAME})
 
 install(TARGETS ${BIN_NAME} LIBRARY DESTINATION ${DFM_PLUGIN_FILEMANAGER_CORE_DIR})

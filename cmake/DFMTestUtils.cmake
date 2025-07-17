@@ -400,6 +400,33 @@ function(dfm_setup_library_targets)
             find_package(dfm-extension QUIET)
             if(dfm-extension_FOUND)
                 message(STATUS "DFM: Found dfm-extension package")
+                # Even if package is found, we need to create the target if it doesn't exist
+                # because the package config file only sets variables, not targets
+                if(NOT TARGET DFM::extension)
+                    if(dfm-extension_LIBRARIES)
+                        # The dfm-extension_LIBRARIES might be just the library name, not the full path
+                        # We need to find the actual library file
+                        if(dfm-extension_LIBRARIES STREQUAL "dfm-extension")
+                            find_library(DFM_EXTENSION_ACTUAL_LIB NAMES dfm-extension libdfm-extension)
+                            if(DFM_EXTENSION_ACTUAL_LIB)
+                                add_library(DFM::extension SHARED IMPORTED)
+                                set_target_properties(DFM::extension PROPERTIES
+                                    IMPORTED_LOCATION ${DFM_EXTENSION_ACTUAL_LIB}
+                                    INTERFACE_INCLUDE_DIRECTORIES ${dfm-extension_INCLUDE_DIR}
+                                )
+                                message(STATUS "DFM: Created imported target DFM::extension from package with actual library: ${DFM_EXTENSION_ACTUAL_LIB}")
+                            endif()
+                        else()
+                            # If it's already a full path, use it directly
+                            add_library(DFM::extension SHARED IMPORTED)
+                            set_target_properties(DFM::extension PROPERTIES
+                                IMPORTED_LOCATION ${dfm-extension_LIBRARIES}
+                                INTERFACE_INCLUDE_DIRECTORIES ${dfm-extension_INCLUDE_DIR}
+                            )
+                            message(STATUS "DFM: Created imported target DFM::extension from package")
+                        endif()
+                    endif()
+                endif()
             else()
                 find_library(DFM_EXTENSION_LIB NAMES dfm-extension libdfm-extension)
                 if(DFM_EXTENSION_LIB)

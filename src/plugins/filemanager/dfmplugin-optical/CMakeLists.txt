@@ -5,14 +5,14 @@ set(BIN_NAME dfm-optical-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+
 FILE(GLOB_RECURSE OPTICAL_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-
-find_package(Qt6 COMPONENTS DBus Widgets Concurrent SvgWidgets REQUIRED)
-set(SVGLIB Qt6::Svg)
 
 add_library(${BIN_NAME}
     SHARED
@@ -22,15 +22,8 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 
-target_link_libraries(${BIN_NAME} PRIVATE
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::DBus
-    Qt6::Concurrent
-    Qt6::SvgWidgets
-    DFM6::base
-    DFM6::framework
-)
+# Apply optical plugin specific configuration
+dfm_setup_optical_dependencies(${BIN_NAME})
 
 #install library file
 install(TARGETS
