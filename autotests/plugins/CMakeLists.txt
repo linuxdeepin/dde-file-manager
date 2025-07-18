@@ -28,3 +28,13 @@ add_subdirectory(dfmplugin-core)
 add_subdirectory(dfmplugin-detailspace)
 add_subdirectory(dfmplugin-avfsbrowser)
 add_subdirectory(dfmplugin-computer)
+
+# Filedialog plugins unit tests
+add_subdirectory(filedialog-core)
+
+# Daemon plugins unit tests
+add_subdirectory(dfmdaemon-core)
+add_subdirectory(dfmdaemon-filemanager1)
+add_subdirectory(dfmdaemon-tag)
+add_subdirectory(dfmdaemon-vault)
+add_subdirectory(dfmdaemon-recent)

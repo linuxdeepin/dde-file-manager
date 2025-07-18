@@ -3,28 +3,15 @@ cmake_minimum_required(VERSION 3.10)
 project(dfmdaemon-recent-plugin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(RecentManager_XML ${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.Daemon.RecentManager.xml)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${RecentManager_XML}"
     )
 
-find_package(Qt6 COMPONENTS
-    Core
-    DBus
-    REQUIRED)
-
-# qt6_generate_dbus_interface(
-#     recentmanagerdbus.h
-#     ${RecentManager_XML}
-#     OPTIONS -M -S
-# )
-
-qt6_add_dbus_adaptor(SRC_FILES ${RecentManager_XML}
-    recentmanagerdbus.h RecentManagerDBus)
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -34,12 +21,8 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DAEMON_DIR})
 
-target_link_libraries(${PROJECT_NAME}
-    DFM6::base
-    DFM6::framework
-    Qt6::Core
-    Qt6::DBus
-)
+# Apply plugin specific configuration
+dfm_setup_daemon_recent_dependencies(${PROJECT_NAME})
 
 install(TARGETS
     ${PROJECT_NAME}
