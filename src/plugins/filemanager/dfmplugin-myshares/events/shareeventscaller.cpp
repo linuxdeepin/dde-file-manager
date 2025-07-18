@@ -17,25 +17,19 @@ void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, Sha
     if (urls.count() == 0)
         return;
 
-    QList<QUrl> convertedUrls = urls;
-    for (auto &url : convertedUrls) {
-        auto u = ShareUtils::convertToLocalUrl(url);
-        url = u.isValid() ? u : url;
-    }
-
     if (urls.count() > 1) {
-        for (auto url : convertedUrls)
+        for (const auto &url : urls)
             dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
     } else {
         switch (mode) {
         case ShareEventsCaller::OpenMode::kOpenInCurrentWindow:
-            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, urls.first());
             break;
         case ShareEventsCaller::OpenMode::kOpenInNewWindow:
-            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, urls.first());
             break;
         case ShareEventsCaller::OpenMode::kOpenInNewTab:
-            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, urls.first());
             break;
         }
     }

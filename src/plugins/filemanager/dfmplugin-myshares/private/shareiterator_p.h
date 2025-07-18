@@ -7,12 +7,6 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include <QUrl>
-
-namespace dfmbase {
-class LocalDirIterator;
-}
-
 namespace dfmplugin_myshares {
 
 class ShareIterator;
@@ -21,17 +15,13 @@ class ShareIteratorPrivate
     friend class ShareIterator;
 
 public:
-    explicit ShareIteratorPrivate(ShareIterator *qq, const QUrl &url);
+    explicit ShareIteratorPrivate(ShareIterator *qq);
     ~ShareIteratorPrivate();
 
 private:
-    dfmbase::LocalDirIterator *proxy { nullptr };
-
     ShareIterator *q { nullptr };
     ShareInfoList shares;
     ShareInfo currentInfo;
-
-    QUrl rootUrl;
 };
 
 }
