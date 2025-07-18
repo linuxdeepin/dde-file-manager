@@ -5,20 +5,15 @@
 #include "wlsetplugin.h"
 #include "settingsdbusinterface.h"
 
-#ifdef COMPILE_ON_V2X
-#    include "wallpapersettings.h"
-#    include "private/autoactivatewindow.h"
-#    include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "wallpapersettings.h"
+#include "private/autoactivatewindow.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#    include <dfm-base/utils/universalutils.h>
-#    include <dfm-base/utils/windowutils.h>
-#    include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
-#    include <QProcess>
-#else
-#    include <QDBusMessage>
-#    include <QDBusPendingCall>
-#endif
+#include <QProcess>
 
 #include <QDBusConnection>
 
@@ -89,8 +84,6 @@ bool EventHandle::init()
     CanvasMangerFollow(hook_CanvasManager_RequestWallpaperSetting, &EventHandle::hookCanvasRequest);
     return true;
 }
-
-#ifdef COMPILE_ON_V2X
 
 bool EventHandle::wallpaperSetting(const QString &name)
 {
@@ -179,27 +172,6 @@ void EventHandle::show(QString name, int mode)
 
     QMetaObject::invokeMethod(wallpaperSettings, "refreshList", Qt::QueuedConnection);
 }
-#else
-bool EventHandle::wallpaperSetting(const QString &name)
-{
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                                      "com.deepin.dde.ControlCenter", "ShowPage");
-    msg.setArguments({ QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("WallpaperSetting")) });
-    QDBusConnection::sessionBus().asyncCall(msg, 5);
-    fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
-    return true;
-}
-
-bool EventHandle::screenSaverSetting(const QString &name)
-{
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                                      "com.deepin.dde.ControlCenter", "ShowPage");
-    msg.setArguments({ QVariant::fromValue(QString("personalization")), QVariant::fromValue(QString("ScreensaverSetting")) });
-    QDBusConnection::sessionBus().asyncCall(msg, 5);
-    fmInfo() << "ControlCenter serivce called." << msg.service() << msg.arguments();
-    return true;
-}
-#endif
 
 bool EventHandle::hookCanvasRequest(const QString &screen)
 {
