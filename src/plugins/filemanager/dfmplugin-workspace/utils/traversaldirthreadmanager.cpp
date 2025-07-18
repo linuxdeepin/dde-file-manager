@@ -95,7 +95,7 @@ void TraversalDirThreadManager::start()
     if (this->sortRole != dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault
         && dirIterator->oneByOne()) {
         fmDebug() << "Setting QueryAttributes for sorted one-by-one iteration";
-        dirIterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::size,\
+        dirIterator->setProperty("QueryAttributes", "standard::name,standard::type,standard::is-file,standard::is-dir,\
                                   standard::size,standard::is-symlink,standard::symlink-target,access::*,time::*");
     }
 
