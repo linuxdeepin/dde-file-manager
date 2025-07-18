@@ -39,8 +39,7 @@ public:
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
-    QReadWriteLock lock;
-    QMutex mutex;
+    mutable QMutex lock;
     QReadWriteLock iconLock;
     QIcon fileIcon;
     QVariant isLocalDevice = true;
