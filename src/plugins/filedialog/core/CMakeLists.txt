@@ -10,12 +10,8 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-find_package(Qt6 COMPONENTS DBus Widgets REQUIRED)
-
-qt6_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialog.xml
-    ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialoghandledbus.h FileDialogHandleDBus)
-qt6_add_dbus_adaptor(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dbus/com.deepin.filemanager.filedialogmanager.xml
-    ${CMAKE_CURRENT_SOURCE_DIR}/dbus/filedialogmanagerdbus.h FileDialogManagerDBus)
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -25,11 +21,8 @@ add_library(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEDIALOG_DIR})
 
-target_link_libraries(${PROJECT_NAME}
-    DFM6::base
-    DFM6::framework
-    Qt6::DBus
-)
+# Apply plugin specific configuration
+dfm_setup_filedialog_core_dependencies(${PROJECT_NAME})
 
 #install library file
 install(TARGETS

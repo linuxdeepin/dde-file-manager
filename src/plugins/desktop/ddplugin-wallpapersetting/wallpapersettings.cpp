@@ -21,13 +21,8 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-#ifdef COMPILE_ON_V2X
-#    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
-#    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
-#else
-#    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
-#    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
-#endif
+#define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
+#define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -333,11 +328,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QString value = reply.value();
         auto wallapers = processListReply(value);
         fmDebug() << "get available wallpapers" << wallapers;
-#ifdef COMPILE_ON_V2X
         actualEffectivedWallpaper = appearanceIfs->GetCurrentWorkspaceBackgroundForMonitor(screenName);
-#else
-        actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
-#endif
         fmDebug() << "get current wallpaper" << screenName << actualEffectivedWallpaper;
         if (actualEffectivedWallpaper.contains(kDefaultWallpaperPath)) {
             QString errString;

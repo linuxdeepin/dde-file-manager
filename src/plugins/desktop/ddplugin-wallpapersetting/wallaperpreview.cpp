@@ -14,19 +14,11 @@ WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)
 {
 
-#ifdef COMPILE_ON_V2X
     fmDebug() << "create org.deepin.dde.Appearance1";
     inter = new BackgroudInter("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
     inter->setTimeout(1000);
     fmDebug() << "create org.deepin.dde.Appearance1 end";
-#else
-    fmDebug() << "create com.deepin.wm";
-    inter = new BackgroudInter("com.deepin.wm", "/com/deepin/wm",
-                          QDBusConnection::sessionBus(), this);
-    inter->setTimeout(1000);
-    fmDebug() << "create com.deepin.wm end";
-#endif
 
 }
 

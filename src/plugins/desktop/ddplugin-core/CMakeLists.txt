@@ -18,23 +18,13 @@ set(SCREEN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbushelper.cpp"
     )
 
-if (COMPILE_ON_V2X)
-    set(SCREEN_FILES
-        ${SCREEN_FILES}
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.cpp"
-    )
-else()
-    set(SCREEN_FILES
-        ${SCREEN_FILES}
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.cpp"
-    )
-endif()
+set(SCREEN_FILES
+    ${SCREEN_FILES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.cpp"
+)
 
 set(CORE_FILES
     frame/basewindow.h

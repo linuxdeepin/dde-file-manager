@@ -57,8 +57,28 @@ function(dfm_include_plugin_dependencies target_name dependencies_file)
         get_filename_component(plugin_dir ${dependencies_file} DIRECTORY)
         get_filename_component(plugin_name ${plugin_dir} NAME)
         
-        # Try to call plugin-specific setup function
-        string(REPLACE "dfmplugin-" "" plugin_short_name ${plugin_name})
+        # Determine plugin short name based on plugin type and directory structure
+        get_filename_component(plugin_parent_dir ${plugin_dir} DIRECTORY)
+        get_filename_component(plugin_type ${plugin_parent_dir} NAME)
+        
+        if(plugin_type STREQUAL "common" OR plugin_type STREQUAL "filemanager")
+            # common and filemanager plugins: remove "dfmplugin-" prefix
+            string(REPLACE "dfmplugin-" "" plugin_short_name ${plugin_name})
+        elseif(plugin_type STREQUAL "filedialog")
+            # filedialog plugins: use "filedialog_" + directory name
+            set(plugin_short_name "filedialog_${plugin_name}")
+        elseif(plugin_type STREQUAL "daemon")
+            # daemon plugins: use "daemon_" + directory name
+            set(plugin_short_name "daemon_${plugin_name}")
+        elseif(plugin_type STREQUAL "desktop")
+            # desktop plugins: use "desktop_" + directory name (remove "ddplugin-" prefix if present)
+            string(REPLACE "ddplugin-" "" clean_name ${plugin_name})
+            set(plugin_short_name "desktop_${clean_name}")
+        else()
+            # fallback: use original logic for unknown plugin types
+            string(REPLACE "dfmplugin-" "" plugin_short_name ${plugin_name})
+        endif()
+        
         set(setup_function_name "dfm_setup_${plugin_short_name}_dependencies")
         
         if(COMMAND ${setup_function_name})
