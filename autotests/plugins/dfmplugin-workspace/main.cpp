@@ -4,8 +4,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef ENABLE_TSAN_TOOL
-#include <sanitizer/tsan_interface.h>
-#endif
+#include "dfm_test_main.h"
 
 DFM_TEST_MAIN(dfmplugin_workspace)
