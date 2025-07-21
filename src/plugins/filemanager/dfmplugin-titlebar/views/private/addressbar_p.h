@@ -49,7 +49,7 @@ class AddressBarPrivate : public QObject
     QString completerBaseString;
     QString lastEditedString;
     int lastPressedKey { Qt::Key_D };   // just an init value
-    int lastPreviousKey { Qt::Key_Control };   //记录上前一个按钮
+    int lastPreviousKey { Qt::Key_Control };   // 记录上前一个按钮
     int selectPosStart { 0 };
     CrumbInterface *crumbController { nullptr };
     CompleterViewModel completerModel;
@@ -82,8 +82,6 @@ public:
     void completeLocalPath(const QString &text, const QUrl &url, int slashIndex);
 
 public Q_SLOTS:
-    void startSpinner();
-    void stopSpinner();
     void onTextEdited(const QString &text);
     void onReturnPressed();
     void insertCompletion(const QString &completion);
@@ -101,4 +99,4 @@ protected:
 
 }
 
-#endif   //AddressBar_P_H
+#endif   // AddressBar_P_H
