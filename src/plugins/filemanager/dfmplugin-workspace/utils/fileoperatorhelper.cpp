@@ -121,12 +121,16 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
 
             if (fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
                 QUrl dirUrl = url;
-                if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink))
+                if (fileInfoPtr->isAttributes(OptInfoType::kIsSymLink)) {
                     dirUrl = QUrl::fromLocalFile(QDir(fileInfoPtr->pathOf(PathInfoType::kSymLinkTarget)).absolutePath());
+                    fmDebug() << "Directory is symlink - resolved target:" << dirUrl.toString();
+                }
 
                 if (mode == DirOpenMode::kOpenNewWindow || (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
+                    fmDebug() << "Opening directory in new window:" << dirUrl.toString();
                     dirListOpenInNewWindow.append(dirUrl);
                 } else {
+                    fmDebug() << "Changing current URL to directory:" << dirUrl.toString();
                     WorkspaceEventCaller::sendChangeCurrentUrl(windowId, dirUrl);
                 }
                 continue;
@@ -134,13 +138,16 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
         }
 
         const QList<QUrl> &openUrls = { url };
+        fmDebug() << "Opening file with default application:" << url.toString();
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles,
                                      windowId,
                                      openUrls);
     }
 
-    if (dirListOpenInNewWindow.isEmpty())
+    if (dirListOpenInNewWindow.isEmpty()) {
+        fmDebug() << "No directories to open in new windows";
         return;
+    }
 
     if (dirListOpenInNewWindow.count() > DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount) {
         fmWarning() << "Too many directories to open in new windows - count:" << dirListOpenInNewWindow.count() << "max allowed:" << DFMGLOBAL_NAMESPACE::kOpenNewWindowMaxCount;
@@ -181,8 +188,10 @@ void FileOperatorHelper::copyFiles(const FileView *view)
     // trans url to local
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
-    if (ok && !urls.isEmpty())
+    if (ok && !urls.isEmpty()) {
+        fmDebug() << "URLs transformed to local - count:" << urls.size();
         selectedUrls = urls;
+    }
 
     if (selectedUrls.size() == 1) {
         const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
@@ -220,8 +229,10 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
     QList<QUrl> urls {};
     bool ok = UniversalUtils::urlsTransformToLocal(selectedUrls, &urls);
-    if (ok && !urls.isEmpty())
+    if (ok && !urls.isEmpty()) {
+        fmDebug() << "URLs transformed to local for cut operation - count:" << urls.size();
         selectedUrls = urls;
+    }
 
     if (selectedUrls.isEmpty()) {
         fmDebug() << "Cut operation aborted - no files selected";
@@ -300,8 +311,10 @@ void FileOperatorHelper::undoFiles(const FileView *view)
 void FileOperatorHelper::moveToTrash(const FileView *view)
 {
     const QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
-    if (selectedUrls.isEmpty())
+    if (selectedUrls.isEmpty()) {
+        fmDebug() << "Move to trash aborted - no files selected";
         return;
+    }
 
     fmInfo() << "Move files to trash, selected urls: " << selectedUrls
              << ", current dir: " << view->rootUrl();
@@ -316,8 +329,10 @@ void FileOperatorHelper::moveToTrash(const FileView *view)
 
 void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &urls)
 {
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "Move to trash aborted - no URLs provided";
         return;
+    }
 
     fmInfo() << "Move files to trash, files urls: " << urls
              << ", current dir: " << view->rootUrl();
@@ -332,8 +347,10 @@ void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &ur
 void FileOperatorHelper::deleteFiles(const FileView *view)
 {
     const QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
-    if (selectedUrls.isEmpty())
+    if (selectedUrls.isEmpty()) {
+        fmDebug() << "Delete files aborted - no files selected";
         return;
+    }
 
     fmInfo() << "Delete files, selected urls: " << selectedUrls
              << ", current dir: " << view->rootUrl();
@@ -396,8 +413,10 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
 void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 {
     QList<QUrl> urls = view->selectedTreeViewUrlList();
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
+        fmDebug() << "Send bluetooth files aborted - no files selected";
         return;
+    }
 
     fmInfo() << "Send to bluetooth, selected urls: " << urls
              << ", current dir: " << view->rootUrl();

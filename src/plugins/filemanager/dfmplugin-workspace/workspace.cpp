@@ -162,6 +162,7 @@ void Workspace::initConfig()
 
 void Workspace::saveRemoteThumbnailToConf(const QVariant &var)
 {
+    fmDebug() << "Workspace: saving remote thumbnail config value:" << var.toBool();
     DConfigManager::instance()->setValue(DConfigInfo::kConfName, DConfigInfo::kRemoteThumbnailKey, var);
 }
 
@@ -177,6 +178,7 @@ bool Workspace::isRemoteThumbnailConfEqual(const QVariant &dcon, const QVariant 
 
 void Workspace::saveIconSizeToConf(const QVariant &var)
 {
+    fmDebug() << "Workspace: saving icon size config value:" << var.toInt();
     DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kIconSizeLevel, var);
 }
 
@@ -192,6 +194,7 @@ bool Workspace::isIconSizeConfEqual(const QVariant &dcon, const QVariant &dset)
 
 void Workspace::saveGridDensityToConf(const QVariant &var)
 {
+    fmDebug() << "Workspace: saving grid density config value:" << var.toInt();
     DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kIconGridDensityLevel, var);
 }
 
@@ -207,6 +210,7 @@ bool Workspace::isGridDensityConfEqual(const QVariant &dcon, const QVariant &dse
 
 void Workspace::saveListHeightToConf(const QVariant &var)
 {
+    fmDebug() << "Workspace: saving list height config value:" << var.toInt();
     DConfigManager::instance()->setValue(kViewDConfName, ViewConfig::kListHeightLevel, var);
 }
 

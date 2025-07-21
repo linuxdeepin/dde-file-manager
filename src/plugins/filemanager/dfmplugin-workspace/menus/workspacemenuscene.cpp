@@ -89,39 +89,55 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
 
     QList<AbstractMenuScene *> currentScene;
     // sort
-    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kBaseSortMenuSceneName))
+    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kBaseSortMenuSceneName)) {
         currentScene.append(sortScene);
+        fmDebug() << "Added BaseSortMenu scene";
+    }
 
     // file operation
-    if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
+    if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName)) {
         currentScene.append(operationScene);
+        fmDebug() << "Added ClipBoardMenu scene";
+    }
 
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
+    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName)) {
         currentScene.append(dirScene);
+        fmDebug() << "Added OpenDirMenu scene";
+    }
 
     if (d->isEmptyArea) {
         fmDebug() << "Creating empty area menu scenes";
         // new (new doc, new dir)
-        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName)) {
             currentScene.append(newCreateScene);
+            fmDebug() << "Added NewCreateMenu scene for empty area";
+        }
     } else {
         fmDebug() << "Creating normal menu scenes";
         // open with
-        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName))
+        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName)) {
             currentScene.append(openWithScene);
+            fmDebug() << "Added OpenWithMenu scene";
+        }
 
         // file (open, rename, delete)
-        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName)) {
             currentScene.append(fileScene);
+            fmDebug() << "Added FileOperatorMenu scene";
+        }
 
         // send to
-        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName)) {
             currentScene.append(fileScene);
+            fmDebug() << "Added SendToMenu scene";
+        }
 
         // share menu
-        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
+        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName)) {
             currentScene.append(shareScene);
+            fmDebug() << "Added ShareMenu scene";
+        }
     }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
@@ -130,19 +146,27 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     // 为了能在扩展菜单中获得所有actions, 扩展菜单场景必须在其他场景之后
     if (!d->isDDEDesktopFileIncluded) {
         // oem menu
-        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
+        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName)) {
             currentScene.append(oemScene);
+            fmDebug() << "Added OemMenu scene";
+        }
 
         // extend menu.must last
-        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
+        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName)) {
             currentScene.append(extendScene);
+            fmDebug() << "Added ExtendMenu scene";
+        }
     }
 
-    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
+    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName)) {
         currentScene.append(dconfigFilterScene);
+        fmDebug() << "Added DConfigHiddenMenu scene";
+    }
 
-    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName)) {
         currentScene.append(actionIconManagerScene);
+        fmDebug() << "Added ActionIconManager scene";
+    }
 
     setSubscene(currentScene);
 
@@ -152,11 +176,15 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
 
 AbstractMenuScene *WorkspaceMenuScene::scene(QAction *action) const
 {
-    if (!action)
+    if (!action) {
+        fmDebug() << "Cannot find scene: action is null";
         return nullptr;
+    }
 
-    if (d->predicateAction.values().contains(action))
+    if (d->predicateAction.values().contains(action)) {
+        fmDebug() << "Action belongs to WorkspaceMenuScene";
         return const_cast<WorkspaceMenuScene *>(this);
+    }
 
     return AbstractMenuScene::scene(action);
 }
@@ -173,6 +201,7 @@ bool WorkspaceMenuScene::create(DMenu *parent)
     Q_ASSERT(d->view);
 
     if (d->isEmptyArea) {
+        fmDebug() << "Adding refresh action for empty area menu";
         auto tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
         d->predicateAction[ActionID::kRefresh] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
@@ -201,17 +230,21 @@ void WorkspaceMenuScene::updateState(DMenu *parent)
     if (d->focusFileInfo && FileUtils::isDesktopFileSuffix(d->focusFileInfo->fileUrl())
         && !d->focusFileInfo->canAttributes(CanableInfoType::kCanRename)) {
         renameEnabled = false;
+        fmDebug() << "Rename disabled for desktop file:" << d->focusFileInfo->fileUrl().toString();
     }
 
     bool addTabEnabled = WorkspaceEventCaller::sendCheckTabAddable(d->windowId);
+    fmDebug() << "Tab addable:" << addTabEnabled << "rename enabled:" << renameEnabled;
 
     auto actions = parent->actions();
     for (auto *act : actions) {
         const auto &actId = act->property(ActionPropertyKey::kActionID);
         if (dfmplugin_menu::ActionID::kOpenInNewTab == actId) {
             act->setEnabled(addTabEnabled);
+            fmDebug() << "Updated OpenInNewTab action enabled:" << addTabEnabled;
         } else if (dfmplugin_menu::ActionID::kRename == actId) {
             act->setEnabled(renameEnabled);
+            fmDebug() << "Updated Rename action enabled:" << renameEnabled;
         }
     }
 
@@ -228,11 +261,15 @@ bool WorkspaceMenuScene::triggered(QAction *action)
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
     fmDebug() << "Action triggered in WorkspaceMenuScene:" << actionId << "isEmptyArea:" << d->isEmptyArea;
 
-    if (filterActionBySubscene(this, action))
+    if (filterActionBySubscene(this, action)) {
+        fmDebug() << "Action filtered by subscene:" << actionId;
         return true;
+    }
 
-    if (d->isEmptyArea)
+    if (d->isEmptyArea) {
+        fmDebug() << "Processing empty area menu action:" << actionId;
         return emptyMenuTriggered(action);
+    }
 
     return normalMenuTriggered(action);
 }
@@ -258,8 +295,10 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
             fmDebug() << "Executing paste operation in empty area";
             QPointer<dfmplugin_workspace::FileView> view = d->view;
             QTimer::singleShot(200, [view]() {
-                if (!view.isNull())
+                if (!view.isNull()) {
+                    fmDebug() << "Executing delayed paste operation";
                     FileOperatorHelperIns->pasteFiles(view);
+                }
             });
             return true;
         }
@@ -348,8 +387,10 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 }
                 QPointer<dfmplugin_workspace::FileView> view = d->view;
                 QTimer::singleShot(80, [view, index]() {
-                    if (!view.isNull())
+                    if (!view.isNull()) {
+                        fmDebug() << "Executing delayed rename operation";
                         view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
+                    }
                 });
                 d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {

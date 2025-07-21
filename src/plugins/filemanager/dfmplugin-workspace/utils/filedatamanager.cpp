@@ -26,9 +26,8 @@ FileDataManager *FileDataManager::instance()
 
 RootInfo *FileDataManager::fetchRoot(const QUrl &url)
 {
-    if (rootInfoMap.contains(url)) {
+    if (rootInfoMap.contains(url))
         return rootInfoMap.value(url);
-    }
 
     fmDebug() << "Creating new RootInfo for URL:" << url.toString();
     return createRoot(url);

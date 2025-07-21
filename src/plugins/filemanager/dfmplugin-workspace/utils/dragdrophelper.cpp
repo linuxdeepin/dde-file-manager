@@ -41,6 +41,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     currentDragUrls = data->urls();
 
     if (data->formats().contains(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey)) {
+        fmDebug() << "Processing tree URLs from mime data";
         currentDragUrls.clear();
         auto treeUrlsStr = QString(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMTreeUrlsKey));
         auto treeUrlss = treeUrlsStr.split("\n");
@@ -49,21 +50,30 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
                 continue;
             currentDragUrls.append(QUrl(url));
         }
+        fmDebug() << "Tree URLs processed - count:" << currentDragUrls.size();
     }
 
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey))
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey)) {
+        fmDebug() << "Processing DFM mime data";
         dfmmimeData = DFMMimeData::fromByteArray(data->data(DFMGLOBAL_NAMESPACE::Mime::kDFMMimeDataKey));
+    }
     currentDragSourceUrls = dfmmimeData.isValid() ? dfmmimeData.urls() : currentDragUrls;
 
     auto targetUrl = view->rootUrl();
-    if (!checkTargetEnable(targetUrl))
+    fmDebug() << "Target URL:" << targetUrl.toString();
+    if (!checkTargetEnable(targetUrl)) {
+        fmDebug() << "Target not enabled for drag operations";
         return true;
+    }
 
     // Filter the event that cannot be dragged
-    if (checkProhibitPaths(event, currentDragUrls))
+    if (checkProhibitPaths(event, currentDragUrls)) {
+        fmDebug() << "Drag operation prohibited by path restrictions";
         return true;
+    }
 
     if (handleDFileDrag(data, targetUrl)) {
+        fmDebug() << "DFile drag handled successfully";
         event->acceptProposedAction();
         return true;
     }
@@ -72,16 +82,20 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         if (checkDragEnable(url, targetUrl))
             continue;
 
+        fmDebug() << "Drag operation not enabled for URL:" << url.toString();
         event->ignore();
         return true;
     }
 
     bool fall = true;
     handleDropEvent(event, &fall);
-    if (!fall)
+    if (!fall) {
+        fmDebug() << "Drop event handled by custom logic";
         return true;
+    }
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
+        fmDebug() << "Direct save mode detected - setting copy action";
         event->setDropAction(Qt::CopyAction);
         event->acceptProposedAction();
         return true;
@@ -93,20 +107,25 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 bool DragDropHelper::dragMove(QDragMoveEvent *event)
 {
     FileInfoPointer hoverFileInfo = fileInfoAtPos(event->pos());
-    if (!hoverFileInfo)
+    if (!hoverFileInfo) {
+        fmDebug() << "No file info at drag position";
         return false;
+    }
 
     bool fall = true;
     handleDropEvent(event, &fall);
 
-    if (!fall)
+    if (!fall) {
+        fmDebug() << "Drop event handled by custom logic in drag move";
         return true;
+    }
 
     QUrl toUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
     // NOTE: if drag file hover on a file item in list view, allow drop the file to root dir.
     // so, check kCanDrop attributes of dir file only
     if (!checkTargetEnable(toUrl)
         || (!hoverFileInfo->canAttributes(CanableInfoType::kCanDrop) && hoverFileInfo->isAttributes(OptInfoType::kIsDir))) {
+        fmDebug() << "Target not suitable for drop - ignoring event";
         event->ignore();
         currentHoverIndexUrl = toUrl;
         return true;
@@ -116,6 +135,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     QList<QUrl> fromUrls = currentDragUrls;
     Qt::DropAction dropAction = event->dropAction();
     if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
+        fmDebug() << "Drag move handled by hook - drop action:" << dropAction;
         event->setDropAction(dropAction);
         view->setViewSelectState(false);
         if (dropAction != Qt::IgnoreAction)
@@ -129,6 +149,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     for (const QUrl &url : fromUrls) {
         if (event->dropAction() == Qt::DropAction::MoveAction) {
             if (!checkMoveEnable(url, toUrl)) {
+                fmDebug() << "Move operation not enabled for URL:" << url.toString();
                 view->setViewSelectState(false);
                 event->ignore();
                 return true;
@@ -139,6 +160,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
         if (event->dropAction() == Qt::DropAction::CopyAction && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+            fmDebug() << "Copy operation not allowed for URL:" << url.toString();
             view->setViewSelectState(false);
             event->ignore();
             return true;
@@ -201,6 +223,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
 bool DragDropHelper::dragLeave(QDragLeaveEvent *event)
 {
     Q_UNUSED(event);
+    fmDebug() << "Drag leave event - clearing state";
     currentHoverIndexUrl = QUrl();
     currentDragUrls.clear();
     return false;
@@ -212,21 +235,26 @@ bool DragDropHelper::drop(QDropEvent *event)
     bool fall = true;
     handleDropEvent(event, &fall);
     // only handle ignore
-    if (!fall && !event->isAccepted())
+    if (!fall && !event->isAccepted()) {
+        fmDebug() << "Drop event handled by custom logic";
         return true;
+    }
 
     // NOTE: The following code sets the properties that will be used
     // in the project `linuxdeepin/qt5platform-plugins`.
     // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
+        fmDebug() << "Direct save mode detected - setting copy action";
         event->setDropAction(Qt::CopyAction);
 
         FileInfoPointer info = fileInfoAtPos(event->pos());
         if (info && info->urlOf(UrlInfoType::kUrl).isLocalFile()) {
             if (info->isAttributes(OptInfoType::kIsDir)) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", info->urlOf(UrlInfoType::kUrl));
+                fmDebug() << "Direct save URL set to directory:" << info->urlOf(UrlInfoType::kUrl).toString();
             } else {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", info->urlOf(UrlInfoType::kParentUrl));
+                fmDebug() << "Direct save URL set to parent directory:" << info->urlOf(UrlInfoType::kParentUrl).toString();
             }
         }
 
@@ -234,15 +262,20 @@ bool DragDropHelper::drop(QDropEvent *event)
     } else {
         QModelIndex hoverIndex = view->indexAt(event->pos());
 
-        if (event->source() == view && dragFileFromCurrent && (!hoverIndex.isValid() || view->isSelected(hoverIndex)) && !WindowUtils::keyCtrlIsPressed())
+        if (event->source() == view && dragFileFromCurrent && (!hoverIndex.isValid() || view->isSelected(hoverIndex)) && !WindowUtils::keyCtrlIsPressed()) {
+            fmDebug() << "Drop canceled - dragging from current view to selected item";
             return true;
+        }
 
         if (!hoverIndex.isValid()) {
+            fmDebug() << "No valid hover index - using root index";
             hoverIndex = view->rootIndex();
         } else {
             FileInfoPointer fileInfo = view->model()->fileInfo(hoverIndex);
-            if (fileInfo.isNull())
+            if (fileInfo.isNull()) {
+                fmDebug() << "File info is null - creating file info";
                 hoverIndex.data(Global::ItemRoles::kItemCreateFileInfoRole);
+            }
             fileInfo = view->model()->fileInfo(hoverIndex);
 
             if (fileInfo) {
@@ -250,17 +283,23 @@ bool DragDropHelper::drop(QDropEvent *event)
                 // NOTE: if item can not drop, the drag item will drop to root dir.
                 if (fileInfo->isAttributes(OptInfoType::kIsFile)
                     && !FileUtils::isDesktopFileSuffix(fileInfo->urlOf(UrlInfoType::kUrl))
-                    && !isDrop)
+                    && !isDrop) {
+                    fmDebug() << "File cannot accept drop - redirecting to root directory";
                     hoverIndex = view->rootIndex();
+                }
             }
         }
 
-        if (!hoverIndex.isValid())
+        if (!hoverIndex.isValid()) {
+            fmDebug() << "No valid hover index after processing";
             return true;
+        }
 
         QUrl toUrl = view->model()->data(hoverIndex, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUrlRole).toUrl();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", currentDragSourceUrls, toUrl))
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", currentDragSourceUrls, toUrl)) {
+            fmDebug() << "Drop handled by hook";
             return true;
+        }
 
         bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
         bool dropEnabled = view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled;
@@ -270,6 +309,7 @@ bool DragDropHelper::drop(QDropEvent *event)
                     : event->dropAction();
             bool isDropped = view->model()->dropMimeData(event->mimeData(), action, hoverIndex.row(), hoverIndex.column(), hoverIndex.parent());
             if (isDropped) {
+                fmInfo() << "Drop operation completed successfully";
                 if (action != event->dropAction()) {
                     event->setDropAction(action);
                     event->accept();
@@ -290,6 +330,7 @@ bool DragDropHelper::drop(QDropEvent *event)
                 const QUrl from = QUrl(urls.first());
                 if (from.path().contains("/.deepinwine/")
                     && view->model()->dropMimeData(event->mimeData(), Qt::CopyAction, hoverIndex.row(), hoverIndex.column(), hoverIndex.parent())) {
+                    fmDebug() << "Wine application drop handled with copy action";
                     event->acceptProposedAction();
                 }
             }

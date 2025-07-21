@@ -29,18 +29,21 @@ QModelIndex SelectHelper::getCurrentPressedIndex() const
 
 void SelectHelper::click(const QModelIndex &index)
 {
+    fmDebug() << "SelectHelper click event - index valid:" << index.isValid() << "row:" << index.row();
     lastPressedIndex = index;
     currentPressedIndex = index;
 }
 
 void SelectHelper::release()
 {
+    fmDebug() << "SelectHelper release event - clearing current selection and pressed index";
     currentSelection = QItemSelection();
     currentPressedIndex = QModelIndex();
 }
 
 void SelectHelper::setSelection(const QItemSelection &selection)
 {
+    fmDebug() << "Setting selection - size:" << selection.size();
     currentSelection = selection;
 }
 
@@ -53,6 +56,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
     // select with shift
     if (WindowUtils::keyShiftIsPressed()) {
+        fmDebug() << "Shift key pressed - processing shift selection";
         if (!lastPressedIndex.isValid()) {
             QItemSelection oldSelection = currentSelection;
             caculateSelection(rect, &oldSelection);
@@ -80,6 +84,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
     // select with ctrl
     if (WindowUtils::keyCtrlIsPressed()) {
+        fmDebug() << "Ctrl key pressed - processing ctrl selection";
         QItemSelection oldSelection = currentSelection;
         view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 
@@ -152,11 +157,15 @@ bool SelectHelper::select(const QList<QUrl> &urls)
 
     view->selectionModel()->select(selection, QItemSelectionModel::Select);
 
-    if (lastIndex.isValid())
+    if (lastIndex.isValid()) {
         view->selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
+        fmDebug() << "Set current index to last selected item";
+    }
 
-    if (firstIndex.isValid())
+    if (firstIndex.isValid()) {
         view->scrollTo(firstIndex, QAbstractItemView::PositionAtTop);
+        fmDebug() << "Scrolled to first selected item";
+    }
 
     return true;
 }
@@ -193,6 +202,8 @@ void SelectHelper::filterSelectedFiles(const QList<QUrl> &urlList)
         fmDebug() << "No files to filter - selected files empty:" << selectedFiles.isEmpty() << "filter list empty:" << urlList.isEmpty();
         return;
     }
+
+    fmDebug() << "Filtering selected files - selected count:" << selectedFiles.size() << "filter list count:" << urlList.size();
 
     QList<QUrl> filteredUrls;
 

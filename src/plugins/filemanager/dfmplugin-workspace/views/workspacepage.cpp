@@ -102,7 +102,7 @@ QUrl WorkspacePage::currentUrl() const
 WorkspacePage::ViewPtr WorkspacePage::currentViewPtr()
 {
     if (currentViewScheme.isEmpty()) {
-        qDebug() << "Can not find current view, currentViewScheme is empty";
+        fmWarning() << "Can not find current view, currentViewScheme is empty";
         return nullptr;
     }
 

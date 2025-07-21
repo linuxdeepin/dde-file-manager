@@ -19,6 +19,7 @@ static constexpr char kSeparatorLine[] { "separator-line" };
 
 AbstractMenuScene *BaseSortMenuCreator::create()
 {
+    fmDebug() << "Creating BaseSortMenuScene instance";
     return new BaseSortMenuScene();
 }
 
@@ -80,6 +81,7 @@ void BaseSortMenuScenePrivate::sortMenuActions(QMenu *menu, const QStringList &s
             separatorAct->setProperty(ActionID::kActionID, ActionID::kSeparatorLine);
             separatorAct->setSeparator(true);
             actions.insert(iter, separatorAct);
+            fmDebug() << "Inserted separator after action:" << rule;
         } else {
             insertSeparator(++index);
         }
@@ -120,6 +122,8 @@ void BaseSortMenuScenePrivate::sortSecondaryMenu(QMenu *menu)
 
     const QMap<QString, QStringList> &sortRuleMap = secondaryMenuRule();
     auto actions = menu->actions();
+
+    fmDebug() << "Sorting secondary menus for" << actions.size() << "actions";
     for (QAction *action : actions) {
         QMenu *secondaryMenu = action->menu();
         if (secondaryMenu && !secondaryMenu->actions().isEmpty()) {
@@ -138,6 +142,7 @@ QStringList BaseSortMenuScenePrivate::sendToRule()
 
     static std::once_flag flag;
     std::call_once(flag, []() {
+        fmDebug() << "Initializing send-to rules";
         list << "send-to-removable-";
         list << "send-file-to-burnning-";
     });
@@ -151,6 +156,7 @@ QStringList BaseSortMenuScenePrivate::stageToRule()
 
     static std::once_flag flag;
     std::call_once(flag, []() {
+        fmDebug() << "Initializing stage-to rules";
         list << "_stage-file-to-burning-";
     });
 

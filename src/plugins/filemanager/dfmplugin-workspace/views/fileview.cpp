@@ -126,8 +126,10 @@ void FileView::setViewMode(Global::ViewMode mode)
     // itemDelegate 未设置时为未初始化状态，此时调用setViewMode需要执行设置流程
     // itemDelegate 已设置时，若view不可见，则暂不执行viewMode设置逻辑
     if (!isVisible() && itemDelegate()
-        && d->delegates[static_cast<int>(mode)] == itemDelegate())
+        && d->delegates[static_cast<int>(mode)] == itemDelegate()) {
+        fmDebug() << "View mode change skipped: view not visible and delegate already set for mode:" << static_cast<int>(mode);
         return;
+    }
 
     if (itemDelegate())
         itemDelegate()->hideAllIIndexWidget();
@@ -135,6 +137,7 @@ void FileView::setViewMode(Global::ViewMode mode)
     int delegateModeIndex = mode == Global::ViewMode::kTreeMode ? static_cast<int>(Global::ViewMode::kListMode) : static_cast<int>(mode);
     if (d->delegates.keys().contains(delegateModeIndex)) {
         d->currentViewMode = mode;
+        fmDebug() << "View mode set successfully to:" << static_cast<int>(mode);
     } else {
         fmWarning() << QString("The view mode %1 is not support in this dir! This view will set default mode.").arg(delegateModeIndex);
         d->currentViewMode = Global::ViewMode::kIconMode;
@@ -190,6 +193,7 @@ void FileView::setViewMode(Global::ViewMode mode)
     default:
         break;
     }
+    fmDebug() << "View mode change completed for URL:" << rootUrl().toString();
 }
 
 Global::ViewMode FileView::currentViewMode() const
@@ -240,6 +244,7 @@ bool FileView::setRootUrl(const QUrl &url)
     if (model()->currentState() == ModelState::kIdle)
         updateSelectedUrl();
 
+    fmDebug() << "FileView: root URL set successfully to" << url.toString();
     return true;
 }
 
@@ -282,7 +287,9 @@ QList<QUrl> FileView::selectedUrlList() const
 
 void FileView::refresh()
 {
+    fmDebug() << "FileView: refresh requested for URL" << rootUrl().toString();
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        fmWarning() << "FileView: cannot refresh - FTP or SMB is busy for URL" << rootUrl().toString();
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
     }
@@ -449,10 +456,13 @@ void FileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int ne
 
     // each views should refresh
     dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", rootUrl);
+    fmDebug() << "Header section move completed and published for URL:" << rootUrl.toString();
 }
 
 void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidden)
 {
+    fmDebug() << "Header hidden changed - role:" << roleName << "hidden:" << isHidden << "for URL:" << rootUrl().toString();
+
     d->columnForRoleHiddenMap[roleName] = isHidden;
 
     if (d->allowedAdjustColumnSize) {
@@ -464,8 +474,12 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    if (model()->currentState() == ModelState::kBusy)
+    if (model()->currentState() == ModelState::kBusy) {
+        fmDebug() << "Sort indicator change ignored: model is busy for URL:" << rootUrl().toString();
         return;
+    }
+
+    fmDebug() << "Sort indicator changed - column:" << logicalIndex << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "for URL:" << rootUrl().toString();
 
     recordSelectedUrls();
 
@@ -489,10 +503,13 @@ void FileView::onClicked(const QModelIndex &index)
     data.insert("displayName", model()->data(index));
     data.insert("url", url);
     WorkspaceEventCaller::sendViewItemClicked(data);
+
+    fmDebug() << "Item clicked:" << url.toString() << "for URL:" << rootUrl().toString();
 }
 
 void FileView::onDoubleClicked(const QModelIndex &index)
 {
+    fmDebug() << "Item double clicked for URL:" << rootUrl().toString();
     openIndexByClicked(ClickedAction::kDoubleClicked, index);
 }
 
@@ -1129,18 +1146,25 @@ void FileView::onDefaultViewModeChanged(int mode)
 {
     Global::ViewMode newMode = static_cast<Global::ViewMode>(mode);
 
-    if (!WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), newMode))
+    if (!WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), newMode)) {
+        fmWarning() << "View mode not supported for scheme:" << rootUrl().scheme() << "mode:" << mode;
         return;
+    }
 
-    if (newMode == d->currentViewMode)
+    if (newMode == d->currentViewMode) {
+        fmDebug() << "View mode unchanged, skipping update";
         return;
+    }
 
     Global::ViewMode oldMode = d->currentViewMode;
     d->loadViewMode(rootUrl());
 
-    if (oldMode == d->currentViewMode)
+    if (oldMode == d->currentViewMode) {
+        fmDebug() << "View mode unchanged after loading, skipping update";
         return;
+    }
 
+    fmDebug() << "Switching view mode from" << static_cast<int>(oldMode) << "to" << static_cast<int>(d->currentViewMode) << "for URL:" << rootUrl().toString();
     setViewMode(d->currentViewMode);
 }
 
@@ -1787,7 +1811,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     }
 
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
-        fmWarning() << "Context menu blocked: FTP or SMB is busy for URL:" << rootUrl();
+        fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << rootUrl().toString();
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
     }
@@ -2238,13 +2262,16 @@ void FileView::initializePreSelectTimer()
 
 void FileView::updateStatusBar()
 {
-    if (model()->currentState() != ModelState::kIdle)
+    if (model()->currentState() != ModelState::kIdle) {
+        fmDebug() << "Status bar update skipped: model is busy for URL:" << rootUrl().toString();
         return;
+    }
 
     int count = selectedIndexCount();
 
     if (count == 0) {
         d->statusBar->itemCounted(model()->rowCount(rootIndex()));
+        fmDebug() << "Status bar updated: no selection, total items:" << model()->rowCount(rootIndex()) << "for URL:" << rootUrl().toString();
         return;
     }
 
@@ -2263,6 +2290,7 @@ void FileView::updateStatusBar()
     }
 
     d->statusBar->itemSelected(selectFiles, selectFolders, filesizes, list);
+    fmDebug() << "Status bar updated: selected files:" << selectFiles << "folders:" << selectFolders << "size:" << filesizes << "for URL:" << rootUrl().toString();
 }
 
 void FileView::updateLoadingIndicator()
@@ -2276,11 +2304,13 @@ void FileView::updateLoadingIndicator()
             tip = fileInfo->viewOfTip(ViewInfoType::kLoading);
 
         d->statusBar->showLoadingIncator(tip);
+        fmDebug() << "Loading indicator shown for URL:" << rootUrl().toString();
     }
 
     if (state == ModelState::kIdle) {
         d->statusBar->hideLoadingIncator();
         updateStatusBar();
+        fmDebug() << "Loading indicator hidden for URL:" << rootUrl().toString();
     }
 }
 
@@ -2449,19 +2479,21 @@ void FileView::loadViewState(const QUrl &url)
 
 void FileView::onModelStateChanged()
 {
+    fmDebug() << "Model state changed to:" << static_cast<int>(model()->currentState()) << "for URL:" << rootUrl().toString();
+
     updateContentLabel();
     updateLoadingIndicator();
     updateSelectedUrl();
 
     if (model()->currentState() == ModelState::kBusy) {
-        fmDebug() << "Model is busy - disabling header interactions";
+        fmDebug() << "Model is busy - disabling header interactions for URL:" << rootUrl().toString();
         if (d->headerView) {
             d->headerView->setSortIndicatorShown(false);
             d->headerView->setSectionsClickable(false);
         }
         d->animationHelper->reset();
     } else {
-        fmDebug() << "Model is idle - enabling header interactions";
+        fmDebug() << "Model is idle - enabling header interactions for URL:" << rootUrl().toString();
         if (d->headerView) {
             d->headerView->setSortIndicatorShown(true);
             d->headerView->setSectionsClickable(true);
@@ -2480,8 +2512,10 @@ void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex 
     ClickedAction configAction = static_cast<ClickedAction>(Application::instance()->appAttribute(Application::kOpenFileMode).toInt());
     if (action == configAction) {
         Qt::ItemFlags flags = model()->flags(index);
-        if (!flags.testFlag(Qt::ItemIsEnabled))
+        if (!flags.testFlag(Qt::ItemIsEnabled)) {
+            fmDebug() << "Item not enabled, skipping open for URL:" << rootUrl().toString();
             return;
+        }
 
         if (!WindowUtils::keyCtrlIsPressed() && !WindowUtils::keyShiftIsPressed())
             openIndex(index);

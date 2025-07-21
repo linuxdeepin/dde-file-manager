@@ -81,11 +81,15 @@ bool SortAndDisplayMenuScene::initialize(const QVariantHash &params)
 
 AbstractMenuScene *SortAndDisplayMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        fmDebug() << "Cannot find scene: action is null";
         return nullptr;
+    }
 
-    if (!d->predicateAction.key(action).isEmpty())
+    if (!d->predicateAction.key(action).isEmpty()) {
+        fmDebug() << "Action belongs to SortAndDisplayMenuScene";
         return const_cast<SortAndDisplayMenuScene *>(this);
+    }
 
     return AbstractMenuScene::scene(action);
 }
@@ -275,6 +279,7 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
         tempAction->setCheckable(true);
         predicateAction[ActionID::kDisplayTree] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayTree));
+        fmDebug() << "Tree view mode enabled for scheme:" << view->rootUrl().scheme();
     }
 
     return subMenu;
@@ -305,20 +310,26 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     switch (role) {
     case kItemFileDisplayNameRole:
         predicateAction[ActionID::kSrtName]->setChecked(true);
+        fmDebug() << "Set sort by name action as checked";
         break;
     case kItemFileLastModifiedRole:
         predicateAction[ActionID::kSrtTimeModified]->setChecked(true);
+        fmDebug() << "Set sort by time modified action as checked";
         break;
     case kItemFileCreatedRole:
         predicateAction[ActionID::kSrtTimeCreated]->setChecked(true);
+        fmDebug() << "Set sort by time created action as checked";
         break;
     case kItemFileSizeRole:
         predicateAction[ActionID::kSrtSize]->setChecked(true);
+        fmDebug() << "Set sort by size action as checked";
         break;
     case kItemFileMimeTypeRole:
         predicateAction[ActionID::kSrtType]->setChecked(true);
+        fmDebug() << "Set sort by type action as checked";
         break;
     default:
+        fmDebug() << "Unknown sort role:" << role;
         break;
     }
 
@@ -328,15 +339,20 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     switch (mode) {
     case Global::ViewMode::kIconMode:
         predicateAction[ActionID::kDisplayIcon]->setChecked(true);
+        fmDebug() << "Set display as icon action as checked";
         break;
     case Global::ViewMode::kListMode:
         predicateAction[ActionID::kDisplayList]->setChecked(true);
+        fmDebug() << "Set display as list action as checked";
         break;
     case Global::ViewMode::kTreeMode:
-        if (predicateAction.contains(ActionID::kDisplayTree))
+        if (predicateAction.contains(ActionID::kDisplayTree)) {
             predicateAction[ActionID::kDisplayTree]->setChecked(true);
+            fmDebug() << "Set display as tree action as checked";
+        }
         break;
     default:
+        fmDebug() << "Unknown view mode:" << static_cast<int>(mode);
         break;
     }
 }

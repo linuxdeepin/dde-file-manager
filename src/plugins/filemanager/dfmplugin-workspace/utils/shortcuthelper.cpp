@@ -63,6 +63,7 @@ void ShortcutHelper::registerAction(QKeySequence::StandardKey shortcut, bool aut
     action->setProperty(kViewShortcutKey, shortcut);
     view->addAction(action);
     connect(action, &QAction::triggered, this, &ShortcutHelper::acitonTriggered);
+    fmDebug() << "Registered shortcut action - key:" << static_cast<int>(shortcut) << "autoRepeat:" << autoRepeat;
 }
 
 bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
@@ -71,6 +72,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter: {
         if (renameProcessTimer->isActive()) {
+            fmDebug() << "Rename process timer active, setting enter trigger flag";
             enterTriggerFlag = true;
             return false;
         }
@@ -78,14 +80,17 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
         return doEnterPressed();
     }
     case Qt::Key_Backspace: {
+        fmDebug() << "Backspace key pressed - navigating up";
         cdUp();
         return true;
     }
     case Qt::Key_Delete: {
+        fmDebug() << "Delete key pressed - moving to trash";
         moveToTrash();
         break;
     }
     case Qt::Key_End: {
+        fmDebug() << "End key pressed - navigating to last item";
         const auto &urls = view->selectedUrlList();
         if (urls.isEmpty()) {
             int rowCount = view->model()->rowCount(view->rootIndex());
@@ -96,9 +101,11 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
         break;
     }
     case Qt::Key_Escape:
+        fmDebug() << "Escape key pressed - clearing clipboard";
         ClipBoard::clearClipboard();
         return true;
     case Qt::Key_F2: {
+        fmDebug() << "F2 key pressed - refreshing selected files";
         const auto &urls = view->selectedUrlList();
         for (const QUrl &url : urls) {
             FileInfoPointer info = InfoFactory::create<FileInfo>(url);
@@ -117,8 +124,10 @@ bool ShortcutHelper::doEnterPressed()
 {
     const auto &urls = view->selectedUrlList();
     quint64 winId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_EnterPressed", winId, urls))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_EnterPressed", winId, urls)) {
+        fmDebug() << "Enter pressed handled by hook";
         return true;
+    }
 
     int dirCount = 0;
     for (const QUrl &url : urls) {
@@ -129,6 +138,7 @@ bool ShortcutHelper::doEnterPressed()
             break;
     }
 
+    fmDebug() << "Opening files - count:" << urls.size() << "directories:" << dirCount;
     openAction(urls, view->currentDirOpenMode());
     return true;
 }
@@ -142,10 +152,12 @@ void ShortcutHelper::initRenameProcessTimer()
     connect(renameProcessTimer, &QTimer::timeout, this, [=] {
         if (enterTriggerFlag) {
             enterTriggerFlag = false;
-
+            fmDebug() << "Rename process timer timeout - executing enter action";
             doEnterPressed();
         }
     });
+
+    fmDebug() << "Rename process timer initialized with 500ms interval";
 }
 
 bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)

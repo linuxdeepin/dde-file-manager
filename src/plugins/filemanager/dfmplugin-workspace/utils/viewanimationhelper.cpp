@@ -43,6 +43,7 @@ void ViewAnimationHelper::initAnimationHelper()
 
 void ViewAnimationHelper::reset()
 {
+    fmDebug() << "Resetting view animation helper";
     currentIndexRectMap.clear();
     initialized = false;
 }
@@ -51,6 +52,7 @@ void ViewAnimationHelper::syncVisiableRect()
 {
     currentVisiableRect = view->viewport()->rect();
     currentVisiableRect.moveTop(view->verticalOffset());
+    fmDebug() << "Synced visible rect - size:" << currentVisiableRect.size() << "offset:" << view->verticalOffset();
 }
 
 void ViewAnimationHelper::aboutToPlay()
@@ -242,6 +244,7 @@ void ViewAnimationHelper::setAnimProcess(double value)
         return;
 
     animProcess = value;
+    fmDebug() << "Animation process updated to:" << value;
 }
 
 void ViewAnimationHelper::onDelayTimerFinish()
@@ -289,6 +292,7 @@ QMap<QModelIndex, QRect> ViewAnimationHelper::calcIndexRects(const QRect &rect) 
         }
     }
 
+    fmDebug() << "Calculated index rects for visible range - count:" << map.size();
     return map;
 }
 
