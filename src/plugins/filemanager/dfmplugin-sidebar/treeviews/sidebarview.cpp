@@ -4,13 +4,11 @@
 
 #include "sidebarwidget.h"
 #include "sidebarview.h"
-#include "sidebarmodel.h"
+#include "treemodels/sidebarmodel.h"
 #include "sidebaritem.h"
-#include "utils/sidebarinfocachemananger.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
 #include "private/sidebarview_p.h"
-#include "events/sidebareventcaller.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/urlroute.h>

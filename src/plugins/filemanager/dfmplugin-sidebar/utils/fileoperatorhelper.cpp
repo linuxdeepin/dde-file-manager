@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperatorhelper.h"
-#include "utils/sidebarhelper.h"
-#include "sidebarview.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>

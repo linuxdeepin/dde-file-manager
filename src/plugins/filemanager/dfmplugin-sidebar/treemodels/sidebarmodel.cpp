@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sidebarmodel.h"
-#include "sidebaritemdelegate.h"
-#include "sidebaritem.h"
+#include "treeviews/sidebaritem.h"
 #include "utils/sidebarhelper.h"
-#include "utils/sidebarinfocachemananger.h"
 
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-framework/event/event.h>

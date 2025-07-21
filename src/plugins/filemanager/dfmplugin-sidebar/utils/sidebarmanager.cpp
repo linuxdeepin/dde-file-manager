@@ -4,7 +4,7 @@
 
 #include "sidebarmanager.h"
 #include "utils/sidebarhelper.h"
-#include "sidebaritem.h"
+#include "treeviews/sidebaritem.h"
 
 #include <dfm-framework/event/event.h>
 

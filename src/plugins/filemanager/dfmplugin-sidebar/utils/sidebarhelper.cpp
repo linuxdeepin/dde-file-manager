@@ -5,11 +5,10 @@
 #include "dfmplugin_sidebar_global.h"
 #include "sidebarhelper.h"
 #include "sidebarinfocachemananger.h"
-#include "sidebaritem.h"
-#include "sidebarwidget.h"
+#include "treeviews/sidebaritem.h"
+#include "treeviews/sidebarwidget.h"
 
 #include "events/sidebareventcaller.h"
-#include "events/sidebareventreceiver.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
