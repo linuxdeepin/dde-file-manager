@@ -9,7 +9,7 @@ file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
 # Define source files exactly as in the original plugin CMakeLists.txt
 set(EXT_FILES
     ${DFM_SOURCE_DIR}/plugins/desktop/desktoputils/widgetutil.h
-    ${DFM_SOURCE_DIR}/plugins/desktop/desktoputils/ddpugin_eventinterface_helper.h
+    ${DFM_SOURCE_DIR}/plugins/desktop/desktoputils/ddplugin_eventinterface_helper.h
 )
 
 set(SCREEN_FILES

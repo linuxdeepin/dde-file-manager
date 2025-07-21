@@ -7,7 +7,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasbasesortmenuscene.h"
 #include "recentproxy/canvasrecentproxy.h"

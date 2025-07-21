@@ -8,7 +8,7 @@
 #include "menus/organizermenu_defines.h"
 #include "private/surface.h"
 
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "plugins/desktop/ddplugin-canvas/menu/canvasmenu_defines.h"
 

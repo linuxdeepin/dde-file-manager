@@ -8,7 +8,7 @@ function(dfm_setup_desktop_background_dependencies target_name)
     dfm_apply_default_plugin_config(${target_name})
     
     # Find required packages
-    find_package(Qt6 COMPONENTS Core Widgets Gui Svg REQUIRED)
+    find_package(Qt6 COMPONENTS Core Widgets Gui REQUIRED)
     
     # Link libraries
     target_link_libraries(${target_name} PRIVATE

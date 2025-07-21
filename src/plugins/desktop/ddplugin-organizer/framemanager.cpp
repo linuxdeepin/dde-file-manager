@@ -7,7 +7,7 @@
 #include "config/configpresenter.h"
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"

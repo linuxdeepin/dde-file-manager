@@ -9,7 +9,7 @@
 #include "interface/canvasviewshell.h"
 #include "interface/fileinfomodelshell.h"
 #include "config/configpresenter.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "utils/fileoperator.h"
 #include "view/collectionview.h"
 #include "interface/canvasmanagershell.h"
