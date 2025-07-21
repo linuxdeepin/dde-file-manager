@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sidebaritem.h"
-#include "sidebarmodel.h"
+#include "treemodels/sidebarmodel.h"
 #include "utils/sidebarinfocachemananger.h"
 
 #include <dfm-base/base/standardpaths.h>

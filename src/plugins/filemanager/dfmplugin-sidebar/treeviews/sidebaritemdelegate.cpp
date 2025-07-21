@@ -5,7 +5,7 @@
 #include "sidebaritemdelegate.h"
 
 #include "sidebaritem.h"
-#include "sidebarmodel.h"
+#include "treemodels/sidebarmodel.h"
 #include "sidebarview.h"
 #include "events/sidebareventcaller.h"
 

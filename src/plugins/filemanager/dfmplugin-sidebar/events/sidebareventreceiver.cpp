@@ -4,9 +4,9 @@
 
 #include "sidebareventreceiver.h"
 
-#include "sidebarwidget.h"
-#include "sidebaritem.h"
-#include "sidebarmodel.h"
+#include "treeviews/sidebarwidget.h"
+#include "treeviews/sidebaritem.h"
+#include "treemodels/sidebarmodel.h"
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarinfocachemananger.h"
 

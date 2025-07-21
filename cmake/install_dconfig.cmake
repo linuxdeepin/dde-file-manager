@@ -4,6 +4,7 @@ function(INSTALL_DCONFIG CONFIG_NAME)
     message("DConfigPath: ${DConfigPath}")
     set(DFMAppId "org.deepin.dde.file-manager")
     set(ConfigName ${CONFIG_NAME})
+    find_package(Dtk6 REQUIRED COMPONENTS Core)
 
     if (DEFINED DSG_DATA_DIR)
         message("-- DConfig is supported by DTK")

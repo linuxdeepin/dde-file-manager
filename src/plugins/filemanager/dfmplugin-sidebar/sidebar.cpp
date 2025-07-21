@@ -4,8 +4,7 @@
 
 #include "sidebar.h"
 
-#include "sidebarwidget.h"
-#include "sidebaritem.h"
+#include "treeviews/sidebarwidget.h"
 #include "utils/sidebarhelper.h"
 #include "events/sidebareventreceiver.h"
 
