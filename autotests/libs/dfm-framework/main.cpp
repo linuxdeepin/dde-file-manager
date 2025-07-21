@@ -4,17 +4,6 @@
 
 #include <gtest/gtest.h>
 #include <QCoreApplication>
-#include "dfm_asan_helper.h"
+#include "dfm_test_main.h"
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
-
-    ::testing::InitGoogleTest(&argc, argv);
-
-    int ret = RUN_ALL_TESTS();
-
-    DFM_SETUP_ASAN_REPORT(dfm_framework);
-
-    return ret;
-}
+DFM_TEST_MAIN(dfm_framework)

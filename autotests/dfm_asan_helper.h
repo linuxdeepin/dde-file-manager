@@ -7,9 +7,6 @@
 
 #ifdef ENABLE_TSAN_TOOL
 #include <sanitizer/asan_interface.h>
-#include <iostream>
-#include <string>
-#include <cstring>
 
 /**
  * @brief Setup ASAN report path with standardized naming

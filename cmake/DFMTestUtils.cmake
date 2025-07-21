@@ -23,6 +23,7 @@ function(dfm_setup_test_environment)
 
     # Include GTest
     include_directories(${GTEST_INCLUDE_DIRS})
+    include_directories(${DFM_PROJECT_ROOT}/autotests)
     
     # Link libraries for all tests
     link_libraries(${GTEST_LIBRARIES} pthread stdc++fs Qt6::Test)

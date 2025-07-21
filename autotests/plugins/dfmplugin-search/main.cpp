@@ -6,17 +6,8 @@
 #include <QApplication>
 
 // Include ASAN helper
-#include "dfm_asan_helper.h"
+#include "dfm_test_main.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+DFM_TEST_MAIN(dfmplugin_search)
 
-    ::testing::InitGoogleTest(&argc, argv);
-
-    int ret = RUN_ALL_TESTS();
-
-    DFM_SETUP_ASAN_REPORT(dfmplugin_search);
-
-    return ret;
-} 
+ 
