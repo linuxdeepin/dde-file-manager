@@ -8,8 +8,4 @@
 #include <sanitizer/tsan_interface.h>
 #endif
 
-int main(int argc, char *argv[])
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+DFM_TEST_MAIN(dfmplugin_workspace)

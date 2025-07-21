@@ -4,13 +4,8 @@
 
 #include <gtest/gtest.h>
 #include <QApplication>
-#include "dfm_asan_helper.h"
+#include "dfm_test_main.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    ::testing::InitGoogleTest(&argc, argv);
-    int ret = RUN_ALL_TESTS();
-    DFM_SETUP_ASAN_REPORT(mountcontrol_service);
-    return ret;
-} 
+DFM_TEST_MAIN(mountcontrol_service)
+
+ 
