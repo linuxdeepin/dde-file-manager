@@ -4,7 +4,7 @@ function(dfm_setup_daemon_filemanager1_dependencies target_name)
     
     # Configure config.h file
     configure_file(
-        "${APP_SOURCE_DIR}/config.h.in"
+        "${DFM_APP_SOURCE_DIR}/config.h.in"
         "${CMAKE_CURRENT_BINARY_DIR}/config.h"
         )
     

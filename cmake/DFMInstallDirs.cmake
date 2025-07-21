@@ -17,7 +17,7 @@ endif()
 set(DFM_DBUS_XML_DIR ${CMAKE_SOURCE_DIR}/assets/dbus)
 
 # APP source directory
-set(APP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/apps)
+set(DFM_APP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/apps)
 
 # Plugin root directory
 if(NOT DEFINED DFM_PLUGIN_DIR)

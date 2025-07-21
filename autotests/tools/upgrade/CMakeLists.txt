@@ -12,7 +12,7 @@ file(GLOB_RECURSE SRC_FILES FILES_MATCHING PATTERN
 )
 
 configure_file(
-    "${APP_SOURCE_DIR}/config.h.in"
+    "${DFM_APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
