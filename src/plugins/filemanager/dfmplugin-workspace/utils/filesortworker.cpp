@@ -126,8 +126,11 @@ QUrl FileSortWorker::mapToIndex(int index)
 {
     QReadLocker lk(&locker);
 
-    if (index < 0 || index >= visibleChildren.count())
+    if (index < 0 || index >= visibleChildren.count()) {
+        fmDebug() << "Invalid index for mapToIndex:" << index << "visible children count:" << visibleChildren.count();
         return QUrl();
+    }
+
     return visibleChildren.at(index);
 }
 
@@ -158,8 +161,10 @@ FileItemDataPointer FileSortWorker::childData(const int index)
     QUrl url;
     {
         QReadLocker lk(&locker);
-        if (index < 0 || index >= visibleChildren.count())
+        if (index < 0 || index >= visibleChildren.count()) {
+            fmDebug() << "Invalid index for childData:" << index << "visible children count:" << visibleChildren.count();
             return nullptr;
+        }
         url = visibleChildren.at(index);
     }
 
@@ -169,6 +174,7 @@ FileItemDataPointer FileSortWorker::childData(const int index)
 
 void FileSortWorker::cancel()
 {
+    fmDebug() << "Canceling FileSortWorker operations";
     isCanceled = true;
     mimeSorting = false;
 }
@@ -182,6 +188,7 @@ int FileSortWorker::getChildShowIndex(const QUrl &url)
 QList<QUrl> FileSortWorker::getChildrenUrls()
 {
     QReadLocker lk(&locker);
+    fmDebug() << "Getting children URLs, count:" << visibleChildren.size();
     return visibleChildren;
 }
 

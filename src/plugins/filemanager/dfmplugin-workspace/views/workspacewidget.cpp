@@ -268,6 +268,7 @@ void WorkspaceWidget::focusInEvent(QFocusEvent *event)
 // NOTE(zhangs): please ref to: DFileManagerWindow::initRightView (old filemanager)
 void WorkspaceWidget::initializeUi()
 {
+    fmDebug() << "Initializing WorkspaceWidget UI";
     initViewLayout();
 }
 

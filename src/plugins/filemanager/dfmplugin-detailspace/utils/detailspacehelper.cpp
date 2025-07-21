@@ -23,10 +23,8 @@ QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
 
 DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
 {
-    if (!kDetailSpaceMap.contains(windowId)) {
-        fmDebug() << "No detail space found for window ID:" << windowId;
+    if (!kDetailSpaceMap.contains(windowId))
         return nullptr;
-    }
 
     return kDetailSpaceMap[windowId];
 }

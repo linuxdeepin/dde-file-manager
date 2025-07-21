@@ -17,9 +17,12 @@ using namespace dfmplugin_workspace;
 
 QStringList SimpleKeywordStrategy::extractKeywords(const QString &keyword) const
 {
-    if (keyword.isEmpty())
+    if (keyword.isEmpty()) {
+        fmDebug() << "SimpleKeywordStrategy: Empty keyword provided";
         return {};
+    }
 
+    fmDebug() << "SimpleKeywordStrategy: Extracting simple keyword:" << keyword;
     // 简单策略：直接返回原始关键字
     return { keyword };
 }
@@ -28,6 +31,7 @@ bool SimpleKeywordStrategy::canHandle(const QString &keyword) const
 {
     Q_UNUSED(keyword)
     // 简单策略是默认的回退策略，总是能处理
+    fmDebug() << "SimpleKeywordStrategy: Can handle any keyword (fallback strategy)";
     return true;
 }
 
@@ -35,8 +39,12 @@ bool SimpleKeywordStrategy::canHandle(const QString &keyword) const
 
 QStringList BooleanKeywordStrategy::extractKeywords(const QString &keyword) const
 {
-    if (keyword.isEmpty())
+    if (keyword.isEmpty()) {
+        fmDebug() << "BooleanKeywordStrategy: Empty keyword provided";
         return {};
+    }
+
+    fmDebug() << "BooleanKeywordStrategy: Extracting boolean keywords from:" << keyword;
 
     // 按空白字符分割关键字
     QStringList keywords = keyword.split(whitespaceDelimiter, Qt::SkipEmptyParts);
@@ -61,8 +69,10 @@ bool BooleanKeywordStrategy::canHandle(const QString &keyword) const
 
 QStringList WildcardKeywordStrategy::extractKeywords(const QString &keyword) const
 {
-    if (keyword.isEmpty())
+    if (keyword.isEmpty()) {
+        fmDebug() << "WildcardKeywordStrategy: Empty keyword provided";
         return {};
+    }
 
     return extractFromWildcardPattern(keyword);
 }
@@ -75,6 +85,8 @@ bool WildcardKeywordStrategy::canHandle(const QString &keyword) const
 
 QStringList WildcardKeywordStrategy::extractFromWildcardPattern(const QString &pattern) const
 {
+    fmDebug() << "WildcardKeywordStrategy: Processing wildcard pattern:" << pattern;
+
     QStringList keywords;
 
     // 首先添加原始模式本身作为第一个关键字
@@ -103,6 +115,7 @@ QStringList WildcardKeywordStrategy::extractFromWildcardPattern(const QString &p
         }
     }
 
+    fmDebug() << "WildcardKeywordStrategy: Final unique keywords - count:" << uniqueKeywords.size() << "keywords:" << uniqueKeywords;
     return uniqueKeywords;
 }
 
@@ -110,22 +123,28 @@ QStringList WildcardKeywordStrategy::extractFromWildcardPattern(const QString &p
 
 KeywordExtractor::KeywordExtractor()
 {
+    fmDebug() << "KeywordExtractor: Initializing with default strategies";
+
     // 按优先级顺序注册策略
     registerStrategy(QSharedPointer<KeywordExtractionStrategy>(new BooleanKeywordStrategy()));
     registerStrategy(QSharedPointer<KeywordExtractionStrategy>(new WildcardKeywordStrategy()));
     registerStrategy(QSharedPointer<KeywordExtractionStrategy>(new SimpleKeywordStrategy()));
+
+    fmDebug() << "KeywordExtractor: Initialized with" << strategies.size() << "strategies";
 }
 
 QStringList KeywordExtractor::extractFromUrl(const QUrl &url) const
 {
     QUrlQuery query(url.query());
     if (!query.hasQueryItem("keyword")) {
+        fmDebug() << "KeywordExtractor: No keyword query item found in URL";
         return {};
     }
 
     QString keywordValue = query.queryItemValue("keyword");
     // 先对URL编码的字符进行解码，确保能处理所有空白字符
     keywordValue = QUrl::fromPercentEncoding(keywordValue.toUtf8());
+    fmDebug() << "KeywordExtractor: Decoded keyword value:" << keywordValue;
 
     return extractFromKeyword(keywordValue);
 }
@@ -133,8 +152,11 @@ QStringList KeywordExtractor::extractFromUrl(const QUrl &url) const
 QStringList KeywordExtractor::extractFromKeyword(const QString &keyword) const
 {
     if (keyword.isEmpty()) {
+        fmDebug() << "KeywordExtractor: Empty keyword provided";
         return {};
     }
+
+    fmDebug() << "KeywordExtractor: Extracting keywords from:" << keyword << "using" << strategies.size() << "strategies";
 
     // 按优先级顺序尝试每个策略
     for (const auto &strategy : strategies) {
@@ -158,17 +180,20 @@ void KeywordExtractor::registerStrategy(QSharedPointer<KeywordExtractionStrategy
         return;
     }
 
+    fmDebug() << "KeywordExtractor: Registering strategy with priority:" << strategy->priority();
     strategies.append(strategy);
     sortStrategiesByPriority();
 }
 
 const QList<QSharedPointer<KeywordExtractionStrategy>> &KeywordExtractor::getStrategies() const
 {
+    fmDebug() << "KeywordExtractor: Returning" << strategies.size() << "strategies";
     return strategies;
 }
 
 void KeywordExtractor::sortStrategiesByPriority()
 {
+    fmDebug() << "KeywordExtractor: Sorting strategies by priority";
     std::sort(strategies.begin(), strategies.end(),
               [](const QSharedPointer<KeywordExtractionStrategy> &a,
                  const QSharedPointer<KeywordExtractionStrategy> &b) {
@@ -181,10 +206,12 @@ void KeywordExtractor::sortStrategiesByPriority()
 KeywordExtractorManager &KeywordExtractorManager::instance()
 {
     static KeywordExtractorManager instance;
+    fmDebug() << "KeywordExtractorManager: Returning singleton instance";
     return instance;
 }
 
 KeywordExtractor &KeywordExtractorManager::extractor()
 {
+    fmDebug() << "KeywordExtractorManager: Returning extractor reference";
     return keywordExtractor;
 }

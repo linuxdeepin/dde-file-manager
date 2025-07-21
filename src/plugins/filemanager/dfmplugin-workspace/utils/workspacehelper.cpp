@@ -79,6 +79,7 @@ void WorkspaceHelper::setCustomTopWidgetVisible(quint64 windowId, const QString 
 
 void WorkspaceHelper::setFilterData(quint64 windowId, const QUrl &url, const QVariant &data)
 {
+    fmDebug() << "WorkspaceHelper: setting filter data for window" << windowId << "URL" << url.toString();
     FileView *view = findFileViewByWindowID(windowId);
     if (view)
         view->setFilterData(url, data);
@@ -86,6 +87,7 @@ void WorkspaceHelper::setFilterData(quint64 windowId, const QUrl &url, const QVa
 
 void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback)
 {
+    fmDebug() << "WorkspaceHelper: setting filter callback for window" << windowId << "URL" << url.toString();
     FileView *view = findFileViewByWindowID(windowId);
     if (view)
         view->setFilterCallback(url, callback);
@@ -399,6 +401,7 @@ void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
 
 void WorkspaceHelper::fileUpdate(const QUrl &url)
 {
+    fmDebug() << "WorkspaceHelper: updating file for URL" << url.toString();
     for (const auto &wind : kWorkspaceMap) {
         if (wind) {
             FileView *view = dynamic_cast<FileView *>(wind->currentView());

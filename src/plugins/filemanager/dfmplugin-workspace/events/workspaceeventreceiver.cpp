@@ -31,6 +31,7 @@ WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
 
 WorkspaceEventReceiver::~WorkspaceEventReceiver()
 {
+    fmDebug() << "WorkspaceEventReceiver: Destructor called, unsubscribing from events";
     dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                      WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
 }
@@ -38,11 +39,14 @@ WorkspaceEventReceiver::~WorkspaceEventReceiver()
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 {
     static WorkspaceEventReceiver receiver;
+    fmDebug() << "WorkspaceEventReceiver: Returning singleton instance";
     return &receiver;
 }
 
 void WorkspaceEventReceiver::initConnection()
 {
+    fmDebug() << "WorkspaceEventReceiver: Initializing event connections";
+
     // signal event
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                    WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
@@ -146,60 +150,73 @@ void WorkspaceEventReceiver::initConnection()
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleMoveToTrashFileResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleMoveToTrashFileResult);
+
+    fmDebug() << "WorkspaceEventReceiver: Event connections initialized successfully";
 }
 
 void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, int mode)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling tile bar switch mode triggered - window ID:" << windowId << "mode:" << mode;
     WorkspaceHelper::instance()->switchViewMode(windowId, mode);
 }
 
 void WorkspaceEventReceiver::handleShowCustomTopWidget(quint64 windowId, const QString &scheme, bool visible)
 {
+    fmDebug() << "WorkspaceEventReceiver: handling show custom top widget request for window" << windowId << "scheme" << scheme << "visible" << visible;
     WorkspaceHelper::instance()->setCustomTopWidgetVisible(windowId, scheme, visible);
 }
 
 void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUrl> &files)
 {
+    fmDebug() << "WorkspaceEventReceiver: handling select files request for window" << windowId << "with" << files.size() << "files";
     WorkspaceHelper::instance()->selectFiles(windowId, files);
 }
 
 void WorkspaceEventReceiver::handleSelectAll(quint64 windowId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling select all request for window ID:" << windowId;
     WorkspaceHelper::instance()->selectAll(windowId);
 }
 
 void WorkspaceEventReceiver::handleReverseSelect(quint64 windowId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling reverse select request for window ID:" << windowId;
     WorkspaceHelper::instance()->reverseSelect(windowId);
 }
 
 void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
 {
+    fmDebug() << "WorkspaceEventReceiver: handling set sort request for window" << windowId << "role" << static_cast<int>(role);
     WorkspaceHelper::instance()->setSort(windowId, role);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set selection mode request for window" << windowId << "mode:" << static_cast<int>(mode);
     WorkspaceHelper::instance()->setSelectionMode(windowId, mode);
 }
 
 void WorkspaceEventReceiver::handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set enabled selection modes request for window" << windowId << "modes count:" << modes.size();
     WorkspaceHelper::instance()->setEnabledSelectionModes(windowId, modes);
 }
 
 void WorkspaceEventReceiver::handleSetViewDragEnabled(const quint64 windowId, const bool enabled)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set view drag enabled request for window" << windowId << "enabled:" << enabled;
     WorkspaceHelper::instance()->setViewDragEnabled(windowId, enabled);
 }
 
 void WorkspaceEventReceiver::handleSetViewDragDropMode(const quint64 windowId, const QAbstractItemView::DragDropMode mode)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set view drag drop mode request for window" << windowId << "mode:" << static_cast<int>(mode);
     WorkspaceHelper::instance()->setViewDragDropMode(windowId, mode);
 }
 
 void WorkspaceEventReceiver::handleClosePersistentEditor(const quint64 windowId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling close persistent editor request for window ID:" << windowId;
     WorkspaceHelper::instance()->closePersistentEditor(windowId);
 }
 
@@ -215,16 +232,19 @@ QStringList WorkspaceEventReceiver::handleGetNameFilter(const quint64 windowId)
 
 void WorkspaceEventReceiver::handleSetViewFilter(const quint64 windowId, const QDir::Filters &filters)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set view filter request for window" << windowId << "filters:" << static_cast<int>(filters);
     WorkspaceHelper::instance()->setViewFilter(windowId, filters);
 }
 
 void WorkspaceEventReceiver::handleSetNameFilter(const quint64 windowId, const QStringList &filters)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set name filter request for window" << windowId << "filters count:" << filters.size();
     WorkspaceHelper::instance()->setNameFilter(windowId, filters);
 }
 
 void WorkspaceEventReceiver::handleSetReadOnly(const quint64 windowId, const bool readOnly)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set read only request for window" << windowId << "readOnly:" << readOnly;
     WorkspaceHelper::instance()->setReadOnly(windowId, readOnly);
 }
 
@@ -236,9 +256,12 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
 
     // if paste files from revocation operate, these files should not be selected.
     QList<QUrl> filterUrls = WorkspaceHelper::instance()->filterUndoFiles(destUrls);
+    fmDebug() << "WorkspaceEventReceiver: Filtered URLs count:" << filterUrls.size() << "from" << destUrls.size() << "total";
 
-    if (!filterUrls.isEmpty())
+    if (!filterUrls.isEmpty()) {
+        fmDebug() << "WorkspaceEventReceiver: Requesting selection of" << filterUrls.size() << "filtered files";
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
+    }
 }
 
 void WorkspaceEventReceiver::handleMoveToTrashFileResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg)
@@ -253,14 +276,17 @@ void WorkspaceEventReceiver::handleRenameFileResult(const quint64 windowId, cons
     Q_UNUSED(windowId)
     Q_UNUSED(errMsg)
 
-    if (!ok || renamedUrls.isEmpty())
+    if (!ok || renamedUrls.isEmpty()) {
+        fmDebug() << "WorkspaceEventReceiver: No files to select after rename";
         return;
+    }
 
     WorkspaceHelper::instance()->laterRequestSelectFiles(renamedUrls.values());
 }
 
 void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
 {
+    fmDebug() << "WorkspaceEventReceiver: handling file update request for URL" << url.toString();
     WorkspaceHelper::instance()->fileUpdate(url);
 }
 
@@ -280,6 +306,7 @@ QRectF WorkspaceEventReceiver::handleGetVisualGeometry(const quint64 windowID)
     if (workspaceWidget)
         return workspaceWidget->viewVisibleGeometry();
 
+    fmWarning() << "WorkspaceEventReceiver: cannot find workspace widget for window ID" << windowID;
     return QRectF(0, 0, 0, 0);
 }
 
@@ -289,11 +316,13 @@ QRectF WorkspaceEventReceiver::handleGetViewItemRect(const quint64 windowID, con
     if (workspaceWidget)
         return workspaceWidget->itemRect(url, role);
 
+    fmWarning() << "WorkspaceEventReceiver: cannot find workspace widget for window ID" << windowID << "URL" << url.toString();
     return QRectF(0, 0, 0, 0);
 }
 
 void WorkspaceEventReceiver::handleSetCustomViewProperty(const QString &scheme, const QVariantMap &properties)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set custom view property request for scheme:" << scheme << "properties count:" << properties.size();
     WorkspaceHelper::instance()->registerCustomViewProperty(scheme, properties);
 }
 
@@ -309,16 +338,19 @@ ViewMode WorkspaceEventReceiver::handleGetCurrentViewMode(const quint64 windowID
     if (workspaceWidget)
         return workspaceWidget->currentViewMode();
 
+    fmWarning() << "WorkspaceEventReceiver: cannot find workspace widget for window ID" << windowID;
     return ViewMode::kNoneMode;
 }
 
 void WorkspaceEventReceiver::handleRegisterFileView(const QString &scheme)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling register file view request for scheme:" << scheme;
     WorkspaceHelper::instance()->registerFileView(scheme);
 }
 
 void WorkspaceEventReceiver::handleRegisterMenuScene(const QString &scheme, const QString &scene)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling register menu scene request for scheme:" << scheme << "scene:" << scene;
     WorkspaceHelper::instance()->setWorkspaceMenuScene(scheme, scene);
 }
 
@@ -334,6 +366,7 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
         fmWarning() << "custom top widget sechme " << info.scheme << "has been resigtered!";
     }
 
+    fmDebug() << "WorkspaceEventReceiver: Registering custom top widget for scheme:" << info.scheme;
     WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, [=]() {
         CustomTopWidgetInterface *interface {
             new CustomTopWidgetInterface
@@ -342,6 +375,7 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
         interface->setKeepTop(info.keepTop);
         interface->registeCreateTopWidgetCallback(info.createTopWidgetCb);
         interface->registeCreateTopWidgetCallback(info.showTopWidgetCb);
+        fmDebug() << "WorkspaceEventReceiver: Created custom top widget interface for scheme:" << info.scheme;
         return interface;
     });
 }
@@ -352,6 +386,8 @@ bool WorkspaceEventReceiver::handleGetCustomTopWidgetVisible(const quint64 windo
     if (workspaceWidget) {
         return workspaceWidget->getCustomTopWidgetVisible(scheme);
     }
+
+    fmWarning() << "WorkspaceEventReceiver: Cannot find workspace widget for window ID" << windowID;
     return false;
 }
 
@@ -365,22 +401,28 @@ QList<QUrl> WorkspaceEventReceiver::handleGetSelectedUrls(const quint64 windowID
     WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
     if (workspaceWidget) {
         auto view = workspaceWidget->currentView();
-        if (view)
+        if (view) {
             return view->selectedUrlList();
-        else
+        } else {
+            fmWarning() << "WorkspaceEventReceiver: No current view found for window ID:" << windowID;
             return {};
+        }
     }
 
+    fmWarning() << "WorkspaceEventReceiver: Cannot find workspace widget for window ID:" << windowID;
     return {};
 }
 
 void WorkspaceEventReceiver::handleSetCustomFilterData(quint64 windowID, const QUrl &url, const QVariant &data)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set custom filter data request for window ID:" << windowID << "URL:" << url.toString() << "data valid:" << data.isValid();
     WorkspaceHelper::instance()->setFilterData(windowID, url, data);
 }
 
 void WorkspaceEventReceiver::handleSetCustomFilterCallback(quint64 windowID, const QUrl &url, const QVariant callback)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set custom filter callback request for window ID:" << windowID << "URL:" << url.toString() << "callback valid:" << callback.isValid();
+
     auto filterCallback = DPF_NAMESPACE::paramGenerator<FileViewFilterCallback>(callback);
     WorkspaceHelper::instance()->setFilterCallback(windowID, url, filterCallback);
 }
@@ -397,41 +439,57 @@ void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
 
 void WorkspaceEventReceiver::handleSetAlwaysOpenInCurrentWindow(const quint64 windowID)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling set always open in current window request for window ID:" << windowID;
     WorkspaceHelper::instance()->setAlwaysOpenInCurrentWindow(windowID);
 }
 
 void WorkspaceEventReceiver::handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling about to change view width request for window ID:" << windowID << "delta width:" << deltaWidth;
     WorkspaceHelper::instance()->aboutToChangeViewWidth(windowID, deltaWidth);
 }
 
 void WorkspaceEventReceiver::handleTabCreated(const quint64 windowId, const QString &uniqueId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling tab created event for window ID:" << windowId << "unique ID:" << uniqueId;
+
     auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
-    if (workspace)
+    if (workspace) {
         workspace->createNewPage(uniqueId);
+        fmDebug() << "WorkspaceEventReceiver: Created new page for window" << windowId << "unique ID" << uniqueId;
+    }
 }
 
 void WorkspaceEventReceiver::handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling tab removed event for window ID:" << windowId << "removed ID:" << removedId << "next ID:" << nextId;
+
     auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
-    if (workspace)
+    if (workspace) {
         workspace->removePage(removedId, nextId);
+        fmDebug() << "WorkspaceEventReceiver: Removed page for window" << windowId << "removed ID" << removedId;
+    }
 }
 
 void WorkspaceEventReceiver::handleTabChanged(const quint64 windowId, const QString &uniqueId)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling tab changed event for window ID:" << windowId << "unique ID:" << uniqueId;
+
     auto workspace = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
-    if (workspace)
+    if (workspace) {
         workspace->setCurrentPage(uniqueId);
+        fmDebug() << "WorkspaceEventReceiver: Set current page for window" << windowId << "unique ID" << uniqueId;
+    }
 }
 
 void WorkspaceEventReceiver::handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling register load strategy request for scheme:" << scheme << "strategy:" << static_cast<int>(strategy);
     WorkspaceHelper::instance()->registerLoadStrategy(scheme, strategy);
 }
 
 void WorkspaceEventReceiver::handleRegisterFocusFileViewDisabled(const QString &scheme)
 {
+    fmDebug() << "WorkspaceEventReceiver: Handling register focus file view disabled request for scheme:" << scheme;
     WorkspaceHelper::instance()->registerFocusFileViewDisabled(scheme);
 }
