@@ -16,7 +16,8 @@ FILE(GLOB_RECURSE CANVAS_FILES
 
 set(BIN_NAME dd-canvas-plugin)
 
-find_package(Qt6 COMPONENTS Core Widgets Gui Svg REQUIRED)
+# Include plugin configuration
+include(DFMPluginConfig)
 
 add_library(${BIN_NAME}
     SHARED
@@ -27,18 +28,11 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
-target_include_directories(${BIN_NAME} PUBLIC
-    ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
-)
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::Gui
-    Qt6::Svg
-)
+# Apply plugin specific configuration
+dfm_setup_desktop_canvas_dependencies(${BIN_NAME})
 
 install(TARGETS ${BIN_NAME}
     LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
