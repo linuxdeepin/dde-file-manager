@@ -26,9 +26,9 @@ function(dfm_setup_fileoperations_dependencies target_name)
     )
     
     # Configure config.h if needed
-    if(EXISTS "${APP_SOURCE_DIR}/config.h.in")
+    if(EXISTS "${DFM_APP_SOURCE_DIR}/config.h.in")
         configure_file(
-            "${APP_SOURCE_DIR}/config.h.in"
+            "${DFM_APP_SOURCE_DIR}/config.h.in"
             "${CMAKE_CURRENT_BINARY_DIR}/config.h"
         )
         target_include_directories(${target_name} PRIVATE

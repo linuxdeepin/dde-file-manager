@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(dde-select-dialog-x11)
 
 configure_file(
-    "${APP_SOURCE_DIR}/config.h.in"
+    "${DFM_APP_SOURCE_DIR}/config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
 
