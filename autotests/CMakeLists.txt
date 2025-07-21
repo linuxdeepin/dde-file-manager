@@ -37,4 +37,4 @@ add_subdirectory(services)
 # Optional: add other test directories if they exist
 # add_subdirectory(apps)
 # add_subdirectory(external)
-# add_subdirectory(tools)
+add_subdirectory(tools)

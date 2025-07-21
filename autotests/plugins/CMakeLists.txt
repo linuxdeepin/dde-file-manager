@@ -38,3 +38,10 @@ add_subdirectory(dfmdaemon-filemanager1)
 add_subdirectory(dfmdaemon-tag)
 add_subdirectory(dfmdaemon-vault)
 add_subdirectory(dfmdaemon-recent)
+
+# Desktop plugins unit tests
+add_subdirectory(ddplugin-core)
+add_subdirectory(ddplugin-canvas)
+add_subdirectory(ddplugin-background)
+add_subdirectory(ddplugin-organizer)
+add_subdirectory(ddplugin-wallpapersetting)

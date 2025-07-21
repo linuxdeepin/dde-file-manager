@@ -16,7 +16,8 @@ FILE(GLOB_RECURSE CORE_FILES
 
 set(BIN_NAME dd-organizer-plugin)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+# Include plugin configuration
+include(DFMPluginConfig)
 
 # 指定资源文件
 set(QRC_FILE
@@ -35,10 +36,8 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
-target_link_libraries(${BIN_NAME}
-    DFM6::base
-    DFM6::framework
-)
+# Use default plugin configuration
+dfm_apply_default_plugin_config(${BIN_NAME})
 
 install(TARGETS ${BIN_NAME}
     LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}

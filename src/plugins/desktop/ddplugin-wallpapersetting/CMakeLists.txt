@@ -21,11 +21,8 @@ set(QRCS
 
 set(BIN_NAME dd-wallpapersetting-plugin)
 
-find_package(Qt6 COMPONENTS Core Svg REQUIRED)
-find_package(Dtk6 COMPONENTS Widget REQUIRED)
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(xcb REQUIRED xcb IMPORTED_TARGET)
+# Include plugin configuration
+include(DFMPluginConfig)
 
 add_library(${BIN_NAME}
     SHARED
@@ -34,19 +31,14 @@ add_library(${BIN_NAME}
     ${QRCS}
 )
 
-target_include_directories(${BIN_NAME} PUBLIC
-    ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
-)
-
-target_link_libraries(${BIN_NAME}
-    Qt6::Svg
-    DFM6::base
-    DFM6::framework
-    PkgConfig::xcb
-)
-
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
+
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+
+# Apply plugin specific configuration
+dfm_setup_desktop_wallpapersetting_dependencies(${BIN_NAME})
 
 install(TARGETS ${BIN_NAME}
     LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
