@@ -5,7 +5,7 @@
 #include "wallaperpreview.h"
 
 #include "desktoputils/widgetutil.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_wallpapersetting;

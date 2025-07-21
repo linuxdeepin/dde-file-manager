@@ -8,7 +8,7 @@
 #include "view/collectionview.h"
 #include "config/configpresenter.h"
 #include "models/collectionmodel.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 
 using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE

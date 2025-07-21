@@ -7,7 +7,7 @@
 
 #include "wallpapersettings.h"
 #include "private/autoactivatewindow.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/windowutils.h>

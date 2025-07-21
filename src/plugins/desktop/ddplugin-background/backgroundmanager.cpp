@@ -6,7 +6,7 @@
 #include "backgroundmanager.h"
 #include "backgroundmanager_p.h"
 #include "backgrounddefault.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/universalutils.h>

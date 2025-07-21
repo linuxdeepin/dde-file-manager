@@ -8,8 +8,7 @@ function(dfm_setup_desktop_wallpapersetting_dependencies target_name)
     dfm_apply_default_plugin_config(${target_name})
     
     # Find required packages
-    find_package(Qt6 COMPONENTS Core Svg REQUIRED)
-    find_package(Dtk6 COMPONENTS Widget REQUIRED)
+    find_package(Qt6 COMPONENTS Core Widgets Svg REQUIRED)
     find_package(PkgConfig REQUIRED)
     
     # Check for xcb using pkg-config
@@ -27,4 +26,4 @@ function(dfm_setup_desktop_wallpapersetting_dependencies target_name)
     )
     
     message(STATUS "DFM: Desktop wallpapersetting plugin dependencies configured successfully for: ${target_name}")
-endfunction() 
+endfunction()

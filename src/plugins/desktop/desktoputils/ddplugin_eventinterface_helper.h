@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef DDPUGIN_EVENTINTERFACE_HELPER_H
-#define DDPUGIN_EVENTINTERFACE_HELPER_H
+#ifndef DDPLUGIN_EVENTINTERFACE_HELPER_H
+#define DDPLUGIN_EVENTINTERFACE_HELPER_H
 
 #include <dfm-base/interfaces/screen/abstractscreenproxy.h>
 
@@ -55,4 +55,4 @@ static inline QList<QWidget *> desktopFrameRootWindows()
 
 }
 
-#endif   // DDPUGIN_EVENTINTERFACE_HELPER_H
+#endif   // DDPLUGIN_EVENTINTERFACE_HELPER_H

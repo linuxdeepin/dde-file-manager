@@ -6,7 +6,7 @@
 #include "thumbnailmanager.h"
 #include "private/wallpapersettings_p.h"
 #include "desktoputils/widgetutil.h"
-#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "desktoputils/ddplugin_eventinterface_helper.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/windowutils.h>

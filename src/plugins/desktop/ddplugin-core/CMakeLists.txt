@@ -6,7 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(EXT_FILES
     ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/widgetutil.h
-    ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/ddpugin_eventinterface_helper.h
+    ${CMAKE_SOURCE_DIR}/src/plugins/desktop/desktoputils/ddplugin_eventinterface_helper.h
     )
 
 set(SCREEN_FILES
