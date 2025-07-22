@@ -161,6 +161,7 @@ void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
 
 void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
 {
+    fmDebug() << "Vault: Encryption finished - success:" << success << "message:" << msg;
     waterProgress->stop();
     widgetOne->setVisible(false);
     widgetTow->setVisible(false);
@@ -176,6 +177,7 @@ void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
 
     using namespace dfmplugin_utils;
     if (success) {   // 创建保险箱成功
+        fmDebug() << "Vault: Vault creation completed successfully";
         waterProgress->setValue(100);
         encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
         tipsThree->setText(tr("The setup is complete"));
@@ -188,6 +190,7 @@ void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
 
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
     } else {
+        fmWarning() << "Vault: Vault creation failed:" << msg;
         encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(100, 100));
         tipsThree->setText(msg);
         finishedBtn->setText(tr("Close"));
@@ -201,7 +204,9 @@ void VaultActiveFinishedView::setProgressValue(int value)
 
 void VaultActiveFinishedView::slotEncryptVault()
 {
+    fmDebug() << "Vault: Encrypt vault slot called";
     if (finishedBtn->text() == tr("Encrypt")) {
+        fmDebug() << "Vault: Starting vault encryption process";
         // 异步授权
         VaultUtils::instance().showAuthorityDialog(kPolkitVaultCreate);
         connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
@@ -211,6 +216,7 @@ void VaultActiveFinishedView::slotEncryptVault()
         finishedBtn->setEnabled(false);
     } else {
         if (finishedBtn->text() == tr("OK")) {
+            fmDebug() << "Vault: Switching to vault main page after successful creation";
             // 切换到保险箱主页面
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
             VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);

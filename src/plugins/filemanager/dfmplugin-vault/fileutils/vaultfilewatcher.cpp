@@ -15,6 +15,7 @@ using namespace dfmplugin_vault;
 VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new VaultFileWatcherPrivate(VaultHelper::vaultToLocalUrl(url), this), parent)
 {
+    fmDebug() << "Vault: Creating file watcher for URL:" << url.toString();
     dptr = dynamic_cast<VaultFileWatcherPrivate *>(d.data());
     QUrl localUrl = VaultHelper::vaultToLocalUrl(url);
     dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(localUrl);
@@ -26,6 +27,7 @@ VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
             this, &VaultFileWatcher::onFileRename, Qt::QueuedConnection);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::subfileCreated,
             this, &VaultFileWatcher::onSubfileCreated, Qt::QueuedConnection);
+    fmDebug() << "Vault: File watcher created successfully";
 }
 
 VaultFileWatcher::~VaultFileWatcher()

@@ -22,6 +22,7 @@ using namespace dfmplugin_vault;
 BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
+    fmDebug() << "Vault: Creating basic property widget";
     initUI();
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
@@ -30,12 +31,14 @@ BasicWidget::BasicWidget(QWidget *parent)
 
 BasicWidget::~BasicWidget()
 {
+    fmDebug() << "Vault: Destroying basic property widget";
     fileCalculationUtils->stop();
     fileCalculationUtils->deleteLater();
 }
 
 void BasicWidget::initUI()
 {
+    fmDebug() << "Vault: Initializing basic property widget UI";
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
 

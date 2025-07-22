@@ -193,6 +193,7 @@ bool VaultMenuScene::create(QMenu *parent)
 
 void VaultMenuScene::updateState(QMenu *parent)
 {
+    fmDebug() << "Vault: Updating menu state";
     AbstractMenuScene::updateState(parent);
     if (d->isEmptyArea) {
         fmDebug() << "Vault: Filtering menu for empty area";

@@ -128,7 +128,7 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
     if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
         result = false;
         emit signalUnlockVault(d->activeState.value(3));
-        fmWarning() << "Vault: unlock vault failed!";
+        fmWarning() << "Vault: Unlock vault failed with error code:" << d->activeState.value(3);
     } else {
         result = true;
         d->curState = kUnlocked;
@@ -177,7 +177,7 @@ bool FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 
 bool FileEncryptHandle::createDirIfNotExist(QString path)
 {
-    fmDebug() << "Vault: Checking directory existence:" << path;
+    fmDebug() << "Vault: Checking vault directory existence";
     if (!QFile::exists(path)) {
         QDir().mkpath(path);
     } else {
@@ -186,7 +186,7 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
             fmCritical() << "Vault: Create vault dir failed, dir is not empty!";
             return false;
         }
-        fmDebug() << "Vault: Directory already exists and is empty:" << path;
+        fmDebug() << "Vault: The vault directory already exists and is empty";
     }
     return true;
 }

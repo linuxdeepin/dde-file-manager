@@ -91,6 +91,7 @@ QString VaultRemoveByPasswordView::titleText() const
 
 void VaultRemoveByPasswordView::buttonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Remove by password view button clicked - index:" << index << "text:" << text;
     Q_UNUSED(text)
 
     switch (index) {

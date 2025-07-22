@@ -45,6 +45,7 @@ QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString 
 
 bool OperatorCenter::runCmd(const QString &cmd)
 {
+    fmDebug() << "Vault: Executing command:" << cmd;
     QProcess process;
     int mescs = 10000;
     if (cmd.startsWith(kRootProxy)) {
@@ -111,11 +112,11 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
 
 bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCount)
 {
-    fmDebug() << "Vault: Statistics files in directory:" << dirPath;
+    fmDebug() << "Vault: Statistics files in vault directory";
 
     QDir dir(dirPath);
     if (!dir.exists()) {
-        fmWarning() << "Vault: Directory does not exist:" << dirPath;
+        fmWarning() << "Vault: Vault directory does not exist";
         return false;
     }
 
@@ -135,7 +136,7 @@ bool OperatorCenter::statisticsFilesInDir(const QString &dirPath, int *filesCoun
 
 void OperatorCenter::removeDir(const QString &dirPath, int filesCount, int *removedFileCount, int *removedDirCount)
 {
-    fmDebug() << "Vault: Removing directory:" << dirPath << "total files:" << filesCount;
+    fmDebug() << "Vault: Removing vault directory, total files:" << filesCount;
 
     QDir dir(dirPath);
     if (!dir.exists() || filesCount < 1) {
@@ -640,6 +641,8 @@ QString OperatorCenter::autoGeneratePassword(int length)
     for (int i = 0; i < nCount; ++i) {
         strPassword += strAllChar.at(::rand() % 52);
     }
+
+    fmDebug() << "Vault: Generated password success";
     return strPassword;
 }
 
@@ -767,7 +770,7 @@ QString OperatorCenter::passwordFromKeyring()
 
 void OperatorCenter::removeVault(const QString &basePath)
 {
-    fmDebug() << "Vault: Removing vault from base path:" << basePath;
+    fmDebug() << "Vault: Removing vault from base path";
 
     if (basePath.isEmpty()) {
         fmWarning() << "Vault: Base path is empty, cannot remove vault";

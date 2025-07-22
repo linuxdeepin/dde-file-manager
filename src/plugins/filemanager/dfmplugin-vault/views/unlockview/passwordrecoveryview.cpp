@@ -55,6 +55,7 @@ void PasswordRecoveryView::setResultsPage(QString password)
 
 void PasswordRecoveryView::buttonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Password recovery view button clicked - index:" << index << "text:" << text;
     switch (index) {
     case 0:
         fmDebug() << "Vault: Go to Unlock button clicked, jumping to unlock page";

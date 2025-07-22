@@ -96,6 +96,7 @@ void RecoveryKeyView::showAlertMessage(const QString &text, int duration)
 
 void RecoveryKeyView::buttonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Recovery key view button clicked - index:" << index << "text:" << text;
     if (index == 1) {   // unlock vault
         fmInfo() << "Vault: Unlock button clicked, starting unlock process";
 

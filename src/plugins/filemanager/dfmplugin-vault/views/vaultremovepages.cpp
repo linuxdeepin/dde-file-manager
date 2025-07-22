@@ -47,20 +47,26 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
 
 void VaultRemovePages::pageSelect(RemoveWidgetType type)
 {
+    fmDebug() << "Vault: Selecting remove page type:" << static_cast<int>(type);
     switch (type) {
     case kPasswordWidget: {
+        fmDebug() << "Vault: Showing password widget";
         showPasswordWidget();
     } break;
     case kRecoveryKeyWidget: {
+        fmDebug() << "Vault: Showing recovery key widget";
         showRecoveryKeyWidget();
     } break;
     case kRemoveProgressWidget: {
+        fmDebug() << "Vault: Showing remove progress widget";
         showRemoveProgressWidget();
     } break;
     case kNoneWidget: {
+        fmDebug() << "Vault: Showing none widget";
         showNodeWidget();
     } break;
     default:
+        fmDebug() << "Vault: Unknown remove widget type:" << static_cast<int>(type);
         break;
     }
 }

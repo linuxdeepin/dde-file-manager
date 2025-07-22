@@ -16,6 +16,7 @@ VaultUtils &VaultUtils::instance()
 
 void VaultUtils::showAuthorityDialog(const QString &actionId)
 {
+    fmDebug() << "Vault: Showing authority dialog for action:" << actionId;
     auto ins = Authority::instance();
     ins->checkAuthorization(actionId,
                             UnixProcessSubject(getpid()),
@@ -26,13 +27,17 @@ void VaultUtils::showAuthorityDialog(const QString &actionId)
 
 void VaultUtils::slotCheckAuthorizationFinished(Authority::Result result)
 {
+    fmDebug() << "Vault: Authorization check finished with result:" << static_cast<int>(result);
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultUtils::slotCheckAuthorizationFinished);
 
-    if (Authority::Yes != result)
+    if (Authority::Yes != result) {
+        fmWarning() << "Vault: Authorization denied";
         emit resultOfAuthority(false);
-    else
+    } else {
+        fmDebug() << "Vault: Authorization granted";
         emit resultOfAuthority(true);
+    }
 }
 
 VaultUtils::VaultUtils(QObject *parent)

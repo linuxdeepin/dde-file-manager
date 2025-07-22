@@ -21,6 +21,7 @@ VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
     : DDialog(parent),
       platformWindowHandle(new DPlatformWindowHandle(this, this))
 {
+    fmDebug() << "Vault: Creating property dialog";
     platformWindowHandle->setEnableSystemResize(true);
     setFixedWidth(kDialogWidth);
     initInfoUI();
@@ -29,10 +30,12 @@ VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
 
 VaultPropertyDialog::~VaultPropertyDialog()
 {
+    fmDebug() << "Vault: Property dialog destroyed";
 }
 
 void VaultPropertyDialog::initInfoUI()
 {
+    fmDebug() << "Vault: Initializing property dialog UI";
     scrollArea = new QScrollArea();
     scrollArea->setObjectName("PropertyDialog-QScrollArea");
     QPalette palette = scrollArea->viewport()->palette();
@@ -135,6 +138,7 @@ void VaultPropertyDialog::processHeight(int height)
 
 void VaultPropertyDialog::selectFileUrl(const QUrl &url)
 {
+    fmDebug() << "Vault: Selecting file URL for property dialog:" << url.toString();
     createHeadUI(url);
     createBasicWidget(url);
 }

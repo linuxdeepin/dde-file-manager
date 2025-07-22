@@ -111,6 +111,7 @@ void UnlockView::initUI()
 
 void UnlockView::buttonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Unlock view button clicked - index:" << index << "text:" << text;
     if (index == 1) {
         emit sigBtnEnabled(1, false);
 

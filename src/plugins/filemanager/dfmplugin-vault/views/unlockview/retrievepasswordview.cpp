@@ -151,6 +151,7 @@ QString RetrievePasswordView::titleText()
 
 void RetrievePasswordView::buttonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Retrieve password view button clicked - index:" << index << "text:" << text;
     switch (index) {
     case 0:
         fmDebug() << "Vault: Back button clicked, jumping to unlock page";
