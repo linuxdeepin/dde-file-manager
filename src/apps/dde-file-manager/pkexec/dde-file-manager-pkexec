@@ -4,86 +4,109 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-function get_scale_factor() {
-    user_name=$(logname)
-    scaling=$(sudo -u "$user_name" dbus-launch gsettings get com.deepin.xsettings scale-factor)
-
-    if (( $(bc <<< "$scaling >= 1 && $scaling <= 10") )); then
-        echo $scaling
-    else
-        echo "Error: Invalid scaling factor: $scaling" >&2
-        echo 1
-    fi
-}
+# [NOTE] 增加 set -e，让脚本在出错时立即退出，方便调试
+set -e
 
 function run_pkexec() {
-        # 创建临时文件保存原始会话类型
-        TEMP_SESSION_FILE="/tmp/.dde-fm-session-$$"
-        echo "$XDG_SESSION_TYPE" > "$TEMP_SESSION_FILE"
-        
-        xhost +SI:localuser:root
-        echo "run in pkexec: $@"
-        pkexec --disable-internal-agent "$@" `id -u` "$TEMP_SESSION_FILE"
-        
-        # 清理临时文件
-        rm -f "$TEMP_SESSION_FILE"
-        
-        xhost -SI:localuser:root
-        xhost
+    # 使用一个临时文件来传递所有必要的环境变量，而不仅仅是会话类型
+    local TEMP_ENV_FILE="/tmp/.dde-fm-env-$$"
+    
+    echo "Capturing environment before elevating..."
+    # 捕获 DISPLAY, XAUTHORITY, 和 XDG_SESSION_TYPE
+    echo "export DISPLAY='$DISPLAY'" > "$TEMP_ENV_FILE"
+    echo "export XAUTHORITY='$XAUTHORITY'" >> "$TEMP_ENV_FILE"
+    echo "export XDG_SESSION_TYPE='$XDG_SESSION_TYPE'" >> "$TEMP_ENV_FILE"
+    
+    # [NOTE] xhost 仍然保留，作为一种备用授权机制
+    xhost +SI:localuser:root &>/dev/null
+    
+    echo "run in pkexec: $@"
+    # 将 uid 和临时环境文件路径作为最后两个参数传递，确保解析的稳定性
+    pkexec --disable-internal-agent "$0" "$@" "$(id -u)" "$TEMP_ENV_FILE"
+    
+    # 清理
+    rm -f "$TEMP_ENV_FILE"
+    xhost -SI:localuser:root &>/dev/null
 }
 
 function run_app() {
-        echo "param in run_app: $@"
-        user_name=$(logname)
-        uid=$(id -u "$user_name")
-        echo "runner uid: $uid"
-        
-        # 获取原始会话类型
-        ORIGINAL_SESSION_TYPE=""
-        TEMP_SESSION_FILE="$2"  # 第二个参数是临时文件路径
-        if [ -f "$TEMP_SESSION_FILE" ]; then
-            ORIGINAL_SESSION_TYPE=$(cat "$TEMP_SESSION_FILE")
-            echo "Read original session type: $ORIGINAL_SESSION_TYPE"
-        else
-            ORIGINAL_SESSION_TYPE="$XDG_SESSION_TYPE"
-            echo "Using current session type: $ORIGINAL_SESSION_TYPE"
-        fi
-        
-        export XDG_RUNTIME_DIR=/run/user/$uid
-        
-        # Set environment variables based on session type
-        if [ "$ORIGINAL_SESSION_TYPE" == "x11" ]; then
-            export DISPLAY=:0
-            export QT_QPA_PLATFORM=dxcb;xcb
-            export GDK_BACKEND=x11
-            export XDG_SESSION_TYPE=x11
-        else
-            export WAYLAND_DISPLAY=wayland-0
-            export DISPLAY=:0
-            export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
-            export XDG_SESSION_TYPE=wayland
-            export QT_QPA_PLATFORM=
-            export GDK_BACKEND=x11
-        fi
-        
-        export $(dbus-launch)
+    # 健壮的参数解析
+    # $1: 原始用户 UID
+    # $2: 临时环境文件路径
+    # ${@:3}: 传递给文件管理器的原始参数
+    local uid="$1"
+    local TEMP_ENV_FILE="$2"
+    shift 2 # 移除 uid 和 temp_file_path，剩下的是应用参数
+    local app_args=("$@")
 
-        scale_factor=$(get_scale_factor)
-        if [ "$scale_factor" != "1" ]; then
-            echo "export scaling: $scale_factor"
-            # 暂时屏蔽，v25 下造成缩放异常
-            # export QT_SCALE_FACTOR=$scale_factor
-        fi
+    local user_name
+    user_name=$(getent passwd "$uid" | cut -d: -f1)
+    echo "Running as root for user: $user_name (UID: $uid)"
+    
+    # 从临时文件中加载关键环境变量
+    if [ -f "$TEMP_ENV_FILE" ]; then
+        echo "Loading environment from $TEMP_ENV_FILE"
+        source "$TEMP_ENV_FILE"
+        echo "Environment loaded: DISPLAY=$DISPLAY, XDG_SESSION_TYPE=$XDG_SESSION_TYPE"
+    else
+        # 如果文件丢失，启动将很可能失败，这里只做警告
+        echo "Error: Temp env file not found! GUI application will likely fail." >&2
+        # 不再硬编码，让它自然失败会暴露出更准确的错误
+    fi
+    
+    # 正确设置 D-Bus 和运行时目录，这是连接用户桌面的关键
+    export XDG_RUNTIME_DIR="/run/user/$uid"
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+    
+    # 根据会话类型设置环境
+    if [ "$XDG_SESSION_TYPE" == "x11" ]; then
+        # DISPLAY 和 XAUTHORITY 已通过 source 加载
+        export QT_QPA_PLATFORM=dxcb:xcb
+        export GDK_BACKEND=x11
+    else
+        # Wayland 逻辑
+        export WAYLAND_DISPLAY=wayland-0
+        # DISPLAY 和 XAUTHORITY 已加载，用于 XWayland 兼容
+        export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
+        export XDG_SESSION_TYPE=wayland
+        export QT_QPA_PLATFORM=wayland
+        export GDK_BACKEND=wayland,x11
+    fi
 
-        file-manager.sh "$1" -w "$(pwd)"
+
+    # [NOTE] 假设 dde-file-manager 是最终执行的程序
+    echo "Starting dde-file-manager with args: ${app_args[*]} and CWD: $(pwd)"
+    file-manager.sh "${app_args[@]}" -w "$(pwd)"
+  
 }
+
+# --- Main script logic ---
 
 echo "run dde-file-manager in $XDG_SESSION_TYPE"
 echo "current file: $0"
-if [ x$(id -u) != "x0" ];then
-        run_pkexec "$0" "$@"
-        exit 0
+
+if [ "$(id -u)" -ne 0 ];then
+    run_pkexec "$0" "$@"
+    exit 0
 fi
 
-echo "run app: $@"
-run_app "$@"
+# --- 此处代码以 root 权限执行 ---
+echo "Running with root privileges."
+
+# 健壮地从末尾解析脚本自身添加的参数
+args_array=("$@")
+num_args=${#args_array[@]}
+
+# 最后一个参数是临时文件路径
+temp_file_path="${args_array[$num_args-1]}"
+# 倒数第二个参数是UID
+uid="${args_array[$num_args-2]}"
+
+# 原始参数是除了脚本名、uid、tempfile之外的所有内容
+# ($0 是脚本名，所以从索引1开始，长度为 num_args-3)
+original_params=()
+if [ "$num_args" -gt 2 ]; then
+    original_params=("${args_array[@]:1:$num_args-3}")
+fi
+
+run_app "$uid" "$temp_file_path" "${original_params[@]}"
