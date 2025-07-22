@@ -148,6 +148,7 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
 
 void VaultEventReceiver::handleCurrentUrlChanged(const quint64 &winId, const QUrl &url)
 {
+    fmDebug() << "Vault: Handling URL change event - windowId:" << winId << "url:" << url.toString();
     auto window = FMWindowsIns.findWindowById(winId);
 
     if (url.scheme() == VaultHelper::instance()->scheme() && window) {
@@ -215,6 +216,7 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
             DialogManagerInstance->showErrorDialog(tr("Vault"), tr("Vault not available because cryfs not installed!"));
             return true;
         } else {
+            fmDebug() << "Vault: Unknown vault state, blocking URL change";
             return true;
         }
     }
@@ -232,6 +234,7 @@ bool VaultEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
 
 bool VaultEventReceiver::handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles)
 {
+    fmDebug() << "Vault: Handling path to virtual conversion, file count:" << files.size();
     if (files.isEmpty()) {
         fmDebug() << "Vault: Empty files list";
         return false;

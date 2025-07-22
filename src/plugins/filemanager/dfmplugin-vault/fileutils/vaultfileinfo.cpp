@@ -203,8 +203,10 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
 
 QVariantHash VaultFileInfo::extraProperties() const
 {
-    if (!proxy)
+    if (!proxy) {
+        fmDebug() << "Vault: No proxy available for extraProperties, URL:" << url.toString();
         return ProxyFileInfo::extraProperties();
+    }
     return proxy->extraProperties();
 }
 
@@ -225,8 +227,10 @@ QIcon VaultFileInfo::fileIcon()
         return QIcon::fromTheme(iconName);
     }
 
-    if (!proxy)
+    if (!proxy) {
+        fmDebug() << "Vault: No proxy available for fileIcon, URL:" << url.toString();
         return ProxyFileInfo::fileIcon();
+    }
     return proxy->fileIcon();
 }
 
@@ -243,8 +247,10 @@ QString VaultFileInfo::viewOfTip(const FileInfo::ViewType type) const
 
 qint64 VaultFileInfo::size() const
 {
-    if (!proxy)
+    if (!proxy) {
+        fmDebug() << "Vault: No proxy available for size, URL:" << url.toString();
         return ProxyFileInfo::size();
+    }
     return proxy->size();
 }
 
@@ -284,10 +290,12 @@ QString VaultFileInfo::nameOf(const NameInfoType type) const
         if (d->isRoot) {
             return iconName;
         } else {
-            if (!proxy)
+            if (!proxy) {
+                fmDebug() << "Vault: No proxy available for icon name, URL:" << url.toString();
                 return const_cast<VaultFileInfo *>(this)->fileMimeType(QMimeDatabase::MatchDefault).iconName();
-            else
+            } else {
                 return proxy->nameOf(NameInfoType::kIconName);
+            }
         }
     }
     default:
@@ -301,9 +309,11 @@ QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
     case DisPlayInfoType::kFileDisplayName:
         if (d->isRoot)
             return QObject::tr("File Vault");
-        if (proxy)
-            return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
-        return ProxyFileInfo::displayOf(type);
+        if (!proxy) {
+            fmDebug() << "Vault: No proxy available for display name, URL:" << url.toString();
+            return ProxyFileInfo::displayOf(type);
+        }
+        return proxy->displayOf(DisPlayInfoType::kFileDisplayName);
     case DisPlayInfoType::kFileDisplayPath:
         return d->fileDisplayPath();
     default:

@@ -202,6 +202,7 @@ void VaultActiveSaveKeyFileView::initConnect()
 
 void VaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
 {
+    fmDebug() << "Vault: Select radio button triggered, button text:" << btn->text();
     if (btn == defaultPathRadioBtn) {
         selectfileSavePathEdit->setEnabled(false);
         nextBtn->setEnabled(true);
@@ -215,6 +216,7 @@ void VaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
 
 void VaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
 {
+    fmDebug() << "Vault: File chooser edit changed, fileName:" << fileName;
     QDir dir(fileName);
     dir.cdUp();
     QString path = dir.absolutePath();
@@ -224,6 +226,7 @@ void VaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
     if (temp != QFileDevice::WriteUser) {
         nextBtn->setEnabled(false);
         otherRadioBtnHitMsg->show();
+        fmWarning() << "Vault: No write permission for path:" << path;
     } else if (!fileName.isEmpty()) {
         otherRadioBtnHitMsg->hide();
         nextBtn->setEnabled(true);

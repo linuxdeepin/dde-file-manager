@@ -241,6 +241,7 @@ bool VaultHelper::enableUnlockVault()
 
 void VaultHelper::appendWinID(const quint64 &winId)
 {
+    fmDebug() << "Vault: Adding window ID:" << winId;
     currentWinID = winId;
     if (!winIDs.contains(winId))
         winIDs.append(winId);
@@ -369,17 +370,18 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
 
     if (url.path().contains(instance()->sourceRootUrl().path())) {
         QUrl localUrl = QUrl::fromLocalFile(url.path());
-        fmDebug() << "Vault: Direct path conversion - local URL:" << localUrl.toString();
+        fmDebug() << "Vault: Direct path conversion";
         return localUrl;
     } else {
         QUrl localUrl = QUrl::fromLocalFile(instance()->sourceRootUrl().path() + url.path());
-        fmDebug() << "Vault: Path concatenation - local URL:" << localUrl.toString();
+        fmDebug() << "Vault: Path concatenation";
         return localUrl;
     }
 }
 
 void VaultHelper::createVault(QString &password)
 {
+    fmDebug() << "Vault: Starting vault creation process";
     const EncryptType &type = FileEncryptHandle::instance()->encryptAlgoTypeOfGroupPolicy();
     FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
@@ -482,6 +484,7 @@ void VaultHelper::openWindow()
 
 void VaultHelper::openWidWindow(quint64 winID, const QUrl &url)
 {
+    fmDebug() << "Vault: Opening vault window, windowId:" << winID << "url:" << url.toString();
     VaultEventCaller::sendItemActived(winID, url);
 }
 
@@ -493,6 +496,7 @@ void VaultHelper::newOpenWindow()
 
 void VaultHelper::slotlockVault(int state)
 {
+    fmDebug() << "Vault: Lock vault slot called with state:" << state;
     if (state == 0) {
         fmDebug() << "Vault: Vault locked successfully, notifying components";
 

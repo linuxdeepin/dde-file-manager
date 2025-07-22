@@ -123,15 +123,21 @@ void VaultVisibleManager::updateSideBarVaultItem()
 
 void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
+    fmDebug() << "Vault: Window opened event received, window ID:" << winID;
     auto window = FMWindowsIns.findWindowById(winID);
 
-    if (!window)
+    if (!window) {
+        fmDebug() << "Vault: Window not found for ID:" << winID;
         return;
+    }
 
-    if (window->sideBar())
+    if (window->sideBar()) {
+        fmDebug() << "Vault: Sidebar already available, updating vault item";
         updateSideBarVaultItem();
-    else
+    } else {
+        fmDebug() << "Vault: Sidebar not ready, connecting to install finished signal";
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &VaultVisibleManager::updateSideBarVaultItem, Qt::DirectConnection);
+    }
 }
 
 void VaultVisibleManager::removeSideBarVaultItem()

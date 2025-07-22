@@ -292,6 +292,7 @@ void VaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
 
 void VaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
+    fmDebug() << "Vault: Encryption type changed to index:" << index;
     if (index) {   // transparent encrypyion
         fmDebug() << "Vault: Switching to transparent encryption mode";
 

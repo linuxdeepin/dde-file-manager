@@ -40,8 +40,13 @@ VaultFileHelper::VaultFileHelper(QObject *parent)
 
 bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    if (target.scheme() != scheme())
+    fmDebug() << "Vault: Cut file operation requested, "
+              << "source count:" << sources.size() << "target:" << target.toString();
+
+    if (target.scheme() != scheme()) {
+        fmDebug() << "Vault: Target scheme mismatch, operation cancelled";
         return false;
+    }
 
     QList<QUrl> actualUrls;
     for (const QUrl &url : sources) {
@@ -61,8 +66,13 @@ bool VaultFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
 
 bool VaultFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    if (target.scheme() != scheme())
+    fmDebug() << "Vault: Copy file operation requested, "
+              << "source count:" << sources.size() << "target:" << target.toString();
+
+    if (target.scheme() != scheme()) {
+        fmDebug() << "Vault: Target scheme mismatch, operation cancelled";
         return false;
+    }
 
     QList<QUrl> actualUrls;
     for (const QUrl &url : sources) {
@@ -98,10 +108,17 @@ bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
 
 bool VaultFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
-    if (sources.isEmpty())
+    fmDebug() << "Vault: Delete file operation requested, "
+              << "source count:" << sources.size();
+
+    if (sources.isEmpty()) {
+        fmDebug() << "Vault: Empty sources list, operation cancelled";
         return false;
-    if (sources.first().scheme() != scheme())
+    }
+    if (sources.first().scheme() != scheme()) {
+        fmDebug() << "Vault: Source scheme mismatch, operation cancelled";
         return false;
+    }
 
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback = std::bind(&VaultFileHelper::callBackFunction, this, std::placeholders::_1);
     QList<QUrl> redirectedFileUrls = transUrlsToLocal(sources);
@@ -128,8 +145,13 @@ bool VaultFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
 
 bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const AbstractJobHandler::JobFlags flags)
 {
-    if (oldUrl.scheme() != scheme())
+    fmDebug() << "Vault: Rename file operation requested, "
+              << "old URL:" << oldUrl.toString() << "new URL:" << newUrl.toString();
+
+    if (oldUrl.scheme() != scheme()) {
+        fmDebug() << "Vault: Old URL scheme mismatch, operation cancelled";
         return false;
+    }
 
     const QUrl ourl = transUrlsToLocal({ oldUrl }).first();
     const QUrl nurl = transUrlsToLocal({ newUrl }).first();

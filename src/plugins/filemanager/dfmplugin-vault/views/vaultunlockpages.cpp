@@ -144,6 +144,7 @@ void VaultUnlockPages::pageSelect(PageType page)
 
 void VaultUnlockPages::onButtonClicked(int index, const QString &text)
 {
+    fmDebug() << "Vault: Button clicked - index:" << index << "text:" << text;
     if (getContent(0) == unlockView) {
         fmDebug() << "Vault: Forwarding button click to unlock view";
         unlockView->buttonClicked(index, text);

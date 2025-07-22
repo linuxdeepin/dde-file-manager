@@ -49,11 +49,13 @@ bool VaultEntryFileEntity::showProgress() const
 bool VaultEntryFileEntity::showTotalSize() const
 {
     if (VaultHelper::instance()->state(PathManager::vaultLockPath()) == VaultState::kUnlocked) {
+        fmDebug() << "Vault: Vault is unlocked, starting size calculation";
         showSizeState = true;
         QUrl url = VaultHelper::instance()->vaultToLocalUrl(VaultHelper::instance()->sourceRootUrl());
         fileCalculationUtils->start(QList<QUrl>() << url);
         return true;
     }
+    fmDebug() << "Vault: Vault is not unlocked, skipping size calculation";
     return false;
 }
 

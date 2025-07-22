@@ -23,6 +23,7 @@ VaultFileIteratorPrivate::VaultFileIteratorPrivate(const QUrl &url,
 {
     Q_UNUSED(nameFilters);
     Q_UNUSED(flags);
+    fmDebug() << "Vault: Creating file iterator for URL:" << url.toString();
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
     temp.setScheme(url.scheme());
 
@@ -31,8 +32,10 @@ VaultFileIteratorPrivate::VaultFileIteratorPrivate(const QUrl &url,
         fmWarning("Vault: create enumerator failed!");
         abort();
     }
+    fmDebug() << "Vault: File iterator created successfully";
 }
 
 VaultFileIteratorPrivate::~VaultFileIteratorPrivate()
 {
+    fmDebug() << "Vault: File iterator destroyed";
 }
