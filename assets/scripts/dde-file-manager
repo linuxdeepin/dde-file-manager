@@ -93,7 +93,9 @@ build_dbus_args() {
         local processed_arg="$arg"
         
         # 如果不是选项，且不是URL，且看起来像本地路径，则规范化
-        if [[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]] && ! is_url "$arg"; then
+        # 排除JSON格式的字符串（以{开头或[开头的结构化数据）
+        if [[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]] && ! is_url "$arg" && \
+           [[ ! "$arg" =~ ^\{.*\}$ ]] && [[ ! "$arg" =~ ^\[.*\]$ ]]; then
             processed_arg=$(get_canonical_path "$arg")
         fi
         
