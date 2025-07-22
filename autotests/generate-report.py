@@ -362,7 +362,7 @@ class TestReportGenerator:
         }
     
     def _build_coverage_tree(self, details: List[Dict]) -> Dict:
-        """构建简化的两级覆盖率结构：项目 -> 文件列表"""
+        """构建详细的模块覆盖率结构：支持plugins和services的细粒度拆分"""
         # 按模块分组文件
         modules = {}
         
@@ -378,14 +378,8 @@ class TestReportGenerator:
             if not self._is_source_file(relative_path):
                 continue
             
-            # 获取模块名（第一级目录）
-            path_parts = relative_path.split('/')
-            if len(path_parts) > 1:
-                module_name = path_parts[0]  # 如 "src", "include", "tests"
-                if module_name == "src" and len(path_parts) > 2:
-                    module_name = path_parts[1]  # 如 "dfm-base", "dfm-framework"
-            else:
-                module_name = "根目录"
+            # 智能解析模块名
+            module_name = self._extract_module_name(relative_path)
             
             if module_name not in modules:
                 modules[module_name] = {
@@ -433,6 +427,147 @@ class TestReportGenerator:
             module["files"].sort(key=lambda x: x["stats"]["line_coverage"], reverse=True)
         
         return modules
+    
+    def _extract_module_name(self, relative_path: str) -> str:
+        """智能提取模块名，支持plugins和services的细粒度拆分"""
+        path_parts = relative_path.split('/')
+        
+        if len(path_parts) <= 1:
+            return "根目录"
+        
+        # 处理src目录下的结构
+        if path_parts[0] == "src":
+            if len(path_parts) < 2:
+                return "src"
+            
+            second_level = path_parts[1]
+            
+            # 处理plugins目录：src/plugins/[plugin-name]
+            if second_level == "plugins" and len(path_parts) >= 3:
+                plugin_name = path_parts[2]
+                return f"Plugin: {self._format_plugin_name(plugin_name)}"
+            
+            # 处理services目录：src/services/[service-name]
+            elif second_level == "services" and len(path_parts) >= 3:
+                service_name = path_parts[2]
+                return f"Service: {self._format_service_name(service_name)}"
+            
+            # 处理其他src下的模块：dfm-base, dfm-framework等
+            else:
+                return self._format_module_name(second_level)
+        
+        # 处理tests目录下的结构
+        elif path_parts[0] == "tests":
+            if len(path_parts) < 2:
+                return "Tests"
+            
+            second_level = path_parts[1]
+            
+            # 处理tests/plugins目录
+            if second_level == "plugins" and len(path_parts) >= 3:
+                plugin_name = path_parts[2]
+                return f"Test: {self._format_plugin_name(plugin_name)}"
+            
+            # 处理tests/services目录
+            elif second_level == "services" and len(path_parts) >= 3:
+                service_name = path_parts[2]
+                return f"Test: {self._format_service_name(service_name)}"
+            
+            # 处理其他tests下的模块
+            else:
+                return f"Test: {self._format_module_name(second_level)}"
+        
+        # 处理include目录
+        elif path_parts[0] == "include":
+            if len(path_parts) >= 2:
+                return f"Include: {self._format_module_name(path_parts[1])}"
+            return "Include"
+        
+        # 处理autotests目录
+        elif path_parts[0] == "autotests":
+            if len(path_parts) >= 2:
+                second_level = path_parts[1]
+                
+                # 处理autotests/plugins目录
+                if second_level == "plugins" and len(path_parts) >= 3:
+                    plugin_name = path_parts[2]
+                    return f"AutoTest: {self._format_plugin_name(plugin_name)}"
+                
+                # 处理autotests/services目录
+                elif second_level == "services" and len(path_parts) >= 3:
+                    service_name = path_parts[2]
+                    return f"AutoTest: {self._format_service_name(service_name)}"
+                
+                # 处理其他autotests下的模块
+                else:
+                    return f"AutoTest: {self._format_module_name(second_level)}"
+            return "AutoTest"
+        
+        # 其他顶级目录
+        else:
+            return self._format_module_name(path_parts[0])
+    
+    def _format_plugin_name(self, plugin_name: str) -> str:
+        """格式化插件名称，使其更易读"""
+        # 移除常见前缀
+        if plugin_name.startswith('dfmplugin-'):
+            plugin_name = plugin_name[10:]  # 移除 'dfmplugin-'
+        elif plugin_name.startswith('ddplugin-'):
+            plugin_name = plugin_name[9:]   # 移除 'ddplugin-'
+        elif plugin_name.startswith('dfmdaemon-'):
+            plugin_name = plugin_name[10:]  # 移除 'dfmdaemon-'
+        
+        # 将连字符替换为空格并首字母大写
+        formatted = plugin_name.replace('-', ' ').title()
+        
+        # 特殊名称映射
+        name_mappings = {
+            'Avfsbrowser': 'AVFS Browser',
+            'Smbbrowser': 'SMB Browser',
+            'Myshares': 'My Shares',
+            'Fileoperations': 'File Operations',
+            'Propertydialog': 'Property Dialog',
+            'Detailspace': 'Detail Space',
+            'Dirshare': 'Directory Share',
+            'Trashcore': 'Trash Core',
+            'Titlebar': 'Title Bar',
+            'Wallpapersetting': 'Wallpaper Setting',
+            'Disk Encrypt Entry': 'Disk Encrypt Entry',
+            'Encrypt Manager': 'Encrypt Manager'
+        }
+        
+        return name_mappings.get(formatted, formatted)
+    
+    def _format_service_name(self, service_name: str) -> str:
+        """格式化服务名称，使其更易读"""
+        # 将连字符替换为空格并首字母大写
+        formatted = service_name.replace('-', ' ').title()
+        
+        # 特殊名称映射
+        name_mappings = {
+            'Accesscontrol': 'Access Control',
+            'Sharecontrol': 'Share Control',
+            'Mountcontrol': 'Mount Control',
+            'Diskencrypt': 'Disk Encrypt',
+            'Textindex': 'Text Index'
+        }
+        
+        return name_mappings.get(formatted, formatted)
+    
+    def _format_module_name(self, module_name: str) -> str:
+        """格式化通用模块名称"""
+        # 将连字符替换为空格并首字母大写
+        formatted = module_name.replace('-', ' ').title()
+        
+        # 特殊名称映射
+        name_mappings = {
+            'Dfm Base': 'DFM Base',
+            'Dfm Framework': 'DFM Framework',
+            'Dfm Extension': 'DFM Extension',
+            'Filedialog Core': 'File Dialog Core'
+        }
+        
+        return name_mappings.get(formatted, formatted)
     
     def _is_source_file(self, file_path: str) -> bool:
         """判断是否为源码文件"""
@@ -969,14 +1104,8 @@ class TestReportGenerator:
             line_coverage_color = self._get_coverage_color(stats["line_coverage"])
             func_coverage_color = self._get_coverage_color(stats["function_coverage"])
             
-            # 模块图标
-            module_icon = "📦"
-            if "dfm" in module["name"].lower():
-                module_icon = "🔧"
-            elif "test" in module["name"].lower():
-                module_icon = "🧪"
-            elif "include" in module["name"].lower():
-                module_icon = "📋"
+            # 智能选择模块图标
+            module_icon = self._get_module_icon(module["name"])
             
             html += f"""
             <div class="module-card card mb-3">
@@ -1061,6 +1190,102 @@ class TestReportGenerator:
             """
         
         return html
+    
+    def _get_module_icon(self, module_name: str) -> str:
+        """根据模块名称返回合适的图标"""
+        name_lower = module_name.lower()
+        
+        # Plugin icons
+        if name_lower.startswith("plugin:"):
+            plugin_name = name_lower[7:].strip()  # Remove "plugin:" prefix
+            
+            # Specific plugin icons
+            if "canvas" in plugin_name:
+                return "🖼️"  # Canvas/Desktop
+            elif "organizer" in plugin_name:
+                return "📂"  # File organizer
+            elif "wallpaper" in plugin_name:
+                return "🌅"  # Wallpaper
+            elif "background" in plugin_name:
+                return "🎨"  # Background
+            elif "menu" in plugin_name:
+                return "📋"  # Menu
+            elif "search" in plugin_name:
+                return "🔍"  # Search
+            elif "bookmark" in plugin_name:
+                return "⭐"  # Bookmark
+            elif "recent" in plugin_name:
+                return "⏰"  # Recent
+            elif "trash" in plugin_name:
+                return "🗑️"  # Trash
+            elif "burn" in plugin_name or "optical" in plugin_name:
+                return "💿"  # Optical/Burn
+            elif "vault" in plugin_name or "encrypt" in plugin_name:
+                return "🔐"  # Encryption/Vault
+            elif "computer" in plugin_name:
+                return "💻"  # Computer
+            elif "sidebar" in plugin_name:
+                return "📑"  # Sidebar
+            elif "titlebar" in plugin_name:
+                return "📊"  # Title bar
+            elif "property" in plugin_name:
+                return "⚙️"  # Properties
+            elif "file" in plugin_name and "operation" in plugin_name:
+                return "✂️"  # File operations
+            elif "share" in plugin_name or "smb" in plugin_name:
+                return "🌐"  # Network/Share
+            elif "tag" in plugin_name:
+                return "🏷️"  # Tags
+            elif "emblem" in plugin_name:
+                return "🎖️"  # Emblems
+            elif "avfs" in plugin_name:
+                return "📁"  # Archive browser
+            else:
+                return "🔌"  # Generic plugin
+        
+        # Service icons
+        elif name_lower.startswith("service:"):
+            service_name = name_lower[8:].strip()  # Remove "service:" prefix
+            
+            if "access" in service_name and "control" in service_name:
+                return "🛡️"  # Access control
+            elif "share" in service_name and "control" in service_name:
+                return "🔗"  # Share control
+            elif "mount" in service_name and "control" in service_name:
+                return "📀"  # Mount control
+            elif "disk" in service_name and "encrypt" in service_name:
+                return "🔒"  # Disk encryption
+            elif "text" in service_name and "index" in service_name:
+                return "📝"  # Text indexing
+            else:
+                return "⚡"  # Generic service
+        
+        # Test modules
+        elif name_lower.startswith("test:") or name_lower.startswith("autotest:"):
+            return "🧪"  # Test modules
+        
+        # Include modules
+        elif name_lower.startswith("include:"):
+            return "📋"  # Include files
+        
+        # Core framework modules
+        elif "dfm" in name_lower:
+            if "base" in name_lower:
+                return "🏗️"  # Base framework
+            elif "framework" in name_lower:
+                return "🔧"  # Framework
+            elif "extension" in name_lower:
+                return "🧩"  # Extensions
+            else:
+                return "⚙️"  # Generic DFM module
+        
+        # File dialog
+        elif "dialog" in name_lower:
+            return "💬"  # Dialog
+        
+        # Default icon
+        else:
+            return "📦"  # Generic module
     
     def _get_coverage_color(self, percentage: float) -> str:
         """根据覆盖率百分比返回对应的颜色"""
