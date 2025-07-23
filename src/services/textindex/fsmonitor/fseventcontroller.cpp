@@ -88,10 +88,12 @@ void FSEventController::setEnabled(bool enabled)
 
 void FSEventController::setEnabledNow(bool enabled)
 {
-    if (enabled)
+    if (enabled) {
         setEnabled(enabled);
-    else
+    } else {
+        m_enabled = false;
         stopFSMonitoring();
+    }
 }
 
 void FSEventController::startFSMonitoring()

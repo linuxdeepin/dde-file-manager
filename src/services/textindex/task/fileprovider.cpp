@@ -46,9 +46,15 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
 
         QString currentPath = dirQueue.dequeue();
 
+        // 检查是否应该跳过此目录
+        if (IndexTraverseUtils::shouldSkipDirectory(currentPath)) {
+            fmDebug() << "[FileSystemProvider::traverse] Skipping directory:" << currentPath;
+            continue;
+        }
+
         // 检查是否是系统目录或绑定目录
         if (!IndexUtility::isDefaultIndexedDirectory(currentPath)) {
-            if (bindPathTable.contains(currentPath) || IndexTraverseUtils::shouldSkipDirectory(currentPath)) {
+            if (bindPathTable.contains(currentPath)) {
                 fmDebug() << "[FileSystemProvider::traverse] Skipping system/bind directory:" << currentPath;
                 continue;
             }
@@ -96,16 +102,25 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
                 continue;
             }
 
-            // 对于普通文件，只检查路径有效性
+            // 对于普通文件，检查路径有效性和文件扩展名
             if (S_ISREG(st.st_mode)) {
+                QString fileName = QString::fromUtf8(entry->d_name);
+                // 早期扩展名过滤 - 避免昂贵的路径验证
+                if (!IndexTraverseUtils::isSupportedFileExtension(fileName)) {
+                    continue;
+                }
+                
+                // 只有通过扩展名检查的文件才进行昂贵的路径验证
                 if (IndexTraverseUtils::isValidFile(fullPath)) {
                     handler(fullPath);
                     processedFiles++;
                 }
             }
-            // 对于目录，加入队列（后续会检查是否访问过）
+            // 对于目录，检查是否应该跳过，然后加入队列
             else if (S_ISDIR(st.st_mode)) {
-                dirQueue.enqueue(fullPath);
+                if (!IndexTraverseUtils::shouldSkipDirectory(fullPath)) {
+                    dirQueue.enqueue(fullPath);
+                }
             }
         }
     }
@@ -186,9 +201,14 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
             // 处理文件 - 只有通过扩展名检查的文件才进行昂贵的路径验证
             if (IndexTraverseUtils::isValidFile(path)
                 && IndexUtility::isPathInContentIndexDirectory(path)) {
-                handler(path);
-                processedFiles.insert(path);
-                initialFiles++;
+                // 检查是否已经处理过这个文件
+                if (!processedFiles.contains(path)) {
+                    handler(path);
+                    processedFiles.insert(path);
+                    initialFiles++;
+                } else {
+                    fmDebug() << "[MixedPathListProvider::traverse] Skipping duplicate file:" << path;
+                }
             } else {
                 fmDebug() << "[MixedPathListProvider::traverse] Skipping invalid or out-of-scope file:" << path;
             }

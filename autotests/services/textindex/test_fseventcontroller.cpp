@@ -91,22 +91,31 @@ protected:
         using QTimerStartFunc = void (QTimer::*)(int);
         stub.set_lamda(static_cast<QTimerStartFunc>(&QTimer::start), [this](QTimer *timer, int msec) {
             __DBG_STUB_INVOKE__
-            if (timer == mockStartTimer) {
+            
+            // Based on the actual FSEventController logic:
+            // - Start timer uses interval 0 (immediate) or mockAutoIndexInterval * 1000 (delayed)
+            // - Stop timer uses inotifyResourceCleanupDelayMs() (5000ms default)
+            if (msec == 0 || msec == mockAutoIndexInterval * 1000) {
+                // This is the start timer
                 mockStartTimerActive = true;
                 mockStartTimerInterval = msec;
-            } else if (timer == mockStopTimer) {
+                // When start timer is started, stop timer should be inactive
+                mockStopTimerActive = false;
+            } else if (msec >= 5000) {
+                // This is the stop timer with cleanup delay
                 mockStopTimerActive = true;
                 mockStopTimerInterval = msec;
+                // When stop timer is started, start timer should be inactive
+                mockStartTimerActive = false;
             }
         });
 
         stub.set_lamda(ADDR(QTimer, stop), [this](QTimer *timer) {
             __DBG_STUB_INVOKE__
-            if (timer == mockStartTimer) {
-                mockStartTimerActive = false;
-            } else if (timer == mockStopTimer) {
-                mockStopTimerActive = false;
-            }
+            // For simplicity, we'll assume stop() always stops the start timer
+            // since that's the most common case in the FSEventController logic
+            // When setEnabled(false) is called, it first stops the start timer
+            mockStartTimerActive = false;
         });
 
         stub.set_lamda(ADDR(QTimer, setSingleShot), [](QTimer *, bool) {

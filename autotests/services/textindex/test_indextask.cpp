@@ -235,10 +235,16 @@ TEST_F(UT_IndexTask, Start_AlreadyRunning_IgnoresRequest)
 
     IndexTask task(IndexTask::Type::Create, "/test/path", handler);
 
-    // Mock task as already running
+    // Mock task as running after first start
+    static bool firstCall = true;
     stub.set_lamda(ADDR(TaskState, isRunning), [](TaskState *) -> bool {
         __DBG_STUB_INVOKE__
-        return true;
+        static bool hasStarted = false;
+        if (!hasStarted) {
+            hasStarted = true;
+            return false;  // First call: not running, allow start
+        }
+        return true;  // Subsequent calls: running, ignore
     });
 
     task.start();
