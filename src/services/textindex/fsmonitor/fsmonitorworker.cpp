@@ -94,7 +94,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
     // Capture by value to avoid accessing destroyed object
     auto capturedMaxResults = maxResultsCount;
     auto capturedExclusionChecker = exclusionChecker;
-    
+
     auto scanOperation = [capturedMaxResults, capturedExclusionChecker]() -> QStringList {
         SearchResultList directories;
         auto status = DFMSEARCH::Global::fileNameIndexStatus();
