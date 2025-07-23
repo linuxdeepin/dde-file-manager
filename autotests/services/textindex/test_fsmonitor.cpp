@@ -17,6 +17,7 @@
 
 #include "fsmonitor/fsmonitor.h"
 #include "fsmonitor/fsmonitorworker.h"
+#include "fsmonitor/fsmonitor_p.h"
 #include "utils/textindexconfig.h"
 
 #include <dfm-base/utils/protocolutils.h>
@@ -363,6 +364,7 @@ TEST_F(UT_FSMonitor, FastScan_SetAndGet_ShouldWork)
     EXPECT_TRUE(monitor.useFastScan());
 
     // Test setting when not active
+    monitor.d_ptr->active = false;
     monitor.setUseFastScan(false);
     EXPECT_FALSE(monitor.useFastScan());
 
