@@ -91,7 +91,11 @@ void FSMonitorWorker::tryFastDirectoryScan()
     fastScanInProgress = true;
 
     // Create a lambda for the async operation
-    auto scanOperation = [this]() -> QStringList {
+    // Capture by value to avoid accessing destroyed object
+    auto capturedMaxResults = maxResultsCount;
+    auto capturedExclusionChecker = exclusionChecker;
+    
+    auto scanOperation = [capturedMaxResults, capturedExclusionChecker]() -> QStringList {
         SearchResultList directories;
         auto status = DFMSEARCH::Global::fileNameIndexStatus();
 
@@ -108,7 +112,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
         QObject holder;
         SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
         SearchOptions options;
-        options.setMaxResults(maxResultsCount);
+        options.setMaxResults(capturedMaxResults);
         options.setSyncSearchTimeout(120);
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
@@ -125,7 +129,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
         QStringList filteredDirs;
         for (const auto &dir : std::as_const(directories)) {
             const QString &path = dir.path();
-            if (!exclusionChecker(path)) {
+            if (!capturedExclusionChecker(path)) {
                 filteredDirs << path;
             }
         }
