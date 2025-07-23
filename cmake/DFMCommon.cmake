@@ -18,6 +18,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-needed")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -Werror=return-type")
 
 # Common definitions
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(COMPILE_ON_V2X TRUE)
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 add_definitions(-DENABLE_TESTING)

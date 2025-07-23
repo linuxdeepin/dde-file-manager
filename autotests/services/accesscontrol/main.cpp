@@ -9,5 +9,3 @@
 #include "dfm_test_main.h"
 
 DFM_TEST_MAIN(accesscontrol_service)
-
- 
