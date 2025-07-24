@@ -34,7 +34,7 @@ class TestReportGenerator:
         # Initialize parsers and generators
         self.test_parser = TestOutputParser(self.report_dir)
         self.coverage_parser = CoverageParser(self.build_dir, self.report_dir, self.project_root)
-        self.html_generator = HtmlReportGenerator(self.build_dir)
+        self.html_generator = HtmlReportGenerator(self.build_dir, self.project_root)
     
     def parse_test_output(self, test_passed: bool, test_duration: int) -> Dict:
         """Parse test output using TestOutputParser"""

@@ -23,8 +23,9 @@ from ..utils.file_utils import sanitize_id
 class HtmlReportGenerator:
     """Generate HTML test reports with navigation"""
     
-    def __init__(self, build_dir: Path):
+    def __init__(self, build_dir: Path, project_root: Path = None):
         self.build_dir = build_dir
+        self.project_root = project_root or build_dir.parent
     
     def generate_html_report(self, test_info: Dict, coverage_info: Dict, build_info: Dict) -> str:
         """Generate complete HTML report with global navigation"""
@@ -447,6 +448,9 @@ class HtmlReportGenerator:
         # Generate module navigation
         module_nav_html = self._generate_module_navigation(coverage_info["tree_structure"])
         
+        # Generate floating navigation button
+        floating_nav_button = self._generate_floating_nav_button()
+        
         # Generate module cards
         modules_html = self._generate_coverage_modules_html(coverage_info["tree_structure"])
         
@@ -454,11 +458,9 @@ class HtmlReportGenerator:
         <div class="mt-4" id="coverage-details-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5>📁 模块覆盖率详情</h5>
-                <button class="btn btn-outline-primary btn-sm" id="toggleModuleNavigation">
-                    <i class="fas fa-list"></i> 模块导航
-                </button>
             </div>
             {module_nav_html}
+            {floating_nav_button}
             <div class="coverage-modules">
                 {modules_html}
             </div>
@@ -467,13 +469,31 @@ class HtmlReportGenerator:
         
         return coverage_details_html
     
+    def _generate_floating_nav_button(self) -> str:
+        """Generate floating navigation button that's always accessible"""
+        return """
+        <!-- Floating Module Navigation Button -->
+        <div id="floatingNavButton" class="floating-nav-button">
+            <button class="btn btn-primary btn-lg" id="toggleModuleNavigation" title="Module Navigation">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+        """
+    
     def _generate_module_navigation(self, modules: Dict) -> str:
-        """Generate module navigation panel"""
+        """Generate module navigation panel with detailed plugin categorization"""
         
-        # Group modules by type
-        plugin_modules = []
+        # Group modules by type with detailed plugin categorization
+        plugin_categories = {
+            "daemon": [],
+            "desktop": [],
+            "filemanager": [],
+            "common": [],
+            "filedialog": []
+        }
         service_modules = []
         core_modules = []
+        test_modules = []
         
         for module_name, module_data in modules.items():
             stats = module_data["stats"]
@@ -488,16 +508,43 @@ class HtmlReportGenerator:
             }
             
             if module_name.startswith("Plugin:"):
-                plugin_modules.append(module_info)
+                # Categorize plugins based on directory structure from module name
+                plugin_info_str = module_name[8:]  # Remove "Plugin: " prefix
+                
+                # Extract category from module name if present (e.g., "Plugin Name (category)")
+                if "(" in plugin_info_str and ")" in plugin_info_str:
+                    category = plugin_info_str.split("(")[-1].split(")")[0].lower()
+                    if category in plugin_categories:
+                        plugin_categories[category].append(module_info)
+                    else:
+                        plugin_categories["common"].append(module_info)
+                else:
+                    # Fallback: try to categorize based on plugin name patterns
+                    plugin_name_lower = plugin_info_str.lower()
+                    if any(name in plugin_name_lower for name in ["ddplugin", "desktop", "canvas", "organizer", "wallpaper", "background"]):
+                        plugin_categories["desktop"].append(module_info)
+                    elif any(name in plugin_name_lower for name in ["filedialog", "dialog"]):
+                        plugin_categories["filedialog"].append(module_info)
+                    elif any(name in plugin_name_lower for name in ["daemon", "filemanager1"]):
+                        plugin_categories["daemon"].append(module_info)
+                    elif any(name in plugin_name_lower for name in ["dfmplugin"]):
+                        # Most dfmplugin are either filemanager or common, default to filemanager
+                        plugin_categories["filemanager"].append(module_info)
+                    else:
+                        plugin_categories["common"].append(module_info)
             elif module_name.startswith("Service:"):
                 service_modules.append(module_info)
+            elif module_name.startswith(("Test:", "AutoTest:")):
+                test_modules.append(module_info)
             else:
                 core_modules.append(module_info)
         
-        # Sort by coverage
-        plugin_modules.sort(key=lambda x: x["coverage"], reverse=True)
+        # Sort each category by coverage
+        for category in plugin_categories.values():
+            category.sort(key=lambda x: x["coverage"], reverse=True)
         service_modules.sort(key=lambda x: x["coverage"], reverse=True)
         core_modules.sort(key=lambda x: x["coverage"], reverse=True)
+        test_modules.sort(key=lambda x: x["coverage"], reverse=True)
         
         navigation_html = """
         <!-- 模块导航栏 -->
@@ -518,9 +565,18 @@ class HtmlReportGenerator:
                 <div class="navigation-body">
         """
         
-        # Generate plugin navigation
-        if plugin_modules:
-            navigation_html += self._generate_nav_category("插件模块", "fas fa-plug", plugin_modules)
+        # Generate plugin navigation by category
+        plugin_category_names = {
+            "daemon": ("守护进程插件", "fas fa-server"),
+            "desktop": ("桌面插件", "fas fa-desktop"),
+            "filemanager": ("文件管理器插件", "fas fa-folder-open"),
+            "common": ("通用插件", "fas fa-plug"),
+            "filedialog": ("文件对话框插件", "fas fa-file")
+        }
+        
+        for category_key, (category_name, icon_class) in plugin_category_names.items():
+            if plugin_categories[category_key]:
+                navigation_html += self._generate_nav_category(category_name, icon_class, plugin_categories[category_key])
         
         # Generate service navigation
         if service_modules:
@@ -529,6 +585,10 @@ class HtmlReportGenerator:
         # Generate core module navigation
         if core_modules:
             navigation_html += self._generate_nav_category("核心模块", "fas fa-cogs", core_modules)
+        
+        # Generate test module navigation
+        if test_modules:
+            navigation_html += self._generate_nav_category("测试模块", "fas fa-vial", test_modules)
         
         navigation_html += """
                 </div>
@@ -643,10 +703,22 @@ class HtmlReportGenerator:
                 elif file_info["name"].endswith(('.h', '.hpp', '.hxx')):
                     file_icon = "📋"
                 
-                # Generate clickable file name if coverage HTML exists
+                # Generate clickable file name - restore original functionality
                 file_name_html = file_info['name']
+                
+                # Primary link: Coverage HTML (original functionality)
                 if file_info.get('coverage_html_path') and os.path.exists(file_info['coverage_html_path']):
-                    file_name_html = f'<a href="file://{file_info["coverage_html_path"]}" target="_blank" class="file-link">{file_info["name"]}</a>'
+                    file_name_html = f'<a href="file://{file_info["coverage_html_path"]}" target="_blank" class="file-link coverage-primary">{file_info["name"]}</a>'
+                    
+                    # Secondary link: Source file
+                    source_file_path = self.project_root / file_info['path']
+                    if source_file_path.exists():
+                        file_name_html += f' <a href="file://{source_file_path}" target="_blank" class="file-link source-secondary" title="View Source Code"><i class="fas fa-code"></i></a>'
+                else:
+                    # Fallback: Source file link if coverage not available
+                    source_file_path = self.project_root / file_info['path']
+                    if source_file_path.exists():
+                        file_name_html = f'<a href="file://{source_file_path}" target="_blank" class="file-link source-primary">{file_info["name"]}</a>'
                 
                 html += f"""
                         <div class="file-item">
@@ -831,6 +903,44 @@ class HtmlReportGenerator:
             text-decoration: underline;
         }
         
+        .coverage-primary {
+            color: #007bff;
+            font-weight: 500;
+        }
+        
+        .coverage-primary:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        .source-primary {
+            color: #007bff;
+            font-weight: 500;
+        }
+        
+        .source-primary:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        .source-secondary {
+            color: #28a745;
+            margin-left: 0.5rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.2rem;
+            background-color: #28a745;
+            color: white;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        
+        .source-secondary:hover {
+            background-color: #218838;
+            color: white;
+            text-decoration: none;
+            transform: scale(1.05);
+        }
+        
         .file-stats {
             display: flex;
             gap: 0.25rem;
@@ -854,14 +964,40 @@ class HtmlReportGenerator:
             padding: 0.15rem 0.4rem;
         }
         
+        /* 浮动导航按钮样式 */
+        .floating-nav-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1060;
+        }
+        
+        .floating-nav-button .btn {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .floating-nav-button .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 123, 255, 0.4);
+        }
+        
+        .floating-nav-button .btn i {
+            font-size: 1.2rem;
+        }
+        
         /* 模块导航样式 */
         .module-navigation {
             position: fixed;
             top: 50%;
             right: 20px;
             transform: translateY(-50%);
-            width: 350px;
-            max-height: 70vh;
+            width: 400px;
+            max-height: 80vh;
             background: white;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -1055,6 +1191,24 @@ class HtmlReportGenerator:
                 left: 10px;
                 width: auto;
             }
+            
+            .floating-nav-button {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .floating-nav-button .btn {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .floating-nav-button .btn i {
+                font-size: 1rem;
+            }
+            
+            .files-grid {
+                grid-template-columns: 1fr;
+            }
         }
         """
     
@@ -1235,7 +1389,8 @@ class HtmlReportGenerator:
                 toggleModuleNavBtn.addEventListener('click', function() {
                     if (moduleNavigation.style.display === 'none' || !moduleNavigation.style.display) {
                         moduleNavigation.style.display = 'block';
-                        toggleModuleNavBtn.innerHTML = '<i class="fas fa-list"></i> 隐藏导航';
+                        toggleModuleNavBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        toggleModuleNavBtn.setAttribute('title', 'Close Navigation');
                         
                         // 添加显示动画
                         moduleNavigation.style.opacity = '0';
@@ -1261,7 +1416,8 @@ class HtmlReportGenerator:
                 moduleNavigation.style.transform = 'translateY(-50%) scale(0.9)';
                 setTimeout(() => {
                     moduleNavigation.style.display = 'none';
-                    toggleModuleNavBtn.innerHTML = '<i class="fas fa-list"></i> 模块导航';
+                    toggleModuleNavBtn.innerHTML = '<i class="fas fa-list"></i>';
+                    toggleModuleNavBtn.setAttribute('title', 'Module Navigation');
                 }, 300);
             }
             

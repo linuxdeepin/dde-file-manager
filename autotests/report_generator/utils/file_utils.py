@@ -109,17 +109,17 @@ def extract_module_name(relative_path: str) -> str:
         
         second_level = path_parts[1]
         
-        # Handle plugins directory: src/plugins/[category]/[plugin-name] or src/plugins/[plugin-name]
+        # Handle plugins directory: src/plugins/[category]/[plugin-name]
         if second_level == "plugins":
             if len(path_parts) >= 4:
-                # src/plugins/common/dfmplugin-xxx or src/plugins/filemanager/dfmplugin-xxx
-                plugin_category = path_parts[2]  # common, filemanager, desktop, etc.
+                # src/plugins/filemanager/dfmplugin-xxx or src/plugins/desktop/ddplugin-xxx
+                plugin_category = path_parts[2]  # filemanager, desktop, daemon, common, filedialog
                 plugin_name = path_parts[3]
-                return f"Plugin: {format_plugin_name(plugin_name)}"
+                return f"Plugin: {format_plugin_name(plugin_name)} ({plugin_category})"
             elif len(path_parts) >= 3:
-                # src/plugins/plugin-name (fallback for direct plugin structure)
-                plugin_name = path_parts[2]
-                return f"Plugin: {format_plugin_name(plugin_name)}"
+                # src/plugins/category (category level files)
+                plugin_category = path_parts[2]
+                return f"Plugin: {plugin_category.title()}"
         
         # Handle services directory: src/services/[service-name]
         elif second_level == "services" and len(path_parts) >= 3:
