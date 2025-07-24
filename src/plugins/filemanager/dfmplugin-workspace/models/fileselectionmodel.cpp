@@ -82,14 +82,14 @@ void FileSelectionModel::updateSelecteds()
 
 void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command)
 {
+    if (!command.testFlag(NoUpdate))
+        d->selectedList.clear();
+
     if (command != QItemSelectionModel::SelectionFlags(Current | Rows | ClearAndSelect)) {
         if (d->timer.isActive()) {
             d->timer.stop();
             updateSelecteds();
         }
-
-        if (!command.testFlag(NoUpdate))
-            d->selectedList.clear();
 
         d->currentCommand = command;
 
@@ -97,9 +97,6 @@ void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionM
 
         return;
     }
-
-    if (!command.testFlag(NoUpdate))
-        d->selectedList.clear();
 
     if (selection.isEmpty()) {
         d->firstSelectedIndex = QModelIndex();
@@ -111,7 +108,9 @@ void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionM
 
     QItemSelection newSelection(d->firstSelectedIndex, d->lastSelectedIndex);
 
-    emitSelectionChanged(newSelection, d->selection);
+    // 这里不能发送 emitSelectionChanged这个信号
+    // 发送了这个信号当timer超时去执行QItemSelectionModel::select时，select相当没有改变，不会再次发送emitSelectionChanged
+    // QItemSelectionModel::selectedIndexes()会返回以前的，不会是当前的newSelection；
 
     d->currentCommand = command;
     d->selection = newSelection;
