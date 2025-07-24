@@ -250,3 +250,7 @@ Name[zh_TW]=回收站
 Exec=dde-file-manager --event "{\"action\":\"cleantrash\"}"
 Name=Clean Trash
 
+# Translations:
+# Do not manually modify!
+Name[zh_CN]=清空
+Name[zh_HK]=清空
