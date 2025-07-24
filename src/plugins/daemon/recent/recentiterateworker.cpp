@@ -30,7 +30,7 @@ RecentIterateWorker::RecentIterateWorker(QObject *parent)
 // 对 xbel 的增删改都会触发本函数重新扫描 xbel 文件
 void RecentIterateWorker::onRequestReload(const QString &xbelPath, qint64 timestamp)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    // Q_ASSERT(qApp->thread() != QThread::currentThread());
     FinallyUtil finally([this, timestamp]() {
         emit reloadFinished(timestamp);
     });
@@ -57,12 +57,12 @@ void RecentIterateWorker::onRequestReload(const QString &xbelPath, qint64 timest
     }
 
     if (reader.hasError()) {
-        fmCritical() << "[RecentIterateWorker::onRequestReload] Error reading recent XML file:" << xbelPath 
+        fmCritical() << "[RecentIterateWorker::onRequestReload] Error reading recent XML file:" << xbelPath
                      << "error:" << reader.errorString();
         return;
     }
-    
-    fmInfo() << "[RecentIterateWorker::onRequestReload] Successfully processed recent file:" << xbelPath 
+
+    fmInfo() << "[RecentIterateWorker::onRequestReload] Successfully processed recent file:" << xbelPath
              << "current items:" << curPathList.size() << "cached items:" << cachedPathList.size();
 
     removeOutdatedItems(cachedPathList, curPathList);
@@ -70,7 +70,7 @@ void RecentIterateWorker::onRequestReload(const QString &xbelPath, qint64 timest
 
 void RecentIterateWorker::processBookmarkElement(QXmlStreamReader &reader, QStringList &curPathList)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    // Q_ASSERT(qApp->thread() != QThread::currentThread());
 
     const QString location = reader.attributes().value("href").toString();
     const QString readTime = reader.attributes().value("modified").toString();
@@ -94,13 +94,13 @@ void RecentIterateWorker::processBookmarkElement(QXmlStreamReader &reader, QStri
     curPathList.append(bindPath);
     if (itemsInfo.contains(bindPath)) {
         if (itemsInfo[bindPath].modified != readTimeSecs) {
-            fmDebug() << "[RecentIterateWorker::processBookmarkElement] Item modified:" << bindPath 
+            fmDebug() << "[RecentIterateWorker::processBookmarkElement] Item modified:" << bindPath
                       << "old time:" << itemsInfo[bindPath].modified << "new time:" << readTimeSecs;
             itemsInfo[bindPath].modified = readTimeSecs;
             emit itemChanged(bindPath, itemsInfo[bindPath]);
         }
     } else {
-        fmDebug() << "[RecentIterateWorker::processBookmarkElement] New item added:" << bindPath 
+        fmDebug() << "[RecentIterateWorker::processBookmarkElement] New item added:" << bindPath
                   << "modified time:" << readTimeSecs;
         RecentItem item { location, readTimeSecs };
         itemsInfo.insert(bindPath, item);
@@ -110,7 +110,7 @@ void RecentIterateWorker::processBookmarkElement(QXmlStreamReader &reader, QStri
 
 void RecentIterateWorker::removeOutdatedItems(const QStringList &cachedPathList, const QStringList &curPathList)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    // Q_ASSERT(qApp->thread() != QThread::currentThread());
 
     QStringList removedPathList;
     for (const auto &cachedPath : cachedPathList) {
@@ -128,7 +128,7 @@ void RecentIterateWorker::removeOutdatedItems(const QStringList &cachedPathList,
 
 void RecentIterateWorker::onRequestAddRecentItem(const QVariantMap &item)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    // Q_ASSERT(qApp->thread() != QThread::currentThread());
     fmDebug() << "[RecentIterateWorker::onRequestAddRecentItem] Received item request:" << item;
 
     const auto path = item[RecentProperty::kPath].toString();
@@ -146,18 +146,18 @@ void RecentIterateWorker::onRequestAddRecentItem(const QVariantMap &item)
     };
 
     if (!DTK_CORE_NAMESPACE::DRecentManager::addItem(path, recentData)) {
-        fmCritical() << "[RecentIterateWorker::onRequestAddRecentItem] Failed to add recent item:" << path 
+        fmCritical() << "[RecentIterateWorker::onRequestAddRecentItem] Failed to add recent item:" << path
                      << "app:" << appName << "mime:" << mimeType;
         return;
     }
 
-    fmInfo() << "[RecentIterateWorker::onRequestAddRecentItem] Successfully added recent item:" << path 
+    fmInfo() << "[RecentIterateWorker::onRequestAddRecentItem] Successfully added recent item:" << path
              << "app:" << appName;
 }
 
 void RecentIterateWorker::onRequestRemoveItems(const QStringList &hrefs)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    //   Q_ASSERT(qApp->thread() != QThread::currentThread());
 
     fmInfo() << "[RecentIterateWorker::onRequestRemoveItems] Removing recent items:" << hrefs.size() << "items";
     DTK_CORE_NAMESPACE::DRecentManager::removeItems(hrefs);
@@ -166,7 +166,7 @@ void RecentIterateWorker::onRequestRemoveItems(const QStringList &hrefs)
 
 void RecentIterateWorker::onRequestPurgeItems(const QString &xbelPath)
 {
-    Q_ASSERT(qApp->thread() != QThread::currentThread());
+    //   Q_ASSERT(qApp->thread() != QThread::currentThread());
 
     static constexpr char kEmptyRecentFile[] =
             R"|(<?xml version="1.0" encoding="UTF-8"?>

@@ -98,7 +98,8 @@ void RecentManager::startWatch()
     fmInfo() << "[RecentManager::startWatch] Starting file watcher for recent file:" << uri;
     // fileAttributeChanged 可能被高频率发送
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::reload, Qt::DirectConnection);
-    watcher->startWatcher();
+    if (watcher)
+        watcher->startWatcher();
     fmInfo() << "[RecentManager::startWatch] File watcher started successfully";
 }
 
@@ -137,7 +138,7 @@ void RecentManager::forceReload(qint64 timestamp)
 void RecentManager::addRecentItem(const QVariantMap &item)
 {
     if (itemsInfo.size() >= kRecentItemLimit) {
-        fmWarning() << "[RecentManager::addRecentItem] Recent items exceeded limit:" << kRecentItemLimit 
+        fmWarning() << "[RecentManager::addRecentItem] Recent items exceeded limit:" << kRecentItemLimit
                     << "current count:" << itemsInfo.size();
         return;
     }
@@ -174,7 +175,7 @@ QVariantMap RecentManager::getItemInfo(const QString &path)
 {
     QVariantMap map;
     if (path.isEmpty() || !itemsInfo.contains(path)) {
-        fmWarning() << "[RecentManager::getItemInfo] Cannot get item info for path:" << path 
+        fmWarning() << "[RecentManager::getItemInfo] Cannot get item info for path:" << path
                     << "empty:" << path.isEmpty() << "exists:" << itemsInfo.contains(path);
         return map;
     }
@@ -189,7 +190,7 @@ QVariantMap RecentManager::getItemInfo(const QString &path)
 void RecentManager::onItemAdded(const QString &path, const RecentItem &item)
 {
     if (itemsInfo.size() >= kRecentItemLimit) {
-        fmWarning() << "[RecentManager::onItemAdded] Recent items exceeded limit:" << kRecentItemLimit 
+        fmWarning() << "[RecentManager::onItemAdded] Recent items exceeded limit:" << kRecentItemLimit
                     << "current count:" << itemsInfo.size() << "path:" << path;
         return;
     }
