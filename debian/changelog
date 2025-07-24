@@ -1,3 +1,9 @@
+dde-file-manager (6.5.81) unstable; urgency=medium
+
+  * autotests
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 24 Jul 2025 18:24:48 +0800
+
 dde-file-manager (6.5.80) unstable; urgency=medium
 
   * fix tree view issues in MyShares plugin
