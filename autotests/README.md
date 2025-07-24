@@ -8,9 +8,6 @@
 
 ```bash
 sudo apt install lcov cmake python3
-
-# 其他可能需要的依赖
-sudo apt install build-essential qt5-default libqt5test5-dev
 ```
 
 ### Python 依赖
@@ -126,7 +123,7 @@ genhtml coverage.info --output-directory coverage-html
 
 2. **编译错误**
    - 检查是否安装了所有必需的开发依赖
-   - 确保 Qt 开发环境正确配置
+   - 确保文管开发环境正确配置
 
 3. **权限问题**
    ```bash
