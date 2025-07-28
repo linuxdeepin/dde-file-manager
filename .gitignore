@@ -87,7 +87,7 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 *.substvars
 
 # clangd cache files
-.cache/clangd/
+.cache
 
 # cursor
 .cursorindexingignore
@@ -95,5 +95,6 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 .specstory
 
 # autotests
+Testing
 __pycache__
 *.pyc
