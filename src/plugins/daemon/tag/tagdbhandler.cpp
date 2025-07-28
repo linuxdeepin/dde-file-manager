@@ -59,6 +59,7 @@ QVariantMap TagDbHandler::getTagsColor(const QStringList &tags)
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::getTagsColor: Empty tag list provided";
+        finally.dismiss();
         return {};
     }
 
@@ -73,7 +74,6 @@ QVariantMap TagDbHandler::getTagsColor(const QStringList &tags)
     }
 
     fmDebug() << "TagDbHandler::getTagsColor: Retrieved colors for" << tagColorsMap.size() << "out of" << tags.size() << "requested tags";
-    finally.dismiss();
     return tagColorsMap;
 }
 
@@ -83,6 +83,7 @@ QVariantMap TagDbHandler::getTagsByUrls(const QStringList &urlList)
     if (urlList.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::getTagsByUrls: Empty URL list provided";
+        finally.dismiss();
         return {};
     }
 
@@ -101,7 +102,6 @@ QVariantMap TagDbHandler::getTagsByUrls(const QStringList &urlList)
     }
 
     fmDebug() << "TagDbHandler::getTagsByUrls: Retrieved tags for" << allFileTags.size() << "out of" << urlList.size() << "requested files";
-    finally.dismiss();
     return allFileTags;
 }
 
@@ -112,6 +112,7 @@ QVariant TagDbHandler::getSameTagsOfDiffUrls(const QStringList &urlList)
     if (urlList.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::getSameTagsOfDiffUrls: Empty URL list provided";
+        finally.dismiss();
         return {};
     }
 
@@ -133,7 +134,6 @@ QVariant TagDbHandler::getSameTagsOfDiffUrls(const QStringList &urlList)
     }
 
     fmDebug() << "TagDbHandler::getSameTagsOfDiffUrls: Found" << sameTags.size() << "common tags among" << urlList.size() << "files";
-    finally.dismiss();
     return sameTags;
 }
 
@@ -144,6 +144,7 @@ QVariantMap TagDbHandler::getFilesByTag(const QStringList &tags)
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::getFilesByTag: Empty tag list provided";
+        finally.dismiss();
         return {};
     }
 
@@ -160,7 +161,6 @@ QVariantMap TagDbHandler::getFilesByTag(const QStringList &tags)
     }
 
     fmDebug() << "TagDbHandler::getFilesByTag: Retrieved files for" << tags.size() << "tags";
-    finally.dismiss();
     return allTagFiles;
 }
 
@@ -198,6 +198,7 @@ bool TagDbHandler::addTagProperty(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::addTagProperty: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -218,7 +219,6 @@ bool TagDbHandler::addTagProperty(const QVariantMap &data)
 
     emit newTagsAdded(data);
     fmInfo() << "TagDbHandler::addTagProperty: Successfully added tag properties";
-    finally.dismiss();
     return true;
 }
 
@@ -229,6 +229,7 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::addTagsForFiles: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -276,7 +277,6 @@ bool TagDbHandler::addTagsForFiles(const QVariantMap &data)
     }
 
     emit filesWereTagged(data);
-    finally.dismiss();
     return ret;
 }
 
@@ -287,6 +287,7 @@ bool TagDbHandler::removeTagsOfFiles(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::removeTagsOfFiles: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -310,7 +311,6 @@ bool TagDbHandler::removeTagsOfFiles(const QVariantMap &data)
     }
 
     emit filesUntagged(data);
-    finally.dismiss();
     return ret;
 }
 
@@ -321,6 +321,7 @@ bool TagDbHandler::deleteTags(const QStringList &tags)
     if (tags.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::deleteTags: Empty tag list provided";
+        finally.dismiss();
         return false;
     }
 
@@ -345,7 +346,6 @@ bool TagDbHandler::deleteTags(const QStringList &tags)
 
     emit tagsDeleted(tags);
     fmInfo() << "TagDbHandler::deleteTags: Successfully deleted" << tags.size() << "tags";
-    finally.dismiss();
     return ret;
 }
 
@@ -356,6 +356,7 @@ bool TagDbHandler::deleteFiles(const QStringList &urls)
     if (urls.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::deleteFiles: Empty URL list provided";
+        finally.dismiss();
         return false;
     }
 
@@ -370,7 +371,6 @@ bool TagDbHandler::deleteFiles(const QStringList &urls)
     }
 
     fmInfo() << "TagDbHandler::deleteFiles: Successfully deleted tag information for" << urls.size() << "files";
-    finally.dismiss();
     return true;
 }
 
@@ -381,6 +381,7 @@ bool TagDbHandler::changeTagColors(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::changeTagColors: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -398,7 +399,6 @@ bool TagDbHandler::changeTagColors(const QVariantMap &data)
 
     emit tagsColorChanged(data);
     fmInfo() << "TagDbHandler::changeTagColors: Successfully changed colors for" << data.size() << "tags";
-    finally.dismiss();
     return ret;
 }
 
@@ -409,6 +409,7 @@ bool TagDbHandler::changeTagNamesWithFiles(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::changeTagNamesWithFiles: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -431,8 +432,6 @@ bool TagDbHandler::changeTagNamesWithFiles(const QVariantMap &data)
         fmInfo() << "TagDbHandler::changeTagNamesWithFiles: Successfully changed names for" << updatedData.size() << "tags";
     }
 
-    if (ret)
-        finally.dismiss();
 
     return ret;
 }
@@ -444,6 +443,7 @@ bool TagDbHandler::changeFilePaths(const QVariantMap &data)
     if (data.isEmpty()) {
         lastErr = "input parameter is empty!";
         fmWarning() << "TagDbHandler::changeFilePaths: Empty data provided";
+        finally.dismiss();
         return false;
     }
 
@@ -458,7 +458,6 @@ bool TagDbHandler::changeFilePaths(const QVariantMap &data)
     }
 
     fmInfo() << "TagDbHandler::changeFilePaths: Successfully changed paths for" << data.size() << "files";
-    finally.dismiss();
     return true;
 }
 
@@ -567,7 +566,6 @@ bool TagDbHandler::insertTagProperty(const QString &name, const QVariant &value)
     }
 
     fmDebug() << "TagDbHandler::insertTagProperty: Successfully inserted tag property - name:" << name << "color:" << value.toString();
-    finally.dismiss();
     return true;
 }
 
@@ -603,7 +601,6 @@ bool TagDbHandler::tagFile(const QString &file, const QVariant &tags)
     }
 
     fmDebug() << "TagDbHandler::tagFile: Successfully tagged file:" << file << "with" << tempTags.size() << "tags";
-    finally.dismiss();
     return true;
 }
 
@@ -634,7 +631,6 @@ bool TagDbHandler::removeSpecifiedTagOfFile(const QString &url, const QVariant &
     }
 
     fmDebug() << "TagDbHandler::removeSpecifiedTagOfFile: Successfully removed" << tempTags.size() << "tags from file:" << url;
-    finally.dismiss();
     return true;
 }
 
@@ -656,7 +652,6 @@ bool TagDbHandler::changeTagColor(const QString &tagName, const QString &newTagC
     }
 
     fmDebug() << "TagDbHandler::changeTagColor: Successfully changed tag color - tagName:" << tagName << "newColor:" << newTagColor;
-    finally.dismiss();
     return true;
 }
 
@@ -690,7 +685,6 @@ bool TagDbHandler::changeTagNameWithFile(const QString &tagName, const QString &
 
     if (ret) {
         fmDebug() << "TagDbHandler::changeTagNameWithFile: Successfully changed tag name - oldName:" << tagName << "newName:" << newName;
-        finally.dismiss();
     }
 
     return ret;
@@ -714,7 +708,6 @@ bool TagDbHandler::changeFilePath(const QString &oldPath, const QString &newPath
     }
 
     fmDebug() << "TagDbHandler::changeFilePath: Successfully changed file path - oldPath:" << oldPath << "newPath:" << newPath;
-    finally.dismiss();
     return true;
 }
 

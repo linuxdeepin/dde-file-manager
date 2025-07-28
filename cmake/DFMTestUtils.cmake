@@ -147,6 +147,10 @@ function(dfm_create_test_executable test_name)
         target_compile_options(${test_name} PRIVATE ${DFM_TEST_CXX_FLAGS})
         message(STATUS "DFM: Applied test flags to ${test_name}: ${DFM_TEST_CXX_FLAGS}")
     endif()
+
+    if(DFM_TEST_NO_DEBUG)
+        target_compile_definitions(${test_name} PRIVATE QT_NO_DEBUG)
+    endif()
     
     # Setup include directories
     target_include_directories(${test_name} PRIVATE
