@@ -39,7 +39,6 @@ WorkspaceEventReceiver::~WorkspaceEventReceiver()
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 {
     static WorkspaceEventReceiver receiver;
-    fmDebug() << "WorkspaceEventReceiver: Returning singleton instance";
     return &receiver;
 }
 
