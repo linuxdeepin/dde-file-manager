@@ -179,7 +179,8 @@
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation type="unfinished"/>
+        <translation>Todennus vaaditaan
+Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1184"/>
@@ -2228,7 +2229,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Poista &quot;Piilota painalluksella&quot; ominaisuus käytöstä avaamalla &quot;Työpöydän asetukset&quot; pudotusvalikosta ja poistamalla sen käytöstä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
@@ -7434,7 +7435,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostoholvi</translation>
     </message>
 </context>
 <context>
@@ -7474,7 +7475,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostoholvi</translation>
     </message>
 </context>
 <context>
