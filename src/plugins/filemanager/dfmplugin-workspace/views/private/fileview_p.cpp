@@ -206,7 +206,7 @@ void FileViewPrivate::initContentLabel()
         palette.setColor(QPalette::Text, color);
         contentLabel->setPalette(palette);
         QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
-                         contentLabel, [this](DGuiApplicationHelper::ColorType themeType){
+                         contentLabel, [this](DGuiApplicationHelper::ColorType themeType) {
                              QColor textColor = (themeType == DGuiApplicationHelper::ColorType::LightType)
                                      ? QColor(0, 0, 0, 102)
                                      : QColor(255, 255, 255, 102);
@@ -268,7 +268,7 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
     if (parentViewMode != -1) {
         currentViewMode = static_cast<Global::ViewMode>(parentViewMode);
-    } else if (savedViewMode != -1 && WorkspaceHelper::instance()->isViewModeSupported(url.scheme(), static_cast<Global::ViewMode>(savedViewMode))) {  // saved view mode in old version may not be supported
+    } else if (savedViewMode != -1 && WorkspaceHelper::instance()->isViewModeSupported(url.scheme(), static_cast<Global::ViewMode>(savedViewMode))) {   // saved view mode in old version may not be supported
         currentViewMode = static_cast<Global::ViewMode>(savedViewMode);
         fmDebug() << "Using saved view mode:" << savedViewMode;
     } else {
@@ -289,8 +289,7 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
 {
-    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", url).toMap();
-    return valueMap.value(key, defalutValue);
+    return WorkspaceHelper::instance()->getFileViewStateValue(url, key, defalutValue);
 }
 
 void FileViewPrivate::updateHorizontalOffset()

@@ -37,6 +37,7 @@ public:
     static QUrl setSearchKeyword(const QUrl &searchUrl, const QString &keyword);
     static QUrl setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetUrl);
     static QUrl setSearchWinId(const QUrl &searchUrl, const QString &winId);
+    static QUrl viewModelUrl(const QUrl &url);
 
     static QUrl fromSearchFile(const QString &filePath);
     static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &winId);

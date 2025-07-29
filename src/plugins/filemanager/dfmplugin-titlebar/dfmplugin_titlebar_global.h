@@ -72,6 +72,7 @@ enum DPCErrorCode {
 };
 
 using SeprateUrlCallback = std::function<QList<QVariantMap>(const QUrl &)>;
+using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 
 // item of CrumbBar
 struct CrumbData
@@ -152,5 +153,6 @@ DPTITLEBAR_END_NAMESPACE
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QUrl *);
 Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(DPTITLEBAR_NAMESPACE::ViewModeUrlCallback);
 
 #endif   // DFMPLUGIN_TITLEBAR_GLOBAL_H

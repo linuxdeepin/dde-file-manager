@@ -5,6 +5,7 @@
 #include "views/private/viewoptionswidget_p.h"
 #include "views/viewoptionswidget.h"
 #include "utils/optionbuttonmanager.h"
+#include "utils/titlebarhelper.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
@@ -180,9 +181,7 @@ void ViewOptionsWidgetPrivate::initConnect()
 
     connect(iconSizeSlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "iconSizeSlider value changed: " << value;
-        QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
-        map["iconSizeLevel"] = value;
-        Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
+        TitleBarHelper::setFileViewStateValue(fileUrl, "iconSizeLevel", value);
         Application::appObtuselySetting()->sync();
         fmDebug() << "Icon size level saved to settings for URL:" << fileUrl.toString();
     });
@@ -199,9 +198,7 @@ void ViewOptionsWidgetPrivate::initConnect()
     });
     connect(gridDensitySlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "gridDensitySlider value changed: " << value;
-        QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
-        map["gridDensityLevel"] = value;
-        Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
+        TitleBarHelper::setFileViewStateValue(fileUrl, "gridDensityLevel", value);
         Application::appObtuselySetting()->sync();
         fmDebug() << "Grid density level saved to settings for URL:" << fileUrl.toString();
     });
@@ -218,9 +215,7 @@ void ViewOptionsWidgetPrivate::initConnect()
     });
     connect(listHeightSlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "listHeightSlider value changed: " << value;
-        QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
-        map["listHeightLevel"] = value;
-        Application::appObtuselySetting()->setValue("FileViewState", fileUrl, map);
+        TitleBarHelper::setFileViewStateValue(fileUrl, "listHeightLevel", value);
         Application::appObtuselySetting()->sync();
         fmDebug() << "List height level saved to settings for URL:" << fileUrl.toString();
     });
@@ -245,24 +240,27 @@ void ViewOptionsWidgetPrivate::setUrl(const QUrl &url)
 {
     fmDebug() << "Setting URL for view options:" << url.toString();
     fileUrl = url;
-    QVariantMap map = Application::appObtuselySetting()->value("FileViewState", fileUrl).toMap();
+    
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
+    QVariant iconSizeValue = TitleBarHelper::getFileViewStateValue(fileUrl, "iconSizeLevel", defaultIconSize);
     iconSizeSlider->blockSignals(true);
-    iconSizeSlider->setValue(map.value("iconSizeLevel", defaultIconSize).toInt());
+    iconSizeSlider->setValue(iconSizeValue.toInt());
     iconSizeSlider->blockSignals(false);
-    fmDebug() << "iconSizeLevel: " << map.value("iconSizeLevel", defaultIconSize).toInt();
+    fmDebug() << "iconSizeLevel: " << iconSizeValue.toInt();
 
     QVariant defaultGridDensity = Application::instance()->appAttribute(Application::kGridDensityLevel).toInt();
+    QVariant gridDensityValue = TitleBarHelper::getFileViewStateValue(fileUrl, "gridDensityLevel", defaultGridDensity);
     gridDensitySlider->blockSignals(true);
-    gridDensitySlider->setValue(map.value("gridDensityLevel", defaultGridDensity).toInt());
+    gridDensitySlider->setValue(gridDensityValue.toInt());
     gridDensitySlider->blockSignals(false);
-    fmDebug() << "gridDensityLevel: " << map.value("gridDensityLevel", defaultGridDensity).toInt();
+    fmDebug() << "gridDensityLevel: " << gridDensityValue.toInt();
 
     QVariant defaultListHeight = Application::instance()->appAttribute(Application::kListHeightLevel).toInt();
+    QVariant listHeightValue = TitleBarHelper::getFileViewStateValue(fileUrl, "listHeightLevel", defaultListHeight);
     listHeightSlider->blockSignals(true);
-    listHeightSlider->setValue(map.value("listHeightLevel", defaultListHeight).toInt());
+    listHeightSlider->setValue(listHeightValue.toInt());
     listHeightSlider->blockSignals(false);
-    fmDebug() << "listHeightLevel: " << map.value("listHeightLevel", defaultListHeight).toInt();
+    fmDebug() << "listHeightLevel: " << listHeightValue.toInt();
 }
 
 void ViewOptionsWidgetPrivate::switchMode(ViewMode mode)

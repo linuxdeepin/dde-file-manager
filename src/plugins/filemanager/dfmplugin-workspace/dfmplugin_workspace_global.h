@@ -95,12 +95,13 @@ using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using FileViewFilterCallback = std::function<bool(dfmbase::SortFileInfo *, QVariant)>;
 using FileViewRoutePrehaldler = std::function<void(quint64 winId, const QUrl &, std::function<void()>)>;
+using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 
 struct CustomTopWidgetInfo
 {
     QString scheme;
     bool keepShow { false };   // always show
-    bool keepTop { false };    // top of all topWidget
+    bool keepTop { false };   // top of all topWidget
     CreateTopWidgetCallback createTopWidgetCb { nullptr };
     ShowTopWidgetCallback showTopWidgetCb { nullptr };
 
@@ -123,9 +124,12 @@ struct CustomViewProperty
     dfmbase::Global::ViewMode defaultViewMode { dfmbase::Global::ViewMode::kNoneMode };
     int defaultListHeight { -1 };
     bool allowChangeListHeight { true };
+    ViewModeUrlCallback viewModelUrlCallback { nullptr };
 
     CustomViewProperty() = default;
-    inline CustomViewProperty(const QVariantMap &map) {
+    inline CustomViewProperty(const QVariantMap &map)
+        : viewModelUrlCallback(DPF_NAMESPACE::paramGenerator<ViewModeUrlCallback>(map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kViewModeUrlCallback]))
+    {
         supportIconMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportIconMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportIconMode].toBool() : true;
         supportListMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportListMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportListMode].toBool() : true;
         supportTreeMode = map.contains(DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode) ? map[DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode].toBool() : true;
@@ -156,6 +160,7 @@ Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewFilterCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewRoutePrehaldler);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewModeUrlCallback);
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(QDir::Filters)

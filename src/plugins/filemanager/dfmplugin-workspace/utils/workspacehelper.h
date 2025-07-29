@@ -103,6 +103,11 @@ public:
     void registerFocusFileViewDisabled(const QString &scheme);
     bool isFocusFileViewDisabled(const QString &scheme) const;
 
+    // FileViewState unified access methods
+    QVariant getFileViewStateValue(const QUrl &url, const QString &key, const QVariant &defaultValue = QVariant()) const;
+    void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
+    QUrl transformViewModeUrl(const QUrl &url) const;
+
     void registerLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy getLoadStrategy(const QString &scheme);
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   // ###: for creating new file.

@@ -6,6 +6,7 @@
 #include "views/optionbuttonbox.h"
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
+#include "utils/titlebarhelper.h"
 #include "views/sortbybutton.h"
 #include "views/viewoptionsbutton.h"
 
@@ -77,9 +78,8 @@ void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
 {
-    QUrl tmpUrl = url.adjusted(QUrl::RemoveQuery);
-    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(tmpUrl.scheme()));
-    auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", tmpUrl).toMap().value("viewMode", defaultViewMode).toInt());
+    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(url.scheme()));
+    auto viewMode = static_cast<ViewMode>(TitleBarHelper::getFileViewStateValue(url, "viewMode", defaultViewMode).toInt());
     if (viewMode == ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         fmInfo() << "Tree view is disabled in config, switching to list mode";
         viewMode = ViewMode::kListMode;
@@ -114,7 +114,7 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::onViewModeChanged(int mode)
 {
-    if (Application::appObtuselySetting()->value("FileViewState", currentUrl).toMap().contains("viewMode")) {
+    if (!TitleBarHelper::getFileViewStateValue(currentUrl, "viewMode").isNull()) {
         loadViewMode(currentUrl);
     } else {
         auto viewMode = static_cast<ViewMode>(mode);

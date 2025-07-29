@@ -660,9 +660,9 @@ QList<ItemRoles> FileViewModel::getColumnRoles() const
     QList<ItemRoles> roles;
     bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(dirRootUrl, &roles);
 
-    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
-    if (map.contains("headerList")) {
-        QVariantList headerList = map.value("headerList").toList();
+    QVariant headerListValue = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "headerList");
+    if (!headerListValue.isNull()) {
+        QVariantList headerList = headerListValue.toList();
 
         for (ItemRoles role : roles) {
             if (!headerList.contains(role))
@@ -701,9 +701,9 @@ ItemRoles FileViewModel::columnToRole(int column) const
     QList<ItemRoles> roles;
     bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(dirRootUrl, &roles);
 
-    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
-    if (map.contains("headerList")) {
-        QVariantList headerList = map.value("headerList").toList();
+    QVariant headerListValue = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "headerList");
+    if (!headerListValue.isNull()) {
+        QVariantList headerList = headerListValue.toList();
         if (headerList.length() > column)
             return ItemRoles(headerList.at(column).toInt());
 
@@ -1125,9 +1125,8 @@ void FileViewModel::initFilterSortWork()
     }
 
     // get sort config
-    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
-    Qt::SortOrder order = static_cast<Qt::SortOrder>(valueMap.value("sortOrder", Qt::SortOrder::AscendingOrder).toInt());
-    ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
+    Qt::SortOrder order = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
+    ItemRoles role = static_cast<ItemRoles>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortRole", kItemFileDisplayNameRole).toInt());
 
     fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role << "for URL:" << dirRootUrl.toString();
 
