@@ -23,12 +23,40 @@ bool isIndexWithAnything(const QString &path)
 
 bool isDefaultIndexedDirectory(const QString &path)
 {
-    return DFMSEARCH::Global::defaultIndexedDirectory().contains(path);
+    static const QStringList &kDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+    return kDirs.contains(path);
 }
 
 bool isPathInContentIndexDirectory(const QString &path)
 {
-    return DFMSEARCH::Global::isPathInContentIndexDirectory(path);
+    if (!DFMSEARCH::Global::isContentIndexAvailable())
+        return false;
+
+    static const QStringList &kDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+    return std::any_of(kDirs.cbegin(), kDirs.cend(),
+                       [&path](const QString &dir) {
+                           // Normalize both paths by ensuring they don't end with '/'
+                           QString normalizedDir = dir;
+                           QString normalizedPath = path;
+
+                           if (normalizedDir.endsWith('/') && normalizedDir.length() > 1) {
+                               normalizedDir.chop(1);
+                           }
+                           if (normalizedPath.endsWith('/') && normalizedPath.length() > 1) {
+                               normalizedPath.chop(1);
+                           }
+
+                           // Exact match - the path is the indexed directory itself
+                           if (normalizedPath == normalizedDir) {
+                               return true;
+                           }
+
+                           // Check if path is within the directory by ensuring proper path separation
+                           // The path must start with the directory + '/' to avoid false positives
+                           // like '/foobar' matching '/foo'
+                           const QString dirWithSeparator = normalizedDir + '/';
+                           return normalizedPath.startsWith(dirWithSeparator);
+                       });
 }
 
 QString statusFilePath()

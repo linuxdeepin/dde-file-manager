@@ -40,6 +40,11 @@ protected:
             return QStringList { "/home/test", "/home/user/Documents" };
         });
 
+        stub.set_lamda(ADDR(DFMSEARCH::Global, isContentIndexAvailable), []() -> bool {
+            __DBG_STUB_INVOKE__
+            return true;
+        });
+
         stub.set_lamda(ADDR(DFMSEARCH::Global, isPathInContentIndexDirectory), [](const QString &path) -> bool {
             __DBG_STUB_INVOKE__
             return path.startsWith("/home/test") || path.startsWith("/home/user/Documents");
@@ -157,6 +162,61 @@ TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_InvalidPath_ReturnsFalse)
     bool result = IndexUtility::isPathInContentIndexDirectory("/invalid/path");
 
     EXPECT_FALSE(result);
+}
+
+// Additional comprehensive tests for directory matching edge cases
+TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_ExactMatch_ReturnsTrue)
+{
+    // Test exact match for indexed directory
+    bool result1 = IndexUtility::isPathInContentIndexDirectory("/home/test");
+    bool result2 = IndexUtility::isPathInContentIndexDirectory("/home/user/Documents");
+
+    EXPECT_TRUE(result1);
+    EXPECT_TRUE(result2);
+}
+
+TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_ExactMatchWithTrailingSlash_ReturnsTrue)
+{
+    // Test exact match with trailing slash
+    bool result1 = IndexUtility::isPathInContentIndexDirectory("/home/test/");
+    bool result2 = IndexUtility::isPathInContentIndexDirectory("/home/user/Documents/");
+
+    EXPECT_TRUE(result1);
+    EXPECT_TRUE(result2);
+}
+
+TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_FalsePositivePrevention_ReturnsFalse)
+{
+    // Test prevention of false positives - these should NOT match
+    bool result1 = IndexUtility::isPathInContentIndexDirectory("/home/test_backup");  // Similar but different
+    bool result2 = IndexUtility::isPathInContentIndexDirectory("/home/testing");      // Starts with indexed dir name
+    bool result3 = IndexUtility::isPathInContentIndexDirectory("/home/user/Documents_old");  // Similar pattern
+    bool result4 = IndexUtility::isPathInContentIndexDirectory("/home/user/DocumentsBackup"); // Another similar pattern
+
+    EXPECT_FALSE(result1);
+    EXPECT_FALSE(result2);
+    EXPECT_FALSE(result3);
+    EXPECT_FALSE(result4);
+}
+
+TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_DeepSubdirectory_ReturnsTrue)
+{
+    // Test deep subdirectories
+    bool result1 = IndexUtility::isPathInContentIndexDirectory("/home/test/deep/nested/folder/file.txt");
+    bool result2 = IndexUtility::isPathInContentIndexDirectory("/home/user/Documents/projects/myproject/src");
+
+    EXPECT_TRUE(result1);
+    EXPECT_TRUE(result2);
+}
+
+TEST_F(UT_IndexUtility, IsPathInContentIndexDirectory_PathWithTrailingSlash_ReturnsTrue)
+{
+    // Test subdirectories with trailing slash
+    bool result1 = IndexUtility::isPathInContentIndexDirectory("/home/test/subfolder/");
+    bool result2 = IndexUtility::isPathInContentIndexDirectory("/home/user/Documents/projects/");
+
+    EXPECT_TRUE(result1);
+    EXPECT_TRUE(result2);
 }
 
 TEST_F(UT_IndexUtility, StatusFilePath_ReturnsCorrectPath)
