@@ -151,6 +151,9 @@ QMap<QString, QString> fstabBindInfo()
             }
             endfsent();
         }
+    } else {
+        // Clear table when fstab file doesn't exist or can't be accessed
+        table.clear();
     }
 
     return table;

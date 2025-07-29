@@ -195,14 +195,13 @@ bool isCompatibleVersion()
 bool checkFileSize(const QFileInfo &fileInfo)
 {
     try {
-        static const qint64 kMaxFileSizeInBytes = [] {
-            qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
-            // 在这里进行上述的健全性检查
-            if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
-                sizeMBFromConfig = 50LL;   // Default fallback
-            }
-            return sizeMBFromConfig * 1024LL * 1024LL;
-        }();
+        // Get the max file size from config each time to support testing
+        qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
+        // 在这里进行上述的健全性检查
+        if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
+            sizeMBFromConfig = 50LL;   // Default fallback
+        }
+        const qint64 kMaxFileSizeInBytes = sizeMBFromConfig * 1024LL * 1024LL;
 
         if (fileInfo.size() > kMaxFileSizeInBytes) {
             fmDebug() << "File" << fileInfo.fileName() << "size" << fileInfo.size()
@@ -268,8 +267,18 @@ QString normalizeDirectoryPath(const QString &dirPath)
 
 bool isDirectoryMove(const QString &toPath)
 {
+    if (toPath.isEmpty()) {
+        return false;
+    }
+    
+    // First check if path exists and is a directory
     QFileInfo toFileInfo(toPath);
-    return toFileInfo.exists() && toFileInfo.isDir();
+    if (toFileInfo.exists()) {
+        return toFileInfo.isDir();
+    }
+    
+    // If path doesn't exist, infer from path format (trailing slash indicates directory)
+    return toPath.endsWith('/');
 }
 
 }   // namespace PathCalculator

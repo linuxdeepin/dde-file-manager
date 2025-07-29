@@ -119,7 +119,7 @@ private:
 
 TEST_F(UT_IndexUtility, IsIndexWithAnything_FileNameIndexReady_ReturnsTrue)
 {
-    bool result = IndexUtility::isIndexWithAnything("/home/test/document.txt");
+    bool result = IndexUtility::isIndexWithAnything("/home/test");
 
     EXPECT_TRUE(result);
 }

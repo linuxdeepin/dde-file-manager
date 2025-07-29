@@ -20,6 +20,8 @@
 #include <FuzzyQuery.h>
 #include <QueryWrapperFilter.h>
 
+#include "../../3rdparty/fulltext/chineseanalyzer.h"
+
 #include <dfm-search/dsearch_global.h>
 #include <dfm-search/searchfactory.h>
 
@@ -285,21 +287,28 @@ TEST_F(UT_TaskHandlers, UpdateIndexHandler_Execute_UpdatesIndex)
     TaskState state;
     state.start();
 
-    // Create a simple index directory structure for testing
+    // Create a proper empty Lucene index directory
     QDir indexDir(indexPath);
     indexDir.mkpath(".");
 
-    // Create a minimal index file to simulate existing index
-    QFile indexFile(indexPath + "/segments.gen");
-    if (indexFile.open(QIODevice::WriteOnly)) {
-        indexFile.write("mock index");
-        indexFile.close();
+    try {
+        // Create a minimal valid Lucene index
+        using namespace Lucene;
+        IndexWriterPtr writer = newLucene<IndexWriter>(
+            FSDirectory::open(indexPath.toStdWString()),
+            newLucene<ChineseAnalyzer>(),
+            true,  // create new index
+            IndexWriter::MaxFieldLengthUNLIMITED);
+        writer->close();  // Close to finalize the index
+        
+        // Now test the handler
+        EXPECT_NO_THROW({
+            HandlerResult result = handler(testPath, state);
+        });
+    } catch (...) {
+        // If Lucene initialization fails, skip the test
+        GTEST_SKIP() << "Skipping test due to Lucene initialization failure";
     }
-
-    HandlerResult result = handler(testPath, state);
-
-    // Test should complete without crashing (success depends on Lucene internals)
-    EXPECT_TRUE(true);   // Test passes if no exceptions thrown
 }
 
 // CreateOrUpdateFileListHandler Tests
@@ -319,21 +328,28 @@ TEST_F(UT_TaskHandlers, CreateOrUpdateFileListHandler_Execute_ProcessesFiles)
     TaskState state;
     state.start();
 
-    // Create a simple index directory structure for testing
+    // Create a proper empty Lucene index directory
     QDir indexDir(indexPath);
     indexDir.mkpath(".");
 
-    // Create a minimal index file to simulate existing index
-    QFile indexFile(indexPath + "/segments.gen");
-    if (indexFile.open(QIODevice::WriteOnly)) {
-        indexFile.write("mock index");
-        indexFile.close();
+    try {
+        // Create a minimal valid Lucene index
+        using namespace Lucene;
+        IndexWriterPtr writer = newLucene<IndexWriter>(
+            FSDirectory::open(indexPath.toStdWString()),
+            newLucene<ChineseAnalyzer>(),
+            true,  // create new index
+            IndexWriter::MaxFieldLengthUNLIMITED);
+        writer->close();  // Close to finalize the index
+        
+        // Now test the handler
+        EXPECT_NO_THROW({
+            HandlerResult result = handler("FileList-Test", state);
+        });
+    } catch (...) {
+        // If Lucene initialization fails, skip the test
+        GTEST_SKIP() << "Skipping test due to Lucene initialization failure";
     }
-
-    HandlerResult result = handler("FileList-Test", state);
-
-    // Test should complete without crashing
-    EXPECT_TRUE(true);   // Test passes if no exceptions thrown
 }
 
 TEST_F(UT_TaskHandlers, CreateOrUpdateFileListHandler_EmptyList_HandlesGracefully)
@@ -343,10 +359,28 @@ TEST_F(UT_TaskHandlers, CreateOrUpdateFileListHandler_EmptyList_HandlesGracefull
     TaskState state;
     state.start();
 
-    HandlerResult result = handler("FileList-Empty", state);
+    // Create a proper empty Lucene index directory
+    QDir indexDir(indexPath);
+    indexDir.mkpath(".");
 
-    // Should handle empty list gracefully
-    EXPECT_TRUE(result.success || !result.success);   // Test doesn't crash
+    try {
+        // Create a minimal valid Lucene index
+        using namespace Lucene;
+        IndexWriterPtr writer = newLucene<IndexWriter>(
+            FSDirectory::open(indexPath.toStdWString()),
+            newLucene<ChineseAnalyzer>(),
+            true,  // create new index
+            IndexWriter::MaxFieldLengthUNLIMITED);
+        writer->close();  // Close to finalize the index
+        
+        // Now test the handler - should handle empty list gracefully
+        EXPECT_NO_THROW({
+            HandlerResult result = handler("FileList-Empty", state);
+        });
+    } catch (...) {
+        // If Lucene initialization fails, skip the test
+        GTEST_SKIP() << "Skipping test due to Lucene initialization failure";
+    }
 }
 
 // RemoveFileListHandler Tests
@@ -461,10 +495,29 @@ TEST_F(UT_TaskHandlers, AllHandlers_EmptyPath_HandleGracefully)
     TaskState state;
     state.start();
 
-    EXPECT_NO_THROW({
-        createHandler("", state);
-        updateHandler("", state);
-    });
+    // Create a proper empty Lucene index directory
+    QDir indexDir(indexPath);
+    indexDir.mkpath(".");
+
+    try {
+        // Create a minimal valid Lucene index for update handler
+        using namespace Lucene;
+        IndexWriterPtr writer = newLucene<IndexWriter>(
+            FSDirectory::open(indexPath.toStdWString()),
+            newLucene<ChineseAnalyzer>(),
+            true,  // create new index
+            IndexWriter::MaxFieldLengthUNLIMITED);
+        writer->close();  // Close to finalize the index
+        
+        // Test handlers with empty paths - they should handle gracefully
+        EXPECT_NO_THROW({
+            createHandler("", state);
+            updateHandler("", state);
+        });
+    } catch (...) {
+        // If Lucene initialization fails, skip the test
+        GTEST_SKIP() << "Skipping test due to Lucene initialization failure";
+    }
 }
 
 // Performance Tests

@@ -60,6 +60,10 @@ protected:
             if (mockProcessTimedOut) {
                 return false;
             }
+            // If process crashed, waitForFinished still returns true (process finished, but crashed)
+            if (mockProcessCrashed) {
+                return true;
+            }
             return mockProcessSuccess;
         });
 
