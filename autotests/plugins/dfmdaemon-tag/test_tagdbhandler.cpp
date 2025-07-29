@@ -7,31 +7,82 @@
 #include <QSignalSpy>
 #include <QVariantMap>
 #include <QDir>
+#include <QTemporaryDir>
+#include <QStandardPaths>
 
 #include "stubext.h"
+#include "stub.h"
 
 #include "tagdbhandler.h"
 #include "beans/filetaginfo.h"
 #include "beans/tagproperty.h"
 
+#include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/db/sqlitehandle.h>
+
 DAEMONPTAG_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 class TestTagDbHandler : public testing::Test
 {
 public:
     void SetUp() override
     {
+        // Create temporary directory for test database
+        tempDir.reset(new QTemporaryDir);
+        ASSERT_TRUE(tempDir->isValid());
+        
+        // Mock StandardPaths to return our temporary directory
+        stub.set_lamda(static_cast<QString (*)(StandardPaths::StandardLocation)>(&StandardPaths::location), 
+                      [this](StandardPaths::StandardLocation type) {
+            __DBG_STUB_INVOKE__
+            if (type == StandardPaths::kApplicationConfigPath) {
+                return tempDir->path();
+            }
+            // For other types, return a safe default path
+            return QString("/tmp/test");
+        });
+        
+        // Mock database operations to avoid real database writes
+        mockDatabaseOperations();
+        
         handler = TagDbHandler::instance();
     }
 
     void TearDown() override
     {
         stub.clear();
+        tempDir.reset();
     }
+
+protected:
+    void mockDatabaseOperations()
+    {
+        // Mock SqliteHandle::excute to prevent real database operations
+        stub.set_lamda(ADDR(SqliteHandle, excute), [](SqliteHandle *, const QString &, std::function<void(QSqlQuery *)>) {
+            __DBG_STUB_INVOKE__
+            return true; // Always succeed for table creation, etc.
+        });
+        
+        // Reset mock data for each test
+        mockTags.clear();
+        mockFileTags.clear();
+        mockLastError.clear();
+    }
+    
+    void setMockTags(const QVariantMap &tags) { mockTags = tags; }
+    void setMockFileTags(const QVariantMap &fileTags) { mockFileTags = fileTags; }
+    void setMockError(const QString &error) { mockLastError = error; }
 
 protected:
     TagDbHandler *handler = nullptr;
     stub_ext::StubExt stub;
+    std::unique_ptr<QTemporaryDir> tempDir;
+    
+    // Mock data storage
+    QVariantMap mockTags;
+    QVariantMap mockFileTags;
+    QString mockLastError;
 };
 
 // Test getAllTags method with empty database
@@ -219,7 +270,7 @@ TEST_F(TestTagDbHandler, AddTagProperty_WithValidData_ShouldReturnTrueAndEmitSig
         return false;
     });
     
-    // Mock insertTagProperty to return true
+    // Mock insertTagProperty to return true (prevents real database write)
     stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
         __DBG_STUB_INVOKE__
         return true;
@@ -302,7 +353,7 @@ TEST_F(TestTagDbHandler, AddTagsForFiles_WithEmptyData_ShouldReturnFalseAndSetEr
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test addTagsForFiles method with valid data (simplified)
+// Test addTagsForFiles method with valid data
 TEST_F(TestTagDbHandler, AddTagsForFiles_WithValidData_ShouldReturnResult)
 {
     QVariantMap fileData;
@@ -314,13 +365,18 @@ TEST_F(TestTagDbHandler, AddTagsForFiles_WithValidData_ShouldReturnResult)
         return QVariantMap();
     });
     
+    // Mock tagFile to return true (prevents real database write)
+    stub.set_lamda(&TagDbHandler::tagFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     QSignalSpy spy(handler, &TagDbHandler::filesWereTagged);
     
     bool result = handler->addTagsForFiles(fileData);
     
-    // Should execute without crashing, result depends on actual database state
-    EXPECT_TRUE(result == true || result == false);
-    EXPECT_EQ(spy.count(), 1); // Signal should be emitted regardless
+    EXPECT_TRUE(result);
+    EXPECT_EQ(spy.count(), 1); // Signal should be emitted
 }
 
 // Test removeTagsOfFiles method with empty data
@@ -334,19 +390,24 @@ TEST_F(TestTagDbHandler, RemoveTagsOfFiles_WithEmptyData_ShouldReturnFalseAndSet
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test removeTagsOfFiles method with valid data (simplified)
+// Test removeTagsOfFiles method with valid data
 TEST_F(TestTagDbHandler, RemoveTagsOfFiles_WithValidData_ShouldReturnResult)
 {
     QVariantMap fileData;
     fileData["/path/file1"] = QStringList{"tag1", "tag2"};
     
+    // Mock removeSpecifiedTagOfFile to return true (prevents real database write)
+    stub.set_lamda(&TagDbHandler::removeSpecifiedTagOfFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     QSignalSpy spy(handler, &TagDbHandler::filesUntagged);
     
     bool result = handler->removeTagsOfFiles(fileData);
     
-    // Should execute without crashing
-    EXPECT_TRUE(result == true || result == false);
-    EXPECT_EQ(spy.count(), 1); // Signal should be emitted regardless
+    EXPECT_TRUE(result);
+    EXPECT_EQ(spy.count(), 1); // Signal should be emitted
 }
 
 // Test deleteTags method with empty input
@@ -360,19 +421,23 @@ TEST_F(TestTagDbHandler, DeleteTags_WithEmptyInput_ShouldReturnFalseAndSetError)
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test deleteTags method with valid input (simplified)
+// Test deleteTags method with valid input
 TEST_F(TestTagDbHandler, DeleteTags_WithValidInput_ShouldReturnResult)
 {
     QStringList tags = {"tag1", "tag2"};
+    
+    // Mock database operations to return success (prevents real database write)
+    stub.set_lamda(ADDR(SqliteHandle, excute), [](SqliteHandle *, const QString &, std::function<void(QSqlQuery *)>) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     
     QSignalSpy spy(handler, &TagDbHandler::tagsDeleted);
     
     bool result = handler->deleteTags(tags);
     
-    // Should execute without crashing
-    EXPECT_TRUE(result == true || result == false);
-    // Signal emission depends on success
-    EXPECT_TRUE(spy.count() >= 0);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(spy.count(), 1); // Signal should be emitted on success
 }
 
 // Test deleteFiles method with empty input
@@ -386,15 +451,20 @@ TEST_F(TestTagDbHandler, DeleteFiles_WithEmptyInput_ShouldReturnFalseAndSetError
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test deleteFiles method with valid input (simplified)
+// Test deleteFiles method with valid input
 TEST_F(TestTagDbHandler, DeleteFiles_WithValidInput_ShouldReturnResult)
 {
     QStringList urls = {"/path/file1", "/path/file2"};
     
+    // Mock database operations to return success (prevents real database write)
+    stub.set_lamda(ADDR(SqliteHandle, excute), [](SqliteHandle *, const QString &, std::function<void(QSqlQuery *)>) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->deleteFiles(urls);
     
-    // Should execute without crashing
-    EXPECT_TRUE(result == true || result == false);
+    EXPECT_TRUE(result);
 }
 
 // Test changeTagColors method with empty data
@@ -408,14 +478,14 @@ TEST_F(TestTagDbHandler, ChangeTagColors_WithEmptyData_ShouldReturnFalseAndSetEr
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test changeTagColors method with valid data (simplified)
+// Test changeTagColors method with valid data
 TEST_F(TestTagDbHandler, ChangeTagColors_WithValidData_ShouldReturnResult)
 {
     QVariantMap colorData;
     colorData["tag1"] = "red";
     colorData["tag2"] = "blue";
     
-    // Mock changeTagColor to return true
+    // Mock changeTagColor to return true (prevents real database write)
     stub.set_lamda(&TagDbHandler::changeTagColor, [](TagDbHandler *, const QString &, const QString &) {
         __DBG_STUB_INVOKE__
         return true;
@@ -441,13 +511,13 @@ TEST_F(TestTagDbHandler, ChangeTagNamesWithFiles_WithEmptyData_ShouldReturnFalse
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test changeTagNamesWithFiles method with valid data (simplified)
+// Test changeTagNamesWithFiles method with valid data
 TEST_F(TestTagDbHandler, ChangeTagNamesWithFiles_WithValidData_ShouldReturnResult)
 {
     QVariantMap nameData;
     nameData["oldTag"] = "newTag";
     
-    // Mock changeTagNameWithFile to return true
+    // Mock changeTagNameWithFile to return true (prevents real database write)
     stub.set_lamda(&TagDbHandler::changeTagNameWithFile, [](TagDbHandler *, const QString &, const QString &) {
         __DBG_STUB_INVOKE__
         return true;
@@ -473,13 +543,13 @@ TEST_F(TestTagDbHandler, ChangeFilePaths_WithEmptyData_ShouldReturnFalseAndSetEr
     EXPECT_FALSE(handler->lastError().isEmpty());
 }
 
-// Test changeFilePaths method with valid data (simplified)
+// Test changeFilePaths method with valid data
 TEST_F(TestTagDbHandler, ChangeFilePaths_WithValidData_ShouldReturnResult)
 {
     QVariantMap pathData;
     pathData["/old/path"] = "/new/path";
     
-    // Mock changeFilePath to return true
+    // Mock changeFilePath to return true (prevents real database write)
     stub.set_lamda(&TagDbHandler::changeFilePath, [](TagDbHandler *, const QString &, const QString &) {
         __DBG_STUB_INVOKE__
         return true;
@@ -533,10 +603,21 @@ TEST_F(TestTagDbHandler, AddTagProperty_WithEmptyTagName_ShouldHandleGracefully)
     QVariantMap tagData;
     tagData[""] = "color"; // Empty tag name
     
+    // Mock operations to prevent real database writes
+    stub.set_lamda(&TagDbHandler::checkTag, [](TagDbHandler *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    
+    stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true; // Simulate graceful handling
+    });
+    
     bool result = handler->addTagProperty(tagData);
     
-    // Should handle gracefully (might succeed or fail, but shouldn't crash)
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 // Test insertTagProperty through addTagProperty with null value
@@ -545,10 +626,21 @@ TEST_F(TestTagDbHandler, AddTagProperty_WithNullValue_ShouldHandleGracefully)
     QVariantMap tagData;
     tagData["tag"] = QVariant(); // Null value
     
+    // Mock operations to prevent real database writes
+    stub.set_lamda(&TagDbHandler::checkTag, [](TagDbHandler *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    
+    stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true; // Simulate graceful handling
+    });
+    
     bool result = handler->addTagProperty(tagData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 // Test with empty file paths and tag lists
@@ -563,10 +655,16 @@ TEST_F(TestTagDbHandler, AddTagsForFiles_WithEmptyFilePath_ShouldHandleGracefull
         return QVariantMap();
     });
     
+    // Mock tagFile to prevent real database writes
+    stub.set_lamda(&TagDbHandler::tagFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->addTagsForFiles(fileData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 // Test with empty tag lists
@@ -581,10 +679,16 @@ TEST_F(TestTagDbHandler, AddTagsForFiles_WithEmptyTagList_ShouldHandleGracefully
         return QVariantMap();
     });
     
+    // Mock tagFile to prevent real database writes
+    stub.set_lamda(&TagDbHandler::tagFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->addTagsForFiles(fileData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 // Test with empty parameters for various methods
@@ -593,10 +697,16 @@ TEST_F(TestTagDbHandler, RemoveTagsOfFiles_WithEmptyParameters_ShouldHandleGrace
     QVariantMap fileData;
     fileData[""] = QStringList(); // Empty file path and tag list
     
+    // Mock removeSpecifiedTagOfFile to prevent real database writes
+    stub.set_lamda(&TagDbHandler::removeSpecifiedTagOfFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->removeTagsOfFiles(fileData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 TEST_F(TestTagDbHandler, ChangeTagColors_WithEmptyTagName_ShouldHandleGracefully)
@@ -604,10 +714,16 @@ TEST_F(TestTagDbHandler, ChangeTagColors_WithEmptyTagName_ShouldHandleGracefully
     QVariantMap colorData;
     colorData[""] = ""; // Empty tag name and color
     
+    // Mock changeTagColor to prevent real database writes
+    stub.set_lamda(&TagDbHandler::changeTagColor, [](TagDbHandler *, const QString &, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->changeTagColors(colorData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 TEST_F(TestTagDbHandler, ChangeTagNamesWithFiles_WithEmptyParameters_ShouldHandleGracefully)
@@ -615,10 +731,16 @@ TEST_F(TestTagDbHandler, ChangeTagNamesWithFiles_WithEmptyParameters_ShouldHandl
     QVariantMap nameData;
     nameData[""] = ""; // Empty old and new names
     
+    // Mock changeTagNameWithFile to prevent real database writes
+    stub.set_lamda(&TagDbHandler::changeTagNameWithFile, [](TagDbHandler *, const QString &, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->changeTagNamesWithFiles(nameData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 TEST_F(TestTagDbHandler, ChangeFilePaths_WithEmptyParameters_ShouldHandleGracefully)
@@ -626,10 +748,16 @@ TEST_F(TestTagDbHandler, ChangeFilePaths_WithEmptyParameters_ShouldHandleGracefu
     QVariantMap pathData;
     pathData[""] = ""; // Empty old and new paths
     
+    // Mock changeFilePath to prevent real database writes
+    stub.set_lamda(&TagDbHandler::changeFilePath, [](TagDbHandler *, const QString &, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     bool result = handler->changeFilePaths(pathData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
 // Test database initialization
@@ -682,49 +810,102 @@ TEST_F(TestTagDbHandler, AddTagProperty_WithLargeData_ShouldHandleGracefully)
     QString largeColor(1000, 'b');   // 1000 character color
     tagData[largeTagName] = largeColor;
     
+    // Mock operations to prevent real database writes
+    stub.set_lamda(&TagDbHandler::checkTag, [](TagDbHandler *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    
+    stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true; // Simulate graceful handling
+    });
+    
     bool result = handler->addTagProperty(tagData);
     
-    // Should handle gracefully without crashing
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
-// Test with special characters
+// Test with special characters (now safe because it's mocked)
 TEST_F(TestTagDbHandler, AddTagProperty_WithSpecialCharacters_ShouldHandleGracefully)
 {
     QVariantMap tagData;
     tagData["tag with spaces & symbols!@#$%"] = "color with 中文 and émojis 🎉";
     
+    // Mock operations to simulate successful handling and PREVENT real database writes
+    stub.set_lamda(&TagDbHandler::checkTag, [](TagDbHandler *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return false; // Tag doesn't exist
+    });
+    
+    stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true; // Successful insertion (mocked, no real database write)
+    });
+    
     bool result = handler->addTagProperty(tagData);
     
-    // Should handle gracefully
-    EXPECT_TRUE(result == true || result == false);
+    // Should handle gracefully with mocked operations
+    EXPECT_TRUE(result);
 }
 
-// Test multiple operations in sequence to test state consistency
+// Test multiple operations in sequence to test state consistency (now safe)
 TEST_F(TestTagDbHandler, MultipleOperations_ShouldMaintainConsistency)
 {
+    // Mock all operations to return success and PREVENT real database writes
+    stub.set_lamda(&TagDbHandler::checkTag, [](TagDbHandler *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return false; // Tag doesn't exist initially
+    });
+    
+    stub.set_lamda(&TagDbHandler::insertTagProperty, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(&TagDbHandler::tagFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(&TagDbHandler::changeTagColor, [](TagDbHandler *, const QString &, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(&TagDbHandler::removeSpecifiedTagOfFile, [](TagDbHandler *, const QString &, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
     // Add a tag
     QVariantMap tagData;
     tagData["sequenceTag"] = "blue";
-    handler->addTagProperty(tagData);
+    bool addResult = handler->addTagProperty(tagData);
+    EXPECT_TRUE(addResult);
     
     // Add file with tag
     QVariantMap fileData;
     fileData["/sequence/file"] = QStringList{"sequenceTag"};
-    handler->addTagsForFiles(fileData);
+    bool tagFileResult = handler->addTagsForFiles(fileData);
+    EXPECT_TRUE(tagFileResult);
     
     // Change tag color
     QVariantMap colorData;
     colorData["sequenceTag"] = "red";
-    handler->changeTagColors(colorData);
+    bool changeColorResult = handler->changeTagColors(colorData);
+    EXPECT_TRUE(changeColorResult);
     
     // Remove tag from file
-    handler->removeTagsOfFiles(fileData);
+    bool removeResult = handler->removeTagsOfFiles(fileData);
+    EXPECT_TRUE(removeResult);
     
     // Delete tag
     QStringList tags = {"sequenceTag"};
-    handler->deleteTags(tags);
+    bool deleteResult = handler->deleteTags(tags);
+    EXPECT_TRUE(deleteResult);
     
-    // All operations should complete without crashing
+    // All operations should complete successfully with mocked operations
     EXPECT_TRUE(true); // If we reach here, no crashes occurred
 }
