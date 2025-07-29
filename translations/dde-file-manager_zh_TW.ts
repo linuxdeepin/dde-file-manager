@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_TW">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_TW">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -32,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -67,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
         <source>Can&apos;t access file!</source>
-        <translation>無法存取檔案！</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -125,7 +123,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
         <source>Decrypting </source>
-        <translation>正在解密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -133,7 +131,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -149,7 +147,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
         <source>Decrypting </source>
-        <translation>正在解密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -157,7 +155,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -181,8 +179,7 @@
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation>需要驗證身份
-請輸入%1的使用者名稱和密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1184"/>
@@ -661,7 +658,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation>預設圖示大小：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -1780,17 +1777,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation>未知</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
         <source>search</source>
-        <translation>搜尋</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
         <source>advanced search</source>
-        <translation>進階搜尋</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
@@ -1858,7 +1855,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
-        <translation>正在更新 grub...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
@@ -1871,7 +1868,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
         <source>Encrypting </source>
-        <translation>正在加密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1930,7 +1927,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -2188,7 +2185,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation>桌面設定</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2231,7 +2228,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation>若要停用一鍵隱藏功能，請呼叫桌面上下文功能表中的「桌面設定」視窗並關閉「一鍵隱藏集合」。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
@@ -2275,7 +2272,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation>桌面設定</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -2915,12 +2912,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation>復原後將會徹底刪除&amp;#xa0;%1&amp;#xa0;，您確定要徹底刪除？</translation>
+        <translation>復原後將會徹底刪除 %1 ，您確定要徹底刪除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>復原後將會徹底刪除這&amp;#xa0;%1&amp;#xa0;項內容，您確定要徹底刪除？</translation>
+        <translation>復原後將會徹底刪除這 %1 項內容，您確定要徹底刪除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
@@ -3232,12 +3229,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
         <source>Default icon grid density:</source>
-        <translation>預設圖示網格密度：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
         <source>Default list height:</source>
-        <translation>預設列表高度：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
@@ -3262,7 +3259,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Default icon size:</source>
-        <translation>預設圖示大小：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
@@ -4235,7 +4232,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation>解析度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
@@ -4399,7 +4396,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation>共享名稱過長，將會被截斷。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4641,7 +4638,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
         <source>Continue partition decryption</source>
-        <translation>繼續分區解密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
@@ -4689,7 +4686,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
         <source>unmount</source>
-        <translation>移除</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
@@ -5100,17 +5097,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation>裝置尚未完全解密，請完成解密後再訪問。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
         <source>Unlocking device failed</source>
-        <translation>解鎖裝置失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation>請點擊磁碟右鍵選單中的「繼續分區加密」以完成分區加密。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5149,7 +5146,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation>請輸入24位數的復原金鑰</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
@@ -5730,17 +5727,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Accessed</source>
-        <translation>存取時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="109"/>
         <source>Modified</source>
-        <translation>修改時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="113"/>
@@ -5750,12 +5747,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Resolution</source>
-        <translation>解析度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation>時長</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
@@ -6109,12 +6106,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="296"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>索引更新完成，上次更新時間：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="297"/>
         <source>Update index now</source>
-        <translation>立即更新索引</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6162,32 +6159,32 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Index update failed, please</source>
-        <translation>索引更新失敗，請</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="173"/>
         <source>try updating again</source>
-        <translation>嘗試重新更新</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation>啟用後可搜尋檔案內容。建立索引可能需要幾分鐘</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="198"/>
         <source>Building index</source>
-        <translation>正在建立索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="204"/>
         <source>Building index, %1 files indexed</source>
-        <translation>正在建立索引，已索引 %1 個檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="209"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>正在建立索引，已索引 %1/%2 項</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6329,7 +6326,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation>輸入位址</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6532,29 +6529,29 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="344"/>
         <source>Icon view</source>
-        <translation>圖示檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="271"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="348"/>
         <source>List view</source>
-        <translation>清單檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="282"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="352"/>
         <source>Tree view</source>
-        <translation>樹狀檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
         <source>Sort by</source>
-        <translation>排序方式</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="310"/>
         <source>View options</source>
-        <translation>檢視選項</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6562,27 +6559,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation>名稱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation>修改時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation>大小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation>類型</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6590,27 +6587,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="56"/>
         <source>View Options</source>
-        <translation>檢視選項</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="70"/>
         <source>Icon size</source>
-        <translation>圖示大小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="103"/>
         <source>Grid density</source>
-        <translation>網格密度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
-        <translation>清單高度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
-        <translation>顯示預覽</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6954,52 +6951,52 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation>建立公鑰失敗：金鑰長度過長！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation>儲存RSA密文檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation>儲存公鑰檔案失敗：公鑰為空。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
         <source>Failed to save public key file: %1</source>
-        <translation>儲存公鑰檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="294"/>
         <source>Failed to create config dir: %1</source>
-        <translation>建立設定目錄失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="322"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation>建立RSA私鑰檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="333"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation>建立RSA密文檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="344"/>
         <source>Failed to create hint file: %1</source>
-        <translation>建立提示檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="376"/>
         <source>Failed to save hint info: %1</source>
-        <translation>儲存提示資訊失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="731"/>
         <source>Save password failed: %1</source>
-        <translation>儲存密碼失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7244,7 +7241,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="196"/>
         <source>Close</source>
-        <translation>關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
@@ -7408,27 +7405,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation>建立保險箱失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation>建立保險箱失敗：獲取加密方式失敗！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation>建立保險箱失敗：未知的加密方式！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation>建立保險箱失敗：取得的密碼為空！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation>自動產生密碼失敗！</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7436,7 +7433,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation>保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7476,7 +7473,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
         <source>File Vault</source>
-        <translation>保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7671,7 +7668,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="738"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="740"/>
@@ -7733,7 +7730,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
