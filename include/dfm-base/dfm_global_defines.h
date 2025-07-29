@@ -29,7 +29,7 @@ enum class ViewMode {
 };
 
 enum class DirectoryLoadStrategy : uint8_t {
-    kCreateNew, // 默认策略：每次切换目录时立即清空视图
+    kCreateNew,   // 默认策略：每次切换目录时立即清空视图
     kPreserve   // 保留策略：保留现有视图内容，直到新目录数据加载完成后再更新视图
 };
 
@@ -40,7 +40,8 @@ inline constexpr char kSupportTreeMode[] { "Custom_Key_SupportTreeMode" };
 inline constexpr char kDefaultViewMode[] { "Custom_Key_DefaultViewMode" };
 inline constexpr char kDefaultListHeight[] { "Custom_Key_DefaultListHeight" };
 inline constexpr char kAllowChangeListHeight[] { "Custom_Key_AllowChangeListHeight" };
-} // namespace ViewCustomKeys
+inline constexpr char kViewModeUrlCallback[] { "Custom_Key_ViewModeUrlCallback" };
+}   // namespace ViewCustomKeys
 
 enum class TransparentStatus : uint8_t {
     kDefault,
@@ -210,7 +211,7 @@ inline constexpr char kDfmDBName[] { "dfmruntime.db" };
 namespace DataPersistence {
 // groups
 inline constexpr char kReportGroup[] { "Report" };
-//keys
+// keys
 inline constexpr char kDesktopStartUpReportKey[] { "DesktopStartUp" };
 inline constexpr char kDesktopLaunchTime[] { "DesktopLaunchTime" };
 inline constexpr char kDesktopDrawWallpaperTime[] { "DrawWallPaperTime" };

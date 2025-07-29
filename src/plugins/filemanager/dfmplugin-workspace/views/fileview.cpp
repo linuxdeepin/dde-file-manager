@@ -2544,11 +2544,7 @@ void FileView::openIndex(const QModelIndex &index)
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
 {
-    QVariantMap map = Application::appObtuselySetting()->value("FileViewState", url).toMap();
-
-    map[key] = value;
-
-    Application::appObtuselySetting()->setValue("FileViewState", url, map);
+    WorkspaceHelper::instance()->setFileViewStateValue(url, key, value);
 }
 
 void FileView::saveViewModeState()

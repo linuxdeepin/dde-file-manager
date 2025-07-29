@@ -13,6 +13,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
@@ -553,4 +554,25 @@ FileView *WorkspaceHelper::findFileViewByWindowID(const quint64 windowID)
     }
     fmDebug() << "No workspace widget found for window ID:" << windowID;
     return {};
+}
+
+QUrl WorkspaceHelper::transformViewModeUrl(const QUrl &url) const
+{
+    auto callback = findCustomViewProperty(url.scheme()).viewModelUrlCallback;
+    return callback ? callback(url) : url;
+}
+
+QVariant WorkspaceHelper::getFileViewStateValue(const QUrl &url, const QString &key, const QVariant &defaultValue) const
+{
+    QUrl viewModeUrl = transformViewModeUrl(url);
+    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", viewModeUrl).toMap();
+    return valueMap.value(key, defaultValue);
+}
+
+void WorkspaceHelper::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
+{
+    QUrl viewModeUrl = transformViewModeUrl(url);
+    QVariantMap map = Application::appObtuselySetting()->value("FileViewState", viewModeUrl).toMap();
+    map[key] = value;
+    Application::appObtuselySetting()->setValue("FileViewState", viewModeUrl, map);
 }

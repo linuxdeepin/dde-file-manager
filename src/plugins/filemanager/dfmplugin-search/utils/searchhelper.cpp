@@ -103,6 +103,28 @@ QUrl SearchHelper::setSearchWinId(const QUrl &searchUrl, const QString &winId)
     return url;
 }
 
+QUrl SearchHelper::viewModelUrl(const QUrl &url)
+{
+    if (url.scheme() != scheme() || !url.hasQuery())
+        return url;
+
+    // 解析原始查询参数
+    QUrlQuery urlQuery(url.query());
+    QString urlValue = urlQuery.queryItemValue("url");
+
+    // 创建新的URL对象
+    QUrl newUrl(url);
+
+    if (!urlValue.isEmpty()) {
+        // 只保留url参数
+        QUrlQuery newQuery;
+        newQuery.addQueryItem("url", urlValue);
+        newUrl.setQuery(newQuery);
+    }
+
+    return newUrl;
+}
+
 QUrl SearchHelper::fromSearchFile(const QString &filePath)
 {
     QUrl url;

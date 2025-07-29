@@ -30,11 +30,13 @@
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 Q_DECLARE_METATYPE(CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(ViewModeUrlCallback)
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -85,10 +87,12 @@ void Search::onWindowOpened(quint64 windId)
 
 void Search::regSearchCrumbToTitleBar()
 {
+    ViewModeUrlCallback viewModelUrlCallback { SearchHelper::viewModelUrl };
     QVariantMap property;
     property["Property_Key_KeepAddressBar"] = true;
     property[ViewCustomKeys::kSupportTreeMode] = false;
     property[ViewCustomKeys::kAllowChangeListHeight] = false;
+    property[ViewCustomKeys::kViewModeUrlCallback] = QVariant::fromValue(viewModelUrlCallback);
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SearchHelper::scheme(), property);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_RedirectUrl",
                             SearchHelper::instance(), &SearchHelper::crumbRedirectUrl);
@@ -105,11 +109,13 @@ void Search::regSearchToWorkspace()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterLoadStrategy", SearchHelper::scheme(), DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kPreserve);
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFocusFileViewDisabled", SearchHelper::scheme());
 
+    ViewModeUrlCallback viewModelUrlCallback { SearchHelper::viewModelUrl };
     QVariantMap propertise {
         { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kSupportTreeMode, false },
         { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultViewMode, static_cast<int>(Global::ViewMode::kListMode) },
         { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kAllowChangeListHeight, false },
-        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultListHeight, ViewDefines().listHeightCount() - 1 }
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kDefaultListHeight, ViewDefines().listHeightCount() - 1 },
+        { DFMGLOBAL_NAMESPACE::ViewCustomKeys::kViewModeUrlCallback, QVariant::fromValue(viewModelUrlCallback) }
     };
     dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", SearchHelper::scheme(), propertise);
 

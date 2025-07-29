@@ -14,6 +14,8 @@
 
 #include <dfm-base/utils/universalutils.h>
 
+#include <dfm-framework/event/eventhelper.h>
+
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -34,14 +36,15 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 
     bool keepAddressBar { properties.value(CustomKey::kKeepAddressBar).toBool() };
     bool hideDetailSpaceBtn { properties.value(CustomKey::kHideDetailSpaceBtn).toBool() };
-    bool hideListViewBtn = properties.contains(ViewCustomKeys::kSupportListMode) &&
-                            !properties.value(ViewCustomKeys::kSupportListMode).toBool();
-    bool hideIconViewBtn = properties.contains(ViewCustomKeys::kSupportIconMode) &&
-                            !properties.value(ViewCustomKeys::kSupportIconMode).toBool();
-    bool hideTreeViewBtn = properties.contains(ViewCustomKeys::kSupportTreeMode) &&
-                            !properties.value(ViewCustomKeys::kSupportTreeMode).toBool();
-    bool hideListHeightOpt = properties.contains(ViewCustomKeys::kAllowChangeListHeight) &&
-                            !properties.value(ViewCustomKeys::kAllowChangeListHeight).toBool();
+    bool hideListViewBtn = properties.contains(ViewCustomKeys::kSupportListMode)
+            && !properties.value(ViewCustomKeys::kSupportListMode).toBool();
+    bool hideIconViewBtn = properties.contains(ViewCustomKeys::kSupportIconMode)
+            && !properties.value(ViewCustomKeys::kSupportIconMode).toBool();
+    bool hideTreeViewBtn = properties.contains(ViewCustomKeys::kSupportTreeMode)
+            && !properties.value(ViewCustomKeys::kSupportTreeMode).toBool();
+    bool hideListHeightOpt = properties.contains(ViewCustomKeys::kAllowChangeListHeight)
+            && !properties.value(ViewCustomKeys::kAllowChangeListHeight).toBool();
+    ViewModeUrlCallback modelViewUrlCallback = DPF_NAMESPACE::paramGenerator<ViewModeUrlCallback>(properties.value(ViewCustomKeys::kViewModeUrlCallback));
 
     int state { OptionButtonManager::kDoNotHide };
     if (hideListViewBtn)
@@ -65,6 +68,9 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
 
     if (keepAddressBar)
         TitleBarHelper::registerKeepTitleStatusScheme(scheme);
+
+    if (modelViewUrlCallback)
+        TitleBarHelper::registerViewModelUrlCallback(scheme, modelViewUrlCallback);
 
     return true;
 }
