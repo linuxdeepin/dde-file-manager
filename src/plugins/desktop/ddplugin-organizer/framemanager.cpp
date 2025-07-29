@@ -153,7 +153,7 @@ void FrameManagerPrivate::onHideAllKeyPressed()
     if (!CfgPresenter->isRepeatNoMore() && aboutToHide) {
         uint notifyId = QDate::currentDate().daysInYear();
         QString keySequence = CfgPresenter->hideAllKeySequence().toString();
-        QString tips = tr("To disable the One-Click Hide feature, invoke the \"View Options\" window "
+        QString tips = tr("To disable the One-Click Hide feature, invoke the \"Desktop Settings\" window "
                           "in the desktop context menu and turn off the \"One-Click Hide Collection\".");
         QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
         QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
