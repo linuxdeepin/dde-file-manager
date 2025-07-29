@@ -15,6 +15,8 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/abstractframe.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <gtest/gtest.h>
 
@@ -23,10 +25,10 @@ Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractSceneCreator *)
 
 DFMBASE_USE_NAMESPACE
-        DPSEARCH_USE_NAMESPACE
-                DPF_USE_NAMESPACE
+DPSEARCH_USE_NAMESPACE
+DPF_USE_NAMESPACE
 
-                TEST(SearchTest, ut_initialize)
+TEST(SearchTest, ut_initialize)
 {
     stub_ext::StubExt st;
     st.set_lamda(&Search::bindEvents, []() { return; });
@@ -46,6 +48,10 @@ TEST(SearchTest, ut_start)
         delete creator;
         return QVariant();
     });
+
+    st.set_lamda(&DConfigManager::addConfig, [] { return true; });
+    st.set_lamda(&SettingJsonGenerator::addGroup, [] { return true; });
+    st.set_lamda(&SettingJsonGenerator::addConfig, [] { return true; });
 
     Application app;
 
@@ -132,15 +138,15 @@ TEST(SearchTest, ut_bindEvents)
     typedef bool (SearchHelper::*HookFunc1)(const QUrl &, QList<Global::ItemRoles> *);
     typedef bool (EventSequenceManager::*HookType1)(const QString &, const QString &, SearchHelper *, HookFunc1);
 
-             // type of SearchHelper::customRoleDisplayName
+    // type of SearchHelper::customRoleDisplayName
     typedef bool (SearchHelper::*HookFunc2)(const QUrl &, const Global::ItemRoles, QString *);
     typedef bool (EventSequenceManager::*HookType2)(const QString &, const QString &, SearchHelper *, HookFunc2);
 
-             // type of SearchHelper::customRoleData
+    // type of SearchHelper::customRoleData
     typedef bool (SearchHelper::*HookFunc3)(const QUrl &, const QUrl &, const Global::ItemRoles, QVariant *);
     typedef bool (EventSequenceManager::*HookType3)(const QString &, const QString &, SearchHelper *, HookFunc3);
 
-             // type of SearchHelper::blockPaste
+    // type of SearchHelper::blockPaste
     typedef bool (SearchHelper::*HookFunc4)(quint64, const QUrl &);
     typedef bool (EventSequenceManager::*HookType4)(const QString &, const QString &, SearchHelper *, HookFunc4);
 
@@ -153,20 +159,20 @@ TEST(SearchTest, ut_bindEvents)
     auto follow4 = static_cast<HookType4>(&EventSequenceManager::follow);
     st.set_lamda(follow4, [] { return true; });
 
-             // subscribe
-             // type of SearchEventReceiver::handleSearch
+    // subscribe
+    // type of SearchEventReceiver::handleSearch
     typedef void (SearchEventReceiver::*SubFunc1)(quint64, const QString &);
     typedef bool (EventDispatcherManager::*SubType1)(const QString &, const QString &, SearchEventReceiver *, SubFunc1);
 
-             // type of SearchEventReceiver::handleStopSearch
+    // type of SearchEventReceiver::handleStopSearch
     typedef void (SearchEventReceiver::*SubFunc2)(quint64);
     typedef bool (EventDispatcherManager::*SubType2)(const QString &, const QString &, SearchEventReceiver *, SubFunc2);
 
-             // type of SearchEventReceiver::handleShowAdvanceSearchBar
+    // type of SearchEventReceiver::handleShowAdvanceSearchBar
     typedef void (SearchEventReceiver::*SubFunc3)(quint64, bool);
     typedef bool (EventDispatcherManager::*SubType3)(const QString &, const QString &, SearchEventReceiver *, SubFunc3);
 
-             // type of SearchEventReceiver::handleUrlChanged
+    // type of SearchEventReceiver::handleUrlChanged
     typedef void (SearchEventReceiver::*SubFunc4)(quint64, const QUrl &);
     typedef bool (EventDispatcherManager::*SubType4)(const QString &, const QString &, SearchEventReceiver *, SubFunc4);
 
@@ -179,16 +185,16 @@ TEST(SearchTest, ut_bindEvents)
     auto subscribe4 = static_cast<SubType4>(&EventDispatcherManager::subscribe);
     st.set_lamda(subscribe4, [] { return true; });
 
-             // connect
-             // type of CustomManager::registerCustomInfo
+    // connect
+    // type of CustomManager::registerCustomInfo
     typedef bool (CustomManager::*SigFunc1)(const QString &, const QVariantMap &);
     typedef bool (EventChannelManager::*SigType1)(const QString &, const QString &, CustomManager *, SigFunc1);
 
-             // type of CustomManager::isDisableSearch
+    // type of CustomManager::isDisableSearch
     typedef bool (CustomManager::*SigFunc2)(const QUrl &);
     typedef bool (EventChannelManager::*SigType2)(const QString &, const QString &, CustomManager *, SigFunc2);
 
-             // type of CustomManager::redirectedPath
+    // type of CustomManager::redirectedPath
     typedef QString (CustomManager::*SigFunc3)(const QUrl &);
     typedef bool (EventChannelManager::*SigType3)(const QString &, const QString &, CustomManager *, SigFunc3);
 
