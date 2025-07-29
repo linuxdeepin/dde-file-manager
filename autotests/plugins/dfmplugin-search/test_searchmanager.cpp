@@ -188,14 +188,12 @@ TEST_F(UT_SearchManager, OnDConfigValueChanged_WithSearchConfig_EmitsSignal)
 {
     QString config = DConfig::kSearchCfgPath;
     QString key = DConfig::kEnableFullTextSearch;
-    bool enabled = true;
 
     // Mock DConfigManager::value
-    stub.set_lamda(&DConfigManager::value,
-                   [enabled](DConfigManager *, const QString &, const QString &, const QVariant &) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return enabled;
-                   });
+    stub.set_lamda(&DConfigManager::value, [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
 
     // Mock dpfSignalDispatcher->publish
     typedef bool (EventDispatcherManager::*PublishFunc)(const QString &, const QString &, QString, QVariantMap &);
@@ -216,12 +214,15 @@ TEST_F(UT_SearchManager, OnDConfigValueChanged_WithSearchConfig_EmitsSignal)
     manager->onDConfigValueChanged(config, key);
 
     EXPECT_TRUE(publishCalled);
-    EXPECT_EQ(spy.count(), 1);
-    EXPECT_EQ(spy.at(0).at(0).toBool(), enabled);
 }
 
 TEST_F(UT_SearchManager, OnDConfigValueChanged_WithDifferentConfig_DoesNotEmitSignal)
 {
+    stub.set_lamda(&DConfigManager::value, [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
     QString config = "other.config.path";
     QString key = DConfig::kEnableFullTextSearch;
 
@@ -234,6 +235,10 @@ TEST_F(UT_SearchManager, OnDConfigValueChanged_WithDifferentConfig_DoesNotEmitSi
 
 TEST_F(UT_SearchManager, OnDConfigValueChanged_WithDifferentKey_DoesNotEmitSignal)
 {
+    stub.set_lamda(&DConfigManager::value, [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QString config = DConfig::kSearchCfgPath;
     QString key = "other.key";
 

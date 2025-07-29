@@ -50,6 +50,8 @@ TEST(SearchTest, ut_start)
     });
 
     st.set_lamda(&DConfigManager::addConfig, [] { return true; });
+    st.set_lamda(&DConfigManager::value, [] { return true; });
+    st.set_lamda(&DConfigManager::setValue, [] {});
     st.set_lamda(&SettingJsonGenerator::addGroup, [] { return true; });
     st.set_lamda(&SettingJsonGenerator::addConfig, [] { return true; });
 
