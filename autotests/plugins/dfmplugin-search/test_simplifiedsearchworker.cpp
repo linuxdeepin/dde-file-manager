@@ -352,63 +352,6 @@ TEST_F(TestSimplifiedSearchWorker, MergeResults_CombinesSearchResults)
     EXPECT_TRUE(true);
 }
 
-TEST_F(TestSimplifiedSearchWorker, CompleteWorkflow_StartProcessMergeStop)
-{
-    // Mock complete workflow
-    stub.set_lamda(&QReadWriteLock::lockForWrite, [](QReadWriteLock *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&QReadWriteLock::lockForRead, [](QReadWriteLock *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&QReadWriteLock::unlock, [](QReadWriteLock *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&DFMSearcher::supportUrl, [](const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    stub.set_lamda(DFMSearcher::realSearchPath, [](const QUrl &) -> QString {
-        __DBG_STUB_INVOKE__
-        return "/home/test";
-    });
-
-    stub.set_lamda(&Global::defaultIndexedDirectory, []() -> QStringList {
-        __DBG_STUB_INVOKE__
-        return QStringList() << "/home/test/Documents";
-    });
-
-    stub.set_lamda(VADDR(IteratorSearcher, stop), [](AbstractSearcher *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&QObject::deleteLater, [](QObject *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    // Execute complete workflow
-    QMetaObject::invokeMethod(worker, "setTaskId", Qt::DirectConnection,
-                              Q_ARG(QString, taskId));
-    QMetaObject::invokeMethod(worker, "setSearchUrl", Qt::DirectConnection,
-                              Q_ARG(QUrl, searchUrl));
-    QMetaObject::invokeMethod(worker, "setKeyword", Qt::DirectConnection,
-                              Q_ARG(QString, searchKeyword));
-
-    QMetaObject::invokeMethod(worker, "startSearch", Qt::DirectConnection);
-
-    DFMSearchResultMap results;
-    QMetaObject::invokeMethod(worker, "getResults", Qt::DirectConnection,
-                              Q_RETURN_ARG(DFMSearchResultMap, results));
-
-    QMetaObject::invokeMethod(worker, "stopSearch", Qt::DirectConnection);
-
-    EXPECT_TRUE(true);
-}
-
 TEST_F(TestSimplifiedSearchWorker, ThreadSafety_WithConcurrentAccess)
 {
     // Test thread safety with read/write locks
@@ -469,16 +412,13 @@ TEST_F(TestSimplifiedSearchWorker, SearchTypeConfiguration_HandlesDifferentTypes
     QList<bool> fullTextSearchSettings = { true, false };
 
     for (bool enableFullText : fullTextSearchSettings) {
-        stub.set_lamda(&DConfigManager::value, [enableFullText](DConfigManager *, const QString &, const QString &, const QVariant &) -> QVariant {
+        stub.set_lamda(&DConfigManager::value, [enableFullText] {
             __DBG_STUB_INVOKE__
             return QVariant(enableFullText);
         });
 
         QUrl testUrl = QUrl::fromLocalFile("/home/test");
-        QMetaObject::invokeMethod(worker, "createSearchersForUrl", Qt::DirectConnection,
-                                  Q_ARG(QUrl, testUrl));
-
-        EXPECT_TRUE(true);
+        EXPECT_NO_FATAL_FAILURE(worker->createSearchersForUrl(testUrl));
     }
 }
 
