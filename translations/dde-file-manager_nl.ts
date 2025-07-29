@@ -2229,7 +2229,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>De functie ‘Verbergen met één klik’ kan worden uitgeschakeld via het weergaveoptiesmenu op het bureaublad.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
