@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="354"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="353"/>
         <source>File Manager</source>
         <translation>Bestandsbeheerder</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="359"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="358"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Bestandsbeheer is een programma voor het beheren van bestanden en beschikt over vele mogelijkheden, zoals zoeken, kopiëren, verwijderen, (de)compressie en andere handige functies.</translation>
     </message>
@@ -385,19 +385,19 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="492"/>
         <source>File has been moved or deleted</source>
         <translation>Bestand is verplaatst of verwijderd</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="494"/>
         <source>You do not have permission to access this folder</source>
         <translation>Je bent niet bevoegd om deze map te openen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="497"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Je bent niet bevoegd om deze map te gebruiken</translation>
     </message>
@@ -413,8 +413,8 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Bezig met laden…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="66"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
         <source>Executable</source>
         <translation>Uitvoerbaar</translation>
     </message>
@@ -457,7 +457,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
         <source>Built-in disks</source>
         <translation>Interne schijven</translation>
     </message>
@@ -481,7 +481,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
         <source>Loop partitions</source>
         <translation>Loop-partities</translation>
     </message>
@@ -489,7 +489,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
         <source>Mounted sharing folders</source>
         <translation>Aangekoppelde gedeelde mappen</translation>
@@ -505,7 +505,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="269"/>
         <source>Network</source>
         <translation>Netwerk</translation>
     </message>
@@ -513,7 +513,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
         <source>Mounted partitions and discs</source>
         <translation>Aangekoppelde partities en schijven</translation>
     </message>
@@ -521,7 +521,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="265"/>
         <source>Partitions</source>
         <translation>Partities</translation>
     </message>
@@ -529,7 +529,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="261"/>
         <source>Quick access</source>
         <translation>Snelle toegang</translation>
     </message>
@@ -537,7 +537,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="273"/>
         <source>Tag</source>
         <translation>Label</translation>
     </message>
@@ -902,7 +902,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="235"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="132"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -920,18 +920,18 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Snelkoppeling</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1070"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1059"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Deze systeemachtergrond is vergrendeld - neem contact op met je beheerder.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1128"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1117"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (kopiëren)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1129"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1118"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (kopie %1)</translation>
@@ -954,7 +954,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
         <source>Access denied</source>
         <translation>Toegang geweigerd</translation>
     </message>
@@ -969,13 +969,13 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="561"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="186"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
         <source>Open in new window</source>
         <translation>Openen in nieuw venster</translation>
     </message>
@@ -983,9 +983,9 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="565"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="310"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
@@ -1007,9 +1007,9 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="201"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="327"/>
         <source>Properties</source>
         <translation>Eigenschappen</translation>
     </message>
@@ -1055,35 +1055,35 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Comprimeren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
         <source>Write only</source>
         <translation>Alleen-schrijven</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <source>Read only</source>
         <translation>Alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <source>Read-write</source>
         <translation>Lezen-schrijven</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="155"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="156"/>
         <source>Owner</source>
         <translation>Eigenaar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="159"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="160"/>
         <source>Group</source>
         <translation>Groep</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="164"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
         <translation>Overige</translation>
@@ -1330,7 +1330,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="267"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
         <source>Open</source>
         <translation>Openen</translation>
     </message>
@@ -1386,65 +1386,65 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Onbekend apparaat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="247"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>Do you want to remove this item?</source>
         <translation>Wil je dit item verwijderen?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>Wil je %1 items verwijderen?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="250"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <source>It does not delete the original files</source>
         <translation>De oorspronkelijke bestanden worden niet verwijderd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
         <source>Clear recent history</source>
         <translation>Recente geschiedenis wissen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
         <translation>Bronlocatie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="93"/>
         <source>New window</source>
         <translation>Nieuw venster</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
         <source>New tab</source>
         <translation>Nieuw tabblad</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="103"/>
         <source>Connect to Server</source>
         <translation>Verbinden met server</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="107"/>
         <source>Set share password</source>
         <translation>Gedeeld wachtwoord instellen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="112"/>
         <source>Change disk password</source>
         <translation>Schijfwachtwoord wijzigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="117"/>
         <source>Settings</source>
         <translation>Instellingen</translation>
     </message>
@@ -1570,52 +1570,47 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Bezig met zoeken…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="303"/>
-        <source>My Vault</source>
-        <translation>Mijn kluis</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
         <source>Create Vault</source>
         <translation>Kluis maken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>Unlock</source>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <source>Lock</source>
         <translation>Vergrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
         <source>Auto lock</source>
         <translation>Automatisch vergrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
         <source>Never</source>
         <translation>Nooit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="298"/>
         <source>5 minutes</source>
         <translation>5 minuten</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="305"/>
         <source>10 minutes</source>
         <translation>10 minuten</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="312"/>
         <source>20 minutes</source>
         <translation>20 minuten</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <source>Delete File Vault</source>
         <translation>Standaard bestandskluis</translation>
     </message>
@@ -1765,7 +1760,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="247"/>
         <source>Sidebar</source>
         <translation>Zijbalk</translation>
     </message>
@@ -1862,6 +1857,11 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
         <translation>Bezig met bijwerken van grub…</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
+        <source>File Vault</source>
+        <translation>Bestandskluis</translation>
     </message>
 </context>
 <context>
@@ -2228,8 +2228,8 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
-        <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation>De functie ‘Verbergen met één klik’ kan worden uitgeschakeld via het weergaveoptiesmenu op het bureaublad.</translation>
+        <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
@@ -2475,29 +2475,29 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1064"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1055"/>
         <source>Loading wallpapers...</source>
         <translation>Bezig met laden van achtergronden…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1066"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1057"/>
         <source>Loading screensavers...</source>
         <translation>Bezig met laden van schermbeveiligingen…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1126"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1117"/>
         <source>Custom Screensaver</source>
         <translation>Aangepaste schermbeveiliging</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1127"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1129"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1118"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1120"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Instellen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1202"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1193"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Deze systeemachtergrond is vergrendeld - neem contact op met je beheerder.</translation>
     </message>
@@ -2505,59 +2505,59 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettingsPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="142"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="137"/>
         <source>Wallpaper</source>
         <translation>Bureaubladachtergrond</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="152"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="147"/>
         <source>Screensaver</source>
         <translation>Schermbeveiliging</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="377"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="368"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>Bureaublad</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="378"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="369"/>
         <source>Lock Screen</source>
         <comment>button</comment>
         <translation>Vergrendelscherm</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="370"/>
         <source>Both</source>
         <translation>Beide</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="579"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="570"/>
         <source>Wallpaper Slideshow</source>
         <translation>Diavoorstelling</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="620"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="611"/>
         <source>When login</source>
         <translation>Bij inloggen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="622"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="613"/>
         <source>When wakeup</source>
         <translation>Bij ontwaken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="651"/>
         <source>Require a password on wakeup</source>
         <translation>Wachtwoord vereisen bij ontwaken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="692"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="683"/>
         <source>Never</source>
         <translation>Nooit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="694"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="685"/>
         <source>Wait:</source>
         <translation>Wachten:</translation>
     </message>
@@ -5648,7 +5648,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="202"/>
         <source>My Shares</source>
         <translation>Mijn gedeelde items</translation>
     </message>
@@ -5905,14 +5905,14 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="169"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="312"/>
         <source>Allow to execute as program</source>
         <translation>Uitvoeren als programma</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="139"/>
         <source>Permissions</source>
         <translation>Bevoegdheden</translation>
     </message>
@@ -5977,127 +5977,127 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
         <source>Search:</source>
         <translation>Doorzoeken:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>File Type:</source>
         <translation>Bestandssoort:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
         <source>File Size:</source>
         <translation>Bestandsgrootte:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>Time Modified:</source>
         <translation>Aangepast om</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
         <source>Time Accessed:</source>
         <translation>Geopend:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Time Created:</source>
         <translation>Aangemaakt op</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="65"/>
         <source>Reset</source>
         <translation>Standaardwaarden</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
         <source>All subdirectories</source>
         <translation>Onderliggende mappen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>Current directory</source>
         <translation>Huidige map</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Application</source>
         <translation>App</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
         <source>Image</source>
         <translation>Afbeelding</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
         <source>Archive</source>
         <translation>Archief</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
         <source>Executable</source>
         <translation>Uitvoerbaar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="100"/>
         <source>Backup file</source>
         <translation>Reservekopie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>Today</source>
         <translation>Vandaag</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Yesterday</source>
         <translation>Gisteren</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>This week</source>
         <translation>Deze week</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>Last week</source>
         <translation>Vorige week</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
         <source>This month</source>
         <translation>Deze maand</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
         <source>Last month</source>
         <translation>Vorige maand</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
         <source>This year</source>
         <translation>Dit jaar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
         <source>Last year</source>
         <translation>Vorig jaar</translation>
     </message>
@@ -6118,13 +6118,13 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="47"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="146"/>
         <source>Search</source>
         <translation>Zoeken</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="152"/>
         <source>Full-Text search</source>
         <translation>Volledige tekst doorzoeken</translation>
     </message>
@@ -6132,7 +6132,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="190"/>
         <source>Path</source>
         <translation>Locatie</translation>
     </message>
@@ -6191,32 +6191,32 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="410"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="409"/>
         <source>Quick access</source>
         <translation>Snelle toegang</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="410"/>
         <source>Partitions</source>
         <translation>Partities</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="411"/>
         <source>Network</source>
         <translation>Netwerk</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="413"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="412"/>
         <source>Tag</source>
         <translation>Label</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="413"/>
         <source>Other</source>
         <translation>Andere</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
         <source>Unknown Group</source>
         <translation>Onbekende groep</translation>
     </message>
@@ -6586,27 +6586,27 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="56"/>
         <source>View Options</source>
         <translation>Weergaveopties</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="70"/>
         <source>Icon size</source>
         <translation>Pictogramgrootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="103"/>
         <source>Grid density</source>
         <translation>Tussenruimte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
         <translation>Hoogte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
         <translation>Voorvertoningen tonen</translation>
     </message>
@@ -6893,42 +6893,42 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_vault::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="45"/>
         <source>Basic info</source>
         <translation>Algemene informatie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="53"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="59"/>
         <source>Contains</source>
         <translation>Bevat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="65"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="71"/>
         <source>Location</source>
         <translation>Locatie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="77"/>
         <source>Time created</source>
         <translation>Aangemaakt op</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="83"/>
         <source>Time accessed</source>
         <translation>Geopend</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="89"/>
         <source>Time locked</source>
         <translation>Tijd vergrendeld</translation>
     </message>
@@ -6951,52 +6951,52 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
         <source>Failed to create public key: The key length is too long!</source>
         <translation>De sleutel kan niet worden gemaakt: lengte ervan is te lang.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
         <source>Failed to save rsa ciphertext file: %1</source>
         <translation>Het vercijferde rsa-bestand kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
         <source>Failed to save public key file: The public key is empty.</source>
         <translation>De openbare sleutel kan niet worden opgeslagen, want deze is blanco.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
         <source>Failed to save public key file: %1</source>
         <translation>De openbare sleutel kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="294"/>
         <source>Failed to create config dir: %1</source>
         <translation>De instellingenmap kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="321"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="322"/>
         <source>Failed to create rsa private key file: %1</source>
         <translation>Het persoonlijke rsa-bestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="333"/>
         <source>Failed to create rsa ciphertext file: %1</source>
         <translation>Het vercijferde rsa-bestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="343"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="344"/>
         <source>Failed to create hint file: %1</source>
         <translation>Het hintbestand kan niet worden aangemaakt: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="376"/>
         <source>Failed to save hint info: %1</source>
         <translation>De hintinformatie kan niet worden opgeslagen: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="728"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="731"/>
         <source>Save password failed: %1</source>
         <translation>Het wachtwoord kan niet worden opgeslagen: %1</translation>
     </message>
@@ -7056,17 +7056,17 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="121"/>
         <source>Wrong recovery key</source>
         <translation>Onjuiste herstelsleutel</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="241"/>
         <source>Failed to unlock file vault</source>
         <translation>De bestandskluis kan niet worden ontgrendeld</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="245"/>
         <source>OK</source>
         <translation>Oké</translation>
     </message>
@@ -7085,17 +7085,17 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="207"/>
         <source>Select a path</source>
         <translation>Kies een locatie</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="103"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="188"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
         <source>Unable to get the key file</source>
         <translation>Het sleutelbestand kan niet worden opgehaald</translation>
     </message>
@@ -7125,12 +7125,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_vault::ServiceManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="25"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="26"/>
         <source>Location</source>
         <translation>Locatie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="49"/>
         <source>Time locked</source>
         <translation>Tijd vergrendeld</translation>
     </message>
@@ -7175,45 +7175,45 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Wachtwoordhint: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="120"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>De kluis kan niet worden ontgrendeld.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="129"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="130"/>
         <source>Please try again %1 minutes later</source>
         <translation>Probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="163"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Onjuist wachtwoord - probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="167"/>
         <source>Wrong password, one chance left</source>
         <translation>Onjuist wachtwoord - nog 1 poging te gaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="170"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Onjuist wachtwoord - nog %1 pogingen te gaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="229"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="230"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="240"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="236"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>De bestandskluis kan niet worden ontgrendeld. Foutcode: %1</translation>
     </message>
@@ -7236,27 +7236,27 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Bezig met versleutelen…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="183"/>
         <source>The setup is complete</source>
         <translation>Instellen voltooid</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="196"/>
         <source>Close</source>
         <translation>Sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="204"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="232"/>
         <source>Encrypt</source>
         <translation>Versleutelen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="182"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="213"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="247"/>
         <source>OK</source>
         <translation>Oké</translation>
     </message>
@@ -7434,19 +7434,19 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <name>dfmplugin_vault::VaultEntryFileEntity</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
-        <source>My Vault</source>
-        <translation>Mijn kluis</translation>
+        <source>File Vault</source>
+        <translation>Bestandskluis</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault</source>
         <translation>Kluis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>De kluis is niet beschikbaar omdat cryfs niet geïnstalleerd is.</translation>
     </message>
@@ -7455,7 +7455,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="565"/>
         <source>Vault</source>
         <translation>Kluis</translation>
     </message>
@@ -7465,7 +7465,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>De kluis is niet beschikbaar omdat cryfs niet geïnstalleerd is.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="565"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>De actie kan niet worden uitgevoerd omdat er een actieve taak is</translation>
     </message>
@@ -7473,9 +7473,9 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_vault::VaultPropertyDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
-        <source>My Vault</source>
-        <translation>Mijn kluis</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
+        <source>File Vault</source>
+        <translation>Bestandskluis</translation>
     </message>
 </context>
 <context>
@@ -7549,17 +7549,17 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
         <translation>Bestandskluis vernietigen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="108"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="206"/>
         <source>Failed to delete file vault</source>
         <translation>De bestandskluis kan niet worden vernietigd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="210"/>
         <source>OK</source>
         <translation>Oké</translation>
     </message>
@@ -7629,10 +7629,6 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
-        <source>My Vault</source>
-        <translation>Mijn kluis</translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="114"/>
         <source>File Vault</source>
         <translation>Bestandskluis</translation>
@@ -7649,12 +7645,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2219"/>
         <source>Mount error</source>
         <translation>Het aankoppelen is mislukt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2220"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>De inloggegevens van de server zijn onjuist. Koppel af en weer aan.</translation>
     </message>
@@ -7662,27 +7658,27 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="731"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="734"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="733"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="736"/>
         <source>Time modified</source>
         <translation>Gewijzigd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="738"/>
         <source>Time created</source>
         <translation>Aangemaakt op</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="740"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="739"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="742"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
