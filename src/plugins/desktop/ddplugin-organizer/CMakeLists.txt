@@ -24,6 +24,8 @@ set(QRC_FILE
     resources/images.qrc
 )
 
+find_package(Dtk6 COMPONENTS Gui REQUIRED)
+
 qt_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 add_library(${BIN_NAME}
@@ -36,8 +38,11 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
-# Use default plugin configuration
-dfm_apply_default_plugin_config(${BIN_NAME})
+target_link_libraries(${BIN_NAME} PRIVATE
+    DFM6::base
+    DFM6::framework
+    Dtk6::Gui
+)
 
 install(TARGETS ${BIN_NAME}
     LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
