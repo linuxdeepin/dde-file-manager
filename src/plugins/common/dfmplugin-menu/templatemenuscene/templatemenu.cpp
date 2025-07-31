@@ -110,23 +110,23 @@ void TemplateMenuPrivate::createActionByDesktopFile(const QDir &dir, const QStri
     templateFileNames.push_back(fileName);
 }
 
-void TemplateMenuPrivate::traverseFolderToCreateActions(const QString &path, bool val)
+void TemplateMenuPrivate::traverseFolderToCreateActions(const QString &path, bool isDesktopEntryFolderPath)
 {
     if (path.isEmpty())
         return;
 
     QDir templateFolder(path);
-    if (templateFolder.exists() && (val ? (templateFolder != QDir::home()) : true)) {
-        const QStringList &templateFileList = val ? templateFolder.entryList(QStringList(QStringLiteral("*.desktop")),
-                                                                             QDir::Files | QDir::Readable | QDir::NoSymLinks)
-                                                  : templateFolder.entryList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
+    if (templateFolder.exists() && (isDesktopEntryFolderPath ? (templateFolder != QDir::home()) : true)) {
+        const QStringList &templateFileList = isDesktopEntryFolderPath ? templateFolder.entryList(QStringList(QStringLiteral("*.desktop")),
+                                                                                                  QDir::Files | QDir::Readable)
+                                                                       : templateFolder.entryList(QDir::Files | QDir::Readable);
 
         if (templateFileList.isEmpty())
             return;
 
         for (const auto &fileName : templateFileList)
-            val ? createActionByDesktopFile(templateFolder, templateFolder.absoluteFilePath(fileName))
-                : createActionByNormalFile(templateFolder.absoluteFilePath(fileName));
+            isDesktopEntryFolderPath ? createActionByDesktopFile(templateFolder, templateFolder.absoluteFilePath(fileName))
+                                     : createActionByNormalFile(templateFolder.absoluteFilePath(fileName));
     }
 }
 

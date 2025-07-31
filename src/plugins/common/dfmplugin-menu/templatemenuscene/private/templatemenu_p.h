@@ -24,7 +24,7 @@ public:
 
     void createActionByNormalFile(const QString &path);
     void createActionByDesktopFile(const QDir &dir, const QString &path);
-    void traverseFolderToCreateActions(const QString &path, bool val);
+    void traverseFolderToCreateActions(const QString &path, bool isDesktopEntryFolderPath);
 
 public:
     TemplateMenu *q;
