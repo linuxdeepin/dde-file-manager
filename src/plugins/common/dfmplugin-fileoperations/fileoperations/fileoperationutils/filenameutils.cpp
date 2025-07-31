@@ -110,7 +110,8 @@ bool fileExists(FileInfoPointer targetDir, const QString &fileName)
     }
 
     QUrl targetUrl = targetDir->urlOf(UrlInfoType::kUrl);
-    targetUrl.setPath(targetUrl.path() + "/" + fileName);
+    QString cleanPath = QDir::cleanPath(targetUrl.path() + QLatin1Char('/') + fileName);
+    targetUrl.setPath(cleanPath);
 
     return DFMIO::DFile(targetUrl).exists();
 }
@@ -168,7 +169,7 @@ QString generateUniqueFileName(const FileNameComponents &components,
         ++number;
 
         // Safety check to prevent infinite loops
-        if (number > std::numeric_limits<int>::max()) {
+        if (number == std::numeric_limits<int>::max()) {
             qCritical() << "ConflictNameGenerator: Too many naming attempts, aborting";
             return QString();
         }
