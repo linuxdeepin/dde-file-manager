@@ -121,13 +121,13 @@ bool ExtendMenuScenePrivate::insertIntoExistedSubActions(QAction *action, QMap<Q
 
     auto separatPos = cacheActionsSeparator.value(action, DCustomActionDefines::kNone);
     if (separatPos & DCustomActionDefines::kTop) {
-        QAction *separator = new QAction;
+        QAction *separator = new QAction(action->parent());
         separator->setSeparator(true);
         subActions.insert(actPos, separator);
         actPos++;   // separator inserted before action, the pos grows.
     }
     if (separatPos & DCustomActionDefines::kBottom) {
-        QAction *separator = new QAction;
+        QAction *separator = new QAction(action->parent());
         separator->setSeparator(true);
         subActions.insert(actPos + 1, separator);
     }
