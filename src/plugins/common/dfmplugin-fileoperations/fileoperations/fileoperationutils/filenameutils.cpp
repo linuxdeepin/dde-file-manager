@@ -170,7 +170,7 @@ QString generateUniqueFileName(const FileNameComponents &components,
 
         // Safety check to prevent infinite loops
         if (number == std::numeric_limits<int>::max()) {
-            qCritical() << "ConflictNameGenerator: Too many naming attempts, aborting";
+            fmCritical() << "ConflictNameGenerator: Too many naming attempts, aborting";
             return QString();
         }
 
