@@ -1,3 +1,9 @@
+dde-file-manager (6.5.83) unstable; urgency=medium
+
+  * enable symlinks for template menu files
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 31 Jul 2025 16:52:35 +0800
+
 dde-file-manager (6.5.82) unstable; urgency=medium
 
   * fix bugs
