@@ -47,8 +47,8 @@ private:
 
     TagColorListWidget *getMenuListWidget() const;
 
-    QAction *createTagAction() const;
-    QAction *createColorListAction() const;
+    QAction *createTagAction(QMenu *parent) const;
+    QAction *createColorListAction(QMenu *parent) const;
     QWidget *findDesktopView(QWidget *root) const;
 };
 

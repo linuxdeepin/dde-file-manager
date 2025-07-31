@@ -392,7 +392,7 @@ void secret_utils::forgetPasswordInSession(const QString &host)
     }
 
     // 在会话集合中搜索密码
-    GHashTable_autoptr query = g_hash_table_new_full(g_str_hash,
+    GHashTable *query = g_hash_table_new_full(g_str_hash,
                                                      g_str_equal,
                                                      g_free,
                                                      g_free);
@@ -410,12 +410,15 @@ void secret_utils::forgetPasswordInSession(const QString &host)
         fmWarning() << "Error searching in session collection:" << error->message;
         g_object_unref(sessionCollection);
         g_object_unref(service);
+        if (query)
+            g_hash_table_unref(query);
         return;
     }
 
-    while (items) {
-        SecretItem *item = reinterpret_cast<SecretItem *>(items->data);
-        items = items->next;
+    GList *gList = items;
+    while (gList) {
+        SecretItem *item = reinterpret_cast<SecretItem *>(gList->data);
+        gList = gList->next;
         char *label = secret_item_get_label(item);
         fmInfo() << "Remove saved item:" << QString(label);
         secret_item_delete(item, nullptr, nullptr, nullptr);
@@ -423,4 +426,6 @@ void secret_utils::forgetPasswordInSession(const QString &host)
     }
     g_object_unref(sessionCollection);
     g_object_unref(service);
+    if (query)
+        g_hash_table_unref(query);
 }
