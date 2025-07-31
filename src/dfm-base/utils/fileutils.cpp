@@ -1104,50 +1104,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     return true;
 }
 
-QString FileUtils::nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir)
-{
-    if (!targetDir || !DFMIO::DFile(targetDir->urlOf(UrlInfoType::kUrl)).exists()) {
-        return QString();
-    }
 
-    if (!targetDir->isAttributes(OptInfoType::kIsDir)) {
-        return QString();
-    }
-
-    const QString &copySuffix = QObject::tr(" (copy)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
-    const QString &copySuffix2 = QObject::tr(" (copy %1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
-
-    QString fileBaseName = fromInfo->nameOf(NameInfoType::kCompleteBaseName);
-    QString suffix = fromInfo->nameOf(NameInfoType::kSuffix);
-    QString fileName = fromInfo->nameOf(NameInfoType::kFileName);
-    // 在7z分卷压缩后的名称特殊处理7z.003
-    const QString &reg = ".7z.[0-9]{3,10}$";
-    if (fileName.contains(QRegularExpression(reg))) {
-        const int &index = fileName.indexOf(QRegularExpression(reg));
-        fileBaseName = fileName.left(index);
-        suffix = fileName.mid(index + 1);
-    }
-
-    int number = 0;
-    QString newFileName;
-
-    QUrl newUrl = targetDir->urlOf(UrlInfoType::kUrl);
-
-    do {
-        auto nameSuffix = number > 0 ? copySuffix2.arg(number) : copySuffix;
-        newFileName = QString("%1%2").arg(fileBaseName, nameSuffix);
-
-        if (!suffix.isEmpty()) {
-            newFileName.append('.').append(suffix);
-        }
-
-        ++number;
-        newUrl = targetDir->urlOf(UrlInfoType::kUrl);
-        newUrl.setPath(newUrl.path() + "/" + newFileName);
-    } while (DFMIO::DFile(newUrl).exists());
-
-    return newFileName;
-}
 
 QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
 {

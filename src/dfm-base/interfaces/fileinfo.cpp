@@ -132,10 +132,10 @@ QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
         return dptr->fileName();
     case FileNameInfoType::kBaseName:
         [[fallthrough]];
-    case FileNameInfoType::kCompleteBaseName:
-        [[fallthrough]];
     case FileNameInfoType::kBaseNameOfRename:
         return dptr->baseName();
+    case FileNameInfoType::kCompleteBaseName:
+        return dptr->completeBaseName();
     case FileNameInfoType::kSuffixOfRename:
         [[fallthrough]];
     case FileNameInfoType::kSuffix:
@@ -600,6 +600,29 @@ QString FileInfoPrivate::fileName() const
  * \return
  */
 QString FileInfoPrivate::baseName() const
+{
+    const QString &fileName = this->fileName();
+    const QString &completeSuffix = q->nameOf(NameInfoType::kCompleteSuffix);
+
+    if (completeSuffix.isEmpty()) {
+        return fileName;
+    }
+
+    return fileName.left(fileName.length() - completeSuffix.length() - 1);
+}
+
+/*!
+ * \brief completeBaseName 文件的完整基本名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * completeBaseName = archive.tar
+ *
+ * \param
+ *
+ * \return
+ */
+QString FileInfoPrivate::completeBaseName() const
 {
     const QString &fileName = this->fileName();
     const QString &suffix = q->nameOf(NameInfoType::kSuffix);

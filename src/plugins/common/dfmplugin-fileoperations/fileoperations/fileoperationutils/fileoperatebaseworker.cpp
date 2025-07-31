@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperatebaseworker.h"
+#include "filenameutils.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "workerdata.h"
 
@@ -617,7 +618,7 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
     case AbstractJobHandler::SupportAction::kCoexistAction: {
         const auto ne = InfoFactory::create<FileInfo>(newTargetInfo->uri(), Global::CreateFileInfoType::kCreateFileInfoSync);
         const auto to = InfoFactory::create<FileInfo>(toInfo->uri(), Global::CreateFileInfoType::kCreateFileInfoSync);
-        fileNewName = FileUtils::nonExistFileName(ne, to);
+        fileNewName = FileNamingUtils::generateNonConflictingName(ne, to);
         if (fileNewName.isEmpty()) {
             return nullptr;
         }

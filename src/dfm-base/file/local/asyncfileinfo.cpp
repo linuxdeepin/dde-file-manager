@@ -100,6 +100,10 @@ QString AsyncFileInfo::nameOf(const NameInfoType type) const
         if (d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardName).isValid())
             return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardName).toString();
         break;
+    case FileNameInfoType::kBaseName:
+        if (d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardBaseName).isValid())
+            return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardBaseName).toString();
+        break;
     case FileNameInfoType::kCompleteBaseName:
         if (d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName).isValid())
             return d->asyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName).toString();
@@ -717,6 +721,21 @@ QString AsyncFileInfoPrivate::fileName() const
     return fileName;
 }
 /*!
+ * \brief baseName 文件的基本名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * baseName = archive
+ *
+ * \param
+ *
+ * \return
+ */
+QString AsyncFileInfoPrivate::baseName() const
+{
+    return this->attribute(DFileInfo::AttributeID::kStandardBaseName).toString();
+}
+/*!
  * \brief completeBaseName 文件的完整基本名称
  *
  * url = file:///tmp/archive.tar.gz
@@ -1095,6 +1114,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
         updateMediaInfo(mediaType, extendIDs);
     }
     insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardName, fileName());
+    insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardBaseName, baseName());
     insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteBaseName, completeBaseName());
     insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardCompleteSuffix, completeSuffix());
     insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardDisplayName, fileDisplayName());
