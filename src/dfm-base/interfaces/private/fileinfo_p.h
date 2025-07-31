@@ -27,6 +27,7 @@ public:
     QUrl getUrlByNewFileName(const QString &fileName) const;
     QString fileName() const;
     QString baseName() const;
+    QString completeBaseName() const;
     QString suffix() const;
     bool canDrop() const;
     QString canonicalPath() const;

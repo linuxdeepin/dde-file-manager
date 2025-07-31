@@ -76,7 +76,6 @@ public:
 
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
-    static QString nonExistFileName(FileInfoPointer fromInfo, FileInfoPointer targetDir);
 
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name
