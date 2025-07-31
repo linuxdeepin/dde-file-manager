@@ -92,12 +92,12 @@ bool TagMenuScene::create(QMenu *parent)
 
     // create by focus fileinfo
     d->tagNames = TagManager::instance()->getTagsByUrls({ FileUtils::bindUrlTransform(d->focusFile) });
-    QAction *colorListAction = createColorListAction();
+    QAction *colorListAction = createColorListAction(parent);
     colorListAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagColorListKey));
     parent->addAction(colorListAction);
     d->predicateAction.insert(TagActionId::kActTagColorListKey, colorListAction);
 
-    QAction *tagAction = createTagAction();
+    QAction *tagAction = createTagAction(parent);
     tagAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagAddKey));
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
@@ -235,18 +235,18 @@ TagColorListWidget *TagMenuScene::getMenuListWidget() const
     return nullptr;
 }
 
-QAction *TagMenuScene::createTagAction() const
+QAction *TagMenuScene::createTagAction(QMenu *parent) const
 {
-    QAction *action = new QAction;
+    QAction *action = new QAction(parent);
     action->setText(d->predicateName.value(TagActionId::kActTagAddKey));
 
     return action;
 }
 
-QAction *TagMenuScene::createColorListAction() const
+QAction *TagMenuScene::createColorListAction(QMenu *parent) const
 {
-    TagColorListWidget *colorListWidget = new TagColorListWidget;
-    QWidgetAction *action = new QWidgetAction(nullptr);
+    TagColorListWidget *colorListWidget = new TagColorListWidget(parent);
+    QWidgetAction *action = new QWidgetAction(parent);
 
     action->setDefaultWidget(colorListWidget);
     // get tags by focus fileinfo
