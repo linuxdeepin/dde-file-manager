@@ -187,14 +187,21 @@ void BurnHelper::updateBurningStateToPersistence(const QString &id, const QStrin
     info[Persistence::kIdKey] = id;
     info[Persistence::kWoringKey] = working;
 
-    Application::dataPersistence()->setValue(Persistence::kBurnStateGroup, dev, info);
-    Application::dataPersistence()->sync();
+    if (Application::dataPersistence()) {
+        Application::dataPersistence()->setValue(Persistence::kBurnStateGroup, dev, info);
+        Application::dataPersistence()->sync();
+    }
 }
 
 void BurnHelper::mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList)
 {
     if (!srcList.isEmpty() && (srcList.size() != targetList.size())) {
         fmWarning() << "Src url size != targt url size";
+        return;
+    }
+
+    if (targetList.isEmpty() || !Application::dataPersistence()) {
+        fmWarning() << "Target url is empty";
         return;
     }
 
