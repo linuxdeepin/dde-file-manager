@@ -339,6 +339,7 @@ void ExtensionEmblemManager::onAllPluginsInitialized()
 
         EmblemIconWorker *worker { new EmblemIconWorker };
         worker->moveToThread(&d->workerThread);
+        worker->setParent(this);
         connect(&d->workerThread, &QThread::finished, worker, &QObject::deleteLater);
         connect(this, &ExtensionEmblemManager::requestFetchEmblemIcon, worker, &EmblemIconWorker::onFetchEmblemIcons);
         connect(this, &ExtensionEmblemManager::requestClearCache, worker, &EmblemIconWorker::onClearCache);

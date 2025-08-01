@@ -24,6 +24,7 @@ class SideBarView : public DTreeView
 
 public:
     explicit SideBarView(QWidget *parent = nullptr);
+    ~SideBarView() override;
     virtual SideBarModel *model() const;
     QModelIndex indexAt(const QPoint &p) const override;
     SideBarItem *itemAt(const QPoint &pt) const;

@@ -215,6 +215,7 @@ void TaskDialog::removeTask()
     QListWidgetItem *item = taskItems.value(jobHandler);
     taskListWidget->removeItemWidget(item);
     taskListWidget->takeItem(taskListWidget->row(item));
+    delete item;  // 显式删除动态分配的对象
     taskItems.remove(jobHandler);
     setTitle(taskListWidget->count());
     if (taskListWidget->count() == 0) {
@@ -233,7 +234,8 @@ void TaskDialog::closeEvent(QCloseEvent *event)
     while (it != taskItems.end()) {
         it.key()->operateTaskJob(AbstractJobHandler::SupportAction::kStopAction);
         taskListWidget->removeItemWidget(it.value());
-        taskListWidget->takeItem(taskListWidget->row(it.value()));
+        QListWidgetItem *item = taskListWidget->takeItem(taskListWidget->row(it.value()));
+        delete item;  // 显式删除动态分配的对象
         it = taskItems.erase(it);
     }
     emit closed();
