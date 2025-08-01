@@ -5,9 +5,12 @@
 #include "plugins/common/dfmplugin-burn/utils/burnjobmanager.h"
 #include "plugins/common/dfmplugin-burn/utils/burnjob.h"
 #include "plugins/common/dfmplugin-burn/utils/auditlogjob.h"
+#include "plugins/common/dfmplugin-burn/utils/packetwritingjob.h"
 
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-io/dfileinfo.h>
 
 #include "stubext.h"
@@ -16,6 +19,7 @@
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace GlobalServerDefines;
 
 class UT_BurnJobManager : public testing::Test
 {
@@ -248,6 +252,91 @@ TEST_F(UT_BurnJobManager, startAuditLogForBurnFiles)
 
     BurnJobManager::instance()->startAuditLogForBurnFiles({}, {}, {});
     EXPECT_TRUE(triggerStart);
+}
+
+TEST_F(UT_BurnJobManager, startAuditLogForEraseDisc)
+{
+    bool triggerStart { false };
+    stub.set_lamda(ADDR(QThread, start), [&triggerStart] {
+        __DBG_STUB_INVOKE__
+        triggerStart = true;
+    });
+
+    QVariantMap info;
+    info[DeviceProperty::kDrive] = "/dev/sr0";
+    info[DeviceProperty::kMedia] = "DVD+RW";
+    
+    BurnJobManager::instance()->startAuditLogForEraseDisc(info, true);
+    EXPECT_TRUE(triggerStart);
+}
+
+TEST_F(UT_BurnJobManager, startPutFilesToDisc)
+{
+    bool triggerAddJob { false };
+    stub.set_lamda(ADDR(PacketWritingScheduler, addJob), [&triggerAddJob](PacketWritingScheduler *, AbstractPacketWritingJob *job) {
+        __DBG_STUB_INVOKE__
+        triggerAddJob = true;
+        EXPECT_TRUE(job);
+        EXPECT_TRUE(qobject_cast<PutPacketWritingJob *>(job));
+        EXPECT_EQ(job->device(), "/dev/sr0");
+        
+        QList<QUrl> urls = job->property("pendingUrls").value<QList<QUrl>>();
+        EXPECT_EQ(urls.size(), 2);
+        EXPECT_EQ(urls[0], QUrl::fromLocalFile("/tmp/file1.txt"));
+        EXPECT_EQ(urls[1], QUrl::fromLocalFile("/tmp/file2.txt"));
+    });
+
+    QList<QUrl> urls;
+    urls << QUrl::fromLocalFile("/tmp/file1.txt") << QUrl::fromLocalFile("/tmp/file2.txt");
+    
+    BurnJobManager::instance()->startPutFilesToDisc("/dev/sr0", urls);
+    EXPECT_TRUE(triggerAddJob);
+}
+
+TEST_F(UT_BurnJobManager, startRemoveFilesFromDisc)
+{
+    bool triggerAddJob { false };
+    stub.set_lamda(ADDR(PacketWritingScheduler, addJob), [&triggerAddJob](PacketWritingScheduler *, AbstractPacketWritingJob *job) {
+        __DBG_STUB_INVOKE__
+        triggerAddJob = true;
+        EXPECT_TRUE(job);
+        EXPECT_TRUE(qobject_cast<RemovePacketWritingJob *>(job));
+        EXPECT_EQ(job->device(), "/dev/sr0");
+        
+        QList<QUrl> urls = job->property("pendingUrls").value<QList<QUrl>>();
+        EXPECT_EQ(urls.size(), 2);
+        EXPECT_EQ(urls[0], QUrl::fromLocalFile("/media/sr0/file1.txt"));
+        EXPECT_EQ(urls[1], QUrl::fromLocalFile("/media/sr0/file2.txt"));
+    });
+
+    QList<QUrl> urls;
+    urls << QUrl::fromLocalFile("/media/sr0/file1.txt") << QUrl::fromLocalFile("/media/sr0/file2.txt");
+    
+    BurnJobManager::instance()->startRemoveFilesFromDisc("/dev/sr0", urls);
+    EXPECT_TRUE(triggerAddJob);
+}
+
+TEST_F(UT_BurnJobManager, startRenameFileFromDisc)
+{
+    bool triggerAddJob { false };
+    stub.set_lamda(ADDR(PacketWritingScheduler, addJob), [&triggerAddJob](PacketWritingScheduler *, AbstractPacketWritingJob *job) {
+        __DBG_STUB_INVOKE__
+        triggerAddJob = true;
+        EXPECT_TRUE(job);
+        EXPECT_TRUE(qobject_cast<RenamePacketWritingJob *>(job));
+        EXPECT_EQ(job->device(), "/dev/sr0");
+        
+        QUrl srcUrl = job->property("srcUrl").toUrl();
+        QUrl destUrl = job->property("destUrl").toUrl();
+        EXPECT_EQ(srcUrl, QUrl::fromLocalFile("/media/sr0/oldname.txt"));
+        EXPECT_EQ(destUrl, QUrl::fromLocalFile("/media/sr0/newname.txt"));
+    });
+
+    QUrl srcUrl = QUrl::fromLocalFile("/media/sr0/oldname.txt");
+    QUrl destUrl = QUrl::fromLocalFile("/media/sr0/newname.txt");
+    
+    BurnJobManager::instance()->startRenameFileFromDisc("/dev/sr0", srcUrl, destUrl);
+    EXPECT_TRUE(triggerAddJob);
 }
 
 TEST_F(UT_BurnJobManager, initBurnJobConnect)

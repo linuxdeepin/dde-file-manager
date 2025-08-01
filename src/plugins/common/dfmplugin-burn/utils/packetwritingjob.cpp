@@ -131,8 +131,10 @@ bool PutPacketWritingJob::work()
 {
     const auto &names { urls2Names(pendingUrls) };
     fmInfo() << "Start put: " << names;
+    if (names.isEmpty())
+        return false;
     return std::all_of(names.begin(), names.end(), [this](const QString &name) {
-        return pwController->put(name);
+        return pwController && pwController->put(name);
     });
 }
 
@@ -156,7 +158,7 @@ bool RemovePacketWritingJob::work()
     const auto &names { urls2Names(pendingUrls) };
     fmInfo() << "Start remove: " << names;
     return std::all_of(names.begin(), names.end(), [this](const QString &name) {
-        return pwController->rm(name);
+        return pwController && pwController->rm(name);
     });
 }
 
@@ -192,7 +194,7 @@ bool RenamePacketWritingJob::work()
     QString destName { urls2Names({ destUrl }).at(0) };
 
     fmInfo() << "Start rename " << srcName << "to" << destName;
-    return pwController->mv(srcName, destName);
+    return pwController && pwController->mv(srcName, destName);
 }
 
 DPBURN_END_NAMESPACE
