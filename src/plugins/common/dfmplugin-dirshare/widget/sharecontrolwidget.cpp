@@ -45,7 +45,6 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace ConstDef {
-static constexpr int kKeyWidth { 80 };
 static constexpr int kWidgetFixedWidth { 195 };
 static constexpr char kShareFileDir[] { "/var/lib/samba/usershares" };
 }
@@ -61,16 +60,9 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     : QLabel(text, parent, f)
 {
     setObjectName("SectionKeyLabel");
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    setFixedWidth(DSizeModeHelper::element(ConstDef::kKeyWidth, ConstDef::kKeyWidth));
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
-        this->setFixedWidth(DSizeModeHelper::element(ConstDef::kKeyWidth, ConstDef::kKeyWidth));
-    });
-#else
-    setFixedWidth(ConstDef::kKeyWidth);
-#endif
     DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T7, QFont::Medium);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 ShareControlWidget::ShareControlWidget(const QUrl &url, bool disableState, QWidget *parent)
@@ -124,6 +116,7 @@ void ShareControlWidget::setupUi(bool disableState)
     basicInfoFrameLay->setContentsMargins(0, 0, 0, 0);
     basicInfoFrameLay->setContentsMargins(20, 0, 10, 0);
     basicInfoFrameLay->setVerticalSpacing(6);
+    basicInfoFrameLay->setHorizontalSpacing(6);
 
     setupShareSwitcher();
     basicInfoFrameLay->addRow(" ", shareSwitcher);
