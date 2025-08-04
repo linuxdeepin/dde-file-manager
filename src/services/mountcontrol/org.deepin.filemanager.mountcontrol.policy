@@ -9,6 +9,8 @@
     <description>Mount and unmount file systems</description>
     <message>Authentication is required to mount or unmount file systems</message>
     <message xml:lang="zh_CN">挂载或卸载文件系统需要认证</message>
+    <message xml:lang="zh_HK">掛載或卸載檔案系統需要認證</message>
+    <message xml:lang="zh_TW">掛載或卸載檔案系統需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
