@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QClipboard>
 #include <QApplication>
+#include <QAbstractTextDocumentLayout>
 
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -40,7 +41,9 @@ void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
     rightValueEdit = new RightValueWidget(this);
+    auto layout = rightValueEdit->document()->documentLayout();
     connect(rightValueEdit, &RightValueWidget::clicked, this, &KeyValueLabel::valueAreaClicked);
+    connect(layout, &QAbstractTextDocumentLayout::documentSizeChanged, this, &KeyValueLabel::adjustHeight);
     rightValueEdit->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setContentsMargins(0, 0, 0, 0);
@@ -154,7 +157,10 @@ void KeyValueLabel::setLeftRightValue(QString leftValue, QString rightValue, Qt:
 
 void KeyValueLabel::adjustHeight()
 {
-    rightValueEdit->setFixedHeight(static_cast<int>(rightValueEdit->document()->size().height()) + 2);
+    qreal docHeight = rightValueEdit->document()->size().height();
+    QMargins margins = rightValueEdit->contentsMargins();
+    int totalHeight = qCeil(docHeight) + margins.top() + margins.bottom();
+    rightValueEdit->setFixedHeight(totalHeight);
 }
 
 /*!

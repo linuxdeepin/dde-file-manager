@@ -32,8 +32,8 @@
 #include <QImageReader>
 
 static constexpr int kSpacingHeight { 2 };
-static constexpr int kLeftContentsMargins { 0 };
-static constexpr int kRightContentsMargins { 5 };
+static constexpr int kLeftContentsMargins { 10 };
+static constexpr int kRightContentsMargins { 10 };
 static constexpr int kFrameWidth { 360 };
 static constexpr int kItemWidth { 340 };
 static constexpr int kLeftWidgetWidth { 70 };
@@ -121,10 +121,10 @@ KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
 {
     KeyValueLabel *res = new KeyValueLabel(frame);
     res->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::Medium);
-    res->setLeftValue(leftValue, Qt::ElideMiddle, Qt::AlignLeft, true);
+    res->setLeftValue(leftValue, Qt::ElideMiddle, Qt::AlignLeft | Qt::AlignVCenter, true);
     res->setRightFontSizeWeight(DFontSizeManager::SizeType::T8, QFont::Light);
-    res->leftWidget()->setFixedWidth(kLeftWidgetWidth);
-    res->rightWidget()->setFixedWidth(kRightWidgetWidth);
+    res->leftWidget()->setMinimumWidth(kLeftWidgetWidth);
+    res->rightWidget()->setMinimumWidth(kRightWidgetWidth);
     return res;
 }
 
@@ -150,7 +150,7 @@ void BasicWidget::basicExpand(const QUrl &url)
         case kFieldReplace: {
             for (BasicFieldExpandEnum k : filterEnumList) {
                 QPair<QString, QString> field = expand.value(k);
-                fieldMap.value(k)->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
+                fieldMap.value(k)->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft | Qt::AlignVCenter, true);
                 fieldMap.value(k)->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
             }
         } break;
@@ -463,7 +463,6 @@ void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
 
     const QString &imgSizeStr = QString::number(width) + "x" + QString::number(height);
     fileMediaResolution->setRightValue(imgSizeStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaResolution->adjustHeight();
 }
 
 void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties)
@@ -478,7 +477,6 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
     const QString &videoResolutionStr = QString::number(width) + "x" + QString::number(height);
     fileMediaResolution->setRightValue(videoResolutionStr, Qt::ElideNone, Qt::AlignVCenter, true);
-    fileMediaResolution->adjustHeight();
 
     int duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration].toInt();
     if (duration != 0) {
@@ -486,14 +484,12 @@ void BasicWidget::videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
         t = t.addMSecs(duration);
         const QString &durationStr = t.toString("hh:mm:ss");
         fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-        fileMediaDuration->adjustHeight();
     } else {
         QString localFile = url.toLocalFile();
         connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
                 this, [this](const QString &duration) {
                     if (!duration.isEmpty()) {
                         fileMediaDuration->setRightValue(duration);
-                        fileMediaDuration->adjustHeight();
                     } else {
                         fileMediaDuration->setVisible(false);
                     }
@@ -518,14 +514,12 @@ void BasicWidget::audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
         t = t.addMSecs(duration);
         const QString &durationStr = t.toString("hh:mm:ss");
         fileMediaDuration->setRightValue(durationStr, Qt::ElideNone, Qt::AlignVCenter, true);
-        fileMediaDuration->adjustHeight();
     } else {
         QString localFile = url.toLocalFile();
         connect(infoFetchWorker, &MediaInfoFetchWorker::durationReady,
                 this, [this](const QString &duration) {
                     if (!duration.isEmpty()) {
                         fileMediaDuration->setRightValue(duration);
-                        fileMediaDuration->adjustHeight();
                     } else {
                         fileMediaDuration->setVisible(false);
                     }
