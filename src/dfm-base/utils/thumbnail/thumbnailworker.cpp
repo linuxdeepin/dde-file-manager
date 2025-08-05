@@ -46,16 +46,29 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
     const auto &mime = mimeDb.mimeTypeForUrl(url);
     const auto &mimeName = mime.name();
 
-    if (creators.contains(mimeName)) {   // accularate match
+    if (creators.contains(mimeName)) {   // accurate match
         qCDebug(logDFMBase) << "thumbnail: using exact mime type creator for:" << mimeName;
         img = creators.value(mimeName)(absoluteFilePath, size);
-    } else {   // pattern match
-        for (auto &mimeRegx : creators.keys()) {
-            QRegularExpression regx(mimeRegx);
-            if (mimeName.contains(regx)) {
-                qCDebug(logDFMBase) << "thumbnail: using pattern creator for mime type:" << mimeName << "with pattern:" << mimeRegx;
-                img = creators.value(mimeRegx)(absoluteFilePath, size);
+    } else {
+        // Try parent MIME types for inheritance support (e.g., WPS override)
+        QStringList parentTypes = mime.parentMimeTypes();
+        for (const QString &parentType : parentTypes) {
+            if (creators.contains(parentType)) {
+                qCDebug(logDFMBase) << "thumbnail: using parent mime type creator for:" << mimeName << "matched parent:" << parentType;
+                img = creators.value(parentType)(absoluteFilePath, size);
                 break;
+            }
+        }
+        
+        // If no parent match, try pattern matching
+        if (img.isNull()) {
+            for (auto &mimeRegx : creators.keys()) {
+                QRegularExpression regx(mimeRegx);
+                if (mimeName.contains(regx)) {
+                    qCDebug(logDFMBase) << "thumbnail: using pattern creator for mime type:" << mimeName << "with pattern:" << mimeRegx;
+                    img = creators.value(mimeRegx)(absoluteFilePath, size);
+                    break;
+                }
             }
         }
     }
