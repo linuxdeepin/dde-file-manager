@@ -40,7 +40,6 @@ class SideBarViewPrivate : public QObject
     QUrl sidebarUrl;
     DFMBASE_NAMESPACE::DFMMimeData dfmMimeData;
     QPalette originPalette;
-    QStyle *style = nullptr;
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool checkOpTime();   // 检查当前操作与上次操作的时间间隔
