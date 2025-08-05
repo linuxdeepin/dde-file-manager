@@ -7,6 +7,7 @@
 #include "private/bluetoothtransdialog.h"
 
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <QTimer>
 
@@ -14,6 +15,11 @@ using namespace dfmplugin_utils;
 
 void VirtualBluetoothPlugin::initialize()
 {
+    if (DFMBASE_NAMESPACE::SysInfoUtils::isOpenAsAdmin()) {
+        fmWarning() << "Bluetooth is disable when open as admin";
+        return;
+    }
+
     QTimer::singleShot(1000, this, [] {
         fmInfo() << "start initialize bluetooth manager";
         BluetoothManager::instance();
