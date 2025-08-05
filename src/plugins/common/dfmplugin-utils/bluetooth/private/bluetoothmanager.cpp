@@ -46,7 +46,7 @@ BluetoothManagerPrivate::~BluetoothManagerPrivate()
         delete bluetoothInter;
         bluetoothInter = nullptr;
     }
-    
+
     if (watcher) {
         if (watcher->isRunning()) {
             watcher->future().cancel();
@@ -93,6 +93,7 @@ void BluetoothManagerPrivate::initInterface()
         delete bluetoothInter;
     bluetoothInter = new QDBusInterface(BluetoothService, BluetoothPath, BluetoothInterface,
                                         QDBusConnection::sessionBus(), q);
+    bluetoothInter->setTimeout(2000);
 }
 
 void BluetoothManagerPrivate::initConnects()
@@ -396,9 +397,8 @@ BluetoothManager *BluetoothManager::instance()
 void BluetoothManager::refresh()
 {
     Q_D(BluetoothManager);
-
     if (!d->bluetoothInter || !d->bluetoothInter->isValid()) {
-        fmCritical() << "bluetooth interface is not valid!!!";
+        fmCritical() << "bluetooth interface is not valid!!!" << d->bluetoothInter->lastError();
         return;
     }
 
