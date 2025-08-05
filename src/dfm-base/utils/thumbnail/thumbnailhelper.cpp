@@ -130,7 +130,7 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
     if (Q_LIKELY(mimeList.contains(Mime::kTypeAppPdf)
                  || mimeName == Mime::kTypeAppCRRMedia
                  || mimeName == Mime::kTypeAppMxf)
-        || mimeName == Mime::kTypeAppPptx) {
+        || mimeList.contains(Mime::kTypeAppPptx)) {
         bool supported = checkStatus(Application::kPreviewDocumentFile);
         return supported;
     }
