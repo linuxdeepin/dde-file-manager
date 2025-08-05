@@ -161,8 +161,13 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
                         "Please configure its connection policy in Security Center or contact your administrator.");
         }
     } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {
-        title = kUnmountFailed;
-        errMsg = tr("The device is busy, cannot remove now");
+        if (err.code == DeviceError::kUserErrorAuthenticationFailed) {
+            title.clear();
+            errMsg.clear();
+        } else {
+            title = kUnmountFailed;
+            errMsg = tr("The device is busy, cannot remove now");
+        }
     }
 
     if (!errMsg.isEmpty())
