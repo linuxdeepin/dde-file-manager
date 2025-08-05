@@ -260,16 +260,11 @@ SideBarView::SideBarView(QWidget *parent)
     d->originPalette = palette();
     d->lastOpTime = 0;
 
-    d->style = new SidebarViewStyle(style());
-    setStyle(d->style);
+    setStyle(new SidebarViewStyle(style()));
 }
 
 SideBarView::~SideBarView()
 {
-    if (d->style) {
-        delete d->style;
-        d->style = nullptr;
-    }
 }
 
 SideBarModel *SideBarView::model() const
