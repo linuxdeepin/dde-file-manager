@@ -78,7 +78,7 @@ QSettings::Format RegisterCustomFormat::customFormat()
 
 RegisterCustomFormat::RegisterCustomFormat()
 {
-    //注册读写规则
+    // 注册读写规则
     registeredcustomFormat = QSettings::registerFormat("conf", &RegisterCustomFormat::readConf, &RegisterCustomFormat::writeConf);
 }
 
@@ -87,7 +87,7 @@ DCustomActionParser::DCustomActionParser(QObject *parent)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-    //获取注册的自定义方式
+    // 获取注册的自定义方式
     customFormat = RegisterCustomFormat::instance().customFormat();
 
     initWatcher();
@@ -120,14 +120,14 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
         if (!dir.exists())
             continue;
 
-        //以时间先后遍历
+        // 以时间先后遍历
         for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
             const auto &cfgName = actionFileInfo.fileName();
             if (cfgList.contains(cfgName))
                 continue;
 
             cfgList << cfgName;
-            //解析文件字段
+            // 解析文件字段
             QSettings actionSetting(actionFileInfo.filePath(), customFormat);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             actionSetting.setIniCodec("UTF-8");
@@ -148,7 +148,7 @@ QList<DCustomActionEntry> DCustomActionParser::getActionFiles(bool onDesktop)
     foreach (const DCustomActionEntry &entry, actionEntry) {
         // NotShowIn
         if (isActionShouldShow(entry.actionNotShowIn, onDesktop))
-            ret << entry;   //一级菜单不在桌面/文管显示则跳过该项
+            ret << entry;   // 一级菜单不在桌面/文管显示则跳过该项
     }
 
     return ret;
@@ -159,18 +159,18 @@ QList<DCustomActionEntry> DCustomActionParser::getActionFiles(bool onDesktop)
 */
 bool DCustomActionParser::parseFile(QSettings &actionSetting)
 {
-    //基本信息，版本，选中类型,且选中类型无明确说明则认为是无效的配置文件
+    // 基本信息，版本，选中类型,且选中类型无明确说明则认为是无效的配置文件
     FileBasicInfos basicInfos;
     bool prefixExists = actionSetting.childGroups().contains(kMenuPrefix);
-    if (!prefixExists) {   //关键入口信息没有，认为是无效的配置文件
+    if (!prefixExists) {   // 关键入口信息没有，认为是无效的配置文件
         return false;
     }
     if (!actionFileInfos(basicInfos, actionSetting))
-        return false;   //关键信息无效则
+        return false;   // 关键信息无效则
 
     auto actions = getValue(actionSetting, kMenuPrefix, kActionGroups).toString().simplified();
     if (actions.isEmpty())
-        return false;   //无一级菜单,无效文件
+        return false;   // 无一级菜单,无效文件
 
     auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
@@ -180,10 +180,10 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 #endif
 
     for (auto &once : actList) {
-        if (topActionCount == kCustomMaxNumOne)   //一级数量限制
+        if (topActionCount == kCustomMaxNumOne)   // 一级数量限制
             break;
-        QList<DCustomActionData> childrenActions;   //这个实际上一级时没用
-        bool needSort;   //一级用不到
+        QList<DCustomActionData> childrenActions;   // 这个实际上一级时没用
+        bool needSort;   // 一级用不到
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
         hierarchyNum = 1;
         bool isVisible = parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
@@ -202,13 +202,13 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool &isSort, bool isTop)
 {
     hierarchyNum++;
-    if (4 < hierarchyNum)   //超过三级不解
+    if (4 < hierarchyNum)   // 超过三级不解
         return false;
 
     DCustomActionData actData;
-    //暂时用localname 和name,方式有些不确定，oem和之前的自定义右键是localName，打开方式又好像是genaricName
-    //后续确认优化
-    //目前菜单项名的国际化暂支持"语言_地区/国家"或“语言”简写，即支持“zh_CN”或“zh”的方式。若未找到对应国际化信息，则采用兜底信息
+    // 暂时用localname 和name,方式有些不确定，oem和之前的自定义右键是localName，打开方式又好像是genaricName
+    // 后续确认优化
+    // 目前菜单项名的国际化暂支持"语言_地区/国家"或“语言”简写，即支持“zh_CN”或“zh”的方式。若未找到对应国际化信息，则采用兜底信息
     QString name;
     auto getNameByType = [this, &name, &actionSetting, group](const QString &type) {
         QString systemName = QLocale::system().name().simplified();
@@ -245,7 +245,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     if (0 == actData.actionPosition)
         actData.actionPosition = getValue(actionSetting, group, kActionPosAlias).toInt();
 
-    if (0 == actData.actionPosition && isSort)   //未定义pos行为当前层级以上级指定顺序
+    if (0 == actData.actionPosition && isSort)   // 未定义pos行为当前层级以上级指定顺序
         isSort = false;
 
     // separator
@@ -262,10 +262,10 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     // actions 父级级联与动作
     QString actions = getValue(actionSetting, group, kActionGroups).toString().simplified();
     if (actions.isEmpty()) {
-        //无级联检查是否有动作
+        // 无级联检查是否有动作
         QString command = getValue(actionSetting, group, kActionCmd).toString().simplified();
         if (command.isEmpty())
-            return false;   //无动作无子级
+            return false;   // 无动作无子级
         actData.actionCommand = command;
         execDynamicArg(actData);
     } else {
@@ -281,21 +281,21 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         bool needSort = true;
         for (auto &once : actList) {
             QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
-            //解决二三级存在的count问题
+            // 解决二三级存在的count问题
             bool isVisible = parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos, needSort, false);
             hierarchyNum--;
             if (isVisible) {
                 actCount++;
             }
-            if (2 == hierarchyNum && actCount == kCustomMaxNumTwo)   //二级数量限制
+            if (2 == hierarchyNum && actCount == kCustomMaxNumTwo)   // 二级数量限制
                 break;
-            if (3 == hierarchyNum && actCount == kCustomMaxNumThree)   //三级数量限制
+            if (3 == hierarchyNum && actCount == kCustomMaxNumThree)   // 三级数量限制
                 break;
         }
         if (0 == tpChildrenActions.size())
-            return false;   //作为无动作无子级，不再为其添加已有动作
+            return false;   // 作为无动作无子级，不再为其添加已有动作
         //        actData.m_childrenActions = tpChildrenActions;
-        if (needSort)   //全量二三级才排序,否则按照写入actions顺序
+        if (needSort)   // 全量二三级才排序,否则按照写入actions顺序
             std::stable_sort(tpChildrenActions.begin(), tpChildrenActions.end(), [](const DCustomActionData &a, const DCustomActionData &b) {
                 return a.actionPosition < b.actionPosition;
             });
@@ -305,13 +305,13 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     if (isTop) {
         DCustomActionEntry tpEntry;
 
-        //支持类型combo
+        // 支持类型combo
         auto comboStr = getValue(actionSetting, group, kConfCombo).toString().simplified();
         if (comboStr.isEmpty())
             comboStr = getValue(actionSetting, group, kConfComboAlias).toString().simplified();
 
         if (comboStr.isEmpty()) {
-            return false;   //无支持选中类型默认该一级无效
+            return false;   // 无支持选中类型默认该一级无效
         } else {
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
             QStringList &&comboList = comboStr.split(":", QString::SkipEmptyParts);
@@ -362,7 +362,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
         // comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
-            return false;   //有一级菜单项支持的类型，但全无效，自动作为无效废弃项
+            return false;   // 有一级菜单项支持的类型，但全无效，自动作为无效废弃项
 
         tpEntry.packageName = basicInfos.package;
         tpEntry.packageVersion = basicInfos.version;
@@ -378,7 +378,9 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 void DCustomActionParser::initWatcher()
 {
     static const QStringList &kPaths { { "/usr/etc/deepin/context-menus" },
-                                       { "/etc/deepin/context-menus" } };
+                                       { "/etc/deepin/context-menus" },
+                                       { QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+                                         + QStringLiteral("/deepin/dde-file-manager/context-menus") } };
 
     // Add directories from XDG_DATA_DIRS environment variable
     const QByteArray xdgDataDirs = qgetenv("XDG_DATA_DIRS");
@@ -454,19 +456,19 @@ QVariant DCustomActionParser::getValue(QSettings &actionSetting, const QString &
 */
 bool DCustomActionParser::actionFileInfos(FileBasicInfos &basicInfo, QSettings &actionSetting)
 {
-    //基本信息
-    //文件名
+    // 基本信息
+    // 文件名
     basicInfo.package = actionSetting.fileName();
 
-    //签名
+    // 签名
     basicInfo.sign = getValue(actionSetting, kMenuPrefix, kConfSign).toString().simplified();
 
-    //版本
+    // 版本
     basicInfo.version = getValue(actionSetting, kMenuPrefix, kConfFileVersion).toString().simplified();
     if (basicInfo.version.isEmpty())
         return false;
 
-    //描述
+    // 描述
     basicInfo.comment = getValue(actionSetting, kMenuPrefix, kConfComment).toString().simplified();
     return true;
 }
@@ -528,7 +530,7 @@ void DCustomActionParser::execDynamicArg(DCustomActionData &act)
 */
 bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const QString &group, DCustomActionData &act)
 {
-    //能到这一步说明这个文件的有效性已经验证了
+    // 能到这一步说明这个文件的有效性已经验证了
     auto comboStr = getValue(actionSetting, group, kConfCombo).toString().simplified();
     if (comboStr.isEmpty())
         comboStr = getValue(actionSetting, group, kConfComboAlias).toString().simplified();
@@ -542,7 +544,7 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
     bool hasCombo = false;
     for (auto temp : comboList) {
         cPos = QString("%1-%2").arg(kActionPos, temp.simplified());
-        auto ret = getValue(actionSetting, group, cPos);   //取出对应选中类型的pos
+        auto ret = getValue(actionSetting, group, cPos);   // 取出对应选中类型的pos
         if (!ret.isValid()) {
             cPos = QString("%1-%2").arg(kActionPosAlias, temp.simplified());
             ret = getValue(actionSetting, group, cPos);
@@ -583,9 +585,9 @@ bool DCustomActionParser::isActionShouldShow(const QStringList &notShowInList, b
 {
     // X-DFM-NotShowIn not exist
     if (notShowInList.isEmpty())
-        return true;   //未明确指明仅显示在桌面或者文管窗口默认都显示
+        return true;   // 未明确指明仅显示在桌面或者文管窗口默认都显示
     if (notShowInList.contains("*"))
-        return false;   //都不显示： 配置了"X-DFM-NotShowIn=*"或者"X-DFM-NotShowIn=desktop:filemanager"
+        return false;   // 都不显示： 配置了"X-DFM-NotShowIn=*"或者"X-DFM-NotShowIn=desktop:filemanager"
 
     // is menu triggered on desktop
     return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) || (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
