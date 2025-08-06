@@ -388,15 +388,23 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout = new QHBoxLayout;
     d->hBoxLayout->setSpacing(0);
     d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
+    
+    // Add compact button (for compact mode)
     d->hBoxLayout->addWidget(d->compactButton);
     d->hBoxLayout->addSpacing(10);
+    
+    // Add view mode buttons (left side)
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
     if (d->treeViewButton) {
         d->hBoxLayout->addWidget(d->treeViewButton);
     }
     d->hBoxLayout->addWidget(d->viewOptionsButton);
-    d->hBoxLayout->addSpacing(10);
+    
+    // Add stretch to push sortByButton to the right and keep its position fixed
+    d->hBoxLayout->addStretch(1);
+    
+    // Add sortByButton (right side - position will remain fixed)
     d->hBoxLayout->addWidget(d->sortByButton);
 
     setLayout(d->hBoxLayout);
@@ -404,20 +412,34 @@ void OptionButtonBox::initUiForSizeMode()
 
 void OptionButtonBox::updateFixedWidth()
 {
-    int fixedWidth = 10;   // 起始间距
+    int fixedWidth = 10;   // Initial spacing
 
-    // 视图模式按钮部分
+    // View mode buttons section (left side)
     if (d->isCompactMode) {
-        fixedWidth += d->compactButton->width();
+        fixedWidth += 48;  // Compact button width
+        fixedWidth += 10;  // Spacing after compact button
     } else {
-        fixedWidth += d->iconViewButton->width() + d->listViewButton->width();
-        if (d->treeViewButton) {
-            fixedWidth += d->treeViewButton->width();
-        }
+        fixedWidth += 10;  // Spacing after compact button (even when hidden)
+        
+        // Only count visible view mode buttons (each is kToolButtonSize = 30)
+        if (d->iconViewEnabled && d->iconViewButton && !d->iconViewButton->isHidden())
+            fixedWidth += kToolButtonSize;
+        if (d->listViewEnabled && d->listViewButton && !d->listViewButton->isHidden())
+            fixedWidth += kToolButtonSize;
+        if (d->treeViewEnabled && d->treeViewButton && !d->treeViewButton->isHidden())
+            fixedWidth += kToolButtonSize;
     }
 
-    // 其他按钮部分（这部分在两种模式下都是一样的）
-    fixedWidth += d->viewOptionsButton->width() + 10 + d->sortByButton->width();
+    // ViewOptions button (part of left side, also kToolButtonSize = 30)
+    if (d->viewOptionsEnabled && d->viewOptionsButton && !d->viewOptionsButton->isHidden())
+        fixedWidth += kToolButtonSize;
+
+    // Minimum spacing for stretch area (to ensure sortByButton stays on right)
+    fixedWidth += 20;  // Minimum stretch space
+
+    // SortByButton (right side - width is 46 when visible)
+    if (d->sortByEnabled && d->sortByButton && !d->sortByButton->isHidden())
+        fixedWidth += 46;  // kSortToolButtonWidth
 
     setFixedWidth(fixedWidth);
 }
