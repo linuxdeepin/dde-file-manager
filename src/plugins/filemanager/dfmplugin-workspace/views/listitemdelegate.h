@@ -32,8 +32,13 @@ public:
     QRectF itemIconRect(const QRectF &itemRect) const override;
     QRect getRectOfItem(RectOfItemType type, const QModelIndex &index) const override;
 
-    void setItemMinimumHeightByHeightLevel(int level) override;
-    int minimumHeightLevel() const override;
+    // Unified size control interfaces (for list/tree mode, controls row height)
+    int iconSizeLevel() const override;
+    int minimumIconSizeLevel() const override;
+    int maximumIconSizeLevel() const override;
+    int increaseIcon() override;
+    int decreaseIcon() override;
+    int setIconSizeByIconSizeLevel(int level) override;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) override;
