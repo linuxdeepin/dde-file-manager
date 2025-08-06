@@ -102,6 +102,7 @@ private:
     struct TitleBarState
     {
         DFMBASE_NAMESPACE::Global::ViewMode viewMode { DFMBASE_NAMESPACE::Global::ViewMode::kIconMode };
+        bool advancedSearchVisible { false };
         bool advancedSearchChecked { false };
         QString searchText { "" };
     };

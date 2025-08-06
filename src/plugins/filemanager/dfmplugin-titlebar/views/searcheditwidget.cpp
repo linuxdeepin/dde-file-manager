@@ -88,6 +88,11 @@ void SearchEditWidget::deactivateEdit()
         updateSearchEditWidget(parentWidget()->width());
 }
 
+bool SearchEditWidget::isAdvancedButtonVisible() const
+{
+    return advancedButton->isVisible();
+}
+
 bool SearchEditWidget::isAdvancedButtonChecked() const
 {
     return advancedButton->isChecked();
@@ -95,7 +100,6 @@ bool SearchEditWidget::isAdvancedButtonChecked() const
 
 void SearchEditWidget::setAdvancedButtonChecked(bool checked)
 {
-    advancedButton->setVisible(checked);
     advancedButton->setChecked(checked);
 }
 
@@ -155,6 +159,8 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->setText("");
+    advancedButton->setVisible(false);
+    advancedButton->setChecked(false);
 }
 
 void SearchEditWidget::onAdvancedButtonClicked()
@@ -309,6 +315,10 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
+    if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
+        advancedButton->setVisible(false);
+    }
+
     if (e->reason() == Qt::PopupFocusReason
         || e->reason() == Qt::ActiveWindowFocusReason
         || e->reason() == Qt::OtherFocusReason) {
@@ -316,10 +326,6 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
         if (!searchEdit->text().isEmpty())
             searchEdit->lineEdit()->setFocus(Qt::MouseFocusReason);
         return;
-    }
-
-    if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
-        advancedButton->setVisible(false);
     }
 
     if (parentWidget()) {

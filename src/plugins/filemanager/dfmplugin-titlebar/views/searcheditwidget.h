@@ -21,9 +21,9 @@ namespace dfmplugin_titlebar {
 
 enum class SearchMode {
     kUnknown,
-    kCollapsed,  // Collapsed mode, only show search button
-    kExpanded,    // Expanded mode, show search box
-    kExtraLarge,  // Extra large mode, show search box
+    kCollapsed,   // Collapsed mode, only show search button
+    kExpanded,   // Expanded mode, show search box
+    kExtraLarge,   // Extra large mode, show search box
 };
 
 class SearchEditWidget : public QWidget
@@ -36,6 +36,7 @@ public:
     void activateEdit(bool setAdvanceBtn = true);
     void deactivateEdit();
 
+    bool isAdvancedButtonVisible() const;
     bool isAdvancedButtonChecked() const;
     void setAdvancedButtonChecked(bool checked);
     void setAdvancedButtonVisible(bool visible);
@@ -89,6 +90,6 @@ private:
     qint64 lastSearchTime { 0 };
 };
 
-} // namespace dfmplugin_titlebar
+}   // namespace dfmplugin_titlebar
 
-#endif // SEARCHEDITWIDGET_H
+#endif   // SEARCHEDITWIDGET_H
