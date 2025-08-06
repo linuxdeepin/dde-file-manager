@@ -523,6 +523,8 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
         return indexFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
     case Global::ItemRoles::kItemFilePinyinNameRole:
         return indexFileInfo->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
+    case Global::ItemRoles::kItemFileCreatedRole:
+        return indexFileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss");
     case Global::ItemRoles::kItemFileLastModifiedRole:
         return indexFileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss");   // todo by file info: lastModifiedDisplayName
     case Global::ItemRoles::kItemFileSizeRole:
