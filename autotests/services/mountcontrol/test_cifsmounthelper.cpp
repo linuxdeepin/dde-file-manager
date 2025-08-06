@@ -330,18 +330,13 @@ TEST_F(UT_CifsMountHelper, Unmount_MountNotExist_ReturnsError)
 
 TEST_F(UT_CifsMountHelper, Unmount_NotOwnerWithoutAuth_ReturnsError)
 {
-    // Test unmount when not owner and no auth
+    // Test unmount when not owner - the method directly returns error without separate auth check
     QString path = "smb://192.168.1.100/share";
     QVariantMap opts;
 
     stub.set_lamda(&CifsMountHelper::checkMount, [](CifsMountHelper *, const QString &, QString &) {
         __DBG_STUB_INVOKE__
         return CifsMountHelper::kNotOwner;
-    });
-
-    stub.set_lamda(&CifsMountHelper::checkAuth, [](CifsMountHelper *) {
-        __DBG_STUB_INVOKE__
-        return false;
     });
 
     QVariantMap result = getHelper()->unmount(path, opts);
