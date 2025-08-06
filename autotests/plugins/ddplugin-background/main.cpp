@@ -7,6 +7,3 @@
 #include "dfm_test_main.h"
 
 DFM_TEST_MAIN(ddplugin_background)
-
-
- 
