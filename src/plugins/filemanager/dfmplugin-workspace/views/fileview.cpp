@@ -515,35 +515,30 @@ void FileView::onDoubleClicked(const QModelIndex &index)
 
 void FileView::wheelEvent(QWheelEvent *event)
 {
-    if (isIconViewMode()) {
-        if (WindowUtils::keyCtrlIsPressed()) {
-            if (event->angleDelta().y() > 0) {
-                increaseIcon();
-            } else {
-                decreaseIcon();
-            }
-            emit viewStateChanged();
-            event->accept();
+    // Handle size control for all view modes with Ctrl + wheel
+    if (WindowUtils::keyCtrlIsPressed()) {
+        if (event->angleDelta().y() > 0) {
+            increaseIcon();
         } else {
-#ifdef QT_SCROLL_WHEEL_ANI
-            DListView::wheelEvent(event);
-#else
-            verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
-#endif
+            decreaseIcon();
         }
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
-#else
-    } else if (event->modifiers() == Qt::AltModifier || event->angleDelta().x() != 0) {
-#endif
-        horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
-    } else {
-#ifdef QT_SCROLL_WHEEL_ANI
-        DListView::wheelEvent(event);
-#else
-        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
-#endif
+        emit viewStateChanged();
+        event->accept();
+        return;
     }
+    
+    // Handle horizontal scrolling with Alt modifier or horizontal wheel
+    if (event->modifiers() == Qt::AltModifier || event->angleDelta().x() != 0) {
+        horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
+        return;
+    }
+    
+    // Default vertical scrolling
+#ifdef QT_SCROLL_WHEEL_ANI
+    DListView::wheelEvent(event);
+#else
+    verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+#endif
 }
 
 void FileView::keyPressEvent(QKeyEvent *event)
@@ -1085,8 +1080,17 @@ void FileView::increaseIcon()
         return;
 
     int newLevel = itemDelegate()->increaseIcon();
+    if (newLevel < 0)
+        return;
+
     const QUrl &url = rootUrl();
-    setFileViewStateValue(url, "iconSizeLevel", newLevel);
+    if (isIconViewMode()) {
+        setFileViewStateValue(url, "iconSizeLevel", newLevel);
+        fmDebug() << "Icon size level increased to:" << newLevel;
+    } else if (isListViewMode() || isTreeViewMode()) {
+        setFileViewStateValue(url, "listHeightLevel", newLevel);
+        fmDebug() << "List height level increased to:" << newLevel;
+    }
 }
 
 void FileView::decreaseIcon()
@@ -1095,8 +1099,17 @@ void FileView::decreaseIcon()
         return;
 
     int newLevel = itemDelegate()->decreaseIcon();
+    if (newLevel < 0)
+        return;
+
     const QUrl &url = rootUrl();
-    setFileViewStateValue(url, "iconSizeLevel", newLevel);
+    if (isIconViewMode()) {
+        setFileViewStateValue(url, "iconSizeLevel", newLevel);
+        fmDebug() << "Icon size level decreased to:" << newLevel;
+    } else if (isListViewMode() || isTreeViewMode()) {
+        setFileViewStateValue(url, "listHeightLevel", newLevel);
+        fmDebug() << "List height level decreased to:" << newLevel;
+    }
 }
 
 void FileView::setIconSizeBySizeIndex(const int sizeIndex)
@@ -1185,11 +1198,16 @@ void FileView::onItemWidthLevelChanged(int level)
     if (!itemDelegate())
         return;
 
-    if (itemDelegate()->minimumWidthLevel() == level && d->currentGridDensityLevel == level)
+    // Check if this is an icon delegate that supports width level control
+    auto iconDelegate = dynamic_cast<IconItemDelegate*>(itemDelegate());
+    if (!iconDelegate)
+        return;
+
+    if (iconDelegate->minimumWidthLevel() == level && d->currentGridDensityLevel == level)
         return;
 
     d->currentGridDensityLevel = level;
-    itemDelegate()->setItemMinimumWidthByWidthLevel(level);
+    iconDelegate->setItemMinimumWidthByWidthLevel(level);
     doItemsLayout();
     updateHorizontalOffset();
 }
@@ -1202,11 +1220,11 @@ void FileView::onItemHeightLevelChanged(int level)
     if (!d->fileViewHelper->canChangeListItemHeight())
         return;
 
-    if (itemDelegate()->minimumHeightLevel() == level && d->currentListHeightLevel == level)
+    if (itemDelegate()->iconSizeLevel() == level && d->currentListHeightLevel == level)
         return;
 
     d->currentListHeightLevel = level;
-    itemDelegate()->setItemMinimumHeightByHeightLevel(level);
+    itemDelegate()->setIconSizeByIconSizeLevel(level);
     doItemsLayout();
 }
 

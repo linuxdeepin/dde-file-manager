@@ -6,6 +6,7 @@
 #include "views/headerview.h"
 #include "views/fileviewstatusbar.h"
 #include "views/baseitemdelegate.h"
+#include "views/iconitemdelegate.h"
 #include "models/fileviewmodel.h"
 #include "utils/workspacehelper.h"
 #include "utils/dragdrophelper.h"
@@ -113,8 +114,13 @@ void FileViewPrivate::initIconModeView()
 
     if (q->itemDelegate()) {
         q->itemDelegate()->setIconSizeByIconSizeLevel(currentIconSizeLevel);
-        q->itemDelegate()->setItemMinimumWidthByWidthLevel(currentGridDensityLevel);
-        fmDebug() << "Item delegate configured for icon mode - density level:" << currentGridDensityLevel;
+        
+        // Set width level only for icon delegate
+        auto iconDelegate = dynamic_cast<IconItemDelegate*>(q->itemDelegate());
+        if (iconDelegate) {
+            iconDelegate->setItemMinimumWidthByWidthLevel(currentGridDensityLevel);
+            fmDebug() << "Item delegate configured for icon mode - density level:" << currentGridDensityLevel;
+        }
     }
 }
 
@@ -123,7 +129,7 @@ void FileViewPrivate::initListModeView()
     fmDebug() << "Initializing list mode view";
 
     if (q->itemDelegate()) {
-        q->itemDelegate()->setItemMinimumHeightByHeightLevel(currentListHeightLevel);
+        q->itemDelegate()->setIconSizeByIconSizeLevel(currentListHeightLevel);
         fmDebug() << "Item delegate height level set to:" << currentListHeightLevel;
     }
 

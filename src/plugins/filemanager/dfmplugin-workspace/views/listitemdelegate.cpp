@@ -46,7 +46,7 @@ using namespace dfmplugin_workspace;
 ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)
 {
-    setItemMinimumHeightByHeightLevel(1);
+    setIconSizeByIconSizeLevel(1);
 }
 
 ListItemDelegate::~ListItemDelegate()
@@ -336,22 +336,64 @@ QRect ListItemDelegate::getRectOfItem(RectOfItemType type, const QModelIndex &in
     return QRect();
 }
 
-void ListItemDelegate::setItemMinimumHeightByHeightLevel(int level)
+int ListItemDelegate::iconSizeLevel() const
+{
+    Q_D(const ListItemDelegate);
+    return d->currentHeightLevel;
+}
+
+int ListItemDelegate::minimumIconSizeLevel() const
+{
+    return 0;
+}
+
+int ListItemDelegate::maximumIconSizeLevel() const
+{
+    Q_D(const ListItemDelegate);
+    return d->viewDefines.listHeightCount() - 1;
+}
+
+int ListItemDelegate::increaseIcon()
+{
+    Q_D(const ListItemDelegate);
+    
+    int newLevel = d->currentHeightLevel + 1;
+    if (newLevel >= d->viewDefines.listHeightCount()) {
+        fmDebug() << "Cannot increase height level: already at maximum" << (d->viewDefines.listHeightCount() - 1);
+        return d->currentHeightLevel;
+    }
+    
+    return setIconSizeByIconSizeLevel(newLevel);
+}
+
+int ListItemDelegate::decreaseIcon()
+{
+    Q_D(const ListItemDelegate);
+    
+    int newLevel = d->currentHeightLevel - 1;
+    if (newLevel < 0) {
+        fmDebug() << "Cannot decrease height level: already at minimum 0";
+        return d->currentHeightLevel;
+    }
+    
+    return setIconSizeByIconSizeLevel(newLevel);
+}
+
+int ListItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_D(ListItemDelegate);
 
-    if (level < 0 || level >= d->viewDefines.listHeightCount())
-        return;
+    if (level < 0 || level >= d->viewDefines.listHeightCount()) {
+        fmDebug() << "Invalid height level:" << level << ", valid range: 0 -" << (d->viewDefines.listHeightCount() - 1);
+        return d->currentHeightLevel;
+    }
 
     d->currentHeightLevel = level;
     updateItemSizeHint();
     int iconHeight = d->itemSizeHint.height() * 0.75;
-    parent()->parent()->setIconSize(QSize(iconHeight, iconHeight));   // 设置 iconSize 为行高的 0.75
-}
-
-int ListItemDelegate::minimumHeightLevel() const
-{
-    Q_D(const ListItemDelegate);
+    parent()->parent()->setIconSize(QSize(iconHeight, iconHeight));   // Set iconSize to 0.75 of row height
+    
+    fmDebug() << "List height level set to:" << level;
     return d->currentHeightLevel;
 }
 
