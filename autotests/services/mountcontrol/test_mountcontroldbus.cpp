@@ -141,7 +141,10 @@ TEST_F(UT_MountControlDBus, Mount_NoFsTypeSpecified_ReturnsError)
     QString path = "smb://example.com/share";
     QVariantMap opts;
     // Don't specify fsType
-
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Mount(path, opts);
 
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
@@ -157,6 +160,10 @@ TEST_F(UT_MountControlDBus, Mount_UnsupportedFsType_ReturnsError)
     QVariantMap opts;
     opts.insert(MountOptionsField::kFsType, "nfs");
 
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Mount(path, opts);
 
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
@@ -181,6 +188,10 @@ TEST_F(UT_MountControlDBus, Mount_SupportedFsType_CallsHelper)
 
     addMockHelper("cifs", mockHelper);
 
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Mount(path, opts);
 
     EXPECT_TRUE(mockHelper->mountCalled);
@@ -199,7 +210,10 @@ TEST_F(UT_MountControlDBus, Unmount_NoFsTypeSpecified_ReturnsError)
     QString path = "smb://example.com/share";
     QVariantMap opts;
     // Don't specify fsType
-
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Unmount(path, opts);
 
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
@@ -214,7 +228,10 @@ TEST_F(UT_MountControlDBus, Unmount_UnsupportedFsType_ReturnsError)
     QString path = "nfs://example.com/share";
     QVariantMap opts;
     opts.insert(MountOptionsField::kFsType, "nfs");
-
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Unmount(path, opts);
 
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
@@ -237,7 +254,10 @@ TEST_F(UT_MountControlDBus, Unmount_SupportedFsType_CallsHelper)
     };
 
     addMockHelper("cifs", mockHelper);
-
+    stub.set_lamda(&MountControlDBus::checkAuthentication, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     QVariantMap result = getDBus()->Unmount(path, opts);
 
     EXPECT_TRUE(mockHelper->unmountCalled);
