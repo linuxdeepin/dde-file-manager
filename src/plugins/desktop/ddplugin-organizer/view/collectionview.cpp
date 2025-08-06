@@ -1677,6 +1677,7 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     };
 
     switch (fileSortRole) {
+    case kItemFileCreatedRole:
     case kItemFileLastModifiedRole:
     case kItemFileMimeTypeRole:
     case kItemFileDisplayNameRole: {

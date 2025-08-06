@@ -251,6 +251,8 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         tmp->setExecutable(sortInfo->isExecutable);
         tmp->setLastReadTime(sortInfo->lastRead);
         tmp->setLastModifiedTime(sortInfo->lastModifed);
+        // create来自于stat结构中的st_ctim
+        // 获取的时间并不是文件的创建时间，而是文件状态最后更改时间
         tmp->setCreateTime(sortInfo->create);
         tmp->setInfoCompleted(true);
         wsortlist.append(tmp);

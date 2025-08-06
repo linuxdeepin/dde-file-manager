@@ -1720,10 +1720,6 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
         auto lastModified = QDateTime::fromSecsSinceEpoch(info->lastModifiedTime());
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
-    case kItemFileCreatedRole: {
-        auto created = QDateTime::fromSecsSinceEpoch(info->createTime());
-        return created.isValid() ? created.toString(FileUtils::dateTimeFormat()) : "-";
-    }
     case kItemFileDisplayNameRole:
         return info->fileUrl().fileName();
     case kItemFileMimeTypeRole: {
