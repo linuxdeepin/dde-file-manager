@@ -63,7 +63,7 @@ int ComputerModel::columnCount(const QModelIndex &parent) const
 
 QVariant ComputerModel::data(const QModelIndex &index, int role) const
 {
-    if (items.count() <= index.row()) {
+    if (!index.isValid() || items.count() <= index.row()) {
         fmWarning() << "ComputerModel::data invalid index row:" << index.row() << "items count:" << items.count();
         return {};
     }
