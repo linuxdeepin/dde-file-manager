@@ -78,13 +78,6 @@ TEST_F(UT_MyShares, Initialize)
     stub_ext::StubExt stub;
     stub.set_lamda(&MyShares::beMySubScene, [] { __DBG_STUB_INVOKE__ });
 
-    // AddrAny any;
-    // std::map<std::string, void *> result;
-    // any.get_local_func_addr_symtab("^dfmplugin_menu_util", result);
-    // auto regScene = result.at("dfmplugin_menu_util::menuSceneRegisterScene(QString const&, dfmbase::AbstractSceneCreator*)");
-    // if (regScene)
-    //     stub.set(regScene, stubRegistScene);
-
     EXPECT_NO_FATAL_FAILURE(ins.initialize());
 }
 
