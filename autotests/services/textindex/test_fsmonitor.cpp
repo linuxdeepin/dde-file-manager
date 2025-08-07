@@ -389,3 +389,303 @@ TEST_F(UT_FSMonitor, Stop_WhenActive_ShouldStopMonitoring)
 
     EXPECT_FALSE(monitor.isActive());
 }
+
+// Test FSMonitorPrivate::isExternalMount with empty path
+TEST_F(UT_FSMonitor, IsExternalMount_WithEmptyPath_ShouldReturnFalse)
+{
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount("");
+    EXPECT_FALSE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with invalid storage
+TEST_F(UT_FSMonitor, IsExternalMount_WithInvalidStorage_ShouldReturnFalse)
+{
+    // Mock QStorageInfo to return invalid storage
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_FALSE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with not ready storage
+TEST_F(UT_FSMonitor, IsExternalMount_WithNotReadyStorage_ShouldReturnFalse)
+{
+    // Mock QStorageInfo to return not ready storage
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_FALSE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with FUSE filesystem
+TEST_F(UT_FSMonitor, IsExternalMount_WithFuseFilesystem_ShouldReturnTrue)
+{
+    // Mock QStorageInfo to return FUSE filesystem
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "fuse.sshfs";
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with NFS filesystem
+TEST_F(UT_FSMonitor, IsExternalMount_WithNfsFilesystem_ShouldReturnTrue)
+{
+    // Mock QStorageInfo to return NFS filesystem
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "nfs4";
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with CIFS filesystem
+TEST_F(UT_FSMonitor, IsExternalMount_WithCifsFilesystem_ShouldReturnTrue)
+{
+    // Mock QStorageInfo to return CIFS filesystem
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "cifs";
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with various network filesystems
+TEST_F(UT_FSMonitor, IsExternalMount_WithNetworkFilesystems_ShouldReturnTrue)
+{
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    // Mock QStorageInfo to return valid and ready storage
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Test various network filesystem types
+    QStringList networkFsTypes = {
+        "nfs", "nfs4", "cifs", "smb", "smb2", "smbfs", "webdav",
+        "ceph", "glusterfs", "moosefs", "lustre", "overlay", "aufs", "9p",
+        "sftp", "curlftpfs", "davfs"
+    };
+
+    for (const QString &fsType : networkFsTypes) {
+        stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [fsType](QStorageInfo *) -> QByteArray {
+            __DBG_STUB_INVOKE__
+            return fsType.toUtf8();
+        });
+
+        bool result = d_ptr->isExternalMount(testPath);
+        EXPECT_TRUE(result) << "Failed for filesystem type: " << fsType.toStdString();
+    }
+}
+
+// Test FSMonitorPrivate::isExternalMount with local filesystem
+TEST_F(UT_FSMonitor, IsExternalMount_WithLocalFilesystem_ShouldReturnFalse)
+{
+    // Mock QStorageInfo to return local filesystem
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "ext4";
+    });
+
+    // Mock ProtocolUtils to return local file
+    stub.set_lamda(&ProtocolUtils::isLocalFile, [](const QUrl &url) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_FALSE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with various local filesystems
+TEST_F(UT_FSMonitor, IsExternalMount_WithVariousLocalFilesystems_ShouldReturnFalse)
+{
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    // Mock QStorageInfo to return valid and ready storage
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Mock ProtocolUtils to return local file
+    stub.set_lamda(&ProtocolUtils::isLocalFile, [](const QUrl &url) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Test various local filesystem types
+    QStringList localFsTypes = {
+        "ext4", "ext3", "ext2", "xfs", "btrfs", "zfs", "reiserfs", 
+        "jfs", "ntfs", "vfat", "fat32", "fat16", "exfat", "hfs", "hfsplus"
+    };
+
+    for (const QString &fsType : localFsTypes) {
+        stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [fsType](QStorageInfo *) -> QByteArray {
+            __DBG_STUB_INVOKE__
+            return fsType.toUtf8();
+        });
+
+        bool result = d_ptr->isExternalMount(testPath);
+        EXPECT_FALSE(result) << "Failed for local filesystem type: " << fsType.toStdString();
+    }
+}
+
+// Test FSMonitorPrivate::isExternalMount with non-local file URL
+TEST_F(UT_FSMonitor, IsExternalMount_WithNonLocalFileUrl_ShouldReturnTrue)
+{
+    // Mock QStorageInfo to return valid local filesystem
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "ext4";
+    });
+
+    // Mock ProtocolUtils to return non-local file
+    stub.set_lamda(&ProtocolUtils::isLocalFile, [](const QUrl &url) -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+}
+
+// Test FSMonitorPrivate::isExternalMount with case-insensitive filesystem types
+TEST_F(UT_FSMonitor, IsExternalMount_WithCaseInsensitiveFilesystemTypes_ShouldWork)
+{
+    FSMonitor &monitor = FSMonitor::instance();
+    FSMonitorPrivate *d_ptr = monitor.d_ptr.get();
+
+    // Mock QStorageInfo to return valid and ready storage
+    stub.set_lamda(ADDR(QStorageInfo, isValid), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QStorageInfo, isReady), [](QStorageInfo *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Test case-insensitive matching for FUSE
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "FUSE.SSHFS";  // uppercase
+    });
+
+    bool result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+
+    // Test case-insensitive matching for network filesystems
+    stub.set_lamda(ADDR(QStorageInfo, fileSystemType), [](QStorageInfo *) -> QByteArray {
+        __DBG_STUB_INVOKE__
+        return "NFS4";  // uppercase
+    });
+
+    result = d_ptr->isExternalMount(testPath);
+    EXPECT_TRUE(result);
+}

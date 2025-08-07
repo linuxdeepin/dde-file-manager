@@ -146,7 +146,7 @@ bool FSMonitorPrivate::startMonitoring()
     // Start monitoring
     active = true;
     watchedDirectories.clear();
-    resourceLimitReached = false;  // Reset resource limit flag
+    resourceLimitReached = false;   // Reset resource limit flag
 
     // Start worker thread
     if (!workerThread.isRunning()) {
@@ -225,7 +225,7 @@ void FSMonitorPrivate::setupWorkerThread()
                 if (!active || resourceLimitReached) {
                     return;
                 }
-                
+
                 // Process each subdirectory
                 for (const QString &dir : directories) {
                     if (active && !resourceLimitReached) {
@@ -376,18 +376,29 @@ bool FSMonitorPrivate::isExternalMount(const QString &path) const
     }
 
     // Check for network filesystems
-    const QString fsType = storage.fileSystemType();
-    static const QStringList networkFsTypes = {
-        "nfs", "cifs", "smb", "smb2", "smbfs", "fuse.sshfs", "fuse.davfs"
+    const QString fsType = storage.fileSystemType().toLower();
+
+    // Reject all FUSE-based filesystems
+    if (fsType.startsWith("fuse")) {
+        return true;
+    }
+
+    // Check for other known network filesystems
+    // TODO: add to DConfig
+    static const QStringList kNetworkFsTypes = {
+        "nfs", "nfs4", "cifs", "smb", "smb2", "smbfs", "webdav",
+        "ceph", "glusterfs", "moosefs", "lustre", "overlay", "aufs", "9p",
+        "sftp", "curlftpfs", "davfs"
     };
 
-    if (networkFsTypes.contains(fsType.toLower())) {
+    if (kNetworkFsTypes.contains(fsType.toLower())) {
         return true;
     }
 
     // Check for removable media
-    if (!ProtocolUtils::isLocalFile(QUrl::fromLocalFile(path)))
+    if (!ProtocolUtils::isLocalFile(QUrl::fromLocalFile(path))) {
         return true;
+    }
 
     return false;
 }
@@ -410,7 +421,7 @@ bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
             fmWarning() << "FSMonitor: Watch limit reached (" << watchedDirectories.size()
                         << "/" << maxWatches << "), stopping further directory monitoring";
             resourceLimitReached = true;
-            
+
             // Notify about the resource limit
             Q_EMIT q_ptr->resourceLimitReached(watchedDirectories.size(), maxWatches);
         }

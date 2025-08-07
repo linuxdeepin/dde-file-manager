@@ -44,7 +44,6 @@ class AddressBarPrivate : public QObject
     QTimer timer;
     QVariantAnimation animation;
     QString placeholderText { tr("Enter address") };
-    QAction indicatorAction;
     QAction clearAction;
     QString completerBaseString;
     QString lastEditedString;
@@ -90,7 +89,6 @@ public Q_SLOTS:
     void onCompletionModelCountChanged();
     void appendToCompleterModel(const QStringList &stringList);
     void onTravelCompletionListFinished();
-    void onIndicatorTriggerd();
 
 protected:
     virtual bool eventFilterHide(AddressBar *addressbar, QHideEvent *event);
