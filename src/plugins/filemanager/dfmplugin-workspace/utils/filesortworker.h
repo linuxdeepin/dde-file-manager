@@ -9,7 +9,6 @@
 #include "models/fileitemdata.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/interfaces/abstractsortfilter.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <dfm-base/base/application/application.h>
@@ -36,6 +35,14 @@ class FileSortWorker : public QObject
         kInsertOptAppend = 0,
         kInsertOptReplace = 1,
         kInsertOptForce = 2,
+    };
+
+    enum class SortScenarios : uint8_t {
+        kSortScenariosIteratorAddFile = 1,      // Iterator adding new files for sorting
+        kSortScenariosIteratorExistingFile = 2, // Iterator handling existing files in display model
+        kSortScenariosNormal = 3,               // Normal display completion scenario
+        kSortScenariosWatcherAddFile = 4,       // File watcher detected file addition (including rename)
+        kSortScenariosWatcherOther = 5,         // Other file watcher scenarios
     };
 
 public:
@@ -171,7 +178,7 @@ private:
     void filterTreeDirFiles(const QUrl &parent, const bool byInfo = false);
 
     bool addChild(const SortInfoPointer &sortInfo,
-                  const AbstractSortFilter::SortScenarios sort);
+                  const SortScenarios sort);
     bool sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo);
 
     void switchTreeView();
@@ -194,8 +201,8 @@ private:
     void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
 
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                       AbstractSortFilter::SortScenarios sort);
-    bool lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort);
+                       SortScenarios sort);
+    bool lessThan(const QUrl &left, const QUrl &right, SortScenarios sort);
     QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
     QVariant data(const SortInfoPointer &info, Global::ItemRoles role);
 
@@ -222,7 +229,6 @@ private:
     QHash<QUrl, FileItemDataPointer> childrenDataLastMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
-    AbstractSortFilterPointer sortAndFilter { nullptr };
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     FileItemDataPointer rootdata { nullptr };

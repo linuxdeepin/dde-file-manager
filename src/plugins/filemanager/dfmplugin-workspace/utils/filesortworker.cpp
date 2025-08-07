@@ -46,7 +46,6 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
     if (!dirPath.isEmpty() && dirPath != QDir::separator() && url.path().endsWith(QDir::separator()))
         dirPath.chop(1);
     current.setPath(dirPath);
-    sortAndFilter = SortFilterFactory::create<AbstractSortFilter>(current);
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 
     fmDebug() << "Mixed dir and file sorting enabled:" << isMixDirAndFile;
@@ -401,7 +400,7 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
             continue;
         }
 
-        auto suc = addChild(sortInfo, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+        auto suc = addChild(sortInfo, SortScenarios::kSortScenariosWatcherAddFile);
         if (!added)
             added = suc;
     }
@@ -632,7 +631,7 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         auto subVisibleList = visibleTreeChildren.take(parentUrl);
         auto offset = subVisibleList.count();
         if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
-            offset = insertSortList(sortInfo->fileUrl(), subVisibleList, AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile);
+            offset = insertSortList(sortInfo->fileUrl(), subVisibleList, SortScenarios::kSortScenariosWatcherAddFile);
         auto subIndex = offset;
         // 根目录下的offset计算不一样
         if (UniversalUtils::urlEquals(parentUrl, current)) {
@@ -1091,7 +1090,7 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
 }
 
 bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
-                              const AbstractSortFilter::SortScenarios sort)
+                              const SortScenarios sort)
 {
     if (isCanceled || sortInfo.isNull())
         return false;
@@ -1165,7 +1164,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
         insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
     }
 
-    if (sort == AbstractSortFilter::SortScenarios::kSortScenariosWatcherAddFile)
+    if (sort == SortScenarios::kSortScenariosWatcherAddFile)
         Q_EMIT selectAndEditFile(sortInfo->fileUrl());
 
     return true;
@@ -1318,7 +1317,7 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
         if (isCanceled)
             return {};
         if (!reverse) {
-            sortIndex = insertSortList(url, sortList, AbstractSortFilter::SortScenarios::kSortScenariosNormal);
+            sortIndex = insertSortList(url, sortList, SortScenarios::kSortScenariosNormal);
         } else if (!firstFile && !isMixDirAndFile) {
             auto sortInfo = sortInfos.value(url);
             if (sortInfo && sortInfo->needsCompletion())
@@ -1510,7 +1509,7 @@ void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoP
 }
 
 int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                                   AbstractSortFilter::SortScenarios sort)
+                                   SortScenarios sort)
 {
     int begin = 0;
     int end = list.count();
@@ -1553,7 +1552,7 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
 }
 
 // 左边比右边小返回true，
-bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortFilter::SortScenarios sort)
+bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, SortScenarios sort)
 {
     if (isCanceled)
         return false;
@@ -1568,19 +1567,6 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortF
         return false;
     if (!rightSortInfo)
         return false;
-
-    if (sortAndFilter) {
-        const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
-                ? leftItem->fileInfo()
-                : InfoFactory::create<FileInfo>(left);
-        const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
-                ? rightItem->fileInfo()
-                : InfoFactory::create<FileInfo>(right);
-        auto result = sortAndFilter->lessThan(leftInfo, rightInfo, isMixDirAndFile,
-                                              orgSortRole, sort);
-        if (result > 0)
-            return result;
-    }
 
     bool isDirLeft = leftSortInfo->isDir();
     bool isDirRight = rightSortInfo->isDir();
@@ -1767,13 +1753,6 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         }
         if (!hasMatched)
             item->setAvailableState(false);
-    }
-
-    // 处理继承
-    if (sortAndFilter) {
-        auto result = sortAndFilter->checkFilters(InfoFactory::create<FileInfo>(sortInfo->fileUrl()), filters, filterData);
-        if (result >= 0)
-            return result;
     }
 
     if (filters == QDir::NoFilter)
