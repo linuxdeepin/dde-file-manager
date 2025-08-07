@@ -45,9 +45,6 @@ AddressBarPrivate::AddressBarPrivate(AddressBar *qq)
 
 void AddressBarPrivate::initializeUi()
 {
-    // 左侧Action按钮 设置
-    q->addAction(&indicatorAction, QLineEdit::LeadingPosition);
-
     // Clear text button
     q->setClearButtonEnabled(true);
 
@@ -72,8 +69,6 @@ void AddressBarPrivate::initializeUi()
 
 void AddressBarPrivate::initConnect()
 {
-    connect(&indicatorAction, &QAction::triggered, this, &AddressBarPrivate::onIndicatorTriggerd);
-
     connect(&animation, &QVariantAnimation::valueChanged,
             q, QOverload<>::of(&AddressBar::update));
 
@@ -244,11 +239,6 @@ void AddressBarPrivate::onTravelCompletionListFinished()
     }
 }
 
-void AddressBarPrivate::onIndicatorTriggerd()
-{
-    onReturnPressed();
-}
-
 void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
 {
     if (!crumbController || !crumbController->isSupportedScheme(url.scheme())) {
@@ -412,14 +402,6 @@ void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedComple
         isClearSearch = false;
         q->setSelection(q->text().length() - selectBeginPos, q->text().length());
     }
-}
-
-void AddressBarPrivate::updateIndicatorIcon()
-{
-    QIcon indicatorIcon;
-    QString scope = "go-right";
-    indicatorIcon = QIcon::fromTheme(scope);
-    indicatorAction.setIcon(indicatorIcon);
 }
 
 void AddressBarPrivate::onCompletionModelCountChanged()
@@ -658,7 +640,6 @@ void AddressBar::paintEvent(QPaintEvent *e)
 void AddressBar::showEvent(QShowEvent *event)
 {
     d->timer.start();
-    d->updateIndicatorIcon();
     d->updateHistory();
     return QLineEdit::showEvent(event);
 }

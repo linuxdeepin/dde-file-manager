@@ -44,4 +44,4 @@ Q_SIGNALS:
 
 }
 
-#endif   //AddressBar_H
+#endif   // AddressBar_H
