@@ -1,5 +1,3 @@
-add_subdirectory(dfmplugin-burn)
-add_subdirectory(dfmplugin-search)
 
 # Common plugins unit tests
 add_subdirectory(dfmplugin-utils)
@@ -11,6 +9,7 @@ add_subdirectory(dfmplugin-emblem)
 add_subdirectory(dfmplugin-fileoperations)
 add_subdirectory(dfmplugin-bookmark)
 add_subdirectory(dfmplugin-dirshare)
+add_subdirectory(dfmplugin-burn)
 
 # FileManager plugins unit tests
 add_subdirectory(dfmplugin-vault)
@@ -26,6 +25,7 @@ add_subdirectory(dfmplugin-core)
 add_subdirectory(dfmplugin-detailspace)
 add_subdirectory(dfmplugin-avfsbrowser)
 add_subdirectory(dfmplugin-computer)
+add_subdirectory(dfmplugin-search)
 if(DFM_TEST_ENABLE_DISKENCRYPT)
     add_subdirectory(dfmplugin-encrypt-manager)
     add_subdirectory(dfmplugin-disk-encrypt-entry)

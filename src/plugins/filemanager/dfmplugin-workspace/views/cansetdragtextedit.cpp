@@ -4,7 +4,9 @@
 
 #include "cansetdragtextedit.h"
 
+#ifndef DFM_UNIT_TEST_DISABLE_QT_PRIVATE
 #include <private/qtextedit_p.h>
+#endif
 
 using namespace dfmplugin_workspace;
 
@@ -20,6 +22,13 @@ CanSetDragTextEdit::CanSetDragTextEdit(const QString &text, QWidget *parent)
 
 void CanSetDragTextEdit::setDragEnabled(const bool &bdrag)
 {
+#ifndef DFM_UNIT_TEST_DISABLE_QT_PRIVATE
     QTextEditPrivate *dd = reinterpret_cast<QTextEditPrivate *>(qGetPtrHelper(d_ptr));
     dd->control->setDragEnabled(bdrag);
+#else
+    // Fallback implementation for unit tests
+    // Use the public API which may have limited functionality
+    setAcceptDrops(bdrag);
+    Q_UNUSED(bdrag)
+#endif
 }
