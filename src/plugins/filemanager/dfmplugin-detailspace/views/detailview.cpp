@@ -163,7 +163,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         iconLabel = new DLabel(this);
         iconLabel->setFixedSize(200, 200);
         //iconLabel->setStyleSheet("border: 1px solid red;");
-        QSize targetSize(200, 160);
+        QSize targetSize(160, 160);
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
             bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
