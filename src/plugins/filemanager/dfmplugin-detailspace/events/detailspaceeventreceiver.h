@@ -31,7 +31,7 @@ public slots:
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
     bool handleBasicFiledFilterRootAdd(const QString &scheme, const QStringList &enums);
 
-    // worksapce
+    // workspace
     void handleViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 
 private:

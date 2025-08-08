@@ -6,7 +6,7 @@ set(plugin_path "${DFM_SOURCE_DIR}/plugins/filemanager/dfmplugin-workspace")
 # Find test files
 file(GLOB_RECURSE UT_CXX_FILE FILES_MATCHING PATTERN "*.cpp" "*.h")
 
-# Get all worksapce plugin files (like the source does)
+# Get all workspace plugin files (like the source does)
 file(GLOB_RECURSE WORKSPACE_FILES
     "${plugin_path}/*.h"
     "${plugin_path}/*.cpp"
