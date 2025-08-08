@@ -85,7 +85,6 @@ public Q_SLOTS:
     void onReturnPressed();
     void insertCompletion(const QString &completion);
     void onCompletionHighlighted(const QString &highlightedCompletion);
-    void updateIndicatorIcon();
     void onCompletionModelCountChanged();
     void appendToCompleterModel(const QStringList &stringList);
     void onTravelCompletionListFinished();
