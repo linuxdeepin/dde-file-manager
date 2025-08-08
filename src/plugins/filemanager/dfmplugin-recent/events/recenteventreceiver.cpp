@@ -101,9 +101,8 @@ bool RecentEventReceiver::customRoleDisplayName(const QUrl &url, const ItemRoles
 bool RecentEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
 {
     if (url == RecentHelper::rootUrl()) {
-        *iconName = SystemPathUtil::instance()->systemPathIconName("Recent");
-        if (!iconName->isEmpty())
-            return true;
+        *iconName = "dfm_recent";
+        return true;
     }
     return false;
 }
