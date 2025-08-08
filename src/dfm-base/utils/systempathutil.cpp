@@ -157,7 +157,7 @@ QString SystemPathUtil::findSystemPathKey(const QString &path) const
 
     auto rootPath = StandardPaths::location(StandardPaths::kDiskPath);
     if (systemPathsSet.contains(rootPath) && targetPath == rootPath)
-        return systemPathsMap.value(rootPath);
+        return systemPathsMap.key(rootPath);
 
     auto userHome = StandardPaths::location(StandardPaths::kHomePath);
     if (targetPath.contains(userHome)) {
