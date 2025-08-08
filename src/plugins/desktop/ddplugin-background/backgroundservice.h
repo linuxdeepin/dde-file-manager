@@ -33,7 +33,7 @@ protected slots:
 
 protected:
     int getCurrentWorkspaceIndex();
-    int currentWorkspaceIndex = 1;   // worksapce index is started with 1.
+    int currentWorkspaceIndex = 1;   // workspace index is started with 1.
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     WMInter *wmInter = nullptr;
 #endif
