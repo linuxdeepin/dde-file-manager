@@ -227,7 +227,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (workData->exBlockSyncEveryWrite || ProtocolUtils::isSMBFile(toInfo->uri()))
+        if (shouldSyncToDevice(toInfo))
             syncBlockFile(toInfo);
         return NextDo::kDoCopyNext;
     }
@@ -237,7 +237,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     // 循环读取和写入文件，拷贝
     int toFd = -1;
     auto toIsSmb = ProtocolUtils::isSMBFile(toInfo->uri());
-    if (workData->exBlockSyncEveryWrite || toIsSmb)
+    if (shouldSyncToDevice(toIsSmb))
         toFd = open(toInfo->uri().path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize;
     char *data = new char[static_cast<uint>(blockSize + 1)];
@@ -267,7 +267,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         }
 
         // 执行同步策略
-        if ((workData->exBlockSyncEveryWrite || toIsSmb) && toFd > 0)
+        if (shouldSyncToDevice(toIsSmb) && toFd > 0)
             syncfs(toFd);
 
     } while (fromDevice->pos() != fromSize);
@@ -276,7 +276,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     data = nullptr;
 
     // 执行同步策略
-    if ((workData->exBlockSyncEveryWrite || toIsSmb) && toFd > 0)
+    if (shouldSyncToDevice(toIsSmb) && toFd > 0)
         syncfs(toFd);
 
     if (toFd > 0)
@@ -332,7 +332,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (workData->exBlockSyncEveryWrite || ProtocolUtils::isSMBFile(toInfo->uri()))
+        if (shouldSyncToDevice(toInfo))
             syncfs(targetFd);
         return NextDo::kDoCopyNext;
     }
@@ -875,4 +875,24 @@ void DoCopyFileWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toU
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
     if (permissions != 0000)
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
+}
+
+/*!
+ * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed
+ * \param toInfo Target file info
+ * \return true if sync is required, false otherwise
+ */
+bool DoCopyFileWorker::shouldSyncToDevice(const DFileInfoPointer &toInfo) const
+{
+    return shouldSyncToDevice(ProtocolUtils::isSMBFile(toInfo->uri()));
+}
+
+/*!
+ * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed (optimized version)
+ * \param toIsSmb Whether target is SMB file (pre-calculated for performance)
+ * \return true if sync is required, false otherwise
+ */
+bool DoCopyFileWorker::shouldSyncToDevice(bool toIsSmb) const
+{
+    return workData->expandDiskSync && (workData->exBlockSyncEveryWrite || toIsSmb);
 }

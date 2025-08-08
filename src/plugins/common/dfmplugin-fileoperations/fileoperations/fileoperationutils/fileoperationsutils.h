@@ -71,6 +71,7 @@ private:
     static bool blockSync();
     static QUrl parentUrl(const QUrl &url);
     static bool canBroadcastPaste();
+    static bool expandDiskSync();
 
 private:
     static QSet<QString> fileNameUsing;
