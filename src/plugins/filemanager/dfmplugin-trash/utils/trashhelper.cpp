@@ -285,29 +285,48 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
 
 void TrashHelper::onTrashStateChanged()
 {
-    if (FileUtils::trashIsEmpty() == isTrashEmpty)
+    // Ensure we know the current state before processing state change
+    ensureTrashStateInitialized();
+    
+    bool actuallyEmpty = FileUtils::trashIsEmpty();
+    TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    
+    // Only process if state actually changed
+    if (newState == trashState)
         return;
 
-    isTrashEmpty = !isTrashEmpty;
+    trashState = newState;
 
-    if (isTrashEmpty)
+    // Update UI for any state change, but only when trash becomes non-empty
+    // This matches the original logic: if (isTrashEmpty) return; 
+    if (trashState == TrashState::Empty) {
+        fmDebug() << "Trash: State changed to empty, no UI update needed";
         return;
+    }
 
+    // When trash becomes non-empty, update UI
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
         auto window = FMWindowsIns.findWindowById(winId);
         if (window) {
             const QUrl &url = window->currentUrl();
-            if (url.scheme() == scheme())
-                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+            if (url.scheme() == scheme()) {
+                // !isTrashEmpty was used in original, so when not empty, pass true
+                bool showNotEmpty = (trashState == TrashState::NotEmpty);
+                TrashEventCaller::sendShowEmptyTrash(winId, showNotEmpty);
+            }
         }
     }
+    fmDebug() << "Trash: State changed to non-empty, UI updated";
 }
 
 void TrashHelper::onTrashEmptyState()
 {
-    isTrashEmpty = FileUtils::trashIsEmpty();
-    if (!isTrashEmpty) {
+    // Force refresh the actual state
+    bool actuallyEmpty = FileUtils::trashIsEmpty();
+    trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    
+    if (trashState != TrashState::Empty) {
         fmDebug() << "Trash: Trash is not empty, no action needed";
         return;
     }
@@ -318,9 +337,10 @@ void TrashHelper::onTrashEmptyState()
         if (window) {
             const QUrl &url = window->currentUrl();
             if (url.scheme() == scheme())
-                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+                TrashEventCaller::sendShowEmptyTrash(winId, false); // false means empty
         }
     }
+    fmDebug() << "Trash: State updated to empty, UI refreshed";
 }
 
 void TrashHelper::trashNotEmpty()
@@ -330,22 +350,24 @@ void TrashHelper::trashNotEmpty()
 
 void TrashHelper::onTrashNotEmptyState()
 {
-    isTrashEmpty = false;
+    trashState = TrashState::NotEmpty;
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
         auto window = FMWindowsIns.findWindowById(winId);
         if (window) {
             const QUrl &url = window->currentUrl();
             if (url.scheme() == scheme())
-                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+                TrashEventCaller::sendShowEmptyTrash(winId, true); // true means not empty
         }
     }
+    fmDebug() << "Trash: State explicitly set to non-empty";
 }
 
 TrashHelper::TrashHelper(QObject *parent)
     : QObject(parent)
 {
-    isTrashEmpty = FileUtils::trashIsEmpty();
+    // Remove blocking FileUtils::trashIsEmpty() call from constructor
+    // State will be lazily initialized when needed
     initEvent();
 }
 
@@ -355,4 +377,15 @@ void TrashHelper::initEvent()
     if (!resutl)
         fmWarning() << "subscribe signal_TrashCore_TrashStateChanged from dfmplugin_trashcore is failed.";
     connect(this, &TrashHelper::trashNotEmptyState, this, &TrashHelper::onTrashNotEmptyState, Qt::QueuedConnection);
+}
+
+void TrashHelper::ensureTrashStateInitialized()
+{
+    if (trashState == TrashState::Unknown) {
+        // Lazy initialization: determine actual trash state only when needed
+        bool actuallyEmpty = FileUtils::trashIsEmpty();
+        trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+        fmDebug() << "Trash: Lazy initialized trash state to" 
+                 << (trashState == TrashState::Empty ? "Empty" : "NotEmpty");
+    }
 }
