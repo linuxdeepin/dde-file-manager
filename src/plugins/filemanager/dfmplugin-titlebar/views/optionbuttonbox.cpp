@@ -263,6 +263,7 @@ void OptionButtonBox::initializeUi()
     d->iconViewButton->setFixedSize(buttonSize);
     d->iconViewButton->setToolTip(tr("Icon view"));
     d->iconViewButton->setIconSize(buttonIconSize);
+    d->iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     d->listViewButton = new CustomDToolButton;
     d->listViewButton->setCheckable(true);
@@ -270,6 +271,7 @@ void OptionButtonBox::initializeUi()
     d->listViewButton->setFixedSize(buttonSize);
     d->listViewButton->setToolTip(tr("List view"));
     d->listViewButton->setIconSize(buttonIconSize);
+    d->listViewButton->setFocusPolicy(Qt::NoFocus);
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
 
@@ -281,6 +283,7 @@ void OptionButtonBox::initializeUi()
         d->treeViewButton->setFixedSize(buttonSize);
         d->treeViewButton->setToolTip(tr("Tree view"));
         d->treeViewButton->setIconSize(buttonIconSize);
+        d->treeViewButton->setFocusPolicy(Qt::NoFocus);
         d->buttonGroup->addButton(d->treeViewButton);
     } else {
         fmDebug() << "Tree view is disabled in configuration";
