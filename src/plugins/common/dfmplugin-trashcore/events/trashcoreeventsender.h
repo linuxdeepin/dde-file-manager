@@ -32,13 +32,20 @@ private slots:
     void sendTrashStateChangedAdd();
 
 private:
+    enum class TrashState {
+        Unknown,    // Initial state, not yet determined
+        Empty,      // Trash is empty
+        NotEmpty    // Trash contains files
+    };
+
     explicit TrashCoreEventSender(QObject *parent = nullptr);
     void initTrashWatcher();
     bool checkAndStartWatcher();
+    void ensureTrashStateInitialized();
 
 private:
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;
-    bool isEmpty { false };
+    TrashState trashState { TrashState::Unknown };
     QTimer timer;
 };
 

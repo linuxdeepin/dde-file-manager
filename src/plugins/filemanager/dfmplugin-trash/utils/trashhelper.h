@@ -81,12 +81,19 @@ private:
     void onTrashStateChanged();
 
 private:
+    enum class TrashState {
+        Unknown,    // Initial state, not yet determined
+        Empty,      // Trash is empty
+        NotEmpty    // Trash contains files
+    };
+
     explicit TrashHelper(QObject *parent = nullptr);
     void initEvent();
+    void ensureTrashStateInitialized();
 
 private:
     DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher { nullptr };
-    bool isTrashEmpty;
+    TrashState trashState { TrashState::Unknown };
 };
 
 }
