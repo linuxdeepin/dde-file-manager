@@ -62,7 +62,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T7, QFont::Medium);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
 ShareControlWidget::ShareControlWidget(const QUrl &url, bool disableState, QWidget *parent)
