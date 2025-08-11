@@ -32,6 +32,7 @@ public Q_SLOTS:
 
 protected:
     bool parseCifsMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool parseDevMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     static bool askForConfirmChmod(const QString &devName);
 
 private:
