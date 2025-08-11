@@ -48,7 +48,7 @@ bool ComputerEventReceiver::handleSepateTitlebarCrumb(const QUrl &url, QList<QVa
         mapGroup->push_back(map);
         return true;
     } else if (url.scheme() == Global::Scheme::kFile) {
-        return parseCifsMountCrumb(url, mapGroup);
+        return parseCifsMountCrumb(url, mapGroup) || parseDevMountCrumb(url, mapGroup);
     }
 
     return false;
@@ -221,6 +221,53 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
         mapGroup->push_back(dirNode);
     }
     return true;
+}
+
+bool ComputerEventReceiver::parseDevMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    // fix bug-326657
+    // 暂时仅处理挂载到media目录下的设备，后续如有需要再放宽限制
+    QString filePath = url.path();
+    if (!filePath.startsWith("/media"))
+        return false;
+
+    auto devIds = DevProxyMng->getAllBlockIds();
+    for (const auto &id : std::as_const(devIds)) {
+        QUrl devUrl(ComputerUtils::makeBlockDevUrl(id));
+        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+        const auto &devPath = info->targetUrl().path();
+        if (!devPath.isEmpty() && devPath != "/" && filePath.startsWith(devPath)) {
+            QString iconName { info->fileIcon().name() };
+            if (info->fileIcon().name().startsWith("media"))
+                iconName = "media-optical-symbolic";
+            else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
+                iconName = "drive-removable-media-symbolic";
+            else if (iconName == "android-device")
+                iconName = "phone-symbolic";
+            else if (iconName == "ios-device")
+                iconName = "phone-apple-iphone-symbolic";
+            else
+                iconName += "-symbolic";
+
+            QVariantMap rootNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(devPath) },
+                                   { "CrumbData_Key_IconName", iconName },
+                                   { "CrumbData_Key_DisplayText", "" } };
+            mapGroup->push_back(rootNode);
+
+            QString currPrefix = devPath;
+            auto subPathList = filePath.remove(devPath).split("/", Qt::SkipEmptyParts);
+            while (subPathList.count() > 0) {
+                QString dirName = subPathList.takeFirst();
+                currPrefix = currPrefix + "/" + dirName;
+                QVariantMap dirNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(currPrefix) },
+                                      { "CrumbData_Key_DisplayText", dirName } };
+                mapGroup->push_back(dirNode);
+            }
+            return true;
+        }
+    };
+
+    return false;
 }
 
 bool ComputerEventReceiver::askForConfirmChmod(const QString &devName)
