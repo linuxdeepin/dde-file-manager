@@ -1230,7 +1230,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
                             workData->expandDiskSync = FileOperationsUtils::expandDiskSync();
-                            countWriteType = workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
+                            countWriteType = !workData->expandDiskSync || workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
                                                                              : CountWriteSizeType::kWriteBlockType;
                             targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
 
