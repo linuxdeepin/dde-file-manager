@@ -43,6 +43,8 @@ DoCopyFileWorker::~DoCopyFileWorker()
 // main thread using
 void DoCopyFileWorker::pause()
 {
+    if (state == kPasued || state == kStoped)
+        return;
     state = kPasued;
 }
 // main thread using
@@ -340,8 +342,8 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
     size_t blockSize = static_cast<size_t>(fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize);
     off_t offset_in = 0;
     off_t offset_out = 0;
+    size_t total = static_cast<size_t>(fromSize);
     ssize_t result = -1;
-    size_t left = static_cast<size_t>(fromSize);
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
         if (Q_UNLIKELY(!stateCheck()))
@@ -349,7 +351,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         do {
             if (Q_UNLIKELY(!stateCheck()))
                 return NextDo::kDoCopyErrorAddCancel;
-            blockSize = left < blockSize ? left : blockSize;
+            blockSize = total < blockSize ? total : blockSize;
             result = copy_file_range(sourcFd, &offset_in, targetFd, &offset_out, blockSize, 0);
             if (result < 0) {
                 auto lastError = strerror(errno);
@@ -362,7 +364,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
                 offset_out = offset_in;
             } else {
                 workData->currentWriteSize += result;
-                left -= static_cast<size_t>(result);
+                total -= static_cast<size_t>(result);
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
         checkRetry();
@@ -872,7 +874,7 @@ void DoCopyFileWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toU
     localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl), fromInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>(), fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
-    //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
+    // 权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
     if (permissions != 0000)
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }
