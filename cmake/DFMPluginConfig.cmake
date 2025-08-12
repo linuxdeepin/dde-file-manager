@@ -13,6 +13,11 @@ function(dfm_apply_default_plugin_config target_name)
         DFM6::framework
     )
     
+    # Skip build rpath for reproducible release build
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set_target_properties(${target_name} PROPERTIES SKIP_BUILD_RPATH TRUE)
+    endif()
+    
     message(STATUS "DFM: Default plugin configuration applied successfully")
 endfunction()
 

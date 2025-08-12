@@ -30,6 +30,11 @@ target_include_directories(${PROJECT_NAME}
         ${Qt6Widgets_PRIVATE_INCLUDE_DIRS}
 )
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SKIP_BUILD_RPATH TRUE)
+endif()
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Dde::Shell
     DFM6::base

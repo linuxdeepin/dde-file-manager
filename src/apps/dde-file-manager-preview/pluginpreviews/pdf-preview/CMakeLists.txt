@@ -20,6 +20,11 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_PREVIEW_DIR}/previews)
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SKIP_BUILD_RPATH TRUE)
+endif()
+
 target_link_libraries(${PROJECT_NAME}
     DFM6::base
     DFM6::framework

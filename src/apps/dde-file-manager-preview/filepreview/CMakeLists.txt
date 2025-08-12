@@ -21,6 +21,11 @@ add_executable(${BIN_NAME}
     ${FILEPREVIEW_FILES}
 )
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${BIN_NAME} PROPERTIES SKIP_BUILD_RPATH TRUE)
+endif()
+
 target_link_libraries(${BIN_NAME} PRIVATE
     Qt6::Core
     Dtk6::Widget

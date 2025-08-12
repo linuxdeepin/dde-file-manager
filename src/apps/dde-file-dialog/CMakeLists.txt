@@ -14,6 +14,11 @@ set(SRCS
 find_package(Qt6 COMPONENTS Core)
 add_executable(${PROJECT_NAME} ${SRCS})
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SKIP_BUILD_RPATH TRUE)
+endif()
+
 target_link_libraries(
     ${PROJECT_NAME}
     DFM6::base

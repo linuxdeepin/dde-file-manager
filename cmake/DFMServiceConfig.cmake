@@ -14,6 +14,11 @@ function(dfm_apply_default_service_config target_name)
         Qt6::DBus
     )
     
+    # Skip build rpath for reproducible release build
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set_target_properties(${target_name} PROPERTIES SKIP_BUILD_RPATH TRUE)
+    endif()
+    
     message(STATUS "DFM: Default service configuration applied successfully")
 endfunction()
 

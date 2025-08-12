@@ -38,6 +38,11 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${BIN_NAME} PROPERTIES SKIP_BUILD_RPATH TRUE)
+endif()
+
 target_link_libraries(${BIN_NAME} PRIVATE
     DFM6::base
     DFM6::framework
