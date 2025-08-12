@@ -43,9 +43,9 @@ DoCopyFileWorker::~DoCopyFileWorker()
 // main thread using
 void DoCopyFileWorker::pause()
 {
-    if (state == kPasued || state == kStoped)
+    if (state == kPaused || state == kStopped)
         return;
-    state = kPasued;
+    state = kPaused;
 }
 // main thread using
 void DoCopyFileWorker::resume()
@@ -56,7 +56,7 @@ void DoCopyFileWorker::resume()
 // main thread using// main thread using
 void DoCopyFileWorker::stop()
 {
-    state = kStoped;
+    state = kStopped;
     waitCondition->wakeAll();
     auto fileOpsAll = fileOps.listByLock();
     for (auto op : fileOpsAll) {
@@ -382,7 +382,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
 
 bool DoCopyFileWorker::stateCheck()
 {
-    if (state == kPasued)
+    if (state == kPaused)
         workerWait();
 
     return state == kNormal;
@@ -856,7 +856,7 @@ void DoCopyFileWorker::checkRetry()
 
 bool DoCopyFileWorker::isStopped()
 {
-    return state == kStoped;
+    return state == kStopped;
 }
 
 /*!

@@ -30,8 +30,8 @@ class DoCopyFileWorker : public QObject
 public:
     enum : u_int8_t {
         kNormal,
-        kPasued,
-        kStoped,
+        kPaused,
+        kStopped,
     };
 
     enum class NextDo: u_int8_t {
