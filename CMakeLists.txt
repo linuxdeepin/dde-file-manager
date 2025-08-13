@@ -32,6 +32,11 @@ include(install_dbus_service)
 include(GNUInstallDirs)
 include(DFMInstallDirs)
 
+# Skip build rpath for reproducible release build
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_SKIP_BUILD_RPATH TRUE)
+endif()
+
 # sub directories
 add_subdirectory(src/apps)
 add_subdirectory(src/dfm-base)
