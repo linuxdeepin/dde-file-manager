@@ -219,6 +219,7 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 bool FileView::setRootUrl(const QUrl &url)
 {
     d->url = url;
+    setFocus();
 
     clearSelection();
     selectionModel()->clear();
@@ -526,13 +527,13 @@ void FileView::wheelEvent(QWheelEvent *event)
         event->accept();
         return;
     }
-    
+
     // Handle horizontal scrolling with Alt modifier or horizontal wheel
     if (event->modifiers() == Qt::AltModifier || event->angleDelta().x() != 0) {
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
         return;
     }
-    
+
     // Default vertical scrolling
 #ifdef QT_SCROLL_WHEEL_ANI
     DListView::wheelEvent(event);
