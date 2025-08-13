@@ -9,13 +9,21 @@
 //  #define DFM_PLUGIN_PATH xxx
 
 #ifndef DFM_BUILD_DIR
-#    define DFM_BUILD_DIR "${DFM_BUILD_DIR}"
+#   ifdef QT_DEBUG
+#        define DFM_BUILD_DIR "${DFM_BUILD_DIR}"
+#   else
+#        define DFM_BUILD_DIR "/nonexistent"
+#   endif
 #elif
 #    warning "cmake unseting definition DFM_BUILD_DIR"
 #endif
 
 #ifndef DFM_BUILD_PLUGIN_DIR
-#    define DFM_BUILD_PLUGIN_DIR "${DFM_BUILD_PLUGIN_DIR}"
+#   ifdef QT_DEBUG
+#       define DFM_BUILD_PLUGIN_DIR "${DFM_BUILD_PLUGIN_DIR}"
+#   else
+#        define DFM_BUILD_PLUGIN_DIR "/nonexistent"
+#   endif
 #elif
 #    warning "cmake unseting definition DFM_BUILD_PLUGIN_DIR"
 #endif
