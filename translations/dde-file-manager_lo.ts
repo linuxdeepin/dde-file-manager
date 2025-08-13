@@ -22,7 +22,7 @@
         <location filename="../src/apps/dde-file-manager/main.cpp" line="353"/>
         <location filename="../dde-file-manager/src/apps/dde-file-manager/main.cpp" line="353"/>
         <source>File Manager</source>
-        <translation>ຫຼຸບຸດແ ഍ືບຸດໃນລະບຸບ</translation>
+        <translation>ຕົວຈັດການໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="358"/>
@@ -626,7 +626,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="75"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="46"/>
         <source>Computers in LAN</source>
-        <translation>កុំព្យុតក្នុង LAN</translation>
+        <translation>ຄອມພິວເຕີໃນເຄືອຂ່າຍພາຍໃນ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
@@ -894,7 +894,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../dde-file-manager/src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation>גודל значкаเริ่มต้น:</translation>
+        <translation>ຂະໜາດໄອຄອນເລີ່ມຕົ້ນ:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -1290,7 +1290,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/utils/universalutils.cpp" line="105"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>dde-file-manager</source>
-        <translation>dde-file-manager</translation>
+        <translation>ຕົວຈັດການເອກະສານ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="180"/>
@@ -1429,13 +1429,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="71"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="71"/>
         <source>New File</source>
-        <translation>קובץ חדש</translation>
+        <translation>ໄຟລໃໝ່</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="199"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="199"/>
         <source>Create symlink</source>
-        <translation>ສ້າງ symlink</translation>
+        <translation>ສ້າງລິ້ງສັນຍາລັກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="541"/>
@@ -1451,7 +1451,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
         <source>Write only</source>
-        <translation>כתוב בלבד</translation>
+        <translation>ຂຽນເທົ່ານັ້ນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
@@ -1459,7 +1459,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <source>Read only</source>
-        <translation>קריאה בלבד</translation>
+        <translation>ອ່ານເທົ່ານັ້ນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
@@ -1467,19 +1467,19 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <source>Read-write</source>
-        <translation>קריאה וכתיבה</translation>
+        <translation>ອ່ານ-ຂຽນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="156"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="156"/>
         <source>Owner</source>
-        <translation>ឡូwner</translation>
+        <translation>ເຈົ້າຂອງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="160"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="160"/>
         <source>Group</source>
-        <translation>קבוצה</translation>
+        <translation>ກຸ່ມ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="164"/>
@@ -1487,26 +1487,26 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="164"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <source>Others</source>
-        <translation>אחרים</translation>
+        <translation>ອື່ນໆ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="108"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="108"/>
         <source>Burn</source>
         <comment>button</comment>
-        <translation>ışpak</translation>
+        <translation>ເຜົາ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="119"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="119"/>
         <source>Disc name:</source>
-        <translation>ຊື່ດີ້ວ:</translation>
+        <translation>ຊື່ດີສ:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="188"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="188"/>
         <source>Write speed:</source>
-        <translation>מהירות כתיבה:</translation>
+        <translation>ຄວາມໄວໃນການຂຽນ:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
@@ -1526,7 +1526,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
         <source>Verify data</source>
-        <translation>אמת נתונים</translation>
+        <translation>ກວດສອບຂໍ້ມູນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
@@ -1534,19 +1534,19 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
-        <translation>ထုတ်ယုတ်</translation>
+        <translation>ດຶງອອກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="183"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="183"/>
         <source>Add to disc</source>
-        <translation>ເພີ່ມເຂົ້າໃນດີ້ວ</translation>
+        <translation>ເພີ່ມໃສ່ດີສ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="35"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="35"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation>តុប្រាកដ ថាគឺជាទំនាក់ទំនងការលើងឹមអត្តសញ្ញាណរបស់អ្នក។</translation>
+        <translation>ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການລຶບຂໍ້ມູນທັງໝົດໃນດີສ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="38"/>
@@ -1585,37 +1585,37 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="121"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="121"/>
         <source>%1 is a duplicate file.</source>
-        <translation>%1 သည် ဒီဇျောက်ဖျက်ဖိုင်တစ်ခုဖြစ်သည်။</translation>
+        <translation>%1 ແມ່ນໄຟລ໌ຊ້ຳກັນ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="124"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="124"/>
         <source>Insufficient disc space.</source>
-        <translation>មានជម្ងាយអាចរ៉ាប់របស់ឌិសមិនគ្រប់គ្រាន់។</translation>
+        <translation>ພື້ນທີ່ດິສບໍ່ພຽງພໍ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="127"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="127"/>
         <source>Lost connection to drive.</source>
-        <translation>ချက်ချင်းချိတ်ဆက်မှုကျော်ကွက်ပြီး ဆုံးရှုပါသည်။</translation>
+        <translation>ຂາດການເຊື່ອມຕໍ່ກັບໄດຣ໌.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="130"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="130"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation>CD/DVD ချက်ချင်းချိတ်ဆက်မှုကျော်ကွက်ပြီး ဆုံးရှုပါသည်။</translation>
+        <translation>ໄດຣ໌ CD/DVD ບໍ່ພ້ອມ. ກະລຸນາລອງໃຊ້ແຜ່ນອື່ນ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="133"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="133"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation>ປ່ອນດີ້ວ CD/DVD ອິດສະຫຼັບ. ລ້າງໂປແກຼມທີ່ໃຊ້ດີ້ວ, ແລ້ວໃສ່ດີ້ວອີກຄັ້ງ.</translation>
+        <translation>ໄດຣ໌ CD/DVD ກຳລັງຖືກໃຊ້. ອອກຈາກໂປຣແກຣມທີ່ກຳລັງໃຊ້ໄດຣ໌, ແລ້ວໃສ່ໄດຣ໌ອີກຄັ້ງ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <source>Invalid volume name</source>
-        <translation>မမှန်ကန်တဲ့ အမည်ပေးခြင်း</translation>
+        <translation>ຊື່ວໍລຸມບໍ່ຖືກຕ້ອງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
@@ -1728,7 +1728,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
         <source>Rename</source>
         <comment>button</comment>
-        <translation>Rename</translation>
+        <translation>ປ່ຽນຊື່</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
@@ -1836,50 +1836,50 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="312"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="316"/>
         <source>Android mobile device</source>
-        <translation>අන්ඩ්‍රොයිඩ ളුහුපාති</translation>
+        <translation>ອຸປະກອນມືຖື Android</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
         <source>Apple mobile device</source>
-        <translation>අපڵි ളුහුපාති</translation>
+        <translation>ອຸປະກອນມືຖື Apple</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
         <source>Unknown device</source>
-        <translation>තහවුලින් ളුහුපාති</translation>
+        <translation>ອຸປະກອນທີ່ບໍ່ຮູ້ຈັກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>හිරින්මාන්තිරාන්</translation>
+        <translation>ລຶບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>Do you want to remove this item?</source>
-        <translation>මෙම ളුහුපාතිය കිහිපයකුට കිහිපයක් രුකුවුලු നුවන්තිරාන් പැවිත්රන්න් യිතුරාන්?</translation>
+        <translation>ທ່ານຕ້ອງການລຶບລາຍການນີ້ບໍ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation>මෙම ളුහුපාතිය %1 ളුහුපාතිය പැවිත්රන්න් യිතුරාන්?</translation>
+        <translation>ທ່ານຕ້ອງການລຶບ %1 ລາຍການບໍ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <source>It does not delete the original files</source>
-        <translation>ມັນບໍ່ໄດ້ລົບຟາຍລ໌ຕົ້ນສະບັບ</translation>
+        <translation>ມັນບໍ່ໄດ້ລົບໄຟລ໌ຕົ້ນສະບັບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
         <source>Clear recent history</source>
-        <translation>මාරිගුණෙන් നැගිලි ളිස්තිය വැඩේහැඳිනි ളිස්තිය വැඩේහැඳිනි ളිස්තිය വැඩේහැඳිනි ളිස්තිය വැඩේහැඳිනි ളිස්තිය</translation>
+        <translation>ລ້າງປະຫວັດຫຼ້າສຸດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
@@ -1907,7 +1907,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="103"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="103"/>
         <source>Connect to Server</source>
-        <translation>මාරිගුණෙන් വැඩේහැඳිනි ളිස්තිය വැඩේහැඳිනි ളිස්තිය വැඩේහැඳිනි ളිස්තිය</translation>
+        <translation>ຕິດຕັ້ງກັບບ່ອນເຊີ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="107"/>
@@ -2017,31 +2017,31 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Before file name</source>
-        <translation>ລិපි ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ກ່ອນຊື່ໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>After file name</source>
-        <translation>ລិපි ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ຫຼັງຊື່ໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
         <source>File name</source>
-        <translation>ລិපි ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ຊື່ໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Start at</source>
-        <translation>ເລື່ອງເລີ່ມຈາກ</translation>
+        <translation>ເລີ່ມຕົ້ນທີ່</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>&apos;ແපළ: ശ්‍ර්‍ති ഭ ഊී ശ්‍ර්‍ති&apos;</translation>
+        <translation>ແນະນຳ: ຈັດລຽງຕາມລຳດັບໄຟລ໌ທີ່ເລືອກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.cpp" line="30"/>
@@ -2063,43 +2063,43 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="76"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="88"/>
         <source>Search</source>
-        <translation>ຄີກ ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ຄົ້ນຫາ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="99"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="99"/>
         <source>No results</source>
-        <translation>ຜູ່ມີ ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ບໍ່ມີຜົນການຄົ້ນຫາ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="101"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="101"/>
         <source>Searching...</source>
-        <translation>ຄີກ ഭ ഊී ശ්‍ර්‍ති...</translation>
+        <translation>ກຳລັງຄົ້ນຫາ...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
         <source>Create Vault</source>
-        <translation>ສ້າງ ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ສ້າງຕູ້ເກັບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>Unlock</source>
-        <translation>ເປັນເອງ</translation>
+        <translation>ເປີດລັອກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <source>Lock</source>
-        <translation>ປັບລິມະບົດ ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ລັອກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
         <source>Auto lock</source>
-        <translation>ອັດຕະລະຍະ ഭ ഊී ശ්‍ර්‍ති</translation>
+        <translation>ລັອກອັດຕະໂນມັດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
@@ -2207,7 +2207,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <location filename="../dde-file-manager/src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation>ការផ្តល់ argument មិនត្រឹមត្រូវ</translation>
+        <translation>ອາກິວເມັ້ນບໍ່ຖືກຕ້ອງ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
@@ -2297,19 +2297,19 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Success</source>
-        <translation>Thành công</translation>
+        <translation>ສຳເລັດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
-        <translation>Thất bại</translation>
+        <translation>ລົ້ມເຫຼວ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="247"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="247"/>
         <source>Sidebar</source>
-        <translation>Thanh bên</translation>
+        <translation>ແຖບຂ້າງ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -2317,13 +2317,13 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../dde-file-manager/src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
-        <translation>hoặc</translation>
+        <translation>ຫຼື</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <source>Clear search history</source>
-        <translation>Xóa lịch sử tìm kiếm</translation>
+        <translation>ລຶບປະຫວັດການຄົ້ນຫາ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
@@ -2335,49 +2335,49 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="260"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="260"/>
         <source>search</source>
-        <translation>tìm kiếm</translation>
+        <translation>ຄົ້ນຫາ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="275"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="275"/>
         <source>advanced search</source>
-        <translation>tìm kiếm nâng cao</translation>
+        <translation>ຄົ້ນຫາຂັ້ນສູງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
         <source>Cannot generate random number by TPM</source>
-        <translation>Không thể tạo số ngẫu nhiên bằng TPM</translation>
+        <translation>ບໍ່ສາມາດສ້າງຕົວເລກສຸ່ມໂດຍ TPM ໄດ້</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
         <source>No available encrypt algorithm.</source>
-        <translation>មិនមានអាល gorithm សម្បូរសម្រាប់ប្រើប្រាស់</translation>
+        <translation>ບໍ່ມີອັລກອລິທຶມການເຂົ້າລະຫັດທີ່ສາມາດໃຊ້ໄດ້</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>TPM encrypt failed.</source>
-        <translation>Việc mã hóa TPM đã thất bại.</translation>
+        <translation>ການເຂົ້າລະຫັດ TPM ລົ້ມເຫຼວ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>TPM is locked.</source>
-        <translation>TPM đã bị khóa.</translation>
+        <translation>TPM ຖືກລັອກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
         <source>Confirm encrypt %1?</source>
-        <translation>Xác nhận mã hóa %1?</translation>
+        <translation>ຢືນຢັນການເຂົ້າລະຫັດ %1 ຫຼືບໍ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation>Phầnition hiện tại sắp được mã hóa và không thể hủy bỏ trong suốt quá trình mã hóa, vui lòng xác nhận mã hóa.</translation>
+        <translation>ພາທິຊັນປະຈຸບັນກຳລັງຈະຖືກເຂົ້າລະຫັດ ແລະບໍ່ສາມາດຍົກເລີກໄດ້ໃນຂະນະກຳລັງເຂົ້າລະຫັດ, ກະລຸນາຢືນຢັນການເຂົ້າລະຫັດ.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
@@ -2485,7 +2485,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
-        <translation>Personalization</translation>
+        <translation>ການປັບແຕ່ງສ່ວນຕົວ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
@@ -2493,67 +2493,67 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Set Wallpaper</source>
-        <translation>Set Wallpaper</translation>
+        <translation>ຕັ້ງພາບພື້ນຫຼັງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>ຊື່</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="145"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="145"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>ເວລາທີ່ແກ້ໄຂ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation>Time created</translation>
+        <translation>ເວລາສ້າງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>ຂະໜາດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="148"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="148"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>ປະເພດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="152"/>
         <source>Tiny</source>
-        <translation>Tiny</translation>
+        <translation>ນ້ອຍຫຼາຍ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="153"/>
         <source>Small</source>
-        <translation>Small</translation>
+        <translation>ນ້ອຍ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="154"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="154"/>
         <source>Medium</source>
-        <translation>Medium</translation>
+        <translation>ກາງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="155"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="155"/>
         <source>Large</source>
-        <translation>Large</translation>
+        <translation>ໃຫຍ່</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="156"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="156"/>
         <source>Super large</source>
-        <translation>Super large</translation>
+        <translation>ໃຫຍ່ຫຼາຍ</translation>
     </message>
 </context>
 <context>
@@ -2562,7 +2562,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <source>%1 are not allowed</source>
-        <translation>&apos;%1 are not allowed&apos;</translation>
+        <translation>%1 ບໍ່ອະນຸຍາດ</translation>
     </message>
 </context>
 <context>
@@ -2571,7 +2571,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="275"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="275"/>
         <source>Rename %1 Files</source>
-        <translation>Rename %1 Files</translation>
+        <translation>ປ່ຽນຊື່ໄຟລ໌ %1</translation>
     </message>
 </context>
 <context>
@@ -2580,25 +2580,25 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="66"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="66"/>
         <source>Mode:</source>
-        <translation>&apos;Mode:&apos;</translation>
+        <translation>ໂໝດ:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Replace Text</source>
-        <translation>ແປແທນຂໍ້ຄວາມ</translation>
+        <translation>ແທນຂໍ້ຄວາມ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
-        <translation>เพิ่ม ཡིང་</translation>
+        <translation>ເພີ່ມຂໍ້ຄວາມ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Custom Text</source>
-        <translation>ຂໍ້ຄວາມປະເພດເອິ້ນ</translation>
+        <translation>ຂໍ້ຄວາມກຳນົດເອງ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="73"/>
@@ -2809,13 +2809,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Organize desktop</source>
-        <translation>រៀបចំ desktop</translation>
+        <translation>ຈັດລຽງເດສທັອບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Enable desktop organization</source>
-        <translation>បុកមូលដ្ឋានរៀបចំ desktop</translation>
+        <translation>ເປີດໃຊ້ການຈັດລຽງເດສທັອບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
@@ -2878,7 +2878,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
         <source>Desktop organizer</source>
-        <translation>រៀបចំ desktop</translation>
+        <translation>ຕົວຈັດການເດສທັອບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
@@ -2944,19 +2944,19 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="39"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="39"/>
         <source>Organize desktop</source>
-        <translation>ຈັດການ desktop</translation>
+        <translation>ຈັດລຽງໂຕະທຳງານ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <source>Organize by</source>
-        <translation>ຈັດການໂດຍ</translation>
+        <translation>ຈັດລຽງຕາມ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation>ໜຶ່ງຄລ຿ກ ཁຳບ ཀົງ</translation>
+        <translation>ເຊື່ອງທຸກກຸ່ມການເກັບຮວບດ້ວຍການຄລິກຄັ້ງດຽວ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
@@ -3040,7 +3040,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="94"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="94"/>
         <source>Location:</source>
-        <translation>위치:</translation>
+        <translation>ສະຖານທີ່:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
@@ -3118,7 +3118,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
         <location filename="../dde-file-manager/src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
         <source>Other</source>
-        <translation>ອື໅້ນໍ້</translation>
+        <translation>ອື່ນໆ</translation>
     </message>
 </context>
 <context>
@@ -3302,13 +3302,13 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="25"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="25"/>
         <source>%1 item</source>
-        <translation>%1 ད຾້ນ</translation>
+        <translation>%1 ລາຍການ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="26"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="26"/>
         <source>%1 items</source>
-        <translation>%1 항목</translation>
+        <translation>%1 ລາຍການ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
@@ -3316,43 +3316,43 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
         <source>%1 item selected</source>
-        <translation>&apos;%1 ຕົວເລື່ອນທີ່ເລືອກ&apos;</translation>
+        <translation>ເລືອກ %1 ລາຍການ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="28"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="28"/>
         <source>%1 items selected</source>
-        <translation>%1 개의 아이템 선택됨</translation>
+        <translation>ເລືອກ %1 ລາຍການ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="29"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="29"/>
         <source>%1 folder selected (contains %2)</source>
-        <translation>%1 폴더 선택됨 (내부에 %2 포함)</translation>
+        <translation>ເລືອກ %1 ໂຟນເດີ (ມີ %2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="30"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="30"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>%1 개의 폴더 선택됨 (내부에 %2 포함)</translation>
+        <translation>ເລືອກ %1 ໂຟນເດີ (ມີ %2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="31"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="31"/>
         <source>%1 file selected (%2)</source>
-        <translation>%1 개의 파일 선택됨 (%2)</translation>
+        <translation>ເລືອກ %1 ໄຟລ໌ (%2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="32"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="32"/>
         <source>%1 files selected (%2)</source>
-        <translation>%1 개의 파일 선택됨 (%2)</translation>
+        <translation>ເລືອກ %1 ໄຟລ໌ (%2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="33"/>
         <location filename="../dde-file-manager/src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="33"/>
         <source>%1 folder selected</source>
-        <translation>%1 개의 폴더 선택됨</translation>
+        <translation>ເລືອກ %1 ໂຟນເດີ</translation>
     </message>
 </context>
 <context>
@@ -3372,43 +3372,43 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>확인</translation>
+        <translation>ຢືນຢັນ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="83"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="83"/>
         <source>Operating failed</source>
-        <translation>운영 실패</translation>
+        <translation>ການດຳເນີນການລົ້ມເຫຼວ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="84"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="84"/>
         <source>Mount failed</source>
-        <translation>마운트 실패</translation>
+        <translation>ຕິດຕັ້ງລົ້ມເຫຼວ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="85"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="85"/>
         <source>Unmount failed</source>
-        <translation>언마운트 실패</translation>
+        <translation>ຖອດອຸປະກອນລົ້ມເຫຼວ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <source>Unmounting device now...</source>
-        <translation>장치 언마운트 중...</translation>
+        <translation>ກຳລັງຖອດອຸປະກອນ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Mounting device now...</source>
-        <translation>장치 마운트 중...</translation>
+        <translation>ກຳລັງຕິດຕັ້ງອຸປະກອນ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Erasing device now...</source>
-        <translation>장치 지우기 중...</translation>
+        <translation>ກຳລັງລຶບອຸປະກອນ...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
@@ -3643,7 +3643,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="535"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>Delete</translation>
+        <translation>ລົບ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
@@ -3675,7 +3675,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="441"/>
         <location filename="../dde-file-manager/src/dfm-base/utils/dialogmanager.cpp" line="441"/>
         <source>Empty</source>
-        <translation>Empty</translation>
+        <translation>ລ້າງ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="480"/>
@@ -3828,19 +3828,19 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="37"/>
         <location filename="../dde-file-manager/src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="37"/>
         <source>Executable</source>
-        <translation>ිකිකිරෙකිරි</translation>
+        <translation>ສາມາດໃຊ້ໄດ້</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="38"/>
         <location filename="../dde-file-manager/src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="38"/>
         <source>Backup file</source>
-        <translation>වැනි མැබිණියෙනි</translation>
+        <translation>ໄຟລ໌ສຳລັບ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="39"/>
         <location filename="../dde-file-manager/src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="39"/>
         <source>Unknown</source>
-        <translation>තහනමියෙනි</translation>
+        <translation>ບໍ່ຮູ້ຈັກ</translation>
     </message>
 </context>
 <context>
@@ -4034,25 +4034,25 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Downloads</source>
-        <translation>ดาวน์โหลด</translation>
+        <translation>ດາວໂຫລດ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Open in new tab:</source>
-        <translation>เปิดในแท็บใหม่:</translation>
+        <translation>ເປີດໃນຕົວເລກສຸມັກ:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Current Directory</source>
-        <translation>ไดเรกทอรีปัจจุบัน</translation>
+        <translation>ໂຟນເດີປັຈຈຸບັນ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
         <source>Files and folders</source>
-        <translation>ไฟล์และโฟลเดอร์</translation>
+        <translation>ໄຟລ໌ແລະໂຟນເດີ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
@@ -4172,7 +4172,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <location filename="../dde-file-manager/src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Image preview</source>
-        <translation>ການສະແດງຮູບພາບຕົວຢ່າງ</translation>
+        <translation>ການສະແດງພາບຕົວຢ່າງ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
@@ -4957,13 +4957,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
         <source>ISO9660/Joliet (For Windows)</source>
-        <translation>ISO9660/Joliet (ສຳລັບ Windows)</translation>
+        <translation>ISO9660/Joliet (ສໍາລັບ Windows)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
-        <translation>ISO9660/Rock Ridge (ສຳລັບ Unix)</translation>
+        <translation>ISO9660/Rock Ridge (ສໍາລັບ Unix)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
@@ -5611,13 +5611,13 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="112"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Recovery key</source>
-        <translation>ключа восстановления</translation>
+        <translation>ລະຫັດກູ້ຄືນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
         <source>Recovery key is not valid!</source>
-        <translation>ключа восстановления недействителен!</translation>
+        <translation>ລະຫັດກູ້ຄືນບໍ່ຖືກຕ້ອງ!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="147"/>
@@ -5627,37 +5627,37 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="191"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation>Минимум 8 битов, содержит три типа заглавных букв, строчных букв, цифр и символов</translation>
+        <translation>ຢ່າງນ້ອຍ 8 ຕົວອັກສອນ, ປະກອບມີ 3 ປະເພດ: A-Z, a-z, 0-9 ແລະ ສັນຍາລັກ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
         <source>%1 inconsistency</source>
-        <translation>несовпадение %1</translation>
+        <translation>%1 ບໍ່ກົງກັນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>Validate with %1</source>
-        <translation>Проверить с помощью %1</translation>
+        <translation>ກວດສອບດ້ວຍ %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
         <source>Please input recovery key</source>
-        <translation>Пожалуйста, введите ключ восстановления</translation>
+        <translation>ກະລຸນາປ້ອນລະຫັດກູ້ຄືນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
         <source>Old %1</source>
-        <translation>Старый %1</translation>
+        <translation>%1 ເກົ່າ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
         <source>Validate with recovery key</source>
-        <translation>Проверить с помощью ключа восстановления</translation>
+        <translation>ກວດສອບດ້ວຍລະຫັດກູ້ຄືນ</translation>
     </message>
 </context>
 <context>
@@ -5666,7 +5666,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation>Пожалуйста, введите ключ восстановления для разблокировки устройства</translation>
+        <translation>ກະລຸນາປ້ອນລະຫັດກູ້ຄືນເພື່ອຖອດລະຫັດອຸປະກອນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
@@ -5682,7 +5682,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>PIN</source>
-        <translation>ПИН-код</translation>
+        <translation>ລະຫັດ PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
@@ -5690,25 +5690,25 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>passphrase</source>
-        <translation>парольная фраза</translation>
+        <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt device</source>
-        <translation>Пожалуйста, введите %1 для разблокировки устройства</translation>
+        <translation>ກະລຸນາໃສ່ %1 ເພື່ອຖອດລະຫັດອຸປະກອນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <source>Validate with recovery key</source>
-        <translation>Проверить с помощью ключа восстановления</translation>
+        <translation>ກວດສອບດ້ວຍລະຫັດກູ້ຄືນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>Passphrase</source>
-        <translation>Парольная фраза</translation>
+        <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
@@ -5747,19 +5747,19 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
         <source>Unlock encrypted partition</source>
-        <translation>ounlock encrypted partition</translation>
+        <translation>ເປີດລະຫັດພາກສ່ວນທີ່ຖືກລະຫັດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
         <source>Cancel partition encryption</source>
-        <translation>ຍົກເລີກການລະບົບກັນຂໍ້ມູນຂອງພັກ</translation>
+        <translation>ຍົກເລີກການເຂົ້າລະຫັດພາກສ່ວນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
         <source>passphrase</source>
-        <translation>passphrase</translation>
+        <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="176"/>
@@ -5793,13 +5793,13 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
         <source>Error</source>
-        <translation>Error</translation>
+        <translation>ຜິດພາດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation>ບໍ່ສາມາດແຈ້ງລະຫັດຜ່ານຈາກ TPM</translation>
+        <translation>ບໍ່ສາມາດດຶງລະຫັດຜ່ານຈາກ TPM ໄດ້</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
@@ -5807,7 +5807,7 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
         <source>PIN error</source>
-        <translation>PIN error</translation>
+        <translation>ລະຫັດ PIN ຜິດພາດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
@@ -6064,13 +6064,13 @@ Enter user and password for %1</source>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <source>TPM error</source>
-        <translation>TPM 오шибка</translation>
+        <translation>ຂໍ້ຜິດພາດ TPM</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <source>TPM status error!</source>
-        <translation>TPM статус ошибки!</translation>
+        <translation>ສະຖານະ TPM ຜິດພາດ!</translation>
     </message>
 </context>
 <context>
@@ -6948,7 +6948,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
         <source>Bluetooth</source>
-        <translation>Bluetooth</translation>
+        <translation>ບລູທູດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="265"/>
@@ -7334,7 +7334,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <location filename="../dde-file-manager/src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
-        <translation>Properties</translation>
+        <translation>ຄຸນສົມບັດ</translation>
     </message>
 </context>
 <context>
@@ -7514,13 +7514,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>This week</source>
-        <translation>ນີ້ອັນག ൥</translation>
+        <translation>ອາທິດນີ້</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>Last week</source>
-        <translation>ຜ້ານອັນག ൥</translation>
+        <translation>ອາທິດກ່ອນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
@@ -7835,13 +7835,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Unfavorite</source>
-        <translation> favorites ളුපිරියා ൊන්න</translation>
-    </message>
+        <translation>ທີ່ມັກ</translation>
+    </message>  
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Error</source>
-        <translation>තាម ളුපිරියා ൊන්න</translation>
+        <translation>ຜິດພາດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
@@ -8147,7 +8147,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
-        <translation>hiển thị xem trước</translation>
+        <translation>ສະແດງຕົວຢ່າງ</translation>
     </message>
 </context>
 <context>
@@ -8156,7 +8156,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="25"/>
         <source>Trash</source>
-        <translation>Thùng rác</translation>
+        <translation>ຖັງຂີ້ເຫຍື້ອ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="33"/>
@@ -8168,7 +8168,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/views/emptyTrashWidget.cpp" line="34"/>
         <source>Empty Trash</source>
-        <translation>Rỗng Thùng rác</translation>
+        <translation>ລ້າງຖັງຂີ້ເຫຍື້ອ</translation>
     </message>
 </context>
 <context>
@@ -8177,13 +8177,13 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="274"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="274"/>
         <source>Source Path</source>
-        <translation>Đường dẫn nguồn</translation>
+        <translation>ເສັ້ນທາງຕົ້ນສະບັບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="279"/>
         <source>Time deleted</source>
-        <translation>Thời gian xóa</translation>
+        <translation>ເວລາທີ່ຖືກລຶບ</translation>
     </message>
 </context>
 <context>
@@ -8192,31 +8192,31 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="204"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="204"/>
         <source>Restore</source>
-        <translation>Khôi phục</translation>
+        <translation>ກູ້ຄືນ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="205"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="205"/>
         <source>Restore all</source>
-        <translation>Khôi phục tất cả</translation>
+        <translation>ກູ້ຄືນທັງໝົດ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
         <source>Empty trash</source>
-        <translation>Rỗng thùng rác</translation>
+        <translation>ລ້າງຖັງຂີ້ເຫຍື້ອ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
         <source>Source path</source>
-        <translation>Đường dẫn nguồn</translation>
+        <translation>ເສັ້ນທາງຕົ້ນສະບັບ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="208"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="208"/>
         <source>Time deleted</source>
-        <translation>Thời gian xóa</translation>
+        <translation>ເວລາທີ່ຖືກລຶບ</translation>
     </message>
 </context>
 <context>
