@@ -36,4 +36,5 @@ install(TARGETS
     ${DFM_PLUGIN_COMMON_CORE_DIR}
 )
 
-
+# install dconfig files.
+INSTALL_DCONFIG("org.deepin.dde.file-manager.shred.json")
