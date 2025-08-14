@@ -82,14 +82,14 @@ void FileSelectionModel::updateSelecteds()
 
 void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command)
 {
-    if (!command.testFlag(NoUpdate))
-        d->selectedList.clear();
-
     if (command != QItemSelectionModel::SelectionFlags(Current | Rows | ClearAndSelect)) {
         if (d->timer.isActive()) {
             d->timer.stop();
             updateSelecteds();
         }
+
+        if (!command.testFlag(NoUpdate))
+            d->selectedList.clear();
 
         d->currentCommand = command;
 
@@ -97,6 +97,9 @@ void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionM
 
         return;
     }
+
+    if (!command.testFlag(NoUpdate))
+        d->selectedList.clear();
 
     if (selection.isEmpty()) {
         d->firstSelectedIndex = QModelIndex();
