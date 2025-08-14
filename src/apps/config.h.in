@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QObject>
+
 // config.h.in platfrom plugin output
 // set(DFM_PLUGIN_PATH) in cmake
 // if setting new definition, please use:
