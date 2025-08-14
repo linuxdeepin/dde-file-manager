@@ -1,0 +1,17 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "shred.enabled": {
+            "value": false,
+            "serial": 0,
+            "flags": [],
+            "name": "shred enabled",
+            "name[zh_CN]": "粉碎功能",
+            "description": "Enable or disable the file shredding function. When enabled (true), users can shred files in their home directory. When disabled (false), the shred function will not be available.",
+            "description[zh_CN]": "启用或禁用文件粉碎功能。启用（true）时，用户可以粉碎其主目录中的文件。禁用（false）时，粉碎功能将不可用。",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}
