@@ -26,6 +26,11 @@ public:
     QList<QSize> surfaceSizes();
     void setSurfaceInfo(const QList<QWidget *> surfaces);
 
+    void setLastStyleConfigId(const QString &id);
+    QString lastStyleConfigId() const;
+
+    bool hasConfigId(const QString &configId) const;
+
     inline bool isEnable() const { return enable; }
     void setEnable(bool e);
 
@@ -50,9 +55,9 @@ public:
     QList<CollectionBaseDataPtr> normalProfile() const;
     void saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas);
 
-    CollectionStyle normalStyle(const QString &key) const;
-    void updateNormalStyle(const CollectionStyle &style) const;
-    void writeNormalStyle(const QList<CollectionStyle> &styles) const;
+    CollectionStyle normalStyle(const QString &configId, const QString &key) const;
+    void updateNormalStyle(const QString &configId, const CollectionStyle &style) const;
+    void writeNormalStyle(const QString &configId, const QList<CollectionStyle> &styles) const;
 
     CollectionStyle customStyle(const QString &key) const;
     void updateCustomStyle(const CollectionStyle &style) const;
