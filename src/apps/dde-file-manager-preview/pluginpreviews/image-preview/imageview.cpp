@@ -5,6 +5,7 @@
 #include "imageview.h"
 
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <QUrl>
 #include <QImageReader>
@@ -60,16 +61,19 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         tmpMovie->deleteLater();
     }
 
-    QImageReader reader(fileName, format);
-    sourceImageSize = reader.size();
-
+    QImage image(fileName, format);
+    sourceImageSize = image.size();
     if (!sourceImageSize.isValid()) {
         setPixmap(QPixmap());
         return;
     }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        // 应用颜色空间转换，解决CMYK等格式的颜色显示问题 (仅Qt6)
+    image = DFMBASE_NAMESPACE::FileUtils::convertToSRgbColorSpace(image);
+#endif
     QSize showSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
                            qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
-    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(showSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap pixmap = QPixmap::fromImage(image).scaled(showSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     setPixmap(pixmap);
 }
 
