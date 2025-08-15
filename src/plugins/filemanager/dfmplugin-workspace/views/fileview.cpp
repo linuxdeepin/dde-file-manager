@@ -1200,7 +1200,7 @@ void FileView::onItemWidthLevelChanged(int level)
         return;
 
     // Check if this is an icon delegate that supports width level control
-    auto iconDelegate = dynamic_cast<IconItemDelegate*>(itemDelegate());
+    auto iconDelegate = dynamic_cast<IconItemDelegate *>(itemDelegate());
     if (!iconDelegate)
         return;
 
@@ -1367,6 +1367,8 @@ DirOpenMode FileView::currentDirOpenMode() const
     } else {
         if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
             mode = DirOpenMode::kOpenNewWindow;
+        } else if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewTab).toBool()) {
+            mode = DirOpenMode::kOpenNewTab;
         } else {
             mode = DirOpenMode::kOpenInCurrentWindow;
         }
