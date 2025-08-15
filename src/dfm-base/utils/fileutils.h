@@ -90,6 +90,10 @@ public:
     static QString symlinkTarget(const QUrl &url);
     static QString resolveSymlink(const QUrl &url);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    static QImage convertToSRgbColorSpace(const QImage &image);
+#endif
+
 private:
     static QMutex cacheCopyingMutex;
     static QSet<QUrl> copyingUrl;
