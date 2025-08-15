@@ -36,9 +36,9 @@ static constexpr char kFormat[] { ".png" };
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
-QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
+QImage decodeHeifThumbnail(const QString &filePath, int maxSize)
 {
-    heif_context* ctx = heif_context_alloc();
+    heif_context *ctx = heif_context_alloc();
     if (!ctx) {
         qWarning() << "HEIF: Failed to allocate context.";
         return {};
@@ -51,7 +51,7 @@ QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
         return {};
     }
 
-    heif_image_handle* handle = nullptr;
+    heif_image_handle *handle = nullptr;
     err = heif_context_get_primary_image_handle(ctx, &handle);
     if (err.code != heif_error_Ok) {
         qWarning() << "HEIF: Failed to get image handle:" << filePath << "Error:" << err.message;
@@ -59,7 +59,7 @@ QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
         return {};
     }
 
-    heif_image* img = nullptr;
+    heif_image *img = nullptr;
 
     // Check for alpha channel and decode appropriately
     bool hasAlpha = heif_image_handle_has_alpha_channel(handle);
@@ -86,7 +86,7 @@ QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
     }
 
     int stride = 0;
-    const uint8_t* data = heif_image_get_plane_readonly(img, heif_channel_interleaved, &stride);
+    const uint8_t *data = heif_image_get_plane_readonly(img, heif_channel_interleaved, &stride);
     if (!data || stride <= 0) {
         qWarning() << "HEIF: Failed to get image plane data.";
         heif_image_release(img);
@@ -97,7 +97,6 @@ QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
 
     QImage::Format format = hasAlpha ? QImage::Format_RGBA8888 : QImage::Format_RGB888;
     QImage image(data, width, height, stride, format);
-
 
     // Copy image to detach from HEIF buffer
     QImage finalImage = image.copy();
@@ -116,7 +115,7 @@ QImage decodeHeifThumbnail(const QString& filePath, int maxSize)
 QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: using default creator for:" << filePath << "size:" << size;
-    
+
     QFileInfo qInf(filePath);
     auto sz = static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size);
     QString thumbPath = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(qInf, sz);
@@ -133,7 +132,7 @@ QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, Thumb
 QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating video thumbnail for:" << filePath;
-    
+
     QImage img = videoThumbnailCreatorLib(filePath, size);
     if (img.isNull()) {
         qCDebug(logDFMBase) << "thumbnail: video library creator failed, trying ffmpeg for:" << filePath;
@@ -237,7 +236,7 @@ QImage ThumbnailCreators::videoThumbnailCreatorLib(const QString &filePath, Thum
 QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating text thumbnail for:" << filePath << "size:" << size;
-    
+
     QImage img;
     DFMIO::DFile dfile(filePath);
     if (!dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
@@ -253,7 +252,7 @@ QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, Thumbnai
 
     QString text { FileUtils::toUnicode(dfile.read(2000), info->nameOf(NameInfoType::kFileName)) };
     qCDebug(logDFMBase) << "thumbnail: read" << text.length() << "characters from text file:" << filePath;
-    
+
     QFont font;
     font.setPixelSize(12);
 
@@ -278,7 +277,7 @@ QImage ThumbnailCreators::textThumbnailCreator(const QString &filePath, Thumbnai
 QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating audio thumbnail for:" << filePath << "size:" << size;
-    
+
     QProcess ffmpeg;
     QStringList args { "-nostats", "-loglevel", "0", "-i", filePath,
                        "-an", "-vf", QString("scale='min(%1, iw)':-1").arg(size), "-f", "image2pipe", "-fs", "9000", "-" };
@@ -296,7 +295,7 @@ QImage ThumbnailCreators::audioThumbnailCreator(const QString &filePath, Thumbna
         qCDebug(logDFMBase) << "thumbnail: no embedded artwork found in audio file:" << filePath;
         return img;
     }
-    
+
     if (!img.loadFromData(output)) {
         qCWarning(logDFMBase) << "thumbnail: failed to load embedded artwork from audio file:" << filePath;
     } else {
@@ -315,13 +314,13 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     QString mimeType = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath), QMimeDatabase::MatchContent).name();
 
     if (mimeType == "image/heif" || mimeType == "image/heic") {
-    	QImage heifImage = decodeHeifThumbnail(filePath, size);
-    	if (!heifImage.isNull()) {
-        	qCDebug(logDFMBase) << "thumbnail: HEIF thumbnail decoded natively for:" << filePath;
-        	return heifImage;
-    	} else {
-        	qCWarning(logDFMBase) << "thumbnail: native HEIF decoding failed for:" << filePath;
-    	}
+        QImage heifImage = decodeHeifThumbnail(filePath, size);
+        if (!heifImage.isNull()) {
+            qCDebug(logDFMBase) << "thumbnail: HEIF thumbnail decoded natively for:" << filePath;
+            return heifImage;
+        } else {
+            qCWarning(logDFMBase) << "thumbnail: native HEIF decoding failed for:" << filePath;
+        }
     }
 
     const QString &suffix = mimeType.replace("image/", "");
@@ -358,6 +357,10 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
         return image;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    image = FileUtils::convertToSRgbColorSpace(image);
+#endif
+
     qCDebug(logDFMBase) << "thumbnail: image thumbnail created successfully for:" << filePath;
     return image;
 }
@@ -365,7 +368,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
 QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating djvu thumbnail for:" << filePath << "size:" << size;
-    
+
     QImage img = defaultThumbnailCreator(filePath, size);
     if (!img.isNull()) {
         qCDebug(logDFMBase) << "thumbnail: djvu thumbnail created by default creator for:" << filePath;
@@ -377,9 +380,9 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
         qCWarning(logDFMBase) << "thumbnail: deepin-reader not found, cannot create djvu thumbnail for:" << filePath;
         return img;
     }
-    
+
     qCDebug(logDFMBase) << "thumbnail: using deepin-reader to create djvu thumbnail for:" << filePath;
-    
+
     // Use subprocess to call deepin-reader program to generate djvu format file thumbnail
     QProcess process;
     QStringList arguments;
@@ -426,7 +429,7 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
 QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating PDF thumbnail for:" << filePath << "size:" << size;
-    
+
     QImage img;
     QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
     if (!doc || doc->is_locked()) {
@@ -490,7 +493,7 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
 QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
     qCDebug(logDFMBase) << "thumbnail: creating AppImage thumbnail for:" << filePath << "size:" << size;
-    
+
     // 1. Check if AppImage exists
     if (!QFile::exists(filePath)) {
         qCWarning(logDFMBase) << "thumbnail: AppImage file not found:" << filePath;
@@ -525,14 +528,14 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
     proc.setWorkingDirectory(extractTo);
     proc.start(filePath, { "--appimage-extract" });
     auto done = proc.waitForFinished();
-    
+
     if (!done || proc.exitCode() != 0) {
         qCWarning(logDFMBase) << "thumbnail: AppImage extraction failed for:" << filePath
                               << "exit code:" << proc.exitCode()
                               << "error:" << proc.errorString();
         return QImage();
     }
-    
+
     qCDebug(logDFMBase) << "thumbnail: AppImage extraction completed successfully for:" << filePath;
 
     // 5. Search for PNG/SVG files in temporary directory

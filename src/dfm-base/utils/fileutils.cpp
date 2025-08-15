@@ -29,6 +29,9 @@
 #    include <KCodecs>
 #    include <KEncodingProber>
 #endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#    include <QColorSpace>
+#endif
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfile.h>
@@ -1029,6 +1032,87 @@ QString FileUtils::resolveSymlink(const QUrl &url)
     return target;
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+/**
+   @brief 转换图片颜色空间到sRGB，解决CMYK等颜色空间图片显示颜色不正确的问题
+   @param image 原始图片
+   @return 转换后的图片，如果不需要转换或转换失败则返回原图
+   @note 此功能仅在Qt6中可用
+ */
+QImage FileUtils::convertToSRgbColorSpace(const QImage &image)
+{
+    if (image.isNull())
+        return image;
+
+    QColorSpace srgbColorSpace = QColorSpace::SRgb;
+    bool needsConversion = false;
+    if (image.colorSpace().isValid()) {
+        qCDebug(logDFMBase) << "Image has color space:" << image.colorSpace().description();
+
+        if (image.colorSpace() != srgbColorSpace) {
+            needsConversion = true;
+            qCDebug(logDFMBase) << "Converting color space from" << image.colorSpace().description()
+                                << "to sRGB";
+        }
+    } else {
+        qCDebug(logDFMBase) << "Image has no valid color space, checking format for potential CMYK";
+        if (image.format() == QImage::Format_CMYK8888) {
+            needsConversion = true;
+            qCDebug(logDFMBase) << "CMYK format detected, attempting conversion";
+        }
+    }
+
+    if (!needsConversion) {
+        qCDebug(logDFMBase) << "No color space conversion needed";
+        return image;
+    }
+
+    QImage convertedImage = QImage();
+    try {
+        convertedImage = image.convertedToColorSpace(srgbColorSpace);
+        if (!convertedImage.isNull()) {
+            qCDebug(logDFMBase) << "Color space conversion method 1 (convertedToColorSpace) succeeded";
+        } else {
+            qCDebug(logDFMBase) << "Color space conversion method 1 failed";
+        }
+    } catch (...) {
+        qCDebug(logDFMBase) << "Color space conversion method 1 threw exception";
+    }
+
+    if (convertedImage.isNull()) {
+        qCDebug(logDFMBase) << "Trying color space conversion method 2: manual color space setting";
+
+        convertedImage = image.copy();
+        convertedImage.setColorSpace(srgbColorSpace);
+
+        if (convertedImage.format() != QImage::Format_RGB888 && convertedImage.format() != QImage::Format_ARGB32 && convertedImage.format() != QImage::Format_ARGB32_Premultiplied) {
+            convertedImage = convertedImage.convertToFormat(QImage::Format_RGB888);
+        }
+
+        if (!convertedImage.isNull()) {
+            qCDebug(logDFMBase) << "Color space conversion method 2 succeeded";
+        }
+    }
+
+    if (convertedImage.isNull()) {
+        qCDebug(logDFMBase) << "Trying color space conversion method 3: basic format conversion";
+        convertedImage = image.convertToFormat(QImage::Format_RGB888);
+        convertedImage.setColorSpace(srgbColorSpace);
+
+        if (!convertedImage.isNull()) {
+            qCDebug(logDFMBase) << "Color space conversion method 3 succeeded";
+        }
+    }
+
+    if (convertedImage.isNull()) {
+        qCWarning(logDFMBase) << "All color space conversion methods failed, returning original image";
+        return image;
+    }
+
+    return convertedImage;
+}
+#endif
+
 QString FileUtils::encryptString(const QString &str)
 {
     QByteArray byteArray = str.toUtf8();
@@ -1103,8 +1187,6 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
 
     return true;
 }
-
-
 
 QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
 {
