@@ -1200,7 +1200,6 @@ void FileOperateBaseWorker::determineCountProcessType()
     auto device = DFMUtils::deviceNameFromUrl(targetOrgUrl);
     if (device.startsWith("/dev/")) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
-        isTargetFileExBlock = false;
         fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
         if (!isTargetFileLocal) {
             blocakTargetRootPath = rootPath;
@@ -1231,7 +1230,7 @@ void FileOperateBaseWorker::determineCountProcessType()
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
                             workData->expandDiskSync = FileOperationsUtils::expandDiskSync();
                             countWriteType = !workData->expandDiskSync || workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
-                                                                             : CountWriteSizeType::kWriteBlockType;
+                                                                                                          : CountWriteSizeType::kWriteBlockType;
                             targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
 
                             workData->isBlockDevice = true;

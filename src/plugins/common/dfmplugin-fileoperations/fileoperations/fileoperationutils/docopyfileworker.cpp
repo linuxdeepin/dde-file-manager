@@ -750,10 +750,6 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
     if (!actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() - (currentPos + readSize - surplusSize), skip))
         return NextDo::kDoCopyErrorAddCancel;
 
-    if (workData->needSyncEveryRW && sizeWrite > 0) {
-        toDevice->flush();
-    }
-
     return NextDo::kDoCopyCurrentFile;
 }
 
