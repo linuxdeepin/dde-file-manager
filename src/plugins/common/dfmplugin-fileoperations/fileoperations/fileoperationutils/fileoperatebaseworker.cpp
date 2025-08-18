@@ -645,24 +645,11 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
                        toInfo->uri(), skip))
         return false;
 
-    if (jobType == AbstractJobHandler::JobType::kCutType)
-        return doCopyOtherFile(fromInfo, toInfo, skip);
-
-    if (isSourceFileLocal && isTargetFileLocal && !workData->signalThread) {
-        while (bigFileCopy && !isStopped()) {
-            QThread::msleep(10);
-        }
-        if (fromSize > bigFileSize && FileUtils::isSameDevice(fromInfo->uri(), targetUrl)) {
-            bigFileCopy = true;
-            auto result = doCopyLocalByRange(fromInfo, toInfo, skip);
-            bigFileCopy = false;
-            return result;
-        }
-        return doCopyLocalFile(fromInfo, toInfo);
-    }
-
-    // copy other file or cut file
-    return doCopyOtherFile(fromInfo, toInfo, skip);
+    bool isSameDevice = isSourceFileLocal && isTargetFileLocal
+            && FileUtils::isSameDevice(fromInfo->uri(), targetUrl);
+    return isSameDevice
+            ? doCopyLocalByRange(fromInfo, toInfo, skip)
+            : doCopyOtherFile(fromInfo, toInfo, skip);
 }
 
 bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip)
@@ -766,38 +753,19 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     return true;
 }
 
-void FileOperateBaseWorker::waitThreadPoolOver()
-{
-    // wait all thread start
-    if (!isStopped() && threadPool) {
-        QThread::msleep(10);
-    }
-    // wait thread pool copy local file or copy big file over
-    while (threadPool && threadPool->activeThreadCount() > 0) {
-        QThread::msleep(10);
-    }
-}
+// waitThreadPoolOver method removed - no longer needed without multi-threading
 
 void FileOperateBaseWorker::initCopyWay()
 {
-    // local file useing least 8 thread
-    if (isSourceFileLocal && isTargetFileLocal) {
-        countWriteType = CountWriteSizeType::kCustomizeType;
-        workData->signalThread = (sourceFilesCount > 1 || sourceFilesTotalSize > FileOperationsUtils::bigFileSize()) && FileUtils::getCpuProcessCount() > 4
-                ? false
-                : true;
-        if (!workData->signalThread)
-            threadCount = FileUtils::getCpuProcessCount() >= 8 ? FileUtils::getCpuProcessCount() : 8;
-    }
+    // Simplified: always use single thread for file copying
+    countWriteType = CountWriteSizeType::kCustomizeType;
+    workData->signalThread = true;   // Force single thread
 
     if (ProtocolUtils::isSMBFile(targetUrl)
         || ProtocolUtils::isFTPFile(targetUrl)
         || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
         countWriteType = CountWriteSizeType::kCustomizeType;
 
-    if (!workData->signalThread) {
-        initThreadCopy();
-    }
 
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
@@ -848,21 +816,6 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
 }
 
-void FileOperateBaseWorker::initThreadCopy()
-{
-    for (int i = 0; i < threadCount; i++) {
-        QSharedPointer<DoCopyFileWorker> copy(new DoCopyFileWorker(workData));
-        // todo init new
-        connect(copy.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::retryErrSuccess, this, &FileOperateBaseWorker::retryErrSuccess, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::skipCopyLocalBigFile, this, &FileOperateBaseWorker::skipMemcpyBigFile, Qt::DirectConnection);
-        threadCopyWorker.append(copy);
-    }
-
-    threadPool.reset(new QThreadPool);
-    threadPool->setMaxThreadCount(threadCount);
-}
 
 void FileOperateBaseWorker::initSignalCopyWorker()
 {
@@ -884,28 +837,8 @@ QUrl FileOperateBaseWorker::createNewTargetUrl(const DFileInfoPointer &toInfo, c
     return newTargetUrl;
 }
 
-bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo)
-{
-    if (!stateCheck())
-        return false;
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QtConcurrent::run(threadPool.data(), threadCopyWorker[threadCopyFileCount % threadCount].data(),
-                      static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer, const DFileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
-                      fromInfo, toInfo);
-#else
-    QtConcurrent::run(threadPool.data(), [this, fromInfo, toInfo]() {
-        threadCopyWorker[threadCopyFileCount % threadCount]->doFileCopy(fromInfo, toInfo);
-    });
-#endif
-
-    threadCopyFileCount++;
-    return true;
-}
-
 bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
-    waitThreadPoolOver();
     initSignalCopyWorker();
     const QString &targetUrl = toInfo->uri().toString();
 
@@ -929,6 +862,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     FileUtils::cacheCopyingFileUrl(targetUrl);
     const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
     DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
+    // bigFileSize 使用doCopyFilePractically的原因是为了大文件拷贝中途支持暂停
     if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
         do {
             nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
@@ -1228,9 +1162,6 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            workData->expandDiskSync = FileOperationsUtils::expandDiskSync();
-                            countWriteType = !workData->expandDiskSync || workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
-                                                                                                          : CountWriteSizeType::kWriteBlockType;
                             targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
 
                             workData->isBlockDevice = true;
@@ -1258,18 +1189,21 @@ void FileOperateBaseWorker::determineCountProcessType()
 
 void FileOperateBaseWorker::syncFilesToDevice()
 {
-    if (isTargetFileLocal || !workData->expandDiskSync)
+    // Only sync when copying to external devices and sync is enabled
+    if (isTargetFileLocal || !workData->exBlockSyncEveryWrite)
         return;
 
     fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
-    for (const auto &url : syncFiles) {
-        std::string stdStr = url.path().toUtf8().toStdString();
+
+    // Optimized: only sync once per filesystem instead of per file
+    if (!syncFiles.isEmpty()) {
+        std::string stdStr = syncFiles.first().path().toUtf8().toStdString();
         int tofd = open(stdStr.data(), O_RDONLY);
         if (-1 != tofd) {
-            syncfs(tofd);
+            syncfs(tofd);   // Single syncfs call for the entire filesystem
             close(tofd);
         }
     }
+
     fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
-    // 这里本来是拷贝到了手动分区的盘，不需要后面去等待同步计算进度结果
 }

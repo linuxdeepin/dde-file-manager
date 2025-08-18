@@ -34,17 +34,6 @@
             "description":"Open this configuration and report the results of the paste event to the specified location.",
             "permissions":"readwrite",
             "visibility":"private"
-        },
-        "file.operation.expanddisksync": {
-            "value":true,
-            "serial":0,
-            "flags":[],
-            "name":"Expand Disk Sync",
-            "name[zh_CN]":"扩展磁盘同步",
-            "description[zh_CN]":"对拷贝到扩展磁盘上的文件执行同步",
-            "description":"Perform synchronization on files copied to the extended disk",
-            "permissions":"readwrite",
-            "visibility":"private"
         }
     }
 }

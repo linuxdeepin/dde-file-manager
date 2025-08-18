@@ -57,7 +57,6 @@ public:
     QMap<AbstractJobHandler::JobErrorType, AbstractJobHandler::SupportAction> errorOfAction;
     std::atomic_bool exBlockSyncEveryWrite { false };
     std::atomic_bool isBlockDevice { false };
-    std::atomic_bool expandDiskSync { true };
     std::atomic_bool copyFileRange { false };
     std::atomic_int64_t currentWriteSize { 0 };
     QAtomicInteger<qint64> zeroOrlinkOrDirWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory

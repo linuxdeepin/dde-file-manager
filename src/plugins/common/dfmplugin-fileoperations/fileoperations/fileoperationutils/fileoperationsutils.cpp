@@ -32,7 +32,6 @@ inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operation
 inline constexpr char kFileBigSize[] { "file.operation.bigfilesize" };
 inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
 inline constexpr char kBroadcastPaste[] { "file.operation.broadcastpastevent" };
-inline constexpr char kExpandDiskSync[] { "file.operation.expanddisksync" };
 QMutex FileOperationsUtils::mutex;
 
 /*!
@@ -187,8 +186,3 @@ bool FileOperationsUtils::canBroadcastPaste()
     return DConfigManager::instance()->value(kFileOperations, kBroadcastPaste, false).toBool();
 }
 
-bool FileOperationsUtils::expandDiskSync()
-{
-    // 组策略中配置
-    return DConfigManager::instance()->value(kFileOperations, kExpandDiskSync, true).toBool();
-}

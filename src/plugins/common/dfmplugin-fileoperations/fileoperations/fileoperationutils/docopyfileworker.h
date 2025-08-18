@@ -117,11 +117,8 @@ private:   // file copy
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
     bool isStopped();
-    void syncBlockFile(const DFileInfoPointer toInfo);
     int openFileBySys(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
                       const int flags, bool *skip, const bool isSource = true);
-    bool shouldSyncToDevice(const DFileInfoPointer &toInfo) const;
-    bool shouldSyncToDevice(bool toIsSmb) const;
 public:
     static void progressCallback(int64_t current, int64_t total, void *progressData);
 
