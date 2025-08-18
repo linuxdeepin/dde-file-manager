@@ -77,9 +77,6 @@ bool DoCopyFilesWorker::doWork()
 
 void DoCopyFilesWorker::stop()
 {
-    // clean muilt thread copy file info queue
-    threadCopyFileCount = 0;
-
     FileOperateBaseWorker::stop();
 }
 
@@ -122,8 +119,6 @@ bool DoCopyFilesWorker::initArgs()
 
 void DoCopyFilesWorker::endWork()
 {
-    waitThreadPoolOver();
-
     // deal target files
     for (DFileInfoPointer info : precompleteTargetFileInfo) {
         info->initQuerier();

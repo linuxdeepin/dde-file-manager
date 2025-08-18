@@ -151,17 +151,6 @@ void DoCopyFileWorker::progressCallback(int64_t current, int64_t total, void *pr
     data->data->everyFileWriteSize.insert(data->copyFile, current);
 }
 
-void DoCopyFileWorker::syncBlockFile(const DFileInfoPointer toInfo)
-{
-    if (!workData->isBlockDevice)
-        return;
-    std::string stdStr = toInfo->uri().path().toUtf8().toStdString();
-    int tofd = open(stdStr.data(), O_RDONLY);
-    if (-1 != tofd) {
-        syncfs(tofd);
-        close(tofd);
-    }
-}
 
 /*!
  * \brief DoCopyFileWorker::openFile
@@ -229,18 +218,12 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (shouldSyncToDevice(toInfo))
-            syncBlockFile(toInfo);
         return NextDo::kDoCopyNext;
     }
     // resize target file
     if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyResizeDestinationFile) && !resizeTargetFile(fromInfo, toInfo, toDevice, skip))
         return NextDo::kDoCopyErrorAddCancel;
     // 循环读取和写入文件，拷贝
-    int toFd = -1;
-    auto toIsSmb = ProtocolUtils::isSMBFile(toInfo->uri());
-    if (shouldSyncToDevice(toIsSmb))
-        toFd = open(toInfo->uri().path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize;
     char *data = new char[static_cast<uint>(blockSize + 1)];
     uLong sourceCheckSum = adler32(0L, nullptr, 0);
@@ -251,16 +234,12 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         if (nextReadDo != NextDo::kDoCopyCurrentFile) {
             delete[] data;
             data = nullptr;
-            if (toFd > 0)
-                close(toFd);
             return nextReadDo;
         }
         auto nextDo = doWriteFile(fromInfo, toInfo, toDevice, fromDevice, data, sizeRead, skip);
         if (nextDo != NextDo::kDoCopyCurrentFile) {
             delete[] data;
             data = nullptr;
-            if (toFd > 0)
-                close(toFd);
             return nextDo;
         }
 
@@ -268,21 +247,12 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
-        // 执行同步策略
-        if (shouldSyncToDevice(toIsSmb) && toFd > 0)
-            syncfs(toFd);
 
     } while (fromDevice->pos() != fromSize);
 
     delete[] data;
     data = nullptr;
 
-    // 执行同步策略
-    if (shouldSyncToDevice(toIsSmb) && toFd > 0)
-        syncfs(toFd);
-
-    if (toFd > 0)
-        close(toFd);
 
     // 对文件加权
     setTargetPermissions(fromInfo->uri(), toInfo->uri());
@@ -334,8 +304,6 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (shouldSyncToDevice(toInfo))
-            syncfs(targetFd);
         return NextDo::kDoCopyNext;
     }
     // 循环读取和写入文件，拷贝
@@ -875,22 +843,3 @@ void DoCopyFileWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toU
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
 }
 
-/*!
- * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed
- * \param toInfo Target file info
- * \return true if sync is required, false otherwise
- */
-bool DoCopyFileWorker::shouldSyncToDevice(const DFileInfoPointer &toInfo) const
-{
-    return shouldSyncToDevice(ProtocolUtils::isSMBFile(toInfo->uri()));
-}
-
-/*!
- * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed (optimized version)
- * \param toIsSmb Whether target is SMB file (pre-calculated for performance)
- * \return true if sync is required, false otherwise
- */
-bool DoCopyFileWorker::shouldSyncToDevice(bool toIsSmb) const
-{
-    return workData->expandDiskSync && (workData->exBlockSyncEveryWrite || toIsSmb);
-}
