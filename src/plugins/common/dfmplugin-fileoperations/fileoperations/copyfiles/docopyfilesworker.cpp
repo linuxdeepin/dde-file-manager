@@ -117,13 +117,6 @@ bool DoCopyFilesWorker::initArgs()
     if (targetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool())
         targetOrgUrl = QUrl::fromLocalFile(targetInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
 
-    workData->needSyncEveryRW = ProtocolUtils::isRemoteFile(targetUrl);
-    if (!workData->needSyncEveryRW) {
-        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(targetUrl);
-        workData->isFsTypeVfat = fsType.contains("vfat");
-        workData->needSyncEveryRW = fsType == "cifs" || fsType == "vfat";
-    }
-
     return true;
 }
 
