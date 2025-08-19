@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <zlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 static const quint32 kMaxBufferLength { 1024 * 1024 * 1 };
 
@@ -1140,8 +1141,23 @@ bool DoCopyFileWorker::handlePauseResume(FileWriter &writer, const QString &dest
 {
     // Sync data before pausing
     if (writer.fd >= 0) {
-        // TODO: fsync if not fuse
-        // fsync(writer.fd);
+        // Determine target filesystem type for appropriate sync strategy
+        // QUrl destUrl = QUrl::fromLocalFile(dest);
+        // QString targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);
+        
+        // if (targetFsType.toLower().contains("fuse")) {
+        //     // For fuse filesystems, avoid fsync as it may cause performance issues
+        //     // or hang in some fuse implementations
+        //     fmDebug() << "Skipping fsync for fuse filesystem:" << targetFsType;
+        // } else {
+        //     // For non-fuse filesystems, use fsync to ensure data is written to device
+        //     // before pausing, providing better data integrity
+        //     fmDebug() << "Performing fsync for non-fuse filesystem:" << targetFsType;
+        //     if (syncfs(writer.fd) != 0) {
+        //         fmWarning() << "fsync failed for file:" << dest << "error:" << strerror(errno);
+        //         // Continue anyway, as this is not a fatal error
+        //     }
+        // }
         close(writer.fd);
     }
 
