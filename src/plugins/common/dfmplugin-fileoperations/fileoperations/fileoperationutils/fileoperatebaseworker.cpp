@@ -766,7 +766,6 @@ void FileOperateBaseWorker::initCopyWay()
         || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
         countWriteType = CountWriteSizeType::kCustomizeType;
 
-
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
@@ -816,7 +815,6 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
 }
 
-
 void FileOperateBaseWorker::initSignalCopyWorker()
 {
     if (!copyOtherFileWorker) {
@@ -845,7 +843,33 @@ bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    return nextDo == DoCopyFileWorker::NextDo::kDoCopyNext;
+    
+    if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
+        return true;
+    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
+        // For same-device local copies, copy_file_range should work
+        // If it returns fallback, this indicates a system issue that should be reported
+        fmWarning() << "copy_file_range failed for same-device local copy, system error"
+                   << "from:" << fromInfo->uri() << "to:" << toInfo->uri();
+        
+        // Show error dialog like in doCopyFileByRange
+        // We don't have direct access to errno here, but we know copy_file_range failed
+        auto lastError = "copy_file_range system call failed";
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
+            fromInfo->uri(), toInfo->uri(),
+            AbstractJobHandler::JobErrorType::kWriteError,
+            false, 
+            lastError);
+        
+        if (skip) {
+            *skip = (action == AbstractJobHandler::SupportAction::kSkipAction);
+        }
+        
+        return action == AbstractJobHandler::SupportAction::kNoAction;
+    } else {
+        // kDoCopyErrorAddCancel or other error cases
+        return false;
+    }
 }
 
 bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
@@ -853,24 +877,39 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     initSignalCopyWorker();
     const QString &targetUrl = toInfo->uri().toString();
 
-    bool ok { false };
-    if (workData->copyFileRange) {
-        ok = doCopyLocalByRange(fromInfo, toInfo, skip);
-        return ok;
-    }
-
     FileUtils::cacheCopyingFileUrl(targetUrl);
+
+    bool ok = false;
     const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
-    // bigFileSize 使用doCopyFilePractically的原因是为了大文件拷贝中途支持暂停
-    if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
+
+    // Strategy 1: Try copy_file_range first (always try for any file system copy)
+    // copy_file_range works for same filesystem copies, including U盘 to U盘
+    DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
+    if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
+        ok = true;
+    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel) {
+        FileUtils::removeCopyingFileUrl(targetUrl);
+        return false;
+    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
+        fmDebug() << "copy_file_range fallback needed, trying other methods";
+        // Continue to fallback methods
+    }
+    // If copy_file_range failed but not cancelled, fallback to other methods
+
+    // Strategy 2: Use doCopyFilePractically for large files, sync mode, or unsupported dfmio
+    if (!ok && (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite)) {
+        DoCopyFileWorker::NextDo nextDo;
         do {
             nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         } while (nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
         ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
-    } else {
+    }
+
+    // Strategy 3: Fallback to dfmio copy for small files
+    if (!ok && !workData->exBlockSyncEveryWrite) {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
     }
+
     if (ok)
         syncFiles.append(targetUrl);
     FileUtils::removeCopyingFileUrl(targetUrl);
@@ -1134,6 +1173,7 @@ void FileOperateBaseWorker::determineCountProcessType()
     auto device = DFMUtils::deviceNameFromUrl(targetOrgUrl);
     if (device.startsWith("/dev/")) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
+        workData->isTargetFileLocal = isTargetFileLocal;   // Set workData flag
         fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
         if (!isTargetFileLocal) {
             blocakTargetRootPath = rootPath;
@@ -1178,12 +1218,6 @@ void FileOperateBaseWorker::determineCountProcessType()
             }
         }
         fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
-    } else {
-        // 使用file_copy_range只能是cifs挂载，使用gvfs挂载、vfatU盘使用都很慢，
-        // 使用g_file_copy拷贝到外设和协议设备都很慢，并且打断退出很长时间
-        workData->copyFileRange = jobType == AbstractJobHandler::JobType::kCopyType
-                && FileUtils::isSameDevice(sourceUrls.first(), targetOrgUrl)
-                && DFMUtils::fsTypeFromUrl(targetOrgUrl) == "cifs";
     }
 }
 
