@@ -763,10 +763,44 @@ void FileOperateBaseWorker::initCopyWay()
 
     if (ProtocolUtils::isSMBFile(targetUrl)
         || ProtocolUtils::isFTPFile(targetUrl)
-        || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
+        || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize)) {
         countWriteType = CountWriteSizeType::kCustomizeType;
+    } else if (shouldUseBlockWriteType()) {
+        // Use block device write counting for specific scenarios
+        countWriteType = CountWriteSizeType::kWriteBlockType;
+        fmDebug() << "Using kWriteBlockType for progress counting";
+    }
 
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
+}
+
+/*!
+ * \brief FileOperateBaseWorker::shouldUseBlockWriteType Determine if should use block write type for progress counting
+ * \return true if should use kWriteBlockType, false otherwise
+ */
+bool FileOperateBaseWorker::shouldUseBlockWriteType() const
+{
+    // Only consider block write type when copying to removable devices
+    if (!targetIsRemovable || !workData->isBlockDevice || !workData->exBlockSyncEveryWrite) {
+        return false;
+    }
+
+    // Get target filesystem type
+    const QString &targetFsType = dfmio::DFMUtils::fsTypeFromUrl(targetOrgUrl);
+
+    // Condition 1: Target filesystem is fuse
+    if (targetFsType.toLower().contains("fuse")) {
+        fmDebug() << "Using block write type: target filesystem is fuse (" << targetFsType << ")";
+        return true;
+    }
+
+    // Condition 2: Both source and target files are on devices (not local)
+    if (!isSourceFileLocal && !isTargetFileLocal) {
+        fmDebug() << "Using block write type: both source and target are on devices";
+        return true;
+    }
+
+    return false;
 }
 
 QUrl FileOperateBaseWorker::trashInfo(const DFileInfoPointer &fromInfo)
@@ -1218,7 +1252,11 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
+                            // CRITICAL FIX: Always record current sector count as baseline
+                            // The block device stat shows CUMULATIVE sectors written since boot.
+                            // Setting to 0 would incorrectly count ALL device writes, not just our copy operation.
+                            // For accurate progress: (current_sectors - baseline_sectors) * sector_size = our_copy_progress
+                            targetDeviceStartSectorsWritten = getSectorsWritten();
 
                             workData->isBlockDevice = true;
                         }

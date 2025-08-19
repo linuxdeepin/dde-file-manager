@@ -84,6 +84,7 @@ public:
 
 protected:
     void initCopyWay();
+    bool shouldUseBlockWriteType() const;
     QUrl trashInfo(const DFileInfoPointer &fromInfo);
     QString fileOriginName(const QUrl &trashInfoUrl);
     void removeTrashInfo(const QUrl &trashInfoUrl);
