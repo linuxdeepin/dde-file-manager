@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperatebaseworker.h"
+#include "dfm-base/dfm_log_defines.h"
 #include "filenameutils.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "workerdata.h"
@@ -644,10 +645,9 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
     if (!checkFileSize(fromSize, fromInfo->uri(),
                        toInfo->uri(), skip))
         return false;
-
-    bool isSameDevice = isSourceFileLocal && isTargetFileLocal
+    bool isSameLocalDevice = isSourceFileLocal && isTargetFileLocal
             && FileUtils::isSameDevice(fromInfo->uri(), targetUrl);
-    return isSameDevice
+    return isSameLocalDevice
             ? doCopyLocalByRange(fromInfo, toInfo, skip)
             : doCopyOtherFile(fromInfo, toInfo, skip);
 }
@@ -843,28 +843,28 @@ bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    
+
     if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
         return true;
     } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
         // For same-device local copies, copy_file_range should work
         // If it returns fallback, this indicates a system issue that should be reported
         fmWarning() << "copy_file_range failed for same-device local copy, system error"
-                   << "from:" << fromInfo->uri() << "to:" << toInfo->uri();
-        
+                    << "from:" << fromInfo->uri() << "to:" << toInfo->uri();
+
         // Show error dialog like in doCopyFileByRange
         // We don't have direct access to errno here, but we know copy_file_range failed
         auto lastError = "copy_file_range system call failed";
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
-            fromInfo->uri(), toInfo->uri(),
-            AbstractJobHandler::JobErrorType::kWriteError,
-            false, 
-            lastError);
-        
+                fromInfo->uri(), toInfo->uri(),
+                AbstractJobHandler::JobErrorType::kWriteError,
+                false,
+                lastError);
+
         if (skip) {
             *skip = (action == AbstractJobHandler::SupportAction::kSkipAction);
         }
-        
+
         return action == AbstractJobHandler::SupportAction::kNoAction;
     } else {
         // kDoCopyErrorAddCancel or other error cases
@@ -875,24 +875,40 @@ bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, 
 bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     initSignalCopyWorker();
-    const QString &targetUrl = toInfo->uri().toString();
+    const QUrl &targetFileUrl = toInfo->uri();
 
-    FileUtils::cacheCopyingFileUrl(targetUrl);
+    FileUtils::cacheCopyingFileUrl(targetFileUrl);
 
     bool ok = false;
     const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
-    // Strategy 1: Try copy_file_range first (always try for any file system copy)
-    // copy_file_range works for same filesystem copies, including U盘 to U盘
-    DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
-    if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
-        ok = true;
-    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel) {
-        FileUtils::removeCopyingFileUrl(targetUrl);
-        return false;
-    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
-        fmDebug() << "copy_file_range fallback needed, trying other methods";
-        // Continue to fallback methods
+    // Strategy 1: Try copy_file_range first, but only for same device copies
+    // copy_file_range only works within the same filesystem (e.g., U盘 to U盘)
+    bool isSameDevice = FileUtils::isSameDevice(fromInfo->uri(), this->targetUrl);
+    if (isSameDevice) {
+        DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
+        if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
+            ok = true;
+        } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel) {
+            FileUtils::removeCopyingFileUrl(targetFileUrl);
+            return false;
+        } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
+            fmDebug() << "copy_file_range fallback needed for same device, trying other methods";
+
+            // Clean up any partially created target file before fallback
+            // copy_file_range may have created an empty file that needs cleanup
+            QString targetPath = toInfo->uri().path();
+            if (QFile::exists(targetPath)) {
+                if (QFile::remove(targetPath)) {
+                    fmDebug() << "Successfully cleaned up partially created target file:" << targetPath;
+                } else {
+                    fmWarning() << "Failed to cleanup partially created target file:" << targetPath;
+                }
+            }
+            // Continue to fallback methods
+        }
+    } else {
+        fmDebug() << "Cross-device copy detected, skipping copy_file_range";
     }
     // If copy_file_range failed but not cancelled, fallback to other methods
 
@@ -911,8 +927,8 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     }
 
     if (ok)
-        syncFiles.append(targetUrl);
-    FileUtils::removeCopyingFileUrl(targetUrl);
+        syncFiles.append(targetFileUrl);
+    FileUtils::removeCopyingFileUrl(targetFileUrl);
 
     return ok;
 }
