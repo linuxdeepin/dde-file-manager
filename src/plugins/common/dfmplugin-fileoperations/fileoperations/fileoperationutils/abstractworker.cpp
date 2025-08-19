@@ -248,6 +248,9 @@ bool AbstractWorker::statisticsFilesSize()
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(firstUrl);
         isSourceFileLocal = fsType.startsWith("ext");
     }
+    
+    // Set workData flags for use in DoCopyFileWorker
+    workData->isSourceFileLocal = isSourceFileLocal;
 
     if (isSourceFileLocal) {
         fmDebug() << "Using synchronous file size calculation for local files";

@@ -34,17 +34,34 @@ public:
         kStopped,
     };
 
-    enum class NextDo: u_int8_t {
-        kDoCopyCurrentOp, // 继续执行当前的写或者读操作
-        kDoCopyCurrentFile, // 继续执行当前文件拷贝
-        kDoCopyReDoCurrentFile, // 重新执行当前文件的拷贝
-        kDoCopyNext, // 继续执行下一个文件的拷贝
-        kDoCopyErrorAddCancel, // 当前拷贝出错，退出拷贝
+    enum class NextDo : u_int8_t {
+        kDoCopyCurrentOp,   // 继续执行当前的写或者读操作
+        kDoCopyCurrentFile,   // 继续执行当前文件拷贝
+        kDoCopyReDoCurrentFile,   // 重新执行当前文件的拷贝
+        kDoCopyNext,   // 继续执行下一个文件的拷贝
+        kDoCopyErrorAddCancel,   // 当前拷贝出错，退出拷贝
+        kDoCopyFallback,   // copy_file_range失败，需要fallback到其他方法
     };
 
-    struct ProgressData {
+    struct ProgressData
+    {
         QUrl copyFile;
-        QSharedPointer<WorkerData> data{ nullptr };
+        QSharedPointer<WorkerData> data { nullptr };
+    };
+
+    enum class WriteMode {
+        Normal,
+        Direct   // O_DIRECT mode
+    };
+
+    struct FileWriter
+    {
+        int fd;
+        WriteMode mode;
+        size_t alignment;
+
+        FileWriter(int fd = -1, WriteMode mode = WriteMode::Normal)
+            : fd(fd), mode(mode), alignment(4096) { }   // 4K alignment for O_DIRECT
     };
 
 public:
@@ -58,6 +75,12 @@ public:
     void operateAction(const AbstractJobHandler::SupportAction action);
     // normal copy
     NextDo doCopyFilePractically(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                 bool *skip);
+    // O_DIRECT copy for safe sync mode
+    NextDo doCopyFileWithDirectIO(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                  bool *skip);
+    // Traditional DFMIO copy
+    NextDo doCopyFileTraditional(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
                                  bool *skip);
     // normal copy
     NextDo doCopyFileByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
@@ -119,6 +142,15 @@ private:   // file copy
     bool isStopped();
     int openFileBySys(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
                       const int flags, bool *skip, const bool isSource = true);
+
+    // O_DIRECT support methods
+    FileWriter openDestinationFile(const QString &dest, WriteMode preferredMode);
+    FileWriter reopenDestinationFileForResume(const QString &dest, WriteMode preferredMode);
+    char *allocateAlignedBuffer(size_t size, size_t alignment);
+    bool handlePauseResume(FileWriter &writer, const QString &dest, bool *skip);
+    NextDo actionToNextDo(AbstractJobHandler::SupportAction action, qint64 size, bool *skip);
+    bool shouldFallbackFromCopyFileRange(int errorCode) const;
+
 public:
     static void progressCallback(int64_t current, int64_t total, void *progressData);
 
