@@ -166,22 +166,24 @@ bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
 QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool reload)
 {
     d->initMounts();
-    QString blkid, rootblkid;
+    QString devId, rootDevId;
     QReadLocker lk(&d->lock);
     for (auto it = d->allMounts.begin(); it != d->allMounts.end(); it++) {
         if (it.value() == "/") {
-            rootblkid = it.key();
+            rootDevId = it.key();
             continue;
         }
         if (path.startsWith(it.value())
             || (path + "/").startsWith(it.value())) {
-            blkid = it.key();
+            devId = it.key();
             break;
         }
     }
-    if (blkid.isEmpty())
-        blkid = rootblkid;
-    return queryBlockInfo(blkid, reload);
+    if (devId.isEmpty())
+        devId = rootDevId;
+    return devId.startsWith(kBlockDeviceIdPrefix)
+            ? queryBlockInfo(devId, reload)
+            : queryProtocolInfo(devId, reload);
 }
 
 DeviceProxyManager::DeviceProxyManager(QObject *parent)
