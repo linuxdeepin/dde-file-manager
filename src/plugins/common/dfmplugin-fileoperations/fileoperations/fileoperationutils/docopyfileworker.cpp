@@ -359,7 +359,6 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     close(writer.fd);
 
     if (!success) {
-        unlink(destPath.toLocal8Bit().constData());
         return NextDo::kDoCopyErrorAddCancel;
     }
 
@@ -1144,7 +1143,7 @@ bool DoCopyFileWorker::handlePauseResume(FileWriter &writer, const QString &dest
         // Determine target filesystem type for appropriate sync strategy
         // QUrl destUrl = QUrl::fromLocalFile(dest);
         // QString targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);
-        
+
         // if (targetFsType.toLower().contains("fuse")) {
         //     // For fuse filesystems, avoid fsync as it may cause performance issues
         //     // or hang in some fuse implementations
