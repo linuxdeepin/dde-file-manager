@@ -27,10 +27,11 @@ bool DoDeleteFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
-    fmInfo() << "Starting delete operation for" << sourceUrls.count() << "files/directories";
+    fmInfo() << "Start deleting files - count:" << sourceUrls.count();
     deleteAllFiles();
 
     // 完成
+    fmInfo() << "Delete operation completed successfully";
     endWork();
 
     return true;
@@ -68,7 +69,7 @@ bool DoDeleteFilesWorker::deleteAllFiles()
  */
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
-    fmDebug() << "Deleting files on non-removable device, file count:" << allFilesList.count();
+    fmDebug() << "Deleting files on non-removable device - file count:" << allFilesList.count();
     
     if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -88,7 +89,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
             if (!localFileHandler->deleteFile(url)) {
-                fmWarning() << "Failed to delete file:" << url << "error:" << localFileHandler->errorString();
+                fmWarning() << "Delete file failed - file:" << url << "error:" << localFileHandler->errorString();
                 action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                               localFileHandler->errorString());
             } else {
@@ -116,7 +117,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         emit fileDeleted(url);
     }
     
-    fmInfo() << "Completed deletion on non-removable device, deleted count:" << deleteFilesCount;
+    fmInfo() << "Completed deletion on non-removable device - deleted count:" << deleteFilesCount;
     return true;
 }
 /*!
@@ -125,21 +126,21 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
  */
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
-    fmDebug() << "Deleting files on other device, source count:" << sourceUrls.count();
+    fmDebug() << "Deleting files on other device - source count:" << sourceUrls.count();
     
     bool ok = true;
     if (sourceUrls.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(sourceUrls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
         if (info) {
             deleteFirstFileSize = info->size();
-            fmDebug() << "Single file deletion on other device, size:" << deleteFirstFileSize;
+            fmDebug() << "Single file deletion on other device - size:" << deleteFirstFileSize;
         }
     }
     
     for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
-            fmCritical() << "Failed to create file info for:" << url;
+            fmCritical() << "Failed to create file info for deletion - URL:" << url;
             // pause and emit error msg
             if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction) {
                 fmInfo() << "Skipped file due to info creation failure:" << url;
@@ -167,7 +168,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
         fmDebug() << "Successfully deleted item:" << url;
     }
     
-    fmInfo() << "Completed deletion on other device, processed count:" << sourceUrls.count();
+    fmInfo() << "Completed deletion on other device - processed count:" << sourceUrls.count();
     return true;
 }
 /*!
@@ -186,7 +187,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!localFileHandler->deleteFile(url)) {
-            fmWarning() << "Failed to delete file on other device:" << url << "error:" << localFileHandler->errorString();
+            fmWarning() << "Delete file failed on other device - file:" << url << "error:" << localFileHandler->errorString();
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                           localFileHandler->errorString());
         } else {
@@ -213,10 +214,10 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     if (!stateCheck())
         return false;
 
-    fmDebug() << "Deleting directory on other device:" << dir->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "Deleting directory recursively:" << dir->urlOf(UrlInfoType::kUrl);
 
     if (dir->countChildFile() < 0) {
-        fmDebug() << "Directory has no children or count failed, treating as file:" << dir->urlOf(UrlInfoType::kUrl);
+        fmDebug() << "Directory has no children, treating as file:" << dir->urlOf(UrlInfoType::kUrl);
         return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
     }
 
@@ -227,7 +228,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
         QString errorMsg;
         iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlOf(UrlInfoType::kUrl), &errorMsg);
         if (!iterator) {
-            fmWarning() << "Failed to create directory iterator for:" << dir->urlOf(UrlInfoType::kUrl) << "error:" << errorMsg;
+            fmWarning() << "Create directory iterator failed - dir:" << dir->urlOf(UrlInfoType::kUrl) << "error:" << errorMsg;
             action = doHandleErrorAndWait(dir->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
@@ -247,7 +248,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
 
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);;
         if (!info) {
-            fmCritical() << "Failed to create file info for child:" << url;
+            fmCritical() << "Failed to create file info for directory child - URL:" << url;
             // pause and emit error msg
             if (doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError) == AbstractJobHandler::SupportAction::kSkipAction) {
                 fmInfo() << "Skipped child due to info creation failure:" << url;
@@ -290,13 +291,13 @@ DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from,
                                           const AbstractJobHandler::JobErrorType &error,
                                           const QString &errorMsg)
 {
-    fmDebug() << "Handling delete error - file:" << from << "error type:" << static_cast<int>(error) << "message:" << errorMsg;
+    fmWarning() << "Delete error - file:" << from << "error:" << static_cast<int>(error) << "message:" << errorMsg;
     
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, false, 0, errorMsg);
 
     waitCondition.wait(&mutex);
 
-    fmDebug() << "Error handling completed, action:" << static_cast<int>(currentAction);
+    fmDebug() << "Error handling completed - action:" << static_cast<int>(currentAction);
     return currentAction;
 }

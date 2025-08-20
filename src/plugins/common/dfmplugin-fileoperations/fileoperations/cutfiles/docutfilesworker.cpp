@@ -44,6 +44,7 @@ bool DoCutFilesWorker::doWork()
     determineCountProcessType();
 
     // 执行剪切
+    fmInfo() << "Start cutting files - count:" << sourceUrls.count();
     if (!cutFiles()) {
         endWork();
         return false;
@@ -53,6 +54,7 @@ bool DoCutFilesWorker::doWork()
     syncFilesToDevice();
 
     // 完成
+    fmInfo() << "Cut operation completed successfully";
     endWork();
 
     return true;
@@ -110,6 +112,7 @@ bool DoCutFilesWorker::cutFiles()
         if (fileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
+                fmWarning() << "Cannot move directory to itself or parent - from:" << url << "to:" << targetUrl;
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
                 return false;
             }
@@ -186,11 +189,11 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         return false;
 
     if (toInfo.isNull()) {
-        fmWarning() << "Rename operation failed: cannot create target file info";
+        fmWarning() << "Rename failed: cannot create target file info";
         return false;
     }
 
-    fmInfo() << "Rename failed, using copy and delete method: from=" << fromInfo->uri() << "to=" << targetPathInfo->uri();
+    fmInfo() << "Rename failed, using copy-delete fallback - from:" << fromInfo->uri() << "to:" << toInfo->uri();
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, skip))
         return false;
 
@@ -222,7 +225,7 @@ void DoCutFilesWorker::endWork()
         for (const auto &info : cutAndDeleteFiles) {
             bool ret = localFileHandler->deleteFile(info->uri());
             if (!ret) {
-                fmWarning() << "Delete file failed, stopping deletion of remaining files";
+                fmWarning() << "Failed to delete source file after cut - file:" << info->uri() << "error:" << localFileHandler->errorString();
                 continue;
             }
         }
@@ -245,7 +248,7 @@ bool DoCutFilesWorker::doMergDir(const DFileInfoPointer &fromInfo, const DFileIn
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->uri(), &error);
     if (!iterator) {
-        fmCritical() << "Failed to create directory iterator, error:" << error;
+        fmCritical() << "Create directory iterator failed - dir:" << fromInfo->uri() << "error:" << error;
         doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
@@ -329,6 +332,7 @@ DFileInfoPointer DoCutFilesWorker::doRenameFile(const DFileInfoPointer &sourceIn
 {
     const QUrl &sourceUrl = sourceInfo->uri();
     if (DFMIO::DFMUtils::deviceNameFromUrl(sourceUrl) == DFMIO::DFMUtils::deviceNameFromUrl(targetOrgUrl)) {
+        fmDebug() << "Same device rename - from:" << sourceUrl << "to:" << targetPathInfo->uri();
         auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, skip);
         if (newTargetInfo.isNull())
             return nullptr;
@@ -352,6 +356,8 @@ DFileInfoPointer DoCutFilesWorker::doRenameFile(const DFileInfoPointer &sourceIn
         if (ok)
             *ok = result;
         return newTargetInfo;
+    } else {
+        fmInfo() << "Cross-device move detected - from:" << sourceUrl << "to:" << targetPathInfo->uri();
     }
 
     auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, ok);
