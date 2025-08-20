@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     // singlentan process
     PreviewSingleApplication app(argc, argv);
 
+    app.setLayoutDirection(Qt::LeftToRight);
     app.setQuitOnLastWindowClosed(false);
     app.setOrganizationName(ORGANIZATION_NAME);
     app.setApplicationName("Deepin File Preview");
