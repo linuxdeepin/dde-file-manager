@@ -115,9 +115,7 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!ret) {
             auto lastError = op->lastError().errorMsg();
-            fmWarning() << "file copy error, url from: " << fromUrl
-                        << " url to: " << toUrl
-                        << " error code: " << op->lastError().code() << " error msg: " << lastError;
+            fmWarning() << "DFMIO copy failed - from:" << fromUrl << "to:" << toUrl << "error:" << lastError;
 
             action = doHandleErrorAndWait(fromUrl, toUrl,
                                           AbstractJobHandler::JobErrorType::kDfmIoError, false, lastError);
@@ -510,15 +508,13 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
                 // Check if this is a "should fallback" error vs a real error
                 if (shouldFallbackFromCopyFileRange(errno)) {
                     // Silent fallback for unsupported scenarios
-                    fmDebug() << "copy_file_range not supported, fallback required. errno:" << errno
-                              << "error:" << strerror(errno);
+                    fmDebug() << "copy_file_range fallback needed - error:" << strerror(errno);
                     return NextDo::kDoCopyFallback;   // Signal fallback needed
                 }
 
                 // Real error - show dialog
                 auto lastError = strerror(errno);
-                fmWarning() << "copy file range error, url from: " << fromInfo->uri()
-                            << " url to: " << toInfo->uri() << " error msg: " << lastError;
+                fmWarning() << "copy_file_range error - from:" << fromInfo->uri() << "to:" << toInfo->uri() << "error:" << lastError;
                 action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                               AbstractJobHandler::JobErrorType::kWriteError,
                                               false, lastError);
@@ -808,7 +804,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doReadFile(const DFileInfoPointer &fr
                 return NextDo::kDoCopyCurrentFile;
             }
 
-            fmWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
+            fmWarning() << "Read error - size:" << readSize << "pos:" << fromFilePos << "expected:" << fromFileInfoSize << "file:" << fromInfo->uri();
             fromInfo->initQuerier();
             const bool fromInfoExist = fromInfo->exists();
             AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
@@ -886,7 +882,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
         } while (sizeWrite > 0 && sizeWrite < surplusSize);
 
         if (toDevice->lastError().code() != DFMIOErrorCode::DFM_IO_ERROR_NONE)
-            fmCritical() << "Write operation failed - size:" << sizeWrite << "error:" << toDevice->lastError().errorMsg();
+            fmWarning() << "Write error - size:" << sizeWrite << "error:" << toDevice->lastError().errorMsg() << "file:" << toInfo->uri();
 
         // 表示全部数据写入完成
         if (sizeWrite >= 0 && sizeWrite == surplusSize && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE)

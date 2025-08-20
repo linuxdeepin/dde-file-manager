@@ -64,6 +64,9 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         return currentAction;
     }
 
+    fmWarning() << "File operation error - from:" << urlFrom << "to:" << urlTo 
+                << "error:" << static_cast<int>(error) << "message:" << errorMsg;
+
     // 发送错误处理 阻塞自己
     emitErrorNotify(urlFrom, urlTo, error, isTo, quintptr(this), errorMsg, errorMsgAll);
     pause();
@@ -206,10 +209,13 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
-        fmInfo() << "current free bytes = " << freeBytes << ", write size = " << sourceFilesTotalSize;
+        fmInfo() << "Disk space check - available:" << freeBytes << "required:" << sourceFilesTotalSize;
+        
         action = AbstractJobHandler::SupportAction::kNoAction;
-        if (sourceFilesTotalSize >= freeBytes)
+        if (sourceFilesTotalSize >= freeBytes) {
+            fmWarning() << "Insufficient disk space - required:" << sourceFilesTotalSize << "available:" << freeBytes;
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
+        }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
@@ -243,7 +249,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
-            fmWarning() << "delete file error, case: " << localFileHandler->errorString();
+            fmWarning() << "Delete file failed - file:" << fromUrl << "error:" << localFileHandler->errorString();
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                           localFileHandler->errorString());
         }
@@ -672,6 +678,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
                 && ProtocolUtils::isMTPFile(fileUrl))
                 errstr = tr("The file name or the path is too long!");
 
+            fmWarning() << "Create directory failed - dir:" << toInfo->uri() << "error:" << errstr;
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kMkdirError, true,
                                           errstr);
@@ -702,7 +709,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->uri(), &error);
     if (!iterator) {
-        fmCritical() << "create dir's iterator failed, case : " << error;
+        fmCritical() << "Create directory iterator failed - dir:" << fromInfo->uri() << "error:" << error;
         doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
@@ -1281,7 +1288,7 @@ void FileOperateBaseWorker::syncFilesToDevice()
     if (isTargetFileLocal || !workData->exBlockSyncEveryWrite)
         return;
 
-    fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
+    fmInfo() << "Start sync files to external device - target:" << targetUrl;
 
     // Optimized: only sync once per filesystem instead of per file
     if (!syncFiles.isEmpty()) {
@@ -1293,5 +1300,5 @@ void FileOperateBaseWorker::syncFilesToDevice()
         }
     }
 
-    fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
+    fmInfo() << "Sync files to external device completed - target:" << targetUrl;
 }
