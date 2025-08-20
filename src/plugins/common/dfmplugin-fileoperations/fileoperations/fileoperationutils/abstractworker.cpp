@@ -212,15 +212,21 @@ FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
  */
 void AbstractWorker::startCountProccess()
 {
-    if (!updateProgressTimer)
-        updateProgressTimer.reset(new UpdateProgressTimer());
     if (!updateProgressThread)
         updateProgressThread.reset(new QThread);
-    updateProgressTimer->moveToThread(updateProgressThread.data());
+    
+    // Move existing timer to the new thread if it exists
+    if (updateProgressTimer) {
+        updateProgressTimer->moveToThread(updateProgressThread.data());
+    }
+    
     updateProgressThread->start();
-    connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
-    connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
-    emit startUpdateProgressTimer();
+    
+    if (updateProgressTimer) {
+        connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
+        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
+        emit startUpdateProgressTimer();
+    }
 }
 /*!
  * \brief AbstractWorker::statisticsFilesSize statistics source files size
@@ -579,6 +585,9 @@ AbstractWorker::AbstractWorker(QObject *parent)
         speedtimer = new QElapsedTimer();
         speedtimer->start();
     }
+    
+    // Create updateProgressTimer in main thread to avoid cross-thread destruction warning
+    updateProgressTimer.reset(new UpdateProgressTimer());
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
@@ -679,13 +688,18 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->wait();
     }
 
-    // 添加对 updateProgressThread 的清理
+    // Stop timer before thread cleanup to avoid cross-thread timer warning
+    if (updateProgressTimer) {
+        updateProgressTimer->stopTimer();
+    }
+
+    // Clean up updateProgressThread
     if (updateProgressThread) {
         if (updateProgressThread->isRunning()) {
             updateProgressThread->quit();
             updateProgressThread->wait();
         }
-        updateProgressThread.reset();   // 或者显式清理智能指针
+        updateProgressThread.reset();
     }
 
     if (speedtimer) {
