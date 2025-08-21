@@ -314,7 +314,7 @@ void OptionButtonBox::initializeUi()
     d->viewOptionsButton->setIconSize(buttonIconSize);
     d->viewOptionsButton->setCheckable(false);
 
-    d->compactButton = new DToolButton(this);
+    d->compactButton = new CustomDToolButton(this);
     d->compactButton->setPopupMode(DToolButton::InstantPopup);
     d->compactButton->setFixedSize(48, kToolButtonSize);
     d->compactButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
