@@ -6971,12 +6971,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Vernietigen</translation>
     </message>
 </context>
 <context>
@@ -6992,17 +6992,17 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="50"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsvernietiging</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
         <source>File shredding function</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsvernietiging</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
         <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Schakel in om een optie aan het rechtermuisknop toe te voegen waarmee bestanden veilig kunnen worden verwijderd</translation>
     </message>
 </context>
 <context>
