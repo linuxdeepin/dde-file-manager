@@ -24,6 +24,7 @@
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
+#include <QKeyEvent>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -174,8 +175,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        fmDebug() << "Search text is empty, quitting search";
-        quitSearch();
+        fmDebug() << "Search text is empty, stopping timer but not quitting search";
+        delayTimer->stop();
         return;
     }
 
@@ -239,6 +240,13 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
             handleFocusInEvent(static_cast<QFocusEvent *>(event));
         } else if (event->type() == QEvent::InputMethod) {
             handleInputMethodEvent(static_cast<QInputMethodEvent *>(event));
+        } else if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            if (keyEvent->key() == Qt::Key_Escape) {
+                fmDebug() << "ESC key pressed in search edit, quitting search";
+                quitSearch();
+                return true;
+            }
         }
     }
 
