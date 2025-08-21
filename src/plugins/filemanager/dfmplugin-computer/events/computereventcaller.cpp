@@ -135,4 +135,9 @@ void ComputerEventCaller::sendErase(const QString &dev)
     dpfSlotChannel->push("dfmplugin_burn", "slot_Erase", dev);
 }
 
+void ComputerEventCaller::sendItemRenamed(const QUrl &url, const QString &name)
+{
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_Item_Renamed", url, name);
+}
+
 }

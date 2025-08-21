@@ -15,6 +15,7 @@ DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DPSIDEBAR_BEGIN_NAMESPACE
 
+class SideBarItem;
 class SideBarItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
@@ -29,6 +30,7 @@ public:
     QWidget *createEditor(QWidget *parent,
                           const QStyleOptionViewItem &option,
                           const QModelIndex &index) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     void updateEditorGeometry(QWidget *editor,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const override;
@@ -37,7 +39,7 @@ public:
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 public Q_SLOTS:
-    void onEditorTextChanged(const QString &text, const FileInfoPointer &info) const;
+    void onEditorTextChanged(const QString &text, SideBarItem *item) const;
 
 private:
     void drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QModelIndex &index,

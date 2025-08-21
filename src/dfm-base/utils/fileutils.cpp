@@ -162,7 +162,7 @@ int FileUtils::supportedMaxLength(const QString &fileSystem)
         { "reiserfs", 15 },   // man 8 mkreiserfs said its max length is 16, but after tested, only 15 chars are accepted.
         { "xfs", 12 }   // https://github.com/edward6/reiser4progs/blob/master/include/reiser4/types.h fs_hint_t
     };
-    return datas.value(fileSystem.toLower(), 11);
+    return datas.value(fileSystem.toLower(), 40);
 }
 
 QString FileUtils::preprocessingFileName(QString name)

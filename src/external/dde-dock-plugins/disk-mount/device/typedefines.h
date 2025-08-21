@@ -23,6 +23,7 @@ struct DockItemData
     quint64 totalSize;
     quint64 usedSize;
     QString sortKey;
+    bool isProtocolDevice;
 };
 Q_DECLARE_METATYPE(DockItemData)
 

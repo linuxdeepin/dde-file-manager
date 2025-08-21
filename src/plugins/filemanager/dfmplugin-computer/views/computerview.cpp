@@ -193,10 +193,7 @@ void ComputerView::initConnect()
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ComputerView::onSelectionChanged);
 
     connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
-    connect(ComputerControllerInstance, &ComputerController::updateItemAlias, this, [this](const QUrl &url) {
-        int row = computerModel()->findItem(url);
-        this->update(computerModel()->index(row, 0));
-    });
+    connect(ComputerControllerInstance, &ComputerController::updateItemAlias, this, &ComputerView::onUpdateItemAlias);
 
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::updatePartitionsVisiable, this, &ComputerView::handleComputerItemVisible);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
@@ -287,6 +284,51 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
     auto idx = model->index(r, 0);
     if (idx.isValid())
         edit(idx);
+}
+
+void ComputerView::onUpdateItemAlias(const QUrl &url, const QString &alias, bool isProtocol)
+{
+    if (isProtocol) {
+        DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+        const auto &itemList = computerModel()->itemList();
+        for (const auto &item : itemList) {
+            if (item.shape == ComputerItemData::kSplitterItem || !item.info)
+                continue;
+
+            if (info->targetUrl().scheme() != item.info->targetUrl().scheme()
+                || info->targetUrl().host() != item.info->targetUrl().host())
+                continue;
+
+            QVariantMap map {
+                { "Property_Key_DisplayName", item.info->displayName() },
+                { "Property_Key_EditDisplayText", item.info->editDisplayText() },
+                { "Property_Key_Editable", true }
+            };
+
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item.info->urlOf(UrlInfoType::kUrl), map);
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_Crumb_Update", item.info->urlOf(UrlInfoType::kUrl));
+            ComputerEventCaller::sendItemRenamed(item.info->urlOf(UrlInfoType::kUrl), alias);
+
+            int row = computerModel()->findItem(item.info->urlOf(UrlInfoType::kUrl));
+            this->update(computerModel()->index(row, 0));
+        }
+    } else {
+        const auto &item = computerModel()->findItemData(url);
+        if (!item.info)
+            return;
+
+        // update sidebar
+        QString sidebarName = alias.isEmpty() ? item.info->displayName() : alias;
+        QVariantMap map {
+            { "Property_Key_DisplayName", sidebarName },
+            { "Property_Key_Editable", true }
+        };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item.info->urlOf(UrlInfoType::kUrl), map);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_SetAlias", item.info->targetUrl(), alias);
+
+        int row = computerModel()->findItem(url);
+        this->update(computerModel()->index(row, 0));
+    }
 }
 
 void ComputerView::handleDisksVisible()

@@ -167,6 +167,9 @@ void ComputerMenuScene::updateState(QMenu *parent)
         if (d->info->targetUrl().isValid())
             keeped << kUnmount;
 
+        if (d->info->renamable())
+            keeped << kRename;
+
         auto id = d->info->extraProperty(DeviceProperty::kId).toString();
         if (id.contains(QRegularExpression("^smb|^ftp|^sftp|^dav")) || ProtocolUtils::isSMBFile(QUrl(id)))
             keeped << kLogoutAndForget;

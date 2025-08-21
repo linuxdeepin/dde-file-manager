@@ -13,6 +13,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #include <DDialog>
 
@@ -195,10 +196,19 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
         return true;
 
     const QString &devPath = match.captured();
-    QString host, share;
+    QString host, share, devName;
     bool ok = DeviceUtils::parseSmbInfo(devPath, host, share);
-    QString devName = ok ? ProtocolEntryFileEntity::tr("%1 on %2").arg(share).arg(host)
-                         : QFileInfo(devPath).fileName();
+    if (ok) {
+        QUrl smbUrl;
+        smbUrl.setScheme("smb");
+        smbUrl.setHost(host);
+        const auto &alias = NPDeviceAliasManager::instance()->getAlias(smbUrl);
+        if (!alias.isEmpty())
+            host = alias;
+        devName = ProtocolEntryFileEntity::tr("%1 on %2").arg(share, host);
+    } else {
+        devName = QFileInfo(devPath).fileName();
+    }
 
     QVariantMap devNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(match.captured()) },
                           { "CrumbData_Key_DisplayText", devName } };

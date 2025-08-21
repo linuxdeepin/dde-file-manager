@@ -23,6 +23,7 @@ public:
 
     bool renamable() const;
     QString displayName() const;
+    QString editDisplayText() const;
     quint64 sizeTotal() const;
     quint64 sizeUsage() const;
     quint64 sizeFree() const;

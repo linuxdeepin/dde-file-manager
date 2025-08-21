@@ -106,6 +106,11 @@ QString EntryFileInfo::displayName() const
     return d->entity ? d->entity->displayName() : "";
 }
 
+QString EntryFileInfo::editDisplayText() const
+{
+    return d->entity ? d->entity->editDisplayText() : "";
+}
+
 quint64 EntryFileInfo::sizeTotal() const
 {
     return d->entity ? d->entity->sizeTotal() : 0;

@@ -42,5 +42,7 @@ using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUr
 Q_DECLARE_METATYPE(ItemClickedActionCallback);
 using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
 Q_DECLARE_METATYPE(FindMeCallback);
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+Q_DECLARE_METATYPE(RenameCallback);
 
 #endif   // TYPEDEFINES_H

@@ -43,7 +43,8 @@ public:
         kActionListRole,   // return the action list that item should have
         kItemIsEditingRole,   // bool: if an item is renaming
         kDeviceDescriptionRole,
-        kDisplayNameIsElidedRole // bool
+        kDisplayNameIsElidedRole,   // bool
+        kEditDisplayTextRole   // string
     };
     Q_ENUM(DataRoles)
 
@@ -61,6 +62,8 @@ protected:
     int findItem(const QUrl &target);
     int findItemByClearDeviceId(const QString &id);
     int findSplitter(const QString &group);
+    ComputerItemData findItemData(const QUrl &target);
+    const QList<ComputerItemData> &itemList();
 
     void initConnect();
 
