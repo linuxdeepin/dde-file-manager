@@ -6997,7 +6997,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
         <source>File shredding function</source>
-        <translation type="unfinished"/>
+        <translation>Função de destruição de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
