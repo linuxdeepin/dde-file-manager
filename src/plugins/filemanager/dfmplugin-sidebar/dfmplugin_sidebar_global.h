@@ -46,6 +46,9 @@ inline constexpr char kSubGroup[] { "Property_Key_SubGroup" };
 // value is string, as display
 inline constexpr char kDisplayName[] { "Property_Key_DisplayName" };
 
+// value is string, for edit display
+inline constexpr char kEditDisplayText[] { "Property_Key_EditDisplayText" };
+
 // value is QIcon, as display
 inline constexpr char kIcon[] { "Property_Key_Icon" };
 
@@ -100,6 +103,7 @@ struct ItemInfo
     QString group;
     QString subGroup;
     QString displayName;
+    QString editDisplayText;
     QIcon icon;
     QUrl finalUrl;
     Qt::ItemFlags flags;
@@ -120,6 +124,7 @@ struct ItemInfo
           group { map[PropertyKey::kGroup].toString() },
           subGroup { map[PropertyKey::kSubGroup].toString() },
           displayName { map[PropertyKey::kDisplayName].toString() },
+          editDisplayText { map[PropertyKey::kEditDisplayText].toString() },
           icon { qvariant_cast<QIcon>(map[PropertyKey::kIcon]) },
           finalUrl { map[PropertyKey::kFinalUrl].toUrl() },
           flags { qvariant_cast<Qt::ItemFlags>(map[PropertyKey::kQtItemFlags]) },

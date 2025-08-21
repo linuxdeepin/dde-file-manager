@@ -60,6 +60,7 @@ public:
     virtual inline bool renamable() const { return false; }
     virtual inline QVariantHash extraProperties() const { return datas; }
     virtual inline void setExtraProperty(const QString &key, const QVariant &val) { datas[key] = val; }
+    virtual inline QString editDisplayText() const { return displayName(); };
 
 protected:
     QUrl entryUrl {};

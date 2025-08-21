@@ -17,6 +17,8 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -47,6 +49,7 @@ static constexpr char kComputerEventNS[] { "dfmplugin_computer" };
 static constexpr char kCptHookAdd[] { "hook_View_ItemFilterOnAdd" };
 static constexpr char kCptHookRemove[] { "hook_View_ItemFilterOnRemove" };
 static constexpr char kCptHookListFilter[] { "hook_View_ItemListFilter" };
+static constexpr char kCptSignalRenamed[] { "signal_Item_Renamed" };
 }   // namespace plugin_events
 
 ProtocolDeviceDisplayManager::ProtocolDeviceDisplayManager(QObject *parent)
@@ -110,6 +113,28 @@ bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
     d->removeAllSmb(entryUrls);
     QTimer::singleShot(0, this, [=] { addAggregatedItems(); });
     return true;
+}
+
+void ProtocolDeviceDisplayManager::handleItemRenamed(const QUrl &entryUrl, const QString &name)
+{
+    Q_UNUSED(name)
+
+    if (entryUrl.scheme() != "entry" || !entryUrl.path().endsWith(kVEntrySuffix)) {
+        fmDebug() << "Entry not supported for entry:" << entryUrl.toString();
+        return;
+    }
+
+    DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
+    QVariantMap map {
+        { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_EditDisplayText", info->editDisplayText() },
+        { "Property_Key_Editable", true }
+    };
+
+    auto stdSmb = entryUrl.path().remove("." + QString(kVEntrySuffix));
+    QUrl sidebarUrl(stdSmb);
+    sidebarUrl.setScheme("vsmb");
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", sidebarUrl, map);
 }
 
 void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString &)
@@ -232,6 +257,7 @@ void ProtocolDeviceDisplayManagerPrivate::init()
     using namespace plugin_events;
     dpfHookSequence->follow(kComputerEventNS, kCptHookAdd, q, &ProtocolDeviceDisplayManager::hookItemInsert);
     dpfHookSequence->follow(kComputerEventNS, kCptHookListFilter, q, &ProtocolDeviceDisplayManager::hookItemsFilter);
+    dpfSignalDispatcher->subscribe(kComputerEventNS, kCptSignalRenamed, q, &ProtocolDeviceDisplayManager::handleItemRenamed);
 
     // regist entity info
     EntryEntityFactor::registCreator<ProtocolVirtualEntryEntity>(kVEntrySuffix);

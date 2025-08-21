@@ -75,8 +75,9 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     // TODO(zhangs): use model direct
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info)) {
-        fmInfo() << "item already added to sidebar." << url;
-        return false;
+        fmInfo() << "item already added to sidebar, update it." << url;
+        handleItemUpdate(url, properties);
+        return true;
     }
 
     SideBarItem *item = SideBarHelper::createItemByInfo(info);
@@ -158,6 +159,8 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         info.subGroup = properties[PropertyKey::kSubGroup].toString();
     if (properties.contains(PropertyKey::kDisplayName))
         info.displayName = properties[PropertyKey::kDisplayName].toString();
+    if (properties.contains(PropertyKey::kEditDisplayText))
+        info.editDisplayText = properties[PropertyKey::kEditDisplayText].toString();
     if (properties.contains(PropertyKey::kIcon))
         info.icon = qvariant_cast<QIcon>(properties[PropertyKey::kIcon]);
     if (properties.contains(PropertyKey::kFinalUrl))

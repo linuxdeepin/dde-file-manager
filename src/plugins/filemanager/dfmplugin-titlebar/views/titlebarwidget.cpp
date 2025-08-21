@@ -78,6 +78,11 @@ TabBar *TitleBarWidget::tabBar() const
     return bottomBar;
 }
 
+CrumbBar *TitleBarWidget::titleCrumbBar() const
+{
+    return crumbBar;
+}
+
 void TitleBarWidget::openNewTab(const QUrl &url)
 {
     if (!tabBar()->tabAddable()) {

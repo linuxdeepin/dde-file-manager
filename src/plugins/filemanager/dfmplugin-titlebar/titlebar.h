@@ -41,6 +41,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Tab_Addable)
     DPF_EVENT_REG_SLOT(slot_Tab_Close)
     DPF_EVENT_REG_SLOT(slot_Tab_SetAlias)
+    DPF_EVENT_REG_SLOT(slot_Crumb_Update)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)

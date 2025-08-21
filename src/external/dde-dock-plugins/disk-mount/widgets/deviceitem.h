@@ -22,6 +22,7 @@ public:
 protected:
     void mouseReleaseEvent(QMouseEvent *) override;
     void resizeEvent(QResizeEvent *e) override;
+    void showEvent(QShowEvent *e) override;
 
 public Q_SLOTS:
     void updateUsage(quint64 usedSize);
@@ -32,6 +33,7 @@ Q_SIGNALS:
 private:
     void initUI();
     void openDevice();
+    void updateDeviceName();
     static void setTextColor(QWidget *obj, int themeType, double alpha);
 
 private:

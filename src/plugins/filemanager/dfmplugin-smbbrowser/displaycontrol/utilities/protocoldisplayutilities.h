@@ -36,6 +36,7 @@ void callForgetPasswd(const QString &stdSmb);
 
 void sidebarMenuCall(quint64 winId, const QUrl &url, const QPoint &pos);
 void sidebarItemClicked(quint64 winId, const QUrl &url);
+void sidebarItemRename(quint64 windowId, const QUrl &url, const QString &name);
 bool sidebarUrlEquals(const QUrl &item, const QUrl &target);
 
 }   // namespace computer_sidebar_event_calls

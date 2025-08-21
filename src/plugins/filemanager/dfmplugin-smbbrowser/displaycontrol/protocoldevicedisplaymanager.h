@@ -29,6 +29,7 @@ public:
     // hook computer event
     bool hookItemInsert(const QUrl &entryUrl);
     bool hookItemsFilter(QList<QUrl> *entryUrls);
+    void handleItemRenamed(const QUrl &entryUrl, const QString &name);
 
 protected Q_SLOTS:
     void onDevMounted(const QString &id, const QString &mpt);

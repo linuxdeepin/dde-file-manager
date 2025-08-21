@@ -179,6 +179,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kDisplayNameIsElidedRole:
         return item->isElided;
 
+    case kEditDisplayTextRole:
+        return item->info ? item->info->editDisplayText() : "";
+
     default:
         return {};
     }
@@ -257,6 +260,21 @@ int ComputerModel::findSplitter(const QString &group)
     if (iter != items.cend())
         return iter - items.cbegin();
     return -1;
+}
+
+ComputerItemData ComputerModel::findItemData(const QUrl &target)
+{
+    auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
+        return UniversalUtils::urlEquals(item.url, target);
+    });
+    if (iter != items.cend())
+        return *iter;
+    return {};
+}
+
+const QList<ComputerItemData> &ComputerModel::itemList()
+{
+    return items;
 }
 
 void ComputerModel::initConnect()

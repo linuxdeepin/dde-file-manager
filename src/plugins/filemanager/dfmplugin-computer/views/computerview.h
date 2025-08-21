@@ -68,6 +68,7 @@ private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
+    void onUpdateItemAlias(const QUrl &url, const QString &alias, bool isProtocol);
     void handleDisksVisible();
     void handleUserDirVisible();
     void handle3rdEntriesVisible();

@@ -23,6 +23,7 @@ public:
 
     // AbstractEntryFileEntity interface
     virtual QString displayName() const override;
+    virtual QString editDisplayText() const override;
     virtual QIcon icon() const override;
     virtual bool exists() const override;
     virtual bool showProgress() const override;
@@ -30,6 +31,7 @@ public:
     virtual bool showUsageSize() const override;
     virtual dfmbase::AbstractEntryFileEntity::EntryOrder order() const override;
     virtual QUrl targetUrl() const override;
+    virtual bool renamable() const override;
 };
 
 DPSMBBROWSER_END_NAMESPACE

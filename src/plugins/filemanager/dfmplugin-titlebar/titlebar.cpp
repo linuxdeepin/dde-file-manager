@@ -131,6 +131,8 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleCloseTabs);
     dpfSlotChannel->connect(curSpace, "slot_Tab_SetAlias",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleSetTabAlias);
+    dpfSlotChannel->connect(curSpace, "slot_Crumb_Update",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleUpdateCrumb);
 }
 
 }   // namespace dfmplugin_titlebar

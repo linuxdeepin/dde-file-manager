@@ -51,8 +51,13 @@ void DeviceItem::mouseReleaseEvent(QMouseEvent *event)
 void DeviceItem::resizeEvent(QResizeEvent *e)
 {
     QFrame::resizeEvent(e);
-    const auto &name = nameLabel->fontMetrics().elidedText(data.displayName, Qt::ElideMiddle, nameLabel->width());
-    nameLabel->setText(name);
+    updateDeviceName();
+}
+
+void DeviceItem::showEvent(QShowEvent *e)
+{
+    updateDeviceName();
+    QFrame::showEvent(e);
 }
 
 void DeviceItem::updateUsage(quint64 usedSize)
@@ -75,6 +80,7 @@ void DeviceItem::initUI()
     nameLabel = new QLabel(data.displayName, this);
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     nameLabel->setTextFormat(Qt::PlainText);
+    nameLabel->setWordWrap(true);
     DFontSizeManager::instance()->bind(nameLabel, DFontSizeManager::T5, QFont::Medium);
     setTextColor(nameLabel, DGuiApplicationHelper::instance()->themeType(), 0.8);
 
@@ -155,6 +161,27 @@ void DeviceItem::openDevice()
         DDesktopServices::showFolder(data.targetFileUrl);
     else
         DDesktopServices::showFolder(data.targetUrl);
+}
+
+void DeviceItem::updateDeviceName()
+{
+    QString devName = data.displayName;
+    if (data.isProtocolDevice) {
+        QString host, share, alias;
+        int port;
+        if (smb_utils::parseSmbInfo(data.targetFileUrl.toString(), &host, &share, &port)) {
+            alias = device_utils::protocolDeviceAlias("smb", host);
+        } else if (data.id.startsWith("ftp") || data.id.startsWith("sftp")) {
+            QUrl url(data.id);
+            host = url.host();
+            alias = device_utils::protocolDeviceAlias(url.scheme(), url.host());
+        }
+        if (!alias.isEmpty())
+            devName.replace(host, alias);
+    }
+
+    devName = nameLabel->fontMetrics().elidedText(devName, Qt::ElideMiddle, nameLabel->width());
+    nameLabel->setText(devName);
 }
 
 void DeviceItem::setTextColor(QWidget *obj, int themeType, double alpha)
