@@ -6830,38 +6830,38 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="37"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met analyseren…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="41"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="76"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"/>
+        <translation>De actie is afgebroken</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="64"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met bestandsvernietiging…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="82"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"/>
+        <translation>Alle bestanden zijn vernietigd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="183"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"/>
+        <translation>De shred-opdracht kan niet worden uitgevoerd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="213"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Toegang geweigerd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="216"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"/>
+        <translation>Het bestand is verplaatst of het proces is afgebroken</translation>
     </message>
 </context>
 <context>
@@ -6927,17 +6927,17 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="105"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsvernietiging mislukt</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="108"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
         <source>Shredding file</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met vernietigen…</translation>
     </message>
 </context>
 <context>
@@ -6945,7 +6945,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="38"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"/>
+        <translation>Bezig met vernietigen van “%1”…</translation>
     </message>
 </context>
 <context>
@@ -6953,7 +6953,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="79"/>
         <source>File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsvernietiging</translation>
     </message>
 </context>
 <context>
@@ -6961,12 +6961,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="236"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Weet je zeker dat je %1 items wilt vernietigen?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="237"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"/>
+        <translation>Dit bestand wordt permanent verwijderd en kan niet worden hersteld.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
