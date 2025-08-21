@@ -327,15 +327,32 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
         advancedButton->setVisible(false);
     }
 
-    if (e->reason() == Qt::PopupFocusReason
-        || e->reason() == Qt::ActiveWindowFocusReason
-        || e->reason() == Qt::OtherFocusReason) {
-        e->accept();
+    // Helper lambda to restore focus if needed
+    auto restoreFocusIfNeeded = [this]() {
         if (!searchEdit->text().isEmpty())
             searchEdit->lineEdit()->setFocus(Qt::MouseFocusReason);
+    };
+
+    // Handle special focus reasons that should not trigger collapse
+    if (e->reason() == Qt::PopupFocusReason || e->reason() == Qt::ActiveWindowFocusReason) {
+        e->accept();
+        restoreFocusIfNeeded();
         return;
     }
 
+    // For Qt::OtherFocusReason, delay check to see if focus really moved away
+    if (e->reason() == Qt::OtherFocusReason) {
+        QTimer::singleShot(0, this, [this]() {
+            if (!searchEdit->hasFocus() && !advancedButton->hasFocus() && parentWidget()) {
+                updateSearchEditWidget(parentWidget()->width());
+            }
+        });
+        e->accept();
+        restoreFocusIfNeeded();
+        return;
+    }
+
+    // Normal focus out - allow collapse
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
     }
