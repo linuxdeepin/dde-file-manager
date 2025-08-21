@@ -212,7 +212,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
             setContentsMargins(0, 0, 0, 0);
             d->compactButton->hide();
         } else {
-            setContentsMargins(5, 0, 15, 0);
+            setContentsMargins(5, 0, 0, 0);
         }
     } else {
         fmDebug() << "No visibility state found for scheme, showing all buttons";
@@ -229,7 +229,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->iconViewButton->setHidden(false);
         d->sortByButton->setHidden(false);
         d->viewOptionsButton->setHidden(false);
-        setContentsMargins(5, 0, 15, 0);
+        setContentsMargins(5, 0, 0, 0);
     }
 
     // Update button box size according to the parent widget width
@@ -253,7 +253,7 @@ void OptionButtonBox::initializeUi()
     QSize buttonSize(kToolButtonSize, kToolButtonSize);
     QSize buttonIconSize(kToolButtonIconSize, kToolButtonIconSize);
 
-    setContentsMargins(5, 0, 5, 0);
+    setContentsMargins(5, 0, 0, 0);
     d->buttonGroup = new QButtonGroup(this);
 
     d->iconViewButton = new CustomDToolButton;
@@ -404,7 +404,7 @@ void OptionButtonBox::initUiForSizeMode()
     }
     d->hBoxLayout->addWidget(d->viewOptionsButton);
 
-    // Add stretch to push sortByButton to the right and keep its position fixed
+    // Add controlled stretch to push sortByButton to the right while limiting total spacing
     d->hBoxLayout->addStretch(1);
 
     // Add sortByButton (right side - position will remain fixed)
@@ -421,6 +421,7 @@ void OptionButtonBox::updateFixedWidth()
     if (d->isCompactMode) {
         fixedWidth += 48;   // Compact button width
         fixedWidth += 10;   // Spacing after compact button
+        fixedWidth -= 20;
     } else {
         fixedWidth += 10;   // Spacing after compact button, using their actual width
         // Only count visible view mode buttons (each is kToolButtonSize = 30)
@@ -436,8 +437,9 @@ void OptionButtonBox::updateFixedWidth()
     if (d->viewOptionsEnabled && d->viewOptionsButton && !d->viewOptionsButton->isHidden())
         fixedWidth += kToolButtonSize;
 
-    // Minimum spacing for stretch area (to ensure sortByButton stays on right)
-    fixedWidth += 20;   // Minimum stretch space
+    // Small fixed spacing + controlled stretch space to achieve ~15px total
+    fixedWidth += 5;   // Fixed spacing before stretch
+    // fixedWidth += 10;   // Controlled stretch space (5px + 10px = 15px total)
 
     // SortByButton (right side - width is 46 when visible)
     if (d->sortByEnabled && d->sortByButton && !d->sortByButton->isHidden())
