@@ -6937,7 +6937,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
         <source>Shredding file</source>
-        <translation type="unfinished"/>
+        <translation>Destruindo arquivo</translation>
     </message>
 </context>
 <context>
@@ -6945,7 +6945,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="38"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"/>
+        <translation>Destruindo arquivo &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -6953,7 +6953,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="79"/>
         <source>File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Destruir arquivo</translation>
     </message>
 </context>
 <context>
@@ -6961,12 +6961,12 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="236"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Destruir estes %1 itens?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="237"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"/>
+        <translation>O arquivo será excluído permanentemente e não poderá ser recuperado.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
@@ -6976,7 +6976,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Destruir</translation>
     </message>
 </context>
 <context>
@@ -6992,7 +6992,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="50"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Destruir arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
