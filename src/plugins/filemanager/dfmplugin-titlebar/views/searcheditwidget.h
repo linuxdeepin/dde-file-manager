@@ -9,6 +9,7 @@
 
 #include <QWidget>
 #include <QCompleter>
+#include <QSpacerItem>
 
 DWIDGET_BEGIN_NAMESPACE
 class DSearchEdit;
@@ -70,6 +71,16 @@ private:
 
     void updateSearchWidgetLayout();
     void quitSearch();
+    
+    /**
+     * @brief Update spacing between searchEdit and advancedButton
+     * @param showAdvancedButton Whether the advanced button should be visible
+     * 
+     * This method ensures consistent 10px right margin by adjusting the internal
+     * spacing based on advanced button visibility. When the button is visible,
+     * 10px spacing is applied; when hidden, spacing is removed.
+     */
+    void updateSpacing(bool showAdvancedButton);
 
     int determineSearchDelay(const QString &inputText);
     bool shouldDelaySearch(const QString &inputText);
@@ -77,6 +88,7 @@ private:
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
     DTK_WIDGET_NAMESPACE::DSearchEdit *searchEdit { nullptr };
+    QSpacerItem *spacingItem { nullptr };   // Dynamic spacing between searchEdit and advancedButton
 
     int selectPosStart { 0 };
     int selectLength { 0 };
