@@ -6861,7 +6861,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="216"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"/>
+        <translation>O arquivo foi movido ou o processo foi encerrado</translation>
     </message>
 </context>
 <context>
@@ -6927,12 +6927,12 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="105"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao destruir arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="108"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
@@ -6971,7 +6971,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
@@ -7002,7 +7002,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
         <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Quando ativada, a opção ‘Destruir arquivo’ ficará disponível no menu de contexto para exclusão segura</translation>
     </message>
 </context>
 <context>
