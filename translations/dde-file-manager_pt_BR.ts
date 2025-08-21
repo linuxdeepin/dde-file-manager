@@ -6830,18 +6830,18 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="37"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Analisando arquivos…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="41"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="76"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"/>
+        <translation>Operação cancelada</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="64"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"/>
+        <translation>Iniciando destruição de arquivos…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="82"/>
