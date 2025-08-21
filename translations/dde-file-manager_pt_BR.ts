@@ -6846,17 +6846,17 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="82"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"/>
+        <translation>Todos os arquivos foram destruídos com êxito</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="183"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao iniciar o comando de destruição</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="213"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Permissão negada</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="216"/>
