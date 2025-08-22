@@ -1,3 +1,9 @@
+dde-file-manager (6.5.89) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Fri, 22 Aug 2025 11:10:37 +0800
+
 dde-file-manager (6.5.88) unstable; urgency=medium
 
   * fix bugs

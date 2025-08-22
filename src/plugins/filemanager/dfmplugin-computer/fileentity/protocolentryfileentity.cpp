@@ -50,7 +50,7 @@ QString ProtocolEntryFileEntity::displayName() const
             displayName = tr("%1 on %2").arg(share, host);
         else
             displayName = tr("%1 on %2").arg(share, alias);
-    } else if (order() == AbstractEntryFileEntity::kOrderFtp && !alias.isEmpty()) {
+    } else if (!alias.isEmpty()) {
         displayName.replace(targetUrl().host(), alias);
     }
 
