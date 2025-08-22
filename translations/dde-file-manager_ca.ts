@@ -62,8 +62,8 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="670"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="784"/>
         <source>Can&apos;t access file!</source>
         <translation>No es pot accedir al fitxer!</translation>
     </message>
@@ -113,7 +113,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="685"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="686"/>
         <source>The file name or the path is too long!</source>
         <translation>El nom del fitxer o el camí és massa llarg!</translation>
     </message>
@@ -171,34 +171,34 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1105"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
         <source>need authorization to access</source>
         <translation>cal autorització per accedir-hi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1122"/>
         <source>Authentication Required
 Enter user and password for %1</source>
         <translation>Cal autenticació
 Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1184"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1194"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>No es pot verificar la identitat de %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1185"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1195"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Això passa quan obriu la sessió per primer cop.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1186"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1196"/>
         <source>The identity sent by the remote computer is</source>
         <translation>La identitat enviada per l&apos;ordinador remot és </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1188"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1198"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Si voleu estar absolutament segur que és segur continuar, poseu-vos en contacte amb l&apos;administrador del sistema.</translation>
     </message>
@@ -241,7 +241,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="105"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>Volum: %1</translation>
     </message>
@@ -262,7 +262,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="114"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="118"/>
         <source>%1 on %2</source>
         <translation>%1 a %2</translation>
     </message>
@@ -383,21 +383,21 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>No es pot trobar el fitxer original.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="492"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="494"/>
         <source>File has been moved or deleted</source>
         <translation>El fitxer s&apos;ha desplaçat o eliminat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="494"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="496"/>
         <source>You do not have permission to access this folder</source>
         <translation>No teniu permís per accedir a aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="497"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="499"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>No teniu permís per passar-hi fitxers.</translation>
     </message>
@@ -490,7 +490,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="84"/>
         <source>Mounted sharing folders</source>
         <translation>Carpetes de compartició muntades</translation>
     </message>
@@ -915,23 +915,23 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Interromp</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="695"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="698"/>
         <source>Shortcut</source>
         <translation>Drecera</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1059"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1143"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Aquest fons de pantalla del sistema està blocat. Poseu-vos en contacte amb l&apos;administrador.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1117"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="128"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (còpia)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1118"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="129"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (copia %1)</translation>
@@ -1771,7 +1771,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>o</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <source>Clear search history</source>
         <translation>Neteja l&apos;historial de cerca</translation>
     </message>
@@ -1781,12 +1781,12 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Deconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="260"/>
         <source>search</source>
         <translation>cerca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="275"/>
         <source>advanced search</source>
         <translation>cerca avançada</translation>
     </message>
@@ -2640,10 +2640,10 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="626"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="647"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2735,243 +2735,243 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>El dispositiu s&apos;ha blocat i no teniu permís per accedir-hi. Configureu-ne la política de connexió al Centre de seguretat o contacteu amb l&apos;administrador.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
         <source>The device is busy, cannot remove now</source>
         <translation>El dispositiu està ocupat. No es pot suprimir ara.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="187"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="192"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>No teniu permís per fer operacions amb el fitxer o carpeta!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="209"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Disculpeu, no teniu permís per fer operacions amb els %1 fitxers o carpetes següents!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="233"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="238"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="248"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="517"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="245"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
         <source>Operation failed!</source>
         <translation>Ha fallat l&apos;operació!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="241"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="246"/>
         <source>Target folder is inside the source folder!</source>
         <translation>La carpeta de destinació és dins de la carpeta d&apos;origen!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="303"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="308"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>Cal contrasenya per accedir a les dades encriptades a %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="665"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="316"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="336"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="386"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="435"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="496"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="534"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="646"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="670"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="312"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="317"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatació</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Per accedir al dispositiu, primer heu de formatar el disc. Segur que el voleu formatar ara?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Voleu executar %1 o veure&apos;n el contingut?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="328"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
         <source>It is an executable text file.</source>
         <translation>És un fitxer de text executable.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="337"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="671"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Executa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="366"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Executa al terminal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Mostra</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
         <source>Do you want to run %1?</source>
         <translation>Voleu executar %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="358"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
         <source>It is an executable file.</source>
         <translation>És un fitxer executable.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>No es poden moure els %1 elements seleccionats a la paperera. Voleu eliminar-los permanentment?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
         <source>Permanently delete %1 items?</source>
         <translation>Voleu eliminar permanentment %1 elements?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>No es pot moure %1 a la paperera. Voleu eliminar-ho permanentment?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="387"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="497"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Elimina</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="407"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
         <source>Permanently delete %1?</source>
         <translation>Voleu eliminar permanentment %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="418"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="455"/>
         <source>This action cannot be undone</source>
         <translation>Aquesta acció no es pot desfer</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Segur que voleu eliminar %1 element?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="427"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="432"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Segur que voleu eliminar %1 elements?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="441"/>
         <source>Empty</source>
         <translation>Buit</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="480"/>
         <source>Do you want to delete %1?</source>
         <translation>Voleu eliminar %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="481"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Voleu eliminar els %1 elements seleccionats?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>No s&apos;ha pogut restaurar %1 fitxer, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>No s&apos;han pogut restaurar %1 fitxers, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation>Després de la revocació, s&apos;eliminarà completament %1. El voleu eliminar completament?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation>Aquests continguts %1 s&apos;eliminaran completament després de la revocació. Voleu eliminar-los completament?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="555"/>
         <source>This operation cannot be reversed.</source>
         <translation>Aquesta operació no es pot revertir.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="566"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="571"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; ja existeix; si us plau, trieu un altre nom.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
         <source>Device or resource busy</source>
         <translation>Dispositiu o recurs ocupat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="593"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Aquest fitxer serà ocult si el nom comença amb un punt. Voleu amagar-lo?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="594"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="599"/>
         <source>Hide</source>
         <translation>Amaga</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="600"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="623"/>
         <source>Unable to access %1</source>
         <translation>No es pot accedir a %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="635"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="640"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1: la referència d&apos;aquesta drecera ha canviat o s&apos;ha desplaçat.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="639"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="644"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Voleu eliminar aquesta drecera?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="664"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="669"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Aquest fitxer no és executable. Voleu afegir-hi el permís d&apos;execució i executar-lo?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="676"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="681"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Els fitxers seleccionats contenen fitxers / directoris del sistema i no es poden eliminar.</translation>
     </message>
@@ -3102,7 +3102,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="285"/>
         <source>Copy complete info</source>
         <translation>Copia la informació completa</translation>
     </message>
@@ -4085,42 +4085,42 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="329"/>
         <source>Unlock device failed</source>
         <translation>Ha fallat desblocar el dispositiu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="329"/>
         <source>Wrong password</source>
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="182"/>
         <source>Rename failed</source>
         <translation>Ha fallat canviar-ne el nom.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="182"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>El dispositiu està ocupat i no se&apos;n pot canviar el nom ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
         <source>Format failed</source>
         <translation>Ha fallat la formatació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>El dispositiu està ocupat i no es pot formatar ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
         <source>Cannot access %1</source>
         <translation>No es pot accedir a %1</translation>
     </message>
@@ -4128,27 +4128,27 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="47"/>
         <source>Computer</source>
         <translation>Ordinador</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="287"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1 és només de lectura. Voleu habilitar-hi els permisos de lectura i escriptura?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="288"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>Un cop habilitat, el permís de lectura i escriptura es concedirà permanentment.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="290"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="291"/>
         <source>Enable Now</source>
         <translation>Habilita&apos;l ara</translation>
     </message>
@@ -4212,8 +4212,9 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="200"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="52"/>
         <source>%1 on %2</source>
         <translation>%1 a %2</translation>
     </message>
@@ -4272,130 +4273,130 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="110"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="102"/>
         <source>Sharing</source>
         <translation>Compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="161"/>
         <source>Share this folder</source>
         <translation>Comparteix aquesta carpeta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="124"/>
         <source>Share name</source>
         <translation>Nom de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="126"/>
         <source>Permission</source>
         <translation>Permís</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="128"/>
         <source>Anonymous</source>
         <translation>Anònim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read and write</source>
         <translation>De lectura i d&apos;escriptura</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read only</source>
         <translation>Només de lectura</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Not allow</source>
         <translation>No ho permetis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Allow</source>
         <translation>Permet-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="140"/>
         <source>Network path</source>
         <translation>Camí de xarxa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="253"/>
         <source>Copy</source>
         <translation>Copia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="141"/>
         <source>Username</source>
         <translation>Nom d&apos;usuari</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="292"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="285"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="571"/>
         <source>None</source>
         <translation>Cap</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="572"/>
         <source>Set password</source>
         <translation>Estableix la contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="572"/>
         <source>Change password</source>
         <translation>Canvia la contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="142"/>
         <source>Share password</source>
         <translation>Contrasenya de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="313"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="306"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Aquesta contrasenya s&apos;aplicarà a totes les carpetes compartides i els usuaris sense contrasenya només podran accedir a les carpetes compartides que permetin l&apos;accés anònim.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="416"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="409"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>El nom de la compartició no ha de tenir dos punts (..) ni un punt (.).</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="427"/>
         <source>The share name is used by another user.</source>
         <translation>El nom de compartició l&apos;usa un altre usuari.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="435"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="430"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>El nom de compartició ja existeix. Voleu reemplaçar la carpeta compartida?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="431"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="439"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="432"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplaça</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
         <source>The shared name is too long and will be truncated.</source>
         <translation>El nom compartit és massa llarg i es truncarà.</translation>
     </message>
@@ -4403,45 +4404,45 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Kindly Reminder</source>
         <translation>Recordatori amable</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Please firstly install samba to continue</source>
         <translation>Primer, instal·leu samba per continuar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="525"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="106"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="564"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>El nom de compartició no ha de contenir %1 i no pot començar amb un guió (-) o espai en blanc, ni acabar amb un espai en blanc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="513"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="552"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>La carpeta de compartició no pot tenir el nom de l&apos;usuari actual.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="519"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="558"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Per protegir els fitxers, no podeu compartir aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="547"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="584"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="586"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
         <source>Sharing failed</source>
         <translation>Ha fallat la compartició.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation>El port SMB està prohibit, comproveu l&apos;estratègia del tallafoc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
         <source>The computer name is too long</source>
         <translation>El nom de l&apos;ordinador és massa llarg.</translation>
     </message>
@@ -5946,7 +5947,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Darrer accés</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
         <translation>Recent</translation>
     </message>
@@ -6257,17 +6258,17 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_smbbrowser::VirtualEntryMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
         <source>Unmount</source>
         <translation>Desmunta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
         <source>Clear saved password and unmount</source>
         <translation>Esborra la contrasenya desada i desmunta-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="194"/>
         <source>Remove</source>
         <translation>Elimina</translation>
     </message>
@@ -6528,29 +6529,29 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="347"/>
         <source>Icon view</source>
         <translation>Vista d&apos;icones</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="271"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="348"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="351"/>
         <source>List view</source>
         <translation>Vista de llista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="282"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="355"/>
         <source>Tree view</source>
         <translation>Vista d&apos;arbre</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Sort by</source>
         <translation>Classifica per...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="313"/>
         <source>View options</source>
         <translation>Mostra&apos;n les opcions</translation>
     </message>
@@ -6825,6 +6826,45 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
 </context>
 <context>
+    <name>dfmplugin_utils::FileShredWorker</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="37"/>
+        <source>Analyzing files...</source>
+        <translation>S&apos;analitzen fitxers...</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="41"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="76"/>
+        <source>Operation cancelled</source>
+        <translation>Operació cancel·lada</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="64"/>
+        <source>Starting file shredding...</source>
+        <translation>S&apos;inicia la destrucció de fitxers...</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="82"/>
+        <source>All files have been successfully shredded</source>
+        <translation>Tots els fitxers s&apos;han destruït correctament.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="183"/>
+        <source>Failed to start shred command</source>
+        <translation>Ha fallat iniciar l&apos;ordre shred.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="213"/>
+        <source>Permission denied</source>
+        <translation>Permís denegat</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="216"/>
+        <source>The file has been moved or the process has exited</source>
+        <translation>El fitxer s&apos;ha mogut o el procés ha acabat.</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="264"/>
@@ -6883,11 +6923,86 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
 </context>
 <context>
+    <name>dfmplugin_utils::ProgressDialog</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="105"/>
+        <source>File shredder failure</source>
+        <translation>Error de la trituradora de fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="108"/>
+        <source>Close</source>
+        <translation>Tanca</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
+        <source>Shredding file</source>
+        <translation>Es destrueix el fitxer</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ProgressWidget</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="38"/>
+        <source>Shredding file &quot; %1 &quot;</source>
+        <translation>Es destrueix el fitxer %1.</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ShredMenuScene</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="79"/>
+        <source>File Shred</source>
+        <translation>Destrucció de fitxers</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ShredUtils</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="236"/>
+        <source>Are you sure to shred these %1 items?</source>
+        <translation>Segur que voleu destruir aquests %1 elements?</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="237"/>
+        <source>The file will be completely deleted and cannot be recovered.</source>
+        <translation>El fitxer s&apos;eliminarà completament i no es podrà recuperar.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
+        <source>Cancel</source>
+        <translation>Cancel·la</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
+        <source>Shred</source>
+        <translation>Destrueix</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_utils::VirtualBluetoothPlugin</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="46"/>
         <source>Sending files now, please try later.</source>
         <translation>Ara s&apos;envien fitxers. Proveu-ho més tard.</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::VirtualShredPlugin</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="50"/>
+        <source>File shred</source>
+        <translation>Destrucció de fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
+        <source>File shredding function</source>
+        <translation>Funció de destrucció de fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
+        <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7645,12 +7760,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2238"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2239"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Les credencials d&apos;inici de sessió del servidor no són vàlides. Desinstal·leu&lt;-lo i torneu-lo a muntar.</translation>
     </message>
