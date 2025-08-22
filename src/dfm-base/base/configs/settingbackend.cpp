@@ -41,6 +41,7 @@ DWIDGET_USE_NAMESPACE
 
 BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivate::keyToAA {
     { LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
+    { LV2_GROUP_OPEN_ACTION ".01_allways_open_on_new_tab", Application::kAllwayOpenOnNewTab },
     { LV2_GROUP_OPEN_ACTION ".02_open_file_action", Application::kOpenFileMode },
     { LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
@@ -144,7 +145,7 @@ void SettingBackend::addSettingAccessor(const QString &key, GetOptFunc get, Save
         d->getters.insert(key, get);
     else
         qCWarning(logDFMBase) << "Null getter function provided for setting key:" << key;
-    
+
     qCDebug(logDFMBase) << "Setting accessor added for key:" << key;
 }
 
@@ -240,14 +241,22 @@ void SettingBackend::initBasicSettingConfig()
     // base / open_behaviour
     ins->addGroup(TOP_GROUP_BASE, "Basic");
     ins->addGroup(LV2_GROUP_OPEN_ACTION, "Open behavior");
-    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
-                           tr("Always open folder in new window"),
-                           false);
-    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+    ins->addConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
+                   { { "key", "00_allways_open_on_new_window" },
+                     { "text", tr("Always open folder in new window") },
+                     { "type", "newWindowCheckBox" },
+                     { "default", false } });
+    ins->addConfig(LV2_GROUP_OPEN_ACTION ".01_allways_open_on_new_tab",
+                   { { "key", "01_allways_open_on_new_tab" },
+                     { "text", tr("Always open folder in new tab") },
+                     { "type", "newTabCheckBox" },
+                     { "default", false } });
+
+    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".02_open_folder_windows_in_aseparate_process",
                            tr("Activate existing window when reopening folder"),
                            false);
     addSettingAccessor(
-            LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+            LV2_GROUP_OPEN_ACTION ".02_open_folder_windows_in_aseparate_process",
             []() {
                 return !(DConfigManager::instance()->value(kViewDConfName,
                                                            kOpenFolderWindowsInASeparateProcess,
@@ -335,33 +344,33 @@ void SettingBackend::initWorkspaceSettingConfig()
     int iconSizeLevelMax = viewDefines.iconSizeCount() - 1;
     int iconSizeLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".00_icon_size",
-                        tr("Default icon size:"),
-                        "dfm_viewoptions_minicon",
-                        "dfm_viewoptions_maxicon",
-                        iconSizeLevelMax,
-                        iconSizeLevelMin,
-                        viewDefines.getIconSizeList(),
-                        5);
+                         tr("Default icon size:"),
+                         "dfm_viewoptions_minicon",
+                         "dfm_viewoptions_maxicon",
+                         iconSizeLevelMax,
+                         iconSizeLevelMin,
+                         viewDefines.getIconSizeList(),
+                         5);
     int iconGridDensityLevelMax = viewDefines.iconGridDensityCount() - 1;
     int iconGridDensityLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".01_icon_grid_density",
-                        tr("Default icon grid density:"),
-                        "dfm_viewoptions_mingrid",
-                        "dfm_viewoptions_maxgrid",
-                        iconGridDensityLevelMax,
-                        iconGridDensityLevelMin,
-                        viewDefines.getIconGridDensityList(),
-                        2);
+                         tr("Default icon grid density:"),
+                         "dfm_viewoptions_mingrid",
+                         "dfm_viewoptions_maxgrid",
+                         iconGridDensityLevelMax,
+                         iconGridDensityLevelMin,
+                         viewDefines.getIconGridDensityList(),
+                         2);
     int listHeightLevelMax = viewDefines.listHeightCount() - 1;
     int listHeightLevelMin = 0;
     ins->addSliderConfig(LV2_GROUP_VIEW ".02_list_height",
-                        tr("Default list height:"),
-                        "dfm_viewoptions_minlist",
-                        "dfm_viewoptions_maxlist",
-                        listHeightLevelMax,
-                        listHeightLevelMin,
-                        viewDefines.getListHeightList(),
-                        1);
+                         tr("Default list height:"),
+                         "dfm_viewoptions_minlist",
+                         "dfm_viewoptions_maxlist",
+                         listHeightLevelMax,
+                         listHeightLevelMin,
+                         viewDefines.getListHeightList(),
+                         1);
     QStringList viewModeValues { tr("Icon"), tr("List") };
     QVariantList viewModeKeys { 1, 2 };
     if (DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {

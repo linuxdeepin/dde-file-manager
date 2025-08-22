@@ -226,6 +226,8 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
             if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(cdUrl)) || Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, cdUrl, !flag);
+            } else if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewTab).toBool()) {
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, d->windowId, cdUrl);
             } else {
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, cdUrl);
             }

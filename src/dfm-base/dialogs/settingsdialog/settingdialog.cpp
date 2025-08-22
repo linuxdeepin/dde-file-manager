@@ -137,6 +137,8 @@ void SettingDialog::loadSettings(const QString & /*templateFile*/)
 
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
 QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> SettingDialog::kNewWindowOpenCheckBox = nullptr;
+QPointer<QCheckBox> SettingDialog::kNewTabOpenCheckBox = nullptr;
 QSet<QString> SettingDialog::kHiddenSettingItems {};
 quint64 SettingDialog::parentWid { 0 };
 
@@ -151,6 +153,8 @@ void SettingDialog::initialze()
     // TODO(xust): move to server plugin.
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
+    widgetFactory()->registerWidget("newWindowCheckBox", &SettingDialog::createNewWindowOpenCheckBox);
+    widgetFactory()->registerWidget("newTabCheckBox", &SettingDialog::createNewTabOpenCheckBox);
 
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
     widgetFactory()->registerWidget("pushButton", &SettingDialog::createPushButton);
@@ -264,6 +268,59 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
     return qMakePair(openCheckBox, nullptr);
 }
 
+QPair<QWidget *, QWidget *> SettingDialog::createNewWindowOpenCheckBox(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    QCheckBox *newWindowCheckBox = new QCheckBox(QObject::tr("Always open folder in new window"));
+    SettingDialog::kNewWindowOpenCheckBox = newWindowCheckBox;
+
+    if (option->value().toBool()) {
+        newWindowCheckBox->setChecked(true);
+        if (kNewTabOpenCheckBox)
+            kNewTabOpenCheckBox->setChecked(false);
+    }
+
+    QObject::connect(newWindowCheckBox,
+                     &QCheckBox::stateChanged,
+                     option,
+                     [=](int state) {
+                         newWindowCheckBoxStateChangedHandle(option, state);
+                     });
+
+    QObject::connect(option, &DSettingsOption::valueChanged, newWindowCheckBox, [=](QVariant value) {
+        newWindowCheckBox->setChecked(value.toBool());
+    });
+
+    return qMakePair(newWindowCheckBox, nullptr);
+}
+
+QPair<QWidget *, QWidget *> SettingDialog::createNewTabOpenCheckBox(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    QCheckBox *newTabCheckBox = new QCheckBox(QObject::tr("Always open folder in new tab"));
+    SettingDialog::kNewTabOpenCheckBox = newTabCheckBox;
+
+    if (option->value().toBool()) {
+        newTabCheckBox->setChecked(true);
+        if (kNewWindowOpenCheckBox) {
+            kNewWindowOpenCheckBox->setChecked(false);
+        }
+    }
+
+    QObject::connect(newTabCheckBox,
+                     &QCheckBox::stateChanged,
+                     option,
+                     [=](int state) {
+                         newTabCheckBoxStateChangedHandle(option, state);
+                     });
+
+    QObject::connect(option, &DSettingsOption::valueChanged, newTabCheckBox, [=](QVariant value) {
+        newTabCheckBox->setChecked(value.toBool());
+    });
+
+    return qMakePair(newTabCheckBox, nullptr);
+}
+
 QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
@@ -315,7 +372,6 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
     return qMakePair(new QLabel(desc), rightWidget);
 }
 
-
 QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
@@ -342,14 +398,14 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
 
     QVariantList valList = option->data("values").toList();
     if (!valList.isEmpty()) {
-        QObject::connect(slider, &DSlider::sliderMoved, slider, [ = ](int position) {
+        QObject::connect(slider, &DSlider::sliderMoved, slider, [=](int position) {
             if (position >= valList.count())
                 return;
             int stepLength = (slider->slider()->width() - 28) / option->data("max").toInt();
             QPoint pos = slider->slider()->mapToGlobal(QPoint(4 + position * stepLength, -48));
             QToolTip::showText(pos, valList.at(position).toString(), slider);
         });
-        QObject::connect(slider, &DSlider::sliderPressed, slider, [ = ]{
+        QObject::connect(slider, &DSlider::sliderPressed, slider, [=] {
             int position = slider->slider()->sliderPosition();
             if (position >= valList.count())
                 return;
@@ -360,16 +416,16 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
     }
 
     option->connect(slider, &DSlider::valueChanged,
-    option, [ = ](int value) {
-        slider->blockSignals(true);
-        option->setValue(value);
-        slider->blockSignals(false);
-    });
+                    option, [=](int value) {
+                        slider->blockSignals(true);
+                        option->setValue(value);
+                        slider->blockSignals(false);
+                    });
     option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
-    slider, [ = ](const QVariant & value) {
-        slider->setValue(value.toInt());
-        slider->update();
-    });
+                    slider, [=](const QVariant &value) {
+                        slider->setValue(value.toInt());
+                        slider->update();
+                    });
 
     return qMakePair(label, slider);
 }
@@ -396,6 +452,28 @@ void SettingDialog::autoMountCheckBoxChangedHandle(DSettingsOption *option, int 
     if (state == 0) {
         option->setValue(false);
     } else if (state == 2) {
+        option->setValue(true);
+    }
+}
+
+void SettingDialog::newWindowCheckBoxStateChangedHandle(DSettingsOption *option, int state)
+{
+    if (state == 0) {
+        option->setValue(false);
+    } else if (state == 2) {
+        if (kNewTabOpenCheckBox)
+            kNewTabOpenCheckBox->setChecked(false);
+        option->setValue(true);
+    }
+}
+
+void SettingDialog::newTabCheckBoxStateChangedHandle(DSettingsOption *option, int state)
+{
+    if (state == 0) {
+        option->setValue(false);
+    } else if (state == 2) {
+        if (kNewWindowOpenCheckBox)
+            kNewWindowOpenCheckBox->setChecked(false);
         option->setValue(true);
     }
 }
