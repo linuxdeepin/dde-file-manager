@@ -7002,7 +7002,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
         <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Un cop activada, l&apos;opció de destrucció de fitxers estarà disponible al menú contextual per a l&apos;eliminació segura de fitxers.</translation>
     </message>
 </context>
 <context>
