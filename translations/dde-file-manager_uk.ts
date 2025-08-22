@@ -6841,17 +6841,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="64"/>
         <source>Starting file shredding...</source>
-        <translation>Починаємо витирання файлів…</translation>
+        <translation>Починаємо знищення файлів…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="82"/>
         <source>All files have been successfully shredded</source>
-        <translation>Усі файли було успішно витерто</translation>
+        <translation>Усі файли було успішно знищено</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="183"/>
         <source>Failed to start shred command</source>
-        <translation>Не вдалося запустити програму витирання</translation>
+        <translation>Не вдалося запустити програму знищення</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="213"/>
@@ -6971,12 +6971,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Знищити</translation>
     </message>
 </context>
 <context>
@@ -6992,17 +6992,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="50"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Знищення файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
         <source>File shredding function</source>
-        <translation type="unfinished"/>
+        <translation>Функція знищення файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
         <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Після вмикання пункт «Знищення файла» у контекстному меню з&apos;явиться пункт безпечного вилучення файлів</translation>
     </message>
 </context>
 <context>
