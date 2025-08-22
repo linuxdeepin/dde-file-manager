@@ -36,7 +36,7 @@
             "visibility":"public"
         },
         "aliasSupportedProtocolList": {
-            "value":["smb", "ftp", "sftp"],
+            "value":["smb", "ftp", "sftp", "dav", "davs", "nfs"],
             "serial":0,
             "flags":[],
             "name":"Network protocol device alias",

@@ -54,6 +54,7 @@ static constexpr int kItemMargin = 10;
 static constexpr int kItemIconSize = 16;
 static constexpr int kEjectIconSize = 16;
 static constexpr int kEmptyItemSize = 10;
+static constexpr int kDefaultMaxLength = 40;
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 static constexpr int kCompactExpandIconSize = 10;
@@ -370,7 +371,7 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, SideBarItem *
     if (!editor)
         return;
 
-    int maxLen = 40;
+    int maxLen = kDefaultMaxLength;
     bool useCharCount = false;
 
     auto info = InfoFactory::create<FileInfo>(item->url(), Global::CreateFileInfoType::kCreateFileInfoSync);
