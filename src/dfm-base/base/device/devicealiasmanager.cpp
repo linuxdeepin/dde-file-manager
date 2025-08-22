@@ -41,6 +41,7 @@ QString NPDeviceAliasManager::getAlias(const QUrl &protocolUrl) const
     if (!canSetAlias(protocolUrl))
         return "";
 
+    QReadLocker lk(&rwLock);
     const auto &itemList = Application::genericSetting()->value(kNPAliasGroupName, kAliasItemName).toList();
     for (const auto &item : std::as_const(itemList)) {
         const auto &map = item.toMap();
@@ -71,7 +72,9 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
     if (!canSetAlias(protocolUrl))
         return false;
 
+    QReadLocker rlk(&rwLock);
     auto itemList = Application::genericSetting()->value(kNPAliasGroupName, kAliasItemName).toList();
+    rlk.unlock();
     bool modified = false;
 
     // Iterate over protocol schemes
@@ -138,8 +141,10 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
         modified = true;
     }
 
-    if (modified)
+    if (modified) {
+        QWriteLocker lk(&rwLock);
         Application::genericSetting()->setValue(kNPAliasGroupName, kAliasItemName, itemList);
+    }
 
     return true;
 }
@@ -159,6 +164,7 @@ bool NPDeviceAliasManager::canSetAlias(const QUrl &protocolUrl) const
     if (!protocolUrl.isValid() || protocolUrl.host().isEmpty())
         return false;
 
+    QReadLocker lk(&rwLock);
     const auto &list = DConfigManager::instance()->value(kCfgName, kNPDAlias).toStringList();
     return list.contains(protocolUrl.scheme(), Qt::CaseInsensitive);
 }

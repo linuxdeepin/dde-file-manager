@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
+#include <QReadWriteLock>
 
 namespace dfmbase {
 
@@ -82,6 +83,8 @@ private:
      * @param parent Parent QObject
      */
     explicit NPDeviceAliasManager(QObject *parent = nullptr);
+
+    mutable QReadWriteLock rwLock;
 };
 
 }
