@@ -91,8 +91,6 @@ signals:
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
     void workerFinish();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
-signals:   // update proccess timer use
-    void startUpdateProgressTimer();
     void startWork();
     void errorNotify(const JobInfoPointer jobInfo);
     void retryErrSuccess(const quint64 id);
@@ -152,7 +150,6 @@ public:
 
 public:
     QSharedPointer<DFMBASE_NAMESPACE::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
-    QSharedPointer<QThread> updateProgressThread { nullptr };   // update progress timer thread
     QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle

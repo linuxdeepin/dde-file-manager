@@ -106,13 +106,11 @@ void AbstractWorker::stop()
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
 
-    if (updateProgressTimer)
-        updateProgressTimer->stopTimer();
-
-    if (updateProgressThread) {
-        updateProgressThread->quit();
-        updateProgressThread->wait();
+    if (updateProgressTimer) {
+        // Stop timer in main thread using cross-thread method invocation
+        QMetaObject::invokeMethod(updateProgressTimer.data(), "stopTimer", Qt::QueuedConnection);
     }
+
     waitCondition.wakeAll();
 }
 /*!
@@ -212,20 +210,11 @@ FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
  */
 void AbstractWorker::startCountProccess()
 {
-    if (!updateProgressThread)
-        updateProgressThread.reset(new QThread);
-    
-    // Move existing timer to the new thread if it exists
     if (updateProgressTimer) {
-        updateProgressTimer->moveToThread(updateProgressThread.data());
-    }
-    
-    updateProgressThread->start();
-    
-    if (updateProgressTimer) {
-        connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
-        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
-        emit startUpdateProgressTimer();
+        // Start timer in main thread using cross-thread method invocation
+        // Signal-slot connection was already established in constructor
+        QMetaObject::invokeMethod(updateProgressTimer.data(), "doStartTime", Qt::QueuedConnection);
+        fmDebug() << "Progress timer started via cross-thread method invocation";
     }
 }
 /*!
@@ -585,9 +574,17 @@ AbstractWorker::AbstractWorker(QObject *parent)
         speedtimer = new QElapsedTimer();
         speedtimer->start();
     }
-    
+
     // Create updateProgressTimer in main thread to avoid cross-thread destruction warning
     updateProgressTimer.reset(new UpdateProgressTimer());
+    
+    // Pre-establish signal-slot connection in main thread
+    // Timer runs in main thread, use DirectConnection for immediate cross-thread call
+    if (updateProgressTimer) {
+        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, 
+                this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
+        fmDebug() << "Progress timer signal-slot connection established with DirectConnection";
+    }
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
@@ -688,18 +685,9 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->wait();
     }
 
-    // Stop timer before thread cleanup to avoid cross-thread timer warning
+    // Stop timer using cross-thread method invocation with blocking call to ensure cleanup
     if (updateProgressTimer) {
-        updateProgressTimer->stopTimer();
-    }
-
-    // Clean up updateProgressThread
-    if (updateProgressThread) {
-        if (updateProgressThread->isRunning()) {
-            updateProgressThread->quit();
-            updateProgressThread->wait();
-        }
-        updateProgressThread.reset();
+        QMetaObject::invokeMethod(updateProgressTimer.data(), "stopTimer", Qt::BlockingQueuedConnection);
     }
 
     if (speedtimer) {
