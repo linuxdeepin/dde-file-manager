@@ -7002,7 +7002,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
         <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Po włączeniu, opcja &apos;Niszczenie pliku&apos; pojawi się w menu kontekstowym dla bezpiecznego usuwania plików</translation>
     </message>
 </context>
 <context>
