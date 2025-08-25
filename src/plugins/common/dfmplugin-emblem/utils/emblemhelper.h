@@ -76,7 +76,6 @@ private:
     GioEmblemWorker *worker { new GioEmblemWorker };
     ProductQueue productQueue;
     QThread workerThread;
-    QSet<QUrl> pendingUrls;  // 添加pending请求缓存
 };
 
 DPEMBLEM_END_NAMESPACE
