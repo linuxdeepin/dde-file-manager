@@ -64,7 +64,7 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         return currentAction;
     }
 
-    fmWarning() << "File operation error - from:" << urlFrom << "to:" << urlTo 
+    fmWarning() << "File operation error - from:" << urlFrom << "to:" << urlTo
                 << "error:" << static_cast<int>(error) << "message:" << errorMsg;
 
     // 发送错误处理 阻塞自己
@@ -210,7 +210,7 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
         action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
         fmInfo() << "Disk space check - available:" << freeBytes << "required:" << sourceFilesTotalSize;
-        
+
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (sourceFilesTotalSize >= freeBytes) {
             fmWarning() << "Insufficient disk space - required:" << sourceFilesTotalSize << "available:" << freeBytes;
@@ -1301,4 +1301,53 @@ void FileOperateBaseWorker::syncFilesToDevice()
     }
 
     fmInfo() << "Sync files to external device completed - target:" << targetUrl;
+}
+
+/*!
+ * \brief FileOperateBaseWorker::needsSyncBeforeStop Check if sync is needed before stopping
+ * \return true if sync is needed, false otherwise
+ */
+bool FileOperateBaseWorker::needsSyncBeforeStop() const
+{
+    // Need sync if:
+    // 1. Target is external device (not local)
+    // 2. Block sync is enabled
+    // 3. Target URL is valid (we can use it for syncfs)
+
+    // // 4. Target filesystem is not fuse (fuse devices don't need sync)
+    // if (!isTargetFileLocal && workData->exBlockSyncEveryWrite && targetUrl.isValid()) {
+    //     const QString &targetFsType = dfmio::DFMUtils::fsTypeFromUrl(targetUrl);
+    //     if (targetFsType.toLower().contains("fuse")) {
+    //         return false;  // Skip sync for fuse filesystems
+    //     }
+    //     return true;
+    // }
+    // return false;
+
+    return !isTargetFileLocal && workData->exBlockSyncEveryWrite && targetUrl.isValid();
+}
+
+/*!
+ * \brief FileOperateBaseWorker::performSyncBeforeStop Perform synchronization before stopping
+ */
+void FileOperateBaseWorker::performSyncBeforeStop()
+{
+    if (!needsSyncBeforeStop()) {
+        return;
+    }
+
+    fmInfo() << "Performing sync before stop for external device - target:" << targetUrl;
+
+    // Directly sync the target filesystem using targetUrl
+    std::string stdStr = targetUrl.path().toUtf8().toStdString();
+    int tofd = open(stdStr.data(), O_RDONLY);
+    if (-1 != tofd) {
+        // TODO (io): direct is ineffective if use mounted by fuse
+        // Causes syncfs to freeze the main interface
+        syncfs(tofd);   // Sync the entire filesystem
+        close(tofd);
+        fmInfo() << "Sync before stop completed successfully";
+    } else {
+        fmWarning() << "Failed to open target path for sync:" << targetUrl.path();
+    }
 }
