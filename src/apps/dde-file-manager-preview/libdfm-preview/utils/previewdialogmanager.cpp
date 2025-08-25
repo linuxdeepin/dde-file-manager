@@ -23,6 +23,8 @@ PreviewDialogManager *PreviewDialogManager::instance()
 
 void PreviewDialogManager::onPreviewDialogClose()
 {
+    filePreviewDialog->deleteLater();
+    filePreviewDialog = nullptr;
     qCInfo(logLibFilePreview) << "PreviewDialogManager: preview dialog closed, starting exit timer";
     exitTimer->start(60000);
 }
@@ -96,29 +98,29 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     qCDebug(logLibFilePreview) << "PreviewDialogManager: stopping exit timer";
     exitTimer->stop();
 
+    bool updatePos = true;
     if (filePreviewDialog) {
+        updatePos = false;
         qCDebug(logLibFilePreview) << "PreviewDialogManager: closing existing preview dialog";
-        filePreviewDialog->close();
-        filePreviewDialog = nullptr;
-    }
-
-    if (!filePreviewDialog) {
+        filePreviewDialog->updatePreviewList(selecturls);
+    } else {
         qCInfo(logLibFilePreview) << "PreviewDialogManager: creating new preview dialog";
         filePreviewDialog = new FilePreviewDialog(selecturls, nullptr);
         DPlatformWindowHandle::enableDXcbForWindow(filePreviewDialog, true);
-        filePreviewDialog->setCurrentWinID(winId);
         connect(filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, &PreviewDialogManager::onPreviewDialogClose);
     }
 
+    filePreviewDialog->setCurrentWinID(winId);
     if (selecturls.count() == 1) {
         qCDebug(logLibFilePreview) << "PreviewDialogManager: single file preview, setting entry URL list with" << dirUrl.size() << "directory URLs";
         filePreviewDialog->setEntryUrlList(dirUrl);
     }
 
     qCInfo(logLibFilePreview) << "PreviewDialogManager: displaying preview dialog";
-    filePreviewDialog->show();
+    if (updatePos) {
+        filePreviewDialog->show();
+        filePreviewDialog->moveToCenter();
+    }
     filePreviewDialog->raise();
     filePreviewDialog->activateWindow();
-
-    filePreviewDialog->moveToCenter();
 }
