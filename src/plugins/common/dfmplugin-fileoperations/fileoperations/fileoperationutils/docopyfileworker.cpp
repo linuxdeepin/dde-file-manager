@@ -318,6 +318,8 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
         while (bytesWritten < actualBytesToWrite && !isStopped()) {
             ssize_t written = write(writer.fd, buffer + bytesWritten,
                                     actualBytesToWrite - bytesWritten);
+            // TODO (io): direct is ineffective if use mounted by fuse
+            // fdatasync(writer.fd);
             if (written < 0) {
                 if (errno == EINTR) {
                     continue;
@@ -1136,6 +1138,7 @@ bool DoCopyFileWorker::handlePauseResume(FileWriter &writer, const QString &dest
 {
     // Sync data before pausing
     if (writer.fd >= 0) {
+        // TODO (io): sync data
         // Determine target filesystem type for appropriate sync strategy
         // QUrl destUrl = QUrl::fromLocalFile(dest);
         // QString targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);

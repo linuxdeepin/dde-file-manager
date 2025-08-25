@@ -67,6 +67,10 @@ public:
     // notify
     void emitSpeedUpdatedNotify(const qint64 &writSize);
 
+    // Sync before stop overrides
+    bool needsSyncBeforeStop() const override;
+    void performSyncBeforeStop() override;
+
     bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);

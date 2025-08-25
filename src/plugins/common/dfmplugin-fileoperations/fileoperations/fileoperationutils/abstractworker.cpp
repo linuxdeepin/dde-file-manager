@@ -102,6 +102,11 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
  */
 void AbstractWorker::stop()
 {
+    // Perform sync before stopping if needed for external devices
+    if (needsSyncBeforeStop()) {
+        performSyncBeforeStop();
+    }
+
     setStat(AbstractJobHandler::JobState::kStopState);
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
