@@ -356,7 +356,6 @@ void FilePreviewDialog::switchToPage(int index)
                 int newPerviewHeight = preview->contentWidget()->size().height();
                 setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
-                moveToCenter();
                 qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully reused preview for file:" << fileList.at(index).toString();
                 return;
             }
@@ -428,7 +427,6 @@ void FilePreviewDialog::switchToPage(int index)
     int newPerviewHeight = preview->contentWidget()->size().height();
     setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
     updateTitle();
-    moveToCenter();
     
     qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully switched to page" << index << "for file:" << fileList.at(index).toString();
 }

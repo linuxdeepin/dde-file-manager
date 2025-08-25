@@ -271,13 +271,6 @@ void EmblemHelper::pending(const FileInfoPointer &info)
     if (!info)
         return;
     
-    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
-    
-    // 避免重复请求同一个URL
-    if (pendingUrls.contains(url))
-        return;
-        
-    pendingUrls.insert(url);
     emit requestProduce(info);
 }
 
@@ -302,9 +295,6 @@ bool EmblemHelper::isExtEmblemProhibited(const FileInfoPointer &info, const QUrl
 
 void EmblemHelper::onEmblemChanged(const QUrl &url, const Product &product)
 {
-    // 从pending集合中移除已处理的URL
-    pendingUrls.remove(url);
-    
     productQueue[url] = product;
     if (product.isEmpty())
         return;
@@ -321,7 +311,6 @@ bool EmblemHelper::onUrlChanged(quint64 windowId, const QUrl &url)
     Q_UNUSED(url);
 
     clearEmblem();
-    pendingUrls.clear();  // 清空pending请求缓存
     emit requestClear();
 
     return false;
