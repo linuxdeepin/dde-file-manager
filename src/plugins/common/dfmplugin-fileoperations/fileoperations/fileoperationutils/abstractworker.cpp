@@ -582,11 +582,11 @@ AbstractWorker::AbstractWorker(QObject *parent)
 
     // Create updateProgressTimer in main thread to avoid cross-thread destruction warning
     updateProgressTimer.reset(new UpdateProgressTimer());
-    
+
     // Pre-establish signal-slot connection in main thread
     // Timer runs in main thread, use DirectConnection for immediate cross-thread call
     if (updateProgressTimer) {
-        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, 
+        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify,
                 this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
         fmDebug() << "Progress timer signal-slot connection established with DirectConnection";
     }
@@ -690,10 +690,13 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->wait();
     }
 
-    // Stop timer using cross-thread method invocation with blocking call to ensure cleanup
-    if (updateProgressTimer) {
-        QMetaObject::invokeMethod(updateProgressTimer.data(), "stopTimer", Qt::BlockingQueuedConnection);
-    }
+    // Directly unlock mutex before destruction to prevent "destroying locked mutex" warning
+    // This is safe in destructor as no other threads will access this object's mutex
+    // The mutex may be locked after waitCondition.wait() calls in error handling scenarios
+    mutex.unlock();
+
+    // UpdateProgressTimer will be automatically cleaned up when destroyed
+    // No need for explicit cross-thread blocking call that can cause deadlock
 
     if (speedtimer) {
         delete speedtimer;
