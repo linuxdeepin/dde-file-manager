@@ -20,21 +20,15 @@ class UpdateProgressTimer : public QObject
     friend class AbstractWorker;
     friend class DoCopyFilesWorker;
     explicit UpdateProgressTimer(QObject *parent = nullptr)
-        : QObject(parent) {}
+        : QObject(parent) { }
+
+signals:
+    void updateProgressNotify();
+
+public slots:
     void stopTimer()
     {
         isStop = true;
-    }
-signals:
-    void updateProgressNotify();
-private slots:
-    void handleTimeOut()
-    {
-        if (Q_UNLIKELY(isStop)) {
-            timer->stop();
-        } else {
-            emit updateProgressNotify();
-        }
     }
 
     void doStartTime()
@@ -43,6 +37,16 @@ private slots:
             timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &UpdateProgressTimer::handleTimeOut, Qt::ConnectionType(Qt::DirectConnection | Qt::UniqueConnection));
         timer->start(500);
+    }
+
+private slots:
+    void handleTimeOut()
+    {
+        if (Q_UNLIKELY(isStop)) {
+            timer->stop();
+        } else {
+            emit updateProgressNotify();
+        }
     }
 
 private:
@@ -71,10 +75,6 @@ private:
     static bool blockSync();
     static QUrl parentUrl(const QUrl &url);
     static bool canBroadcastPaste();
-
-private:
-    static QSet<QString> fileNameUsing;
-    static QMutex mutex;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
