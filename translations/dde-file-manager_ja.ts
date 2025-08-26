@@ -6,23 +6,23 @@
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="49"/>
         <source>Invalid args</source>
-        <translation type="unfinished"></translation>
+        <translation>引数が不正です</translation>
     </message>
     <message>
         <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="50"/>
         <source>Invalid invoker</source>
-        <translation type="unfinished"></translation>
+        <translation>実行者情報が不正です</translation>
     </message>
 </context>
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="354"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="353"/>
         <source>File Manager</source>
         <translation>ファイル マネージャー</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="359"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="358"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>ファイル マネージャーは、検索やコピー、ゴミ箱、圧縮/伸張、ファイルプロパティ、その他の便利な機能を備えた、強力で使いやすいファイル管理ツールです。</translation>
     </message>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化の初期化を実行しています </translation>
     </message>
 </context>
 <context>
@@ -40,7 +40,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="148"/>
         <source>Disks</source>
-        <translation type="unfinished">ディスク</translation>
+        <translation >ディスク</translation>
     </message>
 </context>
 <context>
@@ -64,10 +64,9 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="670"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにアクセスできません！</translation>
     </message>
 </context>
 <context>
@@ -75,33 +74,32 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="163"/>
         <source>The device has been safely removed</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスは安全に切断されました</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="180"/>
         <source>eject</source>
-        <translation type="unfinished"></translation>
+        <translation>反応なし</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="181"/>
         <source>unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>アンマウント</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="182"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="187"/>
         <source>remove</source>
-        <translation type="unfinished"></translation>
+        <translation>切断</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="184"/>
         <source>Operation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>操作に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="185"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイス (%1) は使用中で、現在は %2 できません。</translation>
     </message>
 </context>
 <context>
@@ -109,15 +107,15 @@
     <message>
         <location filename="../src/plugins/filedialog/core/dbus/filedialoghandle.cpp" line="588"/>
         <source>All Files </source>
-        <translation type="unfinished"></translation>
+        <translation> &apos;すべてのファイル &apos; </translation>
     </message>
 </context>
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="685"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="686"/>
         <source>The file name or the path is too long!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名またはパスが長すぎます！</translation>
     </message>
 </context>
 <context>
@@ -125,7 +123,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
         <source>Decrypting </source>
-        <translation type="unfinished"></translation>
+        <translation>復号化を実行しています </translation>
     </message>
 </context>
 <context>
@@ -133,7 +131,55 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化の初期化を実行しています </translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="44"/>
+        <source>Check TPM</source>
+        <translation>TPM を確認</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="45"/>
+        <source>Get Random</source>
+        <translation>ランダム値を取得</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="46"/>
+        <source>Check Algo</source>
+        <translation>アルゴリズムを確認</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="47"/>
+        <source>Encrypt</source>
+        <translation>暗号化</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="48"/>
+        <source>Decrypt</source>
+        <translation>復号化</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="49"/>
+        <source>EncryptInProcess</source>
+        <translation>暗号化中</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="50"/>
+        <source>DecryptInProcess</source>
+        <translation>復号中</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="51"/>
+        <source>EncryptByCommand</source>
+        <translation>コマンドによる暗号化</translation>
+    </message>
+    <message>
+        <location filename="../examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp" line="52"/>
+        <source>DecryptByCommand</source>
+        <translation>コマンドによる復号</translation>
     </message>
 </context>
 <context>
@@ -141,7 +187,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="780"/>
         <source>Unknown</source>
-        <translation>不明</translation>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
@@ -149,7 +195,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
         <source>Decrypting </source>
-        <translation type="unfinished"></translation>
+        <translation> &apos;復号中 &apos; </translation>
     </message>
 </context>
 <context>
@@ -157,15 +203,13 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化の初期化を実行しています </translation>
     </message>
 </context>
 <context>
     <name>PathManager</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
         <translation>ゴミ箱</translation>
     </message>
@@ -173,35 +217,39 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1105"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
         <source>need authorization to access</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセスには認可が必要です</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1176"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1122"/>
+        <source>Authentication Required
+Enter user and password for %1</source>
+        <translation>認証が必要です
+%1のユーザー名とパスワードを入力してください</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1194"/>
         <source>Can&apos;t verify the identity of %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の身元を確認できません。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1177"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1195"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>これは、コンピューターに初めてログインしたときに発生します。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1178"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1196"/>
         <source>The identity sent by the remote computer is</source>
-        <translation type="unfinished"></translation>
+        <translation>リモートコンピューターから送信された身元は</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1180"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1198"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>続けることが安全かどうか確実に確認したい場合は、システム管理者に連絡してください。</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <source>System Disk</source>
         <translation>システムディスク</translation>
     </message>
@@ -213,147 +261,100 @@
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
         <source>Blank %1 Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ブランクディスク</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
         <source>Unknown</source>
         <translation>不明</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ドライブ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
         <source>%1 Encrypted</source>
         <translation>%1 暗号化済み</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="105"/>
         <source>%1 Volume</source>
         <translation>%1 ボリューム</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのスキャン中、停止しますか？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>マウント解除失敗</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
         <source>Cannot stop scanning device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのスキャン停止が不可能です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="114"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は %2 にあります</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="203"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="18"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
         <source>Home</source>
         <translation>ホーム</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="326"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
         <source>Desktop</source>
         <translation>デスクトップ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="207"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="327"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
         <source>Videos</source>
         <translation>ビデオ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="209"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="328"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
         <source>Music</source>
         <translation>ミュージック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="211"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="329"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
         <source>Pictures</source>
         <translation>ピクチャー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="213"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="330"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
         <source>Documents</source>
         <translation>ドキュメント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="215"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
         <source>Downloads</source>
         <translation>ダウンロード</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="217"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
         <source>Trash</source>
         <translation>ゴミ箱</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="219"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
         <source>Recent</source>
         <translation>最近使ったファイル</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
         <source>Auto mount</source>
         <translation>自動マウント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
         <source>Open after auto mount</source>
         <translation>マウント後に開く</translation>
     </message>
@@ -375,30 +376,25 @@
     <message>
         <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1336"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"></translation>
+        <translation>元のファイルが見つかりません</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="438"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="484"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
         <source>File has been moved or deleted</source>
         <translation>ファイルは移動または削除されました</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="486"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
         <source>You do not have permission to access this folder</source>
         <translation>このフォルダーにアクセスする権限がありません</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="489"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished"></translation>
+        <translation>その中にファイルを閲覧するための権限がありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="443"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>フォルダーは空です</translation>
     </message>
@@ -408,458 +404,319 @@
         <translation>読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="65"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="66"/>
         <source>Executable</source>
         <translation>実行可能</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="7"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルマネージャーのファイル選択ダイアログを使用してください</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="8"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="8"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを削除する際は、私の確認を求めてください</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="9"/>
         <source>Index external storage device after connected to computer</source>
-        <translation type="unfinished"></translation>
+        <translation>外部ストレージデバイスをコンピューターに接続した後にインデックスを付けます</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="10"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="10"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="10"/>
         <source>Auto index internal disk</source>
         <translation>内部ディスクを自動的にインデックスする</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="11"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"></translation>
+        <translation>全文検索</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
         <source>Built-in disks</source>
-        <translation type="unfinished"></translation>
+        <translation>組み込みディスク</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
         <source>Computer</source>
         <translation>コンピューター</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/events/smbbrowsereventreceiver.cpp" line="75"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="46"/>
         <source>Computers in LAN</source>
         <translation>LAN内コンピューター</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="694"/>
         <source>Loop partitions</source>
-        <translation type="unfinished"></translation>
+        <translation>ループパーティション</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
         <source>Mounted sharing folders</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントされた共有フォルダ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
-        <translation type="unfinished"></translation>
+        <translation>私の共有</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="270"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="695"/>
         <source>Mounted partitions and discs</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントされたパーティションとディスク</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="266"/>
         <source>Partitions</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティション</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="262"/>
         <source>Quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>クイックアクセス</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="274"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
         <source>Added tags</source>
-        <translation type="unfinished"></translation>
+        <translation>付加されたタグ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>金庫</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="181"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントされたSamba共有を常に表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="37"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="37"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba共有フォルダのエントリをマージする</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="38"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントされたMTPデバイスのパスにおける項目数とサイズを表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の文字数を拡張する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピューターページで組み込みディスクを隠す</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピューター ページでループ デバイスを隠す</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="42"/>
         <source>Show crumb bar clickable area</source>
-        <translation type="unfinished"></translation>
+        <translation>ナビゲーション パネルのクリック可能領域を表示</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク アイコンにファイル システムを表示</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="45"/>
         <source>Compressed file preview</source>
-        <translation type="unfinished"></translation>
+        <translation>圧縮ファイルのプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="46"/>
         <source>Document preview</source>
         <translation>ドキュメントをプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="47"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="47"/>
         <source>Image preview</source>
         <translation>画像をプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"></translation>
+        <translation>リモート環境ではサムネイル プレビュを表示します</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
         <source>Text preview</source>
         <translation>テキストをプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>動画をプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;デフォルトのアイコンサイズ:&apos;</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Music preview</source>
-        <translation type="unfinished"></translation>
+        <translation>音楽のプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
         <source>Show hidden files in search results</source>
         <translation>検索結果で隠しファイルを表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
         <source>Extra small</source>
-        <translation>最小</translation>
+        <translation>極小</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
         <source>Small</source>
-        <translation>小</translation>
+        <translation>小さい</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
         <source>Medium</source>
-        <translation>中</translation>
+        <translation>中くらい</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
         <source>Large</source>
-        <translation>大</translation>
+        <translation>大きい</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
         <source>Extra large</source>
-        <translation>最大</translation>
+        <translation>特大</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルとフォルダの混合ソート</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
         <source>Default view:</source>
         <translation>デフォルトの表示:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
         <source>Show hidden files</source>
         <translation>隠しファイルを表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル エクステンションを表示</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
         <source>Open from default window:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのウィンドウから開く：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
         <source>Open in new tab:</source>
         <translation>新規タブで開く:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
         <source>Always open folder in new window</source>
         <translation>フォルダーを常に新規ウィンドウで開く</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
         <source>Open file:</source>
         <translation>ファイルを開く:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
         <source>Click</source>
         <translation>クリック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
         <source>Double click</source>
         <translation>ダブルクリック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
         <source>Advanced</source>
         <translation>高度な設定</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
         <source>Dialog</source>
         <translation>ダイアログ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
         <source>Index</source>
         <translation>インデックス</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
         <source>Items on sidebar pane</source>
-        <translation type="unfinished"></translation>
+        <translation>サイドバー パネルの項目</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="184"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>マウント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
         <source>Other</source>
         <translation>その他</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
         <source>Preview</source>
         <translation>プレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
         <source>Basic</source>
-        <translation>基本</translation>
+        <translation>ベーシック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
         <source>View</source>
         <translation>表示</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
         <source>Hidden files</source>
         <translation>隠しファイル</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
         <source>New window and tab</source>
         <translation>新規ウィンドウとタブ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>開く動作</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="24"/>
@@ -879,26 +736,15 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"></translation>
+        <translation>サムネイルプレビューを有効にすると、リモートディレクトリの読み込みが遅くなるか、操作がフリーズすることがあります。</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"></translation>
+        <translation>エントリの表示方法を切り替えると、マウントに失敗することがあります</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="329"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
-        <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="232"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="132"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>キャンセル</translation>
@@ -907,41 +753,39 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="44"/>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>中止</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="695"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="698"/>
         <source>Shortcut</source>
         <translation>ショートカット</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1348"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1143"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"></translation>
+        <translation>このシステム ワールドウォールペーパーはロックされています。管理者に連絡してください。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1406"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="128"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"></translation>
+        <translation>（コピー）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1407"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="129"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"></translation>
+        <translation>（コピー %1）</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>dde-file-manager</source>
-        <translation>dde-file-manager</translation>
+        <translation>ファイル管理器</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="180"/>
         <source>Files are being processed</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが処理中です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="213"/>
@@ -949,62 +793,38 @@
         <translation>ビット</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="143"/>
         <source>Access denied</source>
         <translation>アクセス拒否</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>確定</translation>
+        <translation>確認</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="561"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
         <source>Open in new window</source>
         <translation>新規ウィンドウで開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="565"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="191"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>新規タブで開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="574"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>名前を変更</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="55"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>クイックアクセスから削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
@@ -1016,7 +836,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="55"/>
         <source>New Text</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいテキスト</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="59"/>
@@ -1045,41 +865,36 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="541"/>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="635"/>
         <source>Compress</source>
         <translation>圧縮</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="145"/>
         <source>Write only</source>
         <translation>書き込みのみ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="146"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="147"/>
         <source>Read only</source>
         <translation>読み取り専用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read-write</source>
         <translation>読み書き</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="155"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="156"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="159"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="160"/>
         <source>Group</source>
         <translation>グループ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="164"/>
         <source>Others</source>
         <translation>その他</translation>
     </message>
@@ -1087,7 +902,7 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="108"/>
         <source>Burn</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>焼く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="119"/>
@@ -1100,42 +915,40 @@
         <translation>書き込み速度:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="193"/>
+        <location filename="../autotests/plugins/dfmplugin-burn/test_burnoptdialog.cpp" line="494"/>
         <source>Maximum</source>
         <translation>最大</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>Allow files to be added later</source>
-        <translation type="unfinished"></translation>
+        <translation>後でファイルを追加する許可</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
         <source>Verify data</source>
-        <translation type="unfinished"></translation>
+        <translation>データを確認</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>取り出す</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="183"/>
         <source>Add to disc</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクに追加</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="35"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク上のすべてのデータを消去してもよろしいですか？</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="38"/>
         <source>Erase</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="47"/>
@@ -1145,58 +958,57 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="61"/>
         <source>How do you want to use this disc?</source>
-        <translation type="unfinished"></translation>
+        <translation>このディスクをどのように使用しますか？</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="64"/>
         <source>Burn image</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>イメージを焼く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="65"/>
         <source>Burn files</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを焼く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="121"/>
         <source>%1 is a duplicate file.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は重複するファイルです。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="124"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク容量が不足しています。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="127"/>
         <source>Lost connection to drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブとの接続が切断されました。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="130"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD/DVDドライブが準備ができていません。別のディスクを試してください。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="133"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD/DVDドライブはビジー状態です。ドライブを使用してプログラムを終了し、ドライブを再挿入してください。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <source>Invalid volume name</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なボリューム名</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なエラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="340"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>閉じる</translation>
@@ -1209,7 +1021,6 @@
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="138"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="157"/>
         <source>Size: %1</source>
         <translation>サイズ: %1</translation>
     </message>
@@ -1226,7 +1037,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="158"/>
         <source>Items: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>アイテム: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="298"/>
@@ -1246,22 +1057,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="301"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"></translation>
+        <translation>ネイビー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="302"/>
         <source>Azure</source>
-        <translation type="unfinished"></translation>
+        <translation>オーキッドブルー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="303"/>
         <source>Green</source>
-        <translation>緑</translation>
+        <translation>グリーン</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="304"/>
         <source>Yellow</source>
-        <translation>黄色</translation>
+        <translation>イエロー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="305"/>
@@ -1275,8 +1086,6 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>名前を変更</translation>
@@ -1284,13 +1093,13 @@
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名が&apos;.&apos;で始まる場合、このファイルは隠されます。隠すことを希望しますか？</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="74"/>
         <source>Hide</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>隠す</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="104"/>
@@ -1321,142 +1130,138 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="48"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>保存されたパスワードをクリアしてアンマウント</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="267"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="56"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="224"/>
         <source>Cannot access</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセスできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="299"/>
         <source>User directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー ディレクトリ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="303"/>
         <source>Local disk</source>
         <translation>ローカルディスク</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="305"/>
         <source>Removable disk</source>
         <translation>リムーバブルディスク</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="307"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="291"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="310"/>
         <source>Network shared directory</source>
         <translation>ネットワーク共有ディレクトリ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="293"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="312"/>
         <source>Android mobile device</source>
         <translation>Android モバイルデバイス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
         <source>Apple mobile device</source>
         <translation>Apple モバイルデバイス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
         <source>Unknown device</source>
         <translation>不明なデバイス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
-        <source>Do you want to remove this item?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
-        <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
-        <source>It does not delete the original files</source>
-        <translation type="unfinished"></translation>
+        <source>Do you want to remove this item?</source>
+        <translation>この項目を削除しますか？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
+        <source>Do yout want to remove %1 items?</source>
+        <translation> %1個の項目を削除しますか？</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
+        <source>It does not delete the original files</source>
+        <translation>元のファイルは削除されません</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
         <source>Clear recent history</source>
         <translation>最近の履歴を消去</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
         <source>Source path</source>
         <translation>元のパス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="93"/>
         <source>New window</source>
         <translation>新規ウィンドウ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
         <source>New tab</source>
-        <translation type="unfinished">新規タブ</translation>
+        <translation >新規タブ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="103"/>
         <source>Connect to Server</source>
         <translation>サーバーに接続</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="107"/>
         <source>Set share password</source>
         <translation>共有パスワードを設定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="112"/>
         <source>Change disk password</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワード変更</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="117"/>
         <source>Settings</source>
         <translation>設定</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="296"/>
         <source>Copy path</source>
-        <translation type="unfinished"></translation>
+        <translation>パスをコピーする</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
         <source>Edit address</source>
-        <translation type="unfinished"></translation>
+        <translation>住所を編集</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashfilehelper.cpp" line="127"/>
         <source>Unable to open items in the trash, please restore it first</source>
-        <translation type="unfinished"></translation>
+        <translation>ゴミ箱の項目を開くことができません。最初に復元してください。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="74"/>
@@ -1465,7 +1270,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Location</source>
         <translation>場所</translation>
     </message>
@@ -1477,23 +1281,20 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Add Text</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストを追加</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Custom Text</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム テキスト</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>検索</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
         <source>Required</source>
         <translation>必須</translation>
     </message>
@@ -1505,7 +1306,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Optional</source>
-        <translation type="unfinished"></translation>
+        <translation>任意の選択</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
@@ -1515,12 +1316,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Before file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の前に</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>After file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の後に</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
@@ -1530,333 +1331,327 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Start at</source>
-        <translation type="unfinished"></translation>
+        <translation>開始位置</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
         <source>Tips: Sort by selected file order</source>
-        <translation type="unfinished"></translation>
+        <translation>ヒント: 選択したファイルの順序でソート</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/fileinfo/sharefileinfo.cpp" line="30"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/utils/shareutils.cpp" line="32"/>
+        <location filename="../autotests/plugins/dfmplugin-myshares/test_shareutils.cpp" line="41"/>
         <source>My Shares</source>
         <translation>共有</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="163"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"></translation>
+        <translation>空き容量 %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="88"/>
+        <location filename="../autotests/plugins/dfmplugin-search/test_searchfileinfo.cpp" line="191"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="99"/>
+        <location filename="../autotests/plugins/dfmplugin-search/test_searchfileinfo.cpp" line="237"/>
         <source>No results</source>
         <translation>結果なし</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="101"/>
+        <location filename="../autotests/plugins/dfmplugin-search/test_searchfileinfo.cpp" line="244"/>
         <source>Searching...</source>
         <translation>検索中...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="303"/>
-        <source>My Vault</source>
-        <translation>FileVault</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
         <source>Create Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>金庫を作成</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="262"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>アンロッキング</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ロックする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="284"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
         <source>Auto lock</source>
-        <translation type="unfinished"></translation>
+        <translation>自動ロック</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
         <source>Never</source>
         <translation>使用しない</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="298"/>
         <source>5 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>5分間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="305"/>
         <source>10 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>10分間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="312"/>
         <source>20 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>20分間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <source>Delete File Vault</source>
         <translation>FileVaultを削除</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
         <source>File not found</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが見つかりません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが既に存在します</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="11"/>
         <source>File is a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルはディレクトリです</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
         <source>File is not a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルはディレクトリではありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="13"/>
         <source>File is a directory that isn&apos;t empty</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは空でないディレクトリです</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="14"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは通常のファイルではありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="15"/>
         <source>File is not a symbolic link</source>
-        <translation type="unfinished"></translation>
+        <translation>シンボリックリンクではありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="16"/>
         <source>File cannot be mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルをマウントできません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="17"/>
         <source>Filename has too many characters</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名が文字数制限を超えています</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="18"/>
         <source>Filename is invalid or contains invalid characters</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名が無効です。または、無効な文字が含まれています</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="19"/>
         <source>File contains too many symbolic links</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにシンボリックリンクが多すぎます</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="20"/>
         <source>No space left on drive</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブに空き容量がありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"></translation>
+        <translation>引数が不正です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセスが拒否されました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
         <source>Operation (or one of its parameters) not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>操作（またはそのパラメータ）がサポートされていません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
         <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルがマウントされていません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは既にマウントされています</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
         <source>File was closed</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが閉じられています</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>Operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>操作がキャンセルされました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operations are still pending</source>
-        <translation type="unfinished"></translation>
+        <translation>操作がまだ保留中です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
         <source>File is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは読み取り専用です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="32"/>
         <source>Failed to open the file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを開くことができませんでした</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
         <source>Target Trash File Not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットのゴミ箱ファイルが存在しません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>操作がタイムアウトしました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
         <source>File is busy</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが使用中です</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
         <source>Device disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスが切断されました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
         <source>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</source>
-        <translation type="unfinished"></translation>
+        <translation>ID=%1, DateTime=%2, バーナー=%3, ディスクタイプ=%4, 結果=%5, ユーザー=%6, ファイル名=%7, ファイルサイズ=%8, ファイルタイプ=%9</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Success</source>
-        <translation type="unfinished"></translation>
+        <translation>成功しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="247"/>
         <source>Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>サイドバー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
-        <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation>または</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation type="unfinished"></translation>
+        <translation>不明</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
         <source>Cannot generate random number by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMでランダムな数を生成できません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="388"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
         <source>No available encrypt algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能な暗号化アルゴリズムがありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
         <source>TPM encrypt failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMの暗号化に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
         <source>TPM is locked.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="458"/>
-        <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="461"/>
-        <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="468"/>
-        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>TPM がロックされています</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="494"/>
+        <source>Confirm encrypt %1?</source>
+        <translation>确认加密 %1？</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
+        <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
+        <translation>現在のパーティションは暗号化されようとしており、暗号化プロセス中にキャンセルすることはできません。暗号化を確認してください。</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
+        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
+        <translation>* パーティションを暗号化すると、システムはロールバックして以前のバージョンに戻ることはできなくなります。暗号化を確認してください。</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="480"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="501"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>確認して再起動</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="481"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="502"/>
         <source>Confirm</source>
-        <translation type="unfinished">確定</translation>
+        <translation >確定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="512"/>
         <source>Decrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>復号化 %1 ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="492"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>復号化には時間がかかる場合があります。復号化が完了するまで電源が接続されていることを確認してください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <source>Clear search history</source>
-        <translation type="unfinished"></translation>
+        <translation>検索履歴をクリア</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="260"/>
         <source>search</source>
-        <translation type="unfinished"></translation>
+        <translation>検索</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="275"/>
         <source>advanced search</source>
-        <translation type="unfinished"></translation>
+        <translation>高度な検索</translation>
     </message>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"></translation>
+        <translation>GRUBの更新中...</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
+        <source>File Vault</source>
+        <translation>ファイルボルト</translation>
     </message>
 </context>
 <context>
@@ -1864,7 +1659,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
         <source>Encrypting </source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化中</translation>
     </message>
 </context>
 <context>
@@ -1892,7 +1687,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
@@ -1901,14 +1696,13 @@
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Set Wallpaper</source>
         <translation>壁紙を設定</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタマイズ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="144"/>
@@ -1923,7 +1717,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation type="unfinished">作成日時</translation>
+        <translation >作成日時</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -1966,7 +1760,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は許可されていません</translation>
     </message>
 </context>
 <context>
@@ -1974,7 +1768,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="275"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ファイルをリネーム</translation>
     </message>
 </context>
 <context>
@@ -1992,35 +1786,32 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストを追加</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Custom Text</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムテキスト</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="73"/>
         <source>Find:</source>
-        <translation type="unfinished"></translation>
+        <translation>検索:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="76"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>必須</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="80"/>
         <source>Replace:</source>
-        <translation type="unfinished"></translation>
+        <translation>置換:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="82"/>
         <source>Optional</source>
-        <translation type="unfinished"></translation>
+        <translation>任意</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="87"/>
@@ -2035,12 +1826,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の前に</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>After file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の後に</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="101"/>
@@ -2050,20 +1841,18 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation type="unfinished"></translation>
+        <translation>開始位置:</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="133"/>
         <source>Not authorized</source>
         <translation>未認証</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="141"/>
         <source>In trial period</source>
         <translation>トライアル期間</translation>
     </message>
@@ -2072,15 +1861,13 @@
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="286"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="287"/>
         <source>Not authorized</source>
-        <translation type="unfinished">未認証</translation>
+        <translation >未認証</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="292"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="293"/>
         <source>In trial period</source>
-        <translation type="unfinished">トライアル期間</translation>
+        <translation >トライアル期間</translation>
     </message>
 </context>
 <context>
@@ -2088,12 +1875,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation type="unfinished"></translation>
+        <translation>コレクションを表示するショートカットキー &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation type="unfinished"></translation>
+        <translation>プロンプトなし</translation>
     </message>
 </context>
 <context>
@@ -2128,24 +1915,23 @@
     <name>ddplugin_organizer::CollectionTitleBarPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
-        <translation type="unfinished"></translation>
+        <translation>コレクションサイズ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="137"/>
         <source>Large area</source>
-        <translation type="unfinished"></translation>
+        <translation>大容量</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="135"/>
         <source>Small area</source>
-        <translation type="unfinished"></translation>
+        <translation>小容量</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
-        <translation type="unfinished"></translation>
+        <translation>中容量</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
@@ -2163,7 +1949,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="365"/>
         <source>New Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいコレクション</translation>
     </message>
 </context>
 <context>
@@ -2171,27 +1957,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="234"/>
         <source>Organize desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップの整理</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Enable desktop organization</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップの整理を有効にする</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ設定</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
         <source>Organize by</source>
-        <translation type="unfinished"></translation>
+        <translation>整理方法</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="239"/>
         <source>Custom collection</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムコレクション</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="240"/>
@@ -2216,35 +2002,35 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="245"/>
         <source>Create a collection</source>
-        <translation type="unfinished"></translation>
+        <translation>コレクションを作成</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
-        <source>To disable the One-Click Hide feature, invoke the &quot;View Options&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"></translation>
+        <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
+        <translation>ワンクリックで隠す機能を無効にするには、デスクトップのコンテキストメニューから「デスクトップ設定」ウィンドウを呼び出し、「ワンクリックで隠すコレクション」をオフにします。</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
         <source>Desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ整理ツール</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot;ショートカットでコレクションを表示</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>Close</source>
-        <translation type="unfinished">閉じる</translation>
+        <translation >閉じる</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>No more prompts</source>
-        <translation type="unfinished"></translation>
+        <translation>不要な促しが表示されないように</translation>
     </message>
 </context>
 <context>
@@ -2252,7 +2038,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="256"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は許可されていません</translation>
     </message>
 </context>
 <context>
@@ -2268,17 +2054,17 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ設定</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
         <source>Auto arrange icons</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンを自動配置</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ整理を有効にする</translation>
     </message>
 </context>
 <context>
@@ -2286,22 +2072,22 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="39"/>
         <source>Organize desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップを整理</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="115"/>
         <source>Organize by</source>
-        <translation type="unfinished"></translation>
+        <translation>整理方法</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation type="unfinished"></translation>
+        <translation>ワンクリックで全てのコレクションを隠す</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>コレクションショートカットの表示/非表示</translation>
     </message>
 </context>
 <context>
@@ -2309,7 +2095,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="276"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ファイルをリネーム</translation>
     </message>
 </context>
 <context>
@@ -2327,35 +2113,32 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストを追加</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="68"/>
         <source>Custom Text</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムテキスト</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="73"/>
         <source>Find:</source>
-        <translation type="unfinished"></translation>
+        <translation>検索:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="76"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="89"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="103"/>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="109"/>
         <source>Required</source>
         <translation>必須</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="80"/>
         <source>Replace:</source>
-        <translation type="unfinished"></translation>
+        <translation>置換:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="82"/>
         <source>Optional</source>
-        <translation type="unfinished"></translation>
+        <translation>任意</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="87"/>
@@ -2370,12 +2153,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の前に</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
         <source>After file name</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名の後に</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="101"/>
@@ -2385,7 +2168,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="107"/>
         <source>Start at:</source>
-        <translation type="unfinished"></translation>
+        <translation>開始位置:</translation>
     </message>
 </context>
 <context>
@@ -2401,7 +2184,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="68"/>
         <source>Apps</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーション</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="69"/>
@@ -2426,7 +2209,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="73"/>
         <source>Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダ</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
@@ -2439,7 +2222,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="20"/>
         <source>Apps</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーション</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="21"/>
@@ -2464,95 +2247,94 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="25"/>
         <source>Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダ</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1064"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1055"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"></translation>
+        <translation>壁紙の読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1066"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1057"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリーンセーバーの読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1126"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1117"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムスクリーンセーバー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1127"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1129"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1118"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>適用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1202"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1193"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation type="unfinished"></translation>
+        <translation>このシステム壁紙はロックされています。管理者に連絡してください。</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettingsPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="142"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="137"/>
         <source>Wallpaper</source>
         <translation>壁紙</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="152"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="147"/>
         <source>Screensaver</source>
         <translation>スクリーンセーバー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="377"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="368"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>デスクトップ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="378"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="369"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>スクリーンロック</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="370"/>
         <source>Both</source>
-        <translation type="unfinished"></translation>
+        <translation>両方</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="579"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="570"/>
         <source>Wallpaper Slideshow</source>
         <translation>壁紙をスライドショーにする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="620"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="611"/>
         <source>When login</source>
         <translation>ログイン時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="622"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="613"/>
         <source>When wakeup</source>
         <translation>サスペンド復帰時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="651"/>
         <source>Require a password on wakeup</source>
         <translation>サスペンド復帰時にパスワードを必要とする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="692"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="683"/>
         <source>Never</source>
         <translation>使用しない</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="694"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="685"/>
         <source>Wait:</source>
         <translation>開始まで:</translation>
     </message>
@@ -2562,24 +2344,24 @@
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="30"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルマネージャーが新しいバージョンに更新されます。その間に進行中のタスクは中断されます。今すぐ更新しますか？</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="32"/>
         <source>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップサービスが新しいバージョンに更新されます。その間に進行中のタスクは中断されます。今すぐ更新しますか？</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="33"/>
         <source>Update</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>アップグレード</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="34"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
 </context>
 <context>
@@ -2596,7 +2378,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/views/computerstatusbar.cpp" line="15"/>
         <source>%1 item selected</source>
         <translation>%1 項目を選択中</translation>
     </message>
@@ -2635,11 +2416,6 @@
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確定</translation>
@@ -2647,326 +2423,307 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="83"/>
         <source>Operating failed</source>
-        <translation type="unfinished"></translation>
+        <translation>操作に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="84"/>
         <source>Mount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントが失敗しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="85"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>アンマウントが失敗しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="91"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのアンマウント中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのマウント中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスの消去中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイス用のファイルシステムを作成中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのロック中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
         <source>Unlocking device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのアンロック中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="130"/>
         <source>The device is busy now</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスは現在使用中です</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
         <source>Anonymous mount is not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>匿名マウントは許していません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="144"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが違います</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="148"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントポイントを作成できません: ファイル名が長すぎます</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="152"/>
         <source>No such file or directory</source>
-        <translation type="unfinished"></translation>
+        <translation>そのファイルやディレクトリはありません</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>Error occured while mounting device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのマウント中にエラーが発生しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスはブロックされており、アクセス許可がありません。Security Centerで接続ポリシーを構成するか、管理者に連絡してください。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスは使用中で、今すぐ削除できません</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="187"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="192"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>ファイル/フォルダーを操作する権限がありません。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="209"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>申し訳ありませんが、以下の%1ファイル/フォルダーを操作する権限がありません。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="233"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="238"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="245"/>
         <source>Operation failed!</source>
         <translation>操作に失敗しました。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="241"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="246"/>
         <source>Target folder is inside the source folder!</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットフォルダはソースフォルダ内にあります！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="303"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="308"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 上の暗号化されたデータにアクセスするにはパスフレーズが必要です。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="665"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="316"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="312"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="317"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>フォーマット</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスにアクセスするには、まずディスクをフォーマットする必要があります。今すぐフォーマットしますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>%1 を実行またはコンテンツ表示してよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="328"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
         <source>It is an executable text file.</source>
         <translation>これは実行可能なテキストファイルです。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="337"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>実行</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>ターミナルで実行</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
         <source>Do you want to run %1?</source>
         <translation>%1を実行しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="358"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
         <source>It is an executable file.</source>
         <translation>これは実行可能なファイルです。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した %1 項目をゴミ箱に移動できません。これらを完全に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
         <source>Permanently delete %1 items?</source>
         <translation>本当に %1 項目を削除してよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="411"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; をゴミ箱に移すことができません。これを永久に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="387"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>Delete</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="150"/>
         <source>Authentication failed</source>
-        <translation type="unfinished"></translation>
+        <translation>認証失敗</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="407"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="412"/>
         <source>Permanently delete %1?</source>
         <translation>本当に %1 を削除してよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="418"/>
         <source>This action cannot be undone</source>
         <translation>この操作は取り消せません</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>%1 項目を完全に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="427"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="432"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>%1 項目を完全に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="441"/>
         <source>Empty</source>
         <translation>完全に削除</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="480"/>
         <source>Do you want to delete %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を削除しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="481"/>
         <source>Do you want to delete the selected %1 items?</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した %1 項目を削除しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>%1ファイルの復元に失敗しました。対象のフォルダーは読み取り専用です</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>%1ファイルの復元に失敗しました。対象のフォルダーは読み取り専用です</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation type="unfinished"></translation>
+        <translation>取り消し後、%1 は完全に削除されます。完全に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の内容は取り消し後、完全に削除されます。これらを完全に削除してもよろしいですか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="555"/>
         <source>This operation cannot be reversed.</source>
-        <translation type="unfinished"></translation>
+        <translation>この操作は元に戻せません。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="566"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="571"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; はすでに使われてます。他の名前を入力してください。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスまたはリソースが忙しい</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="593"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="598"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名が &apos;.&apos; で始まる場合、このファイルは隠されます。隠す設定を変更しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="594"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="599"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>隠す</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="600"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="623"/>
         <source>Unable to access %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 にアクセスできません</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="635"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="640"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1 へのショートカット先が変更または移動されました&apos;</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="639"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="644"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>このショートカットを削除しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="664"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="669"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>このファイルは実行できません。実行権限を追加して実行しますか？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="676"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="681"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>選択中のファイルはシステムファイル/ディレクトリを含んでいるため削除できません。</translation>
     </message>
@@ -2974,52 +2731,52 @@
 <context>
     <name>dfmbase::MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="24"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
         <source>Directory</source>
         <translation>ディレクトリ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="25"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
         <source>Application</source>
         <translation>アプリケーション</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="26"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
         <source>Video</source>
         <translation>ビデオ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="27"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
         <source>Audio</source>
         <translation>オーディオ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="28"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="34"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="29"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="35"/>
         <source>Archive</source>
         <translation>アーカイブ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="30"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="36"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="31"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="37"/>
         <source>Executable</source>
         <translation>実行可能</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="32"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="38"/>
         <source>Backup file</source>
         <translation>バックアップファイル</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="33"/>
+        <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="39"/>
         <source>Unknown</source>
         <translation>不明</translation>
     </message>
@@ -3086,7 +2843,7 @@
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="33"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>ロックを解除</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="37"/>
@@ -3097,9 +2854,9 @@
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="285"/>
         <source>Copy complete info</source>
-        <translation type="unfinished"></translation>
+        <translation>完全な情報をコピー</translation>
     </message>
 </context>
 <context>
@@ -3107,255 +2864,247 @@
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Always open folder in new window</source>
-        <translation type="unfinished">フォルダーを常に新規ウィンドウで開く</translation>
+        <translation >フォルダーを常に新規ウィンドウで開く</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダを再開すると既存のウィンドウをアクティブにする</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Open file:</source>
-        <translation type="unfinished">ファイルを開く:</translation>
+        <translation >ファイルを開く:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
         <source>Click</source>
-        <translation type="unfinished">クリック</translation>
+        <translation >クリック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Double click</source>
-        <translation type="unfinished">ダブルクリック</translation>
+        <translation >ダブルクリック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window and tab</source>
-        <translation type="unfinished">新規ウィンドウとタブ</translation>
+        <translation >新規ウィンドウとタブ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
         <source>Open from default window:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのウィンドウから開く:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
         <source>Computer</source>
-        <translation type="unfinished">コンピューター</translation>
+        <translation >コンピューター</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Home</source>
-        <translation type="unfinished">ホーム</translation>
+        <translation >ホーム</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
         <source>Desktop</source>
-        <translation type="unfinished">デスクトップ</translation>
+        <translation >デスクトップ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Videos</source>
-        <translation type="unfinished">ビデオ</translation>
+        <translation >ビデオ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>Music</source>
-        <translation type="unfinished">ミュージック</translation>
+        <translation >ミュージック</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Pictures</source>
-        <translation type="unfinished">ピクチャー</translation>
+        <translation >ピクチャー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>Documents</source>
-        <translation type="unfinished">ドキュメント</translation>
+        <translation >ドキュメント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Downloads</source>
-        <translation type="unfinished">ダウンロード</translation>
+        <translation >ダウンロード</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished">新規タブで開く:</translation>
+        <translation >新規タブで開く:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
         <source>Current Directory</source>
-        <translation type="unfinished">カレントディレクトリ</translation>
+        <translation >カレントディレクトリ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
         <source>Files and folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルとフォルダ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
         <source>Show hidden files</source>
-        <translation type="unfinished">隠しファイルを表示する</translation>
+        <translation >隠しファイルを表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの拡張子を表示する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルとフォルダの混合ソーティング</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="330"/>
         <source>Workspace</source>
-        <translation type="unfinished"></translation>
+        <translation>ワークスペース</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="331"/>
         <source>View</source>
-        <translation type="unfinished">表示</translation>
+        <translation >表示</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
         <source>Default view:</source>
-        <translation type="unfinished">デフォルトの表示:</translation>
+        <translation >デフォルトの表示:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
         <source>Icon</source>
-        <translation type="unfinished">アイコン</translation>
+        <translation >アイコン</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのアイコンサイズ：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのアイコングリッド密度:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
         <source>Default list height:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのリストの高さ:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
         <source>List</source>
-        <translation type="unfinished">リスト</translation>
+        <translation >リスト</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Restore default view mode for all directories</source>
-        <translation type="unfinished"></translation>
+        <translation>全てのディレクトリのデフォルトの表示モードを復元する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
         <source>Restore default view mode</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトの表示モードを復元する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
         <source>Thumbnail preview</source>
-        <translation type="unfinished"></translation>
+        <translation>サムネイルプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Compressed file preview</source>
-        <translation type="unfinished"></translation>
+        <translation>圧縮ファイルプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
         <source>Text preview</source>
-        <translation type="unfinished">テキストをプレビュー</translation>
+        <translation >テキストをプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
         <source>Document preview</source>
-        <translation type="unfinished">ドキュメントをプレビュー</translation>
+        <translation >ドキュメントをプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Image preview</source>
-        <translation type="unfinished">画像をプレビュー</translation>
+        <translation >画像をプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>Video preview</source>
-        <translation type="unfinished">動画をプレビュー</translation>
+        <translation >動画をプレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="397"/>
         <source>Music preview</source>
-        <translation type="unfinished"></translation>
+        <translation>音楽プレビュー</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="400"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"></translation>
+        <translation>リモート環境ではサムネイルプレビューを表示しています</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"></translation>
+        <translation>サムネイルプレビューを有効にすると、リモートディレクトリの読み込みが遅くなるか、操作がフリーズすることがあります</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
         <source>Advanced</source>
-        <translation type="unfinished">高度な設定</translation>
+        <translation >高度な設定</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Mount</source>
-        <translation type="unfinished">マウント</translation>
+        <translation >マウント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
         <source>Auto mount</source>
-        <translation type="unfinished">自動マウント</translation>
+        <translation >自動マウント</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished">マウント後に開く</translation>
+        <translation >マウント後に開く</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="425"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba共有フォルダのエントリーをマージする</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"></translation>
+        <translation>エントリーの表示を切り替えると、マウントの失敗が発生する可能性があります</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="432"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル選択ダイアログのFile Managerを使用する</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="434"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを削除するときは、私の確認を求める</translation>
     </message>
 </context>
 <context>
@@ -3398,7 +3147,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
         <source>Reverse selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を反転させる</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -3448,22 +3197,22 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Open in terminal</source>
-        <translation type="unfinished">ターミナルで開く</translation>
+        <translation >ターミナルで開く</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>元に戻す</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>再実行</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>New/Search</source>
-        <translation type="unfinished"></translation>
+        <translation>新規/検索</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -3533,7 +3282,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>Switch to tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリービューに切り替える</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3636,7 +3385,7 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="111"/>
         <source>Recent</source>
-        <translation type="unfinished">最近使ったファイル</translation>
+        <translation >最近使ったファイル</translation>
     </message>
 </context>
 <context>
@@ -3644,12 +3393,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation>ソースファイル %1 の情報作成中に、コンフリクト情報表示関数で失敗しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットファイル %1 の情報作成中に、コンフリクト情報表示関数で失敗しました</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
@@ -3659,17 +3408,17 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
         <source>Original folder</source>
-        <translation type="unfinished"></translation>
+        <translation>元のフォルダ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="789"/>
         <source>Contains: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>含まれる内容：%1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="792"/>
         <source>Original file</source>
-        <translation type="unfinished"></translation>
+        <translation>元のファイル</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="793"/>
@@ -3679,28 +3428,27 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
         <source>Target folder</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットフォルダ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="448"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="781"/>
         <source>In data statistics ...</source>
-        <translation type="unfinished"></translation>
+        <translation>データ統計中...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="792"/>
         <source>Target file</source>
-        <translation type="unfinished"></translation>
+        <translation>対象ファイル</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
         <source>Syncing data</source>
-        <translation type="unfinished"></translation>
+        <translation>データ同期中</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="386"/>
         <source>Please wait</source>
-        <translation type="unfinished"></translation>
+        <translation>お待たせください</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="597"/>
@@ -3716,7 +3464,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="662"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>置き換え</translation>
@@ -3736,7 +3483,7 @@
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="665"/>
         <source>Merge</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>マージ</translation>
     </message>
 </context>
 <context>
@@ -3744,12 +3491,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="29"/>
         <source>Enter a password to protect shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>共有フォルダを保護するパスワードを入力してください</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="53"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
-        <translation type="unfinished"></translation>
+        <translation>匿名アクセスを許可しない場合は、共有フォルダにパスワードを設定してください</translation>
     </message>
 </context>
 <context>
@@ -3775,7 +3522,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
-        <translation type="unfinished"></translation>
+        <translation>ごめんなさい、クイックアクセスのディレクトリを見つけられません。削除しますか？</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
@@ -3795,12 +3542,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="58"/>
         <source>Pin to quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>クイックアクセスにピン留め</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="59"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>クイックアクセスから解除</translation>
     </message>
 </context>
 <context>
@@ -3808,7 +3555,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="86"/>
         <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクを焼成中 %1、お待ちください...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="87"/>
@@ -3822,14 +3569,13 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="164"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="170"/>
         <source>Data verification successful.</source>
-        <translation type="unfinished"></translation>
+        <translation>データ検証成功しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="172"/>
         <source>Burn process completed</source>
-        <translation type="unfinished"></translation>
+        <translation>焼成プロセス完了しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
@@ -3847,12 +3593,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="98"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished"></translation>
+        <translation>焼くことができません。ターゲットディスクに空き容量が足りません。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
         <source>Mount error: unsupported image format</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントエラー：サポートされていないイメージ形式</translation>
     </message>
 </context>
 <context>
@@ -3860,7 +3606,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名またはパスが長すぎます。ファイル名かパスを短くしてから再度お試しください。</translation>
     </message>
 </context>
 <context>
@@ -3889,7 +3635,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="266"/>
@@ -3922,17 +3668,17 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
         <source>View Image File</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>画像ファイルを表示</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="315"/>
         <source>Image successfully created</source>
-        <translation type="unfinished"></translation>
+        <translation>画像作成に成功しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="350"/>
         <source>Image creation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>画像作成に失敗しました</translation>
     </message>
 </context>
 <context>
@@ -3940,42 +3686,42 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="141"/>
         <source>Advanced settings</source>
-        <translation type="unfinished"></translation>
+        <translation>高度な設定</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="165"/>
         <source>File system: </source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルシステム: </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
         <source>ISO9660 Only</source>
-        <translation type="unfinished"></translation>
+        <translation>ISO9660のみ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
         <source>ISO9660/Joliet (For Windows)</source>
-        <translation type="unfinished"></translation>
+        <translation>ISO9660/Joliet (Windows向け)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
-        <translation type="unfinished"></translation>
+        <translation>ISO9660/Rock Ridge (Unix向け)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (Windows CD/DVDモード互換)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
         <source>Device error</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスエラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
         <source>Optical device %1 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>光学デバイス %1 は存在しません</translation>
     </message>
 </context>
 <context>
@@ -3983,7 +3729,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名またはパスが長すぎます。ファイル名かパスを短くしてから再度お試しください。</translation>
     </message>
 </context>
 <context>
@@ -3991,12 +3737,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>Creating an ISO image</source>
-        <translation type="unfinished"></translation>
+        <translation>ISOイメージを作成中</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
         <source>to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>％1へ</translation>
     </message>
 </context>
 <context>
@@ -4005,22 +3751,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="57"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>ISOイメージを作成</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="70"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"></translation>
+        <translation>イメージファイルとして保存</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="81"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク上のすべてのファイルがパッケージ化されISOイメージファイルとして作成されます。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
         <source>Save the ISO image here:</source>
-        <translation type="unfinished"></translation>
+        <translation>ISOイメージをここに保存:</translation>
     </message>
 </context>
 <context>
@@ -4028,7 +3774,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="362"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク％1を消去しています、お待ちください...</translation>
     </message>
 </context>
 <context>
@@ -4036,7 +3782,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="58"/>
         <source>Double click to open it</source>
-        <translation type="unfinished"></translation>
+        <translation>ダブルクリックで開く</translation>
     </message>
 </context>
 <context>
@@ -4049,75 +3795,75 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="184"/>
         <source>Computer display items</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピュータ表示項目</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピュータページで組み込みディスクを隠す</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピュータページでループパーティションを隠す</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="191"/>
         <source>Show file system on disk icon</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクアイコンにファイルシステムを表示</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="195"/>
         <source>Hide My Directories on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピュータページで「マイディレクトリ」を隠す</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="211"/>
         <source>Hide 3rd party entries on the Computer page</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピュータページで第三者のエントリを隠す</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのアンロックに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが違います</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
         <source>Rename failed</source>
-        <translation type="unfinished"></translation>
+        <translation>リネームに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
         <source>The device is busy and cannot be renamed now</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスが忙しくて、今すぐリネームできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
         <source>Format failed</source>
-        <translation type="unfinished"></translation>
+        <translation>フォーマットに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
         <source>The device is busy and cannot be formatted now</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスが忙しくて、今すぐフォーマットできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
         <source>Mount error</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントエラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="668"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 にアクセスできません</translation>
     </message>
 </context>
 <context>
@@ -4128,24 +3874,24 @@
         <translation>コンピューター</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="277"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は読み取り専用です。読み書き権限を有効にしますか？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="278"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>有効にすると、読み取りと書き込みの権限が永久に付与されます</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="280"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="281"/>
         <source>Enable Now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ有効にする</translation>
     </message>
 </context>
 <context>
@@ -4166,7 +3912,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
         <source>Basic info</source>
-        <translation type="unfinished">基本情報</translation>
+        <translation >基本情報</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
@@ -4181,7 +3927,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
         <source>File system</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルシステム</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
@@ -4207,10 +3953,9 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="197"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="200"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%2の%1</translation>
     </message>
 </context>
 <context>
@@ -4228,12 +3973,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="44"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>解像度</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="48"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>再生時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="52"/>
@@ -4243,12 +3988,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="56"/>
         <source>Accessed</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセス済み</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="60"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>変更済み</translation>
     </message>
 </context>
 <context>
@@ -4267,897 +4012,861 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="110"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="102"/>
         <source>Sharing</source>
         <translation>共有</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="161"/>
         <source>Share this folder</source>
         <translation>このフォルダーを共有</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="124"/>
         <source>Share name</source>
-        <translation type="unfinished"></translation>
+        <translation>共有名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="126"/>
         <source>Permission</source>
-        <translation type="unfinished"></translation>
+        <translation>権限</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="128"/>
         <source>Anonymous</source>
         <translation>匿名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read and write</source>
         <translation>読み書き</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read only</source>
         <translation>読み取り専用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Not allow</source>
         <translation>許可しない</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Allow</source>
         <translation>許可</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="140"/>
         <source>Network path</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク経路</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="219"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="141"/>
         <source>Username</source>
         <translation>ユーザー名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="292"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="285"/>
         <source>None</source>
         <translation>何もしない</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="287"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワード設定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
         <source>Change password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワード変更</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="142"/>
         <source>Share password</source>
-        <translation type="unfinished"></translation>
+        <translation>共有パスワード</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="313"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="306"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
-        <translation type="unfinished"></translation>
+        <translation>このパスワードはすべての共有フォルダに適用され、パスワードのないユーザーは匿名アクセスを許可する共有フォルダにのみアクセスできます。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="416"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="409"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>共有名は、2つのドット（..）または 1つのドット（.）であってはなりません。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="427"/>
         <source>The share name is used by another user.</source>
         <translation>この共有名は別のユーザーによって使用されています。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="435"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="430"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>この共有名は既に存在します。共有フォルダを置き換えますか？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="431"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="439"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="432"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>置き換え</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation type="unfinished"></translation>
+        <translation>共有名が長すぎます。切断されます。</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Kindly Reminder</source>
         <translation>お知らせ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Please firstly install samba to continue</source>
-        <translation type="unfinished"></translation>
+        <translation>まずsambaをインストールしてください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="525"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="106"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"></translation>
+        <translation>共有名は %1 を含んではならず、ダッシュ (-) や空白で始まるわけにはならず、末尾に空白があるわけでもありません。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="513"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="552"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"></translation>
+        <translation>共有フォルダ名は現在のユーザー名と同じにできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="519"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="558"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>ファイルを保護するために、このフォルダを共有することはできません。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="547"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="584"/>
         <source>Sharing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>共有に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation type="unfinished"></translation>
+        <translation>SMBポートが禁止されています。ファイアウォールの設定を確認してください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
         <source>The computer name is too long</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピューター名が長すぎます</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::ChgPassphraseDialog</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="93"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="58"/>
         <source>Modify %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を変更</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="69"/>
         <source>Please enter %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 をもう一度入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="72"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>新しい %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="73"/>
         <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を再入力</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
         <source>Confirm</source>
-        <translation type="unfinished">確定</translation>
+        <translation >確定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="101"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; は空にできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="109"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="112"/>
         <source>Recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーが有効ではありません！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="140"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="178"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="147"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>8 ビット以上で、大文字、小文字、数字、記号のうち3種類以上を含む</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="145"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; の不一致</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 で検証</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="172"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
         <source>Please input recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
         <source>Old %1</source>
-        <translation type="unfinished"></translation>
+        <translation>古い %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーで検証</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::DecryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスを復号するには回復キーを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <source>Validate with %1</source>
-        <translation type="unfinished"></translation>
+        <translation> %1 を使用して検証 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスを解読するには %1 を入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーで検証</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="81"/>
-        <source>Recovery key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="82"/>
-        <source>%1 cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
-        <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <source>Recovery key</source>
+        <translation>回復キー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="103"/>
-        <source>Decrypt device</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="88"/>
+        <source>%1 cannot be empty!</source>
+        <translation> &apos;%1 は空にできません!&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="94"/>
+        <source>Recovery key is not valid!</source>
+        <translation>回復キーが有効ではありません!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
+        <source>Decrypt device</source>
+        <translation>デバイスを解読</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
         <source>Confirm</source>
-        <translation type="unfinished">確定</translation>
+        <translation >確定</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されたパーティションをアンロック</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションの暗号化をキャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="176"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化 %1 を変更</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="180"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションの暗号化を続行</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションの復号を続行する</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションの暗号化を有効にする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="262"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation >エラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMからパスフレーズを解決できません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="258"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
         <source>PIN error</source>
-        <translation type="unfinished"></translation>
+        <translation>PINエラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="286"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズの変更に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="501"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="571"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのロック解除に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="502"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="572"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>間違ったパスフレーズです</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="592"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのマウントに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
         <source>unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>アンマウント</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
         <source>lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="564"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="642"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイス %2 の %1 を実行できません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="647"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="728"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>再起動して暗号化を続行</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="648"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="729"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>再起動して復号を完了</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EncryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="118"/>
         <source>Unlock type</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック解除タイプ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="134"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="138"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズでロック解除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="139"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>このコンピューターでTPM+PINを使用してロック解除（推奨）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="140"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMによるこのコンピューターの自動ロック解除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="167"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを忘れていたり、暗号化ハードウェアに損傷があるなどの特別な場合に、回復キーを使って暗号化されたパーティションを解除できます。そのキーを暗号化されていないパーティションにエクスポートし、安全な場所に保管してください！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="182"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"></translation>
+        <translation>キー ファイルのエクスポートパスとして暗号化されていないパーティションを選択してください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="196"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="356"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="206"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="208"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は空にできません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="224"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="348"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="238"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>8ビット以上で、大文字(A-Z)、小文字(a-z)、数字(0-9)、記号のうち3種類以上を含む必要があります</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 が一致しません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="255"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>リカバリーキーのエクスポートパスは空にできません！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="261"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>リカバリーキーのエクスポートパスが存在しません！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="281"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されていないパーティションやUSBフラッシュドライブなどの外部デバイスにエクスポートしてください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="287"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>このパーティションは読み取り専用です。修正可能なパーティションにエクスポートしてください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="280"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションが暗号化されているため、暗号化されていないパーティションやUSBフラッシュドライブなどの外部デバイスにエクスポートしてください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
-        <source>Please continue to encrypt partition %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
-        <source>Next</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
-        <source>Confirm encrypt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="337"/>
-        <source>Export Recovery Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
-        <source>Previous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
-        <source>Set %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="347"/>
-        <source>Repeat %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="349"/>
-        <source>Please enter the %1 again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="353"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="354"/>
-        <source>passphrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="357"/>
-        <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="360"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="363"/>
-        <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <source>Please continue to encrypt partition %1</source>
+        <translation>パーティション %1 を暗号化する続行をどうぞ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="364"/>
-        <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
+        <source>Next</source>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
+        <source>Confirm encrypt</source>
+        <translation>暗号化を確認</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="366"/>
+        <source>Export Recovery Key</source>
+        <translation>回復キーのエクスポート</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
+        <source>Previous</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="375"/>
+        <source>Set %1</source>
+        <translation>%1 を設定</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="376"/>
+        <source>Repeat %1</source>
+        <translation>%1 を再度入力</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="378"/>
+        <source>Please enter the %1 again</source>
+        <translation>%1 をもう一度入力してください</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="383"/>
+        <source>passphrase</source>
+        <translation>パスフレーズ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="387"/>
+        <source>Access to the partition will be unlocked using a passphrase.</source>
+        <translation>パーティションへのアクセスはパスフレーズでロックが解除されます。</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="391"/>
+        <source>PIN</source>
+        <translation>PIN</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="395"/>
+        <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
+        <translation>パーティションへのアクセスはTPMセキュリティチップとPINでロックが解除されます。</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="399"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションへのアクセスはTPMセキュリティチップで自動的にロックが解除され、パスフレーズのチェックは必要ありません。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="423"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="461"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMがロックされており、パーティションの暗号化では使用できません。TPMのパスワードをキャンセルするか、別のロック解除方法を選択してください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="425"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="428"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMエラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="428"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
         <source>TPM status error!</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMステータスエラー！</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EncryptProgressDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="56"/>
         <source>Confirm</source>
-        <translation type="unfinished">確定</translation>
+        <translation >確定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="65"/>
         <source>Re-export the recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>復縁キーを再エクスポートする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="69"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>*復縁キー保存に失敗しました。復縁キーを暗号化されていないパーティションに再保存し、安全な場所に保管してください！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="83"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="88"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="144"/>
-        <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation >エラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
-        <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <source>Recovery key export path cannot be empty!</source>
+        <translation>復縁キーのエクスポートパスは空にできません！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
+        <source>Recovery key export path is not exists!</source>
+        <translation>復縁キーのエクスポートパスが存在しません！</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>このパーティションは読み取り専用です。書き込み可能なパーティションにエクスポートしてください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>このパーティションは暗号化されています。暗号化されていないパーティションまたはUSBフラッシュドライブなどの外部デバイスにエクスポートしてください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"></translation>
+        <translation>復縁キーファイルを作成できません！</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="211"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="208"/>
-        <source>Device %1 has been encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化完了</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="212"/>
+        <source>Device %1 has been encrypted</source>
+        <translation>デバイス%1が暗号化されました</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="217"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="218"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイス%1の暗号化に失敗しました。詳細はログを参照してください。(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
         <source>%1 is under encrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1 が暗号化中です...&apos;</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="330"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化処理はシステムの遅延を引き起こす可能性があります。システム操作を最小限に抑えください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="350"/>
         <source>%1 is under decrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1 が復号中です...&apos;</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="351"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>復号処理はシステムの遅延を引き起こす可能性があります。システム操作を最小限に抑えください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="580"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation >エラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMの状態異常により、復元キーを使用してロックを解除してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PINが正しくありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="393"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズが正しくありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="395"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMエラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="397"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのロックを解除するには、復元キーを使用してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="485"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="459"/>
-        <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="465"/>
-        <source>Preencrypt failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="466"/>
-        <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>事前暗号化が完了しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
-        <source>Decrypt done</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
-        <source>Device %1 has been decrypted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
-        <source>Decrypt disk</source>
-        <translation type="unfinished"></translation>
+        <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
+        <translation>デバイス %1 は事前暗号化が完了しました。暗号化を完了するには再起動してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="494"/>
+        <source>Preencrypt failed</source>
+        <translation>事前暗号化に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
+        <translation>デバイス %1 の事前暗号化に失敗しました。詳細な情報を確認するにはログを参照してください(%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="516"/>
+        <source>Decrypt done</source>
+        <translation>復号化が完了しました</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <source>Device %1 has been decrypted</source>
+        <translation>デバイス %1 は復号化されました</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="525"/>
+        <source>Decrypt disk</source>
+        <translation>ディスクを復号化</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="526"/>
         <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="502"/>
-        <source>Decrypt failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="498"/>
-        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="503"/>
-        <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズまたはPINが正しくありません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
+        <source>Decrypt failed</source>
+        <translation>復号化に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
+        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
+        <translation>デバイス %1 は暗号化中です。暗号化が完了後に復号化してください</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
+        <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
+        <translation>デバイス %1 の復号化に失敗しました。詳細情報を確認するにはログをご覧ください。(%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
         <source>PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="540"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の変更が完了しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="541"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
         <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1の%2が変更されました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="546"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="551"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の変更に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="547"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 が間違っています</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="552"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="590"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイス %1 の %2 変更に失敗しました。詳細情報を確認するにはログをご覧ください。(%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスが完全に復号化されていません。アクセスする前に復号化を完了してください。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
         <source>Unlocking device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスのロック解除に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>パーティションの暗号化を完了するには、右側のディスクメニューから「パーティションを続行して暗号化する」をクリックしてください。</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_diskenc::UnlockPartitionDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="55"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="56"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="81"/>
-        <source>Unlock encryption partition</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック解除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="88"/>
+        <source>Unlock encryption partition</source>
+        <translation>暗号化されたパーティションをロック解除する</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーでロック解除する</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="95"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>パスフレーズでロック解除する</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="96"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PINでアンロックする</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>24桁の回復キーを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスをアンロックするためのパスフレーズを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスをアンロックするためのPINを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーが有効ではありません！</translation>
     </message>
 </context>
 <context>
@@ -5165,258 +4874,237 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="30"/>
         <source>Copying %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1のコピーを作成しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
         <source>to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>を%1へ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
         <source>Deleting %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1を削除しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
         <source>Moving %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1を移動しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
         <source>Trashing %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1をゴミ箱に移動しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
         <source>Restoring %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1を復元しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="114"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Permission error</source>
-        <translation type="unfinished"></translation>
+        <translation>パーミッションエラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>The action is denied</source>
-        <translation type="unfinished"></translation>
+        <translation>アクションが拒否されました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
         <source>Target file %1 already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットファイル%1は既に存在します</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
         <source>Target directory %1 already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットディレクトリ%1は既に存在します</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
         <source>Failed to open the file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を開けませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
         <source>Failed to read the file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を読み取れませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
         <source>Failed to write the file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 の書き込みに失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="129"/>
         <source>Failed to create the directory %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ %1 を作成できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="132"/>
         <source>Failed to delete the file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を削除できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
         <source>Failed to move the file %1 to trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 をゴミ箱に移動できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
         <source>Failed to move the file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 の移動に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Original file %1 does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>元のファイル %1 は存在しません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗しました。%1 のファイルサイズは 4 GB 未満でなければなりません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲット ディスクに空き容量が不足しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
         <source>File %1 integrity was damaged</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 の整合性が損なわれています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲット デバイスは読み取り専用です</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲット フォルダはソース フォルダ内にあります</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>この操作はサポートされていません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>You do not have permission to traverse files in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 のファイルを閲覧する許可がありません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Restore failed, original path could not be found</source>
-        <translation type="unfinished"></translation>
+        <translation>復元に失敗しました、元のパスが見つかりません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なエラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
         <source>Failed to parse the url of trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ゴミ箱のURLを解析できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
         <source>Restore failed: the original file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>復元に失敗しました：元のファイルが存在しません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのコピーまたは切り取りに失敗しました！このファイルを再度コピーしてやり直してください！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにアクセスできません！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
         <source>Failed to open the file %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を開けませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Failed to read the file %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を読み込めませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
         <source>Failed to write the file %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を書き込めませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
         <source>Failed to create the directory %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ %1 を作成できませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="197"/>
         <source>Failed to delete the file %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を削除できませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 をゴミ箱に移動できませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
         <source>Failed to move the file %1, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 を移動できませんでした、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
         <source>File %1 integrity was damaged, cause: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 の整合性が損なわれました、原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
         <source>Failed to create symlink, cause: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>シンボリックリンクを作成できませんでした、原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="221"/>
         <source>Copy or Cut File failed, cause: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのコピーまたは切り取りに失敗しました。原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのコピーまたは切り取りに失敗しました。原因：%1。このファイルを再びコピーしてやり直してください！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのコピーまたは切り取りに失敗しました。原因：%1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットフォルダに%1は既に存在しています</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="256"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
         <source>Original path %1</source>
-        <translation type="unfinished"></translation>
+        <translation>元のパス %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="247"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="251"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="257"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
         <source>Target path %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲットパス %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="262"/>
         <source>Original path %1 Target path %2</source>
-        <translation type="unfinished"></translation>
+        <translation>元のパス %1 バージョン %2</translation>
     </message>
 </context>
 <context>
@@ -5424,28 +5112,27 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="350"/>
         <source>Rename file error</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの改名に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="641"/>
         <source>Failed to create the directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリを作成できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1169"/>
         <source>Failed to create the file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを作成できませんでした</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1247"/>
         <source>link file error</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクファイルのエラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1286"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1295"/>
         <source>Failed to modify file permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのパーミッションを変更できませんでした</translation>
     </message>
 </context>
 <context>
@@ -5453,7 +5140,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewdialogmanager.cpp" line="92"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"></translation>
+        <translation>元のファイルを見つけられませんでした</translation>
     </message>
 </context>
 <context>
@@ -5461,17 +5148,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;貼り付け</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>切り&amp;貼り付け</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>コピー(&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -5479,17 +5166,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="44"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>開く(&amp;O)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>Rena&amp;me</source>
-        <translation type="unfinished"></translation>
+        <translation>リネーム(&amp;N)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>削除(&amp;D)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="47"/>
@@ -5517,7 +5204,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="35"/>
         <source>Office Text</source>
-        <translation type="unfinished"></translation>
+        <translation>オフィス・テキスト</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="36"/>
@@ -5540,7 +5227,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者として開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
@@ -5565,7 +5252,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
-        <translation type="unfinished"></translation>
+        <translation>反転選択</translation>
     </message>
 </context>
 <context>
@@ -5591,7 +5278,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
         <source>Bluetooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="265"/>
@@ -5609,41 +5296,41 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="117"/>
         <source>Share</source>
-        <translation type="unfinished"></translation>
+        <translation>共有</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_myshares::MyShareMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="122"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>開く(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="123"/>
         <source>Open in new window</source>
         <translation>新規ウィンドウで開く</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="124"/>
         <source>Open in new tab</source>
         <translation>新規タブで開く</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="125"/>
         <source>Cancel sharing</source>
         <translation>共有をやめる</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="126"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"></translation>
+        <translation>プロパティ(&amp;P)</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="202"/>
         <source>My Shares</source>
         <translation>共有</translation>
     </message>
@@ -5651,45 +5338,46 @@
 <context>
     <name>dfmplugin_optical::OpticalMediaWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="107"/>
         <source>It does not support burning UDF discs</source>
-        <translation type="unfinished"></translation>
+        <translation>UDFディスクの焼却はサポートしていません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="113"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"></translation>
+        <translation>イメージファイルとして保存</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="114"/>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>焼却</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="168"/>
         <source>%1 burning is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>%1の焼却はサポートしていません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="172"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation type="unfinished"></translation>
+        <translation>1. %1ディスクではありません；
+2. このファイルシステムのバージョンはまだファイルの追加をサポートしていません。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="219"/>
         <source>Mounting failed</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="251"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="264"/>
         <source>No files to burn</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込むファイルがありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込みできません。対象ディスクの空き容量が不足しています。</translation>
     </message>
 </context>
 <context>
@@ -5697,7 +5385,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="95"/>
         <source>Basic info</source>
-        <translation type="unfinished">基本情報</translation>
+        <translation >基本情報</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
@@ -5722,36 +5410,35 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>作成日</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Accessed</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセス日</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="109"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>変更日</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="113"/>
         <source>Hide this file</source>
-        <translation type="unfinished"></translation>
+        <translation>このファイルを非表示にする</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>解像度</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>再生時間</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="421"/>
         <source>%1 item</source>
         <translation>%1 項目</translation>
     </message>
@@ -5771,7 +5458,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="80"/>
         <source>Total size: %1, %2 files</source>
-        <translation type="unfinished"></translation>
+        <translation>合計サイズ: %1, %2 ファイル</translation>
     </message>
 </context>
 <context>
@@ -5779,17 +5466,17 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="306"/>
         <source>For Secrets Security</source>
-        <translation type="unfinished"></translation>
+        <translation>機密セキュリティ用</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="313"/>
         <source>For Government</source>
-        <translation type="unfinished"></translation>
+        <translation>政府用</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="315"/>
         <source>For Enterprise</source>
-        <translation type="unfinished"></translation>
+        <translation>企業用</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="343"/>
@@ -5817,7 +5504,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="75"/>
         <source>Computer name</source>
-        <translation type="unfinished"></translation>
+        <translation>コンピューター名</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
@@ -5832,7 +5519,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="90"/>
         <source>OS build</source>
-        <translation type="unfinished"></translation>
+        <translation>OS ビルド</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="95"/>
@@ -5885,7 +5572,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="147"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ファイル、%2 フォルダ</translation>
     </message>
 </context>
 <context>
@@ -5893,20 +5580,18 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="132"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は許可されていません</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="94"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="168"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="95"/>
         <source>Allow to execute as program</source>
         <translation>プログラムとして実行可能</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="139"/>
         <source>Permissions</source>
         <translation>権限</translation>
     </message>
@@ -5916,7 +5601,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;roperty（プロパティ）</translation>
     </message>
 </context>
 <context>
@@ -5932,38 +5617,38 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished">パス</translation>
+        <translation >パス</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished">最後のアクセス</translation>
+        <translation >最後のアクセス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
-        <translation type="unfinished">最近使ったファイル</translation>
+        <translation >最近使ったファイル</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_recent::RecentMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="180"/>
         <source>Remove</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="181"/>
         <source>Open file location</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの場所を開く</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="182"/>
         <source>Path</source>
         <translation>パス</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="183"/>
         <source>Last access</source>
         <translation>最後のアクセス</translation>
     </message>
@@ -5971,127 +5656,127 @@
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
         <source>Search:</source>
         <translation>検索:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>File Type:</source>
         <translation>ファイルの種類:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
         <source>File Size:</source>
         <translation>ファイルサイズ:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>Time Modified:</source>
         <translation>更新日時:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
         <source>Time Accessed:</source>
         <translation>アクセス日時:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Time Created:</source>
         <translation>作成日時:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="65"/>
         <source>Reset</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
         <source>All subdirectories</source>
         <translation>すべてのサブディレクトリ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>Current directory</source>
         <translation>カレントディレクトリ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Application</source>
         <translation>アプリケーション</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Video</source>
         <translation>ビデオ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
         <source>Audio</source>
         <translation>オーディオ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
         <source>Archive</source>
         <translation>アーカイブ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
         <source>Executable</source>
         <translation>実行可能</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="100"/>
         <source>Backup file</source>
         <translation>バックアップファイル</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>This week</source>
         <translation>今週</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>Last week</source>
         <translation>先週</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
         <source>This month</source>
         <translation>今月</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
         <source>Last month</source>
         <translation>先月</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
         <source>This year</source>
         <translation>今年</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
         <source>Last year</source>
         <translation>昨年</translation>
     </message>
@@ -6101,32 +5786,31 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="296"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス更新完了、最終更新時間：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="297"/>
         <source>Update index now</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックスを今すぐ更新</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="46"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="49"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="152"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"></translation>
+        <translation>全文検索</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="190"/>
         <source>Path</source>
         <translation>パス</translation>
     </message>
@@ -6136,7 +5820,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="171"/>
         <source>Open file location</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの場所を開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="172"/>
@@ -6146,7 +5830,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="173"/>
         <source>Path</source>
-        <translation type="unfinished">パス</translation>
+        <translation >パス</translation>
     </message>
 </context>
 <context>
@@ -6154,65 +5838,65 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス更新に失敗しました、お手数ですが</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="173"/>
         <source>try updating again</source>
-        <translation type="unfinished"></translation>
+        <translation>再度更新をお試しください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの内容を検索するにはインデックスを有効にしてください。インデックス作成には数分かかる場合があります</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="198"/>
         <source>Building index</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス作成中</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="204"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス作成中、%1 ファイルがインデックス化されました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="209"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス作成中、%1/%2 の項目がインデックス化されました</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="410"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="409"/>
         <source>Quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>クイック アクセス</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="410"/>
+        <source>Partitions</source>
+        <translation>パーティション</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="411"/>
-        <source>Partitions</source>
-        <translation type="unfinished"></translation>
+        <source>Network</source>
+        <translation>ネットワーク</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="412"/>
-        <source>Network</source>
-        <translation type="unfinished"></translation>
+        <source>Tag</source>
+        <translation>タグ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="413"/>
-        <source>Tag</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
         <source>Other</source>
         <translation>その他</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
         <source>Unknown Group</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なグループ</translation>
     </message>
 </context>
 <context>
@@ -6220,7 +5904,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="165"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="166"/>
@@ -6230,12 +5914,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="167"/>
         <source>Open in new tab</source>
-        <translation type="unfinished">新規タブで開く</translation>
+        <translation >新規タブで開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="168"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;ロペティ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="169"/>
@@ -6253,17 +5937,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="191"/>
         <source>Unmount</source>
-        <translation type="unfinished">マウント解除</translation>
+        <translation >マウント解除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>保存されたパスワードをクリアし、マウントを解除する</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation >削除</translation>
     </message>
 </context>
 <context>
@@ -6271,7 +5955,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="49"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ</translation>
     </message>
 </context>
 <context>
@@ -6279,15 +5963,15 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="93"/>
         <source>Open file location</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの場所を開く</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_tag::TagEditor</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="97"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ情報を入力します。例えば、work（仕事）、family（家族）。タグの間にカンマを使用します。</translation>
     </message>
 </context>
 <context>
@@ -6300,12 +5984,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="198"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ &quot;%1&quot; を削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="200"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ &quot;%1&quot; を追加</translation>
     </message>
 </context>
 <context>
@@ -6313,7 +5997,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="40"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ</translation>
     </message>
 </context>
 <context>
@@ -6321,7 +6005,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation type="unfinished"></translation>
+        <translation>アドレスを入力</translation>
     </message>
 </context>
 <context>
@@ -6333,25 +6017,23 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="118"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="393"/>
         <source>Clear History</source>
         <translation>履歴を消去</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りを外す</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation >エラー</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation type="unfinished"></translation>
+        <translation>不正なURLのお気に入り登録はできません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
@@ -6368,27 +6050,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
         <source>Charset Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>文字コードのエンコーディング</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="416"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルト</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="475"/>
         <source>My Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>私のお気に入り</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="462"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りはまだ登録されていません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
         <source>Favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りにする</translation>
     </message>
 </context>
 <context>
@@ -6396,22 +6078,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
         <source>Change disk password</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワードを変更する</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
         <source>Current password:</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のパスワード:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
         <source>New password:</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいパスワード:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>Repeat password:</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを再入力:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
@@ -6428,34 +6110,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="177"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが一致しません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="194"/>
         <source>New password should differ from the current one</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいパスワードは現在のパスワードと異なりにしてください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="249"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
-        <translation type="unfinished"></translation>
+        <translation>最少8文字。最低3種類: 0-9、a-z、A-Z、記号。ユーザー名と異なること。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="285"/>
         <source>Password must be no more than %1 characters</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードは %1 文字以内で入力してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="294"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="304"/>
         <source>Password cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードは空にできません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="340"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが間違っています</translation>
     </message>
 </context>
 <context>
@@ -6463,27 +6143,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
         <source>Changing disk password...</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワードを変更中...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
         <source>The window cannot be closed during the process</source>
-        <translation type="unfinished"></translation>
+        <translation>処理中はウィンドウを閉じることはできません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
         <source>Passwords of disks are different</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワードが一致していません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
         <source>Unable to get the encrypted disk list</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されたディスクの一覧を取得できません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化に失敗しました</translation>
     </message>
 </context>
 <context>
@@ -6491,12 +6171,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="29"/>
         <source>Disk password changed</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワードを変更しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
         <source>Failed to change the disk password</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクのパスワードの変更に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="58"/>
@@ -6510,43 +6190,40 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
         <source>back</source>
-        <translation type="unfinished"></translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
         <source>forward</source>
-        <translation type="unfinished"></translation>
+        <translation>進む</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
         <source>Icon view</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコン表示</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="273"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="272"/>
         <source>List view</source>
-        <translation type="unfinished"></translation>
+        <translation>一覧表示</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="284"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="354"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリービュー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="307"/>
         <source>Sort by</source>
-        <translation type="unfinished">並べ替え</translation>
+        <translation >並べ替え</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="313"/>
         <source>View options</source>
-        <translation type="unfinished"></translation>
+        <translation>表示オプション</translation>
     </message>
 </context>
 <context>
@@ -6554,55 +6231,55 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished">名前</translation>
+        <translation >名前</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
         <source>Time modified</source>
-        <translation type="unfinished">更新日時</translation>
+        <translation >更新日時</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
         <source>Time created</source>
-        <translation type="unfinished">作成日時</translation>
+        <translation >作成日時</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
         <source>Size</source>
-        <translation type="unfinished">サイズ</translation>
+        <translation >サイズ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
-        <translation type="unfinished">種類</translation>
+        <translation >種類</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="56"/>
         <source>View Options</source>
-        <translation type="unfinished"></translation>
+        <translation>ビュー設定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="70"/>
         <source>Icon size</source>
-        <translation type="unfinished">アイコンサイズ</translation>
+        <translation >アイコンサイズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="103"/>
         <source>Grid density</source>
-        <translation type="unfinished"></translation>
+        <translation>グリッド密度</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
         <source>List height</source>
-        <translation type="unfinished"></translation>
+        <translation>リストの高さ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
         <source>Display preview</source>
-        <translation type="unfinished"></translation>
+        <translation>プレビュー表示</translation>
     </message>
 </context>
 <context>
@@ -6651,7 +6328,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
         <source>Empty trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ゴミ箱を空にする</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
@@ -6692,7 +6369,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="79"/>
         <source>Contains %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2 を含んでいます</translation>
     </message>
 </context>
 <context>
@@ -6700,12 +6377,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="39"/>
         <source>Bluetooth File Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetoothファイル転送</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="40"/>
         <source>File Transfer Successful</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル転送が成功しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="41"/>
@@ -6714,74 +6391,74 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="43"/>
-        <source>Sending files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
-        <translation type="unfinished"></translation>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>ファイルを &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; へ送信中</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="44"/>
-        <source>Failed to send files to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;"</source>
-        <translation type="unfinished"></translation>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; へのファイル送信に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="45"/>
-        <source>Sent to "&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;" successfully</source>
-        <translation type="unfinished"></translation>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
+        <translation>&quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; への送信が成功しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="46"/>
         <source>Select a Bluetooth device to receive files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを受信する Bluetooth デバイスを選択</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="47"/>
         <source>Cannot find the connected Bluetooth device</source>
-        <translation type="unfinished"></translation>
+        <translation>接続された Bluetooth デバイスが見つかりません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="48"/>
         <source>Waiting to be received...</source>
-        <translation type="unfinished"></translation>
+        <translation>受信待機中...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="49"/>
         <source>Go to Bluetooth Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth 設定へ移動</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="50"/>
         <source>%1/%2 Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2 送信済み</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="51"/>
         <source>Error: the Bluetooth device is disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>エラー: Bluetooth デバイスが切断されました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="52"/>
         <source>Unable to send the file more than 2 GB</source>
-        <translation type="unfinished"></translation>
+        <translation>2GB以上のファイルの送信ができません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="53"/>
         <source>Unable to send 0 KB files</source>
-        <translation type="unfinished"></translation>
+        <translation>0KBのファイルは送信できません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="54"/>
         <source>File doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルが存在しません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="55"/>
         <source>Transferring folders is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダの転送はサポートされていません</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Next</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>次へ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
@@ -6810,12 +6487,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="160"/>
         <source>File sending request timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル送信要求がタイムアウトしました</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="162"/>
         <source>The service is busy and unable to process the request</source>
-        <translation type="unfinished"></translation>
+        <translation>サービスが混み合っており、要求を処理できません</translation>
     </message>
 </context>
 <context>
@@ -6860,12 +6537,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="453"/>
         <source>Open File</source>
-        <translation type="unfinished">ファイルを開く</translation>
+        <translation >ファイルを開く</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="455"/>
         <source>Applications (*.desktop);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーション (*.desktop) ;; すべてのファイル (*)</translation>
     </message>
 </context>
 <context>
@@ -6879,52 +6556,52 @@
 <context>
     <name>dfmplugin_utils::VirtualBluetoothPlugin</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="46"/>
         <source>Sending files now, please try later.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを送信しています、後で再度お試しください</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="45"/>
         <source>Basic info</source>
-        <translation type="unfinished">基本情報</translation>
+        <translation >基本情報</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="53"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="59"/>
         <source>Contains</source>
         <translation>ファイル数</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="65"/>
         <source>Type</source>
         <translation>種類</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="71"/>
         <source>Location</source>
         <translation>場所</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="77"/>
         <source>Time created</source>
         <translation>作成日時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="83"/>
         <source>Time accessed</source>
         <translation>アクセス日時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="89"/>
         <source>Time locked</source>
-        <translation type="unfinished"></translation>
+        <translation>時間ロック</translation>
     </message>
 </context>
 <context>
@@ -6932,66 +6609,67 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック解除失敗</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ディレクトリは占用されています、
+このディレクトリのファイルをクリアして再度安全装置をロック解除をお試しください</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"></translation>
+        <translation>公開鍵の作成に失敗: キー長さが長すぎます!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>RSA 暗号文ファイルの保存に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>公開鍵ファイルの保存に失敗しました: 公開鍵が空です。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>公開鍵ファイルの保存に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="294"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>設定ディレクトリの作成に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="321"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="322"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>RSA 個別鍵ファイルの作成に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="333"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>RSA 暗号文ファイルの作成に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="343"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="344"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ヒントファイルの作成に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="376"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ヒント情報の保存に失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="728"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="731"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードの保存に失敗しました: %1</translation>
     </message>
 </context>
 <context>
@@ -6999,13 +6677,13 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="29"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"></translation>
+        <translation>安全に保管してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="43"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>アンロックへ進む</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="43"/>
@@ -7016,12 +6694,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="48"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"></translation>
+        <translation>認証成功</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="53"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ウォレットパスワード: %1</translation>
     </message>
 </context>
 <context>
@@ -7029,12 +6707,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="60"/>
         <source>Unlock by Key</source>
-        <translation type="unfinished"></translation>
+        <translation>キーベースでアンロック</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="33"/>
         <source>Input the 32-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>32桁の回復キーを入力</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
@@ -7046,20 +6724,20 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>解除ロック</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="121"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーが正しくありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="241"/>
         <source>Failed to unlock file vault</source>
         <translation>FileVaultのロック解除に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="245"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -7069,33 +6747,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="41"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトパスのキーを使用して</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="42"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>指定されたパスのキーを使用して</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="206"/>
         <source>Select a path</source>
-        <translation type="unfinished"></translation>
+        <translation>パスを選択</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="103"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="201"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="239"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"></translation>
+        <translation>キーファイルを取得できません</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
         <source>Verification failed</source>
-        <translation type="unfinished"></translation>
+        <translation>認証に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
@@ -7107,25 +6779,25 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>キーを確認</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="149"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを取得</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::ServiceManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="25"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="26"/>
         <source>Location</source>
         <translation>場所</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="49"/>
         <source>Time locked</source>
-        <translation type="unfinished"></translation>
+        <translation>時間制限でロック</translation>
     </message>
 </context>
 <context>
@@ -7140,7 +6812,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>ロック解除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="50"/>
@@ -7150,12 +6822,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードをお忘れですか？</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
         <source>Key unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>キーによるロック解除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
@@ -7165,50 +6837,48 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="97"/>
         <source>Password hint: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードのヒント: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="120"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク環境下でウォレットをロック解除できません！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="129"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="130"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"></translation>
+        <translation> %1 分钟后再度お試しください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="163"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが正しくありません。%1 分钟后再度お試しください</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="167"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが正しくありません。残り 1 回</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="170"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが正しくありません。残り %1 回</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが正しくありません</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="230"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="231"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="236"/>
         <source>Failed to unlock file vault, error code is %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルボックスのロック解除に失敗しました。エラーコードは %1 です</translation>
     </message>
 </context>
 <context>
@@ -7221,35 +6891,30 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;Encrypt&apos; をクリックしてユーザーのパスワードを入力してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化中...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="183"/>
         <source>The setup is complete</source>
-        <translation type="unfinished"></translation>
+        <translation>設定が完了しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="196"/>
         <source>Close</source>
-        <translation type="unfinished">閉じる</translation>
+        <translation >閉じる</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="204"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="226"/>
         <source>Encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="182"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="213"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="184"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -7259,42 +6924,42 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="51"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーを保存</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="58"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"></translation>
+        <translation>回復キーを安全に保管し、後でボックスのパスワードを取得してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
         <source>Save to default path</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのパスに保存</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="69"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"></translation>
+        <translation>他の場所に保存</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="71"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"></translation>
+        <translation>権限がありません。再度選択してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="78"/>
         <source>Select a path</source>
-        <translation type="unfinished"></translation>
+        <translation>パスを選択</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="95"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次へ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="105"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのパスは他のユーザーに見えません。パス情報は表示されません。</translation>
     </message>
 </context>
 <context>
@@ -7307,17 +6972,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
         <source>Encryption method</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化方法</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="51"/>
         <source>Key encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>鍵ベースの暗号化</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Transparent encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>透過的暗号化</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
@@ -7326,45 +6991,43 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="221"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>≥ 8 文字、大文字A-Z、小文字a-z、数字0-9、記号を含む</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Repeat password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを再入力</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Input the password again</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを再度入力してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
         <source>Password hint</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードヒント</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
         <source>Optional</source>
-        <translation type="unfinished"></translation>
+        <translation>任意</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="76"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルボンボンにアクセスすると、パスワードを確認せずに自動的にアンロックされます。その中のファイルは他のユーザーのアカウントではアクセスできません。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次へ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="246"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="266"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが一致しません</translation>
     </message>
 </context>
 <context>
@@ -7377,22 +7040,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Create your secure private space</source>
-        <translation type="unfinished"></translation>
+        <translation>あなたの安全なプライベートスペースを作成</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Advanced encryption technology</source>
-        <translation type="unfinished"></translation>
+        <translation>高度進化した暗号技術</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
         <source>Convenient and easy to use</source>
-        <translation type="unfinished"></translation>
+        <translation>使いやすく便利</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="41"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>作成</translation>
     </message>
 </context>
 <context>
@@ -7400,75 +7063,74 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"></translation>
+        <translation> vaultを作成に失敗：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"></translation>
+        <translation> vaultを作成に失敗：暗号化方式の取得に失敗しました！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation type="unfinished"></translation>
+        <translation> vaultを作成に失敗：不明な暗号化方式です！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation> vaultを作成に失敗：取得したパスワードが空です！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>自動的にパスワード生成に失敗しました！</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEntryFileEntity</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
-        <source>My Vault</source>
-        <translation>FileVault</translation>
+        <source>File Vault</source>
+        <translation >FileVault</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"></translation>
+        <translation>vaultはインストールされていないため利用できません！</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
         <source>Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>vault</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"></translation>
+        <translation>vaultはインストールされていないため利用できません！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="565"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation type="unfinished"></translation>
+        <translation>処理中のタスクがあるため、ご操作を実行できません</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultPropertyDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="70"/>
-        <source>My Vault</source>
-        <translation>FileVault</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
+        <source>File Vault</source>
+        <translation >FileVault</translation>
     </message>
 </context>
 <context>
@@ -7476,32 +7138,32 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation >Delete</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished">FileVaultを削除</translation>
+        <translation >FileVaultを削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="67"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルvaultの削除に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="71"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation >OK</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="84"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>削除後は、その中のファイルが永久に削除されます</translation>
     </message>
 </context>
 <context>
@@ -7509,7 +7171,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>削除すると、その中のファイルは永久に消去されます</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
@@ -7519,42 +7181,42 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
         <source>Key delete</source>
-        <translation type="unfinished"></translation>
+        <translation>鍵削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="67"/>
         <source>Password hint: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードヒント: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation >Delete</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="89"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished">FileVaultを削除</translation>
+        <translation >FileVaultを削除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="108"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが間違っています</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="206"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルボリュームの削除に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="210"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation >OK</translation>
     </message>
 </context>
 <context>
@@ -7562,37 +7224,37 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="27"/>
         <source>Input the 32-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>32桁の復元キーを入力してください</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation >キャンセル</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation >Delete</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="100"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished">FileVaultを削除</translation>
+        <translation >FileVaultを削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="118"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>復元キーが間違っています</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="191"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルボリュームの削除に失敗しました</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="195"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation >OK</translation>
     </message>
 </context>
 <context>
@@ -7600,33 +7262,28 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="39"/>
         <source>Removing...</source>
-        <translation type="unfinished"></translation>
+        <translation>削除中...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="71"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation >OK</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished">FileVaultを削除</translation>
+        <translation >FileVaultを削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>削除に成功しました</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
-        <source>My Vault</source>
-        <translation>FileVault</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="114"/>
         <source>File Vault</source>
         <translation>FileVault</translation>
     </message>
@@ -7636,48 +7293,48 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="118"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1を開くに失敗しました。移動または改名された可能性があります</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2238"/>
         <source>Mount error</source>
-        <translation type="unfinished"></translation>
+        <translation>マウントエラー</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2239"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーログイン資格情報が無効です。アンインストールして再マウントしてください</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="731"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="734"/>
         <source>Name</source>
-        <translation type="unfinished">名前</translation>
+        <translation >名前</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="733"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="736"/>
         <source>Time modified</source>
-        <translation type="unfinished">更新日時</translation>
+        <translation >更新日時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="735"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="738"/>
         <source>Time created</source>
-        <translation type="unfinished">作成日時</translation>
+        <translation >作成日時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="737"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="740"/>
         <source>Size</source>
-        <translation type="unfinished">サイズ</translation>
+        <translation >サイズ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="739"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="742"/>
         <source>Type</source>
-        <translation type="unfinished">種類</translation>
+        <translation >種類</translation>
     </message>
 </context>
 <context>
@@ -7693,7 +7350,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/iconitemeditor.cpp" line="262"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は許可されていません</translation>
     </message>
 </context>
 <context>
@@ -7701,7 +7358,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/listitemeditor.cpp" line="109"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1は許可されていません</translation>
     </message>
 </context>
 <context>
@@ -7729,7 +7386,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Time created</source>
-        <translation type="unfinished">作成日時</translation>
+        <translation >作成日時</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
@@ -7754,7 +7411,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリー</translation>
     </message>
 </context>
 <context>
@@ -7762,16 +7419,16 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="59"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>リフレッシュ</translation>
     </message>
 </context>
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1015"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1025"/>
         <source>Save</source>
         <comment>button</comment>
-        <translation>保存</translation>
+        <translation>セーブ</translation>
     </message>
 </context>
 <context>
@@ -7812,7 +7469,6 @@
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>キャンセル</translation>
@@ -7823,112 +7479,112 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="279"/>
         <source>Available sizes: </source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能なサイズ：</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="281"/>
         <source>Custom Size</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムサイズ</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="308"/>
         <source>Device Pixel Ratio: </source>
-        <translation type="unfinished"></translation>
+        <translation>デバイスピクセルレシオ：</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Theme: </source>
-        <translation type="unfinished"></translation>
+        <translation>テーマ：</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ライト</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>ダーク</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Mode: </source>
-        <translation type="unfinished"></translation>
+        <translation>モード：</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>通常</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Hovered</source>
-        <translation type="unfinished"></translation>
+        <translation>ホバー</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Pressed</source>
-        <translation type="unfinished"></translation>
+        <translation>押し込み</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレット</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
         <source>Current mode icon does not support the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のモードのアイコンはパレットをサポートしていません</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="363"/>
         <source>Foreground:</source>
-        <translation type="unfinished"></translation>
+        <translation>前景:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="378"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>背景:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="391"/>
         <source>Highlight:</source>
-        <translation type="unfinished"></translation>
+        <translation>ハイライト:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"></translation>
+        <translation>ハイライト・前景:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
         <source>Background Color: </source>
-        <translation type="unfinished"></translation>
+        <translation>背景色:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>白</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Black</source>
-        <translation type="unfinished"></translation>
+        <translation>黒</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>透明</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム</translation>
     </message>
 </context>
 <context>
@@ -7936,7 +7592,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="36"/>
         <source>Encrypted file, please enter the password</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されたファイル、パスワードを入力してください</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="42"/>
@@ -7952,7 +7608,7 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="90"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードが正しくありません</translation>
     </message>
 </context>
 <context>
@@ -7960,22 +7616,22 @@
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="61"/>
         <source>Artist:</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="73"/>
         <source>Album:</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバム:</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="138"/>
         <source>unknown artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト不明</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="142"/>
         <source>unknown album</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバム不明</translation>
     </message>
 </context>
 </TS>
