@@ -27,7 +27,6 @@ using namespace dfmbase;
 static constexpr int kMsgLabelWidth { 390 };
 static constexpr int kMsgLabelHoverWidth { 460 };
 static constexpr int kSpeedLabelWidth { 100 };
-static constexpr uint8_t kVirtualValue { 30 };
 static constexpr char kBtnPropertyActionName[] { "btnType" };
 static constexpr AbstractJobHandler::JobState kPausedState = AbstractJobHandler::JobState::kPauseState;
 
@@ -36,7 +35,7 @@ ElidedLable::ElidedLable(QWidget *parent)
 {
 }
 
-ElidedLable::~ElidedLable() {}
+ElidedLable::~ElidedLable() { }
 /*!
  * \brief ElidedLable::setText 设置当前文字的内容
  * \param text
@@ -329,7 +328,6 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 
     int preValue = progress->value();
 
-    AbstractJobHandler::StatisticState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kStatisticStateKey).value<AbstractJobHandler::StatisticState>();
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
 
@@ -337,13 +335,6 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 
     if (total > 0 && current > 0) {
         value = static_cast<qint64>((static_cast<qreal>(current) / total) * 100);
-        if (current * 100 % total > 0)
-            value += 1;   // +1: round up value，maybe 99% when finished
-    }
-
-    if (state == AbstractJobHandler::StatisticState::kRunningState) {
-        value = value > kVirtualValue ? kVirtualValue : value;
-        value = value > preValue ? preValue + 1 : value;
     }
 
     if (value > 100) {
@@ -840,9 +831,9 @@ void TaskWidget::paintEvent(QPaintEvent *event)
         path.addRoundedRect(bgRect, radius, radius);
         QColor bgColor;
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
-            bgColor = QColor(0, 0, 0, 13);   //rgba(0,0,0,13); border-radius: 8px
+            bgColor = QColor(0, 0, 0, 13);   // rgba(0,0,0,13); border-radius: 8px
         } else {
-            bgColor = QColor(255, 255, 255, 13);   //rgba(255,255,255,13); border-radius: 8px
+            bgColor = QColor(255, 255, 255, 13);   // rgba(255,255,255,13); border-radius: 8px
         }
         painter.save();
         painter.setRenderHint(QPainter::Antialiasing, true);

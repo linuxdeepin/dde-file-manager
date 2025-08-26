@@ -32,6 +32,7 @@ public:
     static void sendCtrlTOnItem(quint64 winId, const QUrl &url);
     static void sendShowPropertyDialog(const QList<QUrl> &urls);
     static void sendErase(const QString &dev);
+    static void sendItemRenamed(const QUrl &url, const QString &name);
 };
 
 }

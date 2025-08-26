@@ -1,3 +1,17 @@
+dde-file-manager (6.5.89) unstable; urgency=medium
+
+  * fix bugs
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Fri, 22 Aug 2025 11:10:37 +0800
+
+dde-file-manager (6.5.88) unstable; urgency=medium
+
+  * fix bugs
+  * new strategy for file copy
+  * new features
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 21 Aug 2025 21:39:30 +0800
+
 dde-file-manager (6.5.87) unstable; urgency=medium
 
   * fix bugs 

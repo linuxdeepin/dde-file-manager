@@ -34,6 +34,7 @@ public:
     NavWidget *navWidget() const;
     DTitlebar *titleBar() const;
     TabBar *tabBar() const;
+    CrumbBar *titleCrumbBar() const;
     void openNewTab(const QUrl &url);
 
     void showSearchFilterButton(bool visible);

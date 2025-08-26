@@ -24,6 +24,7 @@
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
+#include <QKeyEvent>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -174,8 +175,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        fmDebug() << "Search text is empty, quitting search";
-        quitSearch();
+        fmDebug() << "Search text is empty, stopping timer but not quitting search";
+        delayTimer->stop();
         return;
     }
 
@@ -239,6 +240,13 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
             handleFocusInEvent(static_cast<QFocusEvent *>(event));
         } else if (event->type() == QEvent::InputMethod) {
             handleInputMethodEvent(static_cast<QInputMethodEvent *>(event));
+        } else if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            if (keyEvent->key() == Qt::Key_Escape) {
+                fmDebug() << "ESC key pressed in search edit, quitting search";
+                quitSearch();
+                return true;
+            }
         }
     }
 
@@ -278,7 +286,9 @@ void SearchEditWidget::initUI()
 
     layout->addWidget(searchButton);
     layout->addWidget(searchEdit);
-    layout->addSpacing(10);
+    // Create a spacer item to control spacing dynamically
+    spacingItem = new QSpacerItem(10, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+    layout->addItem(spacingItem);
     layout->addWidget(advancedButton);
 
     delayTimer = new QTimer(this);
@@ -311,23 +321,42 @@ QString SearchEditWidget::text() const
 void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 {
     advancedButton->setVisible(true);
+    updateSpacing(true);  // Advanced button is now visible
 }
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
     if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
         advancedButton->setVisible(false);
+        updateSpacing(false);  // Advanced button is now hidden
     }
 
-    if (e->reason() == Qt::PopupFocusReason
-        || e->reason() == Qt::ActiveWindowFocusReason
-        || e->reason() == Qt::OtherFocusReason) {
-        e->accept();
+    // Helper lambda to restore focus if needed
+    auto restoreFocusIfNeeded = [this]() {
         if (!searchEdit->text().isEmpty())
             searchEdit->lineEdit()->setFocus(Qt::MouseFocusReason);
+    };
+
+    // Handle special focus reasons that should not trigger collapse
+    if (e->reason() == Qt::PopupFocusReason || e->reason() == Qt::ActiveWindowFocusReason) {
+        e->accept();
+        restoreFocusIfNeeded();
         return;
     }
 
+    // For Qt::OtherFocusReason, delay check to see if focus really moved away
+    if (e->reason() == Qt::OtherFocusReason) {
+        QTimer::singleShot(0, this, [this]() {
+            if (!searchEdit->hasFocus() && !advancedButton->hasFocus() && parentWidget()) {
+                updateSearchEditWidget(parentWidget()->width());
+            }
+        });
+        e->accept();
+        restoreFocusIfNeeded();
+        return;
+    }
+
+    // Normal focus out - allow collapse
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
     }
@@ -351,6 +380,7 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchEdit->setVisible(false);
         searchButton->setVisible(true);
         advancedButton->setVisible(false);
+        updateSpacing(false);  // No advanced button in collapsed mode
     } else {
         int width = kSearchEditMediumWidth;
         if (currentMode == SearchMode::kExtraLarge)
@@ -358,7 +388,10 @@ void SearchEditWidget::updateSearchWidgetLayout()
         setFixedWidth(qMin(width, kSearchEditMaxWidth));
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
-        advancedButton->setVisible(searchEdit->hasFocus() || !searchEdit->text().isEmpty());
+        
+        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty();
+        advancedButton->setVisible(shouldShowAdvancedButton);
+        updateSpacing(shouldShowAdvancedButton);
     }
 }
 
@@ -368,6 +401,26 @@ void SearchEditWidget::quitSearch()
     delayTimer->stop();
     // deactivateEdit();
     Q_EMIT searchQuit();
+}
+
+void SearchEditWidget::updateSpacing(bool showAdvancedButton)
+{
+    if (!spacingItem) {
+        fmWarning() << "Cannot update spacing - spacingItem is null";
+        return;
+    }
+    
+    // Apply spacing based on advanced button visibility
+    // 10px spacing when button is visible, 0px when hidden for consistent right margin
+    int spacing = showAdvancedButton ? 10 : 0;
+    spacingItem->changeSize(spacing, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+    
+    // Force layout update to ensure immediate visual effect
+    if (layout()) {
+        layout()->invalidate();
+    }
+    
+    fmDebug() << "Updated spacing to" << spacing << "px, advancedButton visible:" << showAdvancedButton;
 }
 
 int SearchEditWidget::determineSearchDelay(const QString &inputText)

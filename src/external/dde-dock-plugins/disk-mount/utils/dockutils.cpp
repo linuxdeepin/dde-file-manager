@@ -16,6 +16,10 @@
 #include <QDir>
 #include <QUrl>
 #include <QIcon>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 #include <libmount/libmount.h>
 
@@ -237,5 +241,54 @@ QString device_utils::queryDevice(const QString &mpt)
 
     mnt_free_table(tab);
     mnt_free_iter(iter);
+    return "";
+}
+
+QString device_utils::protocolDeviceAlias(const QString &scheme, const QString &host)
+{
+    if (scheme.isEmpty() || host.isEmpty()) {
+        qCDebug(logAppDock) << "Invalid protocol URL - missing scheme or host:" << scheme << host;
+        return "";
+    }
+
+    static QString cfgPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+            + "/deepin/dde-file-manager.json";
+
+    QFile file(cfgPath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qCDebug(logAppDock) << "Failed to open config file:" << cfgPath;
+        return "";
+    }
+
+    QJsonParseError jpe;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &jpe);
+    if (jpe.error != QJsonParseError::NoError) {
+        qCWarning(logAppDock) << "Failed to parse JSON config file:" << jpe.errorString();
+        return "";
+    }
+
+    QJsonObject rootObj = doc.object();
+    QJsonObject protocolAliasObj = rootObj.value("NetworkProtocolDeviceAlias").toObject();
+    QJsonArray itemsArray = protocolAliasObj.value("Items").toArray();
+
+    // Search for matching scheme and host
+    for (const QJsonValue &item : itemsArray) {
+        QJsonObject itemObj = item.toObject();
+        QString itemScheme = itemObj.value("scheme").toString();
+        if (itemScheme != scheme)
+            continue;
+
+        QJsonArray devicesArray = itemObj.value("devices").toArray();
+        for (const QJsonValue &device : devicesArray) {
+            QJsonObject deviceObj = device.toObject();
+            QString deviceHost = deviceObj.value("host").toString();
+
+            if (deviceHost == host) {
+                QString alias = deviceObj.value("alias").toString();
+                return alias;
+            }
+        }
+    }
+
     return "";
 }

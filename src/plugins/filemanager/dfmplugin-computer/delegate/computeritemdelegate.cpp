@@ -9,6 +9,7 @@
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #include <DApplication>
 #include <DPaletteHelper>
@@ -129,9 +130,11 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
     editor->setTextMargins(0, topMargin, 0, 0);
     editor->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    QRegularExpression regx(kRegPattern);
-    QValidator *validator = new QRegularExpressionValidator(regx, editor);
-    editor->setValidator(validator);
+    if (!NPDeviceAliasManager::instance()->canSetAlias(index.data(ComputerModel::kRealUrlRole).toUrl())) {
+        QRegularExpression regx(kRegPattern);
+        QValidator *validator = new QRegularExpressionValidator(regx, editor);
+        editor->setValidator(validator);
+    }
 
     int maxLengthWhenRename = index.data(ComputerModel::kDeviceNameMaxLengthRole).toInt();
     connect(editor, &QLineEdit::textChanged, this, [maxLengthWhenRename, editor](const QString &text) {
@@ -166,7 +169,7 @@ void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 {
     auto currEditor = qobject_cast<QLineEdit *>(editor);
     if (currEditor)
-        currEditor->setText(index.data(Qt::DisplayRole).toString());
+        currEditor->setText(index.data(ComputerModel::kEditDisplayTextRole).toString());
 }
 
 void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const

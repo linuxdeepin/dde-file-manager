@@ -763,6 +763,7 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_Group", visableKey == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
         { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_EditDisplayText", info->editDisplayText() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_FinalUrl", findFinalUrl(info) },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
@@ -773,7 +774,8 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
         { "Property_Key_VisiableControl", visableKey },
         { "Property_Key_VisiableDisplayName", visableName },
-        { "Property_Key_ReportName", reportName }
+        { "Property_Key_ReportName", reportName },
+        { "Property_Key_Editable", info->renamable() }
     };
 }
 

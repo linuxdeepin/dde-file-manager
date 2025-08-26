@@ -25,6 +25,7 @@ bool parseSmbInfo(const QString &id, QString *host, QString *share, int *port = 
 namespace device_utils {
 QString blockDeviceName(const QVariantMap &data);
 QString protocolDeviceName(const QVariantMap &data);
+QString protocolDeviceAlias(const QString &scheme, const QString &host);
 
 QString blockDeviceIcon(const QVariantMap &data);
 QString protocolDeviceIcon(const QVariantMap &data);

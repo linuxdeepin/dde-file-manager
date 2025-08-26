@@ -15,11 +15,13 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #include <QRegularExpression>
 
 using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
+DFMBASE_USE_NAMESPACE
 
 /*!
  * \class ProtocolEntryFileEntity
@@ -39,13 +41,26 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
 QString ProtocolEntryFileEntity::displayName() const
 {
     QString displayName = datas.value(DeviceProperty::kDisplayName).toString();
+    const auto &alias = NPDeviceAliasManager::instance()->getAlias(targetUrl());
 
     QString host, share;
     bool isSmb = dfmbase::DeviceUtils::parseSmbInfo(displayName, host, share);
-    if (isSmb)
-        displayName = tr("%1 on %2").arg(share).arg(host);
+    if (isSmb) {
+        if (alias.isEmpty())
+            displayName = tr("%1 on %2").arg(share, host);
+        else
+            displayName = tr("%1 on %2").arg(share, alias);
+    } else if (!alias.isEmpty()) {
+        displayName.replace(targetUrl().host(), alias);
+    }
 
     return displayName;
+}
+
+QString ProtocolEntryFileEntity::editDisplayText() const
+{
+    const auto &alias = NPDeviceAliasManager::instance()->getAlias(targetUrl());
+    return alias.isEmpty() ? targetUrl().host() : alias;
 }
 
 QIcon ProtocolEntryFileEntity::icon() const
@@ -135,7 +150,11 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
 
     target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
-    if (DFMBASE_NAMESPACE::ProtocolUtils::isSMBFile(target))
-        return DFMBASE_NAMESPACE::DeviceUtils::getSambaFileUriFromNative(target);
-    return target;
+    auto url = DeviceUtils::parseNetSourceUrl(target);
+    return url.isValid() ? url : target;
+}
+
+bool ProtocolEntryFileEntity::renamable() const
+{
+    return DFMBASE_NAMESPACE::NPDeviceAliasManager::instance()->canSetAlias(targetUrl());
 }

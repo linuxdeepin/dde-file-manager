@@ -42,9 +42,9 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
         fmCritical() << "Job handle pointer is null, cannot set work arguments";
         return;
     }
-    
+
     fmInfo() << "Setting work arguments - sources count:" << sources.count() << "target:" << target;
-    
+
     connect(this, &AbstractWorker::startWork, this, &AbstractWorker::doWork);
     workData.reset(new WorkerData);
     workData->dirSize = FileUtils::getMemoryPageSize();
@@ -212,15 +212,21 @@ FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
  */
 void AbstractWorker::startCountProccess()
 {
-    if (!updateProgressTimer)
-        updateProgressTimer.reset(new UpdateProgressTimer());
     if (!updateProgressThread)
         updateProgressThread.reset(new QThread);
-    updateProgressTimer->moveToThread(updateProgressThread.data());
+    
+    // Move existing timer to the new thread if it exists
+    if (updateProgressTimer) {
+        updateProgressTimer->moveToThread(updateProgressThread.data());
+    }
+    
     updateProgressThread->start();
-    connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
-    connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
-    emit startUpdateProgressTimer();
+    
+    if (updateProgressTimer) {
+        connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
+        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
+        emit startUpdateProgressTimer();
+    }
 }
 /*!
  * \brief AbstractWorker::statisticsFilesSize statistics source files size
@@ -248,6 +254,9 @@ bool AbstractWorker::statisticsFilesSize()
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(firstUrl);
         isSourceFileLocal = fsType.startsWith("ext");
     }
+
+    // Set workData flags for use in DoCopyFileWorker
+    workData->isSourceFileLocal = isSourceFileLocal;
 
     if (isSourceFileLocal) {
         fmDebug() << "Using synchronous file size calculation for local files";
@@ -317,7 +326,6 @@ bool AbstractWorker::initArgs()
 void AbstractWorker::endWork()
 {
     setStat(AbstractJobHandler::JobState::kStopState);
-
     Q_EMIT removeTaskWidget();
 
     // send finish signal
@@ -335,7 +343,7 @@ void AbstractWorker::endWork()
     fmInfo() << "Work completed - job type:" << static_cast<int>(jobType)
              << "completed files:" << completeSourceFiles.count()
              << "time elapsed:" << timeElapsed.elapsed() << "ms";
-             
+
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
@@ -417,10 +425,10 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
     emit errorNotify(info);
 
-    fmWarning() << "Work error occurred - job type:" << static_cast<int>(jobType) 
-                << "error type:" << static_cast<int>(error) 
-                << "source:" << from 
-                << "target:" << to 
+    fmWarning() << "Work error occurred - job type:" << static_cast<int>(jobType)
+                << "error type:" << static_cast<int>(error)
+                << "source:" << from
+                << "target:" << to
                 << "message:" << errorMsg;
 }
 
@@ -505,8 +513,8 @@ void AbstractWorker::checkRetry()
 bool AbstractWorker::doWork()
 {
     timeElapsed.start();
-    fmInfo() << "Starting work - job type:" << static_cast<int>(jobType) 
-             << "sources count:" << sourceUrls.count() 
+    fmInfo() << "Starting work - job type:" << static_cast<int>(jobType)
+             << "sources count:" << sourceUrls.count()
              << "target:" << targetUrl;
 
     // 执行拷贝的业务逻辑
@@ -560,7 +568,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
     workData->dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
     allFilesList = sizeInfo->allFiles;
-    
+
     fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
 }
 
@@ -577,6 +585,9 @@ AbstractWorker::AbstractWorker(QObject *parent)
         speedtimer = new QElapsedTimer();
         speedtimer->start();
     }
+    
+    // Create updateProgressTimer in main thread to avoid cross-thread destruction warning
+    updateProgressTimer.reset(new UpdateProgressTimer());
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
@@ -648,7 +659,7 @@ void AbstractWorker::saveOperations()
             values.insert("redosources", QUrl::toStringList(completeSourceFiles));
             values.insert("redotargets", QUrl::toStringList(redoTargets));
             dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
-            
+
             fmDebug() << "Saved operation for undo/redo - job type:" << static_cast<int>(jobType);
         }
     }
@@ -677,13 +688,18 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->wait();
     }
 
-    // 添加对 updateProgressThread 的清理
+    // Stop timer before thread cleanup to avoid cross-thread timer warning
+    if (updateProgressTimer) {
+        updateProgressTimer->stopTimer();
+    }
+
+    // Clean up updateProgressThread
     if (updateProgressThread) {
         if (updateProgressThread->isRunning()) {
             updateProgressThread->quit();
             updateProgressThread->wait();
         }
-        updateProgressThread.reset();  // 或者显式清理智能指针
+        updateProgressThread.reset();
     }
 
     if (speedtimer) {
@@ -709,6 +725,6 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
     connect(this, &AbstractWorker::speedUpdatedNotify, handle.get(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
     connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
     connect(this, &AbstractWorker::requestTaskDailog, handle.get(), &AbstractJobHandler::requestTaskDailog, Qt::QueuedConnection);
-    
+
     fmDebug() << "Initialized handle connections";
 }

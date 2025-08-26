@@ -41,9 +41,10 @@ public:
             : closeflag(other.closeflag), isdir(other.isdir), frominfo(other.frominfo), toinfo(other.toinfo), buffer(other.buffer), size(other.size), currentpos(other.currentpos), permission(other.permission)
         {
         }
-        ~BlockFileCopyInfo(){
+        ~BlockFileCopyInfo()
+        {
             if (buffer) {
-                delete []buffer;
+                delete[] buffer;
                 buffer = nullptr;
             }
         }
@@ -54,12 +55,10 @@ public:
     quint16 dirSize { 0 };   // size of dir
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag
     QMap<AbstractJobHandler::JobErrorType, AbstractJobHandler::SupportAction> errorOfAction;
-    std::atomic_bool needSyncEveryRW { false };
     std::atomic_bool exBlockSyncEveryWrite { false };
-    std::atomic_bool isFsTypeVfat { false };
     std::atomic_bool isBlockDevice { false };
-    std::atomic_bool expandDiskSync { true };
-    std::atomic_bool copyFileRange { false };
+    std::atomic_bool isSourceFileLocal { false };   // source file on local device
+    std::atomic_bool isTargetFileLocal { false };   // target file on local device
     std::atomic_int64_t currentWriteSize { 0 };
     QAtomicInteger<qint64> zeroOrlinkOrDirWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
     QAtomicInteger<qint64> blockRenameWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory

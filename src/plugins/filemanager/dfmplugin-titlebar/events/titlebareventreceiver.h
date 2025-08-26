@@ -38,6 +38,7 @@ public slots:
     void handleCloseTabs(const QUrl &url);
     void handleSetTabAlias(const QUrl &url, const QString &name);
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
+    void handleUpdateCrumb(const QUrl &url);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

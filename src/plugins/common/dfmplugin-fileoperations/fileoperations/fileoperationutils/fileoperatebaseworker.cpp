@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperatebaseworker.h"
+#include "dfm-base/dfm_log_defines.h"
 #include "filenameutils.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "workerdata.h"
@@ -62,6 +63,9 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         return currentAction;
     }
+
+    fmWarning() << "File operation error - from:" << urlFrom << "to:" << urlTo 
+                << "error:" << static_cast<int>(error) << "message:" << errorMsg;
 
     // 发送错误处理 阻塞自己
     emitErrorNotify(urlFrom, urlTo, error, isTo, quintptr(this), errorMsg, errorMsgAll);
@@ -205,10 +209,13 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
-        fmInfo() << "current free bytes = " << freeBytes << ", write size = " << sourceFilesTotalSize;
+        fmInfo() << "Disk space check - available:" << freeBytes << "required:" << sourceFilesTotalSize;
+        
         action = AbstractJobHandler::SupportAction::kNoAction;
-        if (sourceFilesTotalSize >= freeBytes)
+        if (sourceFilesTotalSize >= freeBytes) {
+            fmWarning() << "Insufficient disk space - required:" << sourceFilesTotalSize << "available:" << freeBytes;
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
+        }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
@@ -242,7 +249,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
-            fmWarning() << "delete file error, case: " << localFileHandler->errorString();
+            fmWarning() << "Delete file failed - file:" << fromUrl << "error:" << localFileHandler->errorString();
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                           localFileHandler->errorString());
         }
@@ -644,25 +651,11 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
     if (!checkFileSize(fromSize, fromInfo->uri(),
                        toInfo->uri(), skip))
         return false;
-
-    if (jobType == AbstractJobHandler::JobType::kCutType)
-        return doCopyOtherFile(fromInfo, toInfo, skip);
-
-    if (isSourceFileLocal && isTargetFileLocal && !workData->signalThread) {
-        while (bigFileCopy && !isStopped()) {
-            QThread::msleep(10);
-        }
-        if (fromSize > bigFileSize && FileUtils::isSameDevice(fromInfo->uri(), targetUrl)) {
-            bigFileCopy = true;
-            auto result = doCopyLocalByRange(fromInfo, toInfo, skip);
-            bigFileCopy = false;
-            return result;
-        }
-        return doCopyLocalFile(fromInfo, toInfo);
-    }
-
-    // copy other file or cut file
-    return doCopyOtherFile(fromInfo, toInfo, skip);
+    bool isSameLocalDevice = isSourceFileLocal && isTargetFileLocal
+            && FileUtils::isSameDevice(fromInfo->uri(), targetUrl);
+    return isSameLocalDevice
+            ? doCopyLocalByRange(fromInfo, toInfo, skip)
+            : doCopyOtherFile(fromInfo, toInfo, skip);
 }
 
 bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip)
@@ -685,6 +678,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
                 && ProtocolUtils::isMTPFile(fileUrl))
                 errstr = tr("The file name or the path is too long!");
 
+            fmWarning() << "Create directory failed - dir:" << toInfo->uri() << "error:" << errstr;
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kMkdirError, true,
                                           errstr);
@@ -715,7 +709,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->uri(), &error);
     if (!iterator) {
-        fmCritical() << "create dir's iterator failed, case : " << error;
+        fmCritical() << "Create directory iterator failed - dir:" << fromInfo->uri() << "error:" << error;
         doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
@@ -766,40 +760,54 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     return true;
 }
 
-void FileOperateBaseWorker::waitThreadPoolOver()
-{
-    // wait all thread start
-    if (!isStopped() && threadPool) {
-        QThread::msleep(10);
-    }
-    // wait thread pool copy local file or copy big file over
-    while (threadPool && threadPool->activeThreadCount() > 0) {
-        QThread::msleep(10);
-    }
-}
+// waitThreadPoolOver method removed - no longer needed without multi-threading
 
 void FileOperateBaseWorker::initCopyWay()
 {
-    // local file useing least 8 thread
-    if (isSourceFileLocal && isTargetFileLocal) {
-        countWriteType = CountWriteSizeType::kCustomizeType;
-        workData->signalThread = (sourceFilesCount > 1 || sourceFilesTotalSize > FileOperationsUtils::bigFileSize()) && FileUtils::getCpuProcessCount() > 4
-                ? false
-                : true;
-        if (!workData->signalThread)
-            threadCount = FileUtils::getCpuProcessCount() >= 8 ? FileUtils::getCpuProcessCount() : 8;
-    }
+    // Simplified: always use single thread for file copying
+    countWriteType = CountWriteSizeType::kCustomizeType;
+    workData->signalThread = true;   // Force single thread
 
     if (ProtocolUtils::isSMBFile(targetUrl)
         || ProtocolUtils::isFTPFile(targetUrl)
-        || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize))
+        || workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCountProgressCustomize)) {
         countWriteType = CountWriteSizeType::kCustomizeType;
-
-    if (!workData->signalThread) {
-        initThreadCopy();
+    } else if (shouldUseBlockWriteType()) {
+        // Use block device write counting for specific scenarios
+        countWriteType = CountWriteSizeType::kWriteBlockType;
+        fmDebug() << "Using kWriteBlockType for progress counting";
     }
 
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
+}
+
+/*!
+ * \brief FileOperateBaseWorker::shouldUseBlockWriteType Determine if should use block write type for progress counting
+ * \return true if should use kWriteBlockType, false otherwise
+ */
+bool FileOperateBaseWorker::shouldUseBlockWriteType() const
+{
+    // Only consider block write type when copying to removable devices
+    if (!targetIsRemovable || !workData->isBlockDevice || !workData->exBlockSyncEveryWrite) {
+        return false;
+    }
+
+    // Get target filesystem type
+    const QString &targetFsType = dfmio::DFMUtils::fsTypeFromUrl(targetOrgUrl);
+
+    // Condition 1: Target filesystem is fuse
+    if (targetFsType.toLower().contains("fuse")) {
+        fmDebug() << "Using block write type: target filesystem is fuse (" << targetFsType << ")";
+        return true;
+    }
+
+    // Condition 2: Both source and target files are on devices (not local)
+    if (!isSourceFileLocal && !isTargetFileLocal) {
+        fmDebug() << "Using block write type: both source and target are on devices";
+        return true;
+    }
+
+    return false;
 }
 
 QUrl FileOperateBaseWorker::trashInfo(const DFileInfoPointer &fromInfo)
@@ -848,22 +856,6 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
 }
 
-void FileOperateBaseWorker::initThreadCopy()
-{
-    for (int i = 0; i < threadCount; i++) {
-        QSharedPointer<DoCopyFileWorker> copy(new DoCopyFileWorker(workData));
-        // todo init new
-        connect(copy.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::retryErrSuccess, this, &FileOperateBaseWorker::retryErrSuccess, Qt::DirectConnection);
-        connect(copy.data(), &DoCopyFileWorker::skipCopyLocalBigFile, this, &FileOperateBaseWorker::skipMemcpyBigFile, Qt::DirectConnection);
-        threadCopyWorker.append(copy);
-    }
-
-    threadPool.reset(new QThreadPool);
-    threadPool->setMaxThreadCount(threadCount);
-}
-
 void FileOperateBaseWorker::initSignalCopyWorker()
 {
     if (!copyOtherFileWorker) {
@@ -884,62 +876,100 @@ QUrl FileOperateBaseWorker::createNewTargetUrl(const DFileInfoPointer &toInfo, c
     return newTargetUrl;
 }
 
-bool FileOperateBaseWorker::doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo)
-{
-    if (!stateCheck())
-        return false;
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QtConcurrent::run(threadPool.data(), threadCopyWorker[threadCopyFileCount % threadCount].data(),
-                      static_cast<void (DoCopyFileWorker::*)(const DFileInfoPointer, const DFileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
-                      fromInfo, toInfo);
-#else
-    QtConcurrent::run(threadPool.data(), [this, fromInfo, toInfo]() {
-        threadCopyWorker[threadCopyFileCount % threadCount]->doFileCopy(fromInfo, toInfo);
-    });
-#endif
-
-    threadCopyFileCount++;
-    return true;
-}
-
 bool FileOperateBaseWorker::doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
-    waitThreadPoolOver();
     initSignalCopyWorker();
     const QString &targetUrl = toInfo->uri().toString();
 
     FileUtils::cacheCopyingFileUrl(targetUrl);
     DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    return nextDo == DoCopyFileWorker::NextDo::kDoCopyNext;
+
+    if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
+        return true;
+    } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
+        // For same-device local copies, copy_file_range should work
+        // If it returns fallback, this indicates a system issue that should be reported
+        fmWarning() << "copy_file_range failed for same-device local copy, system error"
+                    << "from:" << fromInfo->uri() << "to:" << toInfo->uri();
+
+        // Show error dialog like in doCopyFileByRange
+        // We don't have direct access to errno here, but we know copy_file_range failed
+        auto lastError = "copy_file_range system call failed";
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
+                fromInfo->uri(), toInfo->uri(),
+                AbstractJobHandler::JobErrorType::kWriteError,
+                false,
+                lastError);
+
+        if (skip) {
+            *skip = (action == AbstractJobHandler::SupportAction::kSkipAction);
+        }
+
+        return action == AbstractJobHandler::SupportAction::kNoAction;
+    } else {
+        // kDoCopyErrorAddCancel or other error cases
+        return false;
+    }
 }
 
 bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     initSignalCopyWorker();
-    const QString &targetUrl = toInfo->uri().toString();
+    const QUrl &targetFileUrl = toInfo->uri();
 
-    bool ok { false };
-    if (workData->copyFileRange) {
-        ok = doCopyLocalByRange(fromInfo, toInfo, skip);
-        return ok;
-    }
+    FileUtils::cacheCopyingFileUrl(targetFileUrl);
 
-    FileUtils::cacheCopyingFileUrl(targetUrl);
+    bool ok = false;
     const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
-    if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
+
+    // Strategy 1: Try copy_file_range first, but only for same device copies
+    // copy_file_range only works within the same filesystem (e.g., U盘 to U盘)
+    bool isSameDevice = FileUtils::isSameDevice(fromInfo->uri(), this->targetUrl);
+    if (isSameDevice) {
+        DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
+        if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
+            ok = true;
+        } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel) {
+            FileUtils::removeCopyingFileUrl(targetFileUrl);
+            return false;
+        } else if (nextDo == DoCopyFileWorker::NextDo::kDoCopyFallback) {
+            fmDebug() << "copy_file_range fallback needed for same device, trying other methods";
+
+            // Clean up any partially created target file before fallback
+            // copy_file_range may have created an empty file that needs cleanup
+            QString targetPath = toInfo->uri().path();
+            if (QFile::exists(targetPath)) {
+                if (QFile::remove(targetPath)) {
+                    fmDebug() << "Successfully cleaned up partially created target file:" << targetPath;
+                } else {
+                    fmWarning() << "Failed to cleanup partially created target file:" << targetPath;
+                }
+            }
+            // Continue to fallback methods
+        }
+    } else {
+        fmDebug() << "Cross-device copy detected, skipping copy_file_range";
+    }
+    // If copy_file_range failed but not cancelled, fallback to other methods
+
+    // Strategy 2: Use doCopyFilePractically for large files, sync mode, or unsupported dfmio
+    if (!ok && (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite)) {
+        DoCopyFileWorker::NextDo nextDo;
         do {
             nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         } while (nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
         ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
-    } else {
+    }
+
+    // Strategy 3: Fallback to dfmio copy for small files
+    if (!ok && !workData->exBlockSyncEveryWrite) {
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
     }
+
     if (ok)
-        syncFiles.append(targetUrl);
-    FileUtils::removeCopyingFileUrl(targetUrl);
+        syncFiles.append(targetFileUrl);
+    FileUtils::removeCopyingFileUrl(targetFileUrl);
 
     return ok;
 }
@@ -1200,7 +1230,7 @@ void FileOperateBaseWorker::determineCountProcessType()
     auto device = DFMUtils::deviceNameFromUrl(targetOrgUrl);
     if (device.startsWith("/dev/")) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
-        isTargetFileExBlock = false;
+        workData->isTargetFileLocal = isTargetFileLocal;   // Set workData flag
         fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
         if (!isTargetFileLocal) {
             blocakTargetRootPath = rootPath;
@@ -1229,10 +1259,11 @@ void FileOperateBaseWorker::determineCountProcessType()
 
                         if (targetIsRemovable) {
                             workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            workData->expandDiskSync = FileOperationsUtils::expandDiskSync();
-                            countWriteType = !workData->expandDiskSync || workData->exBlockSyncEveryWrite ? CountWriteSizeType::kCustomizeType
-                                                                             : CountWriteSizeType::kWriteBlockType;
-                            targetDeviceStartSectorsWritten = workData->exBlockSyncEveryWrite ? 0 : getSectorsWritten();
+                            // CRITICAL FIX: Always record current sector count as baseline
+                            // The block device stat shows CUMULATIVE sectors written since boot.
+                            // Setting to 0 would incorrectly count ALL device writes, not just our copy operation.
+                            // For accurate progress: (current_sectors - baseline_sectors) * sector_size = our_copy_progress
+                            targetDeviceStartSectorsWritten = getSectorsWritten();
 
                             workData->isBlockDevice = true;
                         }
@@ -1248,29 +1279,26 @@ void FileOperateBaseWorker::determineCountProcessType()
             }
         }
         fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
-    } else {
-        // 使用file_copy_range只能是cifs挂载，使用gvfs挂载、vfatU盘使用都很慢，
-        // 使用g_file_copy拷贝到外设和协议设备都很慢，并且打断退出很长时间
-        workData->copyFileRange = jobType == AbstractJobHandler::JobType::kCopyType
-                && FileUtils::isSameDevice(sourceUrls.first(), targetOrgUrl)
-                && DFMUtils::fsTypeFromUrl(targetOrgUrl) == "cifs";
     }
 }
 
 void FileOperateBaseWorker::syncFilesToDevice()
 {
-    if (isTargetFileLocal || !workData->expandDiskSync)
+    // Only sync when copying to external devices and sync is enabled
+    if (isTargetFileLocal || !workData->exBlockSyncEveryWrite)
         return;
 
-    fmInfo() << "start sync all file to extend block device!!!!! target : " << targetUrl;
-    for (const auto &url : syncFiles) {
-        std::string stdStr = url.path().toUtf8().toStdString();
+    fmInfo() << "Start sync files to external device - target:" << targetUrl;
+
+    // Optimized: only sync once per filesystem instead of per file
+    if (!syncFiles.isEmpty()) {
+        std::string stdStr = syncFiles.first().path().toUtf8().toStdString();
         int tofd = open(stdStr.data(), O_RDONLY);
         if (-1 != tofd) {
-            syncfs(tofd);
+            syncfs(tofd);   // Single syncfs call for the entire filesystem
             close(tofd);
         }
     }
-    fmInfo() << "end sync all file to extend block device!!!!! target : " << targetUrl;
-    // 这里本来是拷贝到了手动分区的盘，不需要后面去等待同步计算进度结果
+
+    fmInfo() << "Sync files to external device completed - target:" << targetUrl;
 }

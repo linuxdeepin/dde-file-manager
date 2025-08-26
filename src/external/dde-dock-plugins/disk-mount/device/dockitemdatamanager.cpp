@@ -256,7 +256,8 @@ DockItemData DockItemDataManager::buildBlockItem(const QVariantMap &data)
         .iconName = iconName,
         .totalSize = data.value(GlobalServerDefines::DeviceProperty::kSizeTotal).toULongLong(),
         .usedSize = data.value(GlobalServerDefines::DeviceProperty::kSizeUsed).toULongLong(),
-        .sortKey = QString("00%1_00%2").arg(iconName).arg(displayName)
+        .sortKey = QString("00%1_00%2").arg(iconName).arg(displayName),
+        .isProtocolDevice = false
     };
 }
 
@@ -280,7 +281,8 @@ DockItemData DockItemDataManager::buildProtocolItem(const QVariantMap &data)
         .iconName = iconName,
         .totalSize = data.value(GlobalServerDefines::DeviceProperty::kSizeTotal).toULongLong(),
         .usedSize = data.value(GlobalServerDefines::DeviceProperty::kSizeUsed).toULongLong(),
-        .sortKey = QString("01%1_00%2").arg(iconName).arg(displayName)
+        .sortKey = QString("01%1_00%2").arg(iconName).arg(displayName),
+        .isProtocolDevice = true
     };
 }
 

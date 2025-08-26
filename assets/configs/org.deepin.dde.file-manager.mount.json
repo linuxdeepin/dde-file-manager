@@ -34,6 +34,17 @@
             "description":"Display device capacity as disk size (0) or file system size (1). The remaining values are treated as 0.",
             "permissions":"readwrite",
             "visibility":"public"
+        },
+        "aliasSupportedProtocolList": {
+            "value":["smb", "ftp", "sftp", "dav", "davs", "nfs"],
+            "serial":0,
+            "flags":[],
+            "name":"Network protocol device alias",
+            "name[zh_CN]":"网络协议设备别名",
+            "description[zh_CN]":"配置支持别名设置的网络协议",
+            "description":"Configures network protocols that support alias settings",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

@@ -189,3 +189,13 @@ void TitleBarEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QU
     fmDebug() << "Opening new tab for window id:" << windowId << "URL:" << url.toString();
     w->openNewTab(url);
 }
+
+void TitleBarEventReceiver::handleUpdateCrumb(const QUrl &url)
+{
+    auto titlebarWidges = TitleBarHelper::titlebars();
+    for (auto w : titlebarWidges) {
+        auto crumbBar = w->titleCrumbBar();
+        if (crumbBar)
+            crumbBar->onUrlChanged(crumbBar->lastUrl());
+    }
+}

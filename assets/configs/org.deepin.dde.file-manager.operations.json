@@ -14,13 +14,13 @@
             "visibility":"private"
         },
         "file.operation.blockeverysync": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Safe synchronization mode",
             "name[zh_CN]":"安全同步模式",
-            "description[zh_CN]":"安全同步模式是拷贝到外设块设备时，每次写入执行同步到设备。高性能模式是拷贝到外设块设备时，每个任务完成后在进行同步到设备。默认是高性能模式（即关闭安全同步模式）。",
-            "description":"Safe synchronization mode is when copying to a peripheral block device, synchronize to the device for each write. High-performance mode is to synchronize to the device after each task is completed when copying to a peripheral block device.Default is high performance mode (i.e. turn off safe synchronization mode).",
+            "description[zh_CN]":"安全同步模式是拷贝到外设块设备时，每次写入执行同步到设备。高性能模式是拷贝到外设块设备时，每个任务完成后在进行同步到设备。",
+            "description":"Safe synchronization mode is when copying to a peripheral block device, synchronize to the device for each write. High-performance mode is to synchronize to the device after each task is completed when copying to a peripheral block device.",
             "permissions":"readwrite",
             "visibility":"private"
         },
@@ -32,17 +32,6 @@
             "name[zh_CN]":"上报文件粘贴事件结果",
             "description[zh_CN]":"打开此配置，上报粘贴事件的结果到指定位置",
             "description":"Open this configuration and report the results of the paste event to the specified location.",
-            "permissions":"readwrite",
-            "visibility":"private"
-        },
-        "file.operation.expanddisksync": {
-            "value":true,
-            "serial":0,
-            "flags":[],
-            "name":"Expand Disk Sync",
-            "name[zh_CN]":"扩展磁盘同步",
-            "description[zh_CN]":"对拷贝到扩展磁盘上的文件执行同步",
-            "description":"Perform synchronization on files copied to the extended disk",
             "permissions":"readwrite",
             "visibility":"private"
         }

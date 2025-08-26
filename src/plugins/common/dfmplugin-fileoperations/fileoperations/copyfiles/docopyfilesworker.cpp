@@ -42,7 +42,7 @@ bool DoCopyFilesWorker::doWork()
     if (sourceUrls.isEmpty() && workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote)) {
         sourceUrls = dfmbase::ClipBoard::instance()->getRemoteUrls();
         emit requestTaskDailog();
-        fmInfo() << "remote copy source urls list:" << sourceUrls;
+        fmInfo() << "Remote copy initiated - source count:" << sourceUrls.count();
     }
     // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
@@ -61,6 +61,7 @@ bool DoCopyFilesWorker::doWork()
     initCopyWay();
 
     // do main process
+    fmInfo() << "Start copying files - count:" << sourceUrls.count();
     if (!copyFiles()) {
         endWork();
         return false;
@@ -70,6 +71,7 @@ bool DoCopyFilesWorker::doWork()
     syncFilesToDevice();
 
     // end
+    fmInfo() << "Copy operation completed successfully";
     endWork();
 
     return true;
@@ -77,9 +79,6 @@ bool DoCopyFilesWorker::doWork()
 
 void DoCopyFilesWorker::stop()
 {
-    // clean muilt thread copy file info queue
-    threadCopyFileCount = 0;
-
     FileOperateBaseWorker::stop();
 }
 
@@ -89,27 +88,27 @@ bool DoCopyFilesWorker::initArgs()
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
-        fmCritical() << "Copy operation failed: source file count is 0";
+        fmCritical() << "Copy operation failed: no source files";
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        fmCritical() << "Copy operation failed: target URL is invalid";
+        fmCritical() << "Copy operation failed: invalid target URL";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo.reset(new DFileInfo(targetUrl));
     if (!targetInfo) {
         // pause and emit error msg
-        fmCritical() << "Copy operation failed: cannot create target file info for URL:" << targetUrl;
+        fmCritical() << "Copy operation failed: cannot create target file info";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo->initQuerier();
     if (!targetInfo->exists()) {
         // pause and emit error msg
-        fmCritical() << "Copy operation failed: target directory does not exist, URL:" << targetUrl;
+        fmCritical() << "Copy operation failed: target directory does not exist";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
@@ -117,20 +116,11 @@ bool DoCopyFilesWorker::initArgs()
     if (targetInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool())
         targetOrgUrl = QUrl::fromLocalFile(targetInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget).toString());
 
-    workData->needSyncEveryRW = ProtocolUtils::isRemoteFile(targetUrl);
-    if (!workData->needSyncEveryRW) {
-        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(targetUrl);
-        workData->isFsTypeVfat = fsType.contains("vfat");
-        workData->needSyncEveryRW = fsType == "cifs" || fsType == "vfat";
-    }
-
     return true;
 }
 
 void DoCopyFilesWorker::endWork()
 {
-    waitThreadPoolOver();
-
     // deal target files
     for (DFileInfoPointer info : precompleteTargetFileInfo) {
         info->initQuerier();
@@ -157,7 +147,7 @@ bool DoCopyFilesWorker::copyFiles()
         DFileInfoPointer fileInfo(new DFileInfo(url));
         if (!targetInfo) {
             // pause and emit error msg
-            fmCritical() << "Copy operation failed: file info is null - sourceInfo=" << (fileInfo == nullptr) << "targetInfo=" << (targetInfo == nullptr);
+            fmCritical() << "Copy operation failed: target info is null";
             const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
                 return false;
@@ -170,6 +160,7 @@ bool DoCopyFilesWorker::copyFiles()
         if (fileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
+                fmWarning() << "Cannot copy directory to itself or parent - from:" << url << "to:" << targetUrl;
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
                 return false;
             }

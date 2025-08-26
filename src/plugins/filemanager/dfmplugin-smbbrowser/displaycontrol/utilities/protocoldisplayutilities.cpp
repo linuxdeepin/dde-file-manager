@@ -6,6 +6,7 @@
 #include "typedefines.h"
 #include "displaycontrol/datahelper/virtualentrydbhandler.h"
 #include "displaycontrol/info/protocolvirtualentryentity.h"
+#include "displaycontrol/protocoldevicedisplaymanager.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -16,6 +17,7 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DMenu>
@@ -54,8 +56,11 @@ namespace AcName {
 inline constexpr char kAcSidebarDeviceMenu[] { "sidebar_deviceitem_menu" };
 }
 
+Q_GLOBAL_STATIC(QSet<QUrl>, entryUrlList)
+
 void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
 {
+    entryUrlList->insert(vEntryUrl);
     const char *kTransContext = "dfmplugin_computer::ComputerItemWatcher";
     dpfSlotChannel->push(kComputerEventNS, kCptSlotAdd,
                          qApp->translate(kTransContext, "Disks"), vEntryUrl, 1, false);
@@ -66,13 +71,15 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_Group", "Group_Network" },
         { "Property_Key_SubGroup", "" },
         { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_EditDisplayText", info->editDisplayText() },
         { "Property_Key_Icon", QIcon::fromTheme(info->fileIcon().name() + "-symbolic") },
         { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(Qt::ItemIsEnabled | Qt::ItemIsSelectable) },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable) },
         { "Property_Key_Ejectable", false },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(ContextMenuCallback(sidebarMenuCall)) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(ItemClickedActionCallback(sidebarItemClicked)) },
         { "Property_Key_CallbackFindMe", QVariant::fromValue(FindMeCallback(sidebarUrlEquals)) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(RenameCallback(sidebarItemRename)) },
         { "Property_Key_VisiableControl", "mounted_share_dirs" },
         { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
         //        { "Property_Key_ReportName", reportName }
@@ -85,6 +92,7 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
 
 void computer_sidebar_event_calls::callItemRemove(const QUrl &vEntryUrl)
 {
+    entryUrlList->remove(vEntryUrl);
     dpfSlotChannel->push(kComputerEventNS, kCptSlotRemove,
                          vEntryUrl);
 
@@ -113,6 +121,7 @@ void computer_sidebar_event_calls::callComputerRefresh()
         QUrl url(smb);
         url.setScheme("vsmb");
         dpfSlotChannel->push(kSidebarEventNS, kSbSlotRemove, url);
+        entryUrlList->remove(protocol_display_utilities::makeVEntryUrl(smb));
     });
 
     dpfSlotChannel->push(kComputerEventNS, kCptSlotRefresh);
@@ -155,9 +164,11 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
 
     auto act = m.exec(pos);
     if (act) {
-        //        QList<QUrl> urls { url };
-        //        dpfSignalDispatcher->publish("dfmplugin_computer", "signal_ReportLog_MenuData", act->text(), urls);
-        scene->triggered(act);
+        auto key = act->property(ActionPropertyKey::kActionID).toString();
+        if (key == "computer-rename")
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, smbUrl);
+        else
+            scene->triggered(act);
     }
 }
 
@@ -393,9 +404,9 @@ void secret_utils::forgetPasswordInSession(const QString &host)
 
     // 在会话集合中搜索密码
     GHashTable *query = g_hash_table_new_full(g_str_hash,
-                                                     g_str_equal,
-                                                     g_free,
-                                                     g_free);
+                                              g_str_equal,
+                                              g_free,
+                                              g_free);
     g_hash_table_insert(query, g_strdup("server"), g_strdup(host.toStdString().c_str()));
     g_hash_table_insert(query, g_strdup("protocol"), g_strdup("smb"));
 
@@ -428,4 +439,29 @@ void secret_utils::forgetPasswordInSession(const QString &host)
     g_object_unref(service);
     if (query)
         g_hash_table_unref(query);
+}
+
+void computer_sidebar_event_calls::sidebarItemRename(quint64 windowId, const QUrl &url, const QString &name)
+{
+    QUrl smbUrl(url);
+    smbUrl.setScheme("smb");
+    NPDeviceAliasManager::instance()->setAlias(smbUrl, name);
+    // Update related sidebar items
+    for (const auto &entryUrl : std::as_const(*entryUrlList)) {
+        auto stdSmb = entryUrl.path().remove("." + QString(kVEntrySuffix));
+        QUrl smbUrl(stdSmb);
+        if (smbUrl.host() != url.host())
+            continue;
+
+        DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
+        QVariantMap map {
+            { "Property_Key_DisplayName", info->displayName() },
+            { "Property_Key_EditDisplayText", info->editDisplayText() },
+            { "Property_Key_Editable", true }
+        };
+
+        smbUrl.setScheme("vsmb");
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", smbUrl, map);
+    }
+    dpfSlotChannel->push(kComputerEventNS, kCptSlotRefresh);
 }

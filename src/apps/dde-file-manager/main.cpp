@@ -348,6 +348,7 @@ int main(int argc, char *argv[])
     // BUG-278055
     initLogSetting();
 
+    a.setLayoutDirection(Qt::LeftToRight);
     a.setOrganizationName(ORGANIZATION_NAME);
     a.loadTranslator();
     a.setApplicationDisplayName(a.translate("Application", "File Manager"));

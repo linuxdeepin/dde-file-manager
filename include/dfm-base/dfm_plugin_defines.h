@@ -22,7 +22,7 @@ inline constexpr std::initializer_list<const char *> kCommon {
 inline constexpr std::initializer_list<const char *> kCommonVirtual {
     "dfmplugin-appendcompress", "dfmplugin-bluetooth", "dfmplugin-extensionimpl",
     "dfmplugin-global", "dfmplugin-openwith", "dfmplugin-reportlog",
-    "dfmplugin-testing", "dfmplugin-vaultassist"
+    "dfmplugin-testing", "dfmplugin-vaultassist", "dfmplugin-shred"
 };
 inline constexpr std::initializer_list<const char *> kFileManager {
     "dfmplugin-core", "dfmplugin-optical", "dfmplugin-computer",

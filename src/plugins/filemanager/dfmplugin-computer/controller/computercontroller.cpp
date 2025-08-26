@@ -24,6 +24,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -135,14 +136,17 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     Q_UNUSED(winId);
 
     QString newName(name);
-    if (newName.trimmed().isEmpty()) {
-        fmInfo() << "empty name is inputed" << name << ", ignore rename action." << url;
-        return;
-    }
-
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     if (!info) {
         fmWarning() << "Failed to create entry file info for URL:" << url.toString();
+        return;
+    }
+
+    if (doSetProtocolDeviceAlias(info, newName))
+        return;
+
+    if (newName.trimmed().isEmpty()) {
+        fmInfo() << "empty name is inputed" << name << ", ignore rename action." << url;
         return;
     }
 
@@ -239,16 +243,16 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
     }
 
     Application::genericSetting()->setValue(kAliasGroupName, kAliasItemName, list);
+    Q_EMIT updateItemAlias(info->urlOf(UrlInfoType::kUrl), alias, false);
+}
 
-    // update sidebar and computer display
-    QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
-    QVariantMap map {
-        { "Property_Key_DisplayName", sidebarName },
-        { "Property_Key_Editable", true }
-    };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", info->urlOf(UrlInfoType::kUrl), map);
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Tab_SetAlias", info->targetUrl(), displayAlias);
-    Q_EMIT updateItemAlias(info->urlOf(UrlInfoType::kUrl));
+bool ComputerController::doSetProtocolDeviceAlias(DFMEntryFileInfoPointer info, const QString &alias)
+{
+    if (!NPDeviceAliasManager::instance()->setAlias(info->targetUrl(), alias))
+        return false;
+
+    Q_EMIT updateItemAlias(info->urlOf(UrlInfoType::kUrl), alias, true);
+    return true;
 }
 
 void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
@@ -415,7 +419,7 @@ void ComputerController::actEject(const QUrl &url)
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
-            if (!ok  && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
+            if (!ok && err.code != DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
                 fmInfo() << "unmount protocol device failed: " << id << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }

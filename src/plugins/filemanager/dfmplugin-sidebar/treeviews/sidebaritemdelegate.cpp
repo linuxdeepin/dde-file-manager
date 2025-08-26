@@ -14,6 +14,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -53,6 +54,7 @@ static constexpr int kItemMargin = 10;
 static constexpr int kItemIconSize = 16;
 static constexpr int kEjectIconSize = 16;
 static constexpr int kEmptyItemSize = 10;
+static constexpr int kDefaultMaxLength = 40;
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 static constexpr int kCompactExpandIconSize = 10;
@@ -268,24 +270,34 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     SideBarItem *tgItem = sidebarModel->itemFromIndex(index);
     if (!tgItem)
         return nullptr;
-    auto sourceInfo = InfoFactory::create<FileInfo>(tgItem->url(), Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!sourceInfo)
-        return nullptr;
-    if (!sourceInfo->exists())
-        return nullptr;
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
     QLineEdit *qle = nullptr;
     if ((qle = dynamic_cast<QLineEdit *>(editor))) {
-        QRegularExpression regx(GlobalPrivate::kRegPattern);
-        QValidator *validator = new QRegularExpressionValidator(regx, qle);
-        qle->setValidator(validator);
+        if (!NPDeviceAliasManager::instance()->canSetAlias(tgItem->targetUrl())) {
+            QRegularExpression regx(GlobalPrivate::kRegPattern);
+            QValidator *validator = new QRegularExpressionValidator(regx, qle);
+            qle->setValidator(validator);
+        }
 
-        connect(qle, &QLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
-            onEditorTextChanged(text, sourceInfo);
+        connect(qle, &QLineEdit::textChanged, this, [this, tgItem](const QString &text) {
+            onEditorTextChanged(text, tgItem);
         });
     }
 
     return editor;
+}
+
+void SideBarItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    auto currEditor = qobject_cast<QLineEdit *>(editor);
+    if (currEditor && index.isValid()) {
+        DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+        SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
+        if (sidebarItem) {
+            const auto &info = sidebarItem->itemInfo();
+            currEditor->setText(info.editDisplayText.isEmpty() ? info.displayName : info.editDisplayText);
+        }
+    }
 }
 
 void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -353,24 +365,28 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
-void SideBarItemDelegate::onEditorTextChanged(const QString &text, const FileInfoPointer &info) const
+void SideBarItemDelegate::onEditorTextChanged(const QString &text, SideBarItem *item) const
 {
     QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
     if (!editor)
         return;
 
-    int maxLen = INT_MAX;
+    int maxLen = kDefaultMaxLength;
     bool useCharCount = false;
-    const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
-    if (fs.isEmpty()) {
-        const auto &url = info->urlOf(FileInfo::FileUrlInfoType::kUrl);
-        if (url.isLocalFile()) {
-            maxLen = NAME_MAX;
-            const auto &path = url.path();
-            useCharCount = path.isEmpty() ? false : FileUtils::supportLongName(url);
+
+    auto info = InfoFactory::create<FileInfo>(item->url(), Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (info && info->exists()) {
+        const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
+        if (fs.isEmpty()) {
+            const auto &url = info->urlOf(FileInfo::FileUrlInfoType::kUrl);
+            if (url.isLocalFile()) {
+                maxLen = NAME_MAX;
+                const auto &path = url.path();
+                useCharCount = path.isEmpty() ? false : FileUtils::supportLongName(url);
+            }
+        } else {
+            maxLen = FileUtils::supportedMaxLength(fs);
         }
-    } else {
-        maxLen = FileUtils::supportedMaxLength(fs);
     }
 
     QString dstText = text;

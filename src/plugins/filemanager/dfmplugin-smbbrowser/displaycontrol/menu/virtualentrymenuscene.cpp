@@ -35,6 +35,7 @@ static constexpr char kAggregatedForgetUnmountAll[] { "aggregated-forget" };
 // computer's actions
 static constexpr char kCptActMount[] { "computer-mount" };
 static constexpr char kCptActLogoutAndForget[] { "computer-logout-and-forget-passwd" };
+static constexpr char kCptActRename[] { "computer-rename" };
 static constexpr char kCptActProperty[] { "computer-property" };
 
 // static constexpr char kCptActOpen[] { "computer-open" };
@@ -143,9 +144,9 @@ void VirtualEntryMenuScene::updateState(QMenu *parent)
     QStringList visibleActions;
     if (d->aggregatedEntrySelected)
         visibleActions << kAggregatedUnmountAll << kAggregatedForgetUnmountAll
-                       << kVirtualEntryRemove;
+                       << kVirtualEntryRemove << kCptActRename;
     else if (d->seperatedEntrySelected)
-        visibleActions << kCptActMount << kVirtualEntryRemove << kCptActProperty;
+        visibleActions << kCptActMount << kVirtualEntryRemove << kCptActRename << kCptActProperty;
 
     if (!visibleActions.isEmpty())
         d->setActionVisible(visibleActions, parent);

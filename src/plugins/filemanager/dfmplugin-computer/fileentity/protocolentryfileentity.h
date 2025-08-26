@@ -19,6 +19,7 @@ public:
 
     // EntryFileEntity interface
     virtual QString displayName() const override;
+    virtual QString editDisplayText() const override;
     virtual QIcon icon() const override;
     virtual bool exists() const override;
     virtual bool showProgress() const override;
@@ -29,6 +30,9 @@ public:
     virtual quint64 sizeUsage() const override;
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
+    virtual bool renamable() const override;
+
+    QUrl netSourceUrl() const;
 };
 
 }

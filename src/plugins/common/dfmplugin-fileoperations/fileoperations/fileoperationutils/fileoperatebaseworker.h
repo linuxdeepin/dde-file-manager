@@ -83,19 +83,17 @@ public:
     bool checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);
 
 protected:
-    void waitThreadPoolOver();
     void initCopyWay();
+    bool shouldUseBlockWriteType() const;
     QUrl trashInfo(const DFileInfoPointer &fromInfo);
     QString fileOriginName(const QUrl &trashInfoUrl);
     void removeTrashInfo(const QUrl &trashInfoUrl);
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
-    void initThreadCopy();
     void initSignalCopyWorker();
     bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
     QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
-    bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
     bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
     bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
 
@@ -130,7 +128,6 @@ protected:
     QString blocakTargetRootPath;
     QList<QUrl> syncFiles;
 
-    std::atomic_int threadCopyFileCount { 0 };
     QList<DFileInfoPointer> cutAndDeleteFiles;
 };
 DPFILEOPERATIONS_END_NAMESPACE

@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <zlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 static const quint32 kMaxBufferLength { 1024 * 1024 * 1 };
 
@@ -114,9 +115,7 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!ret) {
             auto lastError = op->lastError().errorMsg();
-            fmWarning() << "file copy error, url from: " << fromUrl
-                        << " url to: " << toUrl
-                        << " error code: " << op->lastError().code() << " error msg: " << lastError;
+            fmWarning() << "DFMIO copy failed - from:" << fromUrl << "to:" << toUrl << "error:" << lastError;
 
             action = doHandleErrorAndWait(fromUrl, toUrl,
                                           AbstractJobHandler::JobErrorType::kDfmIoError, false, lastError);
@@ -149,18 +148,6 @@ void DoCopyFileWorker::progressCallback(int64_t current, int64_t total, void *pr
         data->data->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
     data->data->currentWriteSize += (current - data->data->everyFileWriteSize.value(data->copyFile));
     data->data->everyFileWriteSize.insert(data->copyFile, current);
-}
-
-void DoCopyFileWorker::syncBlockFile(const DFileInfoPointer toInfo)
-{
-    if (!workData->isBlockDevice)
-        return;
-    std::string stdStr = toInfo->uri().path().toUtf8().toStdString();
-    int tofd = open(stdStr.data(), O_RDONLY);
-    if (-1 != tofd) {
-        syncfs(tofd);
-        close(tofd);
-    }
 }
 
 /*!
@@ -211,36 +198,205 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
 {
     if (isStopped())
         return NextDo::kDoCopyErrorAddCancel;
+
     // emit current task url
     emit currentTask(fromInfo->uri(), toInfo->uri());
+
     // read ahead source file
     readAheadSourceFile(fromInfo);
-    // 创建文件的divice
+
+    // Check if we should use O_DIRECT mode (safe sync mode for local to external device)
+    // Use the existing isSourceFileLocal and isTargetFileLocal from base worker
+    bool useDirectMode = workData->exBlockSyncEveryWrite && !workData->isTargetFileLocal;
+    if (useDirectMode) {
+        // Use new O_DIRECT implementation for safe sync mode
+        return doCopyFileWithDirectIO(fromInfo, toInfo, skip);
+    } else {
+        // Use traditional DFMIO implementation for other cases
+        return doCopyFileTraditional(fromInfo, toInfo, skip);
+    }
+}
+
+/*!
+ * \brief DoCopyFileWorker::doCopyFileWithDirectIO Copy file using O_DIRECT mode for safe sync
+ * \param fromInfo Source file info
+ * \param toInfo Target file info
+ * \param skip Skip flag
+ * \return NextDo status
+ */
+DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
+{
+    QString sourcePath = fromInfo->uri().path();
+    QString destPath = toInfo->uri().path();
+
+    // Open source file
+    int srcFd = open(sourcePath.toLocal8Bit().constData(), O_RDONLY);
+    if (srcFd < 0) {
+        auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
+                                           AbstractJobHandler::JobErrorType::kOpenError, false,
+                                           QString("Failed to open source file: %1").arg(strerror(errno)));
+        return actionToNextDo(action, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong(), skip);
+    }
+
+    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+
+    // Open destination file with O_DIRECT
+    WriteMode preferredMode = WriteMode::Direct;
+    FileWriter writer = openDestinationFile(destPath, preferredMode);
+    if (writer.fd < 0) {
+        close(srcFd);
+        auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
+                                           AbstractJobHandler::JobErrorType::kOpenError, true,
+                                           QString("Failed to open destination file: %1").arg(strerror(errno)));
+        return actionToNextDo(action, fromSize, skip);
+    }
+
+    // Get optimal chunk size and ensure alignment
+    qint64 baseChunkSize = 1024 * 1024;   // 1M
+    qint64 chunkSize = ((baseChunkSize + writer.alignment - 1) / writer.alignment) * writer.alignment;
+
+    // Allocate aligned buffer
+    char *buffer = allocateAlignedBuffer(chunkSize, writer.alignment);
+    if (!buffer) {
+        close(srcFd);
+        close(writer.fd);
+        auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
+                                           AbstractJobHandler::JobErrorType::kProrogramError, false,
+                                           QString("Failed to allocate aligned buffer"));
+        return actionToNextDo(action, fromSize, skip);
+    }
+
+    qint64 copied = 0;
+    bool directModeActive = (writer.mode == WriteMode::Direct);
+    bool success = true;
+
+    while (copied < fromSize && !isStopped()) {
+        // Handle pause/resume
+        if (state == kPaused) {
+            if (!handlePauseResume(writer, destPath, skip)) {
+                success = false;
+                break;
+            }
+            // Seek source file to correct position after resume
+            if (lseek(srcFd, copied, SEEK_SET) < 0) {
+                success = false;
+                break;
+            }
+        }
+
+        if (isStopped()) {
+            success = false;
+            break;
+        }
+
+        qint64 remaining = fromSize - copied;
+        qint64 toRead = qMin(chunkSize, remaining);
+
+        // For O_DIRECT, ensure read size is aligned (except for the very last read)
+        if (writer.mode == WriteMode::Direct && toRead < chunkSize && toRead % writer.alignment != 0) {
+            toRead = ((toRead + writer.alignment - 1) / writer.alignment) * writer.alignment;
+            toRead = qMin(toRead, remaining);
+        }
+
+        ssize_t bytesRead = read(srcFd, buffer, toRead);
+        if (bytesRead < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            success = false;
+            break;
+        }
+
+        if (bytesRead == 0) {
+            break;   // EOF
+        }
+
+        // Only write the actual bytes we need
+        qint64 actualBytesToWrite = qMin((qint64)bytesRead, fromSize - copied);
+        ssize_t bytesWritten = 0;
+
+        while (bytesWritten < actualBytesToWrite && !isStopped()) {
+            ssize_t written = write(writer.fd, buffer + bytesWritten,
+                                    actualBytesToWrite - bytesWritten);
+            if (written < 0) {
+                if (errno == EINTR) {
+                    continue;
+                }
+
+                // Fallback: If O_DIRECT write fails, remove O_DIRECT flag and continue
+                if (directModeActive && errno == EINVAL) {
+                    fmDebug() << "O_DIRECT write failed, removing O_DIRECT flag";
+                    int flags = fcntl(writer.fd, F_GETFL);
+                    if (flags != -1) {
+                        flags &= ~O_DIRECT;
+                        if (fcntl(writer.fd, F_SETFL, flags) == 0) {
+                            directModeActive = false;
+                            fmDebug() << "Successfully removed O_DIRECT, continuing with regular I/O";
+                            continue;   // Retry the write without O_DIRECT
+                        }
+                    }
+                }
+
+                success = false;
+                break;
+            }
+            bytesWritten += written;
+        }
+
+        if (!success) {
+            break;
+        }
+
+        copied += actualBytesToWrite;
+        workData->currentWriteSize += actualBytesToWrite;
+    }
+
+    // Cleanup
+    free(buffer);
+    close(srcFd);
+    close(writer.fd);
+
+    if (!success) {
+        return NextDo::kDoCopyErrorAddCancel;
+    }
+
+    // Set file permissions and timestamps
+    setTargetPermissions(fromInfo->uri(), toInfo->uri());
+
+    if (!stateCheck())
+        return NextDo::kDoCopyErrorAddCancel;
+
+    toInfo->refresh();
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
+
+    return NextDo::kDoCopyNext;
+}
+
+/*!
+ * \brief DoCopyFileWorker::doCopyFileTraditional Traditional copy implementation using DFMIO
+ * \param fromInfo Source file info
+ * \param toInfo Target file info
+ * \param skip Skip flag
+ * \return NextDo status
+ */
+DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileTraditional(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
+{
+    // 创建文件的device
     QSharedPointer<DFMIO::DFile> fromDevice { nullptr }, toDevice { nullptr };
     if (!createFileDevices(fromInfo, toInfo, fromDevice, toDevice, skip))
         return NextDo::kDoCopyErrorAddCancel;
+
     // 打开文件并创建
     if (!openFiles(fromInfo, toInfo, fromDevice, toDevice, skip))
         return NextDo::kDoCopyErrorAddCancel;
-    // 源文件大小如果为0
+
     auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    if (fromSize <= 0) {
-        // 对文件加权
-        setTargetPermissions(fromInfo->uri(), toInfo->uri());
-        workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (shouldSyncToDevice(toInfo))
-            syncBlockFile(toInfo);
-        return NextDo::kDoCopyNext;
-    }
+
     // resize target file
     if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyResizeDestinationFile) && !resizeTargetFile(fromInfo, toInfo, toDevice, skip))
         return NextDo::kDoCopyErrorAddCancel;
+
     // 循环读取和写入文件，拷贝
-    int toFd = -1;
-    auto toIsSmb = ProtocolUtils::isSMBFile(toInfo->uri());
-    if (shouldSyncToDevice(toIsSmb))
-        toFd = open(toInfo->uri().path().toUtf8().toStdString().data(), O_RDONLY);
     qint64 blockSize = fromSize > kMaxBufferLength ? kMaxBufferLength : fromSize;
     char *data = new char[static_cast<uint>(blockSize + 1)];
     uLong sourceCheckSum = adler32(0L, nullptr, 0);
@@ -250,17 +406,11 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
         auto nextReadDo = doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, skip);
         if (nextReadDo != NextDo::kDoCopyCurrentFile) {
             delete[] data;
-            data = nullptr;
-            if (toFd > 0)
-                close(toFd);
             return nextReadDo;
         }
         auto nextDo = doWriteFile(fromInfo, toInfo, toDevice, fromDevice, data, sizeRead, skip);
         if (nextDo != NextDo::kDoCopyCurrentFile) {
             delete[] data;
-            data = nullptr;
-            if (toFd > 0)
-                close(toFd);
             return nextDo;
         }
 
@@ -268,21 +418,9 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
-        // 执行同步策略
-        if (shouldSyncToDevice(toIsSmb) && toFd > 0)
-            syncfs(toFd);
-
     } while (fromDevice->pos() != fromSize);
 
     delete[] data;
-    data = nullptr;
-
-    // 执行同步策略
-    if (shouldSyncToDevice(toIsSmb) && toFd > 0)
-        syncfs(toFd);
-
-    if (toFd > 0)
-        close(toFd);
 
     // 对文件加权
     setTargetPermissions(fromInfo->uri(), toInfo->uri());
@@ -297,6 +435,21 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFilePractically(const DFileInfo
     if (skip && *skip)
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
 
+    return NextDo::kDoCopyNext;
+}
+
+/*!
+ * \brief DoCopyFileWorker::actionToNextDo Convert action to NextDo enum
+ * \param action Support action
+ * \param size File size for skip calculation
+ * \param skip Skip flag
+ * \return NextDo status
+ */
+DoCopyFileWorker::NextDo DoCopyFileWorker::actionToNextDo(AbstractJobHandler::SupportAction action, qint64 size, bool *skip)
+{
+    if (!actionOperating(action, size, skip)) {
+        return NextDo::kDoCopyErrorAddCancel;
+    }
     return NextDo::kDoCopyNext;
 }
 
@@ -334,8 +487,6 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
         setTargetPermissions(fromInfo->uri(), toInfo->uri());
         workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->uri());
-        if (shouldSyncToDevice(toInfo))
-            syncfs(targetFd);
         return NextDo::kDoCopyNext;
     }
     // 循环读取和写入文件，拷贝
@@ -354,9 +505,16 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
             blockSize = total < blockSize ? total : blockSize;
             result = copy_file_range(sourcFd, &offset_in, targetFd, &offset_out, blockSize, 0);
             if (result < 0) {
+                // Check if this is a "should fallback" error vs a real error
+                if (shouldFallbackFromCopyFileRange(errno)) {
+                    // Silent fallback for unsupported scenarios
+                    fmDebug() << "copy_file_range fallback needed - error:" << strerror(errno);
+                    return NextDo::kDoCopyFallback;   // Signal fallback needed
+                }
+
+                // Real error - show dialog
                 auto lastError = strerror(errno);
-                fmWarning() << "copy file range error, url from: " << fromInfo->uri()
-                            << " url to: " << toInfo->uri() << " error msg: " << lastError;
+                fmWarning() << "copy_file_range error - from:" << fromInfo->uri() << "to:" << toInfo->uri() << "error:" << lastError;
                 action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                               AbstractJobHandler::JobErrorType::kWriteError,
                                               false, lastError);
@@ -646,7 +804,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doReadFile(const DFileInfoPointer &fr
                 return NextDo::kDoCopyCurrentFile;
             }
 
-            fmWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
+            fmWarning() << "Read error - size:" << readSize << "pos:" << fromFilePos << "expected:" << fromFileInfoSize << "file:" << fromInfo->uri();
             fromInfo->initQuerier();
             const bool fromInfoExist = fromInfo->exists();
             AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
@@ -724,7 +882,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
         } while (sizeWrite > 0 && sizeWrite < surplusSize);
 
         if (toDevice->lastError().code() != DFMIOErrorCode::DFM_IO_ERROR_NONE)
-            fmCritical() << "Write operation failed - size:" << sizeWrite << "error:" << toDevice->lastError().errorMsg();
+            fmWarning() << "Write error - size:" << sizeWrite << "error:" << toDevice->lastError().errorMsg() << "file:" << toInfo->uri();
 
         // 表示全部数据写入完成
         if (sizeWrite >= 0 && sizeWrite == surplusSize && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE)
@@ -749,10 +907,6 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doWriteFile(const DFileInfoPointer &f
 
     if (!actionOperating(actionForWrite, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() - (currentPos + readSize - surplusSize), skip))
         return NextDo::kDoCopyErrorAddCancel;
-
-    if (workData->needSyncEveryRW && sizeWrite > 0) {
-        toDevice->flush();
-    }
 
     return NextDo::kDoCopyCurrentFile;
 }
@@ -880,21 +1034,163 @@ void DoCopyFileWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toU
 }
 
 /*!
- * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed
- * \param toInfo Target file info
- * \return true if sync is required, false otherwise
+ * \brief DoCopyFileWorker::openDestinationFile Open destination file with preferred write mode
+ * \param dest Destination file path
+ * \param preferredMode Preferred write mode (Normal or Direct)
+ * \return FileWriter structure with file descriptor and actual mode
  */
-bool DoCopyFileWorker::shouldSyncToDevice(const DFileInfoPointer &toInfo) const
+DoCopyFileWorker::FileWriter DoCopyFileWorker::openDestinationFile(const QString &dest, WriteMode preferredMode)
 {
-    return shouldSyncToDevice(ProtocolUtils::isSMBFile(toInfo->uri()));
+    int destFd = -1;
+    WriteMode actualMode = preferredMode;
+
+    if (preferredMode == WriteMode::Direct) {
+        // Try O_DIRECT first
+        destFd = open(dest.toLocal8Bit().constData(), O_WRONLY | O_CREAT | O_TRUNC | O_DIRECT, 0666);
+
+        if (destFd < 0 && (errno == EINVAL || errno == ENOTSUP)) {
+            // O_DIRECT not supported, fallback to normal mode
+            fmDebug() << "O_DIRECT not supported, falling back to normal mode for:" << dest;
+            actualMode = WriteMode::Normal;
+        }
+    }
+
+    if (destFd < 0) {
+        // Open in normal mode
+        destFd = open(dest.toLocal8Bit().constData(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        actualMode = WriteMode::Normal;
+    }
+
+    fmDebug() << "Using" << (actualMode == WriteMode::Direct ? "O_DIRECT" : "normal")
+              << "mode for file:" << dest;
+
+    return FileWriter(destFd, actualMode);
 }
 
 /*!
- * \brief DoCopyFileWorker::shouldSyncToDevice Check if sync to device is needed (optimized version)
- * \param toIsSmb Whether target is SMB file (pre-calculated for performance)
- * \return true if sync is required, false otherwise
+ * \brief DoCopyFileWorker::reopenDestinationFileForResume Reopen destination file for resume
+ * \param dest Destination file path
+ * \param preferredMode Preferred write mode
+ * \return FileWriter structure with reopened file descriptor
  */
-bool DoCopyFileWorker::shouldSyncToDevice(bool toIsSmb) const
+DoCopyFileWorker::FileWriter DoCopyFileWorker::reopenDestinationFileForResume(const QString &dest, WriteMode preferredMode)
 {
-    return workData->expandDiskSync && (workData->exBlockSyncEveryWrite || toIsSmb);
+    int destFd = -1;
+    WriteMode actualMode = preferredMode;
+
+    if (preferredMode == WriteMode::Direct) {
+        // Try O_DIRECT first - use O_WRONLY (no truncate) and seek to end
+        destFd = open(dest.toLocal8Bit().constData(), O_WRONLY | O_DIRECT, 0666);
+
+        if (destFd < 0 && (errno == EINVAL || errno == ENOTSUP)) {
+            // O_DIRECT not supported, fallback to normal mode
+            fmDebug() << "O_DIRECT not supported for resume, falling back to normal mode for:" << dest;
+            actualMode = WriteMode::Normal;
+        }
+    }
+
+    if (destFd < 0) {
+        // Open in normal mode (no truncate)
+        destFd = open(dest.toLocal8Bit().constData(), O_WRONLY, 0666);
+        actualMode = WriteMode::Normal;
+    }
+
+    if (destFd >= 0) {
+        // Seek to end of file to continue writing where we left off
+        if (lseek(destFd, 0, SEEK_END) < 0) {
+            fmDebug() << "Failed to seek to end of file for resume:" << strerror(errno);
+            close(destFd);
+            return FileWriter(-1, actualMode);
+        }
+    }
+
+    fmDebug() << "Reopened for resume using" << (actualMode == WriteMode::Direct ? "O_DIRECT" : "normal")
+              << "mode for file:" << dest;
+
+    return FileWriter(destFd, actualMode);
+}
+
+/*!
+ * \brief DoCopyFileWorker::allocateAlignedBuffer Allocate aligned buffer for O_DIRECT
+ * \param size Buffer size
+ * \param alignment Alignment requirement
+ * \return Aligned buffer pointer or nullptr on failure
+ */
+char *DoCopyFileWorker::allocateAlignedBuffer(size_t size, size_t alignment)
+{
+    char *buffer = nullptr;
+    if (posix_memalign((void **)&buffer, alignment, size) != 0) {
+        return nullptr;
+    }
+    return buffer;
+}
+
+/*!
+ * \brief DoCopyFileWorker::handlePauseResume Handle pause and resume during copy
+ * \param writer FileWriter to handle
+ * \param dest Destination file path
+ * \param skip Skip flag
+ * \return true if successful, false otherwise
+ */
+bool DoCopyFileWorker::handlePauseResume(FileWriter &writer, const QString &dest, bool *skip)
+{
+    // Sync data before pausing
+    if (writer.fd >= 0) {
+        // Determine target filesystem type for appropriate sync strategy
+        // QUrl destUrl = QUrl::fromLocalFile(dest);
+        // QString targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);
+
+        // if (targetFsType.toLower().contains("fuse")) {
+        //     // For fuse filesystems, avoid fsync as it may cause performance issues
+        //     // or hang in some fuse implementations
+        //     fmDebug() << "Skipping fsync for fuse filesystem:" << targetFsType;
+        // } else {
+        //     // For non-fuse filesystems, use fsync to ensure data is written to device
+        //     // before pausing, providing better data integrity
+        //     fmDebug() << "Performing fsync for non-fuse filesystem:" << targetFsType;
+        //     if (syncfs(writer.fd) != 0) {
+        //         fmWarning() << "fsync failed for file:" << dest << "error:" << strerror(errno);
+        //         // Continue anyway, as this is not a fatal error
+        //     }
+        // }
+        close(writer.fd);
+    }
+
+    // Wait while paused
+    workerWait();
+
+    if (isStopped()) {
+        return false;
+    }
+
+    // Reopen for resume
+    FileWriter newWriter = reopenDestinationFileForResume(dest, writer.mode);
+    if (newWriter.fd < 0) {
+        return false;
+    }
+
+    writer = newWriter;
+    return true;
+}
+
+/*!
+ * \brief DoCopyFileWorker::shouldFallbackFromCopyFileRange Check if copy_file_range error should trigger fallback
+ * \param errorCode errno from copy_file_range
+ * \return true if should fallback silently, false if should show error dialog
+ */
+bool DoCopyFileWorker::shouldFallbackFromCopyFileRange(int errorCode) const
+{
+    // These errors indicate copy_file_range is not supported or not suitable
+    // and we should fallback to other methods silently
+    switch (errorCode) {
+    case ENOSYS:   // System call not implemented
+    case EXDEV:   // Cross-device copy (different filesystems)
+    case EINVAL:   // Invalid arguments (often filesystem doesn't support it)
+    case EBADF:   // Bad file descriptor (sometimes indicates unsupported scenario)
+    case EOPNOTSUPP:   // Operation not supported (ENOTSUP is often the same value)
+        return true;
+    default:
+        // Other errors (ENOSPC, EACCES, EIO, etc.) are real errors that should be reported
+        return false;
+    }
 }
