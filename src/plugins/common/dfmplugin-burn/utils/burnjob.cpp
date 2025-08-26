@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <errno.h> // Required for errno
 
 using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
@@ -248,15 +249,26 @@ void AbstractBurnJob::workingInSubProcess()
         close(progressPipefd[1]);
         close(badPipefd[1]);
 
-        int status;
-        waitpid(-1, &status, WNOHANG);
-        fmDebug() << "start read child process data";
+        fmDebug() << "start read child process data, child pid:" << pid;
         QThread::msleep(1000);
 
         readFunc(progressPipefd[0], badPipefd[0]);
 
         close(progressPipefd[0]);
         close(badPipefd[0]);
+
+        // Properly wait for the specific child process to prevent zombie process
+        int status;
+        pid_t result = waitpid(pid, &status, 0);  // Block until child exits
+        if (result == pid) {
+            if (WIFEXITED(status)) {
+                fmDebug() << "Child process exited normally with code:" << WEXITSTATUS(status);
+            } else if (WIFSIGNALED(status)) {
+                fmWarning() << "Child process terminated by signal:" << WTERMSIG(status);
+            }
+        } else {
+            fmWarning() << "waitpid failed for child process:" << pid << "errno:" << errno;
+        }
     } else {
         fmCritical() << "fork failed";
     }
