@@ -496,7 +496,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation>金庫</translation>
+        <translation>保険箱</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
@@ -1651,7 +1651,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
         <source>File Vault</source>
-        <translation>ファイルボルト</translation>
+        <translation>ファイル ヴォルト</translation>
     </message>
 </context>
 <context>
@@ -5324,7 +5324,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="126"/>
         <source>P&amp;roperties</source>
-        <translation>プロパティ(&amp;P)</translation>
+        <translation>プロパティ(R)</translation>
     </message>
 </context>
 <context>
@@ -5601,7 +5601,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
-        <translation>P&amp;roperty（プロパティ）</translation>
+        <translation>プロパティ(R)</translation>
     </message>
 </context>
 <context>
@@ -5919,7 +5919,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="168"/>
         <source>P&amp;roperties</source>
-        <translation>P&amp;ロペティ</translation>
+        <translation>プロパティ(R)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="169"/>
@@ -7035,7 +7035,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="31"/>
         <source>File Vault</source>
-        <translation>FileVault</translation>
+        <translation>ファイル ヴォルト</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
@@ -7091,7 +7091,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation >FileVault</translation>
+        <translation >ファイル ヴォルト</translation>
     </message>
 </context>
 <context>
@@ -7099,12 +7099,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault</source>
-        <translation>vault</translation>
+        <translation>保険箱</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation>vaultはインストールされていないため利用できません！</translation>
+        <translation>保険箱はインストールされていないため利用できません！</translation>
     </message>
 </context>
 <context>
@@ -7112,7 +7112,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
         <source>Vault</source>
-        <translation>vault</translation>
+        <translation>保険箱</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
@@ -7130,7 +7130,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
         <source>File Vault</source>
-        <translation >FileVault</translation>
+        <translation >ファイル ヴォルト</translation>
     </message>
 </context>
 <context>
@@ -7272,7 +7272,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="76"/>
         <source>Delete File Vault</source>
-        <translation >FileVaultを削除</translation>
+        <translation>ファイルボルトを削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="49"/>
@@ -7285,7 +7285,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="52"/>
         <source>File Vault</source>
-        <translation>FileVault</translation>
+        <translation>ファイル ヴォルト</translation>
     </message>
 </context>
 <context>
