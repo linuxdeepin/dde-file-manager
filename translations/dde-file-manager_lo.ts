@@ -2129,7 +2129,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
         <source>Delete File Vault</source>
-        <translation>ລກມລົງ File Vault</translation>
+        <translation>ລຶບຕູ້ນິລະໄພເອກະສານ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
@@ -2431,7 +2431,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
         <location filename="../dde-file-manager/src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
         <source>File Vault</source>
-        <translation>ឯកសារសម្រាប់ការលាក់មួយ</translation>
+        <translation>ຕູ້ນິລະໄພເອກະສານ</translation>
     </message>
 </context>
 <context>
