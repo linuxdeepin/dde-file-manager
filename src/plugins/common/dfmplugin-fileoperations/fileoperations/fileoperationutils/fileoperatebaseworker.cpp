@@ -967,8 +967,6 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
         ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
     }
 
-    if (ok)
-        syncFiles.append(targetFileUrl);
     FileUtils::removeCopyingFileUrl(targetFileUrl);
 
     return ok;
@@ -1275,32 +1273,11 @@ void FileOperateBaseWorker::determineCountProcessType()
     }
 }
 
-void FileOperateBaseWorker::syncFilesToDevice()
-{
-    // Only sync when copying to external devices and sync is enabled
-    if (isTargetFileLocal || !workData->exBlockSyncEveryWrite)
-        return;
-
-    fmInfo() << "Start sync files to external device - target:" << targetUrl;
-
-    // Optimized: only sync once per filesystem instead of per file
-    if (!syncFiles.isEmpty()) {
-        std::string stdStr = syncFiles.first().path().toUtf8().toStdString();
-        int tofd = open(stdStr.data(), O_RDONLY);
-        if (-1 != tofd) {
-            syncfs(tofd);   // Single syncfs call for the entire filesystem
-            close(tofd);
-        }
-    }
-
-    fmInfo() << "Sync files to external device completed - target:" << targetUrl;
-}
-
 /*!
- * \brief FileOperateBaseWorker::needsSyncBeforeStop Check if sync is needed before stopping
+ * \brief FileOperateBaseWorker::needsSync Check if sync is needed before stopping
  * \return true if sync is needed, false otherwise
  */
-bool FileOperateBaseWorker::needsSyncBeforeStop() const
+bool FileOperateBaseWorker::needsSync() const
 {
     // Need sync if:
     // 1. Target is external device (not local)
@@ -1321,25 +1298,18 @@ bool FileOperateBaseWorker::needsSyncBeforeStop() const
 }
 
 /*!
- * \brief FileOperateBaseWorker::performSyncBeforeStop Perform synchronization before stopping
+ * \brief FileOperateBaseWorker::performSync Perform synchronization before stopping
  */
-void FileOperateBaseWorker::performSyncBeforeStop()
+void FileOperateBaseWorker::performSync()
 {
-    if (!needsSyncBeforeStop()) {
-        return;
-    }
-
-    fmInfo() << "Performing sync before stop for external device - target:" << targetUrl;
-
+    fmInfo() << "Performing sync for external device - target:" << targetUrl;
     // Directly sync the target filesystem using targetUrl
     std::string stdStr = targetUrl.path().toUtf8().toStdString();
     int tofd = open(stdStr.data(), O_RDONLY);
     if (-1 != tofd) {
-        // TODO (io): direct is ineffective if use mounted by fuse
-        // Causes syncfs to freeze the main interface
         syncfs(tofd);   // Sync the entire filesystem
         close(tofd);
-        fmInfo() << "Sync before stop completed successfully";
+        fmInfo() << "Sync completed successfully";
     } else {
         fmWarning() << "Failed to open target path for sync:" << targetUrl.path();
     }

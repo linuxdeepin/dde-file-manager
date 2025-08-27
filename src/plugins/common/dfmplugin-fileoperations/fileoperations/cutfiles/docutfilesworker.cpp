@@ -16,7 +16,6 @@
 #include <QStorageInfo>
 #include <QQueue>
 
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -49,9 +48,6 @@ bool DoCutFilesWorker::doWork()
         endWork();
         return false;
     }
-
-    // sync
-    syncFilesToDevice();
 
     // 完成
     fmInfo() << "Cut operation completed successfully";
