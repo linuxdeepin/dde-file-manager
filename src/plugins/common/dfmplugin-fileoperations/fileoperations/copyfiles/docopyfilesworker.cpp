@@ -67,9 +67,6 @@ bool DoCopyFilesWorker::doWork()
         return false;
     }
 
-    // sync
-    syncFilesToDevice();
-
     // end
     fmInfo() << "Copy operation completed successfully";
     endWork();

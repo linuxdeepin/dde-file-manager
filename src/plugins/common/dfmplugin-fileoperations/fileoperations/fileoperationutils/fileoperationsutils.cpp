@@ -27,12 +27,10 @@ extern "C" {
 DPFILEOPERATIONS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-QSet<QString> FileOperationsUtils::fileNameUsing = {};
 inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operations" };
 inline constexpr char kFileBigSize[] { "file.operation.bigfilesize" };
 inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
 inline constexpr char kBroadcastPaste[] { "file.operation.broadcastpastevent" };
-QMutex FileOperationsUtils::mutex;
 
 /*!
  * \brief FileOperationsUtils::statisticsFilesSize 使用c库统计文件大小
@@ -185,4 +183,3 @@ bool FileOperationsUtils::canBroadcastPaste()
     // 组策略中配置
     return DConfigManager::instance()->value(kFileOperations, kBroadcastPaste, false).toBool();
 }
-

@@ -91,8 +91,6 @@ signals:
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
     void workerFinish();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
-signals:   // update proccess timer use
-    void startUpdateProgressTimer();
     void startWork();
     void errorNotify(const JobInfoPointer jobInfo);
     void retryErrSuccess(const quint64 id);
@@ -121,6 +119,10 @@ protected:
                                  const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
                                  const bool allUsErrorMsg = false);
 
+    // Sync before stop for external devices
+    virtual bool needsSync() const { return false; }
+    virtual void performSync() { }
+
 protected slots:
     virtual bool doWork();
     virtual void onUpdateProgress() { }
@@ -145,6 +147,8 @@ protected:
     void resume();
     void getAction(AbstractJobHandler::SupportActions actions);
     QUrl parentUrl(const QUrl &url);
+    void syncFilesToDevice();
+
     static dfmbase::FileInfo::FileType fileType(const DFileInfoPointer &info);
 
 public:
@@ -152,7 +156,6 @@ public:
 
 public:
     QSharedPointer<DFMBASE_NAMESPACE::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
-    QSharedPointer<QThread> updateProgressThread { nullptr };   // update progress timer thread
     QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle
@@ -187,7 +190,6 @@ public:
 
     QWaitCondition waitCondition;
     QMutex mutex;
-    QVector<QSharedPointer<DoCopyFileWorker>> threadCopyWorker;
     int threadCount { 8 };
     std::atomic_bool retry { false };
     QSharedPointer<QThreadPool> threadPool { nullptr };

@@ -88,13 +88,6 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
     if (id == quintptr(this)) {
         return resume();
     }
-
-    for (auto worker : threadCopyWorker) {
-        if (id == quintptr(worker.data())) {
-            worker->operateAction(currentAction);
-            return;
-        }
-    }
 }
 
 /*!
@@ -106,13 +99,11 @@ void AbstractWorker::stop()
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
 
-    if (updateProgressTimer)
-        updateProgressTimer->stopTimer();
-
-    if (updateProgressThread) {
-        updateProgressThread->quit();
-        updateProgressThread->wait();
+    if (updateProgressTimer) {
+        // Stop timer in main thread using cross-thread method invocation
+        QMetaObject::invokeMethod(updateProgressTimer.data(), "stopTimer", Qt::QueuedConnection);
     }
+
     waitCondition.wakeAll();
 }
 /*!
@@ -176,6 +167,15 @@ QUrl AbstractWorker::parentUrl(const QUrl &url)
     return FileOperationsUtils::parentUrl(url);
 }
 
+void AbstractWorker::syncFilesToDevice()
+{
+    // Only sync when copying to external devices and sync is enabled
+    if (!needsSync())
+        return;
+
+    performSync();
+}
+
 FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
 {
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
@@ -212,20 +212,11 @@ FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
  */
 void AbstractWorker::startCountProccess()
 {
-    if (!updateProgressThread)
-        updateProgressThread.reset(new QThread);
-    
-    // Move existing timer to the new thread if it exists
     if (updateProgressTimer) {
-        updateProgressTimer->moveToThread(updateProgressThread.data());
-    }
-    
-    updateProgressThread->start();
-    
-    if (updateProgressTimer) {
-        connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
-        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
-        emit startUpdateProgressTimer();
+        // Start timer in main thread using cross-thread method invocation
+        // Signal-slot connection was already established in constructor
+        QMetaObject::invokeMethod(updateProgressTimer.data(), "doStartTime", Qt::QueuedConnection);
+        fmDebug() << "Progress timer started via cross-thread method invocation";
     }
 }
 /*!
@@ -278,11 +269,12 @@ bool AbstractWorker::statisticsFilesSize()
     return true;
 }
 /*!
- * \brief AbstractWorker::copyWait Blocking waiting for task
+ * \brief AbstractWorker::workerWait Blocking waiting for task
  * \return Is it running
  */
 bool AbstractWorker::workerWait()
 {
+    QMutexLocker locker(&mutex);
     waitCondition.wait(&mutex);
 
     return currentState == AbstractJobHandler::JobState::kRunningState;
@@ -325,6 +317,8 @@ bool AbstractWorker::initArgs()
  */
 void AbstractWorker::endWork()
 {
+    syncFilesToDevice();
+
     setStat(AbstractJobHandler::JobState::kStopState);
     Q_EMIT removeTaskWidget();
 
@@ -464,20 +458,12 @@ void AbstractWorker::resumeAllThread()
     resume();
     if (copyOtherFileWorker)
         copyOtherFileWorker->resume();
-    for (auto worker : threadCopyWorker) {
-        worker->resume();
-    }
 }
 
 void AbstractWorker::resumeThread(const QList<quint64> &errorIds)
 {
     if (!errorIds.contains(quintptr(this)) && (!copyOtherFileWorker || !errorIds.contains(quintptr(copyOtherFileWorker.data()))))
         resume();
-
-    for (auto worker : threadCopyWorker) {
-        if (!errorIds.contains(quintptr(worker.data())))
-            worker->resume();
-    }
 }
 
 void AbstractWorker::pauseAllThread()
@@ -485,18 +471,12 @@ void AbstractWorker::pauseAllThread()
     pause();
     if (copyOtherFileWorker)
         copyOtherFileWorker->pause();
-    for (auto worker : threadCopyWorker) {
-        worker->pause();
-    }
 }
 
 void AbstractWorker::stopAllThread()
 {
     if (copyOtherFileWorker)
         copyOtherFileWorker->stop();
-    for (auto worker : threadCopyWorker) {
-        worker->stop();
-    }
     stop();
 }
 
@@ -585,9 +565,17 @@ AbstractWorker::AbstractWorker(QObject *parent)
         speedtimer = new QElapsedTimer();
         speedtimer->start();
     }
-    
+
     // Create updateProgressTimer in main thread to avoid cross-thread destruction warning
     updateProgressTimer.reset(new UpdateProgressTimer());
+
+    // Pre-establish signal-slot connection in main thread
+    // Timer runs in main thread, use DirectConnection for immediate cross-thread call
+    if (updateProgressTimer) {
+        connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify,
+                this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
+        fmDebug() << "Progress timer signal-slot connection established with DirectConnection";
+    }
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
@@ -683,24 +671,16 @@ void AbstractWorker::saveOperations()
 
 AbstractWorker::~AbstractWorker()
 {
+    // Ensure all waiting threads are woken up before destruction
+    waitCondition.wakeAll();
+
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
     }
 
-    // Stop timer before thread cleanup to avoid cross-thread timer warning
-    if (updateProgressTimer) {
-        updateProgressTimer->stopTimer();
-    }
-
-    // Clean up updateProgressThread
-    if (updateProgressThread) {
-        if (updateProgressThread->isRunning()) {
-            updateProgressThread->quit();
-            updateProgressThread->wait();
-        }
-        updateProgressThread.reset();
-    }
+    // UpdateProgressTimer will be automatically cleaned up when destroyed
+    // No need for explicit cross-thread blocking call that can cause deadlock
 
     if (speedtimer) {
         delete speedtimer;
