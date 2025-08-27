@@ -118,10 +118,10 @@ protected:
     virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                                  const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
                                  const bool allUsErrorMsg = false);
-    
+
     // Sync before stop for external devices
     virtual bool needsSyncBeforeStop() const { return false; }
-    virtual void performSyncBeforeStop() {}
+    virtual void performSyncBeforeStop() { }
 
 protected slots:
     virtual bool doWork();
@@ -188,7 +188,6 @@ public:
 
     QWaitCondition waitCondition;
     QMutex mutex;
-    QVector<QSharedPointer<DoCopyFileWorker>> threadCopyWorker;
     int threadCount { 8 };
     std::atomic_bool retry { false };
     QSharedPointer<QThreadPool> threadPool { nullptr };

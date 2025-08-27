@@ -106,7 +106,6 @@ protected Q_SLOTS:
                          const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
                          const bool allUsErrorMsg = false) override;
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to) override;
-    void skipMemcpyBigFile(const QUrl url);
 
 private:
     QVariant

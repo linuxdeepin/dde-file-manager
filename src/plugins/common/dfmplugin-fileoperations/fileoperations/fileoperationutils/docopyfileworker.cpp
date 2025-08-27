@@ -318,8 +318,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
         while (bytesWritten < actualBytesToWrite && !isStopped()) {
             ssize_t written = write(writer.fd, buffer + bytesWritten,
                                     actualBytesToWrite - bytesWritten);
-            // TODO (io): direct is ineffective if use mounted by fuse
-            // fdatasync(writer.fd);
+
             if (written < 0) {
                 if (errno == EINTR) {
                     continue;
