@@ -1003,13 +1003,6 @@ void FileOperateBaseWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &
     AbstractWorker::emitCurrentTaskNotify(from, to);
 }
 
-void FileOperateBaseWorker::skipMemcpyBigFile(const QUrl url)
-{
-    for (const auto &worker : threadCopyWorker) {
-        worker->skipMemcpyBigFile(url);
-    }
-}
-
 QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const DFileInfoPointer &fromInfo,
                                                     const DFileInfoPointer &newTargetInfo,
                                                     const bool isCountSize)

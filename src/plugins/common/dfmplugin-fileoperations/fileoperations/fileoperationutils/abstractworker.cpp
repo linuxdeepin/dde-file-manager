@@ -88,13 +88,6 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
     if (id == quintptr(this)) {
         return resume();
     }
-
-    for (auto worker : threadCopyWorker) {
-        if (id == quintptr(worker.data())) {
-            worker->operateAction(currentAction);
-            return;
-        }
-    }
 }
 
 /*!
@@ -458,20 +451,12 @@ void AbstractWorker::resumeAllThread()
     resume();
     if (copyOtherFileWorker)
         copyOtherFileWorker->resume();
-    for (auto worker : threadCopyWorker) {
-        worker->resume();
-    }
 }
 
 void AbstractWorker::resumeThread(const QList<quint64> &errorIds)
 {
     if (!errorIds.contains(quintptr(this)) && (!copyOtherFileWorker || !errorIds.contains(quintptr(copyOtherFileWorker.data()))))
         resume();
-
-    for (auto worker : threadCopyWorker) {
-        if (!errorIds.contains(quintptr(worker.data())))
-            worker->resume();
-    }
 }
 
 void AbstractWorker::pauseAllThread()
@@ -479,18 +464,12 @@ void AbstractWorker::pauseAllThread()
     pause();
     if (copyOtherFileWorker)
         copyOtherFileWorker->pause();
-    for (auto worker : threadCopyWorker) {
-        worker->pause();
-    }
 }
 
 void AbstractWorker::stopAllThread()
 {
     if (copyOtherFileWorker)
         copyOtherFileWorker->stop();
-    for (auto worker : threadCopyWorker) {
-        worker->stop();
-    }
     stop();
 }
 
