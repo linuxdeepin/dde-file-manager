@@ -269,11 +269,12 @@ bool AbstractWorker::statisticsFilesSize()
     return true;
 }
 /*!
- * \brief AbstractWorker::copyWait Blocking waiting for task
+ * \brief AbstractWorker::workerWait Blocking waiting for task
  * \return Is it running
  */
 bool AbstractWorker::workerWait()
 {
+    QMutexLocker locker(&mutex);
     waitCondition.wait(&mutex);
 
     return currentState == AbstractJobHandler::JobState::kRunningState;
@@ -670,6 +671,9 @@ void AbstractWorker::saveOperations()
 
 AbstractWorker::~AbstractWorker()
 {
+    // Ensure all waiting threads are woken up before destruction
+    waitCondition.wakeAll();
+
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();

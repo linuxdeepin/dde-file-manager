@@ -171,7 +171,10 @@ DoCleanTrashFilesWorker::doHandleErrorAndWait(const QUrl &from,
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, isTo, 0, errorMsg);
-    waitCondition.wait(&mutex);
+    {
+        QMutexLocker locker(&mutex);
+        waitCondition.wait(&mutex);
+    }
 
     return currentAction;
 }
