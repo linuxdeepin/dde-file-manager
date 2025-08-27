@@ -43,7 +43,7 @@ public:
         kSuffix = 3,   // 文件的suffix: gz
         kCompleteSuffix = 4,   // 文件完整suffix: tar.gz
         kFileNameOfRename = 5,   // 没有特殊情况返回: archive.tar.gz
-        kBaseNameOfRename = 6,   // 没有特殊情况返回: archive
+        kBaseNameOfRename = 6,   // 没有特殊情况返回: archive.tar
         kSuffixOfRename = 7,   // 没有特殊情况返回: tar.gz
         kFileCopyName = 8,   // 文件的拷贝名称
         kIconName = 9,   // 文件的icom名称
