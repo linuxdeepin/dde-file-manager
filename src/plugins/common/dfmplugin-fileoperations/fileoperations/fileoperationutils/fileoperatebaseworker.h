@@ -58,7 +58,6 @@ public:
     qint64 getTidWriteSize();
     qint64 getSectorsWritten();
     void readAheadSourceFile(const DFileInfoPointer &fileInfo);
-    void syncFilesToDevice();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const bool isTo = false,
@@ -68,8 +67,8 @@ public:
     void emitSpeedUpdatedNotify(const qint64 &writSize);
 
     // Sync before stop overrides
-    bool needsSyncBeforeStop() const override;
-    void performSyncBeforeStop() override;
+    bool needsSync() const override;
+    void performSync() override;
 
     bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
@@ -129,7 +128,6 @@ protected:
     DirPermissonList dirPermissonList;   // dir set Permisson list
     QFuture<void> syncResult;
     QString blocakTargetRootPath;
-    QList<QUrl> syncFiles;
 
     QList<DFileInfoPointer> cutAndDeleteFiles;
 };

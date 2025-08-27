@@ -120,8 +120,8 @@ protected:
                                  const bool allUsErrorMsg = false);
 
     // Sync before stop for external devices
-    virtual bool needsSyncBeforeStop() const { return false; }
-    virtual void performSyncBeforeStop() { }
+    virtual bool needsSync() const { return false; }
+    virtual void performSync() { }
 
 protected slots:
     virtual bool doWork();
@@ -147,6 +147,8 @@ protected:
     void resume();
     void getAction(AbstractJobHandler::SupportActions actions);
     QUrl parentUrl(const QUrl &url);
+    void syncFilesToDevice();
+
     static dfmbase::FileInfo::FileType fileType(const DFileInfoPointer &info);
 
 public:

@@ -95,11 +95,6 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
  */
 void AbstractWorker::stop()
 {
-    // Perform sync before stopping if needed for external devices
-    if (needsSyncBeforeStop()) {
-        performSyncBeforeStop();
-    }
-
     setStat(AbstractJobHandler::JobState::kStopState);
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
@@ -170,6 +165,15 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
 QUrl AbstractWorker::parentUrl(const QUrl &url)
 {
     return FileOperationsUtils::parentUrl(url);
+}
+
+void AbstractWorker::syncFilesToDevice()
+{
+    // Only sync when copying to external devices and sync is enabled
+    if (!needsSync())
+        return;
+
+    performSync();
 }
 
 FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
@@ -312,6 +316,8 @@ bool AbstractWorker::initArgs()
  */
 void AbstractWorker::endWork()
 {
+    syncFilesToDevice();
+
     setStat(AbstractJobHandler::JobState::kStopState);
     Q_EMIT removeTaskWidget();
 
@@ -668,11 +674,6 @@ AbstractWorker::~AbstractWorker()
         statisticsFilesSizeJob->stop();
         statisticsFilesSizeJob->wait();
     }
-
-    // Directly unlock mutex before destruction to prevent "destroying locked mutex" warning
-    // This is safe in destructor as no other threads will access this object's mutex
-    // The mutex may be locked after waitCondition.wait() calls in error handling scenarios
-    mutex.unlock();
 
     // UpdateProgressTimer will be automatically cleaned up when destroyed
     // No need for explicit cross-thread blocking call that can cause deadlock
