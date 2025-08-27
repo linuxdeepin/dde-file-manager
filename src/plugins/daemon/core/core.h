@@ -13,6 +13,7 @@
 class QDBusConnection;
 class DeviceManagerDBus;
 class OperationsStackManagerDbus;
+class SyncDBus;
 
 DAEMONPCORE_BEGIN_NAMESPACE
 
@@ -29,6 +30,7 @@ private:
     void initServiceDBusInterfaces(QDBusConnection *connection);
     void initDeviceDBus(QDBusConnection *connection);
     void initOperationsDBus(QDBusConnection *connection);
+    void initSyncDBus(QDBusConnection *connection);
 
 private Q_SLOTS:
     void exitOnShutdown(bool);
@@ -36,6 +38,7 @@ private Q_SLOTS:
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
     QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
+    QScopedPointer<SyncDBus> syncDBus;
     QScopedPointer<TextIndexController> textIndexController;
 };
 

@@ -6,6 +6,7 @@
 
 #include "devicemanageradaptor.h"
 #include "operationsstackmanageradaptor.h"
+#include "syncadaptor.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
@@ -27,6 +28,7 @@ DFMBASE_USE_NAMESPACE
 static constexpr char kDaemonName[] { "org.deepin.Filemanager.Daemon" };
 static constexpr char kDeviceManagerObjPath[] { "/org/deepin/Filemanager/Daemon/DeviceManager" };
 static constexpr char kOperationsStackManagerObjPath[] { "/org/deepin/Filemanager/Daemon/OperationsStackManager" };
+static constexpr char kSyncObjPath[] { "/org/deepin/Filemanager/Daemon/Sync" };
 
 void Core::initialize()
 {
@@ -90,6 +92,10 @@ void Core::initServiceDBusInterfaces(QDBusConnection *connection)
         fmInfo() << "Init DBus DeviceManager start";
         initDeviceDBus(connection);
         fmInfo() << "Init DBus DeviceManager end";
+
+        fmInfo() << "Init DBus Sync start";
+        initSyncDBus(connection);
+        fmInfo() << "Init DBus Sync end";
     });
 }
 
@@ -114,6 +120,18 @@ void Core::initOperationsDBus(QDBusConnection *connection)
                                     operationsStackManager.data())) {
         fmWarning() << QString("Cannot register the \"%1\" object.\n").arg(kOperationsStackManagerObjPath);
         operationsStackManager.reset(nullptr);
+    }
+}
+
+void Core::initSyncDBus(QDBusConnection *connection)
+{
+    // register object
+    syncDBus.reset(new SyncDBus);
+    Q_UNUSED(new SyncAdaptor(syncDBus.data()));
+    if (!connection->registerObject(kSyncObjPath,
+                                    syncDBus.data())) {
+        fmWarning() << QString("Cannot register the \"%1\" object.\n").arg(kSyncObjPath);
+        syncDBus.reset(nullptr);
     }
 }
 
