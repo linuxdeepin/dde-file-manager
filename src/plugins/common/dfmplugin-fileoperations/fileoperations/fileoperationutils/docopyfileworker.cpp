@@ -40,6 +40,10 @@ DoCopyFileWorker::DoCopyFileWorker(const QSharedPointer<WorkerData> &data, QObje
 
 DoCopyFileWorker::~DoCopyFileWorker()
 {
+    // Ensure all waiting threads are woken up before destruction
+    if (waitCondition) {
+        waitCondition->wakeAll();
+    }
 }
 // main thread using
 void DoCopyFileWorker::pause()
@@ -549,8 +553,8 @@ bool DoCopyFileWorker::stateCheck()
 
 void DoCopyFileWorker::workerWait()
 {
+    QMutexLocker locker(mutex.data());
     waitCondition->wait(mutex.data());
-    mutex->unlock();
 }
 
 bool DoCopyFileWorker::actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip)

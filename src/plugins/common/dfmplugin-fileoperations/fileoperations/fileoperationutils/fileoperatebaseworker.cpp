@@ -70,7 +70,10 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     // 发送错误处理 阻塞自己
     emitErrorNotify(urlFrom, urlTo, error, isTo, quintptr(this), errorMsg, errorMsgAll);
     pause();
-    waitCondition.wait(&mutex);
+    {
+        QMutexLocker locker(&mutex);
+        waitCondition.wait(&mutex);
+    }
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
