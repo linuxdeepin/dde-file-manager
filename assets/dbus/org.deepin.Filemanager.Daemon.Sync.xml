@@ -1,0 +1,28 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.Daemon.Sync">
+    <signal name="SyncCompleted">
+      <arg name="taskId" type="i" direction="out"/>
+      <arg name="path" type="s" direction="out"/>
+    </signal>
+    <signal name="SyncFailed">
+      <arg name="taskId" type="i" direction="out"/>
+      <arg name="path" type="s" direction="out"/>
+      <arg name="errorMessage" type="s" direction="out"/>
+    </signal>
+    <method name="SyncFS">
+      <arg type="i" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="SyncFS">
+      <arg type="i" direction="out"/>
+      <arg name="path" type="s" direction="in"/>
+    </method>
+    <method name="GetSyncStatus">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+  </interface>
+</node>
