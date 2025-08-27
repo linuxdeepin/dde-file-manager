@@ -37,14 +37,13 @@ SyncDBus::~SyncDBus()
 {
     fmInfo() << "SyncDBus service shutting down";
     
-    // Wait for all tasks to complete before destruction
-    m_threadPool->waitForDone(5000); // 5 second timeout
-    
-    // Clean up any remaining tasks
-    for (auto task : m_activeTasks) {
-        task->deleteLater();
-    }
+    // Clear active tasks map (tasks will be auto-deleted by QThreadPool)
     m_activeTasks.clear();
+    
+    // Wait for all tasks to complete before destruction
+    if (!m_threadPool->waitForDone(5000)) { // 5 second timeout
+        fmWarning() << "Some sync tasks did not complete within timeout, forcing shutdown";
+    }
 }
 
 int SyncDBus::SyncFS(const QString &path, const QVariantMap &options)
@@ -64,14 +63,14 @@ int SyncDBus::SyncFS(const QString &path, const QVariantMap &options)
     // Generate unique task ID
     int taskId = generateTaskId();
     
-    // Create sync task
+    // Create sync task with automatic cleanup
     SyncTask *task = new SyncTask(taskId, path, options);
-    task->setAutoDelete(false); // We manage the lifetime manually
+    task->setAutoDelete(true); // Let QThreadPool handle deletion
     
-    // Connect task completion signal
+    // Connect task completion signal before adding to active tasks
     connect(task, &SyncTask::taskCompleted, this, &SyncDBus::onSyncTaskCompleted, Qt::QueuedConnection);
     
-    // Add to active tasks
+    // Add to active tasks with weak tracking
     m_activeTasks.insert(taskId, task);
     
     // Start the task
@@ -109,7 +108,7 @@ void SyncDBus::onSyncTaskCompleted(SyncTask *task)
     int taskId = task->taskId();
     QString path = task->path();
     
-    // Remove from active tasks
+    // Remove from active tasks (task will be auto-deleted by QThreadPool)
     m_activeTasks.remove(taskId);
     
     // Emit appropriate signal based on task result
@@ -122,8 +121,7 @@ void SyncDBus::onSyncTaskCompleted(SyncTask *task)
         emit SyncFailed(taskId, path, errorMsg);
     }
     
-    // Clean up task
-    task->deleteLater();
+    // Note: Task will be automatically deleted by QThreadPool
 }
 
 int SyncDBus::generateTaskId()
@@ -146,31 +144,43 @@ void SyncTask::run()
 {
     fmDebug() << "Starting sync task" << m_taskId << "for path:" << m_path;
     
-    // Resolve the actual filesystem path
-    QString resolvedPath = QFileInfo(m_path).absoluteFilePath();
+    int fd = -1;
     
-    // Open the path (works for both files and directories)
-    int fd = open(resolvedPath.toLocal8Bit().constData(), O_RDONLY);
-    
-    if (fd == -1) {
-        m_errorMessage = QString("Failed to open path: %1 (errno: %2)").arg(resolvedPath).arg(strerror(errno));
-        fmWarning() << "Sync task" << m_taskId << "failed:" << m_errorMessage;
-        emit taskCompleted(this);
-        return;
+    try {
+        // Resolve the actual filesystem path
+        QString resolvedPath = QFileInfo(m_path).absoluteFilePath();
+        
+        // Open the path (works for both files and directories)
+        fd = open(resolvedPath.toLocal8Bit().constData(), O_RDONLY);
+        
+        if (fd == -1) {
+            m_errorMessage = QString("Failed to open path: %1 (errno: %2)").arg(resolvedPath).arg(strerror(errno));
+            fmWarning() << "Sync task" << m_taskId << "failed:" << m_errorMessage;
+            emit taskCompleted(this);
+            return;
+        }
+        
+        // Perform the sync operation
+        int result = syncfs(fd);
+        close(fd);
+        fd = -1; // Mark as closed
+        
+        if (result == 0) {
+            m_success = true;
+            fmDebug() << "Sync task" << m_taskId << "completed successfully for path:" << m_path;
+        } else {
+            m_errorMessage = QString("syncfs failed for path: %1 (errno: %2)").arg(resolvedPath).arg(strerror(errno));
+            fmWarning() << "Sync task" << m_taskId << "failed:" << m_errorMessage;
+        }
+    } catch (...) {
+        // Ensure file descriptor is closed on exception
+        if (fd != -1) {
+            close(fd);
+        }
+        m_errorMessage = "Unexpected exception during sync operation";
+        fmWarning() << "Sync task" << m_taskId << "failed with exception";
     }
     
-    // Perform the sync operation
-    int result = syncfs(fd);
-    close(fd);
-    
-    if (result == 0) {
-        m_success = true;
-        fmDebug() << "Sync task" << m_taskId << "completed successfully for path:" << m_path;
-    } else {
-        m_errorMessage = QString("syncfs failed for path: %1 (errno: %2)").arg(resolvedPath).arg(strerror(errno));
-        fmWarning() << "Sync task" << m_taskId << "failed:" << m_errorMessage;
-    }
-    
-    // Emit completion signal
+    // Always emit completion signal (ensures cleanup)
     emit taskCompleted(this);
 } 
