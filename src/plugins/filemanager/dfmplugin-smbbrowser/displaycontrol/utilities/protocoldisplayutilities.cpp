@@ -81,7 +81,8 @@ void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
         { "Property_Key_CallbackFindMe", QVariant::fromValue(FindMeCallback(sidebarUrlEquals)) },
         { "Property_Key_CallbackRename", QVariant::fromValue(RenameCallback(sidebarItemRename)) },
         { "Property_Key_VisiableControl", "mounted_share_dirs" },
-        { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") }
+        { "Property_Key_VisiableDisplayName", QObject::tr("Mounted sharing folders") },
+        { "Property_Key_Editable", info->renamable() }
         //        { "Property_Key_ReportName", reportName }
     };
     auto stdSmb = vEntryUrl.path().remove("." + QString(kVEntrySuffix));
@@ -462,6 +463,7 @@ void computer_sidebar_event_calls::sidebarItemRename(quint64 windowId, const QUr
 
         smbUrl.setScheme("vsmb");
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", smbUrl, map);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Crumb_Update", info->urlOf(UrlInfoType::kUrl));
     }
     dpfSlotChannel->push(kComputerEventNS, kCptSlotRefresh);
 }

@@ -98,6 +98,24 @@ bool isNFSFile(const QUrl &url)
     return hasMatch(url.path(), nfsMatch);
 }
 
+bool isDavFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    static const QString davMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=false|^/root/.gvfs/dav.*ssl=false))" };
+    return hasMatch(url.path(), davMatch);
+}
+
+bool isDavsFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    static const QString davsMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=true|^/root/.gvfs/dav.*ssl=true))" };
+    return hasMatch(url.path(), davsMatch);
+}
+
 }   // namespace ProtocolUtils
 
 DFMBASE_END_NAMESPACE
