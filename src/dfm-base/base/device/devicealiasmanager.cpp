@@ -3,11 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "devicealiasmanager.h"
+
+#include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <QUrl>
+#include <QRegularExpression>
 
 using namespace dfmbase;
 DFMBASE_USE_NAMESPACE
@@ -30,6 +35,40 @@ NPDeviceAliasManager::NPDeviceAliasManager(QObject *parent)
     qCDebug(logDFMBase) << "EntryEntityAliasManager initialized";
 }
 
+QUrl NPDeviceAliasManager::convertToProtocolUrl(const QUrl &url) const
+{
+    if (!url.isValid()) {
+        qCWarning(logDFMBase) << "Invalid URL provided:" << url.toString();
+        return url;
+    }
+
+    if (url.scheme() != Global::Scheme::kFile)
+        return url;
+
+    static QRegularExpression regex(R"(host=([0-9]{1,3}(?:\.[0-9]{1,3}){3}))");
+    auto match = regex.match(url.path());
+    if (!match.hasMatch())
+        return url;
+
+    QUrl protocolUrl;
+    auto host = match.captured(1);
+    protocolUrl.setHost(host);
+    if (ProtocolUtils::isNFSFile(url))
+        protocolUrl.setScheme(Global::Scheme::kNfs);
+    else if (ProtocolUtils::isSMBFile(url))
+        protocolUrl.setScheme(Global::Scheme::kSmb);
+    else if (ProtocolUtils::isSFTPFile(url))
+        protocolUrl.setScheme(Global::Scheme::kSFtp);
+    else if (ProtocolUtils::isFTPFile(url))
+        protocolUrl.setScheme(Global::Scheme::kFtp);
+    else if (ProtocolUtils::isDavFile(url))
+        protocolUrl.setScheme(Global::Scheme::kDav);
+    else if (ProtocolUtils::isDavsFile(url))
+        protocolUrl.setScheme(Global::Scheme::kDavs);
+
+    return protocolUrl.isValid() ? protocolUrl : url;
+}
+
 NPDeviceAliasManager *NPDeviceAliasManager::instance()
 {
     static NPDeviceAliasManager ins;
@@ -38,7 +77,8 @@ NPDeviceAliasManager *NPDeviceAliasManager::instance()
 
 QString NPDeviceAliasManager::getAlias(const QUrl &protocolUrl) const
 {
-    if (!canSetAlias(protocolUrl))
+    const auto &url = convertToProtocolUrl(protocolUrl);
+    if (!canSetAlias(url))
         return "";
 
     QReadLocker lk(&rwLock);
@@ -46,14 +86,14 @@ QString NPDeviceAliasManager::getAlias(const QUrl &protocolUrl) const
     for (const auto &item : std::as_const(itemList)) {
         const auto &map = item.toMap();
         const auto &scheme = map.value(kSchemeKey).toString();
-        if (scheme != protocolUrl.scheme())
+        if (scheme != url.scheme())
             continue;
 
         const auto &deviceList = map.value(kDevicesKey).toList();
         for (const auto &dev : std::as_const(deviceList)) {
             const auto &devMap = dev.toMap();
             const auto &host = devMap.value(kHostKey).toString();
-            if (host == protocolUrl.host())
+            if (host == url.host())
                 return devMap.value(kAliasKey).toString();
         }
     }
@@ -69,7 +109,8 @@ QString NPDeviceAliasManager::getAlias(const QUrl &protocolUrl) const
  */
 bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alias)
 {
-    if (!canSetAlias(protocolUrl))
+    const auto &url = convertToProtocolUrl(protocolUrl);
+    if (!canSetAlias(url))
         return false;
 
     QReadLocker rlk(&rwLock);
@@ -81,7 +122,7 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
     for (int i = 0; i < itemList.size(); ++i) {
         QVariantMap map = itemList[i].toMap();
         const QString scheme = map.value(kSchemeKey).toString();
-        if (scheme != protocolUrl.scheme())
+        if (scheme != url.scheme())
             continue;
 
         QList<QVariant> deviceList = map.value(kDevicesKey).toList();
@@ -92,19 +133,19 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
             QVariantMap devMap = deviceList[j].toMap();
             const QString host = devMap.value(kHostKey).toString();
             const QString &oldAlias = devMap.value(kAliasKey).toString();
-            if (host == protocolUrl.host()) {
+            if (host == url.host()) {
                 found = true;
                 if (alias.isEmpty() || alias == host) {
                     // Remove the device entry if alias is empty
                     deviceList.removeAt(j);
-                    qCInfo(logDFMBase) << "Alias removed for" << protocolUrl.toString();
+                    qCInfo(logDFMBase) << "Alias removed for" << url.toString();
                 } else if (alias == oldAlias) {
                     return true;
                 } else {
                     // Set or update the alias
                     devMap[kAliasKey] = alias;
                     deviceList[j] = devMap;
-                    qCInfo(logDFMBase) << "Alias set for" << protocolUrl.toString() << ":" << alias;
+                    qCInfo(logDFMBase) << "Alias set for" << url.toString() << ":" << alias;
                 }
                 modified = true;
                 break;
@@ -114,10 +155,10 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
         // If not found and alias is not empty, add new device entry
         if (!found && !alias.isEmpty()) {
             QVariantMap newDev;
-            newDev[kHostKey] = protocolUrl.host();
+            newDev[kHostKey] = url.host();
             newDev[kAliasKey] = alias;
             deviceList.append(newDev);
-            qCInfo(logDFMBase) << "Alias added for" << protocolUrl.toString() << ":" << alias;
+            qCInfo(logDFMBase) << "Alias added for" << url.toString() << ":" << alias;
             modified = true;
         }
 
@@ -131,13 +172,13 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
     // If scheme group not found and alias is not empty, add new group
     if (!modified && !alias.isEmpty()) {
         QVariantMap newMap;
-        newMap[kSchemeKey] = protocolUrl.scheme();
+        newMap[kSchemeKey] = url.scheme();
         QVariantMap newDev;
-        newDev[kHostKey] = protocolUrl.host();
+        newDev[kHostKey] = url.host();
         newDev[kAliasKey] = alias;
         newMap[kDevicesKey] = QVariantList { newDev };
         itemList.append(newMap);
-        qCInfo(logDFMBase) << "Alias group and device added for" << protocolUrl.toString() << ":" << alias;
+        qCInfo(logDFMBase) << "Alias group and device added for" << url.toString() << ":" << alias;
         modified = true;
     }
 
@@ -161,10 +202,11 @@ bool NPDeviceAliasManager::hasAlias(const QUrl &protocolUrl) const
 
 bool NPDeviceAliasManager::canSetAlias(const QUrl &protocolUrl) const
 {
-    if (!protocolUrl.isValid() || protocolUrl.host().isEmpty())
+    const auto &url = convertToProtocolUrl(protocolUrl);
+    if (!url.isValid())
         return false;
 
     QReadLocker lk(&rwLock);
     const auto &list = DConfigManager::instance()->value(kCfgName, kNPDAlias).toStringList();
-    return list.contains(protocolUrl.scheme(), Qt::CaseInsensitive);
+    return list.contains(url.scheme(), Qt::CaseInsensitive);
 }

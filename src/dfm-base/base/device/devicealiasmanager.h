@@ -84,6 +84,8 @@ private:
      */
     explicit NPDeviceAliasManager(QObject *parent = nullptr);
 
+    QUrl convertToProtocolUrl(const QUrl &url) const;
+
     mutable QReadWriteLock rwLock;
 };
 

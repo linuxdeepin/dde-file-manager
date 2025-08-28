@@ -31,8 +31,6 @@ public:
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
     virtual bool renamable() const override;
-
-    QUrl netSourceUrl() const;
 };
 
 }

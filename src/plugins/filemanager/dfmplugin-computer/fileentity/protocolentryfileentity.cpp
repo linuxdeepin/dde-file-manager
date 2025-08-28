@@ -51,7 +51,8 @@ QString ProtocolEntryFileEntity::displayName() const
         else
             displayName = tr("%1 on %2").arg(share, alias);
     } else if (!alias.isEmpty()) {
-        displayName.replace(targetUrl().host(), alias);
+        static QRegularExpression ipRegex(R"([0-9]{1,3}(?:\.[0-9]{1,3}){3})");
+        displayName.replace(ipRegex, alias);
     }
 
     return displayName;
@@ -59,8 +60,20 @@ QString ProtocolEntryFileEntity::displayName() const
 
 QString ProtocolEntryFileEntity::editDisplayText() const
 {
-    const auto &alias = NPDeviceAliasManager::instance()->getAlias(targetUrl());
-    return alias.isEmpty() ? targetUrl().host() : alias;
+    const auto &url = targetUrl();
+    const auto &alias = NPDeviceAliasManager::instance()->getAlias(url);
+    if (!alias.isEmpty())
+        return alias;
+
+    if (!url.host().isEmpty())
+        return url.host();
+
+    QString devId = datas.value(DeviceProperty::kId).toString();
+    QUrl idUrl(devId);
+    if (!idUrl.host().isEmpty())
+        return idUrl.host();
+
+    return displayName();
 }
 
 QIcon ProtocolEntryFileEntity::icon() const
@@ -142,16 +155,16 @@ void ProtocolEntryFileEntity::refresh()
 QUrl ProtocolEntryFileEntity::targetUrl() const
 {
     auto mpt = datas.value(DeviceProperty::kMountPoint).toString();
-    QUrl target;
     if (mpt.isEmpty()) {
         fmDebug() << "No mount point found for protocol device:" << entryUrl;
-        return target;
+        return QUrl();
     }
 
-    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-    target.setPath(mpt);
-    auto url = DeviceUtils::parseNetSourceUrl(target);
-    return url.isValid() ? url : target;
+    QUrl target = QUrl::fromLocalFile(mpt);
+    if (DFMBASE_NAMESPACE::ProtocolUtils::isSMBFile(target))
+        return DFMBASE_NAMESPACE::DeviceUtils::getSambaFileUriFromNative(target);
+
+    return target;
 }
 
 bool ProtocolEntryFileEntity::renamable() const

@@ -179,6 +179,8 @@ void ComputerMenuScene::updateState(QMenu *parent)
     case AbstractEntryFileEntity::kOrderGPhoto2:
     case AbstractEntryFileEntity::kOrderFiles: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kUnmount, kProperty };
+        if (d->info->renamable())
+            keeped << kRename;
     } break;
     case AbstractEntryFileEntity::kOrderApps:
         keeped = QStringList { kOpen };
