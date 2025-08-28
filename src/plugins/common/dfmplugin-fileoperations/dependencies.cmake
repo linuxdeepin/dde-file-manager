@@ -46,23 +46,40 @@ endfunction()
 function(dfm_setup_fileoperations_dbus_interfaces target_name)
     message(STATUS "DFM: Setting up fileoperations DBus interfaces for: ${target_name}")
     
-    # Define the DBus interface file path using DFM_ASSETS_DIR for proper standalone/integrated mode support
-    set(DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.Daemon.OperationsStackManager.xml")
+    # Define the DBus interface file paths using DFM_ASSETS_DIR for proper standalone/integrated mode support
+    set(OPERATIONS_STACK_MANAGER_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.Daemon.OperationsStackManager.xml")
+    set(SYNC_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.Daemon.Sync.xml")
     
-    # Check if the DBus interface file exists
-    if(EXISTS "${DBUS_INTERFACE_FILE}")
-        message(STATUS "DFM: Found OperationsStackManager DBus interface file: ${DBUS_INTERFACE_FILE}")
+    # Setup OperationsStackManager DBus interface
+    if(EXISTS "${OPERATIONS_STACK_MANAGER_INTERFACE_FILE}")
+        message(STATUS "DFM: Found OperationsStackManager DBus interface file: ${OPERATIONS_STACK_MANAGER_INTERFACE_FILE}")
         
         # Generate DBus interface
-        qt6_add_dbus_interface(INTERFACE_SOURCES ${DBUS_INTERFACE_FILE} operationsstackmanager_interface_qt6)
+        qt6_add_dbus_interface(OPERATIONS_STACK_MANAGER_INTERFACE_SOURCES ${OPERATIONS_STACK_MANAGER_INTERFACE_FILE} operationsstackmanager_interface_qt6)
         
         # Add generated sources to target
-        if(INTERFACE_SOURCES)
-            target_sources(${target_name} PRIVATE ${INTERFACE_SOURCES})
+        if(OPERATIONS_STACK_MANAGER_INTERFACE_SOURCES)
+            target_sources(${target_name} PRIVATE ${OPERATIONS_STACK_MANAGER_INTERFACE_SOURCES})
             message(STATUS "DFM: Added OperationsStackManager DBus interface sources to target")
         endif()
     else()
-        message(WARNING "DFM: OperationsStackManager DBus interface file not found: ${DBUS_INTERFACE_FILE}")
+        message(WARNING "DFM: OperationsStackManager DBus interface file not found: ${OPERATIONS_STACK_MANAGER_INTERFACE_FILE}")
+    endif()
+    
+    # Setup Sync DBus interface
+    if(EXISTS "${SYNC_INTERFACE_FILE}")
+        message(STATUS "DFM: Found Sync DBus interface file: ${SYNC_INTERFACE_FILE}")
+        
+        # Generate DBus interface
+        qt6_add_dbus_interface(SYNC_INTERFACE_SOURCES ${SYNC_INTERFACE_FILE} sync_interface_qt6)
+        
+        # Add generated sources to target
+        if(SYNC_INTERFACE_SOURCES)
+            target_sources(${target_name} PRIVATE ${SYNC_INTERFACE_SOURCES})
+            message(STATUS "DFM: Added Sync DBus interface sources to target")
+        endif()
+    else()
+        message(WARNING "DFM: Sync DBus interface file not found: ${SYNC_INTERFACE_FILE}")
     endif()
 endfunction()
 

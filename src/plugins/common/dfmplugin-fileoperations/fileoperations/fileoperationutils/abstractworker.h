@@ -44,6 +44,11 @@ public:
         kCustomizeType
     };
 
+    enum class SyncType {
+        kBlocking,
+        kNonblocking
+    };
+
 signals:
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
@@ -122,6 +127,7 @@ protected:
     // Sync before stop for external devices
     virtual bool needsSync() const { return false; }
     virtual void performSync() { }
+    virtual void performAsyncSync() { }
 
 protected slots:
     virtual bool doWork();

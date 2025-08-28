@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "sync_interface_qt6.h"
+
 DPFILEOPERATIONS_USE_NAMESPACE
 USING_IO_NAMESPACE
 
@@ -1284,20 +1286,23 @@ bool FileOperateBaseWorker::needsSync() const
 {
     // Need sync if:
     // 1. Target is external device (not local)
-    // 2. Block sync is enabled
-    // 3. Target URL is valid (we can use it for syncfs)
+    // 2. Target URL is valid (we can use it for sync)
+    // Note: exBlockSyncEveryWrite condition is now handled in syncFilesToDevice()
 
-    // // 4. Target filesystem is not fuse (fuse devices don't need sync)
-    // if (!isTargetFileLocal && workData->exBlockSyncEveryWrite && targetUrl.isValid()) {
-    //     const QString &targetFsType = dfmio::DFMUtils::fsTypeFromUrl(targetUrl);
-    //     if (targetFsType.toLower().contains("fuse")) {
-    //         return false;  // Skip sync for fuse filesystems
-    //     }
-    //     return true;
-    // }
-    // return false;
+    if (!copyOtherFileWorker) {
+        return false;
+    }
 
-    return !isTargetFileLocal && workData->exBlockSyncEveryWrite && targetUrl.isValid();
+    if (jobType != AbstractJobHandler::JobType::kCopyType
+        && jobType != AbstractJobHandler::JobType::kCutType) {
+        return false;
+    }
+
+    if (workData && !workData->isBlockDevice) {
+        return false;
+    }
+
+    return !isTargetFileLocal && targetUrl.isValid();
 }
 
 /*!
@@ -1316,4 +1321,33 @@ void FileOperateBaseWorker::performSync()
     } else {
         fmWarning() << "Failed to open target path for sync:" << targetUrl.path();
     }
+}
+
+/*!
+ * \brief FileOperateBaseWorker::performAsyncSync Perform non-blocking sync using D-Bus interface
+ */
+void FileOperateBaseWorker::performAsyncSync()
+{
+    fmInfo() << "Performing non-blocking sync for external device - target:" << targetUrl;
+
+    // Create typed D-Bus interface to daemon sync service
+    OrgDeepinFilemanagerDaemonSyncInterface syncInterface(
+            "org.deepin.Filemanager.Daemon",
+            "/org/deepin/Filemanager/Daemon/Sync",
+            QDBusConnection::sessionBus(),
+            this);
+
+    syncInterface.setTimeout(2000);
+
+    if (!syncInterface.isValid()) {
+        fmWarning() << "Failed to create sync D-Bus interface, fallback to blocking sync";
+        return;
+    }
+
+    // Call async sync method using generated interface
+    syncInterface.SyncFS(targetUrl.path());
+
+    // Don't wait for completion - this is non-blocking
+    // The daemon will handle the sync asynchronously
+    fmInfo() << "Non-blocking sync request sent to daemon";
 }
