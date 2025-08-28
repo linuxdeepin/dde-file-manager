@@ -69,6 +69,7 @@ public:
     // Sync before stop overrides
     bool needsSync() const override;
     void performSync() override;
+    void performAsyncSync() override;
 
     bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);

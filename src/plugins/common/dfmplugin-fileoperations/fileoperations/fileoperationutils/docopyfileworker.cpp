@@ -115,6 +115,13 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
         flag |= DFile::CopyFlag::kTargetDefaultPerms;
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
+        // Check if stopped before potentially blocking copyFile operation
+        if (isStopped()) {
+            fmDebug() << "Operation stopped before copyFile - from:" << fromUrl << "to:" << toUrl;
+            ret = false;
+            break;
+        }
+        
         ret = op->copyFile(toUrl, flag, progressCallback, data);
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!ret) {
