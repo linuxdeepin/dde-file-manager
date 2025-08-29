@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QRegularExpression>
 #include <QDebug>
+#include <QMimeDatabase>
 
 DFMBASE_USE_NAMESPACE
 
@@ -62,12 +63,48 @@ FileNameComponents parseFileName(FileInfoPointer fileInfo)
     }
 
     QString fileName = fileInfo->nameOf(NameInfoType::kFileName);
-    QString baseName = fileInfo->nameOf(NameInfoType::kBaseName);
-    QString completeSuffix = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+    if (fileName.isEmpty()) {
+        fmWarning() << "FileNameParser: Empty file name from file info";
+        return FileNameComponents();
+    }
+
+    QString baseName;
+    QString completeSuffix;
+
+    // Use QMimeDatabase to intelligently detect file extensions (inspired by KDE's approach)
+    QMimeDatabase db;
+    QString nameSuffix = db.suffixForFileName(fileName);
+
+    if (fileName.lastIndexOf(QLatin1Char('.')) == 0) {
+        // Hidden file like .bashrc or .config - treat whole name as basename
+        baseName = fileName;
+        completeSuffix = QString();
+    } else if (fileName.endsWith(QLatin1Char('.'))) {
+        // File ending with dot like "file." - basename is everything except the trailing dot
+        baseName = fileName.left(fileName.length() - 1);
+        completeSuffix = QString();  // Empty suffix, but we'll add the dot back when constructing
+    } else if (nameSuffix.isEmpty()) {
+        // No recognized MIME extension, check for manual dot
+        const int lastDot = fileName.lastIndexOf(QLatin1Char('.'));
+        if (lastDot == -1) {
+            // No dot at all - whole name is basename
+            baseName = fileName;
+            completeSuffix = QString();
+        } else {
+            // Has dot but no recognized MIME extension - treat as simple extension
+            baseName = fileName.left(lastDot);
+            completeSuffix = fileName.mid(lastDot + 1);
+        }
+    } else {
+        // Has recognized MIME extension - use it as the complete suffix
+        const QString fullSuffix = QLatin1Char('.') + nameSuffix;
+        baseName = fileName.left(fileName.length() - fullSuffix.length());
+        completeSuffix = nameSuffix;
+    }
 
     FileNameComponents components(baseName, completeSuffix, fileName);
 
-    // Apply special handling for hidden files
+    // Apply special handling for hidden files if needed
     fixHiddenFileBaseName(components);
 
     return components;
@@ -136,6 +173,11 @@ QString generateCopySuffix(int number)
  */
 QString constructFileName(const FileNameComponents &components, const QString &copySuffix)
 {
+    // Special case: file ending with dot like "file." -> "file.(copy)"
+    if (components.fileName.endsWith(QLatin1Char('.')) && components.completeSuffix.isEmpty()) {
+        return QString("%1.%2").arg(components.baseName, copySuffix.trimmed());
+    }
+    
     QString newFileName = QString("%1%2").arg(components.baseName, copySuffix);
 
     if (!components.completeSuffix.isEmpty()) {
