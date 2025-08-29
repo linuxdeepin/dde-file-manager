@@ -69,6 +69,7 @@ QIcon SmbShareFileInfo::fileIcon()
     if (isSmbRoot)
         return QIcon::fromTheme("network-server");
 
+    d->checkAndUpdateNode();
     return QIcon::fromTheme(d->node.iconType);
 }
 
@@ -106,13 +107,6 @@ bool SmbShareFileInfo::canAttributes(const CanableInfoType type) const
 SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(SmbShareFileInfo *qq)
     : q(qq)
 {
-    {
-        QMutexLocker locker(&smb_browser_utils::nodesMutex());
-        node = smb_browser_utils::shareNodes().value(q->fileUrl());
-#if 0
-        fmDebug() << node;
-#endif
-    }
 }
 
 SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()
@@ -128,7 +122,16 @@ bool SmbShareFileInfoPrivate::canDrop() const
     return true;
 }
 
-QString SmbShareFileInfoPrivate::fileName() const
+void SmbShareFileInfoPrivate::checkAndUpdateNode()
 {
+    if (node.url.isEmpty()) {
+        QMutexLocker locker(&smb_browser_utils::nodesMutex());
+        node = smb_browser_utils::shareNodes().value(q->fileUrl());
+    }
+}
+
+QString SmbShareFileInfoPrivate::fileName()
+{
+    checkAndUpdateNode();
     return node.displayName;
 }
