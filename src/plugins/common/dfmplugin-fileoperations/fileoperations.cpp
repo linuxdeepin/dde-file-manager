@@ -5,6 +5,7 @@
 #include "fileoperations.h"
 #include "fileoperationsevent/fileoperationseventreceiver.h"
 #include "fileoperationsevent/trashfileeventreceiver.h"
+#include "settings/operationsettings.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
@@ -12,14 +13,26 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/settingdialog/customsettingitemregister.h>
+
+#include <DSettingsOption>
+#include <QLabel>
 
 Q_DECLARE_METATYPE(bool *)
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
+using namespace dfmplugin_fileoperations;
+
+inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operations" };
+inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
+inline constexpr char kSettingGroup[] { "10_advance.02_0external_storage_device" };
 
 namespace dfmplugin_fileoperations {
 DFM_LOG_REGISTER_CATEGORY(DPFILEOPERATIONS_NAMESPACE)
+}
 
 void FileOperations::initialize()
 {
@@ -30,10 +43,11 @@ void FileOperations::initialize()
 bool FileOperations::start()
 {
     QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.operations", &err);
+    auto ret = DConfigManager::instance()->addConfig(kFileOperations, &err);
     if (!ret)
         fmWarning() << "create dconfig failed: " << err;
 
+    regSettingConfig();
     return true;
 }
 
@@ -59,12 +73,12 @@ void FileOperations::initEventHandle()
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationRestoreFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
                                    TrashFileEventReceiver::instance(),
-                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>&, const QUrl&,
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl> &, const QUrl &,
                                                                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
                                    TrashFileEventReceiver::instance(),
-                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>&, const QUrl&,
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl> &, const QUrl &,
                                                                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag,
                                                                                 DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback, const QVariant,
                                                                                 AbstractJobHandler::OperatorCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
@@ -314,6 +328,35 @@ void FileOperations::followEvents()
                                             FileOperationsEventReceiver::instance(),
                                             &FileOperationsEventReceiver::handleIsSubFile);
             },
-    Qt::DirectConnection);
+            Qt::DirectConnection);
 }
-}   // namespace dfmplugin_fileoperations
+
+void FileOperations::regSettingConfig()
+{
+    SettingJsonGenerator::instance()->addGroup(kSettingGroup, tr("External storage device"));
+    DialogManager::instance()->registerSettingWidget("syncModeItem", &OperationSettings::createSyncModeItem);
+    CustomSettingItemRegister::instance()->registCustomSettingItemType("label",
+                                                                       [](QObject *opt) -> QPair<QWidget *, QWidget *> {
+                                                                           auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+                                                                           auto lab = new QLabel(qApp->translate("QObject", option->name().toStdString().c_str()));
+                                                                           return qMakePair(lab, nullptr);
+                                                                       });
+
+    SettingJsonGenerator::instance()->addConfig(QString("%1.00_external_usage_pattern_label").arg(kSettingGroup),
+                                                { { "key", "00_external_usage_pattern_label" },
+                                                  { "name", tr("External storage device usage patterns") },
+                                                  { "type", "label" } });
+    SettingJsonGenerator::instance()->addConfig(QString("%1.01_sync_mode_item").arg(kSettingGroup),
+                                                { { "key", "01_sync_mode_item" },
+                                                  { "type", "syncModeItem" },
+                                                  { "default", false } });
+
+    SettingBackend::instance()->addSettingAccessor(
+            QString("%1.01_sync_mode_item").arg(kSettingGroup),
+            []() {
+                return DConfigManager::instance()->value(kFileOperations, kBlockEverySync, false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kFileOperations, kBlockEverySync, val);
+            });
+}
