@@ -5430,12 +5430,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="336"/>
         <source>External storage device</source>
-        <translation type="unfinished"/>
+        <translation>Extern opslagapparaat</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="347"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"/>
+        <translation>Gebruikspatronen van externe opslagapparaten</translation>
     </message>
 </context>
 <context>
@@ -5472,22 +5472,22 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="22"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>Directe gegevensoverdracht (aanbevolen)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="23"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"/>
+        <translation>Na het overzetten van de bestanden, kun je de schijf afkoppelen zonder deze ‘veilig’ te moeten verwijderen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="25"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"/>
+        <translation>Prestatiegerichte gegevensoverdracht</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="26"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Gegevens worden niet direcht overgezet en na het kopiëren moet je de schijf ‘veilig verwijderen’ voordat je hem afkoppelt om gegevensverlies te voorkomen.</translation>
     </message>
 </context>
 <context>
