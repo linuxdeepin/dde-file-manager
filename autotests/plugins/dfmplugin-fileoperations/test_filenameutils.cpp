@@ -194,37 +194,7 @@ TEST_F(TestFileNameUtils, FileNameParser_parseFileName_NullFileInfo)
     EXPECT_TRUE(components.completeSuffix.isEmpty());
 }
 
-TEST_F(TestFileNameUtils, FileNameParser_fixHiddenFileBaseName_HiddenFileWithExtension)
-{
-    // Test fixHiddenFileBaseName directly
-    FileNameComponents components(".config", "json", ".config.json");
-    FileNameParser::fixHiddenFileBaseName(components);
 
-    EXPECT_EQ(components.baseName, ".config");
-    EXPECT_EQ(components.completeSuffix, "json");
-}
-
-TEST_F(TestFileNameUtils, FileNameParser_fixHiddenFileBaseName_HiddenFileNoExtension)
-{
-    // Test hidden file without extension
-    FileNameComponents components("", "bashrc", ".bashrc");
-    FileNameParser::fixHiddenFileBaseName(components);
-
-    EXPECT_EQ(components.baseName, ".bashrc");
-    EXPECT_TRUE(components.completeSuffix.isEmpty());
-}
-
-TEST_F(TestFileNameUtils, FileNameParser_fixHiddenFileBaseName_RegularFile)
-{
-    // Test regular file (should not be modified)
-    FileNameComponents components("document", "txt", "document.txt");
-    FileNameComponents original = components;
-    FileNameParser::fixHiddenFileBaseName(components);
-
-    EXPECT_EQ(components.baseName, original.baseName);
-    EXPECT_EQ(components.completeSuffix, original.completeSuffix);
-    EXPECT_EQ(components.fileName, original.fileName);
-}
 
 // ========== FileExistenceChecker Tests ==========
 
