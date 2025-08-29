@@ -110,6 +110,10 @@ QString constructFileName(const FileNameComponents &components, const QString &c
 namespace FileNamingUtils {
 /*!
  * \brief Generate a non-conflicting file name for file operations
+ * .a -> .a(copy)
+ * a. -> a.(copy)
+ * a.tar.gz -> a(copy).tar.gz
+ * a.2025.08.29.xlsx -> a.2025.08.29(copy).xlsx
  * \param fromInfo Source file information
  * \param targetDir Target directory information
  * \return Non-conflicting file name, or empty string if generation failed
