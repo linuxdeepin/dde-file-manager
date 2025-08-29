@@ -9,7 +9,8 @@
 
 #include <dfm-framework/dpf.h>
 
-DPFILEOPERATIONS_BEGIN_NAMESPACE
+namespace dfmplugin_fileoperations {
+
 class FileOperations : public dpf::Plugin
 {
     Q_OBJECT
@@ -55,7 +56,8 @@ private slots:
 
 private:
     void followEvents();
+    void regSettingConfig();
 };
 
-DPFILEOPERATIONS_END_NAMESPACE
+}   // dfmplugin_fileoperations
 #endif   // COREPLUGIN_H
