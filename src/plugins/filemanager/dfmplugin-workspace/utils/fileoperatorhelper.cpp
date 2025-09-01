@@ -79,13 +79,6 @@ void FileOperatorHelper::touchFiles(const FileView *view, const QUrl &source)
                                  callBack);
 }
 
-void FileOperatorHelper::openFiles(const FileView *view)
-{
-    const QList<QUrl> &selectedUrls = view->selectedUrlList();
-    fmDebug() << "Opening selected files - count:" << selectedUrls.size() << "from directory:" << view->rootUrl().toString();
-    openFiles(view, selectedUrls);
-}
-
 void FileOperatorHelper::openFiles(const FileView *view, const QList<QUrl> &urls)
 {
     fmDebug() << "Opening files with current dir open mode - files count:" << urls.size();
@@ -308,25 +301,6 @@ void FileOperatorHelper::undoFiles(const FileView *view)
                                  windowId, undoCallBack);
 }
 
-void FileOperatorHelper::moveToTrash(const FileView *view)
-{
-    const QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
-    if (selectedUrls.isEmpty()) {
-        fmDebug() << "Move to trash aborted - no files selected";
-        return;
-    }
-
-    fmInfo() << "Move files to trash, selected urls: " << selectedUrls
-             << ", current dir: " << view->rootUrl();
-
-    auto windowId = WorkspaceHelper::instance()->windowId(view);
-
-    dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
-                                 windowId,
-                                 selectedUrls,
-                                 AbstractJobHandler::JobFlag::kNoHint, nullptr);
-}
-
 void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &urls)
 {
     if (urls.isEmpty()) {
@@ -362,31 +336,6 @@ void FileOperatorHelper::deleteFiles(const FileView *view)
                                  AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
-void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
-{
-    if (targetParent.isEmpty())
-        targetParent = view->rootUrl();
-
-    auto windowId = WorkspaceHelper::instance()->windowId(view);
-    QList<QUrl> selectedUrls = view->selectedUrlList();
-
-    fmInfo() << "Creating symbolic links for" << selectedUrls.size() << "files in target:" << targetParent.toString();
-
-    for (const QUrl &fileUrl : selectedUrls) {
-        QString linkName = FileUtils::nonExistSymlinkFileName(fileUrl, targetParent);
-        QUrl linkUrl;
-        linkUrl.setScheme(targetParent.scheme());
-        linkUrl.setPath(targetParent.path() + "/" + linkName);
-
-        dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
-                                     windowId,
-                                     fileUrl,
-                                     linkUrl,
-                                     false,
-                                     false);
-    }
-}
-
 void FileOperatorHelper::openInTerminal(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
@@ -408,23 +357,6 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
 
     fmInfo() << "Showing file properties for URLs - count:" << urls.size();
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
-}
-
-void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
-{
-    QList<QUrl> urls = view->selectedTreeViewUrlList();
-    if (urls.isEmpty()) {
-        fmDebug() << "Send bluetooth files aborted - no files selected";
-        return;
-    }
-
-    fmInfo() << "Send to bluetooth, selected urls: " << urls
-             << ", current dir: " << view->rootUrl();
-
-    QStringList paths;
-    for (const auto &u : urls)
-        paths << u.path();
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", paths);
 }
 
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
