@@ -11,6 +11,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QMenu>
 
@@ -124,8 +125,20 @@ bool ShredMenuScene::triggered(QAction *action)
         return AbstractMenuScene::triggered(action);
 
     QString id = d->predicateAction.key(action);
-    if (id == ShredActionId::kFileShredKey)
-        ShredUtils::instance()->shredfile(d->selectFiles, d->windowId);
+    if (id == ShredActionId::kFileShredKey) {
+        if (d->focusFile.scheme() != Global::Scheme::kFile) {
+            QList<QUrl> localUrlList;
+            std::transform(d->selectFiles.cbegin(), d->selectFiles.cend(), std::back_inserter(localUrlList),
+                           [](const QUrl &url) {
+                               QUrl target;
+                               UniversalUtils::urlTransformToLocal(url, &target);
+                               return target;
+                           });
+            ShredUtils::instance()->shredfile(localUrlList, d->windowId);
+        } else {
+            ShredUtils::instance()->shredfile(d->selectFiles, d->windowId);
+        }
+    }
 
     return true;
 }
