@@ -22,9 +22,7 @@ public:
     bool isShredEnabled();
     void initDconfig();
     bool isValidFile(const QUrl &file);
-
     void shredfile(const QList<QUrl> &fileList, quint64 winId);
-    void updateVaultMenuConfig();
 
     static QPair<QWidget *, QWidget *> createShredSettingItem(QObject *opt);
 

@@ -73,7 +73,8 @@ void ShredUtils::initDconfig()
 bool ShredUtils::isValidFile(const QUrl &file)
 {
     // 获取真实路径(解析软链接)
-    QString realPath = QFileInfo(file.toLocalFile()).canonicalFilePath();
+    auto info = InfoFactory::create<FileInfo>(file);
+    QString realPath = info->pathOf(FileInfo::FilePathInfoType::kCanonicalPath);
     if (realPath.isEmpty())
         realPath = file.toLocalFile();
 
@@ -151,35 +152,6 @@ void ShredUtils::shredfile(const QList<QUrl> &fileList, quint64 winId)
 
     // Trigger worker to start processing
     QMetaObject::invokeMethod(worker, "shredFile", Qt::QueuedConnection, Q_ARG(QList<QUrl>, fileList));
-}
-
-void ShredUtils::updateVaultMenuConfig()
-{
-    const QString kVaultDConfigName = "org.deepin.dde.file-manager.vault";
-
-    // 获取现有的菜单配置
-    const QVariant vRe = DConfigManager::instance()->value(kVaultDConfigName, "normalMenuActions");
-    QStringList currentConfig = vRe.toStringList();
-    fmDebug() << "Current vault menu config: " << currentConfig;
-
-    if (!currentConfig.contains("shredfile")) {
-        // 找到 "reverse-select" 的位置
-        int reverseSelectIndex = currentConfig.indexOf("reverse-select");
-
-        if (reverseSelectIndex != -1) {
-            // 在 "reverse-select" 后面插入 "shredfile"
-            currentConfig.insert(reverseSelectIndex + 1, "separator-line");
-            currentConfig.insert(reverseSelectIndex + 2, "shredfile");
-        } else {
-            // 果找不到 "reverse-select"，就追加到末尾
-            currentConfig.append("shredfile");
-        }
-
-        fmDebug() << "New config to be set: " << currentConfig;
-
-        // 使用 DConfigManager 写入新配置
-        DConfigManager::instance()->setValue(kVaultDConfigName, "normalMenuActions", currentConfig);
-    }
 }
 
 QPair<QWidget *, QWidget *> ShredUtils::createShredSettingItem(QObject *opt)

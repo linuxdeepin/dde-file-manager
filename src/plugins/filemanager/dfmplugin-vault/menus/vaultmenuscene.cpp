@@ -63,6 +63,7 @@ QStringList VaultMenuScenePrivate::normalMenuActionRule()
         "delete",
         "reverse-select",
         "separator-line",
+        "file-shred",
         "send-to",
         "property"
     };
