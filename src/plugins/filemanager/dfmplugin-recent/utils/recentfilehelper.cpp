@@ -116,47 +116,6 @@ bool RecentFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
     return true;
 }
 
-bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence)
-{
-    if (url.scheme() != RecentHelper::scheme()) {
-        fmDebug() << "Link file ignored - source URL is not recent scheme:" << url.scheme();
-        return false;
-    }
-
-    Q_UNUSED(windowId)
-
-    if (force) {
-        const FileInfoPointer &toInfo = InfoFactory::create<FileInfo>(link);
-        if (toInfo && toInfo->exists()) {
-            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-            fileHandler.deleteFile(link);
-        }
-    }
-
-    auto checkTargetUrl = [](const QUrl &url) -> QUrl {
-        const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
-        if (!urlParent.isValid())
-            return url;
-
-        const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
-        if (!nameValid.isEmpty())
-            return DFMIO::DFMUtils::buildFilePath(urlParent.toString().toStdString().c_str(),
-                                                  nameValid.toStdString().c_str(), nullptr);
-
-        return url;
-    };
-
-    QUrl urlValid { link };
-    if (silence)
-        urlValid = checkTargetUrl(link);
-
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    const QUrl &localUrl = RecentHelper::urlTransform(url);
-    fileHandler.createSystemLink(localUrl, urlValid);
-
-    return true;
-}
-
 bool RecentFileHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
     if (urls.isEmpty()) {

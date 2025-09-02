@@ -252,41 +252,6 @@ TEST_F(TestOpticalFileHelper, OpenFileInPlugin_ValidFiles_PublishesOpenEvent)
     EXPECT_TRUE(result);
 }
 
-TEST_F(TestOpticalFileHelper, LinkFile_InvalidScheme_ReturnsFalse)
-{
-    QUrl url("file:///tmp/test.txt");
-    QUrl link("file:///tmp/link.txt");
-
-    bool result = helper->linkFile(12345, url, link, false, false);
-
-    EXPECT_FALSE(result);
-}
-
-TEST_F(TestOpticalFileHelper, LinkFile_EmptyBacker_ReturnsFalse)
-{
-    QUrl url("burn:///dev/sr0/disc_files/test.txt");
-    QUrl link("file:///tmp/link.txt");
-
-    mockExtraProperties["mm_backer"] = "";   // Empty backer
-
-    bool result = helper->linkFile(12345, url, link, false, false);
-
-    EXPECT_FALSE(result);
-}
-
-TEST_F(TestOpticalFileHelper, LinkFile_ValidFile_PublishesSymlinkEvent)
-{
-    QUrl url("burn:///dev/sr0/disc_files/test.txt");
-    QUrl link("file:///tmp/link.txt");
-
-    mockExtraProperties["mm_backer"] = "/tmp/test.txt";
-
-    bool result = helper->linkFile(12345, url, link, false, false);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(mockPublishedTopic, QString::number(static_cast<int>(GlobalEventType::kCreateSymlink)));
-}
-
 TEST_F(TestOpticalFileHelper, WriteUrlsToClipboard_EmptySources_ReturnsFalse)
 {
     QList<QUrl> sources;

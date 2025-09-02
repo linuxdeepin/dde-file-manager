@@ -35,7 +35,6 @@ public Q_SLOTS:
     bool moveToTrash(const quint64 windowId, const QList<QUrl> sources,
                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool openFileInPlugin(quint64 winId, QList<QUrl> urls);
-    bool linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence);
     bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                               const QList<QUrl> urls);
     bool openFileInTerminal(const quint64 windowId, const QList<QUrl> urls);
