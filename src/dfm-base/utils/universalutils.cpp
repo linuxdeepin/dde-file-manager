@@ -23,6 +23,7 @@
 #include <QDBusConnectionInterface>
 #include <QRegularExpression>
 #include <DUtil>
+#include <QDBusInterface>
 
 #ifdef COMPILE_ON_V2X
 #    define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
@@ -155,33 +156,6 @@ bool UniversalUtils::isLogined()
 bool UniversalUtils::inMainThread()
 {
     return QThread::currentThread() == QCoreApplication::instance()->thread();
-}
-
-/*!
- * \brief FileUtils::blockShutdown 调用dbus去设置阻塞睡眠
- * \param replay 输入参数，dbus回复
- */
-void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
-{
-    qCInfo(logDFMBase) << "Creating DBus inhibitor to block system shutdown";
-    if (replay.value().isValid()) {
-        qCWarning(logDFMBase) << "Shutdown block already active, skipping new request";
-        return;
-    }
-
-    QDBusInterface loginManager("org.freedesktop.login1",
-                                "/org/freedesktop/login1",
-                                "org.freedesktop.login1.Manager",
-                                QDBusConnection::systemBus());
-
-    QList<QVariant> arg;
-    arg << QString("shutdown:sleep")   // what
-        << qApp->applicationDisplayName()   // who
-        << QObject::tr("Files are being processed")   // why
-        << QString("block");   // mode
-
-    replay = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
-    qCInfo(logDFMBase) << "System shutdown block created successfully";
 }
 
 qint64 UniversalUtils::computerMemory()
@@ -532,6 +506,62 @@ int UniversalUtils::getTextLineHeight(const QString &text, const QFontMetrics &f
         return fontMetrics.height();
 
     return textRect.height();
+}
+
+/*!
+ * \brief UniversalUtils::inhibitStandby Inhibit system standby using ScreenSaver interface
+ * \param reason Human-readable reason for inhibiting standby
+ * \return Cookie for uninhibiting, 0 if failed
+ */
+uint32_t UniversalUtils::inhibitStandby(const QString &reason)
+{
+    qCInfo(logDFMBase) << "Creating ScreenSaver inhibitor to prevent system standby";
+
+    QDBusInterface iface("org.freedesktop.ScreenSaver",
+                         "/org/freedesktop/ScreenSaver",
+                         "org.freedesktop.ScreenSaver",
+                         QDBusConnection::sessionBus());
+
+    if (!iface.isValid()) {
+        qCWarning(logDFMBase) << "ScreenSaver DBus interface is not available";
+        return 0;
+    }
+
+    QDBusReply<uint32_t> reply = iface.call("Inhibit", qApp->applicationName(), "Files are being processed");
+
+    if (reply.isValid() && reply.value() > 0) {
+        qCInfo(logDFMBase) << "ScreenSaver inhibit successful, cookie:" << reply.value();
+        return reply.value();
+    }
+
+    qCWarning(logDFMBase) << "Failed to create ScreenSaver inhibit:" << reply.error().message();
+    return 0;
+}
+
+/*!
+ * \brief UniversalUtils::uninhibitStandby Release ScreenSaver inhibit using cookie
+ * \param cookie Cookie returned from inhibitStandby
+ */
+void UniversalUtils::uninhibitStandby(uint32_t cookie)
+{
+    if (cookie == 0) {
+        qCDebug(logDFMBase) << "Invalid cookie for uninhibitStandby, skipping";
+        return;
+    }
+
+    qCInfo(logDFMBase) << "Releasing ScreenSaver inhibit, cookie:" << cookie;
+
+    QDBusInterface iface("org.freedesktop.ScreenSaver",
+                         "/org/freedesktop/ScreenSaver",
+                         "org.freedesktop.ScreenSaver",
+                         QDBusConnection::sessionBus());
+
+    if (iface.isValid()) {
+        iface.call("UnInhibit", cookie);
+        qCInfo(logDFMBase) << "ScreenSaver inhibit released successfully";
+    } else {
+        qCWarning(logDFMBase) << "ScreenSaver DBus interface not available for release";
+    }
 }
 
 }
