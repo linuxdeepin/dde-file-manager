@@ -10,6 +10,7 @@
 
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/settingdialog/customsettingitemregister.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #define SHRED_SETTING_GROUP "10_advance.04_shred"
 inline constexpr char kShredSettingGroup[] { SHRED_SETTING_GROUP };
@@ -48,13 +49,11 @@ void VirtualShredPlugin::bindScene(const QString &parentScene)
 void VirtualShredPlugin::addShredSettingItem()
 {
     SettingJsonGenerator::instance()->addGroup(kShredSettingGroup, tr("File shred"));
-    CustomSettingItemRegister::instance()->registCustomSettingItemType("switchbutton", ShredUtils::createShredSettingItem);
+    DialogManager::instance()->registerSettingWidget("shredItem", &ShredUtils::createShredSettingItem);
     QVariantMap config {
         { "key", kShredSettingShred },
-        { "text", tr("File shredding function") },
-        { "type", "switchbutton" },
-        { "default", false },
-        { "message", tr("Once turned on, the 'File Shred' option becomes available in the context menu for secure file deletion") },
+        { "type", "shredItem" },
+        { "default", false }
     };
 
     QString key = QString("%1.%2").arg(kShredSettingGroup, kShredSettingShred);

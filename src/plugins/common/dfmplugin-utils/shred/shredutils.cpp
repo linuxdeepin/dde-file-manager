@@ -154,29 +154,27 @@ void ShredUtils::shredfile(const QList<QUrl> &fileList, quint64 winId)
     QMetaObject::invokeMethod(worker, "shredFile", Qt::QueuedConnection, Q_ARG(QList<QUrl>, fileList));
 }
 
-QPair<QWidget *, QWidget *> ShredUtils::createShredSettingItem(QObject *opt)
+QWidget *ShredUtils::createShredSettingItem(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
 
     auto widget = new QWidget;
-    widget->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    auto lab = new QLabel(option->data("text").toString());
-    layout->addWidget(lab);
-
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setContentsMargins(0, 0, 0, 0);
+    auto lab = new QLabel(tr("Enable File Shred"), widget);
+    auto btn = new DSwitchButton(widget);
+    hLayout->addWidget(lab);
+    hLayout->addWidget(btn, 0, Qt::AlignRight);
     layout->addLayout(hLayout);
 
-    auto msgLabel = new DTipLabel(option->data("message").toString(), widget);
+    auto msgLabel = new DTipLabel(tr("Once enable, the 'File Shred' option becomes available in the context menu for secure file deletion"), widget);
     msgLabel->setAlignment(Qt::AlignLeft);
     msgLabel->setWordWrap(true);
+    layout->addWidget(msgLabel);
 
-    hLayout->addWidget(msgLabel);
-
-    auto btn = new DSwitchButton;
     // 设置初始状态
     bool status = ShredUtils::instance()->isShredEnabled();
     btn->setChecked(status);
@@ -197,7 +195,7 @@ QPair<QWidget *, QWidget *> ShredUtils::createShredSettingItem(QObject *opt)
         btn->setChecked(checked);
     });
 
-    return qMakePair(widget, btn);
+    return widget;
 }
 
 bool ShredUtils::confirmAndDisplayFiles(const QList<QUrl> &fileList)
