@@ -6997,22 +6997,32 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::ShredUtils</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="208"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="167"/>
+        <source>Enable File Shred</source>
+        <translation>开启文件粉碎功能</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="173"/>
+        <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
+        <translation>开启后可以在文件右键菜单中“文件粉碎”彻底删除文件</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="206"/>
         <source>Are you sure to shred these %1 items?</source>
         <translation>你确定要粉碎这%1个项目吗？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="209"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="207"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
         <translation>该文件将被彻底删除且无法恢复。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="231"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="229"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="232"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="230"/>
         <source>Shred</source>
         <translation>粉碎</translation>
     </message>
@@ -7028,19 +7038,9 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::VirtualShredPlugin</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="50"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
         <translation>文件粉碎</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="54"/>
-        <source>File shredding function</source>
-        <translation>文件粉碎功能</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="57"/>
-        <source>Once turned on, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation>一旦启用，&quot;文件粉碎&quot;选项将在右键菜单中显示，用于安全删除文件</translation>
     </message>
 </context>
 <context>
