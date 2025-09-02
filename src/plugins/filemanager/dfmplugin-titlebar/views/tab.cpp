@@ -187,6 +187,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         }
     }
 
+    setToolTip(tabName != str ? tabName : "");
     DPalette pal = DPaletteHelper::instance()->palette(widget);
     QColor color;
 
