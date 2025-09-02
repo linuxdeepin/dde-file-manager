@@ -20,11 +20,11 @@ function(dfm_setup_daemon_core_dependencies target_name)
     set(DBUS_SOURCES "")
     
     # Generate DBus interface XML for SyncDBus first
-    qt6_generate_dbus_interface(
-        ${CMAKE_CURRENT_SOURCE_DIR}/syncdbus.h
-        ${Sync_XML}
-        OPTIONS -M -S
-    )
+    # qt6_generate_dbus_interface(
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/syncdbus.h
+    #     ${Sync_XML}
+    #     OPTIONS -M -S
+    # )
     
     # Add adaptors (Sync_XML will be available after generation)
     qt6_add_dbus_adaptor(DBUS_SOURCES ${DeviceManager_XML}
