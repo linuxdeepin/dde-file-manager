@@ -10,6 +10,7 @@
 #include "core.h"
 #include "devicemanagerdbus.h"
 #include "operationsstackmanagerdbus.h"
+#include "syncdbus.h"
 #include "textindexcontroller.h"
 
 #include <dfm-base/base/urlroute.h>
