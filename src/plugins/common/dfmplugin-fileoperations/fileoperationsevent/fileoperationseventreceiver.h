@@ -279,8 +279,7 @@ private:
                            const QList<QUrl> &redoSourcesUrls, const QList<QUrl> &redoTargetUrls,
                            const dfmbase::GlobalEventType redo,
                            const bool isUndo = false, const QUrl &templateUrl = QUrl());
-    QUrl checkTargetUrl(const QUrl &url);
-    QUrl determineLinkTarget(const QUrl &sourceUrl, const QUrl &linkUrl, const bool silence);
+    QUrl determineLinkTarget(const QUrl &sourceUrl, const QUrl &linkUrl, const bool silence, const quint64 windowId);
 
 private:
     std::unique_ptr<FileCopyMoveJob> copyMoveJob { std::make_unique<FileCopyMoveJob>() };
