@@ -687,66 +687,6 @@ QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharC
     return tmpName;
 }
 
-QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
-{
-    const FileInfoPointer &info = InfoFactory::create<FileInfo>(fileUrl);
-
-    if (info && DFMIO::DFile(fileUrl).exists()) {
-        QString baseName = info->displayOf(DisPlayInfoType::kFileDisplayName) == info->nameOf(NameInfoType::kFileName)
-                ? info->nameOf(NameInfoType::kBaseName)
-                : info->displayOf(DisPlayInfoType::kFileDisplayName);
-        QString shortcut = QObject::tr("Shortcut");
-        QString linkBaseName;
-
-        int number = 0;
-
-        forever {
-            if (info->isAttributes(OptInfoType::kIsFile)) {
-                if (info->nameOf(NameInfoType::kSuffix).isEmpty()) {
-                    if (number == 0) {
-                        linkBaseName = QString("%1 %2").arg(baseName, shortcut);
-                    } else {
-                        linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
-                    }
-                } else {
-                    if (number == 0) {
-                        linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info->nameOf(NameInfoType::kSuffix));
-                    } else {
-                        linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->nameOf(NameInfoType::kSuffix));
-                    }
-                }
-            } else if (info->isAttributes(OptInfoType::kIsDir)) {
-                if (number == 0) {
-                    linkBaseName = QString("%1 %2").arg(baseName, shortcut);
-                } else {
-                    linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
-                }
-            } else if (info->isAttributes(OptInfoType::kIsSymLink)) {
-                return QString();
-            }
-
-            if (parentUrl.isEmpty()) {
-                return linkBaseName;
-            }
-
-            QDir parentDir = QDir(parentUrl.path());
-            if (parentDir.exists(linkBaseName)) {
-                ++number;
-            } else {
-                // 链接文件失效后exists会返回false，通过lstat再次判断链接文件本身是否存在
-                auto strLinkPath = parentDir.filePath(linkBaseName).toStdString();
-                struct stat st;
-                if ((lstat(strLinkPath.c_str(), &st) == 0) && S_ISLNK(st.st_mode))
-                    ++number;
-                else
-                    return linkBaseName;
-            }
-        }
-    }
-
-    return QString();
-}
-
 QString FileUtils::toUnicode(const QByteArray &data, const QString &fileName)
 {
     if (data.isEmpty())

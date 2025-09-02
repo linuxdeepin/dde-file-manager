@@ -96,6 +96,37 @@ QString constructFileName(const FileNameComponents &components, const QString &c
 }
 
 /*!
+ * \brief Namespace for symlink-specific file name generation
+ *
+ * Follows Single Responsibility Principle - only responsible for generating symlink names
+ */
+namespace SymlinkNameGenerator {
+/*!
+ * \brief Generate copy suffix for symlinks
+ * \param number Symlink number (0 for first symlink, 1+ for numbered symlinks)
+ * \return Formatted symlink suffix
+ */
+QString generateSymlinkSuffix(int number);
+
+/*!
+ * \brief Construct symlink file name from components and suffix
+ * \param components File name components
+ * \param symlinkSuffix Symlink suffix to append
+ * \return Complete symlink file name
+ */
+QString constructSymlinkFileName(const FileNameComponents &components, const QString &symlinkSuffix);
+
+/*!
+ * \brief Generate a unique symlink name that doesn't conflict with existing files or symlinks
+ * \param components Original file name components
+ * \param targetDir Target directory where symlink will be placed
+ * \return Unique symlink name, or empty string if generation failed
+ */
+QString generateUniqueSymlinkName(const FileNameComponents &components,
+                                  FileInfoPointer targetDir);
+}
+
+/*!
  * \brief Main namespace for file naming operations
  *
  * Follows Facade pattern - provides simple interface to complex subsystem
@@ -114,6 +145,18 @@ namespace FileNamingUtils {
  */
 QString generateNonConflictingName(FileInfoPointer fromInfo,
                                    FileInfoPointer targetDir);
+
+/*!
+ * \brief Generate a non-conflicting symlink name for symlink operations
+ * file.txt -> file.txt Shortcut
+ * .hidden -> .hidden Shortcut
+ * folder -> folder Shortcut
+ * \param fromInfo Source file information
+ * \param targetDir Target directory information
+ * \return Non-conflicting symlink name, or empty string if generation failed
+ */
+QString generateNonConflictingSymlinkName(FileInfoPointer fromInfo,
+                                          FileInfoPointer targetDir);
 }
 
 DPFILEOPERATIONS_END_NAMESPACE
