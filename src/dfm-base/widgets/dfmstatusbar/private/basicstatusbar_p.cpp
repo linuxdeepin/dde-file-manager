@@ -61,7 +61,7 @@ void BasicStatusBarPrivate::initLayout()
     q->clearLayoutAndAnchors();
     layout->addWidget(tip);
     layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 4, 0);
+    layout->setContentsMargins(0, 0, 4, 1);
 }
 
 void BasicStatusBarPrivate::calcFolderContains(const QList<QUrl> &folderList)
