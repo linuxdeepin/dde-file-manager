@@ -510,6 +510,18 @@ int TabBar::count() const
 
 void TabBar::handleTabAnimationFinished(const int index)
 {
+    // Fix for tab hover issue: After tab removal animation completes,
+    // check if mouse cursor is over any tab and update hover state accordingly.
+    // This ensures that when a tab is closed and other tabs move to new positions,
+    // the hover state is correctly updated for the tab now under the mouse cursor.
+    for (Tab *tab : tabList) {
+        auto rect = tab->geometry();
+        auto pos = mapFromGlobal(QCursor::pos());
+        if (rect.contains(pos)) {
+            tab->setHovered(true);
+            break;
+        }
+    }
 }
 
 void TabBar::updateTabsState()
