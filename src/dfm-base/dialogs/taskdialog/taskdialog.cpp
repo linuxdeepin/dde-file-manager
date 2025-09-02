@@ -93,21 +93,21 @@ void TaskDialog::initUI()
     moveToCenter();
 }
 /*!
- * \brief TaskDialog::blockShutdown 调用dbus处理任务中，阻止系统进入休眠或关机，避免文件损坏
+ * \brief TaskDialog::blockShutdown 调用ScreenSaver接口阻止系统进入待机，避免文件传输中断
  */
 void TaskDialog::blockShutdown()
 {
-    UniversalUtils::blockShutdown(replyBlokShutDown);
-    int fd = -1;
-    if (replyBlokShutDown.isValid()) {
-        fd = replyBlokShutDown.value().fileDescriptor();
+    if (m_inhibitCookie > 0) {
+        qCDebug(logDFMBase) << "System standby already inhibited, cookie:" << m_inhibitCookie;
+        return;
     }
 
-    if (fd > 0) {
-        QObject::connect(this, &TaskDialog::closed, this, [this]() {
-            QDBusReply<QDBusUnixFileDescriptor> tmp = replyBlokShutDown;   //::close(fd);
-            replyBlokShutDown = QDBusReply<QDBusUnixFileDescriptor>();
-        });
+    m_inhibitCookie = UniversalUtils::inhibitStandby(QObject::tr("Files are being processed"));
+    
+    if (m_inhibitCookie > 0) {
+        qCInfo(logDFMBase) << "System standby inhibited successfully, cookie:" << m_inhibitCookie;
+    } else {
+        qCWarning(logDFMBase) << "Failed to inhibit system standby";
     }
 }
 /*!
@@ -230,6 +230,13 @@ void TaskDialog::removeTask()
  */
 void TaskDialog::closeEvent(QCloseEvent *event)
 {
+    // Release system standby inhibit
+    if (m_inhibitCookie > 0) {
+        UniversalUtils::uninhibitStandby(m_inhibitCookie);
+        m_inhibitCookie = 0;
+        qCInfo(logDFMBase) << "System standby inhibit released on dialog close";
+    }
+
     QMap<JobHandlePointer, QListWidgetItem *>::iterator it = taskItems.begin();
     while (it != taskItems.end()) {
         it.key()->operateTaskJob(AbstractJobHandler::SupportAction::kStopAction);
@@ -254,4 +261,9 @@ void TaskDialog::keyPressEvent(QKeyEvent *event)
 
 TaskDialog::~TaskDialog()
 {
+    // Ensure system standby inhibit is released
+    if (m_inhibitCookie > 0) {
+        UniversalUtils::uninhibitStandby(m_inhibitCookie);
+        qCInfo(logDFMBase) << "System standby inhibit released in destructor";
+    }
 }

@@ -52,7 +52,7 @@ private:
     QListWidget *taskListWidget { nullptr };
     QMap<JobHandlePointer, QListWidgetItem *> taskItems;
     DTitlebar *titlebar { nullptr };
-    QDBusReply<QDBusUnixFileDescriptor> replyBlokShutDown;
+    uint32_t m_inhibitCookie { 0 };
     static int kMaxHeight;
 };
 
