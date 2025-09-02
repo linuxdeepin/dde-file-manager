@@ -64,8 +64,8 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="833"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="943"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="840"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="950"/>
         <source>Can&apos;t access file!</source>
         <translation>不能访问当前文件</translation>
     </message>
@@ -115,7 +115,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="682"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
         <translation>文件名称或路径太长！</translation>
     </message>
@@ -917,23 +917,23 @@ Enter user and password for %1</source>
         <translation>终 止</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="698"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="204"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1143"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1083"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="128"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="136"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="129"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="137"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本 %1）</translation>
@@ -941,7 +941,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -1016,37 +1016,37 @@ Enter user and password for %1</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="52"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="57"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
         <source>New Text</source>
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
         <source>Document</source>
         <translation>新建Word文档</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="67"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
         <source>Presentation</source>
         <translation>演示文档</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="71"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="76"/>
         <source>New File</source>
         <translation>新建文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="818"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -5443,28 +5443,28 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="350"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="355"/>
         <source>Rename file error</source>
         <translation>文件重命名错误</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="641"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="646"/>
         <source>Failed to create the directory</source>
         <translation>目录创建失败</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1169"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1226"/>
         <source>Failed to create the file</source>
         <translation>创建文件失败</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1247"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1327"/>
         <source>link file error</source>
         <translation>链接文件错误</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1286"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1295"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1369"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1378"/>
         <source>Failed to modify file permissions</source>
         <translation>修改文件权限失败</translation>
     </message>
@@ -5472,22 +5472,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_fileoperations::OperationSettings</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="22"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="41"/>
         <source>Real-time data synchronization (Recommended)</source>
         <translation>数据实时同步（推荐）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="23"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
         <translation>文件拷贝完成后，您可以直接移除外部存储设备，无需使用“安全移除”功能。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="25"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
         <source>Performance First (Requires Safe Removal)</source>
         <translation>性能优先（需安全移除）</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="26"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
         <translation>文件拷贝数据不会实时同步，拷贝完成后您必须使用“安全移除”来移除外部存储设备，否则可能导致文件损坏或数据丢失。</translation>
     </message>
@@ -5628,22 +5628,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_menu::SendToMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="263"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="257"/>
         <source>Send to</source>
         <translation>发送到</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
         <source>Bluetooth</source>
         <translation>蓝牙</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
         <source>Create link</source>
         <translation>创建链接</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="266"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="260"/>
         <source>Send to desktop</source>
         <translation>发送到桌面</translation>
     </message>
@@ -6989,7 +6989,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::ShredMenuScene</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="79"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
         <translation>文件粉碎</translation>
     </message>
@@ -6997,22 +6997,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::ShredUtils</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="236"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="208"/>
         <source>Are you sure to shred these %1 items?</source>
         <translation>你确定要粉碎这%1个项目吗？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="237"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="209"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
         <translation>该文件将被彻底删除且无法恢复。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="259"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="231"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="232"/>
         <source>Shred</source>
         <translation>粉碎</translation>
     </message>
@@ -7789,7 +7789,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>%1打开失败，该文件可能已移动或重命名</translation>
     </message>
