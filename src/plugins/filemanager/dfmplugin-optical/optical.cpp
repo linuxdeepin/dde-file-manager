@@ -102,7 +102,6 @@ void Optical::bindFileOperations()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalFileHelper::instance(), &OpticalFileHelper::linkFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalFileHelper::instance(), &OpticalFileHelper::writeUrlsToClipboard);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInTerminal);
 }
@@ -196,7 +195,8 @@ void Optical::bindWindows()
         Q_UNUSED(id)
         addOpticalCrumbToTitleBar();
     });
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this,
+    connect(
+            &FMWindowsIns, &FileManagerWindowsManager::windowOpened, this,
             [this]() {
                 addOpticalCrumbToTitleBar();
             },

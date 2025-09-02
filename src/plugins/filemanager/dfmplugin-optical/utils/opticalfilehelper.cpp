@@ -92,23 +92,6 @@ bool OpticalFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
     return true;
 }
 
-bool OpticalFileHelper::linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence)
-{
-    if (url.scheme() != scheme())
-        return false;
-
-    QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
-    if (backer.isEmpty()) {
-        fmWarning() << "Link file operation failed - no backer information for:" << url;
-        return false;
-    }
-
-    QUrl redirectedFileUrl { QUrl::fromLocalFile(backer) };
-    fmDebug() << "Creating symlink via redirection:" << url << "-> " << redirectedFileUrl << "link:" << link;
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link, force, silence);
-    return true;
-}
-
 bool OpticalFileHelper::writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
     if (urls.isEmpty())

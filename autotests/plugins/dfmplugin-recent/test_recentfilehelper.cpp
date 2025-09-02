@@ -170,20 +170,6 @@ TEST_F(RecentFileHelperTest, OpenFileInPlugin_CanBeCalled)
 }
 
 /**
- * @brief 测试文件链接创建
- * 验证linkFile方法能正确调用
- */
-TEST_F(RecentFileHelperTest, LinkFile_CanBeCalled)
-{
-    QUrl linkUrl = QUrl("file:///target/link.txt");
-    bool force = false;
-    bool silence = true;
-
-    // Test linkFile - 测试方法能正常调用而不崩溃
-    EXPECT_NO_THROW(helper->linkFile(testWindowId, testUrl1, linkUrl, force, silence));
-}
-
-/**
  * @brief 测试在终端中打开文件
  * 验证openFileInTerminal方法能正确调用
  */
@@ -257,11 +243,11 @@ TEST_F(RecentFileHelperTest, InvalidWindowId_HandlesGracefully)
     stub.set_lamda(VADDR(DDialog, exec), [] { return 1; });
     stub.set_lamda(&RecentManagerDBusInterface::RemoveItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
     stub.set_lamda(&RecentManagerDBusInterface::PurgeItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
 
     quint64 invalidWindowId = 0;
@@ -283,11 +269,11 @@ TEST_F(RecentFileHelperTest, LargeFileSelection_HandlesGracefully)
     stub.set_lamda(VADDR(DDialog, exec), [] { return 1; });
     stub.set_lamda(&RecentManagerDBusInterface::RemoveItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
     stub.set_lamda(&RecentManagerDBusInterface::PurgeItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
 
     // Create large file list
@@ -335,11 +321,11 @@ TEST_F(RecentFileHelperTest, JobFlags_AllCombinationsHandled)
     stub.set_lamda(VADDR(DDialog, exec), [] { return 1; });
     stub.set_lamda(&RecentManagerDBusInterface::RemoveItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
     stub.set_lamda(&RecentManagerDBusInterface::PurgeItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
 
     QList<QUrl> sources = { testUrl1 };
@@ -377,11 +363,11 @@ TEST_F(RecentFileHelperTest, ConcurrentOperations_ThreadSafe)
     stub.set_lamda(VADDR(DDialog, exec), [] { return 1; });
     stub.set_lamda(&RecentManagerDBusInterface::RemoveItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
     stub.set_lamda(&RecentManagerDBusInterface::PurgeItems, [] {
         __DBG_STUB_INVOKE__
-                return QDBusPendingReply<>();
+        return QDBusPendingReply<>();
     });
 
     QList<QUrl> sources = { testUrl1 };
