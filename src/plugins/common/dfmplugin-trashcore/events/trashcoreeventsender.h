@@ -41,7 +41,6 @@ private:
     explicit TrashCoreEventSender(QObject *parent = nullptr);
     void initTrashWatcher();
     bool checkAndStartWatcher();
-    void ensureTrashStateInitialized();
 
 private:
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;

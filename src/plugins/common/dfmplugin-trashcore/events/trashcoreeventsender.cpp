@@ -65,27 +65,13 @@ TrashCoreEventSender *TrashCoreEventSender::instance()
     return &sender;
 }
 
-void TrashCoreEventSender::ensureTrashStateInitialized()
-{
-    if (trashState == TrashState::Unknown) {
-        // Lazy initialization: determine actual trash state only when needed
-        bool actuallyEmpty = FileUtils::trashIsEmpty();
-        trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-        fmDebug() << "TrashCore: Lazy initialized trash state to" 
-                 << (trashState == TrashState::Empty ? "Empty" : "NotEmpty");
-    }
-}
-
 void TrashCoreEventSender::sendTrashStateChangedDel()
-{
-    // Ensure we know the current state before processing deletion
-    ensureTrashStateInitialized();
-    
+{    
     bool actuallyEmpty = FileUtils::trashIsEmpty();
     TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
     
     // Only send signal if state actually changed
-    if (newState != trashState) {
+    if (trashState == TrashState::Unknown || newState != trashState) {
         trashState = newState;
         
         // Only send signal when trash becomes empty (files deleted)
@@ -98,11 +84,8 @@ void TrashCoreEventSender::sendTrashStateChangedDel()
 
 void TrashCoreEventSender::sendTrashStateChangedAdd()
 {
-    // Ensure we know the current state before processing addition
-    ensureTrashStateInitialized();
-    
     // If trash was empty and files are being added, it's now not empty
-    if (trashState == TrashState::Empty) {
+    if (trashState == TrashState::Unknown || trashState == TrashState::Empty) {
         trashState = TrashState::NotEmpty;
         qInfo() << "TrashCore: Trash became non-empty, sending state changed signal";
         dpfSignalDispatcher->publish("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged");
