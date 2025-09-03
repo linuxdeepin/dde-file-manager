@@ -73,7 +73,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="163"/>
         <source>The device has been safely removed</source>
-        <translation>El dispositiu s&apos;ha extret amb seguretat.</translation>
+        <translation>La unitat s&apos;ha extret amb seguretat.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="180"/>
@@ -1316,7 +1316,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="36"/>
         <source>Safely Remove</source>
-        <translation>Extreu-ho amb seguretat</translation>
+        <translation>Extreu-la amb seguretat</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="44"/>
@@ -5477,7 +5477,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>Un cop copiats els fitxers, podeu desconnectar la unitat externa sense necessitar la funció de treure-la de manera segura.</translation>
+        <translation>Un cop copiats els fitxers, podeu desconnectar la unitat externa sense necessitar la funció d&apos;extreure-la de manera segura.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
@@ -5487,7 +5487,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation>Les dades de la còpia de fitxers no es sincronitzen en temps real. Un cop feta la còpia, heu d&apos;usar la funció de desconnexió segura per treure el dispositiu d&apos;emmagatzematge extern. En cas contrari, es poden produir danys al fitxer o pèrdues de dades.</translation>
+        <translation>Les dades de la còpia de fitxers no es sincronitzen en temps real. Un cop feta la còpia, heu d&apos;usar la funció de desconnexió segura per extreure la unitat d&apos;emmagatzematge extern. En cas contrari, es poden produir danys al fitxer o pèrdues de dades.</translation>
     </message>
 </context>
 <context>
