@@ -301,6 +301,12 @@ QStringList TagManager::getFilesByTag(const QString &tag)
     return dataMap.value(tag).toStringList();
 }
 
+QHash<QString, QStringList> TagManager::findChildren(const QString &parentPath) const
+{
+    const auto &url = FileUtils::bindUrlTransform(QUrl::fromLocalFile(parentPath));
+    return FileTagCacheIns.findChildren(url.path());
+}
+
 bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &files)
 {
     // if tags is empty means delete all files's tags
@@ -464,6 +470,17 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
     QVariantMap oldAndNewName = { { tagName, QVariant { newName } } };
     emit tagDeleted(tagName);
     return TagProxyHandleIns->changeTagNamesWithFiles(oldAndNewName);
+}
+
+bool TagManager::removeChildren(const QString &parentPath)
+{
+    bool ret = true;
+    const auto &children = findChildren(parentPath);
+    for (auto it = children.cbegin(); it != children.cend(); ++it) {
+        ret &= removeTagsOfFiles(it.value(), { QUrl::fromLocalFile(it.key()) });
+    }
+
+    return ret;
 }
 
 QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) const
