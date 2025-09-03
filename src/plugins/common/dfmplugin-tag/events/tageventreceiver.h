@@ -12,6 +12,7 @@ namespace dfmplugin_tag {
 inline constexpr char kSidebarOrder[] { "SideBar/ItemOrder" };
 inline constexpr char kTagOrderKey[] { "tag" };
 
+class TagEventWorker;
 class TagEventReceiver : public QObject
 {
     Q_OBJECT
@@ -21,6 +22,7 @@ public:
 public slots:
     void handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok);
     void handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
+    void handleFileCopyResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
     void handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
     void handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
     void handleWindowUrlChanged(quint64 winId, const QUrl &url);
@@ -31,6 +33,10 @@ public slots:
 
 private:
     explicit TagEventReceiver(QObject *parent = nullptr);
+
+    void addTagsToUrl(const QUrl &url, const QStringList &tags);
+    void processDirectoryTags(const QUrl &srcUrl, const QUrl &destUrl, bool shouldRemoveSource);
+    void processFileTags(const QUrl &srcUrl, const QUrl &destUrl, bool shouldRemoveSource);
 };
 
 }

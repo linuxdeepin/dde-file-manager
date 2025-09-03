@@ -238,6 +238,23 @@ QStringList FileTagCache::getTagsByFiles(const QStringList &paths) const
     return intersectionTags;
 }
 
+QHash<QString, QStringList> FileTagCache::findChildren(const QString &parentPath) const
+{
+    QHash<QString, QStringList> children;
+    QString normalizedParent = parentPath;
+    if (!normalizedParent.endsWith('/'))
+        normalizedParent += '/';
+
+    QReadLocker wlk(&d->lock);
+    for (auto it = d->fileTagsCache.cbegin(); it != d->fileTagsCache.cend(); ++it) {
+        const QString &filePath = it.key();
+        if (filePath.startsWith(normalizedParent))
+            children.insert(filePath, it.value().toStringList());
+    }
+
+    return children;
+}
+
 FileTagCache::TagColorMap FileTagCache::getTagsColor(const QStringList &tags) const
 {
     if (tags.isEmpty())
@@ -272,6 +289,11 @@ QStringList FileTagCacheController::getTagsByFile(const QString &path)
 QMap<QString, QColor> FileTagCacheController::getCacheTagsColor(const QStringList &tags)
 {
     return FileTagCache::instance().getTagsColor(tags);
+}
+
+QHash<QString, QStringList> FileTagCacheController::findChildren(const QString &parentPath) const
+{
+    return FileTagCache::instance().findChildren(parentPath);
 }
 
 FileTagCacheController::~FileTagCacheController()

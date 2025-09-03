@@ -52,6 +52,7 @@ public:
     TagColorMap getTagsColor(const QStringList &tags) const;
     QStringList getTagsByUrls(const QList<QUrl> &urls) const;
     QStringList getFilesByTag(const QString &tag);
+    QHash<QString, QStringList> findChildren(const QString &parentPath) const;
 
     // modify
     bool setTagsForFiles(const QStringList &tags, const QList<QUrl> &files);
@@ -60,6 +61,7 @@ public:
     void deleteTags(const QStringList &tags);
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
     bool changeTagName(const QString &tagName, const QString &newName);
+    bool removeChildren(const QString &parentPath);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);

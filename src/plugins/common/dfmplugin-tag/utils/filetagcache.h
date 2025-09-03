@@ -50,6 +50,7 @@ public:
     //query
     QStringList getTagsByFiles(const QStringList &paths) const;
     TagColorMap getTagsColor(const QStringList &tags) const;
+    QHash<QString, QStringList> findChildren(const QString &parentPath) const;
 
 private:
     explicit FileTagCache(QObject *parent = nullptr);
@@ -80,6 +81,7 @@ public:
     QStringList getTagsByFiles(const QStringList &paths);
     QStringList getTagsByFile(const QString &path);
     QMap<QString, QColor> getCacheTagsColor(const QStringList &tags);
+    QHash<QString, QStringList> findChildren(const QString &parentPath) const;
 
 Q_SIGNALS:
     void initLoadTagInfos();
