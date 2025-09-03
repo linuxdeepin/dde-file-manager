@@ -37,6 +37,7 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
 {
     fmDebug() << "SortAndDisplayMenuScene initialized";
     d->predicateName[ActionID::kSortBy] = tr("Sort by");
+    d->predicateName[ActionID::kGroupBy] = tr("Group by");
     d->predicateName[ActionID::kDisplayAs] = tr("Display as");
 
     // 排序子菜单
@@ -45,6 +46,14 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
     d->predicateName[ActionID::kSrtTimeCreated] = tr("Time created");
     d->predicateName[ActionID::kSrtSize] = tr("Size");
     d->predicateName[ActionID::kSrtType] = tr("Type");
+
+    // 分组子菜单
+    d->predicateName[ActionID::kGroupByNone] = tr("None");
+    d->predicateName[ActionID::kGroupByName] = tr("Name");
+    d->predicateName[ActionID::kGroupByModified] = tr("Time modified");
+    d->predicateName[ActionID::kGroupByCreated] = tr("Time created");
+    d->predicateName[ActionID::kGroupBySize] = tr("Size");
+    d->predicateName[ActionID::kGroupByType] = tr("Type");
 
     // 显示子菜单
     d->predicateName[ActionID::kDisplayIcon] = tr("Icon");
@@ -191,6 +200,51 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
                 return true;
             }
         }
+
+        // group by
+        {
+            // group by none
+            if (actionId == ActionID::kGroupByNone) {
+                fmInfo() << "Setting group by none";
+                d->groupByRole(Global::ItemRoles::kItemUnknowRole);
+                return true;
+            }
+
+            // group by name
+            if (actionId == ActionID::kGroupByName) {
+                fmInfo() << "Grouping by name";
+                d->groupByRole(Global::ItemRoles::kItemFileDisplayNameRole);
+                return true;
+            }
+
+            // group by time modified
+            if (actionId == ActionID::kGroupByModified) {
+                fmInfo() << "Grouping by time modified";
+                d->groupByRole(Global::ItemRoles::kItemFileLastModifiedRole);
+                return true;
+            }
+
+            // group by time created
+            if (actionId == ActionID::kGroupByCreated) {
+                fmInfo() << "Grouping by time created";
+                d->groupByRole(Global::ItemRoles::kItemFileCreatedRole);
+                return true;
+            }
+
+            // group by size
+            if (actionId == ActionID::kGroupBySize) {
+                fmInfo() << "Grouping by size";
+                d->groupByRole(Global::ItemRoles::kItemFileSizeRole);
+                return true;
+            }
+
+            // group by type
+            if (actionId == ActionID::kGroupByType) {
+                fmInfo() << "Grouping by type";
+                d->groupByRole(Global::ItemRoles::kItemFileMimeTypeRole);
+                return true;
+            }
+        }
     }
 
     return AbstractMenuScene::triggered(action);
@@ -219,6 +273,11 @@ void SortAndDisplayMenuScenePrivate::createEmptyMenu(QMenu *parent)
     tempAction->setMenu(addSortByActions(parent));
     predicateAction[ActionID::kSortBy] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSortBy));
+
+    tempAction = parent->addAction(predicateName.value(ActionID::kGroupBy));
+    tempAction->setMenu(addGroupByActions(parent));
+    predicateAction[ActionID::kGroupBy] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupBy));
 
     fmDebug() << "Empty area menu created with" << predicateAction.size() << "main actions";
 }
@@ -253,6 +312,45 @@ QMenu *SortAndDisplayMenuScenePrivate::addSortByActions(QMenu *menu)
     tempAction->setCheckable(true);
     predicateAction[ActionID::kSrtType] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtType));
+
+    return subMenu;
+}
+
+QMenu *SortAndDisplayMenuScenePrivate::addGroupByActions(QMenu *menu)
+{
+    fmDebug() << "Adding group by actions to submenu";
+    QMenu *subMenu = new QMenu(menu);
+
+    // GroupBy
+    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupByNone));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupByNone] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByNone));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupByName));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupByName] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByName));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupByModified));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupByModified] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByModified));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupByCreated));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupByCreated] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByCreated));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupBySize));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupBySize] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupBySize));
+
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kGroupByType));
+    tempAction->setCheckable(true);
+    predicateAction[ActionID::kGroupByType] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByType));
 
     return subMenu;
 }
@@ -300,6 +398,24 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
     view->setSort(itemRole, order);
 }
 
+void SortAndDisplayMenuScenePrivate::groupByRole(int role)
+{
+    auto itemRole = static_cast<Global::ItemRoles>(role);
+    auto oldRole = view->model()->groupRole();
+    
+    // Toggle group order if same role is selected again
+    Qt::SortOrder order = Qt::AscendingOrder;
+    if (oldRole == role) {
+        auto currentOrder = view->model()->groupOrder();
+        order = currentOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+    }
+
+    fmDebug() << "Grouping by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+              << "old role:" << oldRole;
+
+    view->setGroup(itemRole, order);
+}
+
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
 {
     fmDebug() << "Updating empty area action state";
@@ -330,6 +446,39 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         break;
     default:
         fmDebug() << "Unknown sort role:" << role;
+        break;
+    }
+
+    // group by
+    auto groupRole = static_cast<ItemRoles>(view->model()->groupRole());
+    fmDebug() << "Current group role:" << groupRole;
+    switch (groupRole) {
+    case kItemUnknowRole:
+        predicateAction[ActionID::kGroupByNone]->setChecked(true);
+        fmDebug() << "Set group by none action as checked";
+        break;
+    case kItemFileDisplayNameRole:
+        predicateAction[ActionID::kGroupByName]->setChecked(true);
+        fmDebug() << "Set group by name action as checked";
+        break;
+    case kItemFileLastModifiedRole:
+        predicateAction[ActionID::kGroupByModified]->setChecked(true);
+        fmDebug() << "Set group by time modified action as checked";
+        break;
+    case kItemFileCreatedRole:
+        predicateAction[ActionID::kGroupByCreated]->setChecked(true);
+        fmDebug() << "Set group by time created action as checked";
+        break;
+    case kItemFileSizeRole:
+        predicateAction[ActionID::kGroupBySize]->setChecked(true);
+        fmDebug() << "Set group by size action as checked";
+        break;
+    case kItemFileMimeTypeRole:
+        predicateAction[ActionID::kGroupByType]->setChecked(true);
+        fmDebug() << "Set group by type action as checked";
+        break;
+    default:
+        fmDebug() << "Unknown group role:" << groupRole;
         break;
     }
 

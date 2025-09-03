@@ -9,6 +9,7 @@ namespace dfmplugin_workspace {
 
 namespace ActionID {
 inline constexpr char kSortBy[] = "sort-by";
+inline constexpr char kGroupBy[] = "group-by";
 inline constexpr char kDisplayAs[] = "display-as";
 inline constexpr char kRefresh[] = "refresh";
 
@@ -18,6 +19,14 @@ inline constexpr char kSrtTimeModified[] = "sort-by-time-modified";
 inline constexpr char kSrtTimeCreated[] = "sort-by-time-created";
 inline constexpr char kSrtSize[] = "sort-by-size";
 inline constexpr char kSrtType[] = "sort-by-type";
+
+// group by
+inline constexpr char kGroupByNone[] = "group-by-none";
+inline constexpr char kGroupByName[] = "group-by-name";
+inline constexpr char kGroupByModified[] = "group-by-modified";
+inline constexpr char kGroupByCreated[] = "group-by-created";
+inline constexpr char kGroupBySize[] = "group-by-size";
+inline constexpr char kGroupByType[] = "group-by-type";
 
 // display by
 inline constexpr char kDisplayIcon[] = "display-as-icon";

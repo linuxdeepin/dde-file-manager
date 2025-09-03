@@ -86,6 +86,7 @@ public:
     void reverseSelect() const;
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);
     void setSort(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
+    void setGroup(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
     void setViewSelectState(bool isSelect);
 
     void setFilterData(const QUrl &url, const QVariant &data);

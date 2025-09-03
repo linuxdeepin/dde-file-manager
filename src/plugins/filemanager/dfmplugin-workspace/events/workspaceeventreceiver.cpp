@@ -130,6 +130,10 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleColumnRoles);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetSort",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_CurrentGroupRole",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentGroupRole);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetGroup",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetGroup);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterDataCache",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_AboutToChangeViewWidth",
@@ -187,6 +191,17 @@ void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
 {
     fmDebug() << "WorkspaceEventReceiver: handling set sort request for window" << windowId << "role" << static_cast<int>(role);
     WorkspaceHelper::instance()->setSort(windowId, role);
+}
+
+ItemRoles WorkspaceEventReceiver::handleCurrentGroupRole(quint64 windowId)
+{
+    return WorkspaceHelper::instance()->groupRole(windowId);
+}
+
+void WorkspaceEventReceiver::handleSetGroup(quint64 windowId, ItemRoles role)
+{
+    fmDebug() << "WorkspaceEventReceiver: handling set group request for window" << windowId << "role" << static_cast<int>(role);
+    WorkspaceHelper::instance()->setGroup(windowId, role);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)

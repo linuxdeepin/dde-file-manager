@@ -778,6 +778,29 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
     }
 }
 
+void FileView::setGroup(const ItemRoles role, const Qt::SortOrder order)
+{
+    if (model()->currentState() == ModelState::kBusy) {
+        fmWarning() << "Cannot set group while model is busy for URL:" << rootUrl().toString();
+        return;
+    }
+
+    if (role == model()->groupRole() && order == model()->groupOrder()) {
+        fmDebug() << "Group settings unchanged, skipping for URL:" << rootUrl().toString();
+        return;
+    }
+
+    fmInfo() << "Setting group by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "for URL:" << rootUrl().toString();
+
+    // Save group configuration to file view state
+    const QUrl &url = rootUrl();
+    setFileViewStateValue(url, "groupRole", static_cast<int>(role));
+    setFileViewStateValue(url, "groupOrder", static_cast<int>(order));
+
+    // Send group request to model
+    Q_EMIT model()->requestGroupChildren(order, role);
+}
+
 void FileView::setViewSelectState(bool isSelect)
 {
     d->isShowViewSelectBox = isSelect;

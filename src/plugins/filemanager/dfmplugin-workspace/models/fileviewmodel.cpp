@@ -766,6 +766,22 @@ ItemRoles FileViewModel::sortRole() const
     return filterSortWorker->getSortRole();
 }
 
+Qt::SortOrder FileViewModel::groupOrder() const
+{
+    if (filterSortWorker.isNull())
+        return Qt::AscendingOrder;
+
+    return filterSortWorker->getGroupOrder();
+}
+
+ItemRoles FileViewModel::groupRole() const
+{
+    if (filterSortWorker.isNull())
+        return kItemUnknowRole;
+
+    return filterSortWorker->getGroupRole();
+}
+
 void FileViewModel::setFilters(QDir::Filters filters)
 {
     fmDebug() << "Setting filters:" << filters << "for URL:" << dirRootUrl.toString();
@@ -1130,6 +1146,12 @@ void FileViewModel::initFilterSortWork()
 
     fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role << "for URL:" << dirRootUrl.toString();
 
+    // get group config
+    Qt::SortOrder groupOrder = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupOrder", Qt::SortOrder::AscendingOrder).toInt());
+    ItemRoles groupRole = static_cast<ItemRoles>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupRole", kItemUnknowRole).toInt());
+
+    fmDebug() << "Group configuration - order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << groupRole << "for URL:" << dirRootUrl.toString();
+
     if (filterSortWorker)
         filterSortWorker->disconnect();
 
@@ -1143,6 +1165,12 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, rootInfo)));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
+    
+    // Set group configuration in worker
+    if (groupRole != kItemUnknowRole) {
+        fmDebug() << "Setting initial group configuration in worker - role:" << groupRole << "order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
+        filterSortWorker->setGroupArguments(groupOrder, groupRole);
+    }
     filterSortWorker->setTreeView(this->isTree
                                   && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
@@ -1268,6 +1296,8 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::HandleNameFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestUpdateFile, filterSortWorker.data(), &FileSortWorker::handleUpdateFile, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::handleResort, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestGroupChildren, filterSortWorker.data(), &FileSortWorker::handleRegroup, Qt::QueuedConnection);
+
     connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestRefreshAllChildren, filterSortWorker.data(), &FileSortWorker::handleRefresh, Qt::QueuedConnection);
