@@ -80,6 +80,9 @@ public:
     Qt::SortOrder sortOrder() const;
     DFMGLOBAL_NAMESPACE::ItemRoles sortRole() const;
 
+    Qt::SortOrder groupOrder() const;
+    DFMGLOBAL_NAMESPACE::ItemRoles groupRole() const;
+
     void setFilters(QDir::Filters filters);
     QDir::Filters getFilters() const;
 
@@ -123,6 +126,7 @@ Q_SIGNALS:
     void requestClearThumbnail();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
+    void requestGroupChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
@@ -177,6 +181,8 @@ private:
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
     bool isTree { false };
+
+
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;

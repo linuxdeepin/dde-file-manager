@@ -36,6 +36,14 @@ static constexpr char kSortToolTimeCreated[] = "sort-by-time-created";
 static constexpr char kSortToolSize[] = "sort-by-size";
 static constexpr char kSortToolType[] = "sort-by-type";
 
+// Group by constants
+static constexpr char kGroupToolNone[] = "group-by-none";
+static constexpr char kGroupToolName[] = "group-by-name";
+static constexpr char kGroupToolTimeModified[] = "group-by-time-modified";
+static constexpr char kGroupToolTimeCreated[] = "group-by-time-created";
+static constexpr char kGroupToolSize[] = "group-by-size";
+static constexpr char kGroupToolType[] = "group-by-type";
+
 SortByButtonPrivate::SortByButtonPrivate(SortByButton *parent)
     : QObject(parent), q(parent)
 {
@@ -82,6 +90,51 @@ void SortByButtonPrivate::setItemSortRoles()
     }
 }
 
+void SortByButtonPrivate::setItemGroupRoles()
+{
+    DFMGLOBAL_NAMESPACE::ItemRoles groupRole = TitleBarEventCaller::sendCurrentGroupRole(q);
+    switch (groupRole) {
+    case DFMGLOBAL_NAMESPACE::kItemUnknowRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolNone);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolName);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolTimeModified);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileCreatedRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolTimeCreated);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileSizeRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolSize);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    case DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole: {
+        auto action = groupMenu->findChild<QAction *>(kGroupToolType);
+        if (action) {
+            action->setChecked(true);
+        }
+    } break;
+    default:
+        break;
+    }
+}
+
 void SortByButtonPrivate::sort()
 {
     TitleBarEventCaller::sendSetSort(q, TitleBarEventCaller::sendCurrentSortRole(q));
@@ -119,11 +172,49 @@ void SortByButtonPrivate::initializeUi()
     action->setObjectName(kSortToolType);
     action->setCheckable(true);
     actionGroup->addAction(action);
+
+    // Add Group by submenu
+    auto groupByAction = menu->addAction(tr("Group by"));
+    groupMenu = new QMenu(q);
+    groupByAction->setMenu(groupMenu);
+
+    auto groupActionGroup = new QActionGroup(q);
+    
+    action = groupMenu->addAction(tr("None"));
+    action->setObjectName(kGroupToolNone);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
+
+    action = groupMenu->addAction(tr("Name"));
+    action->setObjectName(kGroupToolName);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
+
+    action = groupMenu->addAction(tr("Time modified"));
+    action->setObjectName(kGroupToolTimeModified);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
+
+    action = groupMenu->addAction(tr("Time created"));
+    action->setObjectName(kGroupToolTimeCreated);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
+
+    action = groupMenu->addAction(tr("Size"));
+    action->setObjectName(kGroupToolSize);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
+
+    action = groupMenu->addAction(tr("Type"));
+    action->setObjectName(kGroupToolType);
+    action->setCheckable(true);
+    groupActionGroup->addAction(action);
 }
 
 void SortByButtonPrivate::initConnect()
 {
     connect(menu, &QMenu::triggered, this, &SortByButtonPrivate::menuTriggered);
+    connect(groupMenu, &QMenu::triggered, this, &SortByButtonPrivate::groupMenuTriggered);
 }
 
 void SortByButtonPrivate::menuTriggered(QAction *action)
@@ -140,6 +231,25 @@ void SortByButtonPrivate::menuTriggered(QAction *action)
         TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileSizeRole);
     } else if (action->objectName() == kSortToolType) {
         TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole);
+    }
+}
+
+void SortByButtonPrivate::groupMenuTriggered(QAction *action)
+{
+    if (!action)
+        return;
+    if (action->objectName() == kGroupToolNone) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemUnknowRole);
+    } else if (action->objectName() == kGroupToolName) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole);
+    } else if (action->objectName() == kGroupToolTimeModified) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole);
+    } else if (action->objectName() == kGroupToolTimeCreated) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileCreatedRole);
+    } else if (action->objectName() == kGroupToolSize) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileSizeRole);
+    } else if (action->objectName() == kGroupToolType) {
+        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole);
     }
 }
 
@@ -221,6 +331,7 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
 
         if (event->x() > leftWidth && d->menu) {
             d->setItemSortRoles();
+            d->setItemGroupRoles();
             d->menu->exec(mapToGlobal(rect().bottomLeft()));
         } else if (d->iconClicked) {
             d->sort();

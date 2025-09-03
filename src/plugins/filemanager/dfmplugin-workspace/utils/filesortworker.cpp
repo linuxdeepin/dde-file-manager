@@ -121,6 +121,15 @@ FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder ord
     return opt;
 }
 
+void FileSortWorker::setGroupArguments(const Qt::SortOrder order, const ItemRoles groupRole)
+{
+    fmDebug() << "Setting group arguments - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+              << "role:" << static_cast<int>(groupRole);
+
+    groupOrder = order;
+    orgGroupRole = groupRole;
+}
+
 QUrl FileSortWorker::mapToIndex(int index)
 {
     QReadLocker lk(&locker);
@@ -204,6 +213,16 @@ ItemRoles FileSortWorker::getSortRole() const
 Qt::SortOrder FileSortWorker::getSortOrder() const
 {
     return sortOrder;
+}
+
+ItemRoles FileSortWorker::getGroupRole() const
+{
+    return orgGroupRole;
+}
+
+Qt::SortOrder FileSortWorker::getGroupOrder() const
+{
+    return groupOrder;
 }
 
 void FileSortWorker::setTreeView(const bool isTree)
@@ -577,6 +596,34 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
         fmDebug() << "No resort needed";
         return;
     }
+}
+
+void FileSortWorker::handleRegroup(const Qt::SortOrder order, const ItemRoles groupRole)
+{
+    if (isCanceled) {
+        fmDebug() << "Ignoring regroup request - operation canceled";
+        return;
+    }
+
+    fmInfo() << "Handling regroup - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+             << "role:" << static_cast<int>(groupRole);
+
+    // Update group configuration
+    if (groupOrder == order && orgGroupRole == groupRole) {
+        fmDebug() << "Group settings unchanged, skipping regroup";
+        return;
+    }
+
+    groupOrder = order;
+    orgGroupRole = groupRole;
+
+    fmDebug() << "Group configuration updated - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+              << "role:" << static_cast<int>(groupRole);
+
+    // TODO(group): Implement actual grouping logic here
+    // For now, just emit a signal to indicate grouping has changed
+    // The actual grouping implementation will be done in future iterations
+    emit requestUpdateView();
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)

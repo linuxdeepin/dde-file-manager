@@ -56,6 +56,7 @@ public:
     ~FileSortWorker();
     SortOpt setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
                              const bool isMixDirAndFile);
+    void setGroupArguments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles groupRole);
     QUrl mapToIndex(int index);
     int childrenCount();
     FileItemDataPointer childData(const int index);
@@ -70,6 +71,9 @@ public:
 
     DFMGLOBAL_NAMESPACE::ItemRoles getSortRole() const;
     Qt::SortOrder getSortOrder() const;
+
+    DFMGLOBAL_NAMESPACE::ItemRoles getGroupRole() const;
+    Qt::SortOrder getGroupOrder() const;
 
     // 只有在没有启动sort线程时才能调用，线程启动成功了，发送信号处理
     void setTreeView(const bool isTree);
@@ -135,6 +139,7 @@ public slots:
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
+    void handleRegroup(const Qt::SortOrder order, const Global::ItemRoles groupRole);
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
     bool handleUpdateFile(const QUrl &url);
@@ -236,6 +241,10 @@ private:
     Global::ItemRoles orgSortRole { Global::ItemRoles::kItemDisplayRole };
     Qt::SortOrder sortOrder { Qt::AscendingOrder };
     DFMIO::DEnumerator::SortRoleCompareFlag sortRole { DFMIO::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
+    
+    // Group-by configuration
+    Global::ItemRoles orgGroupRole { Global::ItemRoles::kItemUnknowRole };
+    Qt::SortOrder groupOrder { Qt::AscendingOrder };
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
     char placeholderMemory[4];

@@ -69,6 +69,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Model_CurrentSortRole)
     DPF_EVENT_REG_SLOT(slot_Model_ColumnRoles)
     DPF_EVENT_REG_SLOT(slot_Model_SetSort)
+    DPF_EVENT_REG_SLOT(slot_Model_CurrentGroupRole)
+    DPF_EVENT_REG_SLOT(slot_Model_SetGroup)
     DPF_EVENT_REG_SLOT(slot_Model_RegisterDataCache)
     DPF_EVENT_REG_SLOT(slot_Model_RegisterLoadStrategy)
 

@@ -309,6 +309,24 @@ Global::ItemRoles WorkspaceHelper::sortRole(quint64 windowId)
     return Global::ItemRoles::kItemUnknowRole;
 }
 
+void WorkspaceHelper::setGroup(quint64 windowId, Global::ItemRoles role)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view) {
+        Qt::SortOrder order = view->model()->groupOrder();
+        view->setGroup(role, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
+    }
+}
+
+Global::ItemRoles WorkspaceHelper::groupRole(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        return static_cast<Global::ItemRoles>(view->model()->groupRole());
+
+    return Global::ItemRoles::kItemUnknowRole;
+}
+
 QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)
 {
     FileView *view = findFileViewByWindowID(windowId);
