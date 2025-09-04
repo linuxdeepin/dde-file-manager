@@ -32,6 +32,7 @@ DFM_LOG_USE_CATEGORY(DPWORKSPACE_NAMESPACE)
 enum class DirOpenMode : uint8_t {
     kOpenInCurrentWindow,
     kOpenNewWindow,
+    kOpenNewTab,
     kAwaysInCurrentWindow,
     // kForceOpenNewWindow // Todo(yanghao): ???
 };

@@ -122,6 +122,9 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 if (mode == DirOpenMode::kOpenNewWindow || (flag && FileManagerWindowsManager::instance().containsCurrentUrl(dirUrl, view->window()))) {
                     fmDebug() << "Opening directory in new window:" << dirUrl.toString();
                     dirListOpenInNewWindow.append(dirUrl);
+                } else if (mode == DirOpenMode::kOpenNewTab) {
+                    fmDebug() << "Opening directory in new tab:" << dirUrl.toString();
+                    WorkspaceEventCaller::sendOpenNewTab(windowId, dirUrl);
                 } else {
                     fmDebug() << "Changing current URL to directory:" << dirUrl.toString();
                     WorkspaceEventCaller::sendChangeCurrentUrl(windowId, dirUrl);

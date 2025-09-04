@@ -73,6 +73,8 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
     if ((flag && FileManagerWindowsManager::instance().containsCurrentUrl(url))
         || Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
         sendEnterInNewWindow(url, !flag);
+    else if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewTab).toBool())
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, url);
     else
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
