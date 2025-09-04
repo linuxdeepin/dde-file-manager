@@ -85,7 +85,7 @@ QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, c
 void NormalizedModePrivate::collectionStyleChanged(const QString &id)
 {
     if (auto holder = holders.value(id)) {
-        CfgPresenter->updateNormalStyle(holder->style());
+        CfgPresenter->updateNormalStyle(generateScreenConfigId(), holder->style());
         // q->layout();
     }
 }
@@ -448,12 +448,22 @@ void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs, bo
                 ordered.append(org);
             if (reorganized && !org.isEmpty()) {
                 relayoutedFiles.append(org);
-                relayoutedCollectionIDs.append(cfg->key);
+                relayoutedCollectionIDs.insert(cfg->key);
             }
 
             base->items = ordered;
         }
     }
+}
+
+QString NormalizedModePrivate::generateScreenConfigId()
+{
+    QString id = "StyleConfig";
+    for (auto surface : q->surfaces) {
+        if (surface)
+            id += QString("_%1x%2").arg(surface->width()).arg(surface->height());
+    }
+    return id;
 }
 
 NormalizedMode::NormalizedMode(QObject *parent)
@@ -554,6 +564,14 @@ void NormalizedMode::layout()
         });
     }
 
+    auto lastConfigId = CfgPresenter->lastStyleConfigId();
+    const auto configId = d->generateScreenConfigId();
+    auto validConfigId = configId;
+    if (!CfgPresenter->hasConfigId(configId)) {
+        // 如果当前配置不存在，则使用上一次的配置进行重新排列
+        validConfigId = lastConfigId;
+    }
+
     // see if collections should be re-layout
     //      1. calc the bounding rect of all collections which in same screen.
     QList<QRect> orphanRects;   // those collections who's surface loses， should be re-layouted into surface_0.
@@ -562,7 +580,7 @@ void NormalizedMode::layout()
     QMap<int, QRect> boundingRects;
     for (int i = 0; i < holders.count(); ++i) {
         const CollectionHolderPointer &holder = holders.at(i);
-        auto style = CfgPresenter->normalStyle(holder->id());
+        auto style = CfgPresenter->normalStyle(validConfigId, holder->id());
         if (style.key.isEmpty()) continue;
         int sIdx = style.screenIndex - 1;
         boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
@@ -628,7 +646,7 @@ void NormalizedMode::layout()
     QList<CollectionStyle> toSave;
     for (int i = 0; i < holders.count(); ++i) {
         const CollectionHolderPointer &holder = holders.at(i);
-        auto style = CfgPresenter->normalStyle(holder->id());
+        auto style = CfgPresenter->normalStyle(validConfigId, holder->id());
         if (Q_UNLIKELY(style.key != holder->id())) {
             if (!style.key.isEmpty())
                 fmWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
@@ -676,13 +694,13 @@ void NormalizedMode::layout()
         toSave << style;
     }
 
-    CfgPresenter->writeNormalStyle(toSave);
-
+    CfgPresenter->writeNormalStyle(configId, toSave);
     // save new screen resolutions.
     QList<QWidget *> surfaceList;
     for (auto s : surfaces)
         surfaceList.append(s.data());
     CfgPresenter->setSurfaceInfo(surfaceList);
+    CfgPresenter->setLastStyleConfigId(configId);
 }
 
 void NormalizedMode::detachLayout()
@@ -695,6 +713,7 @@ void NormalizedMode::detachLayout()
 void NormalizedMode::rebuild(bool reorganize)
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
+    const auto profiles = CfgPresenter->normalProfile();
     QElapsedTimer time;
     time.start();
     {
@@ -703,8 +722,8 @@ void NormalizedMode::rebuild(bool reorganize)
         auto files = model->files();
         d->classifier->reset(files);
 
-        // order item as config
-        d->restore(CfgPresenter->normalProfile(), reorganize);
+        // 从配置文件中恢复集合中元素顺序
+        d->restore(profiles, reorganize);
 
         fmInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
         time.restart();
@@ -735,6 +754,20 @@ void NormalizedMode::rebuild(bool reorganize)
                 collectionHolder = d->createCollection(key);
                 d->connectCollectionSignals(collectionHolder);
                 d->holders.insert(key, collectionHolder);
+
+                bool inProfile = std::any_of(profiles.cbegin(),
+                                             profiles.cend(),
+                                             [key](const CollectionBaseDataPtr &base) {
+                                                 return base->key == key;
+                                             });
+                if (!d->relayoutedCollectionIDs.contains(key) && !inProfile) {
+                    /* 在前序 restore 中进行该变量的填充时，如果此分组不在默认的 profile 中存在
+                     * 则该组中的元素不会在集合后被选择。
+                     * 因此需要将该分组添加到重排列表中，以便桌面整理后能正常选中该分组内文件。
+                     */
+                    d->relayoutedCollectionIDs.insert(key);
+                    d->relayoutedFiles.append(files);
+                }
             }
         }
     }
