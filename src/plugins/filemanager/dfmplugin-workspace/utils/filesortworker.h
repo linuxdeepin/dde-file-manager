@@ -38,11 +38,11 @@ class FileSortWorker : public QObject
     };
 
     enum class SortScenarios : uint8_t {
-        kSortScenariosIteratorAddFile = 1,      // Iterator adding new files for sorting
-        kSortScenariosIteratorExistingFile = 2, // Iterator handling existing files in display model
-        kSortScenariosNormal = 3,               // Normal display completion scenario
-        kSortScenariosWatcherAddFile = 4,       // File watcher detected file addition (including rename)
-        kSortScenariosWatcherOther = 5,         // Other file watcher scenarios
+        kSortScenariosIteratorAddFile = 1,   // Iterator adding new files for sorting
+        kSortScenariosIteratorExistingFile = 2,   // Iterator handling existing files in display model
+        kSortScenariosNormal = 3,   // Normal display completion scenario
+        kSortScenariosWatcherAddFile = 4,   // File watcher detected file addition (including rename)
+        kSortScenariosWatcherOther = 5,   // Other file watcher scenarios
     };
 
 public:
@@ -231,7 +231,6 @@ private:
     QHash<QUrl, QHash<QUrl, SortInfoPointer>> children {};
     QReadWriteLock childrenDataLocker;
     QHash<QUrl, FileItemDataPointer> childrenDataMap {};
-    QHash<QUrl, FileItemDataPointer> childrenDataLastMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
     FileViewFilterCallback filterCallback { nullptr };
@@ -241,7 +240,7 @@ private:
     Global::ItemRoles orgSortRole { Global::ItemRoles::kItemDisplayRole };
     Qt::SortOrder sortOrder { Qt::AscendingOrder };
     DFMIO::DEnumerator::SortRoleCompareFlag sortRole { DFMIO::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
-    
+
     // Group-by configuration
     Global::ItemRoles orgGroupRole { Global::ItemRoles::kItemUnknowRole };
     Qt::SortOrder groupOrder { Qt::AscendingOrder };

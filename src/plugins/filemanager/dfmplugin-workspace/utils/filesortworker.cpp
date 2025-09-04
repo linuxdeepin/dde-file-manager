@@ -756,7 +756,6 @@ void FileSortWorker::handleRefresh()
 
     {
         QWriteLocker lk(&childrenDataLocker);
-        childrenDataLastMap = childrenDataMap;
         childrenDataMap.clear();
     }
 
@@ -929,7 +928,6 @@ bool FileSortWorker::handleAddChildren(const QString &key,
 
     // 获取相对于已有的新增加的文件
     QList<QUrl> newChildren;
-    childrenDataLastMap.clear();
 
     auto parentUrl = makeParentUrl(children.first()->fileUrl());
     // 获取当前的插入的位置

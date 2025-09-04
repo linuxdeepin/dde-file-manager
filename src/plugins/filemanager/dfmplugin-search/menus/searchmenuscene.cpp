@@ -32,6 +32,7 @@ static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 static constexpr char kDConfigFilterSceneName[] = "DConfigMenuFilter";
 
 static constexpr char kSortByActId[] = "sort-by";
+static constexpr char kGroupByActId[] = "group-by";
 static constexpr char kDisplayAsActId[] = "display-as";
 
 AbstractMenuScene *SearchMenuCreator::create()
@@ -44,6 +45,7 @@ SearchMenuScenePrivate::SearchMenuScenePrivate(SearchMenuScene *qq)
       q(qq)
 {
     emptyWhitelist << kSortByActId
+                   << kGroupByActId
                    << kDisplayAsActId
                    << SearchActionId::kSrtPath
                    << dfmplugin_menu::ActionID::kSelectAll;
