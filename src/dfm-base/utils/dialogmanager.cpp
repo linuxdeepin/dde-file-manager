@@ -150,11 +150,8 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
             errMsg = tr("Authentication failed");
         else if (static_cast<int>(err.code) == ENOENT)
             errMsg = tr("No such file or directory");
-        else if (err.code >= DeviceError::kGIOError
-                 && err.code <= DeviceError::kGIOErrorMessageTooLarge)
-            errMsg = err.message;
         else
-            errMsg = tr("Error occured while mounting device");
+            errMsg = tr("Authentication failed");
 
         if (err.message.contains("Operation not permitted.")) {   // TASK(222725)
             errMsg = tr("The device has been blocked and you do not have permission to access it. "
