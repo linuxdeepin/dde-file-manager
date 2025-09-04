@@ -43,6 +43,8 @@
 #include <QWindow>
 #include <QSpacerItem>
 #include <QIcon>
+#include <QCoreApplication>
+#include <QMouseEvent>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -569,6 +571,23 @@ void ConnectToServerDialog::updateUiState()
     int row = model->findItem(currUrlStr);
     collectionServerView->setCurrentIndex(model->index(row));
     getButton(kConnectButton)->setEnabled(!serverComboBox->currentText().isEmpty());
+    
+    // 更新鼠标hover状态 - 当鼠标移动到收藏列表视图上时,需要更新hover效果
+    // 通过发送一个MouseMove事件来触发hover状态的更新
+    if (hasCollections && collectionServerView->isVisible()) {
+        QPoint globalPos = QCursor::pos();
+        QPoint viewPos = collectionServerView->viewport()->mapFromGlobal(globalPos);
+        
+        if (collectionServerView->viewport()->rect().contains(viewPos)) {
+            QMouseEvent *mouseEvent = new QMouseEvent(QEvent::MouseMove,
+                                                    viewPos,
+                                                    globalPos,
+                                                    Qt::NoButton,
+                                                    Qt::NoButton,
+                                                    Qt::NoModifier);
+            QCoreApplication::postEvent(collectionServerView->viewport(), mouseEvent);
+        }
+    }
 }
 
 QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
