@@ -39,7 +39,7 @@ void CanvasSelectionModel::clear()
 {
     // 检查是否是由collectview的SelectionSyncHelper触发的清除
     bool isSyncClearing = property("syncHelperClearing").toBool();
-    
+
     // 一般的，在canvasview存在多选的时候，在collectview中点击选择会触发canvasselectionmodel的clear
     // 从而导致hook->clear()被调用，进一步collectionview的selectionModel()->clear()被调用，就会存在collectview不能设置选中文件
     // 所以需要区分开来，如果是syncHelper触发的清除，则不调用hook->clear()
@@ -47,6 +47,10 @@ void CanvasSelectionModel::clear()
         hook->clear();
 
     QItemSelectionModel::clear();
+
+    // 部分情况下（如刷新），QItemSelectionModel::clear不会触发selectionChanged信号，
+    // 从而导致selectedCache未被清空，所以需要手动清空
+    selectedCache.clear();
 }
 
 QList<QUrl> CanvasSelectionModel::selectedUrls() const
