@@ -260,20 +260,16 @@ QMap<QString, QStringList> BaseSortMenuScenePrivate::secondaryMenuRule()
 
         ret.insert("sort-by",
                    QStringList { "sort-by-name",
-                                 "sort-by-path",
-                                 "sort-by-source-path",
-                                 "sort-by-lastRead",
                                  "sort-by-time-modified",
                                  "sort-by-time-created",
-                                 "sort-by-time-deleted",
                                  "sort-by-size",
                                  "sort-by-type" });   // 排序方式
 
         ret.insert("group-by",
                    QStringList { "group-by-none",
                                  "group-by-name",
-                                 "group-by-modified",
-                                 "group-by-created",
+                                 "group-by-time-modified",
+                                 "group-by-time-created",
                                  "group-by-size",
                                  "group-by-type" });   // 分组方式
 

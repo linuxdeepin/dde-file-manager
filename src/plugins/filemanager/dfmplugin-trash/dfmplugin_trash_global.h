@@ -22,6 +22,9 @@ inline constexpr char kRestoreAll[] { "restore-all" };
 inline constexpr char kEmptyTrash[] { "empty-trash" };
 inline constexpr char kSourcePath[] { "sort-by-source-path" };
 inline constexpr char kTimeDeleted[] { "sort-by-time-deleted" };
+// group by actions
+inline constexpr char kGroupBySourcePath[] { "group-by-source-path" };
+inline constexpr char kGroupByTimeDeleted[] { "group-by-time-deleted" };
 }
 DPTRASH_END_NAMESPACE
 

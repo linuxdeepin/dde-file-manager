@@ -29,7 +29,11 @@ static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 static constexpr char kDConfigMenuFilterSceneName[] = "DConfigMenuFilter";
 
 static constexpr char kSortByActionId[] = "sort-by";
+static constexpr char kGroupByActionId[] = "group-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
+static constexpr char kSrtTimeCreatedActionId[] = "sort-by-time-created";
+static constexpr char kGroupTimeModifiedActionId[] = "group-by-time-modified";
+static constexpr char kGroupTimeCreatedActionId[] = "group-by-time-created";
 
 using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
@@ -128,6 +132,17 @@ bool RecentMenuScene::create(QMenu *parent)
         actSortByLastRead->setCheckable(true);
         actSortByLastRead->setProperty(ActionPropertyKey::kActionID, RecentActionID::kSortByLastRead);
         d->predicateAction[RecentActionID::kSortByLastRead] = actSortByLastRead;
+
+        // group by
+        QAction *actGroupByPath = new QAction(d->predicateName[RecentActionID::kGroupByPath], parent);
+        actGroupByPath->setCheckable(true);
+        actGroupByPath->setProperty(ActionPropertyKey::kActionID, RecentActionID::kGroupByPath);
+        d->predicateAction[RecentActionID::kGroupByPath] = actGroupByPath;
+
+        QAction *actGroupByLastRead = new QAction(d->predicateName[RecentActionID::kGroupByLastRead], parent);
+        actGroupByLastRead->setCheckable(true);
+        actGroupByLastRead->setProperty(ActionPropertyKey::kActionID, RecentActionID::kGroupByLastRead);
+        d->predicateAction[RecentActionID::kGroupByLastRead] = actGroupByLastRead;
     }
 
     return AbstractMenuScene::create(parent);
@@ -155,6 +170,14 @@ bool RecentMenuScene::triggered(QAction *action)
         } else if (actId == RecentActionID::kSortByLastRead) {
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
+        } else if (actId == RecentActionID::kGroupByPath) {
+            fmDebug() << "Recent: Setting group by path for window:" << d->windowId;
+            d->groupByRole(Global::ItemRoles::kItemFilePathRole);
+            return true;
+        } else if (actId == RecentActionID::kGroupByLastRead) {
+            fmDebug() << "Recent: Setting group by last read for window:" << d->windowId;
+            d->groupByRole(Global::ItemRoles::kItemFileLastReadRole);
+            return true;
         }
         fmWarning() << "Unknown action triggered, actionId:" << actId;
         return false;
@@ -181,6 +204,8 @@ RecentMenuScenePrivate::RecentMenuScenePrivate(RecentMenuScene *qq)
     predicateName[RecentActionID::kOpenFileLocation] = tr("Open file location");
     predicateName[RecentActionID::kSortByPath] = tr("Path");
     predicateName[RecentActionID::kSortByLastRead] = tr("Last access");
+    predicateName[RecentActionID::kGroupByPath] = tr("Path");
+    predicateName[RecentActionID::kGroupByLastRead] = tr("Last access");
 
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kPaste);
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
@@ -215,7 +240,13 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
 
             if (sceneName == kSortAndDisplayMenuSceneName && actId == kSortByActionId) {
                 auto subMenu = act->menu();
-                updateSubMenu(subMenu);
+                updateSortSubMenu(subMenu);
+                continue;
+            }
+
+            if (sceneName == kSortAndDisplayMenuSceneName && actId == kGroupByActionId) {
+                auto subMenu = act->menu();
+                updateGroupSubMenu(subMenu);
                 continue;
             }
 
@@ -272,29 +303,76 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
     }
 }
 
-void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
+void RecentMenuScenePrivate::updateSortSubMenu(QMenu *menu)
 {
-    auto actions = menu->actions();
-    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
+    QStringList actionsToRemove = { kSrtTimeModifiedActionId, kSrtTimeCreatedActionId };
+    QStringList actionsToAdd = { RecentActionID::kSortByLastRead, RecentActionID::kSortByPath };
+    QMap<Global::ItemRoles, QString> roleToActionMap = {
+        { Global::ItemRoles::kItemFilePathRole, RecentActionID::kSortByPath },
+        { Global::ItemRoles::kItemFileLastReadRole, RecentActionID::kSortByLastRead }
+    };
+    
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentSortRole", roleToActionMap);
+}
+
+void RecentMenuScenePrivate::updateGroupSubMenu(QMenu *menu)
+{
+    QStringList actionsToRemove = { kGroupTimeModifiedActionId, kGroupTimeCreatedActionId };
+    QStringList actionsToAdd = { RecentActionID::kGroupByLastRead, RecentActionID::kGroupByPath };
+    QMap<Global::ItemRoles, QString> roleToActionMap = {
+        { Global::ItemRoles::kItemFilePathRole, RecentActionID::kGroupByPath },
+        { Global::ItemRoles::kItemFileLastReadRole, RecentActionID::kGroupByLastRead }
+    };
+    
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentGroupRole", roleToActionMap);
+}
+
+void RecentMenuScenePrivate::groupByRole(int role)
+{
+    auto itemRole = static_cast<Global::ItemRoles>(role);
+    fmDebug() << "Recent: Grouping by role:" << role;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", windowId, itemRole);
+}
+
+void RecentMenuScenePrivate::updateSubMenuGeneric(QMenu *menu, 
+                                                const QStringList &actionsToRemove,
+                                                const QStringList &actionsToAdd,
+                                                const QString &currentRoleSlot,
+                                                const QMap<Global::ItemRoles, QString> &roleToActionMap)
+{
+    // Collect all actions to remove
+    QList<QAction *> actionsToRemoveList;
+    for (auto act : menu->actions()) {
         auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == kSrtTimeModifiedActionId;
-    });
+        if (actionsToRemove.contains(actId)) {
+            actionsToRemoveList.append(act);
+        }
+    }
 
-    if (iter != actions.end()) {
-        menu->insertAction(*iter, predicateAction[RecentActionID::kSortByLastRead]);
-        menu->insertAction(predicateAction[RecentActionID::kSortByLastRead], predicateAction[RecentActionID::kSortByPath]);
-        menu->removeAction(*iter);
+    if (!actionsToRemoveList.isEmpty()) {
+        // Find insertion point
+        QAction *insertBefore = actionsToRemoveList.first();
 
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
-        switch (role) {
-        case Global::ItemRoles::kItemFilePathRole:
-            predicateAction[RecentActionID::kSortByPath]->setChecked(true);
-            break;
-        case Global::ItemRoles::kItemFileLastReadRole:
-            predicateAction[RecentActionID::kSortByLastRead]->setChecked(true);
-            break;
-        default:
-            break;
+        // Insert custom actions in reverse order to maintain correct sequence
+        for (int i = actionsToAdd.size() - 1; i >= 0; --i) {
+            const QString &actionId = actionsToAdd[i];
+            if (predicateAction.contains(actionId)) {
+                menu->insertAction(insertBefore, predicateAction[actionId]);
+            }
+        }
+
+        // Remove all matching actions
+        for (auto act : actionsToRemoveList) {
+            menu->removeAction(act);
+        }
+
+        // Update state based on current role
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", currentRoleSlot, windowId).value<Global::ItemRoles>();
+        if (roleToActionMap.contains(role)) {
+            const QString &actionId = roleToActionMap[role];
+            if (predicateAction.contains(actionId)) {
+                predicateAction[actionId]->setChecked(true);
+            }
         }
     }
 }
