@@ -516,7 +516,10 @@ bool NormalizedMode::initialize(CollectionModel *m)
     // creating if there already are files.
     if (!model->files().isEmpty()) {
         fmDebug() << "Found existing files, triggering rebuild";
-        rebuild();
+        // 这里使用 rebuild(true) 而不是 rebuild() 是为了确保所有文件都被重新整理
+        // 因为当取消了分类之后再创建使用的是上次分类的文件，这样会导致新建的文件没有被整理
+        // 所以确保每次重建的时候都是重新刷新了model中的文件
+        rebuild(true);
     }
 
     return true;
