@@ -22,7 +22,7 @@
 #include <QAction>
 
 DFMBASE_USE_NAMESPACE
-        using namespace dfmplugin_recent;
+using namespace dfmplugin_recent;
 
 class RecentMenuSceneTest : public testing::Test
 {
@@ -81,7 +81,7 @@ TEST_F(RecentMenuSceneTest, create)
 TEST_F(RecentMenuSceneTest, triggered)
 {
     DPF_USE_NAMESPACE
-            auto act = new QAction("hello");
+    auto act = new QAction("hello");
     act->setProperty(ActionPropertyKey::kActionID, "hello");
     d->predicateAction.insert("hello", act);
     d->predicateAction.insert("remove", act);
@@ -149,10 +149,10 @@ TEST_F(RecentMenuSceneTest, updateMenu)
 TEST_F(RecentMenuSceneTest, updateSubMenu)
 {
     DPF_USE_NAMESPACE
-            int flag = 0;
+    int flag = 0;
     stub.set_lamda(&QAction::setChecked, [&flag] {
         __DBG_STUB_INVOKE__
-                flag++;
+        flag++;
     });
     QMenu menu;
     auto act = menu.addAction("1");
@@ -165,30 +165,30 @@ TEST_F(RecentMenuSceneTest, updateSubMenu)
     auto push1 = static_cast<Push1>(&EventChannelManager::push);
     stub.set_lamda(push1, [&flag] {
         __DBG_STUB_INVOKE__
-                flag++;
+        flag++;
         return QVariant();
     });
-    d->updateSubMenu(&menu);
+    d->updateSortSubMenu(&menu);
 
     QMenu menu1;
     auto act2 = menu1.addAction("1");
     act2->setProperty(ActionPropertyKey::kActionID, "sort-by-time-modified");
     stub.set_lamda(push1, [&flag] {
         __DBG_STUB_INVOKE__
-                flag++;
+        flag++;
         return QVariant(Global::ItemRoles::kItemFilePathRole);
     });
-    d->updateSubMenu(&menu);
+    d->updateSortSubMenu(&menu);
 
     QMenu menu2;
     auto act3 = menu2.addAction("1");
     act3->setProperty(ActionPropertyKey::kActionID, "sort-by-time-modified");
     stub.set_lamda(push1, [&flag] {
         __DBG_STUB_INVOKE__
-                flag++;
+        flag++;
         return QVariant(Global::ItemRoles::kItemFileLastReadRole);
     });
-    d->updateSubMenu(&menu2);
+    d->updateSortSubMenu(&menu2);
     EXPECT_TRUE(flag == 3);
 }
 

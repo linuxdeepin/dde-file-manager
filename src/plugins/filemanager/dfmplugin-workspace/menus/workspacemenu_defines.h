@@ -23,8 +23,8 @@ inline constexpr char kSrtType[] = "sort-by-type";
 // group by
 inline constexpr char kGroupByNone[] = "group-by-none";
 inline constexpr char kGroupByName[] = "group-by-name";
-inline constexpr char kGroupByModified[] = "group-by-modified";
-inline constexpr char kGroupByCreated[] = "group-by-created";
+inline constexpr char kGroupByModified[] = "group-by-time-modified";
+inline constexpr char kGroupByCreated[] = "group-by-time-created";
 inline constexpr char kGroupBySize[] = "group-by-size";
 inline constexpr char kGroupByType[] = "group-by-type";
 

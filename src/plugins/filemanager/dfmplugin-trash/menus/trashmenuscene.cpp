@@ -28,6 +28,13 @@ static constexpr char kOemMenuSceneName[] = "OemMenu";
 static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
 static constexpr char kDConfigMenuFilterSceneName[] = "DConfigMenuFilter";
 
+static constexpr char kSortByActionId[] = "sort-by";
+static constexpr char kGroupByActionId[] = "group-by";
+static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
+static constexpr char kSrtTimeCreatedActionId[] = "sort-by-time-created";
+static constexpr char kGroupTimeModifiedActionId[] = "group-by-time-modified";
+static constexpr char kGroupTimeCreatedActionId[] = "group-by-time-created";
+
 using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 
@@ -132,6 +139,17 @@ bool TrashMenuScene::create(QMenu *parent)
         actSortByDeleted->setProperty(ActionPropertyKey::kActionID, TrashActionId::kTimeDeleted);
         d->predicateAction[TrashActionId::kTimeDeleted] = actSortByDeleted;
 
+        // group by
+        QAction *actGroupByPath = new QAction(d->predicateName[TrashActionId::kGroupBySourcePath], parent);
+        actGroupByPath->setCheckable(true);
+        actGroupByPath->setProperty(ActionPropertyKey::kActionID, TrashActionId::kGroupBySourcePath);
+        d->predicateAction[TrashActionId::kGroupBySourcePath] = actGroupByPath;
+
+        QAction *actGroupByDeleted = new QAction(d->predicateName[TrashActionId::kGroupByTimeDeleted], parent);
+        actGroupByDeleted->setCheckable(true);
+        actGroupByDeleted->setProperty(ActionPropertyKey::kActionID, TrashActionId::kGroupByTimeDeleted);
+        d->predicateAction[TrashActionId::kGroupByTimeDeleted] = actGroupByDeleted;
+
         parent->addSeparator();
     } else {
         auto act = parent->addAction(d->predicateName[TrashActionId::kRestore]);
@@ -171,6 +189,14 @@ bool TrashMenuScene::triggered(QAction *action)
             fmDebug() << "Trash: Setting sort by deletion time for window:" << d->windowId;
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileDeletionDate);
             return true;
+        } else if (actId == TrashActionId::kGroupBySourcePath) {
+            fmDebug() << "Trash: Setting group by source path for window:" << d->windowId;
+            d->groupByRole(Global::ItemRoles::kItemFileOriginalPath);
+            return true;
+        } else if (actId == TrashActionId::kGroupByTimeDeleted) {
+            fmDebug() << "Trash: Setting group by deletion time for window:" << d->windowId;
+            d->groupByRole(Global::ItemRoles::kItemFileDeletionDate);
+            return true;
         }
         return false;
     } else if (auto s = scene(action)) {
@@ -206,6 +232,8 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
     predicateName[TrashActionId::kEmptyTrash] = tr("Empty trash");
     predicateName[TrashActionId::kSourcePath] = tr("Source path");
     predicateName[TrashActionId::kTimeDeleted] = tr("Time deleted");
+    predicateName[TrashActionId::kGroupBySourcePath] = tr("Source path");
+    predicateName[TrashActionId::kGroupByTimeDeleted] = tr("Time deleted");
 
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);
@@ -237,9 +265,15 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 || actId == TrashActionId::kEmptyTrash)
                 act->setEnabled(FileUtils::isTrashRootFile(curDir) && !FileUtils::trashIsEmpty());
 
-            if (sceneName == "SortAndDisplayMenu" && actId == "sort-by") {
+            if (sceneName == "SortAndDisplayMenu" && actId == kSortByActionId) {
                 auto subMenu = act->menu();
-                updateSubMenu(subMenu);
+                updateSortSubMenu(subMenu);
+                continue;
+            }
+
+            if (sceneName == "SortAndDisplayMenu" && actId == kGroupByActionId) {
+                auto subMenu = act->menu();
+                updateGroupSubMenu(subMenu);
                 continue;
             }
 
@@ -306,29 +340,76 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
     }
 }
 
-void TrashMenuScenePrivate::updateSubMenu(QMenu *menu)
+void TrashMenuScenePrivate::updateSortSubMenu(QMenu *menu)
 {
-    auto actions = menu->actions();
-    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
+    QStringList actionsToRemove = { kSrtTimeModifiedActionId, kSrtTimeCreatedActionId };
+    QStringList actionsToAdd = { TrashActionId::kTimeDeleted, TrashActionId::kSourcePath };
+    QMap<Global::ItemRoles, QString> roleToActionMap = {
+        { Global::ItemRoles::kItemFileOriginalPath, TrashActionId::kSourcePath },
+        { Global::ItemRoles::kItemFileDeletionDate, TrashActionId::kTimeDeleted }
+    };
+    
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentSortRole", roleToActionMap);
+}
+
+void TrashMenuScenePrivate::updateGroupSubMenu(QMenu *menu)
+{
+    QStringList actionsToRemove = { kGroupTimeModifiedActionId, kGroupTimeCreatedActionId };
+    QStringList actionsToAdd = { TrashActionId::kGroupByTimeDeleted, TrashActionId::kGroupBySourcePath };
+    QMap<Global::ItemRoles, QString> roleToActionMap = {
+        { Global::ItemRoles::kItemFileOriginalPath, TrashActionId::kGroupBySourcePath },
+        { Global::ItemRoles::kItemFileDeletionDate, TrashActionId::kGroupByTimeDeleted }
+    };
+    
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentGroupRole", roleToActionMap);
+}
+
+void TrashMenuScenePrivate::updateSubMenuGeneric(QMenu *menu, 
+                                                const QStringList &actionsToRemove,
+                                                const QStringList &actionsToAdd,
+                                                const QString &currentRoleSlot,
+                                                const QMap<Global::ItemRoles, QString> &roleToActionMap)
+{
+    // Collect all actions to remove
+    QList<QAction *> actionsToRemoveList;
+    for (auto act : menu->actions()) {
         auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == "sort-by-time-modified";
-    });
-
-    if (iter != actions.end()) {
-        menu->insertAction(*iter, predicateAction[TrashActionId::kTimeDeleted]);
-        menu->insertAction(predicateAction[TrashActionId::kTimeDeleted], predicateAction[TrashActionId::kSourcePath]);
-        menu->removeAction(*iter);
-
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
-        switch (role) {
-        case Global::ItemRoles::kItemFileOriginalPath:
-            predicateAction[TrashActionId::kSourcePath]->setChecked(true);
-            break;
-        case Global::ItemRoles::kItemFileDeletionDate:
-            predicateAction[TrashActionId::kTimeDeleted]->setChecked(true);
-            break;
-        default:
-            break;
+        if (actionsToRemove.contains(actId)) {
+            actionsToRemoveList.append(act);
         }
     }
+
+    if (!actionsToRemoveList.isEmpty()) {
+        // Find insertion point
+        QAction *insertBefore = actionsToRemoveList.first();
+
+        // Insert custom actions in reverse order to maintain correct sequence
+        for (int i = actionsToAdd.size() - 1; i >= 0; --i) {
+            const QString &actionId = actionsToAdd[i];
+            if (predicateAction.contains(actionId)) {
+                menu->insertAction(insertBefore, predicateAction[actionId]);
+            }
+        }
+
+        // Remove all matching actions
+        for (auto act : actionsToRemoveList) {
+            menu->removeAction(act);
+        }
+
+        // Update state based on current role
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", currentRoleSlot, windowId).value<Global::ItemRoles>();
+        if (roleToActionMap.contains(role)) {
+            const QString &actionId = roleToActionMap[role];
+            if (predicateAction.contains(actionId)) {
+                predicateAction[actionId]->setChecked(true);
+            }
+        }
+    }
+}
+
+void TrashMenuScenePrivate::groupByRole(int role)
+{
+    auto itemRole = static_cast<Global::ItemRoles>(role);
+    fmDebug() << "Trash: Grouping by role:" << role;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", windowId, itemRole);
 }
