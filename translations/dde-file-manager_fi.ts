@@ -6989,7 +6989,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation>Silppuri</translation>
+        <translation>Tiedotosilppuri</translation>
     </message>
 </context>
 <context>
@@ -6997,32 +6997,32 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="167"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Käytä silppuria</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="173"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Kun silppuri on käytössä, &quot;Tiedostosilppuri&quot; tulee saataville pudotusvalikossa tiedostojen turvallista poistamista varten.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="206"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Haluatko silputa %1 kohdetta?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="207"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"/>
+        <translation>Tiedosto poistetaan, eikä sitä voi palauttaa.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="229"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="230"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Silppua</translation>
     </message>
 </context>
 <context>
@@ -7038,7 +7038,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Tiedotosilppuri</translation>
     </message>
 </context>
 <context>
