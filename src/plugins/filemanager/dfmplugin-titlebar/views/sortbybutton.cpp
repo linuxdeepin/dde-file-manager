@@ -168,8 +168,16 @@ void SortByButton::paintEvent(QPaintEvent *event)
 
         bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
 
-        QColor hoverColor = isDarkTheme ? QColor(255, 255, 255, 15)
-                                        : QColor(0, 0, 0, 26);
+        QColor hoverColor;
+        if (isDown()) {
+            // 按下状态 - 20%不透明度
+            hoverColor = isDarkTheme ? QColor(255, 255, 255, 51)
+                                     : QColor(0, 0, 0, 51);
+        } else {
+            // 悬浮状态 - 10%不透明度
+            hoverColor = isDarkTheme ? QColor(255, 255, 255, 26)
+                                     : QColor(0, 0, 0, 26);
+        }
 
         option.palette.setBrush(QPalette::Button, hoverColor);
 
