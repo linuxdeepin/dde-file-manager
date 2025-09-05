@@ -1941,7 +1941,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="171"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation>削除</translation>
     </message>
 </context>
 <context>
@@ -7143,7 +7143,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="24"/>
         <source>Delete</source>
-        <translation >Delete</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="29"/>
