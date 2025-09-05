@@ -37,8 +37,14 @@ void insertToList(QList<T> &list, int index, const T &t)
 }
 }   // namespace
 
-FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
-    : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags), filterCallback(callfun), currentKey(key)
+FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun,
+                               const QStringList &nameFilters, const QDir::Filters filters, QObject *parent)
+    : QObject(parent),
+      current(url),
+      nameFilters(nameFilters),
+      filters(filters),
+      filterCallback(callfun),
+      currentKey(key)
 {
     fmDebug() << "FileSortWorker created for URL:" << url.toString() << "key:" << key;
 
@@ -130,18 +136,6 @@ void FileSortWorker::setGroupArguments(const Qt::SortOrder order, const ItemRole
     orgGroupRole = groupRole;
 }
 
-QUrl FileSortWorker::mapToIndex(int index)
-{
-    QReadLocker lk(&locker);
-
-    if (index < 0 || index >= visibleChildren.count()) {
-        fmDebug() << "Invalid index for mapToIndex:" << index << "visible children count:" << visibleChildren.count();
-        return QUrl();
-    }
-
-    return visibleChildren.at(index);
-}
-
 int FileSortWorker::childrenCount()
 {
     QReadLocker lk(&locker);
@@ -198,11 +192,6 @@ QList<QUrl> FileSortWorker::getChildrenUrls()
     QReadLocker lk(&locker);
     fmDebug() << "Getting children URLs, count:" << visibleChildren.size();
     return visibleChildren;
-}
-
-QDir::Filters FileSortWorker::getFilters() const
-{
-    return filters;
 }
 
 ItemRoles FileSortWorker::getSortRole() const
