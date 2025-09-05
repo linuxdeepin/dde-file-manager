@@ -19,7 +19,7 @@ using namespace dfmplugin_workspace;
 
 FileViewStatusBar::FileViewStatusBar(QWidget *parent)
     : BasicStatusBar(parent),
-      loadingIndicator(nullptr),
+      loadingSpinner(nullptr),
       scaleSlider(nullptr),
       stretchWidget(nullptr),
       centerContainer(nullptr)
@@ -27,7 +27,7 @@ FileViewStatusBar::FileViewStatusBar(QWidget *parent)
     fmInfo() << "Creating FileViewStatusBar";
 
     initScalingSlider();
-    initLoadingIndicator();
+    initLoadingSpinner();
     setCustomLayout();
 
     fmDebug() << "FileViewStatusBar initialization completed";
@@ -82,9 +82,9 @@ void FileViewStatusBar::showLoadingIncator(const QString &tip)
 {
     fmInfo() << "Showing loading indicator with tip:" << (tip.isEmpty() ? "Loading..." : tip);
 
-    if (loadingIndicator) {
-        loadingIndicator->setVisible(true);
-        loadingIndicator->play();
+    if (loadingSpinner) {
+        loadingSpinner->setVisible(true);
+        loadingSpinner->start();
         fmDebug() << "Loading indicator started playing";
     } else {
         fmWarning() << "Cannot show loading indicator: loadingIndicator is null";
@@ -97,9 +97,9 @@ void FileViewStatusBar::hideLoadingIncator()
 {
     fmInfo() << "Hiding loading indicator";
 
-    if (loadingIndicator) {
-        loadingIndicator->stop();
-        loadingIndicator->setVisible(false);
+    if (loadingSpinner) {
+        loadingSpinner->stop();
+        loadingSpinner->setVisible(false);
         fmDebug() << "Loading indicator stopped and hidden";
     } else {
         fmWarning() << "Cannot hide loading indicator: loadingIndicator is null";
@@ -125,22 +125,13 @@ void FileViewStatusBar::initScalingSlider()
     fmDebug() << "Scaling slider initialized with width: 120, range: 0-1";
 }
 
-void FileViewStatusBar::initLoadingIndicator()
+void FileViewStatusBar::initLoadingSpinner()
 {
     fmDebug() << "Initializing loading indicator";
 
-    QStringList seq;
-
-    for (int i = 1; i != 91; ++i)
-        seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
-
-    loadingIndicator = new DPictureSequenceView(this);
-    loadingIndicator->setFixedSize(18, 18);
-    loadingIndicator->setPictureSequence(seq, true);
-    loadingIndicator->setSpeed(20);
-    loadingIndicator->hide();
-
-    fmDebug() << "Loading indicator initialized with" << seq.size() << "frames, size: 18x18, speed: 20";
+    loadingSpinner = new DSpinner(this);
+    loadingSpinner->setFixedSize(16, 16);
+    loadingSpinner->hide();
 }
 
 DTipLabel *FileViewStatusBar::findTipLabel() const
@@ -180,8 +171,8 @@ void FileViewStatusBar::setCustomLayout()
     centerLayout->setSpacing(5);
     fmDebug() << "Created center layout with spacing: 5";
 
-    // Add loadingIndicator to the center container
-    centerLayout->addWidget(loadingIndicator);
+    // Add loadingSpinner to the center container
+    centerLayout->addWidget(loadingSpinner);
     fmDebug() << "Added loading indicator to center layout";
 
     // Find the tip label from base class
