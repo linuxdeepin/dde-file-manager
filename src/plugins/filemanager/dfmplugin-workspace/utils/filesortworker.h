@@ -51,13 +51,11 @@ public:
                             FileViewFilterCallback callfun = nullptr,
                             const QStringList &nameFilters = QStringList(),
                             const QDir::Filters filters = QDir::NoFilter,
-                            const QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                             QObject *parent = nullptr);
     ~FileSortWorker();
     SortOpt setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
                              const bool isMixDirAndFile);
     void setGroupArguments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles groupRole);
-    QUrl mapToIndex(int index);
     int childrenCount();
     FileItemDataPointer childData(const int index);
     FileItemDataPointer childData(const QUrl &url);
@@ -66,8 +64,6 @@ public:
     void cancel();
     int getChildShowIndex(const QUrl &url);
     QList<QUrl> getChildrenUrls();
-
-    QDir::Filters getFilters() const;
 
     DFMGLOBAL_NAMESPACE::ItemRoles getSortRole() const;
     Qt::SortOrder getSortOrder() const;
@@ -101,7 +97,6 @@ signals:
     // so the link can only be Qt:: QueuedConnection,
     // which cannot be directly called elsewhere, but can only be triggered by signals
 signals:
-    void requestUpdateTimerStart();
     void requestSortByMimeType();
     void aboutToSwitchToListView(const QList<QUrl> &allShowList);
 
@@ -227,7 +222,6 @@ private:
     QUrl current;
     QStringList nameFilters {};
     QDir::Filters filters { QDir::NoFilter };
-    QDirIterator::IteratorFlags flags { QDirIterator::NoIteratorFlags };
     QHash<QUrl, QHash<QUrl, SortInfoPointer>> children {};
     QReadWriteLock childrenDataLocker;
     QHash<QUrl, FileItemDataPointer> childrenDataMap {};
@@ -246,7 +240,6 @@ private:
     Qt::SortOrder groupOrder { Qt::AscendingOrder };
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
-    char placeholderMemory[4];
     QHash<QUrl, QList<QUrl>> visibleTreeChildren {};
     QMultiMap<int8_t, QUrl> depthMap;
     std::atomic_bool istree { false };
