@@ -9,7 +9,7 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/widgets/dfmstatusbar/basicstatusbar.h>
 
-#include <dpicturesequenceview.h>
+#include <DSpinner>
 #include <dslider.h>
 #include <DTipLabel>
 
@@ -36,10 +36,10 @@ protected:
 
 private:
     void initScalingSlider();
-    void initLoadingIndicator();
+    void initLoadingSpinner();
     void setCustomLayout();
 
-    DPictureSequenceView *loadingIndicator { nullptr };
+    DSpinner *loadingSpinner { nullptr };
     DSlider *scaleSlider { nullptr };
     QWidget *stretchWidget { nullptr };
     QWidget *centerContainer { nullptr };
