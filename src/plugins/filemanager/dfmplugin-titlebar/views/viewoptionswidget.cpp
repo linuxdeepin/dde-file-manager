@@ -13,6 +13,8 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DFontSizeManager>
+#include <DPalette>
+#include <DPaletteHelper>
 
 #include <QVBoxLayout>
 #include <QStandardItemModel>
@@ -68,6 +70,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     QFrame *iconSizeLabelFrame = new QFrame(q);
     iconSizeLabelFrame->setFixedWidth(10);
     iconSizeTitle = new DLabel(tr("Icon size"), q);
+    DFontSizeManager::instance()->bind(iconSizeTitle, DFontSizeManager::T10, QFont::Normal);
     iconSizeLabelLayout->addWidget(iconSizeLabelFrame);
     iconSizeLabelLayout->addWidget(iconSizeTitle);
     iconSizeLayout->addLayout(iconSizeLabelLayout);
@@ -101,6 +104,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     QFrame *gridDensityLabelFrame = new QFrame(q);
     gridDensityLabelFrame->setFixedWidth(10);
     gridDensityTitle = new DLabel(tr("Grid density"), q);
+    DFontSizeManager::instance()->bind(gridDensityTitle, DFontSizeManager::T10, QFont::Normal);
     gridDensityLabelLayout->addWidget(gridDensityLabelFrame);
     gridDensityLabelLayout->addWidget(gridDensityTitle);
     gridDensityLayout->addLayout(gridDensityLabelLayout);
@@ -168,6 +172,20 @@ void ViewOptionsWidgetPrivate::initializeUi()
     displayPreviewLayout->addWidget(displayPreviewCheckBox);
     displayPreviewWidget->setLayout(displayPreviewLayout);
     mainLayout->addWidget(displayPreviewWidget);
+    auto updateLabelColor = [this]() {
+        bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+
+        DPalette pa = DPaletteHelper::instance()->palette(title);
+        QColor textColor = isDarkTheme ? QColor(255, 255, 255, 128)
+                                       : QColor(0, 0, 0, 128);
+
+        pa.setColor(DPalette::WindowText, textColor);
+        iconSizeTitle->setPalette(pa);
+        gridDensityTitle->setPalette(pa);
+    };
+    updateLabelColor();
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            title, updateLabelColor);
 }
 
 void ViewOptionsWidgetPrivate::initConnect()
@@ -240,7 +258,7 @@ void ViewOptionsWidgetPrivate::setUrl(const QUrl &url)
 {
     fmDebug() << "Setting URL for view options:" << url.toString();
     fileUrl = url;
-    
+
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     QVariant iconSizeValue = TitleBarHelper::getFileViewStateValue(fileUrl, "iconSizeLevel", defaultIconSize);
     iconSizeSlider->blockSignals(true);
