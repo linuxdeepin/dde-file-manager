@@ -5487,7 +5487,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Dane kopiowania nie są synchronizowane w czasie rzeczywistym. Użyj opcji &quot;Bezpieczne usunięcie&quot;, aby uniknąć utraty danych i bezpiecznie odłączyć zewnętrzny magazyn danych.</translation>
     </message>
 </context>
 <context>
