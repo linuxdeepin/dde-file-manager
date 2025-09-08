@@ -34,6 +34,7 @@
 #include <QLineEdit>
 #include <QApplication>
 #include <QToolTip>
+#include <QMouseEvent>
 #include <QPainterPath>
 
 #include <linux/limits.h>
@@ -57,6 +58,12 @@ void ListItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
+    // Check if this is a group header item
+    if (isGroupHeaderItem(index)) {
+        paintGroupHeader(painter, option, index);
+        return;
+    }
+
     QStyleOptionViewItem opt = option;
 
     auto info = parent()->fileInfo(index);
@@ -92,6 +99,11 @@ void ListItemDelegate::paint(QPainter *painter,
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    // Check if this is a group header item
+    if (isGroupHeaderItem(index)) {
+        return getGroupHeaderSizeHint(option, index);
+    }
+
     Q_UNUSED(index)
     Q_D(const ListItemDelegate);
 
@@ -744,4 +756,71 @@ int ListItemDelegate::dataWidth(const QStyleOptionViewItem &option, const QModel
     }
 
     return -1;
+}
+
+// Group functionality implementation
+int ListItemDelegate::getGroupHeaderHeight(const QStyleOptionViewItem &option) const
+{
+    // Use the same height as a regular file item in list mode
+    QStyleOptionViewItem fileItemOption = option;
+    return BaseItemDelegate::sizeHint(fileItemOption, QModelIndex()).height();
+}
+
+bool ListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    // Handle group header clicks
+    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        handleGroupHeaderClick(mouseEvent, option, index);
+        return true;
+    }
+    
+    // Handle double-click on group headers for expand/collapse
+    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonDblClick) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            // Extract group key from index
+            QUrl url = index.data(Global::kItemUrlRole).toUrl();
+            QString groupKey = url.path(); // Remove "group-header://" prefix
+            if (groupKey.startsWith("/")) {
+                groupKey = groupKey.mid(1); // Remove leading slash
+            }
+            
+            if (!groupKey.isEmpty()) {
+                emit const_cast<ListItemDelegate*>(this)->groupExpansionToggled(groupKey);
+            }
+            return true;
+        }
+    }
+    
+    // Call base class implementation for regular items
+    return BaseItemDelegate::editorEvent(event, model, option, index);
+}
+
+void ListItemDelegate::handleGroupHeaderClick(QMouseEvent *event, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (!event || !index.isValid()) {
+        return;
+    }
+    
+    // Extract group key from index
+    QUrl url = index.data(Global::kItemUrlRole).toUrl();
+    QString groupKey = url.path(); // Remove "group-header://" prefix
+    if (groupKey.startsWith("/")) {
+        groupKey = groupKey.mid(1); // Remove leading slash
+    }
+    
+    if (groupKey.isEmpty()) {
+        return;
+    }
+    
+    // Check if click is on expand button
+    QRect expandButtonRect = getExpandButtonRect(option);
+    if (expandButtonRect.contains(event->pos())) {
+        // Toggle expansion
+        emit const_cast<ListItemDelegate*>(this)->groupExpansionToggled(groupKey);
+    } else {
+        // Click on group header text area
+        emit const_cast<ListItemDelegate*>(this)->groupHeaderClicked(groupKey);
+    }
 }

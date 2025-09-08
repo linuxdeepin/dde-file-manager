@@ -64,6 +64,11 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
+
+    // Initialize grouping engine
+    groupingEngine = std::make_unique<GroupingEngine>(this);
+
+    fmDebug() << "FileSortWorker: Grouping engine initialized";
 }
 
 FileSortWorker::~FileSortWorker()
@@ -132,14 +137,92 @@ void FileSortWorker::setGroupArguments(const Qt::SortOrder order, const ItemRole
     fmDebug() << "Setting group arguments - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
               << "role:" << static_cast<int>(groupRole);
 
+    bool changed = (groupOrder != order || orgGroupRole != groupRole);
+
     groupOrder = order;
     orgGroupRole = groupRole;
+
+    if (changed && groupingEngine) {
+        groupingEngine->setGroupOrder(order);
+        if (m_isGroupingEnabled) {
+            fmDebug() << "Group arguments changed, triggering regroup";
+            // Trigger regroup in next event loop to avoid recursive calls
+            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
+        }
+    }
+}
+
+void FileSortWorker::setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy)
+{
+    currentStrategy = std::move(strategy);
+    if (currentStrategy) {
+        fmDebug() << "FileSortWorker: Grouping strategy set to" << currentStrategy->getStrategyName();
+        if (m_isGroupingEnabled && groupingEngine) {
+            groupingEngine->invalidateCache();
+            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
+        }
+    } else {
+        fmDebug() << "FileSortWorker: Grouping strategy cleared";
+    }
+}
+
+void FileSortWorker::setGroupingEnabled(bool enabled)
+{
+    if (m_isGroupingEnabled != enabled) {
+        m_isGroupingEnabled = enabled;
+        fmDebug() << "FileSortWorker: Grouping" << (enabled ? "enabled" : "disabled");
+
+        if (enabled && currentStrategy && groupingEngine) {
+            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
+        } else if (!enabled) {
+            // Clear grouped data and emit update
+            groupedData.clear();
+            emit groupingDataChanged();
+        }
+    }
+}
+
+bool FileSortWorker::isGroupingEnabled() const
+{
+    return m_isGroupingEnabled;
+}
+
+void FileSortWorker::toggleGroupExpansion(const QString &groupKey)
+{
+    if (groupKey.isEmpty() || !m_isGroupingEnabled) {
+        return;
+    }
+
+    bool currentState = groupExpansionStates.value(groupKey, true);
+    groupExpansionStates[groupKey] = !currentState;
+
+    // Update the grouped data
+    groupedData.setGroupExpanded(groupKey, !currentState);
+
+    fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
+    emit groupingDataChanged();
+}
+
+bool FileSortWorker::isGroupExpanded(const QString &groupKey) const
+{
+    return groupExpansionStates.value(groupKey, true);
+}
+
+GroupedModelData FileSortWorker::getGroupedModelData() const
+{
+    return groupedData;
 }
 
 int FileSortWorker::childrenCount()
 {
-    QReadLocker lk(&locker);
-    return visibleChildren.count();
+    if (!m_isGroupingEnabled) {
+        // Traditional mode: use original logic
+        QReadLocker lk(&locker);
+        return visibleChildren.count();
+    } else {
+        // Grouping mode: return flattened item count
+        return groupedData.getItemCountThreadSafe();
+    }
 }
 
 FileItemDataPointer FileSortWorker::childData(const QUrl &url)
@@ -160,18 +243,37 @@ FileItemDataPointer FileSortWorker::rootData() const
 
 FileItemDataPointer FileSortWorker::childData(const int index)
 {
-    QUrl url;
-    {
-        QReadLocker lk(&locker);
-        if (index < 0 || index >= visibleChildren.count()) {
-            fmDebug() << "Invalid index for childData:" << index << "visible children count:" << visibleChildren.count();
+    if (!m_isGroupingEnabled) {
+        // Traditional mode: use original logic
+        QUrl url;
+        {
+            QReadLocker lk(&locker);
+            if (index < 0 || index >= visibleChildren.count()) {
+                fmDebug() << "Invalid index for childData:" << index << "visible children count:" << visibleChildren.count();
+                return nullptr;
+            }
+            url = visibleChildren.at(index);
+        }
+
+        QReadLocker lk(&childrenDataLocker);
+        return childrenDataMap.value(url);
+    } else {
+        // Grouping mode: use flattened data mapping
+        ModelItemWrapper wrapper = groupedData.getItemAtThreadSafe(index);
+        if (!wrapper.isValid()) {
+            fmDebug() << "Invalid index for grouped childData:" << index;
             return nullptr;
         }
-        url = visibleChildren.at(index);
-    }
 
-    QReadLocker lk(&childrenDataLocker);
-    return childrenDataMap.value(url);
+        if (wrapper.isFileItem()) {
+            return wrapper.fileData;
+        } else if (wrapper.isGroupHeader()) {
+            // Return special FileItemData for group headers
+            return createGroupHeaderData(wrapper.groupData);
+        }
+
+        return nullptr;
+    }
 }
 
 void FileSortWorker::cancel()
@@ -597,22 +699,51 @@ void FileSortWorker::handleRegroup(const Qt::SortOrder order, const ItemRoles gr
     fmInfo() << "Handling regroup - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
              << "role:" << static_cast<int>(groupRole);
 
-    // Update group configuration
-    if (groupOrder == order && orgGroupRole == groupRole) {
-        fmDebug() << "Group settings unchanged, skipping regroup";
+    // Update group configuration if parameters provided
+    if (order != Qt::AscendingOrder || groupRole != Global::ItemRoles::kItemUnknowRole) {
+        groupOrder = order;
+        orgGroupRole = groupRole;
+    }
+
+    // Only perform grouping if enabled and we have a strategy
+    if (!m_isGroupingEnabled || !currentStrategy || !groupingEngine) {
+        fmDebug() << "Grouping not enabled or strategy not set, skipping regroup";
         return;
     }
 
-    groupOrder = order;
-    orgGroupRole = groupRole;
+    fmDebug() << "Performing actual regrouping with strategy:" << currentStrategy->getStrategyName();
 
-    fmDebug() << "Group configuration updated - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-              << "role:" << static_cast<int>(groupRole);
+    try {
+        // Get all current files
+        QList<FileItemDataPointer> allFiles = getAllFiles();
+        if (allFiles.isEmpty()) {
+            fmDebug() << "No files to group";
+            groupedData.clear();
+            emit groupingDataChanged();
+            return;
+        }
 
-    // TODO(group): Implement actual grouping logic here
-    // For now, just emit a signal to indicate grouping has changed
-    // The actual grouping implementation will be done in future iterations
-    emit requestUpdateView();
+        // Perform grouping
+        auto result = groupingEngine->groupFiles(allFiles, currentStrategy.get());
+        if (!result.success) {
+            fmCritical() << "Grouping failed:" << result.errorMessage;
+            return;
+        }
+
+        // Generate model data
+        groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
+
+        fmInfo() << "Regrouping completed - created" << groupedData.groups.size()
+                 << "groups with" << groupedData.getItemCount() << "total items";
+
+        // Emit signal to notify model of changes
+        emit groupingDataChanged();
+
+    } catch (const std::exception &e) {
+        fmCritical() << "Exception during regrouping:" << e.what();
+    } catch (...) {
+        fmCritical() << "Unknown exception during regrouping";
+    }
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -1148,7 +1279,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     }
 
     depthMap.remove(depth - 1, parentUrl);
-    depthMap.insertMulti(depth - 1, parentUrl);
+    depthMap.insert(depth - 1, parentUrl);
 
     if (!checkFilters(sortInfo, true))
         return false;
@@ -1254,7 +1385,7 @@ void FileSortWorker::switchListView()
 
     visibleTreeChildren.clear();
     depthMap.clear();
-    depthMap.insertMulti(-1, current);
+    depthMap.insert(-1, current);
     auto oldMix = isMixDirAndFile;
     isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     // 排序
@@ -2039,4 +2170,37 @@ void FileSortWorker::doCompleteFileInfo(SortInfoPointer sortInfo)
 
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
+}
+
+QList<FileItemDataPointer> FileSortWorker::getAllFiles() const
+{
+    QList<FileItemDataPointer> allFiles;
+
+    QReadLocker lk(&childrenDataLocker);
+    for (auto it = childrenDataMap.constBegin(); it != childrenDataMap.constEnd(); ++it) {
+        const FileItemDataPointer &fileData = it.value();
+        if (fileData) {
+            allFiles.append(fileData);
+        }
+    }
+
+    fmDebug() << "FileSortWorker: Retrieved" << allFiles.size() << "files for grouping";
+    return allFiles;
+}
+
+FileItemDataPointer FileSortWorker::createGroupHeaderData(const FileGroupData *groupData) const
+{
+    if (!groupData) {
+        return nullptr;
+    }
+
+    // Use special URL format to identify group headers
+    QUrl groupHeaderUrl = QUrl::fromUserInput(QString("group-header://%1").arg(groupData->groupKey));
+
+    // Create a special FileItemData to represent group headers
+    // Pass nullptr as FileInfoPointer to mark it as a special group header
+    FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl, nullptr);
+
+    fmDebug() << "FileSortWorker: Created group header data for group" << groupData->groupKey;
+    return headerData;
 }
