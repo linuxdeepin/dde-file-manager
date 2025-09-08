@@ -37,7 +37,3 @@ $ dpkg-buildpackage -uc -us -nc -b # build binary package(s)
 
 * Code contribution via GitHub
 * Submit bug or suggestions to GitHub Issues or GitHub Discussions
-
-## License
-
-**dfm-extension-example** is licensed under GPL-3.0-or-later.

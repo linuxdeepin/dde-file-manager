@@ -37,13 +37,13 @@ protected:
 };
 
 /**
- * @brief 测试dfm_extension_initiliaze函数
- * 验证扩展初始化功能
+ * @brief Test dfm_extension_initialize function
+ * Verify extension initialization functionality
  */
 TEST_F(DFMExtensionGlobalTest, Initialize)
 {
     // 测试初始化函数不会崩溃
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 验证初始化完成（基本功能测试）
     EXPECT_TRUE(true);
@@ -56,7 +56,7 @@ TEST_F(DFMExtensionGlobalTest, Initialize)
 TEST_F(DFMExtensionGlobalTest, Shutdown)
 {
     // 先初始化
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 测试关闭函数不会崩溃
     dfm_extension_shutdown();
@@ -72,7 +72,7 @@ TEST_F(DFMExtensionGlobalTest, Shutdown)
 TEST_F(DFMExtensionGlobalTest, MenuPlugin)
 {
     // 初始化扩展
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 获取菜单插件
     auto menuPlugin = dfm_extension_menu();
@@ -93,7 +93,7 @@ TEST_F(DFMExtensionGlobalTest, MenuPlugin)
 TEST_F(DFMExtensionGlobalTest, EmblemPlugin)
 {
     // 初始化扩展
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 获取标志图标插件
     auto emblemPlugin = dfm_extension_emblem();
@@ -113,7 +113,7 @@ TEST_F(DFMExtensionGlobalTest, EmblemPlugin)
 TEST_F(DFMExtensionGlobalTest, WindowPlugin)
 {
     // 初始化扩展
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 获取窗口插件
     auto windowPlugin = dfm_extension_window();
@@ -133,7 +133,7 @@ TEST_F(DFMExtensionGlobalTest, WindowPlugin)
 TEST_F(DFMExtensionGlobalTest, FilePlugin)
 {
     // 初始化扩展
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 获取文件插件
     auto filePlugin = dfm_extension_file();
@@ -154,7 +154,7 @@ TEST_F(DFMExtensionGlobalTest, LifecycleManagement)
 {
     // 测试多次初始化和关闭
     for (int i = 0; i < 5; ++i) {
-        dfm_extension_initiliaze();
+        dfm_extension_initialize();
         
         // 获取所有插件
         auto menuPlugin = dfm_extension_menu();
@@ -185,9 +185,9 @@ TEST_F(DFMExtensionGlobalTest, BoundaryConditions)
     EXPECT_TRUE(true);
     
     // 测试多次初始化
-    dfm_extension_initiliaze();
-    dfm_extension_initiliaze();
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
+    dfm_extension_initialize();
+    dfm_extension_initialize();
     
     // 验证不会崩溃
     EXPECT_TRUE(true);
@@ -212,7 +212,7 @@ TEST_F(DFMExtensionGlobalTest, Performance)
     // 测试大量初始化和关闭的性能
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; ++i) {
-        dfm_extension_initiliaze();
+        dfm_extension_initialize();
         dfm_extension_shutdown();
     }
     auto end = std::chrono::high_resolution_clock::now();
@@ -230,7 +230,7 @@ TEST_F(DFMExtensionGlobalTest, Performance)
 TEST_F(DFMExtensionGlobalTest, PluginConsistency)
 {
     // 初始化扩展
-    dfm_extension_initiliaze();
+    dfm_extension_initialize();
     
     // 多次获取同一插件
     auto menuPlugin1 = dfm_extension_menu();

@@ -25,7 +25,7 @@ static DFMExtFilePlugin *g_testFilePlugin = nullptr;
 // Global initialization state
 static bool g_testInitialized = false;
 
-extern "C" void dfm_extension_initiliaze()
+extern "C" void dfm_extension_initialize()
 {
     if (g_testInitialized)
         return;
@@ -41,6 +41,12 @@ extern "C" void dfm_extension_initiliaze()
         g_testFilePlugin = new DFMExtFilePlugin();
     
     g_testInitialized = true;
+}
+
+// Legacy misspelled function name for backward compatibility
+extern "C" void dfm_extension_initiliaze()
+{
+    dfm_extension_initialize();
 }
 
 extern "C" void dfm_extension_shutdown()
