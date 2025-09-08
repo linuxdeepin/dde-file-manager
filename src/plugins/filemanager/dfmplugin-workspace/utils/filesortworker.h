@@ -8,7 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 #include "models/fileitemdata.h"
 #include "groupingengine.h"
-#include "abstractgroupstrategy.h"
+#include "groups/abstractgroupstrategy.h"
 #include "groupedmodeldata.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>

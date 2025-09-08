@@ -8,7 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 #include "filegroupdata.h"
 #include "groupedmodeldata.h"
-#include "abstractgroupstrategy.h"
+#include "groups/abstractgroupstrategy.h"
 
 #include <QObject>
 #include <QHash>
