@@ -63,6 +63,12 @@ private:
 
     int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const;
 
+    // Group functionality implementation
+    int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
+    void handleGroupHeaderClick(QMouseEvent *event, const QStyleOptionViewItem &option, const QModelIndex &index);
+
     bool expandable { false };
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };

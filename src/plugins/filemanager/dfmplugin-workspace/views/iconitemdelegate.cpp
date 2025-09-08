@@ -5,6 +5,8 @@
 #include "private/delegatecommon.h"
 #include "iconitemdelegate.h"
 #include "private/iconitemdelegate_p.h"
+
+#include <QMouseEvent>
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "fileview.h"
@@ -100,6 +102,12 @@ void IconItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
+    // Check if this is a group header item
+    if (isGroupHeaderItem(index)) {
+        paintGroupHeader(painter, option, index);
+        return;
+    }
+
     Q_D(const IconItemDelegate);
 
     if (index == d->expandedIndex && !parent()->isSelected(index))
@@ -703,8 +711,12 @@ QSize IconItemDelegate::iconSizeByIconSizeLevel() const
     return QSize(size, size);
 }
 
-QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
+QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    // Check if this is a group header item
+    if (isGroupHeaderItem(index)) {
+        return getGroupHeaderSizeHint(option, index);
+    }
 
     Q_D(const IconItemDelegate);
 
@@ -892,4 +904,72 @@ bool IconItemDelegate::eventFilter(QObject *object, QEvent *event)
     }
 
     return QStyledItemDelegate::eventFilter(object, event);
+}
+
+// Group functionality implementation
+int IconItemDelegate::getGroupHeaderHeight(const QStyleOptionViewItem &option) const
+{
+    Q_UNUSED(option)
+    
+    // Fixed height of 32 pixels for icon mode group headers
+    return 32;
+}
+
+bool IconItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    // Handle group header clicks
+    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        handleGroupHeaderClick(mouseEvent, option, index);
+        return true;
+    }
+    
+    // Handle double-click on group headers for expand/collapse
+    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonDblClick) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            // Extract group key from index
+            QUrl url = index.data(Global::kItemUrlRole).toUrl();
+            QString groupKey = url.path(); // Remove "group-header://" prefix
+            if (groupKey.startsWith("/")) {
+                groupKey = groupKey.mid(1); // Remove leading slash
+            }
+            
+            if (!groupKey.isEmpty()) {
+                emit const_cast<IconItemDelegate*>(this)->groupExpansionToggled(groupKey);
+            }
+            return true;
+        }
+    }
+    
+    // Call base class implementation for regular items
+    return BaseItemDelegate::editorEvent(event, model, option, index);
+}
+
+void IconItemDelegate::handleGroupHeaderClick(QMouseEvent *event, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (!event || !index.isValid()) {
+        return;
+    }
+    
+    // Extract group key from index
+    QUrl url = index.data(Global::kItemUrlRole).toUrl();
+    QString groupKey = url.path(); // Remove "group-header://" prefix
+    if (groupKey.startsWith("/")) {
+        groupKey = groupKey.mid(1); // Remove leading slash
+    }
+    
+    if (groupKey.isEmpty()) {
+        return;
+    }
+    
+    // Check if click is on expand button
+    QRect expandButtonRect = getExpandButtonRect(option);
+    if (expandButtonRect.contains(event->pos())) {
+        // Toggle expansion
+        emit const_cast<IconItemDelegate*>(this)->groupExpansionToggled(groupKey);
+    } else {
+        // Click on group header text area
+        emit const_cast<IconItemDelegate*>(this)->groupHeaderClicked(groupKey);
+    }
 }

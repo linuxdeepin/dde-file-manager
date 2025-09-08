@@ -7,6 +7,9 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "models/fileitemdata.h"
+#include "groupingengine.h"
+#include "abstractgroupstrategy.h"
+#include "groupedmodeldata.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
@@ -56,6 +59,15 @@ public:
     SortOpt setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
                              const bool isMixDirAndFile);
     void setGroupArguments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles groupRole);
+
+    // New grouping-related methods
+    void setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy);
+    void setGroupingEnabled(bool enabled);
+    bool isGroupingEnabled() const;
+    void toggleGroupExpansion(const QString &groupKey);
+    bool isGroupExpanded(const QString &groupKey) const;
+    GroupedModelData getGroupedModelData() const;
+
     int childrenCount();
     FileItemDataPointer childData(const int index);
     FileItemDataPointer childData(const QUrl &url);
@@ -92,6 +104,9 @@ signals:
     void requestUpdateView();
     void requestCursorWait();
     void reqUestCloseCursor();
+
+    // Grouping-related signals
+    void groupingDataChanged();
 
     // Note that the slot functions here are executed in asynchronous threads,
     // so the link can only be Qt:: QueuedConnection,
@@ -218,12 +233,16 @@ private:
     void checkAndSortBytMimeType(const QUrl &url);
     void doCompleteFileInfo(SortInfoPointer sortInfo);
 
+    // New grouping-related private methods
+    QList<FileItemDataPointer> getAllFiles() const;
+    FileItemDataPointer createGroupHeaderData(const FileGroupData *groupData) const;
+
 private:
     QUrl current;
     QStringList nameFilters {};
     QDir::Filters filters { QDir::NoFilter };
     QHash<QUrl, QHash<QUrl, SortInfoPointer>> children {};
-    QReadWriteLock childrenDataLocker;
+    mutable QReadWriteLock childrenDataLocker;
     QHash<QUrl, FileItemDataPointer> childrenDataMap {};
     QList<QUrl> visibleChildren {};
     QReadWriteLock locker;
@@ -238,6 +257,14 @@ private:
     // Group-by configuration
     Global::ItemRoles orgGroupRole { Global::ItemRoles::kItemUnknowRole };
     Qt::SortOrder groupOrder { Qt::AscendingOrder };
+
+    // New grouping-related members
+    std::unique_ptr<GroupingEngine> groupingEngine;
+    std::unique_ptr<AbstractGroupStrategy> currentStrategy;
+    GroupedModelData groupedData;
+    std::atomic_bool m_isGroupingEnabled { false };
+    QHash<QString, bool> groupExpansionStates;
+
     std::atomic_bool isCanceled { false };
     bool isMixDirAndFile { false };
     QHash<QUrl, QList<QUrl>> visibleTreeChildren {};
