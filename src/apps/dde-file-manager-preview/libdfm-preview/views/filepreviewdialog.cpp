@@ -212,14 +212,14 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 qCDebug(logLibFilePreview) << "FilePreviewDialog: previous page key pressed";
                 previousPage();
             }
-            break;
+            return true;
         case Qt::Key_Right:
         case Qt::Key_Down:
             if (!e->isAutoRepeat()) {
                 qCDebug(logLibFilePreview) << "FilePreviewDialog: next page key pressed";
                 nextPage();
             }
-            break;
+            return true;
         case Qt::Key_Escape:
         case Qt::Key_Space: {
             if (!e->isAutoRepeat()) {
