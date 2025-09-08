@@ -28,7 +28,7 @@ static DFMEXT::DFMExtWindowPlugin *myWindow { nullptr };
 static DFMEXT::DFMExtFilePlugin *myFile { nullptr };
 #endif
 
-extern "C" void dfm_extension_initiliaze()
+extern "C" void dfm_extension_initialize()
 {
     myMenu = new Exapmle::MyMenuPlugin;
     myEmblemIcon = new Exapmle::MyEmblemIconPlugin;

@@ -44,9 +44,22 @@ bool ExtensionPluginLoader::initialize()
         return false;
     }
 
-    initFunc = reinterpret_cast<ExtInitFuncType>(loader.resolve("dfm_extension_initiliaze"));
+    // Try to resolve the correctly spelled function name first
+    initFunc = reinterpret_cast<ExtInitFuncType>(loader.resolve("dfm_extension_initialize"));
+    
+    // If not found, try the legacy misspelled function name for backward compatibility
     if (!initFunc) {
-        errorMessage = "Failed, get 'dfm_extension_initiliaze' import function" + loader.fileName();
+        initFunc = reinterpret_cast<ExtInitFuncType>(loader.resolve("dfm_extension_initiliaze"));
+        if (initFunc) {
+            // Log deprecation warning for the misspelled function name
+            qWarning() << "Warning: Plugin" << loader.fileName() 
+                      << "uses deprecated function name 'dfm_extension_initiliaze'. "
+                      << "Please update to 'dfm_extension_initialize'";
+        }
+    }
+    
+    if (!initFunc) {
+        errorMessage = "Failed, get 'dfm_extension_initialize' or 'dfm_extension_initiliaze' import function: " + loader.fileName();
         return false;
     }
 

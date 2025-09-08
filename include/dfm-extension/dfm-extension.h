@@ -12,8 +12,12 @@
 
 BEGEN_DFMEXT_NAMESPACE
 
-extern "C" void dfm_extension_initiliaze();
+extern "C" void dfm_extension_initialize();
 extern "C" void dfm_extension_shutdown();
+
+// Legacy misspelled function name for backward compatibility
+// @deprecated Use dfm_extension_initialize() instead
+extern "C" void dfm_extension_initiliaze();
 extern "C" DFMExtMenuPlugin *dfm_extension_menu();
 extern "C" DFMExtEmblemIconPlugin *dfm_extension_emblem();
 extern "C" DFMExtWindowPlugin *dfm_extension_window();

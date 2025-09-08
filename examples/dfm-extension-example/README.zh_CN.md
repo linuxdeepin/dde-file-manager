@@ -38,6 +38,3 @@ $ dpkg-buildpackage -uc -us -nc -b # 构建二进制包
 * 通过 GitHub 贡献代码
 * 在 GitHub Issues 或 GitHub Discussions 提交错误报告或建议
 
-## 开源协议
-
-**dfm-extension-example** 遵循 GPL-3.0-or-later 协议。 
