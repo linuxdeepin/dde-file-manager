@@ -140,8 +140,6 @@ FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder ord
     return opt;
 }
 
-
-
 void FileSortWorker::setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy)
 {
     currentStrategy = std::move(strategy);
@@ -182,7 +180,7 @@ void FileSortWorker::setGroupOrder(Qt::SortOrder order)
     if (groupOrder != order) {
         fmDebug() << "FileSortWorker: Setting group order to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
         groupOrder = order;
-        
+
         // Update engine with new order if enabled
         if (m_isGroupingEnabled && groupingEngine) {
             groupingEngine->setGroupOrder(order);
@@ -233,6 +231,22 @@ int FileSortWorker::childrenCount()
         // Grouping mode: return flattened item count
         return groupedData.getItemCountThreadSafe();
     }
+}
+
+QVariant FileSortWorker::groupHeaderData(const int index, const int role)
+{
+    // Grouping mode: use flattened data mapping
+    ModelItemWrapper wrapper = groupedData.getItemAtThreadSafe(index);
+    if (!wrapper.isValid()) {
+        fmDebug() << "Invalid index for groupHeaderData:" << index;
+        return {};
+    }
+
+    if (wrapper.isFileItem()) {
+        return {};
+    }
+
+    return wrapper.getData(role);
 }
 
 FileItemDataPointer FileSortWorker::childData(const QUrl &url)
@@ -315,8 +329,6 @@ Qt::SortOrder FileSortWorker::getSortOrder() const
 {
     return sortOrder;
 }
-
-
 
 void FileSortWorker::setTreeView(const bool isTree)
 {
@@ -690,8 +702,6 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
         return;
     }
 }
-
-
 
 void FileSortWorker::performGrouping()
 {
@@ -2197,12 +2207,9 @@ FileItemDataPointer FileSortWorker::createGroupHeaderData(const FileGroupData *g
 
     // Create a special FileItemData to represent group headers
     // Pass nullptr as FileInfoPointer to mark it as a special group header
-    FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl, nullptr);
 
+    FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl);
+    headerData->setParentData(rootdata.data());
     fmDebug() << "FileSortWorker: Created group header data for group" << groupData->groupKey;
     return headerData;
 }
-
-
-
-

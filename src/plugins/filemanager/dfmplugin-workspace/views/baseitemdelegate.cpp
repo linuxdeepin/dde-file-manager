@@ -276,9 +276,7 @@ bool BaseItemDelegate::isGroupHeaderItem(const QModelIndex &index) const
         return false;
     }
 
-    // Check if URL starts with "group-header://"
-    QUrl url = index.data(Global::kItemUrlRole).toUrl();
-    return url.scheme() == "group-header";
+    return index.data(Global::kItemIsGroupHeaderType).toBool();
 }
 
 QSize BaseItemDelegate::getGroupHeaderSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -14,31 +14,22 @@ DPWORKSPACE_BEGIN_NAMESPACE
 using namespace DFMBASE_NAMESPACE;
 
 ModelItemWrapper::ModelItemWrapper()
-    : itemType(FileItem)
-    , groupData(nullptr)
+    : itemType(FileItem), groupData(nullptr)
 {
 }
 
 ModelItemWrapper::ModelItemWrapper(const FileItemDataPointer &fileData, const QString &groupKey)
-    : itemType(FileItem)
-    , groupKey(groupKey)
-    , fileData(fileData)
-    , groupData(nullptr)
+    : itemType(FileItem), groupKey(groupKey), fileData(fileData), groupData(nullptr)
 {
 }
 
 ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
-    : itemType(GroupHeaderItem)
-    , groupKey(groupData ? groupData->groupKey : QString())
-    , groupData(groupData)
+    : itemType(GroupHeaderItem), groupKey(groupData ? groupData->groupKey : QString()), groupData(groupData)
 {
 }
 
 ModelItemWrapper::ModelItemWrapper(const ModelItemWrapper &other)
-    : itemType(other.itemType)
-    , groupKey(other.groupKey)
-    , fileData(other.fileData)
-    , groupData(other.groupData)
+    : itemType(other.itemType), groupKey(other.groupKey), fileData(other.fileData), groupData(other.groupData)
 {
 }
 
@@ -68,38 +59,30 @@ bool ModelItemWrapper::isFileItem() const
     return itemType == FileItem;
 }
 
-QUrl ModelItemWrapper::getUrl() const
-{
-    if (itemType == FileItem && fileData) {
-        return fileData->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
-    } else if (itemType == GroupHeaderItem && groupData) {
-        // Create a special URL for group headers
-        return QUrl::fromUserInput(QString("group-header://%1").arg(groupData->groupKey));
-    }
-    
-    return QUrl();
-}
-
 QVariant ModelItemWrapper::getData(int role) const
 {
     if (itemType == FileItem && fileData) {
+        switch (role) {
+        case Global::kItemIsGroupHeaderType:
+            return false;
+        }
         // For file items, delegate to the file data
         return fileData->data(role);
     } else if (itemType == GroupHeaderItem && groupData) {
         // For group headers, provide appropriate data based on role
         switch (role) {
-        case Global::kItemFilePathRole:
-            return QString("group-header://%1").arg(groupData->groupKey);
+        case Global::kItemIsGroupHeaderType:
+            return true;
         case Global::kItemDisplayRole:
         case Global::kItemNameRole:
             return groupData->getHeaderText();
-        case Global::kItemUrlRole:
-            return getUrl();
+        case Global::kItemGroupHeaderKey:
+            return groupData->groupKey;
         default:
             break;
         }
     }
-    
+
     return QVariant();
 }
 
@@ -110,8 +93,8 @@ bool ModelItemWrapper::isValid() const
     } else if (itemType == GroupHeaderItem) {
         return groupData != nullptr;
     }
-    
+
     return false;
 }
 
-DPWORKSPACE_END_NAMESPACE 
+DPWORKSPACE_END_NAMESPACE

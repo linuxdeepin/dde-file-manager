@@ -368,26 +368,26 @@ int ListItemDelegate::maximumIconSizeLevel() const
 int ListItemDelegate::increaseIcon()
 {
     Q_D(const ListItemDelegate);
-    
+
     int newLevel = d->currentHeightLevel + 1;
     if (newLevel >= d->viewDefines.listHeightCount()) {
         fmDebug() << "Cannot increase height level: already at maximum" << (d->viewDefines.listHeightCount() - 1);
         return d->currentHeightLevel;
     }
-    
+
     return setIconSizeByIconSizeLevel(newLevel);
 }
 
 int ListItemDelegate::decreaseIcon()
 {
     Q_D(const ListItemDelegate);
-    
+
     int newLevel = d->currentHeightLevel - 1;
     if (newLevel < 0) {
         fmDebug() << "Cannot decrease height level: already at minimum 0";
         return d->currentHeightLevel;
     }
-    
+
     return setIconSizeByIconSizeLevel(newLevel);
 }
 
@@ -404,7 +404,7 @@ int ListItemDelegate::setIconSizeByIconSizeLevel(int level)
     updateItemSizeHint();
     int iconHeight = d->itemSizeHint.height() * 0.75;
     parent()->parent()->setIconSize(QSize(iconHeight, iconHeight));   // Set iconSize to 0.75 of row height
-    
+
     fmDebug() << "List height level set to:" << level;
     return d->currentHeightLevel;
 }
@@ -774,25 +774,20 @@ bool ListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
         handleGroupHeaderClick(mouseEvent, option, index);
         return true;
     }
-    
+
     // Handle double-click on group headers for expand/collapse
     if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonDblClick) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
             // Extract group key from index
-            QUrl url = index.data(Global::kItemUrlRole).toUrl();
-            QString groupKey = url.path(); // Remove "group-header://" prefix
-            if (groupKey.startsWith("/")) {
-                groupKey = groupKey.mid(1); // Remove leading slash
-            }
-            
+            const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
             if (!groupKey.isEmpty()) {
-                emit const_cast<ListItemDelegate*>(this)->groupExpansionToggled(groupKey);
+                emit const_cast<ListItemDelegate *>(this)->groupExpansionToggled(groupKey);
             }
             return true;
         }
     }
-    
+
     // Call base class implementation for regular items
     return BaseItemDelegate::editorEvent(event, model, option, index);
 }
@@ -802,25 +797,21 @@ void ListItemDelegate::handleGroupHeaderClick(QMouseEvent *event, const QStyleOp
     if (!event || !index.isValid()) {
         return;
     }
-    
+
     // Extract group key from index
     QUrl url = index.data(Global::kItemUrlRole).toUrl();
-    QString groupKey = url.path(); // Remove "group-header://" prefix
-    if (groupKey.startsWith("/")) {
-        groupKey = groupKey.mid(1); // Remove leading slash
-    }
-    
+    const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
     if (groupKey.isEmpty()) {
         return;
     }
-    
+
     // Check if click is on expand button
     QRect expandButtonRect = getExpandButtonRect(option);
     if (expandButtonRect.contains(event->pos())) {
         // Toggle expansion
-        emit const_cast<ListItemDelegate*>(this)->groupExpansionToggled(groupKey);
+        emit const_cast<ListItemDelegate *>(this)->groupExpansionToggled(groupKey);
     } else {
         // Click on group header text area
-        emit const_cast<ListItemDelegate*>(this)->groupHeaderClicked(groupKey);
+        emit const_cast<ListItemDelegate *>(this)->groupHeaderClicked(groupKey);
     }
 }
