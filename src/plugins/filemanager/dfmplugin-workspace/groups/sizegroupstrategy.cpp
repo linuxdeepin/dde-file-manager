@@ -114,7 +114,7 @@ bool SizeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString SizeGroupStrategy::getStrategyName() const
 {
-    return tr("Size");
+    return "Size";
 }
 
 Global::ItemRoles SizeGroupStrategy::getCorrespondingRole() const

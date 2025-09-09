@@ -122,7 +122,7 @@ bool TypeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString TypeGroupStrategy::getStrategyName() const
 {
-    return tr("Type");
+    return "Type";
 }
 
 Global::ItemRoles TypeGroupStrategy::getCorrespondingRole() const

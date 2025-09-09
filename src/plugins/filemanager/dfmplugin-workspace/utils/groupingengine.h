@@ -138,6 +138,17 @@ private:
     void sortGroupsByDisplayOrder(QList<FileGroupData> &groups, 
                                  DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
+    /**
+     * @brief Check if a group is visible with file info conversion
+     * @param groupKey The group key
+     * @param groupFiles The list of files in the group
+     * @param strategy The grouping strategy
+     * @return true if the group should be visible, false otherwise
+     */
+    bool isGroupVisibleWithConversion(const QString &groupKey,
+                                     const QList<FileItemDataPointer> &groupFiles,
+                                     DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+
     // Cache management
     mutable CacheKey m_lastCacheKey;
     mutable GroupingResult m_cachedResult;
