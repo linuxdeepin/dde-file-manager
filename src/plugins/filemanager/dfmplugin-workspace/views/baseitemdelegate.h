@@ -147,7 +147,6 @@ protected:
     void paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const;
     void paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const;
     void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, const QStyleOptionViewItem &option) const;
-    void paintSeparator(QPainter *painter, const QRect &rect) const;
 
     // Group layout calculation methods
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
@@ -165,7 +164,6 @@ private:
     QSize m_expandButtonSize = QSize(16, 16);
     int m_leftMargin = 12;
     int m_rightMargin = 12;
-
 };
 
 }

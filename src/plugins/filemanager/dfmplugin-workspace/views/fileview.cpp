@@ -152,7 +152,8 @@ void FileView::setViewMode(Global::ViewMode mode)
     case Global::ViewMode::kIconMode:
         d->initHorizontalOffset = false;
         setUniformItemSizes(false);
-        setResizeMode(Adjust);
+        setResizeMode(QListView::Adjust);
+        setMovement(QListView::Static);
         setOrientation(QListView::LeftToRight, true);
 #ifdef DTKWIDGET_CLASS_DSizeMode
         setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
@@ -778,27 +779,50 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
     }
 }
 
-void FileView::setGroup(const ItemRoles role, const Qt::SortOrder order)
+// Modern grouping interface
+void FileView::setGroupingStrategy(const QString &strategyName)
 {
     if (model()->currentState() == ModelState::kBusy) {
-        fmWarning() << "Cannot set group while model is busy for URL:" << rootUrl().toString();
+        fmWarning() << "Cannot set grouping strategy while model is busy for URL:" << rootUrl().toString();
         return;
     }
 
-    if (role == model()->groupRole() && order == model()->groupOrder()) {
-        fmDebug() << "Group settings unchanged, skipping for URL:" << rootUrl().toString();
+    fmInfo() << "Setting grouping strategy:" << strategyName << "for URL:" << rootUrl().toString();
+
+    // Delegate to model
+    model()->setGroupingStrategy(strategyName);
+}
+
+void FileView::setGroupingEnabled(bool enabled)
+{
+    if (model()->currentState() == ModelState::kBusy) {
+        fmWarning() << "Cannot change grouping enabled state while model is busy for URL:" << rootUrl().toString();
         return;
     }
 
-    fmInfo() << "Setting group by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "for URL:" << rootUrl().toString();
+    fmInfo() << "Setting grouping enabled:" << enabled << "for URL:" << rootUrl().toString();
 
-    // Save group configuration to file view state
-    const QUrl &url = rootUrl();
-    setFileViewStateValue(url, "groupRole", static_cast<int>(role));
-    setFileViewStateValue(url, "groupOrder", static_cast<int>(order));
+    // Delegate to model
+    model()->setGroupingEnabled(enabled);
+}
 
-    // Send group request to model
-    Q_EMIT model()->requestGroupChildren(order, role);
+void FileView::setGroupingOrder(Qt::SortOrder order)
+{
+    if (model()->currentState() == ModelState::kBusy) {
+        fmWarning() << "Cannot change grouping order while model is busy for URL:" << rootUrl().toString();
+        return;
+    }
+
+    fmInfo() << "Setting grouping order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+             << "for URL:" << rootUrl().toString();
+
+    // Delegate to model
+    model()->setGroupingOrder(order);
+}
+
+QString FileView::getGroupingStrategy() const
+{
+    return model() ? model()->getGroupingStrategy() : QString("NoGroupStrategy");
 }
 
 void FileView::setViewSelectState(bool isSelect)
@@ -1223,7 +1247,7 @@ void FileView::onItemWidthLevelChanged(int level)
         return;
 
     // Check if this is an icon delegate that supports width level control
-    auto iconDelegate = dynamic_cast<IconItemDelegate*>(itemDelegate());
+    auto iconDelegate = dynamic_cast<IconItemDelegate *>(itemDelegate());
     if (!iconDelegate)
         return;
 
@@ -2178,13 +2202,25 @@ void FileView::initializeDelegate()
     fmDebug() << "Initializing FileView delegates";
 
     d->fileViewHelper = new FileViewHelper(this);
-    setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
-    setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
+
+    // Create delegates
+    auto iconDelegate = new IconItemDelegate(d->fileViewHelper);
+    auto listDelegate = new ListItemDelegate(d->fileViewHelper);
+
+    setDelegate(Global::ViewMode::kIconMode, iconDelegate);
+    setDelegate(Global::ViewMode::kListMode, listDelegate);
+
+    // Connect grouping signals for all delegates
+    connect(iconDelegate, &BaseItemDelegate::groupExpansionToggled, this, &FileView::onGroupExpansionToggled);
+    connect(iconDelegate, &BaseItemDelegate::groupHeaderClicked, this, &FileView::onGroupHeaderClicked);
+
+    connect(listDelegate, &BaseItemDelegate::groupExpansionToggled, this, &FileView::onGroupExpansionToggled);
+    connect(listDelegate, &BaseItemDelegate::groupHeaderClicked, this, &FileView::onGroupHeaderClicked);
 
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
 
-    fmDebug() << "Delegates initialized, items expandable:" << d->itemsExpandable;
+    fmDebug() << "Delegates initialized with grouping signal connections, items expandable:" << d->itemsExpandable;
 }
 
 void FileView::initializeStatusBar()
@@ -2454,8 +2490,9 @@ void FileView::setDefaultViewMode()
 
 void FileView::setListViewMode()
 {
-    setUniformItemSizes(true);
-    setResizeMode(Fixed);
+    setMovement(QListView::Static);
+    setUniformItemSizes(false);
+    setResizeMode(QListView::Fixed);
     setOrientation(QListView::TopToBottom, false);
     setSpacing(kListViewSpacing);
 
@@ -2604,4 +2641,61 @@ void FileView::focusOnView()
 
     if (isVisible())
         setFocus();
+}
+
+// Grouping-related slot implementations
+void FileView::onGroupExpansionToggled(const QString &groupKey)
+{
+    fmDebug() << "Group expansion toggled for key:" << groupKey << "for URL:" << rootUrl().toString();
+
+    if (groupKey.isEmpty()) {
+        fmWarning() << "Cannot toggle expansion: empty group key";
+        return;
+    }
+
+    // Forward to model for handling
+    if (model()) {
+        model()->toggleGroupExpansion(groupKey);
+    }
+}
+
+void FileView::onGroupHeaderClicked(const QString &groupKey)
+{
+    fmDebug() << "Group header clicked for key:" << groupKey << "for URL:" << rootUrl().toString();
+
+    if (groupKey.isEmpty()) {
+        fmWarning() << "Cannot handle header click: empty group key";
+        return;
+    }
+
+    // Use SelectHelper to handle group selection
+    if (d->selectHelper) {
+        // Get keyboard modifiers from current application state
+        Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
+
+        // Create a dummy index for the group header to pass to SelectHelper
+        // We need to find the actual group header index
+        QAbstractItemModel *itemModel = model();
+        if (itemModel) {
+            int rowCount = itemModel->rowCount(rootIndex());
+            for (int row = 0; row < rowCount; ++row) {
+                QModelIndex index = itemModel->index(row, 0, rootIndex());
+                if (index.isValid()) {
+                    QUrl url = index.data(Global::kItemUrlRole).toUrl();
+                    if (url.scheme() == "group-header") {
+                        QString currentGroupKey = url.path();
+                        if (currentGroupKey.startsWith("/")) {
+                            currentGroupKey = currentGroupKey.mid(1);
+                        }
+                        if (currentGroupKey == groupKey) {
+                            d->selectHelper->handleGroupHeaderClick(index, modifiers);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fmDebug() << "Group header click processed for group:" << groupKey;
 }

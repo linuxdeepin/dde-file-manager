@@ -6,6 +6,7 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 #include "utils/filedatamanager.h"
+#include "utils/groupingmanager.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
@@ -195,13 +196,23 @@ void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
 
 ItemRoles WorkspaceEventReceiver::handleCurrentGroupRole(quint64 windowId)
 {
-    return WorkspaceHelper::instance()->groupRole(windowId);
+    // Convert modern grouping strategy to ItemRoles for backward compatibility
+    QString currentStrategy = WorkspaceHelper::instance()->getGroupingStrategy(windowId);
+    return GroupingManager::strategyNameToRole(currentStrategy);
 }
 
 void WorkspaceEventReceiver::handleSetGroup(quint64 windowId, ItemRoles role)
 {
     fmDebug() << "WorkspaceEventReceiver: handling set group request for window" << windowId << "role" << static_cast<int>(role);
-    WorkspaceHelper::instance()->setGroup(windowId, role);
+    
+    // Convert ItemRoles to modern grouping strategy
+    QString strategyName = GroupingManager::roleToStrategyName(role);
+    bool shouldEnable = (role != ItemRoles::kItemUnknowRole);
+    
+    WorkspaceHelper::instance()->setGroupingEnabled(windowId, shouldEnable);
+    if (shouldEnable) {
+        WorkspaceHelper::instance()->setGroupingStrategy(windowId, strategyName);
+    }
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)

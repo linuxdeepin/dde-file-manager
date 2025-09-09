@@ -34,6 +34,12 @@ public:
     void resortSelectFiles();
     void filterSelectedFiles(const QList<QUrl> &urlList);
 
+    // Grouping-related selection methods
+    void handleGroupHeaderClick(const QModelIndex &index, Qt::KeyboardModifiers modifiers);
+    void selectGroup(const QString &groupKey, bool select = true);
+    QList<QModelIndex> getGroupFileIndexes(const QString &groupKey) const;
+    bool isSelectableItem(const QModelIndex &index) const;
+    
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
@@ -43,6 +49,11 @@ private:
     void caculateAndSelectIndex(const QItemSelection &lastSelection,
                                 const QItemSelection &newSelection,
                                 QItemSelectionModel::SelectionFlags flags);
+
+    // Grouping-related helper methods
+    bool isGroupHeaderIndex(const QModelIndex &index) const;
+    QString getGroupKeyFromIndex(const QModelIndex &index) const;
+    void selectGroupFiles(const QString &groupKey, bool select);
 
 private:
     FileView *view { nullptr };

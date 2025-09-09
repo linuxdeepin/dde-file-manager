@@ -265,6 +265,11 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
 
     for (int i = firstIndex; i < lastIndex; ++i) {
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
+        // Skip group header items - they should not be selectable
+        if (isGroupHeaderIndex(index)) {
+            continue;
+        }
+        
         if (view->indexInRect(actualRect, index)) {
             if (!selection->contains(index)) {
                 QItemSelectionRange selectionRange(index);
@@ -286,8 +291,18 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
     using RandeIndex = FileView::RandeIndex;
 
     const RandeIndexList &list = view->rectContainsIndexes(tmpRect);
-    for (const RandeIndex &index : list) {
-        selection->append(QItemSelectionRange(view->model()->index(index.first, 0, view->rootIndex()), view->model()->index(index.second, 0, view->rootIndex())));
+    for (const RandeIndex &indexRange : list) {
+        // Handle each index in the range individually to skip group headers
+        for (int row = indexRange.first; row <= indexRange.second; ++row) {
+            const QModelIndex &index = view->model()->index(row, 0, view->rootIndex());
+            // Skip group header items - they should not be selectable
+            if (index.isValid() && !isGroupHeaderIndex(index)) {
+                if (!selection->contains(index)) {
+                    QItemSelectionRange selectionRange(index);
+                    selection->append(selectionRange);
+                }
+            }
+        }
     }
 }
 
@@ -310,4 +325,145 @@ void SelectHelper::caculateAndSelectIndex(const QItemSelection &lastSelect, cons
         if (!newIndexes.contains(index))
             view->selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::NoUpdate);
     }
+}
+
+// Grouping-related selection methods implementation
+void SelectHelper::handleGroupHeaderClick(const QModelIndex &index, Qt::KeyboardModifiers modifiers)
+{
+    if (!isGroupHeaderIndex(index)) {
+        return;
+    }
+    
+    QString groupKey = getGroupKeyFromIndex(index);
+    if (groupKey.isEmpty()) {
+        return;
+    }
+    
+    fmDebug() << "Handling group header click for group:" << groupKey << "with modifiers:" << static_cast<int>(modifiers);
+    
+    if (modifiers & Qt::ControlModifier) {
+        // Ctrl+Click: toggle group selection
+        QList<QModelIndex> groupIndexes = getGroupFileIndexes(groupKey);
+        bool allSelected = true;
+        
+        // Check if all files in group are selected
+        for (const auto &idx : groupIndexes) {
+            if (!view->selectionModel()->isSelected(idx)) {
+                allSelected = false;
+                break;
+            }
+        }
+        
+        // Toggle selection based on current state
+        selectGroup(groupKey, !allSelected);
+    } else {
+        // Regular click: select entire group
+        view->clearSelection();
+        selectGroup(groupKey, true);
+    }
+}
+
+void SelectHelper::selectGroup(const QString &groupKey, bool select)
+{
+    if (groupKey.isEmpty()) {
+        return;
+    }
+    
+    fmDebug() << "Selecting group:" << groupKey << "select:" << select;
+    
+    QList<QModelIndex> groupIndexes = getGroupFileIndexes(groupKey);
+    if (groupIndexes.isEmpty()) {
+        fmDebug() << "No files found in group:" << groupKey;
+        return;
+    }
+    
+    QItemSelectionModel::SelectionFlags flags = select 
+        ? (QItemSelectionModel::Select | QItemSelectionModel::Rows)
+        : (QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+    
+    for (const auto &index : groupIndexes) {
+        if (isSelectableItem(index)) {
+            view->selectionModel()->select(index, flags);
+        }
+    }
+    
+    fmDebug() << "Group selection completed for:" << groupKey << "files count:" << groupIndexes.size();
+}
+
+QList<QModelIndex> SelectHelper::getGroupFileIndexes(const QString &groupKey) const
+{
+    QList<QModelIndex> indexes;
+    
+    if (!view || !view->model()) {
+        return indexes;
+    }
+    
+    const auto model = view->model();
+    int rowCount = model->rowCount(view->rootIndex());
+    
+    bool inTargetGroup = false;
+    
+    for (int row = 0; row < rowCount; ++row) {
+        QModelIndex index = model->index(row, 0, view->rootIndex());
+        if (!index.isValid()) {
+            continue;
+        }
+        
+        if (isGroupHeaderIndex(index)) {
+            QString currentGroupKey = getGroupKeyFromIndex(index);
+            inTargetGroup = (currentGroupKey == groupKey);
+        } else if (inTargetGroup && isSelectableItem(index)) {
+            indexes.append(index);
+        }
+    }
+    
+    return indexes;
+}
+
+bool SelectHelper::isSelectableItem(const QModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return false;
+    }
+    
+    // Group headers are not selectable
+    if (isGroupHeaderIndex(index)) {
+        return false;
+    }
+    
+    // Check if the item has the necessary flags for selection
+    Qt::ItemFlags flags = index.flags();
+    return (flags & Qt::ItemIsSelectable) && (flags & Qt::ItemIsEnabled);
+}
+
+bool SelectHelper::isGroupHeaderIndex(const QModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return false;
+    }
+    
+    // Check if URL starts with "group-header://"
+    QUrl url = index.data(Global::kItemUrlRole).toUrl();
+    return url.scheme() == "group-header";
+}
+
+QString SelectHelper::getGroupKeyFromIndex(const QModelIndex &index) const
+{
+    if (!isGroupHeaderIndex(index)) {
+        return QString();
+    }
+    
+    QUrl url = index.data(Global::kItemUrlRole).toUrl();
+    QString groupKey = url.path(); // Remove "group-header://" prefix
+    if (groupKey.startsWith("/")) {
+        groupKey = groupKey.mid(1); // Remove leading slash
+    }
+    
+    return groupKey;
+}
+
+void SelectHelper::selectGroupFiles(const QString &groupKey, bool select)
+{
+    // This method is an alias for selectGroup, provided for consistency
+    selectGroup(groupKey, select);
 }
