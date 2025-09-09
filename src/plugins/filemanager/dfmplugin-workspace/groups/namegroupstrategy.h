@@ -5,8 +5,9 @@
 #ifndef NAMEGROUPSTRATEGY_H
 #define NAMEGROUPSTRATEGY_H
 
-#include "abstractgroupstrategy.h"
+#include "dfmplugin_workspace_global.h"
 
+#include <dfm-base/interfaces/abstractgroupstrategy.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QChar>
@@ -15,11 +16,11 @@ DPWORKSPACE_BEGIN_NAMESPACE
 
 /**
  * @brief Name-based grouping strategy implementation
- * 
+ *
  * This strategy groups files based on the first character of their names,
  * supporting both English letters and Chinese characters with pinyin conversion.
  */
-class NameGroupStrategy : public AbstractGroupStrategy
+class NameGroupStrategy : public DFMBASE_NAMESPACE::AbstractGroupStrategy
 {
     Q_OBJECT
 
@@ -36,11 +37,11 @@ public:
     ~NameGroupStrategy() override;
 
     // AbstractGroupStrategy interface implementation
-    QString getGroupKey(const FileItemDataPointer &item) const override;
+    QString getGroupKey(const FileInfoPointer &info) const override;
     QString getGroupDisplayName(const QString &groupKey) const override;
     QStringList getGroupOrder(Qt::SortOrder order = Qt::AscendingOrder) const override;
     int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const override;
-    bool isGroupVisible(const QString &groupKey, const QList<FileItemDataPointer> &items) const override;
+    bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
     DFMBASE_NAMESPACE::Global::ItemRoles getCorrespondingRole() const override;
 
@@ -66,17 +67,20 @@ private:
      */
     QString getPinyin(const QChar &ch) const;
 
+private:
     /**
-     * @brief Name order according to requirements
+     * @brief Get the name order list
+     * @return The name order according to requirements
      */
-    static const QStringList NAME_ORDER;
+    static QStringList getNameOrder();
 
     /**
-     * @brief Display names for each name group
+     * @brief Get display names for name groups
+     * @return Hash map of group keys to display names
      */
-    static const QHash<QString, QString> DISPLAY_NAMES;
+    static QHash<QString, QString> getDisplayNames();
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif // NAMEGROUPSTRATEGY_H 
+#endif   // NAMEGROUPSTRATEGY_H

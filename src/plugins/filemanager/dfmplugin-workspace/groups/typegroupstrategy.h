@@ -5,20 +5,22 @@
 #ifndef TYPEGROUPSTRATEGY_H
 #define TYPEGROUPSTRATEGY_H
 
-#include "abstractgroupstrategy.h"
+#include "dfmplugin_workspace_global.h"
 
+#include <dfm-base/interfaces/abstractgroupstrategy.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
 /**
  * @brief Type-based grouping strategy implementation
- * 
+ *
  * This strategy groups files based on their MIME types, organizing them
  * into categories like documents, images, videos, etc.
  */
-class TypeGroupStrategy : public AbstractGroupStrategy
+class TypeGroupStrategy : public DFMBASE_NAMESPACE::AbstractGroupStrategy
 {
     Q_OBJECT
 
@@ -35,11 +37,11 @@ public:
     ~TypeGroupStrategy() override;
 
     // AbstractGroupStrategy interface implementation
-    QString getGroupKey(const FileItemDataPointer &item) const override;
+    QString getGroupKey(const FileInfoPointer &info) const override;
     QString getGroupDisplayName(const QString &groupKey) const override;
     QStringList getGroupOrder(Qt::SortOrder order = Qt::AscendingOrder) const override;
     int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const override;
-    bool isGroupVisible(const QString &groupKey, const QList<FileItemDataPointer> &items) const override;
+    bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
     DFMBASE_NAMESPACE::Global::ItemRoles getCorrespondingRole() const override;
 
@@ -52,16 +54,18 @@ private:
     QString mapMimeTypeToGroup(const QString &mimeType) const;
 
     /**
-     * @brief Type order according to requirements (directories first, then by frequency)
+     * @brief Get the type order list
+     * @return The type order according to requirements (directories first, then by frequency)
      */
-    static const QStringList TYPE_ORDER;
+    static QStringList getTypeOrder();
 
     /**
-     * @brief Display names for each type group
+     * @brief Get display names for type groups
+     * @return Hash map of group keys to display names for each type group
      */
-    static const QHash<QString, QString> DISPLAY_NAMES;
+    static QHash<QString, QString> getDisplayNames();
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif // TYPEGROUPSTRATEGY_H 
+#endif   // TYPEGROUPSTRATEGY_H

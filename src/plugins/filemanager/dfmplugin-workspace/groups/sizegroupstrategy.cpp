@@ -1,4 +1,4 @@
- // SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,29 +12,33 @@
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-// Size order according to requirements (from smallest to largest)
-const QStringList SizeGroupStrategy::SIZE_ORDER = {
-    "unknown",      // 未知（文件夹）
-    "empty",        // 空（0kb）
-    "tiny",         // 极小（0-16kb）
-    "small",        // 小（16kb-1MB）
-    "medium",       // 中等（1-128MB）  
-    "large",        // 大（128MB-1GB）
-    "huge",         // 巨大（1-4GB）
-    "gigantic"      // 超大（>4GB）
-};
+QStringList SizeGroupStrategy::getSizeOrder()
+{
+    return {
+        "unknown",   // 未知（文件夹）
+        "empty",   // 空（0kb）
+        "tiny",   // 极小（0-16kb）
+        "small",   // 小（16kb-1MB）
+        "medium",   // 中等（1-128MB）
+        "large",   // 大（128MB-1GB）
+        "huge",   // 巨大（1-4GB）
+        "gigantic"   // 超大（>4GB）
+    };
+}
 
-// Display names for each size group with size ranges
-const QHash<QString, QString> SizeGroupStrategy::DISPLAY_NAMES = {
-    {"unknown", QObject::tr("Unknown")},
-    {"empty", QObject::tr("Empty (0KB)")},
-    {"tiny", QObject::tr("Tiny (0-16KB)")},
-    {"small", QObject::tr("Small (16KB-1MB)")},
-    {"medium", QObject::tr("Medium (1-128MB)")},
-    {"large", QObject::tr("Large (128MB-1GB)")},
-    {"huge", QObject::tr("Huge (1-4GB)")},
-    {"gigantic", QObject::tr("Gigantic (>4GB)")}
-};
+QHash<QString, QString> SizeGroupStrategy::getDisplayNames()
+{
+    return {
+        { "unknown", QObject::tr("Unknown") },
+        { "empty", QObject::tr("Empty (0KB)") },
+        { "tiny", QObject::tr("Tiny (0-16KB)") },
+        { "small", QObject::tr("Small (16KB-1MB)") },
+        { "medium", QObject::tr("Medium (1-128MB)") },
+        { "large", QObject::tr("Large (128MB-1GB)") },
+        { "huge", QObject::tr("Huge (1-4GB)") },
+        { "gigantic", QObject::tr("Gigantic (>4GB)") }
+    };
+}
 
 SizeGroupStrategy::SizeGroupStrategy(QObject *parent)
     : AbstractGroupStrategy(parent)
@@ -47,41 +51,40 @@ SizeGroupStrategy::~SizeGroupStrategy()
     fmDebug() << "SizeGroupStrategy: Destroyed";
 }
 
-QString SizeGroupStrategy::getGroupKey(const FileItemDataPointer &item) const
+QString SizeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
 {
-    if (!item || !item->fileInfo()) {
-        fmWarning() << "SizeGroupStrategy: Invalid item or fileInfo";
+    if (!info) {
+        fmWarning() << "SizeGroupStrategy: Invalid fileInfo";
         return "unknown";
     }
 
-    const auto fileInfo = item->fileInfo();
-    
     // Check if it's a directory - directories have unknown size
-    if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
+    if (info->isAttributes(OptInfoType::kIsDir)) {
         return "unknown";
     }
 
     // Get file size and classify
-    qint64 size = fileInfo->size();
+    qint64 size = info->size();
     QString groupKey = classifyBySize(size);
-    
-    fmDebug() << "SizeGroupStrategy: File" << fileInfo->urlOf(UrlInfoType::kUrl).toString() 
+
+    fmDebug() << "SizeGroupStrategy: File" << info->urlOf(UrlInfoType::kUrl).toString()
               << "size:" << size << "bytes -> group:" << groupKey;
-    
+
     return groupKey;
 }
 
 QString SizeGroupStrategy::getGroupDisplayName(const QString &groupKey) const
 {
-    return DISPLAY_NAMES.value(groupKey, groupKey);
+    return getDisplayNames().value(groupKey, groupKey);
 }
 
 QStringList SizeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
 {
+    QStringList sizeOrder = getSizeOrder();
     if (order == Qt::AscendingOrder) {
-        return SIZE_ORDER;
+        return sizeOrder;
     } else {
-        QStringList reversed = SIZE_ORDER;
+        QStringList reversed = sizeOrder;
         std::reverse(reversed.begin(), reversed.end());
         return reversed;
     }
@@ -89,23 +92,24 @@ QStringList SizeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
 
 int SizeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
 {
-    int index = SIZE_ORDER.indexOf(groupKey);
+    QStringList sizeOrder = getSizeOrder();
+    int index = sizeOrder.indexOf(groupKey);
     if (index == -1) {
-        index = SIZE_ORDER.size(); // Unknown groups go to the end
+        index = sizeOrder.size();   // Unknown groups go to the end
     }
-    
+
     if (order == Qt::AscendingOrder) {
         return index;
     } else {
-        return SIZE_ORDER.size() - index - 1;
+        return sizeOrder.size() - index - 1;
     }
 }
 
-bool SizeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileItemDataPointer> &items) const
+bool SizeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const
 {
     Q_UNUSED(groupKey)
-    // A group is visible if it has at least one item
-    return !items.isEmpty();
+    // A group is visible if it has at least one file info
+    return !infos.isEmpty();
 }
 
 QString SizeGroupStrategy::getStrategyName() const
@@ -124,7 +128,7 @@ QString SizeGroupStrategy::classifyBySize(qint64 size) const
     const qint64 KB = 1024;
     const qint64 MB = KB * 1024;
     const qint64 GB = MB * 1024;
-    
+
     // Classify by size ranges according to requirements
     if (size == 0) {
         return "empty";
@@ -135,11 +139,10 @@ QString SizeGroupStrategy::classifyBySize(qint64 size) const
     } else if (size <= 128 * MB) {
         return "medium";
     } else if (size <= 1 * GB) {
-        return "large";  
+        return "large";
     } else if (size <= 4 * GB) {
         return "huge";
     } else {
         return "gigantic";
     }
 }
-

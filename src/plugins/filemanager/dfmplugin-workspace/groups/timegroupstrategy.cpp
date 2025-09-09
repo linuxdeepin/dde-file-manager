@@ -14,25 +14,29 @@
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-// Time order according to requirements (most recent first)
-const QStringList TimeGroupStrategy::TIME_ORDER = {
-    "today",        // 今天
-    "yesterday",    // 昨天  
-    "past-7-days",  // 过去7天
-    "past-30-days", // 过去30天
-    "this-year",    // 今年其他月份
-    "past-years",   // 过去年份
-    "earlier"       // 更早
-};
+QStringList TimeGroupStrategy::getTimeOrder()
+{
+    return {
+        "today",   // 今天
+        "yesterday",   // 昨天
+        "past-7-days",   // 过去7天
+        "past-30-days",   // 过去30天
+        "this-year",   // 今年其他月份
+        "past-years",   // 过去年份
+        "earlier"   // 更早
+    };
+}
 
-// Display names for basic time groups
-const QHash<QString, QString> TimeGroupStrategy::DISPLAY_NAMES = {
-    {"today", QObject::tr("Today")},
-    {"yesterday", QObject::tr("Yesterday")},
-    {"past-7-days", QObject::tr("Past 7 Days")},
-    {"past-30-days", QObject::tr("Past 30 Days")},
-    {"earlier", QObject::tr("Earlier")}
-};
+QHash<QString, QString> TimeGroupStrategy::getDisplayNames()
+{
+    return {
+        { "today", QObject::tr("Today") },
+        { "yesterday", QObject::tr("Yesterday") },
+        { "past-7-days", QObject::tr("Past 7 Days") },
+        { "past-30-days", QObject::tr("Past 30 Days") },
+        { "earlier", QObject::tr("Earlier") }
+    };
+}
 
 TimeGroupStrategy::TimeGroupStrategy(TimeType timeType, QObject *parent)
     : AbstractGroupStrategy(parent), m_timeType(timeType)
@@ -45,33 +49,31 @@ TimeGroupStrategy::~TimeGroupStrategy()
     fmDebug() << "TimeGroupStrategy: Destroyed";
 }
 
-QString TimeGroupStrategy::getGroupKey(const FileItemDataPointer &item) const
+QString TimeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
 {
-    if (!item || !item->fileInfo()) {
-        fmWarning() << "TimeGroupStrategy: Invalid item or fileInfo";
+    if (!info) {
+        fmWarning() << "TimeGroupStrategy: Invalid fileInfo";
         return "earlier";
     }
 
-    const auto fileInfo = item->fileInfo();
-    
     // Get the appropriate timestamp based on the time type
     QDateTime fileTime;
     if (m_timeType == ModificationTime) {
-        fileTime = fileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+        fileTime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
     } else {
-        fileTime = fileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        fileTime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
     }
-    
+
     if (!fileTime.isValid()) {
-        fmWarning() << "TimeGroupStrategy: Invalid file time for" << fileInfo->urlOf(UrlInfoType::kUrl).toString();
+        fmWarning() << "TimeGroupStrategy: Invalid file time for" << info->urlOf(UrlInfoType::kUrl).toString();
         return "earlier";
     }
 
     QString groupKey = calculateTimeGroup(fileTime);
-    
-    fmDebug() << "TimeGroupStrategy: File" << fileInfo->urlOf(UrlInfoType::kUrl).toString() 
+
+    fmDebug() << "TimeGroupStrategy: File" << info->urlOf(UrlInfoType::kUrl).toString()
               << "time:" << fileTime.toString() << "-> group:" << groupKey;
-    
+
     return groupKey;
 }
 
@@ -92,24 +94,24 @@ QString TimeGroupStrategy::getGroupDisplayName(const QString &groupKey) const
             return QString::number(year);
         }
     }
-    
+
     // Return static display names
-    return DISPLAY_NAMES.value(groupKey, groupKey);
+    return getDisplayNames().value(groupKey, groupKey);
 }
 
 QStringList TimeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
 {
     // For time grouping, we need to handle dynamic groups
     // Start with the basic time order
-    QStringList result = TIME_ORDER;
-    
+    QStringList result = getTimeOrder();
+
     // Note: Dynamic groups (months, years) will be inserted at runtime
     // based on the actual files present
-    
+
     if (order == Qt::DescendingOrder) {
         std::reverse(result.begin(), result.end());
     }
-    
+
     return result;
 }
 
@@ -119,25 +121,26 @@ int TimeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrd
     if (groupKey.startsWith("month-") || groupKey.startsWith("year-")) {
         return getDynamicDisplayOrder(groupKey, order);
     }
-    
+
     // Handle basic time groups
-    int index = TIME_ORDER.indexOf(groupKey);
+    QStringList timeOrder = getTimeOrder();
+    int index = timeOrder.indexOf(groupKey);
     if (index == -1) {
-        index = TIME_ORDER.size(); // Unknown groups go to the end
+        index = timeOrder.size();   // Unknown groups go to the end
     }
-    
+
     if (order == Qt::AscendingOrder) {
         return index;
     } else {
-        return TIME_ORDER.size() - index - 1;
+        return timeOrder.size() - index - 1;
     }
 }
 
-bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileItemDataPointer> &items) const
+bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const
 {
     Q_UNUSED(groupKey)
-    // A group is visible if it has at least one item
-    return !items.isEmpty();
+    // A group is visible if it has at least one file info
+    return !infos.isEmpty();
 }
 
 QString TimeGroupStrategy::getStrategyName() const
@@ -167,41 +170,41 @@ QString TimeGroupStrategy::calculateTimeGroup(const QDateTime &fileTime) const
     QDateTime now = QDateTime::currentDateTime();
     QDate today = now.date();
     QDate fileDate = fileTime.date();
-    
+
     // Today
     if (fileDate == today) {
         return "today";
     }
-    
+
     // Yesterday
     if (fileDate == today.addDays(-1)) {
         return "yesterday";
     }
-    
+
     qint64 daysAgo = fileDate.daysTo(today);
-    
+
     // Past 7 days (excluding today and yesterday)
     if (daysAgo <= 7) {
         return "past-7-days";
     }
-    
+
     // Past 30 days (excluding past 7 days)
     if (daysAgo <= 30) {
         return "past-30-days";
     }
-    
+
     // This year - other months
     if (fileDate.year() == today.year()) {
         return QString("month-%1").arg(fileDate.month());
     }
-    
+
     int yearDiff = today.year() - fileDate.year();
-    
+
     // Past 5 years
     if (yearDiff <= 5) {
         return QString("year-%1").arg(fileDate.year());
     }
-    
+
     // Earlier (more than 5 years ago)
     return "earlier";
 }
@@ -209,43 +212,42 @@ QString TimeGroupStrategy::calculateTimeGroup(const QDateTime &fileTime) const
 int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
 {
     QDate today = QDate::currentDate();
-    
+
     if (groupKey.startsWith("month-")) {
         bool ok;
         int month = groupKey.mid(6).toInt(&ok);
-        if (!ok) return 1000; // Invalid, put at end
-        
+        if (!ok) return 1000;   // Invalid, put at end
+
         // Months are ordered by recency (current month = 0, previous month = 1, etc.)
         int monthsAgo = (today.year() - today.year()) * 12 + (today.month() - month);
-        if (monthsAgo < 0) monthsAgo += 12; // Handle year boundary
-        
+        if (monthsAgo < 0) monthsAgo += 12;   // Handle year boundary
+
         // Month groups come after "past-30-days" (index 3) but before "past-years"
-        int baseIndex = 4; // After "past-30-days"
-        
+        int baseIndex = 4;   // After "past-30-days"
+
         if (order == Qt::AscendingOrder) {
             return baseIndex + monthsAgo;
         } else {
             return baseIndex - monthsAgo;
         }
-        
+
     } else if (groupKey.startsWith("year-")) {
         bool ok;
         int year = groupKey.mid(5).toInt(&ok);
-        if (!ok) return 1000; // Invalid, put at end
-        
+        if (!ok) return 1000;   // Invalid, put at end
+
         // Years are ordered by recency (current year = 0, previous year = 1, etc.)
         int yearsAgo = today.year() - year;
-        
+
         // Year groups come after month groups but before "earlier"
-        int baseIndex = 100; // After all possible month groups
-        
+        int baseIndex = 100;   // After all possible month groups
+
         if (order == Qt::AscendingOrder) {
             return baseIndex + yearsAgo;
         } else {
             return baseIndex - yearsAgo;
         }
     }
-    
-    return 1000; // Unknown, put at end
-}
 
+    return 1000;   // Unknown, put at end
+}

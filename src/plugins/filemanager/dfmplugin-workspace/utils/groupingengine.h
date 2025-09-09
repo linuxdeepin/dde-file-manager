@@ -8,7 +8,7 @@
 #include "dfmplugin_workspace_global.h"
 #include "filegroupdata.h"
 #include "groupedmodeldata.h"
-#include "groups/abstractgroupstrategy.h"
+#include <dfm-base/interfaces/abstractgroupstrategy.h>
 
 #include <QObject>
 #include <QHash>
@@ -71,7 +71,7 @@ public:
      * @return The grouping result
      */
     GroupingResult groupFiles(const QList<FileItemDataPointer> &files, 
-                             AbstractGroupStrategy *strategy) const;
+                             DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Sort groups according to strategy and order
@@ -80,7 +80,7 @@ public:
      * @param order Sort order for groups
      */
     void sortGroups(QList<FileGroupData> &groups, 
-                   AbstractGroupStrategy *strategy, 
+                   DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy, 
                    Qt::SortOrder order) const;
 
     /**
@@ -128,7 +128,7 @@ private:
      * @return The grouping result
      */
     GroupingResult performGrouping(const QList<FileItemDataPointer> &files,
-                                  AbstractGroupStrategy *strategy) const;
+                                  DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Sort groups by their display order
@@ -136,7 +136,7 @@ private:
      * @param strategy The grouping strategy
      */
     void sortGroupsByDisplayOrder(QList<FileGroupData> &groups, 
-                                 AbstractGroupStrategy *strategy) const;
+                                 DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     // Cache management
     mutable CacheKey m_lastCacheKey;
