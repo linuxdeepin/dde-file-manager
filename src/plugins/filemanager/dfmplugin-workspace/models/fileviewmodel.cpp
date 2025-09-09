@@ -413,12 +413,18 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         itemData = filterSortWorker->childData(index.row());
     }
 
-    if (itemData) {
-        return itemData->data(columnRole);
-    } else {
+    if (!itemData) {
         fmWarning() << "Failed to get data for index:" << index << "role:" << role << "URL:" << dirRootUrl.toString();
         return QVariant();
     }
+
+    if (itemData->data(ItemRoles::kItemUrlRole).toUrl().scheme() == "group-header") {
+        QVariant groupHeaderVaule = filterSortWorker->groupHeaderData(index.row(), role);
+        if (groupHeaderVaule.isValid())
+            return groupHeaderVaule;
+    }
+
+    return itemData->data(columnRole);
 }
 
 QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
@@ -498,6 +504,10 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (!index.data(kItemFileIsAvailableRole).toBool()) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         return flags;
+    }
+
+    if (index.data(kItemIsGroupHeaderType).toBool()) {
+        return Qt::ItemIsEnabled;
     }
 
     if (index.data(kItemFileCanRenameRole).toBool())

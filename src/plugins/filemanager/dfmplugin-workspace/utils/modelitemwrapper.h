@@ -20,7 +20,7 @@ class FileGroupData;
 
 /**
  * @brief Wrapper for model items (file items or group header items)
- * 
+ *
  * This class unifies the handling of different types of items in the model,
  * allowing the same interface to work with both file items and group headers.
  */
@@ -31,8 +31,8 @@ public:
      * @brief Type of the wrapped item
      */
     enum ItemType {
-        FileItem,        ///< Regular file item
-        GroupHeaderItem  ///< Group header item
+        FileItem,   ///< Regular file item
+        GroupHeaderItem   ///< Group header item
     };
 
     /**
@@ -69,10 +69,10 @@ public:
     ~ModelItemWrapper();
 
     // Member variables
-    ItemType itemType;                      ///< Type of the item
-    QString groupKey;                       ///< Group identifier
-    FileItemDataPointer fileData;           ///< File data (valid for FileItem)
-    const FileGroupData *groupData;         ///< Group data pointer (valid for GroupHeaderItem)
+    ItemType itemType;   ///< Type of the item
+    QString groupKey;   ///< Group identifier
+    FileItemDataPointer fileData;   ///< File data (valid for FileItem)
+    const FileGroupData *groupData;   ///< Group data pointer (valid for GroupHeaderItem)
 
     /**
      * @brief Check if this is a group header item
@@ -85,12 +85,6 @@ public:
      * @return True if this is a file item, false otherwise
      */
     bool isFileItem() const;
-
-    /**
-     * @brief Get the URL for this item
-     * @return The URL for file items, or a special group header URL for group headers
-     */
-    QUrl getUrl() const;
 
     /**
      * @brief Get data for a specific role
@@ -108,4 +102,4 @@ public:
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif // MODELITEMWRAPPER_H 
+#endif   // MODELITEMWRAPPER_H
