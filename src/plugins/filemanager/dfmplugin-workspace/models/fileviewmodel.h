@@ -29,6 +29,7 @@ class FileView;
 class FileItemData;
 class FileSortWorker;
 class RootInfo;
+class GroupingManager;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -80,9 +81,6 @@ public:
     Qt::SortOrder sortOrder() const;
     DFMGLOBAL_NAMESPACE::ItemRoles sortRole() const;
 
-    Qt::SortOrder groupOrder() const;
-    DFMGLOBAL_NAMESPACE::ItemRoles groupRole() const;
-
     void setFilters(QDir::Filters filters);
     QDir::Filters getFilters() const;
 
@@ -109,6 +107,16 @@ public:
     // 执行实际的加载，使用之前准备的URL或当前URL
     void executeLoad();
 
+    // Grouping management (delegated to GroupingManager)
+    void setGroupingStrategy(const QString &strategyName);
+    QString getGroupingStrategy() const;
+    void setGroupingEnabled(bool enabled);
+    bool isGroupingEnabled() const;
+    void setGroupingOrder(Qt::SortOrder order);
+    Qt::SortOrder getGroupingOrder() const;
+    void toggleGroupExpansion(const QString &groupKey);
+    bool isGroupExpanded(const QString &groupKey) const;
+
 Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();
@@ -134,6 +142,12 @@ Q_SIGNALS:
     void requestCollapseItem(const QString &key, const QUrl &parent);
     void requestTreeView(const bool isTree);
 
+    // Grouping-related signals
+    void groupingStrategyChanged(const QString &strategyName);
+    void groupingEnabledChanged(bool enabled);
+    void groupingOrderChanged(Qt::SortOrder order);
+    void groupExpansionChanged(const QString &groupKey, bool expanded);
+
     void aboutToSwitchToListView(const QList<QUrl> &allShowList);
 
 public Q_SLOTS:
@@ -150,6 +164,7 @@ public Q_SLOTS:
     void onHiddenSettingChanged(bool value);
     void onWorkFinish(int visiableCount, int totalCount);
     void onDataChanged(int first, int last);
+    void onGroupingDataChanged();
 
 private:
     void connectRootAndFilterSortWork(RootInfo *root, const bool refresh = false);
@@ -161,6 +176,9 @@ private:
     void changeState(ModelState newState);
     void closeCursorTimer();
     void startCursorTimer();
+
+    // Grouping management helper
+    void initializeGroupingManager();
 
     QUrl dirRootUrl;
     QUrl fetchingUrl;
@@ -182,7 +200,8 @@ private:
     QStringList nameFilters {};
     bool isTree { false };
 
-
+    // Grouping management
+    std::unique_ptr<GroupingManager> m_groupingManager;
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;

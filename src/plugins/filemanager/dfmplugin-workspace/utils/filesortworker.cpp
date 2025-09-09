@@ -22,6 +22,14 @@
 
 #include <sys/stat.h>
 
+// Include grouping utilities
+#include "groupingmanager.h"
+#include "groups/nogroupstrategy.h"
+#include "groups/typegroupstrategy.h"
+#include "groups/timegroupstrategy.h"
+#include "groups/namegroupstrategy.h"
+#include "groups/sizegroupstrategy.h"
+
 using namespace dfmplugin_workspace;
 using namespace dfmbase::Global;
 using namespace dfmio;
@@ -132,25 +140,7 @@ FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder ord
     return opt;
 }
 
-void FileSortWorker::setGroupArguments(const Qt::SortOrder order, const ItemRoles groupRole)
-{
-    fmDebug() << "Setting group arguments - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-              << "role:" << static_cast<int>(groupRole);
 
-    bool changed = (groupOrder != order || orgGroupRole != groupRole);
-
-    groupOrder = order;
-    orgGroupRole = groupRole;
-
-    if (changed && groupingEngine) {
-        groupingEngine->setGroupOrder(order);
-        if (m_isGroupingEnabled) {
-            fmDebug() << "Group arguments changed, triggering regroup";
-            // Trigger regroup in next event loop to avoid recursive calls
-            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
-        }
-    }
-}
 
 void FileSortWorker::setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy)
 {
@@ -159,7 +149,7 @@ void FileSortWorker::setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> 
         fmDebug() << "FileSortWorker: Grouping strategy set to" << currentStrategy->getStrategyName();
         if (m_isGroupingEnabled && groupingEngine) {
             groupingEngine->invalidateCache();
-            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
         }
     } else {
         fmDebug() << "FileSortWorker: Grouping strategy cleared";
@@ -173,7 +163,7 @@ void FileSortWorker::setGroupingEnabled(bool enabled)
         fmDebug() << "FileSortWorker: Grouping" << (enabled ? "enabled" : "disabled");
 
         if (enabled && currentStrategy && groupingEngine) {
-            QMetaObject::invokeMethod(this, "handleRegroup", Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
         } else if (!enabled) {
             // Clear grouped data and emit update
             groupedData.clear();
@@ -185,6 +175,26 @@ void FileSortWorker::setGroupingEnabled(bool enabled)
 bool FileSortWorker::isGroupingEnabled() const
 {
     return m_isGroupingEnabled;
+}
+
+void FileSortWorker::setGroupOrder(Qt::SortOrder order)
+{
+    if (groupOrder != order) {
+        fmDebug() << "FileSortWorker: Setting group order to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
+        groupOrder = order;
+        
+        // Update engine with new order if enabled
+        if (m_isGroupingEnabled && groupingEngine) {
+            groupingEngine->setGroupOrder(order);
+            // Trigger regrouping with new order
+            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
+        }
+    }
+}
+
+Qt::SortOrder FileSortWorker::getGroupOrder() const
+{
+    return groupOrder;
 }
 
 void FileSortWorker::toggleGroupExpansion(const QString &groupKey)
@@ -306,15 +316,7 @@ Qt::SortOrder FileSortWorker::getSortOrder() const
     return sortOrder;
 }
 
-ItemRoles FileSortWorker::getGroupRole() const
-{
-    return orgGroupRole;
-}
 
-Qt::SortOrder FileSortWorker::getGroupOrder() const
-{
-    return groupOrder;
-}
 
 void FileSortWorker::setTreeView(const bool isTree)
 {
@@ -689,58 +691,56 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     }
 }
 
-void FileSortWorker::handleRegroup(const Qt::SortOrder order, const ItemRoles groupRole)
+
+
+void FileSortWorker::performGrouping()
 {
     if (isCanceled) {
-        fmDebug() << "Ignoring regroup request - operation canceled";
+        fmDebug() << "FileSortWorker: Ignoring grouping request - operation canceled";
         return;
     }
 
-    fmInfo() << "Handling regroup - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-             << "role:" << static_cast<int>(groupRole);
-
-    // Update group configuration if parameters provided
-    groupOrder = order;
-    orgGroupRole = groupRole;
-
-    // Only perform grouping if enabled and we have a strategy
     if (!m_isGroupingEnabled || !currentStrategy || !groupingEngine) {
-        fmDebug() << "Grouping not enabled or strategy not set, skipping regroup";
+        fmDebug() << "FileSortWorker: Cannot perform grouping - grouping disabled, no strategy, or no engine";
         return;
     }
 
-    fmDebug() << "Performing actual regrouping with strategy:" << currentStrategy->getStrategyName();
+    fmInfo() << "FileSortWorker: Performing grouping with strategy:" << currentStrategy->getStrategyName()
+             << "order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
 
     try {
         // Get all current files
         QList<FileItemDataPointer> allFiles = getAllFiles();
         if (allFiles.isEmpty()) {
-            fmDebug() << "No files to group";
+            fmDebug() << "FileSortWorker: No files to group";
             groupedData.clear();
             emit groupingDataChanged();
             return;
         }
 
-        // Perform grouping
+        // Set group order in engine (support for ascending/descending order)
+        groupingEngine->setGroupOrder(groupOrder);
+
+        // Perform grouping using GroupingEngine
         auto result = groupingEngine->groupFiles(allFiles, currentStrategy.get());
         if (!result.success) {
-            fmCritical() << "Grouping failed:" << result.errorMessage;
+            fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
             return;
         }
 
-        // Generate model data
+        // Generate model data with current expansion states
         groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
 
-        fmInfo() << "Regrouping completed - created" << groupedData.groups.size()
-                 << "groups with" << groupedData.getItemCount() << "total items";
+        fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
+                 << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
 
-        // Emit signal to notify model of changes
+        // Emit signal to notify model of changes (thread-safe)
         emit groupingDataChanged();
 
     } catch (const std::exception &e) {
-        fmCritical() << "Exception during regrouping:" << e.what();
+        fmCritical() << "FileSortWorker: Exception during grouping:" << e.what();
     } catch (...) {
-        fmCritical() << "Unknown exception during regrouping";
+        fmCritical() << "FileSortWorker: Unknown exception during grouping";
     }
 }
 
@@ -2202,3 +2202,7 @@ FileItemDataPointer FileSortWorker::createGroupHeaderData(const FileGroupData *g
     fmDebug() << "FileSortWorker: Created group header data for group" << groupData->groupKey;
     return headerData;
 }
+
+
+
+

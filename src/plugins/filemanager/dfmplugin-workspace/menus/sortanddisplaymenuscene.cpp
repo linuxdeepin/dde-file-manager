@@ -206,42 +206,42 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
             // group by none
             if (actionId == ActionID::kGroupByNone) {
                 fmInfo() << "Setting group by none";
-                d->groupByRole(Global::ItemRoles::kItemUnknowRole);
+                d->groupByStrategy("NoGroupStrategy");
                 return true;
             }
 
             // group by name
             if (actionId == ActionID::kGroupByName) {
                 fmInfo() << "Grouping by name";
-                d->groupByRole(Global::ItemRoles::kItemFileDisplayNameRole);
+                d->groupByStrategy("Name");
                 return true;
             }
 
             // group by time modified
             if (actionId == ActionID::kGroupByModified) {
                 fmInfo() << "Grouping by time modified";
-                d->groupByRole(Global::ItemRoles::kItemFileLastModifiedRole);
+                d->groupByStrategy("ModifiedTime");
                 return true;
             }
 
             // group by time created
             if (actionId == ActionID::kGroupByCreated) {
                 fmInfo() << "Grouping by time created";
-                d->groupByRole(Global::ItemRoles::kItemFileCreatedRole);
+                d->groupByStrategy("CreatedTime");   // TimeStrategy handles both
                 return true;
             }
 
             // group by size
             if (actionId == ActionID::kGroupBySize) {
                 fmInfo() << "Grouping by size";
-                d->groupByRole(Global::ItemRoles::kItemFileSizeRole);
+                d->groupByStrategy("Size");
                 return true;
             }
 
             // group by type
             if (actionId == ActionID::kGroupByType) {
                 fmInfo() << "Grouping by type";
-                d->groupByRole(Global::ItemRoles::kItemFileMimeTypeRole);
+                d->groupByStrategy("Type");
                 return true;
             }
         }
@@ -398,22 +398,36 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
     view->setSort(itemRole, order);
 }
 
-void SortAndDisplayMenuScenePrivate::groupByRole(int role)
+void SortAndDisplayMenuScenePrivate::groupByStrategy(const QString &strategyName)
 {
-    auto itemRole = static_cast<Global::ItemRoles>(role);
-    auto oldRole = view->model()->groupRole();
-    
-    // Toggle group order if same role is selected again
-    Qt::SortOrder order = Qt::AscendingOrder;
-    if (oldRole == role) {
-        auto currentOrder = view->model()->groupOrder();
-        order = currentOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+    QString currentStrategy = view->getGroupingStrategy();
+
+    fmInfo() << "Setting grouping strategy:" << strategyName << "current strategy:" << currentStrategy;
+
+    // Always set the strategy first (including "NoGroupStrategy")
+    if (currentStrategy == strategyName) {
+        // User clicked the same strategy - toggle sort order (unless it's NoGroupStrategy)
+        if (strategyName != "NoGroupStrategy") {
+            Qt::SortOrder currentOrder = view->model()->getGroupingOrder();
+            Qt::SortOrder newOrder = (currentOrder == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
+
+            fmInfo() << "Toggling grouping order for strategy:" << strategyName
+                     << "from" << (currentOrder == Qt::AscendingOrder ? "Ascending" : "Descending")
+                     << "to" << (newOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
+
+            view->setGroupingOrder(newOrder);
+        }
+        // For NoGroupStrategy, clicking again just reconfirms the disable state
+    } else {
+        // Different strategy - set new strategy
+        view->setGroupingStrategy(strategyName);
     }
 
-    fmDebug() << "Grouping by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-              << "old role:" << oldRole;
+    // Enable or disable grouping based on strategy (after setting the strategy)
+    bool shouldEnable = (strategyName != "NoGroupStrategy");
+    view->setGroupingEnabled(shouldEnable);
 
-    view->setGroup(itemRole, order);
+    fmInfo() << "Grouping" << (shouldEnable ? "enabled" : "disabled") << "with strategy:" << strategyName;
 }
 
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
@@ -450,36 +464,31 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     }
 
     // group by
-    auto groupRole = static_cast<ItemRoles>(view->model()->groupRole());
-    fmDebug() << "Current group role:" << groupRole;
-    switch (groupRole) {
-    case kItemUnknowRole:
+    QString currentStrategy = view->getGroupingStrategy();
+    fmDebug() << "Current grouping strategy:" << currentStrategy;
+
+    if (currentStrategy == "NoGroupStrategy") {
         predicateAction[ActionID::kGroupByNone]->setChecked(true);
         fmDebug() << "Set group by none action as checked";
-        break;
-    case kItemFileDisplayNameRole:
+    } else if (currentStrategy == "Name") {
         predicateAction[ActionID::kGroupByName]->setChecked(true);
         fmDebug() << "Set group by name action as checked";
-        break;
-    case kItemFileLastModifiedRole:
+    } else if (currentStrategy == "ModifiedTime") {
         predicateAction[ActionID::kGroupByModified]->setChecked(true);
         fmDebug() << "Set group by time modified action as checked";
-        break;
-    case kItemFileCreatedRole:
+    } else if (currentStrategy == "CreatedTime") {
         predicateAction[ActionID::kGroupByCreated]->setChecked(true);
         fmDebug() << "Set group by time created action as checked";
-        break;
-    case kItemFileSizeRole:
+    } else if (currentStrategy == "Size") {
         predicateAction[ActionID::kGroupBySize]->setChecked(true);
         fmDebug() << "Set group by size action as checked";
-        break;
-    case kItemFileMimeTypeRole:
+    } else if (currentStrategy == "Type") {
         predicateAction[ActionID::kGroupByType]->setChecked(true);
         fmDebug() << "Set group by type action as checked";
-        break;
-    default:
-        fmDebug() << "Unknown group role:" << groupRole;
-        break;
+    } else {
+        fmDebug() << "Unknown grouping strategy:" << currentStrategy;
+        // Default to none if unknown
+        predicateAction[ActionID::kGroupByNone]->setChecked(true);
     }
 
     // display as

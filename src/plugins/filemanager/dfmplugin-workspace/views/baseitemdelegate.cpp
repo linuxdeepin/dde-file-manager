@@ -165,7 +165,6 @@ void BaseItemDelegate::commitDataAndCloseActiveEditor()
         return;
     d->commitDataCurentWidget = editor;
 
-
     QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
                               Qt::DirectConnection, Q_ARG(QWidget *, editor));
 }
@@ -285,7 +284,7 @@ bool BaseItemDelegate::isGroupHeaderItem(const QModelIndex &index) const
 QSize BaseItemDelegate::getGroupHeaderSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index)
-    
+
     int width = option.rect.width();
     int height = getGroupHeaderHeight(option);
     return QSize(width, height);
@@ -298,35 +297,30 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
     }
 
     painter->save();
-    
+
     // Paint background
     paintGroupBackground(painter, option);
-    
+
     // Get group information
     QString groupText = index.data(Qt::DisplayRole).toString();
     if (groupText.isEmpty()) {
         groupText = "Group";
     }
-    
+
     // Get expansion state - assume expanded by default for now
     // TODO: This should be retrieved from the model or worker
     bool isExpanded = true;
-    
+
     // Calculate layout rectangles
     QRect expandButtonRect = getExpandButtonRect(option);
     QRect textRect = getGroupTextRect(option);
-    
+
     // Paint expand button
     paintExpandButton(painter, expandButtonRect, isExpanded);
-    
+
     // Paint group text
     paintGroupText(painter, textRect, groupText, option);
-    
-    // Paint separator line at bottom
-    QRect separatorRect = option.rect;
-    separatorRect.setTop(separatorRect.bottom() - 1);
-    paintSeparator(painter, separatorRect);
-    
+
     painter->restore();
 }
 
@@ -335,19 +329,17 @@ void BaseItemDelegate::paintGroupBackground(QPainter *painter, const QStyleOptio
     if (!painter) {
         return;
     }
-    
+
     // Choose background color based on state
     QColor backgroundColor;
-    if (option.state & QStyle::State_Selected) {
-        backgroundColor = option.palette.color(QPalette::Highlight);
-    } else if (option.state & QStyle::State_MouseOver) {
+    if (option.state & QStyle::State_MouseOver) {
         backgroundColor = option.palette.color(QPalette::AlternateBase);
     } else {
         backgroundColor = option.palette.color(QPalette::Base);
         // Make it slightly different from normal items
         backgroundColor = backgroundColor.lighter(105);
     }
-    
+
     painter->fillRect(option.rect, backgroundColor);
 }
 
@@ -356,18 +348,18 @@ void BaseItemDelegate::paintExpandButton(QPainter *painter, const QRect &buttonR
     if (!painter || buttonRect.isEmpty()) {
         return;
     }
-    
+
     painter->save();
-    
+
     // Set up style option for drawing arrow
     QStyleOptionViewItem arrowOption;
     arrowOption.rect = buttonRect.marginsRemoved(QMargins(2, 2, 2, 2));
     arrowOption.palette = QApplication::palette();
-    
+
     // Set pen color
     painter->setPen(arrowOption.palette.color(QPalette::Text));
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    
+
     // Draw appropriate arrow based on expansion state
     QStyle *style = QApplication::style();
     if (isExpanded) {
@@ -375,7 +367,7 @@ void BaseItemDelegate::paintExpandButton(QPainter *painter, const QRect &buttonR
     } else {
         style->drawPrimitive(QStyle::PE_IndicatorArrowRight, &arrowOption, painter, nullptr);
     }
-    
+
     painter->restore();
 }
 
@@ -384,14 +376,14 @@ void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, 
     if (!painter || textRect.isEmpty() || text.isEmpty()) {
         return;
     }
-    
+
     painter->save();
-    
+
     // Set up font - make it slightly bold
     QFont font = option.font;
     font.setBold(true);
     painter->setFont(font);
-    
+
     // Set text color
     QColor textColor;
     if (option.state & QStyle::State_Selected) {
@@ -400,32 +392,13 @@ void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, 
         textColor = option.palette.color(QPalette::Text);
     }
     painter->setPen(textColor);
-    
+
     // Draw text with elision if necessary
     QFontMetrics fm(font);
     QString elidedText = fm.elidedText(text, Qt::ElideRight, textRect.width());
-    
-    painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedText);
-    
-    painter->restore();
-}
 
-void BaseItemDelegate::paintSeparator(QPainter *painter, const QRect &rect) const
-{
-    if (!painter || rect.isEmpty()) {
-        return;
-    }
-    
-    painter->save();
-    
-    // Use a subtle separator color
-    QColor separatorColor = QApplication::palette().color(QPalette::Mid);
-    separatorColor.setAlpha(100);
-    painter->setPen(separatorColor);
-    
-    // Draw horizontal line
-    painter->drawLine(rect.left(), rect.top(), rect.right(), rect.top());
-    
+    painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+
     painter->restore();
 }
 
@@ -435,19 +408,19 @@ QRect BaseItemDelegate::getExpandButtonRect(const QStyleOptionViewItem &option) 
     buttonRect.setSize(m_expandButtonSize);
     buttonRect.moveLeft(option.rect.left() + m_leftMargin);
     buttonRect.moveTop(option.rect.top() + (option.rect.height() - m_expandButtonSize.height()) / 2);
-    
+
     return buttonRect;
 }
 
 QRect BaseItemDelegate::getGroupTextRect(const QStyleOptionViewItem &option) const
 {
     QRect expandButtonRect = getExpandButtonRect(option);
-    
+
     QRect textRect;
-    textRect.setLeft(expandButtonRect.right() + 8); // 8px spacing after button
+    textRect.setLeft(expandButtonRect.right() + 8);   // 8px spacing after button
     textRect.setTop(option.rect.top());
     textRect.setRight(option.rect.right() - m_rightMargin);
     textRect.setBottom(option.rect.bottom());
-    
+
     return textRect;
 }

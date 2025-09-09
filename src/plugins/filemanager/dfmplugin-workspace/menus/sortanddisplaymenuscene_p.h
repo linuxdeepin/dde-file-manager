@@ -29,7 +29,7 @@ private:
     QMenu *addDisplayAsActions(QMenu *menu);
 
     void sortByRole(int role);
-    void groupByRole(int role);
+    void groupByStrategy(const QString &strategyName);
     void updateEmptyAreaActionState();
 
 private:

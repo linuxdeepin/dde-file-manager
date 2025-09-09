@@ -13,6 +13,9 @@
 #include "events/workspaceeventsequence.h"
 #include "events/workspaceeventcaller.h"
 
+// Include grouping management
+#include "utils/groupingmanager.h"
+
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -48,6 +51,9 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 {
     currentKey = QString::number(quintptr(this), 16);
     itemRootData = new FileItemData(dirRootUrl);
+
+    // GroupingManager will be initialized when dirRootUrl is set in initFilterSortWork
+
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileViewModel::onHiddenSettingChanged);
@@ -391,7 +397,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
 
     FileItemDataPointer itemData = nullptr;
     int columnRole = role;
-    if (!parentIndex.isValid()) {
+    if (!parentIndex.isValid()) {   // !parentIndex.isValid() 意味着这是目录本身
         itemData = filterSortWorker->rootData();
     } else {
         switch (role) {
@@ -766,22 +772,6 @@ ItemRoles FileViewModel::sortRole() const
     return filterSortWorker->getSortRole();
 }
 
-Qt::SortOrder FileViewModel::groupOrder() const
-{
-    if (filterSortWorker.isNull())
-        return Qt::AscendingOrder;
-
-    return filterSortWorker->getGroupOrder();
-}
-
-ItemRoles FileViewModel::groupRole() const
-{
-    if (filterSortWorker.isNull())
-        return kItemUnknowRole;
-
-    return filterSortWorker->getGroupRole();
-}
-
 void FileViewModel::setFilters(QDir::Filters filters)
 {
     fmDebug() << "Setting filters:" << filters << "for URL:" << dirRootUrl.toString();
@@ -1146,12 +1136,6 @@ void FileViewModel::initFilterSortWork()
 
     fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role << "for URL:" << dirRootUrl.toString();
 
-    // get group config
-    Qt::SortOrder groupOrder = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupOrder", Qt::SortOrder::AscendingOrder).toInt());
-    ItemRoles groupRole = static_cast<ItemRoles>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupRole", kItemUnknowRole).toInt());
-
-    fmDebug() << "Group configuration - order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << groupRole << "for URL:" << dirRootUrl.toString();
-
     if (filterSortWorker)
         filterSortWorker->disconnect();
 
@@ -1165,12 +1149,7 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, rootInfo)));
     endInsertRows();
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    
-    // Set group configuration in worker
-    if (groupRole != kItemUnknowRole) {
-        fmDebug() << "Setting initial group configuration in worker - role:" << groupRole << "order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
-        filterSortWorker->setGroupArguments(groupOrder, groupRole);
-    }
+
     filterSortWorker->setTreeView(this->isTree
                                   && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
@@ -1180,6 +1159,11 @@ void FileViewModel::initFilterSortWork()
 
     RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
     connectRootAndFilterSortWork(root);
+
+    // Initialize and restore grouping settings
+    initializeGroupingManager();
+    m_groupingManager->restoreSettings();
+    m_groupingManager->applyToWorker(filterSortWorker);
 
     filterSortThread->start();
     fmInfo() << "Filter sort work initialized and started for URL:" << dirRootUrl.toString();
@@ -1296,7 +1280,6 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::HandleNameFilters, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestUpdateFile, filterSortWorker.data(), &FileSortWorker::handleUpdateFile, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::handleResort, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestGroupChildren, filterSortWorker.data(), &FileSortWorker::handleRegroup, Qt::QueuedConnection);
 
     connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
@@ -1307,5 +1290,111 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestTreeView, filterSortWorker.data(), &FileSortWorker::handleSwitchTreeView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::aboutToSwitchToListView, this, &FileViewModel::aboutToSwitchToListView, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::groupingDataChanged, this, &FileViewModel::onGroupingDataChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
+}
+
+// Grouping management methods (delegated to GroupingManager)
+void FileViewModel::setGroupingStrategy(const QString &strategyName)
+{
+    if (m_groupingManager) {
+        m_groupingManager->setGroupingStrategy(strategyName);
+        // Apply to worker if available
+        if (!filterSortWorker.isNull()) {
+            m_groupingManager->applyToWorker(filterSortWorker);
+        }
+    }
+}
+
+QString FileViewModel::getGroupingStrategy() const
+{
+    return m_groupingManager ? m_groupingManager->getGroupingStrategy() : QString("NoGroupStrategy");
+}
+
+void FileViewModel::setGroupingEnabled(bool enabled)
+{
+    if (m_groupingManager) {
+        m_groupingManager->setGroupingEnabled(enabled);
+        // Apply to worker if available
+        if (!filterSortWorker.isNull()) {
+            m_groupingManager->applyToWorker(filterSortWorker);
+        }
+    }
+}
+
+bool FileViewModel::isGroupingEnabled() const
+{
+    return m_groupingManager ? m_groupingManager->isGroupingEnabled() : false;
+}
+
+void FileViewModel::setGroupingOrder(Qt::SortOrder order)
+{
+    if (m_groupingManager) {
+        m_groupingManager->setGroupingOrder(order);
+        // Apply to worker if available
+        if (!filterSortWorker.isNull()) {
+            m_groupingManager->applyToWorker(filterSortWorker);
+        }
+    }
+}
+
+Qt::SortOrder FileViewModel::getGroupingOrder() const
+{
+    return m_groupingManager ? m_groupingManager->getGroupingOrder() : Qt::AscendingOrder;
+}
+
+void FileViewModel::toggleGroupExpansion(const QString &groupKey)
+{
+    if (m_groupingManager) {
+        m_groupingManager->toggleGroupExpansion(groupKey);
+        // Apply to worker if available
+        if (!filterSortWorker.isNull()) {
+            filterSortWorker->toggleGroupExpansion(groupKey);
+        }
+    }
+}
+
+bool FileViewModel::isGroupExpanded(const QString &groupKey) const
+{
+    return m_groupingManager ? m_groupingManager->isGroupExpanded(groupKey) : true;
+}
+
+void FileViewModel::initializeGroupingManager()
+{
+    if (!m_groupingManager || dirRootUrl.isValid()) {
+        // Create or recreate GroupingManager for current URL
+        m_groupingManager.reset(new GroupingManager(dirRootUrl, this));
+
+        // Connect signals
+        connect(m_groupingManager.get(), &GroupingManager::groupingStrategyChanged,
+                this, &FileViewModel::groupingStrategyChanged);
+        connect(m_groupingManager.get(), &GroupingManager::groupingEnabledChanged,
+                this, &FileViewModel::groupingEnabledChanged);
+        connect(m_groupingManager.get(), &GroupingManager::groupingOrderChanged,
+                this, &FileViewModel::groupingOrderChanged);
+        connect(m_groupingManager.get(), &GroupingManager::groupExpansionChanged,
+                this, &FileViewModel::groupExpansionChanged);
+
+        fmDebug() << "GroupingManager initialized for URL:" << dirRootUrl.toString();
+    }
+}
+
+void FileViewModel::onGroupingDataChanged()
+{
+    fmDebug() << "Grouping data changed - refreshing model view for URL:" << dirRootUrl.toString();
+
+    if (filterSortWorker.isNull()) {
+        fmWarning() << "Cannot handle grouping data change: worker is null";
+        return;
+    }
+
+    // Get the new item count after regrouping
+    int newRowCount = filterSortWorker->childrenCount();
+
+    fmInfo() << "Model data updated after regrouping - new row count:" << newRowCount << "for URL:" << dirRootUrl.toString();
+
+    if (newRowCount > 0)
+        onDataChanged(0, newRowCount - 1);
+
+    fmDebug() << "Model reset completed after grouping data change";
 }

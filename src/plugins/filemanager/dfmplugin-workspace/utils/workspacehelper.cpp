@@ -309,22 +309,32 @@ Global::ItemRoles WorkspaceHelper::sortRole(quint64 windowId)
     return Global::ItemRoles::kItemUnknowRole;
 }
 
-void WorkspaceHelper::setGroup(quint64 windowId, Global::ItemRoles role)
+// Modern grouping interface
+void WorkspaceHelper::setGroupingStrategy(quint64 windowId, const QString &strategyName)
 {
     FileView *view = findFileViewByWindowID(windowId);
     if (view) {
-        Qt::SortOrder order = view->model()->groupOrder();
-        view->setGroup(role, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
+        fmInfo() << "WorkspaceHelper: Setting grouping strategy" << strategyName << "for window" << windowId;
+        view->setGroupingStrategy(strategyName);
     }
 }
 
-Global::ItemRoles WorkspaceHelper::groupRole(quint64 windowId)
+void WorkspaceHelper::setGroupingEnabled(quint64 windowId, bool enabled)
 {
     FileView *view = findFileViewByWindowID(windowId);
-    if (view)
-        return static_cast<Global::ItemRoles>(view->model()->groupRole());
+    if (view) {
+        fmInfo() << "WorkspaceHelper: Setting grouping enabled" << enabled << "for window" << windowId;
+        view->setGroupingEnabled(enabled);
+    }
+}
 
-    return Global::ItemRoles::kItemUnknowRole;
+QString WorkspaceHelper::getGroupingStrategy(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view) {
+        return view->getGroupingStrategy();
+    }
+    return QString("NoGroupStrategy");
 }
 
 QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)
