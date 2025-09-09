@@ -21,11 +21,11 @@ NoGroupStrategy::~NoGroupStrategy()
 {
 }
 
-QString NoGroupStrategy::getGroupKey(const FileItemDataPointer &item) const
+QString NoGroupStrategy::getGroupKey(const FileInfoPointer &info) const
 {
-    Q_UNUSED(item)
+    Q_UNUSED(info)
     // All files belong to the same virtual group in "no grouping" mode
-    return QString::fromLatin1(NO_GROUP_KEY);
+    return QString::fromLatin1(kNoGroupKey);
 }
 
 QString NoGroupStrategy::getGroupDisplayName(const QString &groupKey) const
@@ -39,7 +39,7 @@ QStringList NoGroupStrategy::getGroupOrder(Qt::SortOrder order) const
 {
     Q_UNUSED(order)
     // Only one virtual group exists
-    return QStringList() << QString::fromLatin1(NO_GROUP_KEY);
+    return QStringList() << QString::fromLatin1(kNoGroupKey);
 }
 
 int NoGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
@@ -50,10 +50,10 @@ int NoGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder
     return 0;
 }
 
-bool NoGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileItemDataPointer> &items) const
+bool NoGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const
 {
     Q_UNUSED(groupKey)
-    Q_UNUSED(items)
+    Q_UNUSED(infos)
     // In no-grouping mode, group headers should not be displayed
     return false;
 }

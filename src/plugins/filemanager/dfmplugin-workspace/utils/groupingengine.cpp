@@ -185,7 +185,14 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
                 continue; // Skip null pointers
             }
             
-            QString groupKey = strategy->getGroupKey(file);
+            // Convert FileItemDataPointer to FileInfoPointer for strategy interface
+            FileInfoPointer fileInfo = file->fileInfo();
+            if (!fileInfo) {
+                fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
+                continue;
+            }
+            
+            QString groupKey = strategy->getGroupKey(fileInfo);
             if (groupKey.isEmpty()) {
                 fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
                 continue;
@@ -201,8 +208,17 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
             const QString &groupKey = it.key();
             const QList<FileItemDataPointer> &groupFiles = it.value();
             
+            // Convert FileItemDataPointer list to FileInfoPointer list for strategy interface
+            QList<FileInfoPointer> groupFileInfos;
+            groupFileInfos.reserve(groupFiles.size());
+            for (const auto &file : groupFiles) {
+                if (file && file->fileInfo()) {
+                    groupFileInfos.append(file->fileInfo());
+                }
+            }
+            
             // Skip groups that shouldn't be visible
-            if (!strategy->isGroupVisible(groupKey, groupFiles)) {
+            if (!strategy->isGroupVisible(groupKey, groupFileInfos)) {
                 continue;
             }
             
