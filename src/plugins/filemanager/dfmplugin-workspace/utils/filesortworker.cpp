@@ -700,10 +700,8 @@ void FileSortWorker::handleRegroup(const Qt::SortOrder order, const ItemRoles gr
              << "role:" << static_cast<int>(groupRole);
 
     // Update group configuration if parameters provided
-    if (order != Qt::AscendingOrder || groupRole != Global::ItemRoles::kItemUnknowRole) {
-        groupOrder = order;
-        orgGroupRole = groupRole;
-    }
+    groupOrder = order;
+    orgGroupRole = groupRole;
 
     // Only perform grouping if enabled and we have a strategy
     if (!m_isGroupingEnabled || !currentStrategy || !groupingEngine) {

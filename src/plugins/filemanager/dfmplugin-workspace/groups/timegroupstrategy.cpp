@@ -146,9 +146,9 @@ bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 QString TimeGroupStrategy::getStrategyName() const
 {
     if (m_timeType == ModificationTime) {
-        return tr("Modified Time");
+        return "ModifiedTime";
     } else {
-        return tr("Created Time");
+        return "CreatedTime";
     }
 }
 

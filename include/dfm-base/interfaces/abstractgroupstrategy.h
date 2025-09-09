@@ -78,7 +78,7 @@ public:
 
     /**
      * @brief Get the strategy name for identification
-     * @return The localized name of this strategy
+     * @return The name of this strategy
      */
     virtual QString getStrategyName() const = 0;
 
