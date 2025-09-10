@@ -128,8 +128,7 @@ void ShredUtils::shredfile(const QList<QUrl> &fileList, quint64 winId)
     });
 
     // Create progress dialog
-    auto window = FMWindowsIns.findWindowById(winId);
-    ProgressDialog *progressDialog = new ProgressDialog(window);
+    ProgressDialog *progressDialog = new ProgressDialog();
     progressDialog->setAttribute(Qt::WA_DeleteOnClose);
 
     // Setup signal connections
@@ -142,7 +141,7 @@ void ShredUtils::shredfile(const QList<QUrl> &fileList, quint64 winId)
             });
         } else {
             progressDialog->handleShredResult(false, message);
-            progressDialog->exec();
+            progressDialog->raise();
         }
     });
 

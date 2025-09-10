@@ -27,8 +27,8 @@ Q_SIGNALS:
 
 private:
     int countFilesInDirectory(const QString &dirPath);
-    void processDirectory(const QString &dirPath);
-    bool executeShredCommandBatch(const QStringList &filePaths);
+    bool processDirectory(const QString &dirPath, QString &msg);
+    bool executeShredCommandBatch(const QStringList &filePaths, QString &msg);
     void parseShredOutput(const QString &output);
     bool isPipe(const QString &path) const;
     int calculateProgress(int processedFiles, int totalFiles, int currentFileProgress = 0);
