@@ -10,20 +10,21 @@ set -e
 function run_pkexec() {
     # 使用一个临时文件来传递所有必要的环境变量，而不仅仅是会话类型
     local TEMP_ENV_FILE="/tmp/.dde-fm-env-$$"
-    
+
     echo "Capturing environment before elevating..."
     # 捕获 DISPLAY, XAUTHORITY, 和 XDG_SESSION_TYPE
     echo "export DISPLAY='$DISPLAY'" > "$TEMP_ENV_FILE"
     echo "export XAUTHORITY='$XAUTHORITY'" >> "$TEMP_ENV_FILE"
     echo "export XDG_SESSION_TYPE='$XDG_SESSION_TYPE'" >> "$TEMP_ENV_FILE"
-    
+    echo "export XDG_DATA_DIRS='$XDG_DATA_DIRS'" >> "$TEMP_ENV_FILE"
+
     # [NOTE] xhost 仍然保留，作为一种备用授权机制
     xhost +SI:localuser:root &>/dev/null
-    
+
     echo "run in pkexec: $@"
     # 将 uid 和临时环境文件路径作为最后两个参数传递，确保解析的稳定性
     pkexec --disable-internal-agent "$0" "$@" "$(id -u)" "$TEMP_ENV_FILE"
-    
+
     # 清理
     rm -f "$TEMP_ENV_FILE"
     xhost -SI:localuser:root &>/dev/null
@@ -42,7 +43,7 @@ function run_app() {
     local user_name
     user_name=$(getent passwd "$uid" | cut -d: -f1)
     echo "Running as root for user: $user_name (UID: $uid)"
-    
+
     # 从临时文件中加载关键环境变量
     if [ -f "$TEMP_ENV_FILE" ]; then
         echo "Loading environment from $TEMP_ENV_FILE"
@@ -53,11 +54,11 @@ function run_app() {
         echo "Error: Temp env file not found! GUI application will likely fail." >&2
         # 不再硬编码，让它自然失败会暴露出更准确的错误
     fi
-    
+
     # 正确设置 D-Bus 和运行时目录，这是连接用户桌面的关键
     export XDG_RUNTIME_DIR="/run/user/$uid"
     export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
-    
+
     # 根据会话类型设置环境
     if [ "$XDG_SESSION_TYPE" == "x11" ]; then
         # DISPLAY 和 XAUTHORITY 已通过 source 加载
@@ -77,7 +78,7 @@ function run_app() {
     # [NOTE] 假设 dde-file-manager 是最终执行的程序
     echo "Starting dde-file-manager with args: ${app_args[*]} and CWD: $(pwd)"
     file-manager.sh "${app_args[@]}" -w "$(pwd)"
-  
+
 }
 
 # --- Main script logic ---
