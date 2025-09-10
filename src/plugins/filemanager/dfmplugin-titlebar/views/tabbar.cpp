@@ -329,25 +329,40 @@ bool TabBar::event(QEvent *event)
 
 void TabBar::mousePressEvent(QMouseEvent *event)
 {
-    // 检查是否点击在标签上
+    QGraphicsItem *itemAtPos = scene->itemAt(mapToScene(event->pos()), QTransform());
     bool onTab = false;
-    for (Tab *tab : tabList) {
-        if (tab->sceneBoundingRect().contains(event->pos())) {
+    if (itemAtPos) {
+        Tab *tab = dynamic_cast<Tab *>(itemAtPos);
+        if (tab && tabList.contains(tab)) {
             onTab = true;
-            break;
         }
     }
+    
+    bool onAddButton = false;
+    if (tabAddButton) {
+        // 确保坐标在同一坐标系中进行比较
+        QRect buttonGeom = tabAddButton->geometry();
+        QPoint eventPos = event->pos();
+        
+        // 由于tabAddButton是通过scene->addWidget()添加的，
+        // 需要确保将其几何形状正确地映射到视图坐标系
+        QPoint buttonPosInScene = buttonGeom.topLeft();
+        QPoint buttonPosInView = mapFromScene(buttonPosInScene);
+        QRect buttonGeomInView(buttonPosInView, buttonGeom.size());
+        
+        onAddButton = buttonGeomInView.contains(eventPos);
+    }
 
-    if (!onTab) {
-        // 如果不在标签上,开始窗口拖拽
-        isDragging = true;
-        event->ignore();   // 让事件继续传播给父窗口
-    } else {
+    if (onTab || onAddButton) {
         if (event->button() == Qt::RightButton) {
             // don't show titlebar context menu
             return;
         }
+        
         QGraphicsView::mousePressEvent(event);
+    } else {
+        isDragging = true;
+        event->ignore(); 
     }
 }
 
