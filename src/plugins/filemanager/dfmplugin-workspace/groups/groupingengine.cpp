@@ -274,18 +274,21 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
     // Performance optimization: For built-in workspace strategies that simply check !infos.isEmpty(),
     // we can avoid the expensive file info conversion and just check if groupFiles is non-empty
     const QString strategyName = strategy->getStrategyName();
-    
+
     // Check if this is one of the built-in strategies that only check for non-empty lists
     // These strategies' isGroupVisible simply returns !infos.isEmpty()
-    if (strategyName == "Name" || strategyName == "Size" || strategyName == "Type" ||
-        strategyName == "ModifiedTime" || strategyName == "CreatedTime") {
-        fmDebug() << "GroupingEngine: Fast path for built-in strategy" << strategyName 
+    if (strategyName == GroupStrategty::kName
+        || strategyName == GroupStrategty::kSize
+        || strategyName == GroupStrategty::kType
+        || strategyName == GroupStrategty::kModifiedTime
+        || strategyName == GroupStrategty::kCreatedTime) {
+        fmDebug() << "GroupingEngine: Fast path for built-in strategy" << strategyName
                   << "- skipping file info conversion";
         return !groupFiles.isEmpty();
     }
-    
+
     // For NoGroupStrategy, it always returns false (groups are not visible in no-group mode)
-    if (strategyName == "NoGroupStrategy") {
+    if (strategyName == GroupStrategty::kNoGroup) {
         fmDebug() << "GroupingEngine: NoGroupStrategy always returns false for group visibility";
         return false;
     }
@@ -294,7 +297,7 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
     fmDebug() << "GroupingEngine: Using full conversion path for custom strategy" << strategyName;
     QList<FileInfoPointer> groupFileInfos;
     groupFileInfos.reserve(groupFiles.size());
-    
+
     for (const auto &file : groupFiles) {
         if (file && file->fileInfo()) {
             groupFileInfos.append(file->fileInfo());

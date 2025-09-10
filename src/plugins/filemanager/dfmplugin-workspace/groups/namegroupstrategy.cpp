@@ -115,12 +115,7 @@ bool NameGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString NameGroupStrategy::getStrategyName() const
 {
-    return "Name";
-}
-
-Global::ItemRoles NameGroupStrategy::getCorrespondingRole() const
-{
-    return Global::ItemRoles::kItemFileDisplayNameRole;
+    return GroupStrategty::kName;
 }
 
 QString NameGroupStrategy::classifyFirstCharacter(const QChar &ch) const

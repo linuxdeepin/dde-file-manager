@@ -315,7 +315,7 @@ void WorkspaceHelper::setGroupingStrategy(quint64 windowId, const QString &strat
     FileView *view = findFileViewByWindowID(windowId);
     if (view) {
         fmInfo() << "WorkspaceHelper: Setting grouping strategy" << strategyName << "for window" << windowId;
-        view->setGroupingStrategy(strategyName);
+        //  view->setGroupingStrategy(strategyName);
     }
 }
 
@@ -324,17 +324,17 @@ void WorkspaceHelper::setGroupingEnabled(quint64 windowId, bool enabled)
     FileView *view = findFileViewByWindowID(windowId);
     if (view) {
         fmInfo() << "WorkspaceHelper: Setting grouping enabled" << enabled << "for window" << windowId;
-        view->setGroupingEnabled(enabled);
+        // view->setGroupingEnabled(enabled);
     }
 }
 
 QString WorkspaceHelper::getGroupingStrategy(quint64 windowId)
 {
-    FileView *view = findFileViewByWindowID(windowId);
-    if (view) {
-        return view->getGroupingStrategy();
-    }
-    return QString("NoGroupStrategy");
+    // FileView *view = findFileViewByWindowID(windowId);
+    // if (view) {
+    //     return view->getGroupingStrategy();
+    // }
+    return GroupStrategty::kNoGroup;
 }
 
 QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)

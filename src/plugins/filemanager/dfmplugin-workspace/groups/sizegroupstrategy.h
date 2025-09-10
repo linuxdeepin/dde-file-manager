@@ -41,7 +41,6 @@ public:
     int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const override;
     bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
-    DFMBASE_NAMESPACE::Global::ItemRoles getCorrespondingRole() const override;
 
 private:
     /**

@@ -6,8 +6,9 @@
 #define GROUPINGENGINE_H
 
 #include "dfmplugin_workspace_global.h"
-#include "filegroupdata.h"
-#include "groupedmodeldata.h"
+#include "groups/filegroupdata.h"
+#include "groups/groupedmodeldata.h"
+
 #include <dfm-base/interfaces/abstractgroupstrategy.h>
 
 #include <QObject>
@@ -20,7 +21,7 @@ DPWORKSPACE_BEGIN_NAMESPACE
 
 /**
  * @brief Core engine for file grouping operations
- * 
+ *
  * This class implements the main grouping algorithms and manages
  * the transformation of file lists into grouped model data.
  */
@@ -32,24 +33,27 @@ public:
     /**
      * @brief Result structure for grouping operations
      */
-    struct GroupingResult {
-        QList<FileGroupData> groups;    ///< The grouped file data
-        bool success = false;           ///< Whether the operation succeeded
-        QString errorMessage;           ///< Error message if operation failed
+    struct GroupingResult
+    {
+        QList<FileGroupData> groups;   ///< The grouped file data
+        bool success = false;   ///< Whether the operation succeeded
+        QString errorMessage;   ///< Error message if operation failed
     };
 
     /**
      * @brief Cache key for grouping results
      */
-    struct CacheKey {
-        QString strategyName;           ///< Strategy name
-        int fileCount;                 ///< Number of files
-        Qt::SortOrder groupOrder;      ///< Group sort order
-        
-        bool operator==(const CacheKey &other) const {
-            return strategyName == other.strategyName 
-                && fileCount == other.fileCount 
-                && groupOrder == other.groupOrder;
+    struct CacheKey
+    {
+        QString strategyName;   ///< Strategy name
+        int fileCount;   ///< Number of files
+        Qt::SortOrder groupOrder;   ///< Group sort order
+
+        bool operator==(const CacheKey &other) const
+        {
+            return strategyName == other.strategyName
+                    && fileCount == other.fileCount
+                    && groupOrder == other.groupOrder;
         }
     };
 
@@ -70,8 +74,8 @@ public:
      * @param strategy The grouping strategy to use
      * @return The grouping result
      */
-    GroupingResult groupFiles(const QList<FileItemDataPointer> &files, 
-                             DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+    GroupingResult groupFiles(const QList<FileItemDataPointer> &files,
+                              DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Sort groups according to strategy and order
@@ -79,9 +83,9 @@ public:
      * @param strategy The grouping strategy
      * @param order Sort order for groups
      */
-    void sortGroups(QList<FileGroupData> &groups, 
-                   DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy, 
-                   Qt::SortOrder order) const;
+    void sortGroups(QList<FileGroupData> &groups,
+                    DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                    Qt::SortOrder order) const;
 
     /**
      * @brief Generate flattened model data from grouping result
@@ -90,7 +94,7 @@ public:
      * @return The flattened model data ready for use in views
      */
     GroupedModelData generateModelData(const GroupingResult &groupingResult,
-                                      const QHash<QString, bool> &expansionStates) const;
+                                       const QHash<QString, bool> &expansionStates) const;
 
     /**
      * @brief Invalidate all cached results
@@ -110,7 +114,7 @@ public:
     int getCacheHits() const;
 
     /**
-     * @brief Get cache miss statistics  
+     * @brief Get cache miss statistics
      * @return Number of cache misses since last reset
      */
     int getCacheMisses() const;
@@ -128,15 +132,15 @@ private:
      * @return The grouping result
      */
     GroupingResult performGrouping(const QList<FileItemDataPointer> &files,
-                                  DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+                                   DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Sort groups by their display order
      * @param groups List of groups to sort
      * @param strategy The grouping strategy
      */
-    void sortGroupsByDisplayOrder(QList<FileGroupData> &groups, 
-                                 DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+    void sortGroupsByDisplayOrder(QList<FileGroupData> &groups,
+                                  DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Check if a group is visible with file info conversion
@@ -146,8 +150,8 @@ private:
      * @return true if the group should be visible, false otherwise
      */
     bool isGroupVisibleWithConversion(const QString &groupKey,
-                                     const QList<FileItemDataPointer> &groupFiles,
-                                     DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+                                      const QList<FileItemDataPointer> &groupFiles,
+                                      DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     // Cache management
     mutable CacheKey m_lastCacheKey;
@@ -166,4 +170,4 @@ private:
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif // GROUPINGENGINE_H 
+#endif   // GROUPINGENGINE_H

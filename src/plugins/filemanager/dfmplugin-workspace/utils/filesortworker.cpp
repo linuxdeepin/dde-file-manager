@@ -4,6 +4,7 @@
 
 #include "filesortworker.h"
 #include "workspacehelper.h"
+#include "groups/groupingfactory.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/schemefactory.h>
@@ -21,14 +22,6 @@
 #include <QStandardPaths>
 
 #include <sys/stat.h>
-
-// Include grouping utilities
-#include "groupingmanager.h"
-#include "groups/nogroupstrategy.h"
-#include "groups/typegroupstrategy.h"
-#include "groups/timegroupstrategy.h"
-#include "groups/namegroupstrategy.h"
-#include "groups/sizegroupstrategy.h"
 
 using namespace dfmplugin_workspace;
 using namespace dfmbase::Global;
@@ -100,7 +93,32 @@ FileSortWorker::~FileSortWorker()
     waitUpdatedFiles.clear();
 }
 
-FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
+FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrder order, const QString &strategy)
+{
+    fmInfo() << "Setting group arguments - strategy:" << strategy << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
+
+    FileSortWorker::GroupingOpt opt { FileSortWorker::GroupingOpt::kGroupingOptNone };
+    groupOrder = order;
+    currentStrategy = GroupingFactory::createStrategy(strategy, this);
+    isCurrentGroupingEnabled = (currentStrategy->getStrategyName() == GroupStrategty::kNoGroup) ? false : true;
+
+    if (!currentStrategy || (groupOrder == order && currentStrategy->getStrategyName() == strategy)) {
+        return opt;
+    }
+
+    groupOrder = order;
+    currentStrategy = GroupingFactory::createStrategy(strategy, this);
+    if (currentStrategy && currentStrategy->getStrategyName() != GroupStrategty::kNoGroup)
+        isCurrentGroupingEnabled = true;
+    else
+        isCurrentGroupingEnabled = false;
+
+    // TODO： 参考 setSortArguments 返回 OnlyOrderChanged
+
+    return FileSortWorker::GroupingOpt::kGroupingOptOtherChanged;
+}
+
+FileSortWorker::SortOpt FileSortWorker::setSortArguments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
 {
     // 强制树形模式下 isMixDirAndFile 为 false
     bool mixDirAndFile = istree ? false : isMixDirAndFile;
@@ -140,90 +158,9 @@ FileSortWorker::SortOpt FileSortWorker::setSortAgruments(const Qt::SortOrder ord
     return opt;
 }
 
-void FileSortWorker::setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy)
-{
-    currentStrategy = std::move(strategy);
-    if (currentStrategy) {
-        fmDebug() << "FileSortWorker: Grouping strategy set to" << currentStrategy->getStrategyName();
-        if (m_isGroupingEnabled && groupingEngine) {
-            groupingEngine->invalidateCache();
-            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
-        }
-    } else {
-        fmDebug() << "FileSortWorker: Grouping strategy cleared";
-    }
-}
-
-void FileSortWorker::setGroupingEnabled(bool enabled)
-{
-    if (m_isGroupingEnabled != enabled) {
-        m_isGroupingEnabled = enabled;
-        fmDebug() << "FileSortWorker: Grouping" << (enabled ? "enabled" : "disabled");
-
-        if (enabled && currentStrategy && groupingEngine) {
-            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
-        } else if (!enabled) {
-            // Clear grouped data and emit update
-            groupedData.clear();
-            emit groupingDataChanged();
-        }
-    }
-}
-
-bool FileSortWorker::isGroupingEnabled() const
-{
-    return m_isGroupingEnabled;
-}
-
-void FileSortWorker::setGroupOrder(Qt::SortOrder order)
-{
-    if (groupOrder != order) {
-        fmDebug() << "FileSortWorker: Setting group order to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
-        groupOrder = order;
-
-        // Update engine with new order if enabled
-        if (m_isGroupingEnabled && groupingEngine) {
-            groupingEngine->setGroupOrder(order);
-            // Trigger regrouping with new order
-            QMetaObject::invokeMethod(this, "performGrouping", Qt::QueuedConnection);
-        }
-    }
-}
-
-Qt::SortOrder FileSortWorker::getGroupOrder() const
-{
-    return groupOrder;
-}
-
-void FileSortWorker::toggleGroupExpansion(const QString &groupKey)
-{
-    if (groupKey.isEmpty() || !m_isGroupingEnabled) {
-        return;
-    }
-
-    bool currentState = groupExpansionStates.value(groupKey, true);
-    groupExpansionStates[groupKey] = !currentState;
-
-    // Update the grouped data
-    groupedData.setGroupExpanded(groupKey, !currentState);
-
-    fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
-    emit groupingDataChanged();
-}
-
-bool FileSortWorker::isGroupExpanded(const QString &groupKey) const
-{
-    return groupExpansionStates.value(groupKey, true);
-}
-
-GroupedModelData FileSortWorker::getGroupedModelData() const
-{
-    return groupedData;
-}
-
 int FileSortWorker::childrenCount()
 {
-    if (!m_isGroupingEnabled) {
+    if (!isCurrentGroupingEnabled) {
         // Traditional mode: use original logic
         QReadLocker lk(&locker);
         return visibleChildren.count();
@@ -267,7 +204,7 @@ FileItemDataPointer FileSortWorker::rootData() const
 
 FileItemDataPointer FileSortWorker::childData(const int index)
 {
-    if (!m_isGroupingEnabled) {
+    if (!isCurrentGroupingEnabled) {
         // Traditional mode: use original logic
         QUrl url;
         {
@@ -328,6 +265,20 @@ ItemRoles FileSortWorker::getSortRole() const
 Qt::SortOrder FileSortWorker::getSortOrder() const
 {
     return sortOrder;
+}
+
+QString FileSortWorker::getGroupStrategyName() const
+{
+    if (!currentStrategy) {
+        return GroupStrategty::kNoGroup;
+    }
+
+    return currentStrategy->getStrategyName();
+}
+
+Qt::SortOrder FileSortWorker::getGroupOrder() const
+{
+    return groupOrder;
 }
 
 void FileSortWorker::setTreeView(const bool isTree)
@@ -682,7 +633,7 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     fmInfo() << "Handling resort - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
              << "role:" << static_cast<int>(sortRole) << "mix dir and file:" << isMixDirAndFile;
 
-    auto opt = setSortAgruments(order, sortRole, /*istree ? false :*/ isMixDirAndFile);
+    auto opt = setSortArguments(order, sortRole, /*istree ? false :*/ isMixDirAndFile);
 
     switch (opt) {
     case FileSortWorker::SortOpt::kSortOptOtherChanged:
@@ -703,55 +654,54 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     }
 }
 
-void FileSortWorker::performGrouping()
+void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &strategy)
 {
     if (isCanceled) {
-        fmDebug() << "FileSortWorker: Ignoring grouping request - operation canceled";
+        fmDebug() << "Ignoring regrouping request - operation canceled";
         return;
     }
 
-    if (!m_isGroupingEnabled || !currentStrategy || !groupingEngine) {
-        fmDebug() << "FileSortWorker: Cannot perform grouping - grouping disabled, no strategy, or no engine";
+    auto opt = setGroupArguments(order, strategy);
+
+    // TODO: 改为switch opt实现，以下只是 demo,仅实现基本的分组流程，以下分组数据完全异常，数据会丢失
+    // TODO：可能要重新实现 GroupingEngine
+
+    if (!isCurrentGroupingEnabled || !currentStrategy || !groupingEngine) {
+        fmWarning() << "FileSortWorker: Cannot perform grouping - grouping disabled, no strategy, or no engine";
         return;
     }
 
-    fmInfo() << "FileSortWorker: Performing grouping with strategy:" << currentStrategy->getStrategyName()
-             << "order:" << (groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
+    emit requestCursorWait();
+    FinallyUtil release([this] {
+        emit reqUestCloseCursor();
+    });
 
-    try {
-        // Get all current files
-        QList<FileItemDataPointer> allFiles = getAllFiles();
-        if (allFiles.isEmpty()) {
-            fmDebug() << "FileSortWorker: No files to group";
-            groupedData.clear();
-            emit groupingDataChanged();
-            return;
-        }
-
-        // Set group order in engine (support for ascending/descending order)
-        groupingEngine->setGroupOrder(groupOrder);
-
-        // Perform grouping using GroupingEngine
-        auto result = groupingEngine->groupFiles(allFiles, currentStrategy.get());
-        if (!result.success) {
-            fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
-            return;
-        }
-
-        // Generate model data with current expansion states
-        groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
-
-        fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
-                 << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
-
-        // Emit signal to notify model of changes (thread-safe)
+    QList<FileItemDataPointer> allFiles = getAllFiles();
+    if (allFiles.isEmpty()) {
+        fmDebug() << "FileSortWorker: No files to group";
+        groupedData.clear();
         emit groupingDataChanged();
-
-    } catch (const std::exception &e) {
-        fmCritical() << "FileSortWorker: Exception during grouping:" << e.what();
-    } catch (...) {
-        fmCritical() << "FileSortWorker: Unknown exception during grouping";
+        return;
     }
+
+    // Set group order in engine (support for ascending/descending order)
+    groupingEngine->setGroupOrder(groupOrder);
+
+    // Perform grouping using GroupingEngine
+    auto result = groupingEngine->groupFiles(allFiles, currentStrategy);
+    if (!result.success) {
+        fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
+        return;
+    }
+
+    // Generate model data with current expansion states
+    groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
+
+    fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
+             << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
+
+    // Emit signal to notify model of changes (thread-safe)
+    emit groupingDataChanged();
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -955,6 +905,22 @@ void FileSortWorker::handleSortByMimeType()
     if (isCanceled)
         return;
     resortCurrent(false);
+}
+
+void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QString &groupKey)
+{
+    if (groupKey.isEmpty() || !isCurrentGroupingEnabled || isCanceled || key != currentKey) {
+        return;
+    }
+
+    bool currentState = groupExpansionStates.value(groupKey, true);
+    groupExpansionStates[groupKey] = !currentState;
+
+    // Update the grouped data
+    groupedData.setGroupExpanded(groupKey, !currentState);
+
+    fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
+    emit groupingDataChanged();
 }
 
 void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)

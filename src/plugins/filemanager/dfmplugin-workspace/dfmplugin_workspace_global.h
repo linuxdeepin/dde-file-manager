@@ -83,6 +83,16 @@ inline constexpr int kMaxTabCount { 8 };
 // view select box
 inline constexpr int kSelectBoxLineWidth { 2 };
 
+namespace GroupStrategty {
+inline constexpr char kNoGroup[] { "NoGroupStrategy" };
+inline constexpr char kName[] { "Name" };
+inline constexpr char kSize[] { "Size" };
+inline constexpr char kModifiedTime[] { "ModifiedTime" };
+inline constexpr char kCreatedTime[] { "CreatedTime" };
+inline constexpr char kType[] { "Type" };
+
+}
+
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };
 inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };

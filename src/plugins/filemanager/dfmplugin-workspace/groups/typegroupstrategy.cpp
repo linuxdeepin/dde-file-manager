@@ -32,7 +32,7 @@ QHash<QString, QString> TypeGroupStrategy::getDisplayNames()
 {
     return {
         { "directory", QObject::tr("Directory") },
-        { "document", QObject::tr("Document") },
+        { "document", QObject::tr("Text") },
         { "image", QObject::tr("Image") },
         { "video", QObject::tr("Video") },
         { "audio", QObject::tr("Audio") },
@@ -122,12 +122,7 @@ bool TypeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString TypeGroupStrategy::getStrategyName() const
 {
-    return "Type";
-}
-
-Global::ItemRoles TypeGroupStrategy::getCorrespondingRole() const
-{
-    return Global::ItemRoles::kItemFileMimeTypeRole;
+    return GroupStrategty::kType;
 }
 
 QString TypeGroupStrategy::mapMimeTypeToGroup(const QString &mimeType) const

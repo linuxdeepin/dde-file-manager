@@ -1,4 +1,4 @@
- // SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,7 +10,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QStringList>  
+#include <QStringList>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -19,7 +19,7 @@ DFMBASE_BEGIN_NAMESPACE
  *
  * This class defines the interface for all file grouping strategies.
  * Each strategy implements different ways to group files (by type, time, name, size, etc.)
- * 
+ *
  * This interface is designed to be plugin-agnostic and can be used by any file manager component
  * that needs to group files according to different criteria.
  */
@@ -70,23 +70,10 @@ public:
     virtual bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const = 0;
 
     /**
-     * @brief Check if a group can be collapsed/expanded
-     * @param groupKey The group key to check
-     * @return True if the group supports collapse/expand, false otherwise
-     */
-    virtual bool isGroupCollapsible(const QString &groupKey) const { return true; }
-
-    /**
      * @brief Get the strategy name for identification
      * @return The name of this strategy
      */
     virtual QString getStrategyName() const = 0;
-
-    /**
-     * @brief Get the corresponding ItemRole for this strategy
-     * @return The ItemRole that this strategy is based on
-     */
-    virtual Global::ItemRoles getCorrespondingRole() const = 0;
 };
 
 DFMBASE_END_NAMESPACE

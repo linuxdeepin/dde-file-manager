@@ -16,9 +16,6 @@
 #include <QAbstractItemView>
 #include <QUrl>
 
-#include <iostream>
-#include <memory>
-
 #include <unistd.h>
 
 class QAbstractItemView;
@@ -29,7 +26,6 @@ class FileView;
 class FileItemData;
 class FileSortWorker;
 class RootInfo;
-class GroupingManager;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -52,6 +48,7 @@ public:
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
     virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+    void grouping(const QString &strategyName, Qt::SortOrder order);
 
     QUrl rootUrl() const;
     QModelIndex rootIndex() const;
@@ -59,8 +56,9 @@ public:
     QModelIndex setRootUrl(const QUrl &url);
     void refresh();
 
-    void doExpand(const QModelIndex &index);
-    void doCollapse(const QModelIndex &index);
+    void toggleTreeItemExpansion(const QModelIndex &index);
+    void toggleTreeItemCollapse(const QModelIndex &index);
+    void toggleGroupExpansion(const QString &groupKey);
 
     ModelState currentState() const;
     FileInfoPointer fileInfo(const QModelIndex &index) const;
@@ -80,6 +78,8 @@ public:
 
     Qt::SortOrder sortOrder() const;
     DFMGLOBAL_NAMESPACE::ItemRoles sortRole() const;
+    Qt::SortOrder groupingOrder() const;
+    QString groupingStrategy() const;
 
     void setFilters(QDir::Filters filters);
     QDir::Filters getFilters() const;
@@ -107,16 +107,6 @@ public:
     // 执行实际的加载，使用之前准备的URL或当前URL
     void executeLoad();
 
-    // Grouping management (delegated to GroupingManager)
-    void setGroupingStrategy(const QString &strategyName);
-    QString getGroupingStrategy() const;
-    void setGroupingEnabled(bool enabled);
-    bool isGroupingEnabled() const;
-    void setGroupingOrder(Qt::SortOrder order);
-    Qt::SortOrder getGroupingOrder() const;
-    void toggleGroupExpansion(const QString &groupKey);
-    bool isGroupExpanded(const QString &groupKey) const;
-
 Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();
@@ -134,19 +124,14 @@ Q_SIGNALS:
     void requestClearThumbnail();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
-    void requestGroupChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role);
+    void requestGroupingChildren(Qt::SortOrder order, const QString &strategyName, const bool isMixAndFile);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
 
+    void requestToggleGroupExpansion(const QString &key, const QString &groupKey);
     void requestCollapseItem(const QString &key, const QUrl &parent);
     void requestTreeView(const bool isTree);
-
-    // Grouping-related signals
-    void groupingStrategyChanged(const QString &strategyName);
-    void groupingEnabledChanged(bool enabled);
-    void groupingOrderChanged(Qt::SortOrder order);
-    void groupExpansionChanged(const QString &groupKey, bool expanded);
 
     void aboutToSwitchToListView(const QList<QUrl> &allShowList);
 
@@ -177,9 +162,6 @@ private:
     void closeCursorTimer();
     void startCursorTimer();
 
-    // Grouping management helper
-    void initializeGroupingManager();
-
     QUrl dirRootUrl;
     QUrl fetchingUrl;
 
@@ -199,9 +181,6 @@ private:
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
     bool isTree { false };
-
-    // Grouping management
-    std::unique_ptr<GroupingManager> m_groupingManager;
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;
