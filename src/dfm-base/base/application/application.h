@@ -22,6 +22,7 @@ public:
     // Application-level configuration, default in the ~/.config/deepin/{AppName}/dde-file-manager.json
     enum ApplicationAttribute {
         kAllwayOpenOnNewWindow,
+        kOpenInNewTab,
         kIconSizeLevel,
         kViewMode,
         kViewSizeAdjustable,   // adjustable table header width for list mode

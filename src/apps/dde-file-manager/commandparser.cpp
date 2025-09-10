@@ -14,6 +14,8 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/application/application.h>
 
 #include <dfm-framework/event/event.h>
 #include <dfm-framework/lifecycle/lifecycle.h>
@@ -235,7 +237,7 @@ void CommandParser::showPropertyDialog()
             uPath.chop(1);
         url.setPath(uPath);
 
-        //Todo(yanghao): symlink , desktop files filters
+        // Todo(yanghao): symlink , desktop files filters
         if (urlList.contains(url))
             continue;
         urlList << url;
@@ -261,7 +263,7 @@ void CommandParser::openWithDialog()
             uPath.chop(1);
         url.setPath(uPath);
 
-        //Todo(yanghao): symlink , desktop files filters
+        // Todo(yanghao): symlink , desktop files filters
         if (urlList.contains(url))
             continue;
         urlList << url;
@@ -270,7 +272,7 @@ void CommandParser::openWithDialog()
         qCWarning(logAppFileManager) << "No valid files found for open with dialog";
         return;
     }
-    
+
     qCInfo(logAppFileManager) << "Opening 'Open With' dialog for" << urlList.size() << "files";
     dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", 0, urlList);
 }
@@ -291,7 +293,7 @@ void CommandParser::openInUrls()
     QList<QUrl> argumentUrls;
     for (QString path : positionalArguments()) {
         if (!isSet("raw")) {
-            //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
+            // 路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
             if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../") && !path.startsWith("/")) {
                 // 路径中包含特殊字符的全部uri编码
                 QRegularExpression regexp("[#&@\\!\\?]");
@@ -360,11 +362,23 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
             dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
         });
     }
-    auto flag = !DConfigManager::instance()->value(kViewDConfName,
-                                                   kOpenFolderWindowsInASeparateProcess, true)
-                         .toBool();
-    flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
+
+    auto winId = FileManagerWindowsManager::instance().lastActivedWindowId();
+    if (Application::appAttribute(Application::kOpenInNewTab).toBool() && winId > 0) {
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, url);
+        auto window = FileManagerWindowsManager::instance().findWindowById(winId);
+        if (window) {
+            if (window->isMinimized())
+                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
+            window->activateWindow();
+        }
+    } else {
+        auto flag = !DConfigManager::instance()->value(kViewDConfName,
+                                                       kOpenFolderWindowsInASeparateProcess, true)
+                             .toBool();
+        flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
+    }
 }
 
 void CommandParser::openSession()
