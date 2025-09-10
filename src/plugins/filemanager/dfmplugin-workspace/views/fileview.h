@@ -86,12 +86,8 @@ public:
     void reverseSelect() const;
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);
     void setSort(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
-    
-    // Modern grouping interface
-    void setGroupingStrategy(const QString &strategyName);
-    void setGroupingEnabled(bool enabled);
-    void setGroupingOrder(Qt::SortOrder order);
-    QString getGroupingStrategy() const;
+    void setGroup(const QString &strategyName, const Qt::SortOrder order = Qt::AscendingOrder);
+
     void setViewSelectState(bool isSelect);
 
     void setFilterData(const QUrl &url, const QVariant &data);
@@ -203,11 +199,11 @@ private slots:
     void onIconSizeChanged(int sizeIndex);
     void onItemWidthLevelChanged(int level);
     void onItemHeightLevelChanged(int level);
-    
+
     // Grouping-related slots
     void onGroupExpansionToggled(const QString &groupKey);
     void onGroupHeaderClicked(const QString &groupKey);
-    
+
 private:
     void initializeModel();
     void initializeDelegate();

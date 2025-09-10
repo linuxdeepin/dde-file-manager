@@ -6,8 +6,9 @@
 #define GROUPEDMODELDATA_H
 
 #include "dfmplugin_workspace_global.h"
-#include "filegroupdata.h"
-#include "modelitemwrapper.h"
+
+#include "groups/filegroupdata.h"
+#include "groups/modelitemwrapper.h"
 
 #include <QList>
 #include <QHash>
@@ -18,7 +19,7 @@ DPWORKSPACE_BEGIN_NAMESPACE
 
 /**
  * @brief Container for grouped model data
- * 
+ *
  * This class manages the flattened representation of grouped files
  * for use in the model-view architecture.
  */
@@ -46,9 +47,9 @@ public:
     ~GroupedModelData();
 
     // Core data members
-    QList<FileGroupData> groups;                    ///< All group data
-    QList<ModelItemWrapper> flattenedItems;        ///< Flattened model items list
-    QHash<QString, bool> groupExpansionStates;     ///< Group expansion state mapping
+    QList<FileGroupData> groups;   ///< All group data
+    QList<ModelItemWrapper> flattenedItems;   ///< Flattened model items list
+    QHash<QString, bool> groupExpansionStates;   ///< Group expansion state mapping
 
     /**
      * @brief Get the total number of files across all groups
@@ -91,7 +92,7 @@ public:
 
     /**
      * @brief Rebuild the flattened items list
-     * 
+     *
      * This method reconstructs the flattened list based on current
      * groups and their expansion states.
      */
@@ -136,9 +137,9 @@ public:
     ModelItemWrapper getItemAtThreadSafe(int index) const;
 
 private:
-    mutable QMutex m_mutex;  ///< Mutex for thread safety
+    mutable QMutex m_mutex;   ///< Mutex for thread safety
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif // GROUPEDMODELDATA_H 
+#endif   // GROUPEDMODELDATA_H

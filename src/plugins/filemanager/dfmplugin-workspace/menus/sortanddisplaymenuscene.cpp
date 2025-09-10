@@ -206,42 +206,42 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
             // group by none
             if (actionId == ActionID::kGroupByNone) {
                 fmInfo() << "Setting group by none";
-                d->groupByStrategy("NoGroupStrategy");
+                d->groupByStrategy(GroupStrategty::kNoGroup);
                 return true;
             }
 
             // group by name
             if (actionId == ActionID::kGroupByName) {
                 fmInfo() << "Grouping by name";
-                d->groupByStrategy("Name");
+                d->groupByStrategy(GroupStrategty::kName);
                 return true;
             }
 
             // group by time modified
             if (actionId == ActionID::kGroupByModified) {
                 fmInfo() << "Grouping by time modified";
-                d->groupByStrategy("ModifiedTime");
+                d->groupByStrategy(GroupStrategty::kModifiedTime);
                 return true;
             }
 
             // group by time created
             if (actionId == ActionID::kGroupByCreated) {
                 fmInfo() << "Grouping by time created";
-                d->groupByStrategy("CreatedTime");   // TimeStrategy handles both
+                d->groupByStrategy(GroupStrategty::kCreatedTime);   // TimeStrategy handles both
                 return true;
             }
 
             // group by size
             if (actionId == ActionID::kGroupBySize) {
                 fmInfo() << "Grouping by size";
-                d->groupByStrategy("Size");
+                d->groupByStrategy(GroupStrategty::kSize);
                 return true;
             }
 
             // group by type
             if (actionId == ActionID::kGroupByType) {
                 fmInfo() << "Grouping by type";
-                d->groupByStrategy("Type");
+                d->groupByStrategy(GroupStrategty::kType);
                 return true;
             }
         }
@@ -400,34 +400,29 @@ void SortAndDisplayMenuScenePrivate::sortByRole(int role)
 
 void SortAndDisplayMenuScenePrivate::groupByStrategy(const QString &strategyName)
 {
-    QString currentStrategy = view->getGroupingStrategy();
+    QString currentStrategy = view->model()->groupingStrategy();
+    Qt::SortOrder order = view->model()->groupingOrder();
 
     fmInfo() << "Setting grouping strategy:" << strategyName << "current strategy:" << currentStrategy;
 
     // Always set the strategy first (including "NoGroupStrategy")
     if (currentStrategy == strategyName) {
         // User clicked the same strategy - toggle sort order (unless it's NoGroupStrategy)
-        if (strategyName != "NoGroupStrategy") {
-            Qt::SortOrder currentOrder = view->model()->getGroupingOrder();
-            Qt::SortOrder newOrder = (currentOrder == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
-
+        if (strategyName != GroupStrategty::kNoGroup) {
+            order = (order == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
             fmInfo() << "Toggling grouping order for strategy:" << strategyName
-                     << "from" << (currentOrder == Qt::AscendingOrder ? "Ascending" : "Descending")
-                     << "to" << (newOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
-
-            view->setGroupingOrder(newOrder);
+                     << "to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
         }
         // For NoGroupStrategy, clicking again just reconfirms the disable state
     } else {
-        // Different strategy - set new strategy
-        view->setGroupingStrategy(strategyName);
+        // Different strategy - set default ascending order for new strategy
+        order = Qt::AscendingOrder;
     }
 
-    // Enable or disable grouping based on strategy (after setting the strategy)
-    bool shouldEnable = (strategyName != "NoGroupStrategy");
-    view->setGroupingEnabled(shouldEnable);
+    view->setGroup(strategyName, order);
 
-    fmInfo() << "Grouping" << (shouldEnable ? "enabled" : "disabled") << "with strategy:" << strategyName;
+    fmInfo() << "Grouping set with strategy:" << strategyName
+             << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
 }
 
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
@@ -464,25 +459,25 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     }
 
     // group by
-    QString currentStrategy = view->getGroupingStrategy();
+    QString currentStrategy = view->model()->groupingStrategy();
     fmDebug() << "Current grouping strategy:" << currentStrategy;
 
-    if (currentStrategy == "NoGroupStrategy") {
+    if (currentStrategy == GroupStrategty::kNoGroup) {
         predicateAction[ActionID::kGroupByNone]->setChecked(true);
         fmDebug() << "Set group by none action as checked";
-    } else if (currentStrategy == "Name") {
+    } else if (currentStrategy == GroupStrategty::kName) {
         predicateAction[ActionID::kGroupByName]->setChecked(true);
         fmDebug() << "Set group by name action as checked";
-    } else if (currentStrategy == "ModifiedTime") {
+    } else if (currentStrategy == GroupStrategty::kModifiedTime) {
         predicateAction[ActionID::kGroupByModified]->setChecked(true);
         fmDebug() << "Set group by time modified action as checked";
-    } else if (currentStrategy == "CreatedTime") {
+    } else if (currentStrategy == GroupStrategty::kCreatedTime) {
         predicateAction[ActionID::kGroupByCreated]->setChecked(true);
         fmDebug() << "Set group by time created action as checked";
-    } else if (currentStrategy == "Size") {
+    } else if (currentStrategy == GroupStrategty::kSize) {
         predicateAction[ActionID::kGroupBySize]->setChecked(true);
         fmDebug() << "Set group by size action as checked";
-    } else if (currentStrategy == "Type") {
+    } else if (currentStrategy == GroupStrategty::kType) {
         predicateAction[ActionID::kGroupByType]->setChecked(true);
         fmDebug() << "Set group by type action as checked";
     } else {

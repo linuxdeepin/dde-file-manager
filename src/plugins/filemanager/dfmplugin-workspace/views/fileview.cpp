@@ -779,50 +779,23 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
     }
 }
 
-// Modern grouping interface
-void FileView::setGroupingStrategy(const QString &strategyName)
+void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
 {
-    if (model()->currentState() == ModelState::kBusy) {
-        fmWarning() << "Cannot set grouping strategy while model is busy for URL:" << rootUrl().toString();
+    if (model()->currentState() == ModelState::kBusy)
         return;
-    }
-
-    fmInfo() << "Setting grouping strategy:" << strategyName << "for URL:" << rootUrl().toString();
-
-    // Delegate to model
-    model()->setGroupingStrategy(strategyName);
-}
-
-void FileView::setGroupingEnabled(bool enabled)
-{
-    if (model()->currentState() == ModelState::kBusy) {
-        fmWarning() << "Cannot change grouping enabled state while model is busy for URL:" << rootUrl().toString();
+    if (strategyName == model()->groupingStrategy() && order == model()->groupingOrder())
         return;
-    }
 
-    fmInfo() << "Setting grouping enabled:" << enabled << "for URL:" << rootUrl().toString();
-
-    // Delegate to model
-    model()->setGroupingEnabled(enabled);
-}
-
-void FileView::setGroupingOrder(Qt::SortOrder order)
-{
-    if (model()->currentState() == ModelState::kBusy) {
-        fmWarning() << "Cannot change grouping order while model is busy for URL:" << rootUrl().toString();
-        return;
-    }
-
-    fmInfo() << "Setting grouping order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+    fmInfo() << "Setting group strategy:" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
              << "for URL:" << rootUrl().toString();
 
-    // Delegate to model
-    model()->setGroupingOrder(order);
-}
+    model()->grouping(strategyName, order);
 
-QString FileView::getGroupingStrategy() const
-{
-    return model() ? model()->getGroupingStrategy() : QString("NoGroupStrategy");
+    const QUrl &url = rootUrl();
+    if (url.isValid()) {
+        setFileViewStateValue(url, "groupStrategy", strategyName);
+        setFileViewStateValue(url, "groupingOrder", static_cast<int>(order));
+    }
 }
 
 void FileView::setViewSelectState(bool isSelect)
@@ -1386,11 +1359,11 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
     if (expanded) {
         // do collapse
         fmInfo() << "do collapse item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
-        model()->doCollapse(index);
+        model()->toggleTreeItemCollapse(index);
     } else {
         // do expanded
         fmInfo() << "do expanded item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
-        model()->doExpand(index);
+        model()->toggleTreeItemExpansion(index);
     }
 
     return true;

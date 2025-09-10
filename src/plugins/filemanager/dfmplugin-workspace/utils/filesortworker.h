@@ -7,13 +7,13 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "models/fileitemdata.h"
-#include "groupingengine.h"
+#include "groups/groupingengine.h"
+#include "groups/groupedmodeldata.h"
+
 #include <dfm-base/interfaces/abstractgroupstrategy.h>
-#include "groupedmodeldata.h"
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
-
 #include <dfm-base/base/application/application.h>
 
 #include <dfm-io/denumerator.h>
@@ -32,6 +32,12 @@ class FileSortWorker : public QObject
         kSortOptNone = 0,
         kSortOptOnlyOrderChanged = 1,
         kSortOptOtherChanged = 2,
+    };
+
+    enum class GroupingOpt : uint8_t {
+        kGroupingOptNone = 0,
+        kGroupingOptOnlyOrderChanged = 1,
+        kGroupingOptOtherChanged = 2,
     };
 
     enum class InsertOpt : uint8_t {
@@ -56,17 +62,9 @@ public:
                             const QDir::Filters filters = QDir::NoFilter,
                             QObject *parent = nullptr);
     ~FileSortWorker();
-    SortOpt setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
+    SortOpt setSortArguments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
                              const bool isMixDirAndFile);
-    // Grouping-related methods
-    void setGroupingStrategy(std::unique_ptr<AbstractGroupStrategy> strategy);
-    void setGroupingEnabled(bool enabled);
-    bool isGroupingEnabled() const;
-    void setGroupOrder(Qt::SortOrder order);
-    Qt::SortOrder getGroupOrder() const;
-    void toggleGroupExpansion(const QString &groupKey);
-    bool isGroupExpanded(const QString &groupKey) const;
-    GroupedModelData getGroupedModelData() const;
+    GroupingOpt setGroupArguments(const Qt::SortOrder order, const QString &strategy);
 
     int childrenCount();
     QVariant groupHeaderData(const int index, const int role);
@@ -80,6 +78,8 @@ public:
 
     DFMGLOBAL_NAMESPACE::ItemRoles getSortRole() const;
     Qt::SortOrder getSortOrder() const;
+    QString getGroupStrategyName() const;
+    Qt::SortOrder getGroupOrder() const;
 
     // 只有在没有启动sort线程时才能调用，线程启动成功了，发送信号处理
     void setTreeView(const bool isTree);
@@ -147,7 +147,7 @@ public slots:
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
-    void performGrouping();   // Modern grouping execution method
+    void handleReGrouping(const Qt::SortOrder order, const QString &strategy);
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
     bool handleUpdateFile(const QUrl &url);
@@ -161,6 +161,7 @@ public slots:
 
     // treeview solts
 public slots:
+    void handleToggleGroupExpansion(const QString &key, const QString &groupKey);
     void handleCloseExpand(const QString &key, const QUrl &parent);
     // 如果不是tree视图，切换到tree视图，就去执行处理dir是否可以展开属性设置
     // 如果是tree视图，切换到普通试图，去掉所有子目录，去掉所有的是否可以展开属性
@@ -252,14 +253,12 @@ private:
     Qt::SortOrder sortOrder { Qt::AscendingOrder };
     DFMIO::DEnumerator::SortRoleCompareFlag sortRole { DFMIO::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
 
-    // Group-by configuration
-    Qt::SortOrder groupOrder { Qt::AscendingOrder };
-
     // New grouping-related members
+    Qt::SortOrder groupOrder { Qt::AscendingOrder };
     std::unique_ptr<GroupingEngine> groupingEngine;
-    std::unique_ptr<AbstractGroupStrategy> currentStrategy;
+    AbstractGroupStrategy *currentStrategy { nullptr };
     GroupedModelData groupedData;
-    std::atomic_bool m_isGroupingEnabled { false };
+    std::atomic_bool isCurrentGroupingEnabled { false };
     QHash<QString, bool> groupExpansionStates;
 
     std::atomic_bool isCanceled { false };

@@ -61,13 +61,7 @@ bool NoGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileIn
 QString NoGroupStrategy::getStrategyName() const
 {
     // Return localized strategy name
-    return "NoGroupStrategy";
-}
-
-Global::ItemRoles NoGroupStrategy::getCorrespondingRole() const
-{
-    // No specific role corresponds to "no grouping"
-    return Global::ItemRoles::kItemUnknowRole;
+    return GroupStrategty::kNoGroup;
 }
 
 DPWORKSPACE_END_NAMESPACE

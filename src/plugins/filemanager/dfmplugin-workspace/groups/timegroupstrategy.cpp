@@ -146,18 +146,9 @@ bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 QString TimeGroupStrategy::getStrategyName() const
 {
     if (m_timeType == ModificationTime) {
-        return "ModifiedTime";
+        return GroupStrategty::kModifiedTime;
     } else {
-        return "CreatedTime";
-    }
-}
-
-Global::ItemRoles TimeGroupStrategy::getCorrespondingRole() const
-{
-    if (m_timeType == ModificationTime) {
-        return Global::ItemRoles::kItemFileLastModifiedRole;
-    } else {
-        return Global::ItemRoles::kItemFileCreatedRole;
+        return GroupStrategty::kCreatedTime;
     }
 }
 
