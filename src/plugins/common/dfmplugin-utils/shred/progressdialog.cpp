@@ -43,7 +43,7 @@ void ProgressWidget::stopProgress()
     progress->stop();
 }
 
-ShredFailedWidget::ShredFailedWidget(const QString &reason, QWidget *parent)
+ShredFailedWidget::ShredFailedWidget(QWidget *parent)
     : QWidget(parent)
 {
     DLabel *failedImage = new DLabel(this);
@@ -52,19 +52,23 @@ ShredFailedWidget::ShredFailedWidget(const QString &reason, QWidget *parent)
     infoLabel = new DLabel(this);
     infoLabel->setMaximumWidth(340);
     infoLabel->setElideMode(Qt::ElideMiddle);
-    infoLabel->setToolTip(reason);
-
-    QString showText = reason;
-    if (reason.length() > 50) {
-        showText = reason.left(25) + "..." + reason.right(22);
-    }
-    infoLabel->setText(showText);
 
     QVBoxLayout *mainLay = new QVBoxLayout(this);
     mainLay->addWidget(failedImage, 0, Qt::AlignHCenter);
     mainLay->addWidget(infoLabel, 0, Qt::AlignHCenter);
 
     setLayout(mainLay);
+}
+
+void ShredFailedWidget::setMessage(const QString &msg)
+{
+    infoLabel->setToolTip(msg);
+
+    QString showText = msg;
+    if (msg.length() > 50) {
+        showText = msg.left(25) + "..." + msg.right(22);
+    }
+    infoLabel->setText(showText);
 }
 
 ProgressDialog::ProgressDialog(QWidget *parent)
@@ -94,17 +98,12 @@ void ProgressDialog::updateProgressValue(int value, const QString &fileName)
 
 void ProgressDialog::handleShredResult(bool result, const QString &reason)
 {
-    if (result) {
-
-    } else {
-        if (proWidget && proWidget->isVisible()) {
-            proWidget->stopProgress();
-        }
-        clearContents(true);
+    if (!result) {
+        proWidget->stopProgress();
+        stackedWidget->setCurrentWidget(failedWidget);
 
         setTitle(tr("File shredder failure"));
-        failedWidget = new ShredFailedWidget(reason, this);
-        addContent(failedWidget);
+        failedWidget->setMessage(reason);
         addButton(tr("Close"));
     }
 }
@@ -132,7 +131,12 @@ void ProgressDialog::initUi()
     setTitle(tr("Shredding file"));
 
     proWidget = new ProgressWidget(this);
-    addContent(proWidget);
+    failedWidget = new ShredFailedWidget(this);
+
+    stackedWidget = new QStackedWidget(this);
+    stackedWidget->addWidget(proWidget);
+    stackedWidget->addWidget(failedWidget);
+    addContent(stackedWidget);
 }
 
 void ProgressDialog::initConnect()

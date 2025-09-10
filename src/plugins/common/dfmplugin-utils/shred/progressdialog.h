@@ -9,6 +9,8 @@
 
 #include <DDialog>
 
+#include <QStackedWidget>
+
 DWIDGET_BEGIN_NAMESPACE
 class DWaterProgress;
 class DLabel;
@@ -35,7 +37,9 @@ class ShredFailedWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ShredFailedWidget(const QString &reason, QWidget *parent = Q_NULLPTR);
+    explicit ShredFailedWidget(QWidget *parent = Q_NULLPTR);
+
+    void setMessage(const QString &msg);
 
 private:
     DTK_WIDGET_NAMESPACE::DLabel *infoLabel { Q_NULLPTR };
@@ -64,6 +68,7 @@ private:
 
     ProgressWidget *proWidget { Q_NULLPTR };
     ShredFailedWidget *failedWidget { Q_NULLPTR };
+    QStackedWidget *stackedWidget { Q_NULLPTR };
 };
 }
 

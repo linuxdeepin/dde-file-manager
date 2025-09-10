@@ -65,7 +65,9 @@ void FileShredWorker::shredFile(const QList<QUrl> &fileList)
 
     // Phase 2: File shredding (1-100% progress)
     if (!regularFiles.isEmpty()) {
-        if (!executeShredCommandBatch(regularFiles)) {
+        QString msg;
+        if (!executeShredCommandBatch(regularFiles, msg)) {
+            emit finished(false, msg);
             return;   // Error already emitted
         }
     }
@@ -76,7 +78,12 @@ void FileShredWorker::shredFile(const QList<QUrl> &fileList)
             emit finished(false, tr("Operation cancelled"));
             return;
         }
-        processDirectory(dir);
+
+        QString msg;
+        if (!processDirectory(dir, msg)) {
+            emit finished(false, msg);
+            return;
+        }
     }
 
     emit finished(true, tr("All files have been successfully shredded"));
@@ -109,9 +116,12 @@ int FileShredWorker::countFilesInDirectory(const QString &dirPath)
     return count;
 }
 
-void FileShredWorker::processDirectory(const QString &dirPath)
+bool FileShredWorker::processDirectory(const QString &dirPath, QString &msg)
 {
-    if (m_shouldStop) return;
+    if (m_shouldStop) {
+        msg = tr("Operation cancelled");
+        return false;
+    }
 
     QDir dir(dirPath);
     // Use QDir::Hidden and QDir::System flags to include hidden and system files
@@ -122,7 +132,10 @@ void FileShredWorker::processDirectory(const QString &dirPath)
     QStringList dirsToProcess;
 
     for (const QFileInfo &entry : entries) {
-        if (m_shouldStop) return;
+        if (m_shouldStop) {
+            msg = tr("Operation cancelled");
+            return false;
+        }
 
         if (isPipe(entry.absoluteFilePath())) {
             QFile::remove(entry.absoluteFilePath());
@@ -139,22 +152,26 @@ void FileShredWorker::processDirectory(const QString &dirPath)
     }
 
     // Process files in batch first
-    if (!filesToShred.isEmpty()) {
-        if (!executeShredCommandBatch(filesToShred))
-            return;
-    }
+    if (!filesToShred.isEmpty() && !executeShredCommandBatch(filesToShred, msg))
+        return false;
 
     // Recursively process subdirectories
     for (const QString &subDir : dirsToProcess) {
-        if (m_shouldStop) return;
-        processDirectory(subDir);
+        if (m_shouldStop) {
+            msg = tr("Operation cancelled");
+            return false;
+        }
+
+        if (!processDirectory(subDir, msg))
+            return false;
     }
 
     // Finally remove the current directory
     dir.rmdir(dirPath);
+    return true;
 }
 
-bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths)
+bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QString &msg)
 {
     if (filePaths.isEmpty())
         return true;
@@ -180,7 +197,7 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths)
 
     if (!process.waitForStarted()) {
         fmWarning() << "Failed to start shred command for batch operation";
-        emit finished(false, tr("Failed to start shred command"));
+        msg = tr("Failed to start shred command");
         return false;
     }
 
@@ -190,6 +207,7 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths)
         if (m_shouldStop) {
             process.kill();
             process.waitForFinished(3000);
+            msg = tr("Operation cancelled");
             return false;
         }
 
@@ -209,14 +227,12 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths)
     }
 
     if (process.exitCode() != 0) {
-        QString errorMsg;
-        errorMsg = savedErrorMsg + ": " + tr("Permission denied");
+        msg = savedErrorMsg + ": " + tr("Permission denied");
 
         if (savedErrorMsg.isEmpty())
-            errorMsg = tr("The file has been moved or the process has exited");
+            msg = tr("The file has been moved or the process has exited");
 
-        fmWarning() << "Batch shred command failed: " << process.exitCode() << errorMsg;
-        emit finished(false, errorMsg);
+        fmWarning() << "Batch shred command failed: " << process.exitCode() << msg;
         return false;
     }
 
