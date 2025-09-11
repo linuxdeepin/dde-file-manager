@@ -5,6 +5,7 @@
 #include "shredutils.h"
 #include "progressdialog.h"
 #include "fileshredworker.h"
+#include "shredfilemodel.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileutils.h>
@@ -17,11 +18,9 @@
 #include <DTipLabel>
 #include <DDialog>
 #include <DFrame>
+#include <DListView>
 
-#include <QListWidget>
 #include <QStandardPaths>
-#include <QFileInfo>
-#include <QStorageInfo>
 #include <QRegularExpression>
 #include <QApplication>
 #include <QVBoxLayout>
@@ -210,19 +209,27 @@ bool ShredUtils::confirmAndDisplayFiles(const QList<QUrl> &fileList)
     DFrame *frame = new DFrame(&dialog);
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setContentsMargins(4, 4, 4, 4);
-    QListWidget *listWidget = new QListWidget(frame);
-    listWidget->setFrameShape(QFrame::NoFrame);
-    layout->addWidget(listWidget);
 
-    for (const auto &url : fileList) {
-        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
-        if (!info->exists())
-            continue;
+    DListView *view = new DListView(frame);
+    view->setFixedHeight(200);
+    view->setEditTriggers(QListView::NoEditTriggers);
+    view->setTextElideMode(Qt::ElideMiddle);
+    view->setIconSize(QSize(24, 24));
+    view->setResizeMode(QListView::Adjust);
+    view->setMovement(QListView::Static);
+    view->setSelectionMode(QListView::NoSelection);
+    view->setFrameShape(QFrame::NoFrame);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setBackgroundType(DStyledItemDelegate::BackgroundType::RoundedBackground);
+    view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+    view->setViewportMargins(0, 0, 0, 0);
+    view->setItemSpacing(1);
+    view->setUniformItemSizes(true);
 
-        QListWidgetItem *item = new QListWidgetItem(info->fileIcon(), info->displayOf(DisPlayInfoType::kFileDisplayName));
-        item->setSizeHint(QSize(item->sizeHint().width(), 35));   // 设置item高度
-        listWidget->addItem(item);
-    }
+    ShredFileModel *model = new ShredFileModel(view);
+    model->setFileList(fileList);
+    view->setModel(model);
+    layout->addWidget(view);
 
     dialog.addContent(frame);
     dialog.addButton(tr("Cancel"));

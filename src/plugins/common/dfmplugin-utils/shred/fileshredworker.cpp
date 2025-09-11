@@ -16,6 +16,8 @@
 
 #include <sys/stat.h>
 
+inline constexpr int kPerMaxCount = 50;
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_utils;
 
@@ -176,64 +178,70 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
     if (filePaths.isEmpty())
         return true;
 
-    QStringList args;
-    args << "-u"
-         << "-f"
-         << "-v"
-         << "-n"
-         << "3";
-    args.append(filePaths);
+    int offset = 0;
+    while (offset < filePaths.count()) {
+        const auto &subFileList = filePaths.mid(offset, kPerMaxCount);
+        offset += kPerMaxCount;
 
-    QProcess process;
+        QStringList args;
+        args << "-u"
+             << "-f"
+             << "-v"
+             << "-n"
+             << "3";
+        args.append(subFileList);
 
-    // Set fixed Chinese environment
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LANG", "zh_CN.UTF-8");
-    env.insert("LC_ALL", "zh_CN.UTF-8");
-    env.insert("LANGUAGE", "zh_CN:zh");
-    process.setProcessEnvironment(env);
+        QProcess process;
 
-    process.start("shred", args);
+        // Set fixed Chinese environment
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("LANG", "zh_CN.UTF-8");
+        env.insert("LC_ALL", "zh_CN.UTF-8");
+        env.insert("LANGUAGE", "zh_CN:zh");
+        process.setProcessEnvironment(env);
 
-    if (!process.waitForStarted()) {
-        fmWarning() << "Failed to start shred command for batch operation";
-        msg = tr("Failed to start shred command");
-        return false;
-    }
+        process.start("shred", args);
 
-    QString savedErrorMsg;   // Used to save error information
-
-    while (process.state() != QProcess::NotRunning) {
-        if (m_shouldStop) {
-            process.kill();
-            process.waitForFinished(3000);
-            msg = tr("Operation cancelled");
+        if (!process.waitForStarted()) {
+            fmWarning() << "Failed to start shred command for batch operation" << process.error();
+            msg = tr("Failed to start shred command");
             return false;
         }
 
-        process.waitForReadyRead(100);
-        QString output = QString::fromLocal8Bit(process.readAllStandardError());
+        QString savedErrorMsg;   // Used to save error information
 
-        // Only extract file path when error message hasn't been saved yet
-        if (savedErrorMsg.isEmpty() && output.contains("无法以写模式打开")) {
-            static QRegularExpression rx("shred:\\s*([^：]+)");   // Only match filename/path part before colon
-            auto match = rx.match(output);
-            if (match.hasMatch()) {
-                savedErrorMsg = match.captured(1).trimmed();   // Only save the first encountered filename/path
+        while (process.state() != QProcess::NotRunning) {
+            if (m_shouldStop) {
+                process.kill();
+                process.waitForFinished(3000);
+                msg = tr("Operation cancelled");
+                return false;
             }
+
+            process.waitForReadyRead(100);
+            QString output = QString::fromLocal8Bit(process.readAllStandardError());
+
+            // Only extract file path when error message hasn't been saved yet
+            if (savedErrorMsg.isEmpty() && output.contains("无法以写模式打开")) {
+                static QRegularExpression rx("shred:\\s*([^：]+)");   // Only match filename/path part before colon
+                auto match = rx.match(output);
+                if (match.hasMatch()) {
+                    savedErrorMsg = match.captured(1).trimmed();   // Only save the first encountered filename/path
+                }
+            }
+
+            parseShredOutput(output);
         }
 
-        parseShredOutput(output);
-    }
+        if (process.exitCode() != 0) {
+            msg = savedErrorMsg + ": " + tr("Permission denied");
 
-    if (process.exitCode() != 0) {
-        msg = savedErrorMsg + ": " + tr("Permission denied");
+            if (savedErrorMsg.isEmpty())
+                msg = tr("The file has been moved or the process has exited");
 
-        if (savedErrorMsg.isEmpty())
-            msg = tr("The file has been moved or the process has exited");
-
-        fmWarning() << "Batch shred command failed: " << process.exitCode() << msg;
-        return false;
+            fmWarning() << "Batch shred command failed: " << process.exitCode() << msg;
+            return false;
+        }
     }
 
     return true;
@@ -260,9 +268,16 @@ void FileShredWorker::parseShredOutput(const QString &output)
     }
 
     // Modified regex to more accurately match shred output format
-    static QRegularExpression rx(R"(shred:\s*([^：]+):\s*第\s*(\d+)\s*次，共\s*(\d+)\s*次\s*\(random\)\.\.\.((?:[\.\d]+[GM]iB/[\.\d]+[GM]iB\s*)?(\d+)?%)?)");
-    auto match = rx.match(output);
+    static QRegularExpression infoReg(R"(shred:\s*([^：]+):\s*第\s*(\d+)\s*次，共\s*(\d+)\s*次\s*\(random\)\.\.\.((?:[\.\d]+[GM]iB/[\.\d]+[GM]iB\s*)?(\d+)?%)?)");
+    auto match = infoReg.match(output);
     if (!match.hasMatch()) {
+        static QRegularExpression rmReg(R"(shred: ([^:]+): 正在删除)");
+        match = rmReg.match(output);
+        if (match.hasMatch()) {
+            int value = qMin(99, 1 + (m_processedFiles * 99 / m_totalFiles));
+            const auto &path = match.captured(1).trimmed();
+            emit progressUpdated(value, path.section('/', -1, -1));
+        }
         return;
     }
 
