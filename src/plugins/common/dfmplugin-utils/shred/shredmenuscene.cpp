@@ -91,6 +91,13 @@ bool ShredMenuScene::create(QMenu *parent)
     if (!parent || d->isEmptyArea)
         return false;
 
+    if (UrlRoute::isVirtual(d->currentDir)) {
+        QUrl targetUrl;
+        UniversalUtils::urlTransformToLocal(d->currentDir, &targetUrl);
+        if (targetUrl.scheme() != Global::Scheme::kFile)
+            return false;
+    }
+
     if (d->focusFileInfo.isNull() || !ShredUtils::instance()->isValidFile(d->focusFile))
         return false;
 
