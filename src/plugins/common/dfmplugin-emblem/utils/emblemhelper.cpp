@@ -217,7 +217,7 @@ QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
 
     // feat: story 1477
     // For desktop files hide all system emblem icons
-    if (FileUtils::isDesktopFileSuffix(info->fileUrl()))
+    if (FileUtils::isDesktopFileInfo(info))
         return {};
 
     QList<QIcon> emblems;
