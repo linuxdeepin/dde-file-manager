@@ -193,69 +193,74 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
     // 首先处理完整匹配 - 在省略后的文本中查找关键词
     matches = findKeywordMatches(elideText);
 
-    // 特殊处理：检查被省略号截断的关键词部分
-    if (elideMode == Qt::ElideRight && elidePos > 0) {
-        // 右侧省略：检查每个原始匹配项是否在省略处被截断
-        for (const auto &match : originalMatches) {
-            int matchStart = match.first;
-            int matchLength = match.second;
-
-            // 计算在省略前文本(elideText)中对应的位置
-            int elideTextStartPos = lineStartPos;
-
-            // 如果匹配项开始在可见区域内但结束在省略区域
-            if (matchStart >= elideTextStartPos && matchStart < elideTextStartPos + elidePos &&
-                matchStart + matchLength > elideTextStartPos + elidePos) {
-                // 只取截断前的可见部分
-                int visibleLength = elidePos - (matchStart - elideTextStartPos);
-                if (visibleLength > 0) {
-                    // 匹配项在省略处被截断，添加可见部分
-                    int adjustedStart = matchStart - elideTextStartPos;
-                    matches.append(qMakePair(adjustedStart, visibleLength));
-                }
-            }
-        }
-    } else if (elideMode == Qt::ElideLeft && elidePos > 0) {
-        // 左侧省略：检查每个原始匹配项是否在省略处被截断
-        int originalLineStart = lineStartPos;
-        int visibleStartInOriginal = originalLineStart + elidePos + 1;
-
+    // 统一：将原始匹配区间与“原文可见区间”相交，映射到 elideText 中
+    auto mapOverlaps = [&](int visibleStartInOriginal, int visibleEndInOriginal, int mappedStartInElide) {
         for (const auto &match : originalMatches) {
             int matchStart = match.first;
             int matchEnd = matchStart + match.second;
-
-            // 如果匹配项开始在省略区域但结束在可见区域
-            if (matchStart < visibleStartInOriginal && matchEnd > visibleStartInOriginal) {
-                // 计算可见部分的长度
-                int visibleLength = matchEnd - visibleStartInOriginal;
-                // 调整到省略后文本中的位置
-                matches.append(qMakePair(elidePos, visibleLength));
+            int isectStart = qMax(matchStart, visibleStartInOriginal);
+            int isectEnd = qMin(matchEnd, visibleEndInOriginal);
+            if (isectEnd > isectStart) {
+                int length = isectEnd - isectStart;
+                int startInElide = mappedStartInElide + (isectStart - visibleStartInOriginal);
+                matches.append(qMakePair(startInElide, length));
             }
         }
-    } else if (elideMode == Qt::ElideMiddle && elidePos > 0) {
-        // 计算在原始文本中前半部分对应的区域
-        int originalLineStart = lineStartPos;
-        int firstVisiblePartLength = elidePos;
+    };
 
-        // 估算原始文本中省略的部分长度（这是近似值）
-        int ellipsisInOriginalPos = originalLineStart + firstVisiblePartLength;
+    if (elidePos > 0) {
+        const QString fullText = text();
+        const int originalLineLength = fullText.length() - lineStartPos;
 
-        // 检查每个原始匹配
-        for (const auto &match : originalMatches) {
-            int matchStart = match.first;
-            int matchEnd = matchStart + match.second;
+        const QString ellipsis = "…";
+        const QString threeDots = "...";
+        int ellipsisStart = -1;
+        int ellipsisLen = 0;
 
-            // 检查是否跨越了前半部分的末尾
-            if (matchStart < ellipsisInOriginalPos && matchEnd > ellipsisInOriginalPos) {
-                // 添加前半部分的可见匹配
-                int visibleLengthInFirstPart = ellipsisInOriginalPos - matchStart;
-                if (visibleLengthInFirstPart > 0) {
-                    matches.append(qMakePair(matchStart - originalLineStart, visibleLengthInFirstPart));
-                }
-
-                // 这里我们不添加后半部分，因为难以准确计算位置映射
-                // 如果需要，可以在详细了解Qt的elide实现后添加更精确的处理
+        if (elideMode == Qt::ElideRight) {
+            // 左侧可见，后跟省略号
+            ellipsisStart = elideText.indexOf(ellipsis, qMax(0, elidePos - 1));
+            if (ellipsisStart >= 0) ellipsisLen = ellipsis.length();
+            if (ellipsisStart < 0) {
+                ellipsisStart = elideText.indexOf(threeDots, qMax(0, elidePos - 1));
+                if (ellipsisStart >= 0) ellipsisLen = threeDots.length();
             }
+            if (ellipsisStart < 0) { ellipsisStart = elidePos; ellipsisLen = 0; }
+
+            int leftVisibleLen = ellipsisStart;
+            mapOverlaps(lineStartPos, lineStartPos + leftVisibleLen, 0);
+        } else if (elideMode == Qt::ElideLeft) {
+            // 省略号后是右侧可见
+            ellipsisStart = elideText.indexOf(ellipsis);
+            if (ellipsisStart == 0) ellipsisLen = ellipsis.length();
+            if (ellipsisLen == 0) {
+                int p = elideText.indexOf(threeDots);
+                if (p == 0) ellipsisLen = threeDots.length();
+            }
+            if (ellipsisLen == 0) { ellipsisLen = 1; }
+
+            int rightVisibleLen = elideText.length() - ellipsisLen;
+            int visibleStartInOriginal = lineStartPos + originalLineLength - rightVisibleLen;
+            int visibleEndInOriginal = lineStartPos + originalLineLength;
+            mapOverlaps(visibleStartInOriginal, visibleEndInOriginal, ellipsisLen);
+        } else if (elideMode == Qt::ElideMiddle) {
+            // 前半段 + 省略号 + 后半段
+            ellipsisStart = elideText.indexOf(ellipsis, elidePos);
+            if (ellipsisStart >= 0) ellipsisLen = ellipsis.length();
+            if (ellipsisStart < 0) {
+                ellipsisStart = elideText.indexOf(threeDots, elidePos);
+                if (ellipsisStart >= 0) ellipsisLen = threeDots.length();
+            }
+            if (ellipsisStart < 0) { ellipsisStart = elidePos; ellipsisLen = 1; }
+
+            int leftVisibleLen = ellipsisStart;
+            int rightVisibleLen = elideText.length() - (ellipsisStart + ellipsisLen);
+
+            // 前半段映射到 [0, leftVisibleLen)
+            mapOverlaps(lineStartPos, lineStartPos + leftVisibleLen, 0);
+            // 后半段映射到 [ellipsisStart+ellipsisLen, end)
+            int rightStartInOriginal = lineStartPos + originalLineLength - rightVisibleLen;
+            mapOverlaps(rightStartInOriginal, rightStartInOriginal + rightVisibleLen, ellipsisStart + ellipsisLen);
         }
     }
 
@@ -498,47 +503,56 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
 void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText,
                                            const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches)
 {
-    // 1. 先绘制整行普通文本
-    line.draw(painter, QPoint(0, 0));
-
-    // 2. 仅在匹配区域上绘制高亮文本
-    if (!allMatches.isEmpty()) {
-        painter->save();
-        painter->setPen(highlightColor);
-
-        int lineEnd = lineStartPos + lineText.length();
-
-        for (const auto &match : allMatches) {
-            int matchStart = match.first;
-            int matchEnd = matchStart + match.second;
-
-            // 跳过与当前行无关的匹配
-            if (matchEnd <= lineStartPos || matchStart >= lineEnd)
-                continue;
-
-            // 计算此行中要高亮的部分
-            int highlightStart = qMax(matchStart, lineStartPos) - lineStartPos;
-            int highlightEnd = qMin(matchEnd, lineEnd) - lineStartPos;
-            int highlightLength = highlightEnd - highlightStart;
-
-            if (highlightLength <= 0)
-                continue;
-
-            // 计算高亮区域在当前行的X坐标位置
-            qreal keywordXPos = line.cursorToX(lineStartPos + highlightStart) - line.cursorToX(lineStartPos);
-            qreal keywordWidth = line.cursorToX(lineStartPos + highlightStart + highlightLength)
-                               - line.cursorToX(lineStartPos + highlightStart);
-
-            // 绘制高亮文本
-            QRectF highlightRect(rect.x() + keywordXPos, rect.y(), keywordWidth + 1, rect.height()); // 宽度加1防止误差导致绘制异常
-            QString highlightText(lineText.mid(highlightStart, highlightLength));
-            painter->drawText(highlightRect,
-                             highlightText,
-                             QTextOption(document->defaultTextOption().alignment()));
-        }
-
-        painter->restore();
+    if (allMatches.isEmpty()) {
+        // 如果没有匹配项，直接绘制普通文本
+        line.draw(painter, QPoint(0, 0));
+        return;
     }
+
+    painter->save();
+
+    // 使用与主布局一致的参数创建临时布局，避免高亮的时候与选中的时候的布局不一致
+    QTextLayout tempLayout(lineText);
+    tempLayout.setFont(attribute<QFont>(kFont));
+    QTextOption opt;
+    opt.setAlignment((Qt::Alignment)attribute<uint>(kAlignment));
+    opt.setWrapMode(QTextOption::NoWrap);
+    opt.setTextDirection(attribute<Qt::LayoutDirection>(kTextDirection));
+    tempLayout.setTextOption(opt);
+
+    QList<QTextLayout::FormatRange> formats;
+    int lineEnd = lineStartPos + lineText.length();
+    for (const auto &match : allMatches) {
+        int matchStart = match.first;
+        int matchEnd = matchStart + match.second;
+        if (matchEnd <= lineStartPos || matchStart >= lineEnd)
+            continue;
+        int highlightStart = qMax(matchStart, lineStartPos) - lineStartPos;
+        int highlightEnd = qMin(matchEnd, lineEnd) - lineStartPos;
+        int highlightLength = highlightEnd - highlightStart;
+        if (highlightLength <= 0)
+            continue;
+        QTextLayout::FormatRange range;
+        range.start = highlightStart;
+        range.length = highlightLength;
+        range.format.setForeground(highlightColor);
+        formats.append(range);
+    }
+    tempLayout.setFormats(formats);
+
+    tempLayout.beginLayout();
+    QTextLine tempLine = tempLayout.createLine();
+    if (tempLine.isValid()) {
+        tempLine.setLineWidth(rect.width());
+        tempLine.setPosition(rect.topLeft());
+        tempLayout.endLayout();
+        tempLayout.draw(painter, QPointF(0, 0));
+    } else {
+        tempLayout.endLayout();
+        line.draw(painter, QPoint(0, 0));
+    }
+
+    painter->restore();
 }
 
 void ElideTextLayout::initLayoutOption(QTextLayout *lay)
