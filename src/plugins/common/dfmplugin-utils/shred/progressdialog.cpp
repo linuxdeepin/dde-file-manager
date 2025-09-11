@@ -33,7 +33,8 @@ ProgressWidget::ProgressWidget(QWidget *parent)
 void ProgressWidget::setValue(int value, const QString &fileName)
 {
     progress->start();
-    progress->setValue(value);
+    if (value > progress->value())
+        progress->setValue(value);
     if (!fileName.isEmpty())
         infoLable->setText(tr("Shredding file \" %1 \"").arg(fileName));
 }
