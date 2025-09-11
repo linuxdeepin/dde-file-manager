@@ -259,7 +259,9 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
 {
     Q_ASSERT(info);
     const QString &suffix = info->nameOf(NameInfoType::kSuffix);
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop) {
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
+        || info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
+        || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         QMimeType type = info->fileMimeType();
         if (!type.isValid())

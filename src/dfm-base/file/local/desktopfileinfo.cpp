@@ -256,10 +256,6 @@ bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
             return false;
 
         return ProxyFileInfo::canAttributes(type);
-    case FileCanType::kCanRename:
-        if (!isAttributes(OptInfoType::kIsWritable))
-            return false;
-        return ProxyFileInfo::canAttributes(type);
     default:
         return ProxyFileInfo::canAttributes(type);
     }
