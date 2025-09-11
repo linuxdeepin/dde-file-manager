@@ -71,19 +71,17 @@ void ShredUtils::initDconfig()
 
 bool ShredUtils::isValidFile(const QUrl &file)
 {
-    // 获取真实路径(解析软链接)
     auto info = InfoFactory::create<FileInfo>(file);
-    QString realPath = info->pathOf(FileInfo::FilePathInfoType::kCanonicalPath);
-    if (realPath.isEmpty())
-        realPath = file.toLocalFile();
+    if (!info) return false;
 
-    if (DevProxyMng->isFileOfExternalBlockMounts(realPath))
+    QString filePath = info->pathOf(FileInfo::FilePathInfoType::kAbsoluteFilePath);
+    if (DevProxyMng->isFileOfExternalBlockMounts(filePath))
         return true;
 
     // 如果是数据盘路径，移除前缀后再判断
     QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    realPath = FileUtils::bindPathTransform(realPath, false);
-    if (!realPath.startsWith(homePath) || realPath == homePath)
+    filePath = FileUtils::bindPathTransform(filePath, false);
+    if (!filePath.startsWith(homePath) || filePath == homePath)
         return false;
 
     // 检查是否为特殊目录
@@ -99,8 +97,8 @@ bool ShredUtils::isValidFile(const QUrl &file)
     };
 
     // 检查路径是否为受保护目录（只检查目录本身，不包括子目录）
-    if (protectedDirs.contains(realPath)) {
-        fmWarning() << "Cannot shred protected directory: " << realPath;
+    if (protectedDirs.contains(filePath)) {
+        fmWarning() << "Cannot shred protected directory: " << filePath;
         return false;
     }
 
