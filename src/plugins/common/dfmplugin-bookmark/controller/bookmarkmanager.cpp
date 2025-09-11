@@ -262,7 +262,10 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
             { "Property_Key_VisiableControl", "hidden_me" },
             { "Property_Key_ReportName", kConfigGroupBookmark },
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-            { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
+            { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
+            // 确保非默认书签逻辑可编辑和视图上的默认可编辑（上面的flags标志）一致，否则会出现不对书签进行修改的情况下，
+            // 从新窗口打开的操作导致后续的视图可编辑标志都被移除，从而书签变的无法编辑
+            { "Property_Key_Editable", true }
         };
     }
 
