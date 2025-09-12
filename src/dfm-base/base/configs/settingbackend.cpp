@@ -41,7 +41,8 @@ DWIDGET_USE_NAMESPACE
 
 BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivate::keyToAA {
     { LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
-    { LV2_GROUP_OPEN_ACTION ".02_open_file_action", Application::kOpenFileMode },
+    { LV2_GROUP_OPEN_ACTION ".01_open_in_new_tab", Application::kOpenInNewTab },
+    { LV2_GROUP_OPEN_ACTION ".03_open_file_action", Application::kOpenFileMode },
     { LV2_GROUP_NEW_TAB_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB_WINDOWS ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
@@ -243,7 +244,10 @@ void SettingBackend::initBasicSettingConfig()
     ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window",
                            tr("Always open folder in new window"),
                            false);
-    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".01_open_in_new_tab",
+                           tr("Open new folder in a new tab"),
+                           false);
+    ins->addCheckBoxConfig(LV2_GROUP_OPEN_ACTION ".02_open_folder_windows_in_aseparate_process",
                            tr("Activate existing window when reopening folder"),
                            false);
     addSettingAccessor(
@@ -259,7 +263,7 @@ void SettingBackend::initBasicSettingConfig()
                                                      kOpenFolderWindowsInASeparateProcess,
                                                      !(val.toBool()));
             });
-    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".02_open_file_action",
+    ins->addComboboxConfig(LV2_GROUP_OPEN_ACTION ".03_open_file_action",
                            tr("Open file:"),
                            QStringList { tr("Click"),
                                          tr("Double click") },

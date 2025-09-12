@@ -31,6 +31,7 @@ private:
     QHash<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> windows;
     FileManagerWindowsManager::WindowCreator customCreator {};
     quint64 previousActivedWindowId = 0;
+    QList<quint64> lastActivedWindowIdList;
 };
 
 DFMBASE_END_NAMESPACE

@@ -107,7 +107,7 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
         return;
     }
 
-    qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Closing window with ID:" 
+    qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Closing window with ID:"
                         << window->internalWinId() << "Remaining windows:" << (count - 1);
 
     if (count == 1) {   // last window
@@ -116,16 +116,17 @@ void FileManagerWindowsManagerPrivate::onWindowClosed(FileManagerWindow *window)
             qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Saving window state for last window";
             window->saveState();
         }
-        qCInfo(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Last window closing, ID:" 
+        qCInfo(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Last window closing, ID:"
                            << window->internalWinId();
         emit manager->lastWindowClosed(window->internalWinId());
         window->deleteLater();
     } else {
-        qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Regular window closing, ID:" 
+        qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Regular window closing, ID:"
                             << window->internalWinId();
         window->deleteLater();
     }
 
+    lastActivedWindowIdList.removeOne(window->internalWinId());
     int removed = windows.remove(window->internalWinId());
     if (removed > 0 && previousActivedWindowId == window->internalWinId()) {
         qCDebug(logDFMBase) << "FileManagerWindowsManager::onWindowClosed: Clearing previous active window ID";
@@ -166,7 +167,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     QString error;
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-    qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Creating window for URL:" << url 
+    qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Creating window for URL:" << url
                         << "New window:" << isNewWindow;
 
     QUrl showedUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
@@ -180,13 +181,13 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         }
     }
     if (!d->isValidUrl(showedUrl, &error)) {
-        qCWarning(logDFMBase) << "FileManagerWindowsManager::createWindow: Invalid URL:" << showedUrl 
+        qCWarning(logDFMBase) << "FileManagerWindowsManager::createWindow: Invalid URL:" << showedUrl
                               << "Error:" << error;
         // use home as showed url if default url is invalid
         showedUrl = UrlRoute::pathToReal(QDir::home().path());
         qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Using home directory as fallback:" << showedUrl;
         if (!d->isValidUrl(showedUrl, &error)) {
-            qCCritical(logDFMBase) << "FileManagerWindowsManager::createWindow: Even home directory is invalid:" 
+            qCCritical(logDFMBase) << "FileManagerWindowsManager::createWindow: Even home directory is invalid:"
                                    << showedUrl << "Error:" << error;
             return nullptr;
         }
@@ -207,7 +208,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     QX11Info::setAppTime(QX11Info::appUserTime());
 #endif
     qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Creating new window instance";
-    
+
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
     FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
                                         : new FMWindow(showedUrl);
@@ -242,13 +243,20 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     });
 
     connect(window, &FileManagerWindow::currentUrlChanged, this, [this, window](const QUrl &url) {
-        qCDebug(logDFMBase) << "FileManagerWindowsManager: Current URL changed for window:" 
+        qCDebug(logDFMBase) << "FileManagerWindowsManager: Current URL changed for window:"
                             << window->winId() << "New URL:" << url;
         emit currentUrlChanged(window->winId(), url);
     });
 
+    connect(window, &FileManagerWindow::windowActived, this, [this, window] {
+        auto &&id = window->internalWinId();
+        if (d->lastActivedWindowIdList.contains(id))
+            d->lastActivedWindowIdList.removeOne(id);
+        d->lastActivedWindowIdList.append(id);
+    });
+
     // In order for the plugin to cache the current window (before the base frame is installed)
-    qCInfo(logDFMBase) << "FileManagerWindowsManager::createWindow: New window created with ID:" 
+    qCInfo(logDFMBase) << "FileManagerWindowsManager::createWindow: New window created with ID:"
                        << window->winId() << "URL:" << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
@@ -353,6 +361,11 @@ void FileManagerWindowsManager::resetPreviousActivedWindowId()
 quint64 FileManagerWindowsManager::previousActivedWindowId()
 {
     return d->previousActivedWindowId;
+}
+
+quint64 FileManagerWindowsManager::lastActivedWindowId()
+{
+    return d->lastActivedWindowIdList.isEmpty() ? 0 : d->lastActivedWindowIdList.last();
 }
 
 bool FileManagerWindowsManager::containsCurrentUrl(const QUrl &url, const QWidget *win)

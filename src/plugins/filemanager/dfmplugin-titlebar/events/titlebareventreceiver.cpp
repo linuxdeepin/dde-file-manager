@@ -6,7 +6,6 @@
 #include "views/titlebarwidget.h"
 #include "views/navwidget.h"
 #include "views/tabbar.h"
-#include "views/tab.h"
 #include "utils/crumbmanager.h"
 #include "utils/crumbinterface.h"
 #include "utils/titlebarhelper.h"
@@ -152,7 +151,7 @@ bool TitleBarEventReceiver::handleTabAddable(quint64 windowId)
         return false;
     }
 
-    return w->tabBar()->tabAddable();
+    return true;
 }
 
 void TitleBarEventReceiver::handleCloseTabs(const QUrl &url)
@@ -171,9 +170,12 @@ void TitleBarEventReceiver::handleSetTabAlias(const QUrl &url, const QString &na
     for (auto w : titlebarWidges) {
         auto tabBar = w->tabBar();
         for (int i = 0; i < tabBar->count(); ++i) {
-            auto tab = tabBar->tabAt(i);
-            if (tab && UniversalUtils::urlEquals(url, tab->getCurrentUrl()))
-                tab->setTabAlias(name);
+            auto tab = tabBar->tabData(i).value<Tab>();
+            if (UniversalUtils::urlEquals(url, tab.tabUrl)) {
+                tab.tabAlias = name;
+                tabBar->setTabData(i, QVariant::fromValue(tab));
+                tabBar->updateTabName(i);
+            }
         }
     }
 }

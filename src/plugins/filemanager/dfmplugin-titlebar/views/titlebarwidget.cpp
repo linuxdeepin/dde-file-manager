@@ -9,7 +9,6 @@
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
-#include "views/tab.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindow.h>
@@ -85,11 +84,6 @@ CrumbBar *TitleBarWidget::titleCrumbBar() const
 
 void TitleBarWidget::openNewTab(const QUrl &url)
 {
-    if (!tabBar()->tabAddable()) {
-        fmWarning() << "Cannot open new tab - maximum tab count reached";
-        return;
-    }
-
     tabBar()->createTab();
 
     if (url.isEmpty())
@@ -157,7 +151,7 @@ void TitleBarWidget::handleHotketCloseCurrentTab()
         return;
     }
 
-    tabBar()->removeTab(tabBar()->getCurrentIndex());
+    tabBar()->removeTab(tabBar()->currentIndex());
 }
 
 void TitleBarWidget::handleHotketNextTab()
@@ -350,11 +344,11 @@ void TitleBarWidget::initConnect()
     connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
-    connect(bottomBar, &TabBar::tabRemoved, this, &TitleBarWidget::onTabRemoved);
+    connect(bottomBar, &TabBar::tabHasRemoved, this, &TitleBarWidget::onTabRemoved);
     connect(bottomBar, &TabBar::tabMoved, this, &TitleBarWidget::onTabMoved);
-    connect(bottomBar, &TabBar::currentChanged, this, &TitleBarWidget::onTabCurrentChanged);
+    connect(bottomBar, &TabBar::currentTabChanged, this, &TitleBarWidget::onTabCurrentChanged);
     connect(bottomBar, &TabBar::tabCloseRequested, this, &TitleBarWidget::onTabCloseRequested);
-    connect(bottomBar, &TabBar::tabAddButtonClicked, this, &TitleBarWidget::onTabAddButtonClicked);
+    connect(bottomBar, &TabBar::tabAddRequested, this, &TitleBarWidget::onTabAddButtonClicked);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -488,12 +482,9 @@ void TitleBarWidget::onTabCreated(const QString &uniqueId)
 
 void TitleBarWidget::onTabRemoved(int oldIndex, int nextIndex)
 {
-
-    Tab *tab = tabBar()->tabAt(oldIndex);
-    Tab *nextTab = tabBar()->tabAt(nextIndex);
-    if (tab && nextTab) {
-        TitleBarEventCaller::sendTabRemoved(this, tab->uniqueId(), nextTab->uniqueId());
-    }
+    Tab tab = tabBar()->tabData(oldIndex).value<Tab>();
+    Tab nextTab = tabBar()->tabData(oldIndex).value<Tab>();
+    TitleBarEventCaller::sendTabRemoved(this, tab.uniqueId, nextTab.uniqueId);
     curNavWidget->removeNavStackAt(oldIndex);
 }
 
@@ -513,31 +504,32 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
 
 void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
 {
-    Tab *tab = tabBar()->tabAt(newIndex);
-    if (tab) {
-        if (oldIndex >= 0 && oldIndex < tabBar()->count())
-            saveTitleBarState(tabBar()->tabAt(oldIndex)->uniqueId());
+    auto data = tabBar()->tabData(newIndex);
+    if (data.isValid()) {
+        Tab tab = data.value<Tab>();
+        if (oldIndex >= 0 && oldIndex < tabBar()->count()) {
+            Tab oldTab = tabBar()->tabData(oldIndex).value<Tab>();
+            saveTitleBarState(oldTab.uniqueId);
+        }
         // switch tab must before change url! otherwise NavWidget can not work!
         curNavWidget->switchHistoryStack(newIndex);
-        TitleBarEventCaller::sendTabChanged(this, tab->uniqueId());
-        TitleBarEventCaller::sendChangeCurrentUrl(this, tab->getCurrentUrl());
-        restoreTitleBarState(tab->uniqueId());
-    } else {
-        fmWarning() << "Tab current changed but new tab is null - newIndex:" << newIndex;
+        TitleBarEventCaller::sendTabChanged(this, tab.uniqueId);
+        TitleBarEventCaller::sendChangeCurrentUrl(this, tab.tabUrl);
+        restoreTitleBarState(tab.uniqueId);
     }
 }
 
-void TitleBarWidget::onTabCloseRequested(int index, bool remainState)
+void TitleBarWidget::onTabCloseRequested(int index)
 {
-    tabBar()->removeTab(index, remainState);
+    tabBar()->removeTab(index);
 }
 
 void TitleBarWidget::onTabAddButtonClicked()
 {
     QUrl url = Application::instance()->appUrlAttribute(Application::kUrlOfNewTab);
-    auto tab = tabBar()->currentTab();
-    if (!url.isValid() && tab)
-        url = tab->getCurrentUrl();
+    auto tab = tabBar()->tabData(tabBar()->currentIndex()).value<Tab>();
+    if (!url.isValid() && tab.tabUrl.isValid())
+        url = tab.tabUrl;
 
     openNewTab(url);
 }
