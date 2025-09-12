@@ -822,4 +822,12 @@ void FileManagerWindow::resizeEvent(QResizeEvent *event)
     d->updateSideBarVisibility();
 }
 
+bool FileManagerWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::WindowActivate)
+        Q_EMIT windowActived();
+
+    return DMainWindow::event(event);
+}
+
 }   // namespace dfmbase

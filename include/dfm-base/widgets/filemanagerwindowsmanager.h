@@ -35,6 +35,7 @@ public:
     QList<quint64> windowIdList();
     void resetPreviousActivedWindowId();
     quint64 previousActivedWindowId();
+    quint64 lastActivedWindowId();
     bool containsCurrentUrl(const QUrl &url, const QWidget *win = nullptr);
 
 Q_SIGNALS:
