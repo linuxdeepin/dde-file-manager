@@ -251,7 +251,7 @@ void SettingBackend::initBasicSettingConfig()
                            tr("Activate existing window when reopening folder"),
                            false);
     addSettingAccessor(
-            LV2_GROUP_OPEN_ACTION ".01_open_folder_windows_in_aseparate_process",
+            LV2_GROUP_OPEN_ACTION ".02_open_folder_windows_in_aseparate_process",
             []() {
                 return !(DConfigManager::instance()->value(kViewDConfName,
                                                            kOpenFolderWindowsInASeparateProcess,

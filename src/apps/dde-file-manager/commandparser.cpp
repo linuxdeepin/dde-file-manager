@@ -363,19 +363,30 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
         });
     }
 
-    auto winId = FileManagerWindowsManager::instance().lastActivedWindowId();
-    if (Application::appAttribute(Application::kOpenInNewTab).toBool() && winId > 0) {
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, url);
-        auto window = FileManagerWindowsManager::instance().findWindowById(winId);
-        if (window) {
-            if (window->isMinimized())
-                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
-            window->activateWindow();
+    auto flag = !DConfigManager::instance()->value(kViewDConfName, kOpenFolderWindowsInASeparateProcess, true).toBool();
+    if (Application::appAttribute(Application::kOpenInNewTab).toBool() && !FMWindowsIns.windowIdList().isEmpty()) {
+        auto activeWindow = [](FileManagerWindow *w) {
+            if (w->isMinimized())
+                w->setWindowState(w->windowState() & ~Qt::WindowMinimized);
+            w->activateWindow();
+        };
+
+        if (flag) {
+            auto window = FMWindowsIns.createWindow(url, false);
+            if (window) {
+                activeWindow(window);
+                return;
+            }
         }
+
+        auto winId = FMWindowsIns.lastActivedWindowId();
+        if (winId <= 0)
+            winId = FMWindowsIns.windowIdList().last();
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, url);
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window)
+            activeWindow(window);
     } else {
-        auto flag = !DConfigManager::instance()->value(kViewDConfName,
-                                                       kOpenFolderWindowsInASeparateProcess, true)
-                             .toBool();
         flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
     }
