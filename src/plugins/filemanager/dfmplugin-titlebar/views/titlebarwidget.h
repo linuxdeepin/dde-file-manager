@@ -77,7 +77,7 @@ private slots:
     void onTabRemoved(int oldIndex, int nextIndex);
     void onTabMoved(int from, int to);
     void onTabCurrentChanged(int oldIndex, int newIndex);
-    void onTabCloseRequested(int index, bool remainState);
+    void onTabCloseRequested(int index);
     void onTabAddButtonClicked();
     void quitSearch();
 
