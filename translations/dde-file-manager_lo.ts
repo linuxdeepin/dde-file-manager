@@ -3164,255 +3164,260 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::SettingBackend</name>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="245"/>
         <source>Always open folder in new window</source>
         <translation>បុរាណបើកថ្លេកថ្មី</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="248"/>
+        <source>Open new folder in a new tab</source>
+        <translation>ເປີດໂຟນເດີໃນຕົວເລກສຸມັກ</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="267"/>
         <source>Open file:</source>
         <translation>បើកឯកសារ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
         <source>Click</source>
         <translation>ចុច</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>Double click</source>
         <translation>ចុចពីរ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
         <source>New window and tab</source>
         <translation>ថ្លេកថ្មីនិងទម្រង់</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <source>Open from default window:</source>
         <translation>បើកពីថ្លេកលំដាប់លំនៅ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
         <source>Computer</source>
         <translation>មេូទ្រុក</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Home</source>
         <translation>ផ្ទៃដើម</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>Desktop</source>
         <translation>តុប្រាស់</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Videos</source>
         <translation>វីដេអូ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
         <source>Music</source>
         <translation>មូសឿក</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
         <source>Pictures</source>
         <translation>រូបភាព</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
         <source>Documents</source>
         <translation>ឯកសារ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
         <source>Downloads</source>
         <translation>ດາວໂຫລດ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>Open in new tab:</source>
         <translation>ເປີດໃນຕົວເລກສຸມັກ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Current Directory</source>
         <translation>ໂຟນເດີປັຈຈຸບັນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="319"/>
         <source>Files and folders</source>
         <translation>ໄຟລ໌ແລະໂຟນເດີ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="321"/>
         <source>Show hidden files</source>
         <translation>แสดงไฟล์ซ่อน</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="324"/>
         <source>Show file extensions</source>
         <translation>แสดงนามสกุลไฟล์</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
         <source>Mix sorting of files and folders</source>
         <translation>ผสมผสานการเรียงลำดับไฟล์และโฟลเดอร์</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="330"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="334"/>
         <source>Workspace</source>
         <translation>พื้นที่ทำงาน</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="331"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="335"/>
         <source>View</source>
         <translation>ເບິ່ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="352"/>
         <source>Default icon grid density:</source>
         <translation>ຄວາມກົ່ງຕົງຂອງຮູບສັນນິ້ວຄ່ອຍເລີ່ມຕົ້ນ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="362"/>
         <source>Default list height:</source>
         <translation>ความสูงเริ่มต้นของรายการ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
         <source>Tree</source>
         <translation>ต้นไม้</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
         <source>Default view:</source>
         <translation>รูปแบบการดูเริ่มต้น:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="369"/>
         <source>Icon</source>
         <translation>ไอคอน</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="251"/>
         <source>Activate existing window when reopening folder</source>
         <translation>เปิดใช้งานหน้าต่างที่มีอยู่เมื่อเปิดซ้ำโฟลเดอร์</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="342"/>
         <source>Default icon size:</source>
         <translation>ຂະໜາດຮູບສັນນິ້ວເລີ່ມຕົ້ນ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="369"/>
         <source>List</source>
         <translation>ບັນຊີ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="382"/>
         <source>Restore default view mode for all directories</source>
         <translation>ជំនួសទីតាំងទៅលើ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
         <source>Restore default view mode</source>
         <translation>ກັບຄືນຮູບແບບເບິ່ງເລີ່ມຕົ້ນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="387"/>
         <source>Thumbnail preview</source>
         <translation>ផ្ទាំងភាពយន្ត</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="390"/>
         <source>Compressed file preview</source>
         <translation>ການສະແດງຕົວຢ່າງໄຟລ໌ທີ່ຖືກບັນທຶກ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
         <source>Text preview</source>
         <translation>ខ្លឹមសារលំដាប់</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
         <source>Document preview</source>
         <translation>ການສະແດງເອກະສານຕົວຢ່າງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="397"/>
         <source>Image preview</source>
         <translation>ການສະແດງພາບຕົວຢ່າງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="399"/>
         <source>Video preview</source>
         <translation>ການສະແດງວິດີໂອຕົວຢ່າງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="397"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
         <source>Music preview</source>
         <translation>ການທົດສອບສຽງເພງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="400"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="404"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>បរិស្ថានចំណុចបំបាកបង្ហាញផ្ទាំងភាពយន្ត</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="405"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>ການເປີດການທົດສອບຮູບນ້ອຍອາດຈະເຮັດໃຫ້ເຊື້ອຂໍ້ມູນໄລຍະໄປມາຊ້າຂຶ້ນຫຼືການດຳເນີນການຢຸດນັ້ນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="414"/>
         <source>Advanced</source>
         <translation>ຂັ້ນສູງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="416"/>
         <source>Mount</source>
         <translation>ຕິດຕັ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="419"/>
         <source>Auto mount</source>
         <translation>ອັອໂມດ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="424"/>
         <source>Open after auto mount</source>
         <translation>ອັອໂມດຫັນເປັນເປັນບູຮ່ຫຼັງຈາກອັອໂມດ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="425"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="429"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>ກັບອົງປະກອບຂອງເຄື່ອງມູນ Samba ഷ້້ອງການ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="431"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>ການປ່ຽນແປງການສະແດງຕົວຊີ້ແຈງຂໍ້ມູນອາດຈະເຮັດໃຫ້ການຕິດຕັ້ງບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="432"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="436"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>ນີ້ນັ້ນໃຊ້ກ диалог выбора файла ഷ້ອງການຈັດການ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="434"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="438"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>ຂໍຄວາມຢືນຢັນຂອງຂ້ອຍເມື່ອລົບໄຟລ</translation>
     </message>
@@ -6671,6 +6676,29 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
         <source>Type</source>
         <translation>ប្រភេទ</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_titlebar::TabBar</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="207"/>
+        <source>Close tab</source>
+        <translation>ປິດແທັບ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="208"/>
+        <source>Close other tabs</source>
+        <translation>ປິດແທັບອື່ນໆ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="216"/>
+        <source>Close tabs to the left</source>
+        <translation>ປິດແທັບທາງຊ້າຍ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="224"/>
+        <source>Close tabs to the right</source>
+        <translation>ປິດແທັບທາງຂວາ</translation>
     </message>
 </context>
 <context>
