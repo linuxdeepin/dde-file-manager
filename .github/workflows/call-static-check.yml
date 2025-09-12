@@ -10,4 +10,3 @@ concurrency:
 jobs:
   static-check:
     uses: linuxdeepin/.github/.github/workflows/static-check.yml@master
-    secrets: inherit
