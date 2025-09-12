@@ -10,4 +10,3 @@ concurrency:
 jobs:
   api-check:
     uses: linuxdeepin/.github/.github/workflows/api-check.yml@master
-    secrets: inherit
