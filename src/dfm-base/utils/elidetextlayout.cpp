@@ -498,47 +498,67 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
 void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText,
                                            const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches)
 {
-    // 1. 先绘制整行普通文本
-    line.draw(painter, QPoint(0, 0));
-
-    // 2. 仅在匹配区域上绘制高亮文本
-    if (!allMatches.isEmpty()) {
-        painter->save();
-        painter->setPen(highlightColor);
-
-        int lineEnd = lineStartPos + lineText.length();
-
-        for (const auto &match : allMatches) {
-            int matchStart = match.first;
-            int matchEnd = matchStart + match.second;
-
-            // 跳过与当前行无关的匹配
-            if (matchEnd <= lineStartPos || matchStart >= lineEnd)
-                continue;
-
-            // 计算此行中要高亮的部分
-            int highlightStart = qMax(matchStart, lineStartPos) - lineStartPos;
-            int highlightEnd = qMin(matchEnd, lineEnd) - lineStartPos;
-            int highlightLength = highlightEnd - highlightStart;
-
-            if (highlightLength <= 0)
-                continue;
-
-            // 计算高亮区域在当前行的X坐标位置
-            qreal keywordXPos = line.cursorToX(lineStartPos + highlightStart) - line.cursorToX(lineStartPos);
-            qreal keywordWidth = line.cursorToX(lineStartPos + highlightStart + highlightLength)
-                               - line.cursorToX(lineStartPos + highlightStart);
-
-            // 绘制高亮文本
-            QRectF highlightRect(rect.x() + keywordXPos, rect.y(), keywordWidth + 1, rect.height()); // 宽度加1防止误差导致绘制异常
-            QString highlightText(lineText.mid(highlightStart, highlightLength));
-            painter->drawText(highlightRect,
-                             highlightText,
-                             QTextOption(document->defaultTextOption().alignment()));
-        }
-
-        painter->restore();
+    if (allMatches.isEmpty()) {
+        // 如果没有匹配项，直接绘制普通文本
+        line.draw(painter, QPoint(0, 0));
+        return;
     }
+    
+    // 保存原始画笔状态
+    painter->save();
+    
+    // 创建一个临时布局用于绘制高亮部分
+    QTextLayout tempLayout(lineText);
+    tempLayout.setFont(document->defaultFont());
+    tempLayout.setTextOption(document->defaultTextOption());
+    
+    // 设置文本格式
+    QList<QTextLayout::FormatRange> formats;
+    
+    // 为每个匹配区域添加格式
+    for (const auto &match : allMatches) {
+        int matchStart = match.first;
+        int matchEnd = matchStart + match.second;
+        
+        // 跳过与当前行无关的匹配
+        if (matchEnd <= lineStartPos || matchStart >= lineStartPos + lineText.length())
+            continue;
+        
+        // 计算此行中要高亮的部分
+        int highlightStart = qMax(matchStart, lineStartPos) - lineStartPos;
+        int highlightEnd = qMin(matchEnd, lineStartPos + lineText.length()) - lineStartPos;
+        int highlightLength = highlightEnd - highlightStart;
+        
+        if (highlightLength <= 0)
+            continue;
+        
+        // 创建格式
+        QTextLayout::FormatRange range;
+        range.start = highlightStart;
+        range.length = highlightLength;
+        range.format.setForeground(highlightColor);
+        formats.append(range);
+    }
+    
+    // 应用格式
+    tempLayout.setFormats(formats);
+    
+    // 布局文本
+    tempLayout.beginLayout();
+    QTextLine tempLine = tempLayout.createLine();
+    if (tempLine.isValid()) {
+        tempLine.setLineWidth(rect.width());
+        tempLine.setPosition(rect.topLeft());
+        tempLayout.endLayout();
+        
+        // 绘制带有高亮的文本
+        tempLayout.draw(painter, QPointF(0, 0));
+    } else {
+        // 如果创建临时文本行失败，回退到原始绘制方法
+        line.draw(painter, QPoint(0, 0));
+    }
+    
+    painter->restore();
 }
 
 void ElideTextLayout::initLayoutOption(QTextLayout *lay)
