@@ -96,26 +96,16 @@ FileSortWorker::~FileSortWorker()
 FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrder order, const QString &strategy)
 {
     fmInfo() << "Setting group arguments - strategy:" << strategy << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
-
-    FileSortWorker::GroupingOpt opt { FileSortWorker::GroupingOpt::kGroupingOptNone };
+    QString oldStrategy = currentStrategy ? currentStrategy->getStrategyName() : "";
     groupOrder = order;
     currentStrategy = GroupingFactory::createStrategy(strategy, this);
     isCurrentGroupingEnabled = (currentStrategy->getStrategyName() == GroupStrategty::kNoGroup) ? false : true;
 
-    if (!currentStrategy || (groupOrder == order && currentStrategy->getStrategyName() == strategy)) {
-        return opt;
+    if (!currentStrategy || !isCurrentGroupingEnabled || !groupingEngine) {
+        return FileSortWorker::GroupingOpt::kGroupingOptNone;
     }
 
-    groupOrder = order;
-    currentStrategy = GroupingFactory::createStrategy(strategy, this);
-    if (currentStrategy && currentStrategy->getStrategyName() != GroupStrategty::kNoGroup)
-        isCurrentGroupingEnabled = true;
-    else
-        isCurrentGroupingEnabled = false;
-
-    // TODO： 参考 setSortArguments 返回 OnlyOrderChanged
-
-    return FileSortWorker::GroupingOpt::kGroupingOptOtherChanged;
+    return strategy == oldStrategy ? FileSortWorker::GroupingOpt::kGroupingOptOnlyOrderChanged : FileSortWorker::GroupingOpt::kGroupingOptOtherChanged;
 }
 
 FileSortWorker::SortOpt FileSortWorker::setSortArguments(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile)
@@ -662,6 +652,17 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
     }
 
     auto opt = setGroupArguments(order, strategy);
+    if (opt == GroupingOpt::kGroupingOptNone)
+        return;
+
+    emit requestCursorWait();
+    FinallyUtil releaseCursor([this] {
+        emit reqUestCloseCursor();
+    });
+    if (opt == GroupingOpt::kGroupingOptOnlyOrderChanged) {
+
+    } else {
+    }
 
     // TODO: 改为switch opt实现，以下只是 demo,仅实现基本的分组流程，以下分组数据完全异常，数据会丢失
     // TODO：可能要重新实现 GroupingEngine
@@ -1724,7 +1725,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, SortScenarios
     // 1. 符号链接的大小需要直接获取指向的文件的信息排序
     // 2. 类型排序必须使用 fastMimeType 保证一致性
     bool useFileInfo = false;
-    if (!leftData.isValid() || (leftSortInfo->isSymLink() && orgSortRole == kItemFileSizeRole)) {
+    if (!leftData.isValid() || (leftSortInfo->isSymLink())) {
         const FileInfoPointer leftInfo = leftItem && leftItem->fileInfo()
                 ? leftItem->fileInfo()
                 : InfoFactory::create<FileInfo>(left);
@@ -1732,7 +1733,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, SortScenarios
         useFileInfo = true;
     }
 
-    if (!rightData.isValid() || (rightSortInfo->isSymLink() && orgSortRole == kItemFileSizeRole)) {
+    if (!rightData.isValid() || (rightSortInfo->isSymLink())) {
         const FileInfoPointer rightInfo = rightItem && rightItem->fileInfo()
                 ? rightItem->fileInfo()
                 : InfoFactory::create<FileInfo>(right);
