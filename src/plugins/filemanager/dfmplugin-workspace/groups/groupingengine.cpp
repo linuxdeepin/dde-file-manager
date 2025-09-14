@@ -5,6 +5,7 @@
 #include "groupingengine.h"
 
 #include <dfm-base/dfm_log_defines.h>
+#include <dfm-base/base/schemefactory.h>
 
 #include <QMutexLocker>
 #include <QElapsedTimer>
@@ -13,6 +14,7 @@
 
 DPWORKSPACE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 GroupingEngine::GroupingEngine(QObject *parent)
     : QObject(parent)
@@ -189,8 +191,12 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
             // Convert FileItemDataPointer to FileInfoPointer for strategy interface
             FileInfoPointer fileInfo = file->fileInfo();
             if (!fileInfo) {
-                fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
-                continue;
+                fileInfo = InfoFactory::create<FileInfo>(file->data(ItemRoles::kItemUrlRole).toUrl());
+                Q_ASSERT(fileInfo);
+                if (!fileInfo) {
+                    fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
+                    continue;
+                }
             }
 
             QString groupKey = strategy->getGroupKey(fileInfo);

@@ -133,17 +133,17 @@ QVariant FileItemData::data(int role) const
         return url.path();
     case kItemFileLastModifiedRole: {
         QDateTime lastModified;
-        if (sortInfo && sortInfo->isInfoCompleted()) {
+        if (sortInfo && !sortInfo->isSymLink() && sortInfo->isInfoCompleted()) {
             lastModified = QDateTime::fromSecsSinceEpoch(sortInfo->lastModifiedTime());
         }
         if (info) {
-            auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+            lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         }
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemFileCreatedRole: {
         QDateTime created;
-        if (sortInfo && sortInfo->isInfoCompleted()) {
+        if (sortInfo && !sortInfo->isSymLink() && sortInfo->isInfoCompleted()) {
             created = QDateTime::fromSecsSinceEpoch(sortInfo->createTime());
         }
         if (info) {
