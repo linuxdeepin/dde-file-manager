@@ -148,7 +148,7 @@ ItemRoles TitleBarEventCaller::sendCurrentGroupRole(QWidget *sender)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    int currentGroupRole = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupRole", id).toInt();
+    int currentGroupRole = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", id).toInt();
     return static_cast<ItemRoles>(currentGroupRole);
 }
 

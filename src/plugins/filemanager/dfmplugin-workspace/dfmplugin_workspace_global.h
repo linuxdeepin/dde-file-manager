@@ -90,9 +90,9 @@ inline constexpr char kSize[] { "Size" };
 inline constexpr char kModifiedTime[] { "ModifiedTime" };
 inline constexpr char kCreatedTime[] { "CreatedTime" };
 inline constexpr char kType[] { "Type" };
-
+inline constexpr char kCustomPath[] { "CustomPath" };
+inline constexpr char kCustomTime[] { "CustomTime" };
 }
-
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };
 inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };

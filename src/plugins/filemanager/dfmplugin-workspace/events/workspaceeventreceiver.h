@@ -34,7 +34,7 @@ public slots:
     void handleSelectAll(quint64 windowId);
     void handleReverseSelect(quint64 windowId);
     void handleSetSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
-    void handleSetGroup(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
+    void handleSetGroup(quint64 windowId, const QString &strategyName);
 
     void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
     void handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes);
@@ -55,7 +55,7 @@ public slots:
     void handleFileUpdate(const QUrl &url);
     DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> handleColumnRoles(quint64 windowId);
-    DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentGroupRole(quint64 windowId);
+    QString handleCurrentGroupStrategy(quint64 windowId);
 
     QRectF handleGetVisualGeometry(const quint64 windowID);
     QRectF handleGetViewItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);

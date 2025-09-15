@@ -41,7 +41,7 @@ QHash<QString, QString> TimeGroupStrategy::getDisplayNames()
 TimeGroupStrategy::TimeGroupStrategy(TimeType timeType, QObject *parent)
     : AbstractGroupStrategy(parent), m_timeType(timeType)
 {
-    fmDebug() << "TimeGroupStrategy: Initialized with time type:" << (timeType == ModificationTime ? "Modification" : "Creation");
+    fmDebug() << "TimeGroupStrategy: Initialized with time type:" << (timeType == kModificationTime ? "Modification" : "Creation");
 }
 
 TimeGroupStrategy::~TimeGroupStrategy()
@@ -58,10 +58,12 @@ QString TimeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
 
     // Get the appropriate timestamp based on the time type
     QDateTime fileTime;
-    if (m_timeType == ModificationTime) {
+    if (m_timeType == kModificationTime) {
         fileTime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
-    } else {
+    } else if (m_timeType == kCreationTime) {
         fileTime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+    } else {
+        fileTime = info->timeOf(TimeInfoType::kCustomerSupport).value<QDateTime>();
     }
 
     if (!fileTime.isValid()) {
@@ -145,10 +147,12 @@ bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString TimeGroupStrategy::getStrategyName() const
 {
-    if (m_timeType == ModificationTime) {
+    if (m_timeType == kModificationTime) {
         return GroupStrategty::kModifiedTime;
-    } else {
+    } else if (m_timeType == kCreationTime) {
         return GroupStrategty::kCreatedTime;
+    } else {
+        return GroupStrategty::kCustomTime;
     }
 }
 

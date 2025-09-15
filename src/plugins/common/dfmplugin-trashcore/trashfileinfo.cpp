@@ -267,6 +267,8 @@ QUrl TrashFileInfo::urlOf(const UrlInfoType type) const
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->targetUrl;
+    case FileUrlInfoType::kCustomerStartUrl:
+        [[fallthrough]];
     case FileUrlInfoType::kOriginalUrl:
         return d->originalUrl;
     case FileUrlInfoType::kUrl:
@@ -418,6 +420,8 @@ QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
         return d->lastRead();
     case TimeInfoType::kLastModified:
         return d->lastModified();
+    case TimeInfoType::kCustomerSupport:
+        [[fallthrough]];
     case TimeInfoType::kDeletionTime:
         return d->deletionTime();
     default:

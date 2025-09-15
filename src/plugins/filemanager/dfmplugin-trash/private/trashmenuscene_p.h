@@ -24,7 +24,7 @@ public:
     void updateMenu(QMenu *menu);
     void updateSortSubMenu(QMenu *menu);
     void updateGroupSubMenu(QMenu *menu);
-    void groupByRole(int role);
+    void groupByRole(const QString &strategy);
 
 private:
     /**
@@ -32,14 +32,10 @@ private:
      * @param menu The submenu to update
      * @param actionsToRemove List of action IDs to remove from the submenu
      * @param actionsToAdd List of action IDs to add to the submenu (in order)
-     * @param currentRoleSlot Slot name to query current role
-     * @param roleToActionMap Mapping from ItemRoles to action IDs for state update
      */
-    void updateSubMenuGeneric(QMenu *menu, 
-                             const QStringList &actionsToRemove,
-                             const QStringList &actionsToAdd,
-                             const QString &currentRoleSlot,
-                             const QMap<DFMBASE_NAMESPACE::Global::ItemRoles, QString> &roleToActionMap);
+    void updateSubMenuGeneric(QMenu *menu,
+                              const QStringList &actionsToRemove,
+                              const QStringList &actionsToAdd);
 
 private:
     TrashMenuScene *q;
