@@ -652,8 +652,10 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
     }
 
     auto opt = setGroupArguments(order, strategy);
-    if (opt == GroupingOpt::kGroupingOptNone)
+    if (opt == GroupingOpt::kGroupingOptNone) {
+        emit groupingDataChanged();
         return;
+    }
 
     emit requestCursorWait();
     FinallyUtil releaseCursor([this] {

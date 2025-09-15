@@ -15,7 +15,6 @@
 #include <QHash>
 #include <QString>
 #include <QList>
-#include <QMutex>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -40,22 +39,6 @@ public:
         QString errorMessage;   ///< Error message if operation failed
     };
 
-    /**
-     * @brief Cache key for grouping results
-     */
-    struct CacheKey
-    {
-        QString strategyName;   ///< Strategy name
-        int fileCount;   ///< Number of files
-        Qt::SortOrder groupOrder;   ///< Group sort order
-
-        bool operator==(const CacheKey &other) const
-        {
-            return strategyName == other.strategyName
-                    && fileCount == other.fileCount
-                    && groupOrder == other.groupOrder;
-        }
-    };
 
     /**
      * @brief Constructor
@@ -153,19 +136,8 @@ private:
                                       const QList<FileItemDataPointer> &groupFiles,
                                       DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
-    // Cache management
-    mutable CacheKey m_lastCacheKey;
-    mutable GroupingResult m_cachedResult;
-    mutable bool m_cacheValid = false;
-    mutable QMutex m_cacheMutex;
-
     // Configuration
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
-
-    // Statistics
-    mutable int m_cacheHits = 0;
-    mutable int m_cacheMisses = 0;
-    mutable QMutex m_statsMutex;
 };
 
 DPWORKSPACE_END_NAMESPACE

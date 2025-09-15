@@ -7,7 +7,6 @@
 #include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/base/schemefactory.h>
 
-#include <QMutexLocker>
 #include <QElapsedTimer>
 #include <QDebug>
 #include <algorithm>
@@ -38,32 +37,6 @@ GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDa
     QElapsedTimer timer;
     timer.start();
 
-    // Build cache key
-    CacheKey currentKey {
-        strategy->getStrategyName(),
-        static_cast<int>(files.size()),
-        m_groupOrder
-    };
-
-    // Check cache
-    {
-        QMutexLocker locker(&m_cacheMutex);
-        if (m_cacheValid && currentKey == m_lastCacheKey) {
-            QMutexLocker statsLocker(&m_statsMutex);
-            ++m_cacheHits;
-            fmDebug() << "GroupingEngine: Cache hit for strategy"
-                      << strategy->getStrategyName()
-                      << "with" << files.size() << "files";
-            return m_cachedResult;
-        }
-    }
-
-    // Cache miss - perform grouping
-    {
-        QMutexLocker statsLocker(&m_statsMutex);
-        ++m_cacheMisses;
-    }
-
     fmDebug() << "GroupingEngine: Performing grouping for strategy"
               << strategy->getStrategyName()
               << "with" << files.size() << "files";
@@ -73,12 +46,6 @@ GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDa
     if (result.success) {
         // Sort groups by display order
         sortGroupsByDisplayOrder(result.groups, strategy);
-
-        // Update cache
-        QMutexLocker locker(&m_cacheMutex);
-        m_lastCacheKey = currentKey;
-        m_cachedResult = result;
-        m_cacheValid = true;
     }
 
     fmDebug() << "GroupingEngine: Grouping completed in"
@@ -133,41 +100,13 @@ GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupin
     return modelData;
 }
 
-void GroupingEngine::invalidateCache()
-{
-    QMutexLocker locker(&m_cacheMutex);
-    m_cacheValid = false;
-    fmDebug() << "GroupingEngine: Cache invalidated";
-}
-
 void GroupingEngine::setGroupOrder(Qt::SortOrder order)
 {
     if (m_groupOrder != order) {
         m_groupOrder = order;
-        invalidateCache();   // Order change invalidates cache
         fmDebug() << "GroupingEngine: Group order changed to"
                   << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
     }
-}
-
-int GroupingEngine::getCacheHits() const
-{
-    QMutexLocker locker(&m_statsMutex);
-    return m_cacheHits;
-}
-
-int GroupingEngine::getCacheMisses() const
-{
-    QMutexLocker locker(&m_statsMutex);
-    return m_cacheMisses;
-}
-
-void GroupingEngine::resetCacheStats()
-{
-    QMutexLocker locker(&m_statsMutex);
-    m_cacheHits = 0;
-    m_cacheMisses = 0;
-    fmDebug() << "GroupingEngine: Cache statistics reset";
 }
 
 GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileItemDataPointer> &files,
