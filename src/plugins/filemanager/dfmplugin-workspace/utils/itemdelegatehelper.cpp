@@ -80,6 +80,26 @@ void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
         auto iconStyle { IconUtils::getIconStyle(opts.rect.size().toSize().width()) };
+        
+        // 计算可用的图像绘制区域（减去阴影和边框）
+        QRectF availableRect = opts.rect;
+        availableRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+        availableRect.adjust(iconStyle.stroke, iconStyle.stroke, -iconStyle.stroke, -iconStyle.stroke);
+        
+        // 计算缩略图的最佳显示尺寸 - 如果小于可用区域则放大铺满
+        qreal scaleX = availableRect.width() / w;
+        qreal scaleY = availableRect.height() / h;
+        qreal scale = qMin(scaleX, scaleY);
+        
+        // 如果原图小于可用区域，则等比放大；否则保持原逻辑
+        if (scale > 1.0) {
+            w *= scale;
+            h *= scale;
+            // 重新计算居中位置
+            x = opts.rect.x() + (opts.rect.width() - w) / 2.0;
+            y = opts.rect.y() + (opts.rect.height() - h) / 2.0;
+        }
+        
         QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
         QRect imageRect { backgroundRect };
 
