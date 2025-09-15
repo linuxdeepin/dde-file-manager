@@ -117,13 +117,17 @@ void FolderViewDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     QStyleOptionViewItem opt = option;
 
-    // draw icon
+    // draw icon (avoid scaling to prevent blur, honor device pixel ratio)
     QRect iconRect = opt.rect.adjusted(kIconLeftPadding, 0, 0, 0);
     iconRect.setSize({ kFolderIconSize, kFolderIconSize });
     iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
-    const auto &px = createCustomOpacityPixmap(icon.pixmap(iconRect.size()), 1.0f);
-    painter->drawPixmap(iconRect, px);
+    const qreal dpr = painter->device() ? painter->device()->devicePixelRatioF() : qApp->devicePixelRatio();
+    QPixmap px = icon.pixmap(iconRect.size() * dpr);
+    px.setDevicePixelRatio(dpr);
+
+    // Draw at top-left without stretching to avoid resampling blur
+    painter->drawPixmap(iconRect.topLeft(), px);
 }
 
 QPixmap FolderViewDelegate::createCustomOpacityPixmap(const QPixmap &px, float opacity) const
