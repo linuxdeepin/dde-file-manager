@@ -196,15 +196,21 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         // Store the state-based visibility
         d->listViewEnabled = !(state & OptionButtonManager::kHideListViewBtn);
         d->iconViewEnabled = !(state & OptionButtonManager::kHideIconViewBtn);
-        d->treeViewEnabled = d->treeViewButton && !(state & OptionButtonManager::kHideTreeViewBtn);
+        // 判断是否需要禁用树视图按钮
+        const bool needDisableTreeBtn = state & OptionButtonManager::kHideTreeViewBtn;
+        // 保持按钮可见，但根据需要禁用它
+        d->treeViewEnabled = d->treeViewButton;
         d->sortByEnabled = !(state & OptionButtonManager::kHideDetailSpaceBtn);
         d->viewOptionsEnabled = !(state & OptionButtonManager::kHideDetailSpaceBtn);
 
         // Apply the state visibility
         d->listViewButton->setHidden(!d->listViewEnabled);
         d->iconViewButton->setHidden(!d->iconViewEnabled);
-        if (d->treeViewButton)
-            d->treeViewButton->setHidden(!d->treeViewEnabled);
+        if (d->treeViewButton) {
+            // 不隐藏按钮，只是在需要时禁用它
+            d->treeViewButton->setHidden(false);
+            d->treeViewButton->setEnabled(!needDisableTreeBtn);
+        }
         d->sortByButton->setHidden(!d->sortByEnabled);
         d->viewOptionsButton->setVisible(d->viewOptionsEnabled);
 
@@ -223,8 +229,11 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->sortByEnabled = true;
         d->viewOptionsEnabled = true;
 
-        if (d->treeViewButton)
+        if (d->treeViewButton) {
             d->treeViewButton->setHidden(false);
+            // 正常状态下，确保启用树视图按钮
+            d->treeViewButton->setEnabled(true);
+        }
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
         d->sortByButton->setHidden(false);
