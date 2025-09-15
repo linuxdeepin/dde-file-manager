@@ -93,6 +93,8 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     else
         opt.state &= (~QStyle::State_Active);
 
+    const bool isActive = opt.widget && opt.widget->isActiveWindow();
+
     painter->setRenderHint(QPainter::Antialiasing);
 
     if (!option.widget)
@@ -136,14 +138,16 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     // Draw the background color when dragging files, rather than when dragging an item
     if ((selected && isDragedItem) || keepDrawingHighlighted) {   // Draw selected background
-        QPalette::ColorGroup colorGroup = QPalette::Normal;
-        QColor bgColor = option.palette.color(colorGroup, QPalette::Highlight);
-
+        QColor bgColor;
         if (isDraggingItemNotHighlighted) {
             if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
                 bgColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
             else
                 bgColor = QColor(230, 230, 230);
+        } else {
+            bgColor = option.palette.color(QPalette::Active, QPalette::Highlight);
+            if (!isActive)
+                bgColor.setAlpha(102);
         }
 
         painter->setBrush(bgColor);
@@ -195,10 +199,15 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         separatorTextColor = QColor(0, 0, 0, 76);   // alpha 30%
     }
     painter->setPen(separatorItem ? separatorTextColor : qApp->palette().color(QPalette::ColorRole::Text));
-    if (iconMode == QIcon::Selected)
-        painter->setPen(opt.widget->isActiveWindow() ? Qt::white : opt.palette.color(cg, QPalette::HighlightedText));
-    if (iconMode != QIcon::Selected && !opt.widget->isActiveWindow())
-        painter->setPen(opt.palette.color(cg, QPalette::Text));
+    if (iconMode == QIcon::Selected) {
+        QColor finalTextColor = opt.palette.color(QPalette::Active, QPalette::HighlightedText);
+        if (!isActive)
+            finalTextColor.setAlpha(102);
+        painter->setPen(finalTextColor);
+    } else if (!isActive) {
+        const QColor c = opt.palette.color(cg, QPalette::Text);
+        painter->setPen(c);
+    }
 
     QString text = index.data().toString();
     qreal baseValue = itemRect.width() - iconSize.width() - 2 * kItemMargin;
@@ -411,8 +420,9 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
                                    QPalette::ColorGroup cg,
                                    bool keepHighlighted) const
 {
+    const bool isActive = option.widget && option.widget->isActiveWindow();
     if (option.state & QStyle::State_Selected) {
-        painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
+        painter->setPen(option.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {
         painter->setPen(option.palette.color(cg, QPalette::Text));
     }
@@ -421,6 +431,11 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QRect iconRect(iconTopLeft.toPoint(), iconSize);
+
+    painter->save();
+    if (iconMode == QIcon::Selected && !isActive) {
+        painter->setOpacity(0.4);
+    }
 
     QVariant icon = index.data(Qt::DecorationRole);
     DDciIcon dciIcon;
@@ -432,6 +447,8 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
     } else {
         drawDciIcon(option, painter, dciIcon, iconRect, cg, keepHighlighted);
     }
+    
+    painter->restore();
 
     // draw ejectable device icon
     if (isEjectable) {
@@ -469,8 +486,10 @@ void SideBarItemDelegate::drawDciIcon(const QStyleOptionViewItem &option, QPaint
     DDciIcon::Theme theme = appTheme == DGuiApplicationHelper::LightType ? DDciIcon::Light : DDciIcon::Dark;
     DDciIconPalette palette { option.palette.color(cg, QPalette::WindowText), option.palette.color(cg, QPalette::Window),
                               option.palette.color(cg, QPalette::Highlight), option.palette.color(cg, QPalette::HighlightedText) };
-    if (keepHighlighted)
-        palette.setForeground(option.palette.color(cg, QPalette::HighlightedText));
+    if ((option.state & QStyle::State_Selected) || keepHighlighted) {
+        const QColor fg = painter->pen().color();
+        palette.setForeground(fg);
+    }
     dciIcon.paint(painter, iconRect, painter->device() ? painter->device()->devicePixelRatioF() : qApp->devicePixelRatio(),
                   theme, mode, Qt::AlignCenter, palette);
 }
