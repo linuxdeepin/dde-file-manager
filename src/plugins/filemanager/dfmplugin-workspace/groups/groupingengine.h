@@ -66,16 +66,6 @@ public:
     void reorderGroups(GroupedModelData *modelData) const;
 
     /**
-     * @brief Sort groups according to strategy and order
-     * @param groups List of groups to sort (modified in place)
-     * @param strategy The grouping strategy
-     * @param order Sort order for groups
-     */
-    void sortGroups(QList<FileGroupData> &groups,
-                    DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
-                    Qt::SortOrder order) const;
-
-    /**
      * @brief Generate flattened model data from grouping result
      * @param groupingResult The result from groupFiles()
      * @param expansionStates Current expansion states for groups
@@ -105,8 +95,7 @@ private:
      * @param groups List of groups to sort
      * @param strategy The grouping strategy
      */
-    void sortGroupsByDisplayOrder(QList<FileGroupData> &groups,
-                                  DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+    void sortGroupsByDisplayOrder(QList<FileGroupData> &groups) const;
 
     /**
      * @brief Check if a group is visible with file info conversion

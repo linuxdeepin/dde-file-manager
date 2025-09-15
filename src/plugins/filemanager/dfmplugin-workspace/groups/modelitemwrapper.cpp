@@ -78,6 +78,8 @@ QVariant ModelItemWrapper::getData(int role) const
             return groupData->getHeaderText();
         case Global::kItemGroupHeaderKey:
             return groupData->groupKey;
+        case Global::kItemGroupDisplayIndex:
+            return groupData->displayInedx;
         default:
             break;
         }

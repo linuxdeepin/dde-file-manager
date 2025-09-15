@@ -45,7 +45,7 @@ GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDa
 
     if (result.success) {
         // Sort groups by display order
-        sortGroupsByDisplayOrder(result.groups, strategy);
+        sortGroupsByDisplayOrder(result.groups);
     }
 
     fmDebug() << "GroupingEngine: Grouping completed in"
@@ -53,22 +53,6 @@ GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDa
               << result.groups.size() << "groups";
 
     return result;
-}
-
-void GroupingEngine::sortGroups(QList<FileGroupData> &groups,
-                                AbstractGroupStrategy *strategy,
-                                Qt::SortOrder order) const
-{
-    if (!strategy || groups.isEmpty()) {
-        return;
-    }
-
-    std::sort(groups.begin(), groups.end(),
-              [strategy, order](const FileGroupData &left, const FileGroupData &right) {
-                  int leftOrder = strategy->getGroupDisplayOrder(left.groupKey, order);
-                  int rightOrder = strategy->getGroupDisplayOrder(right.groupKey, order);
-                  return leftOrder < rightOrder;
-              });
 }
 
 GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupingResult,
@@ -119,15 +103,7 @@ void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
               << "groups with current order" << (m_groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
 
     // Sort groups based on their displayOrder according to m_groupOrder
-    std::sort(modelData->groups.begin(), modelData->groups.end(),
-              [this](const FileGroupData &left, const FileGroupData &right) {
-                  if (m_groupOrder == Qt::AscendingOrder) {
-                      return left.displayOrder < right.displayOrder;
-                  } else {
-                      return left.displayOrder > right.displayOrder;
-                  }
-              });
-
+    sortGroupsByDisplayOrder(modelData->groups);
     modelData->rebuildFlattenedItems();
 }
 
@@ -214,19 +190,20 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
     return result;
 }
 
-void GroupingEngine::sortGroupsByDisplayOrder(QList<FileGroupData> &groups,
-                                              AbstractGroupStrategy *strategy) const
+void GroupingEngine::sortGroupsByDisplayOrder(QList<FileGroupData> &groups) const
 {
-    if (!strategy || groups.isEmpty()) {
+    if (groups.isEmpty()) {
         return;
     }
 
     // Sort groups by their display order
     std::sort(groups.begin(), groups.end(),
-              [strategy, this](const FileGroupData &left, const FileGroupData &right) {
-                  int leftOrder = strategy->getGroupDisplayOrder(left.groupKey, m_groupOrder);
-                  int rightOrder = strategy->getGroupDisplayOrder(right.groupKey, m_groupOrder);
-                  return leftOrder < rightOrder;
+              [this](const FileGroupData &left, const FileGroupData &right) {
+                  if (m_groupOrder == Qt::AscendingOrder) {
+                      return left.displayOrder < right.displayOrder;
+                  } else {
+                      return left.displayOrder > right.displayOrder;
+                  }
               });
 }
 
