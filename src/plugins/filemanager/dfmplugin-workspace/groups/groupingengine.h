@@ -39,7 +39,6 @@ public:
         QString errorMessage;   ///< Error message if operation failed
     };
 
-
     /**
      * @brief Constructor
      * @param parent Parent object
@@ -61,6 +60,12 @@ public:
                               DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
+     * @brief Reorder existing groups in GroupedModelData according to current group order
+     * @param modelData Pointer to the GroupedModelData to reorder
+     */
+    void reorderGroups(GroupedModelData *modelData) const;
+
+    /**
      * @brief Sort groups according to strategy and order
      * @param groups List of groups to sort (modified in place)
      * @param strategy The grouping strategy
@@ -80,32 +85,10 @@ public:
                                        const QHash<QString, bool> &expansionStates) const;
 
     /**
-     * @brief Invalidate all cached results
-     */
-    void invalidateCache();
-
-    /**
      * @brief Set the current group order
      * @param order The sort order for groups
      */
     void setGroupOrder(Qt::SortOrder order);
-
-    /**
-     * @brief Get cache hit statistics
-     * @return Number of cache hits since last reset
-     */
-    int getCacheHits() const;
-
-    /**
-     * @brief Get cache miss statistics
-     * @return Number of cache misses since last reset
-     */
-    int getCacheMisses() const;
-
-    /**
-     * @brief Reset cache statistics
-     */
-    void resetCacheStats();
 
 private:
     /**

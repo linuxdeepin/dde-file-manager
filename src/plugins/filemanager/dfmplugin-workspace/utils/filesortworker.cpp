@@ -651,54 +651,40 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         return;
     }
 
-    auto opt = setGroupArguments(order, strategy);
-    if (opt == GroupingOpt::kGroupingOptNone) {
-        emit groupingDataChanged();
-        return;
-    }
-
-    emit requestCursorWait();
-    FinallyUtil releaseCursor([this] {
-        emit reqUestCloseCursor();
-    });
-    if (opt == GroupingOpt::kGroupingOptOnlyOrderChanged) {
-
-    } else {
-    }
-
-    // TODO: 改为switch opt实现，以下只是 demo,仅实现基本的分组流程，以下分组数据完全异常，数据会丢失
-    // TODO：可能要重新实现 GroupingEngine
-
-    if (!isCurrentGroupingEnabled || !currentStrategy || !groupingEngine) {
-        fmWarning() << "FileSortWorker: Cannot perform grouping - grouping disabled, no strategy, or no engine";
-        return;
-    }
-
     emit requestCursorWait();
     FinallyUtil release([this] {
+        emit groupingDataChanged();
         emit reqUestCloseCursor();
     });
+
+    auto opt = setGroupArguments(order, strategy);
+    if (opt == GroupingOpt::kGroupingOptNone) {
+        groupedData.clear();
+        return;
+    }
 
     QList<FileItemDataPointer> allFiles = getAllFiles();
     if (allFiles.isEmpty()) {
         fmDebug() << "FileSortWorker: No files to group";
         groupedData.clear();
-        emit groupingDataChanged();
         return;
     }
 
     // Set group order in engine (support for ascending/descending order)
     groupingEngine->setGroupOrder(groupOrder);
+    if (opt == GroupingOpt::kGroupingOptOnlyOrderChanged) {
+        groupingEngine->reorderGroups(&groupedData);
+    } else {
+        // Perform grouping using GroupingEngine
+        const auto &result = groupingEngine->groupFiles(allFiles, currentStrategy);
+        if (!result.success) {
+            fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
+            return;
+        }
 
-    // Perform grouping using GroupingEngine
-    auto result = groupingEngine->groupFiles(allFiles, currentStrategy);
-    if (!result.success) {
-        fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
-        return;
+        // Generate model data with current expansion states
+        groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
     }
-
-    // Generate model data with current expansion states
-    groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
 
     fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
              << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
