@@ -27,6 +27,7 @@ public:
     virtual QVariant customData(int role) const override;
 
     virtual QString displayOf(const DisplayInfoType type) const override;
+    virtual QVariant timeOf(const FileTimeType type) const override;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;

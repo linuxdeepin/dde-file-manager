@@ -35,6 +35,9 @@ static constexpr char kSrtTimeCreatedActionId[] = "sort-by-time-created";
 static constexpr char kGroupTimeModifiedActionId[] = "group-by-time-modified";
 static constexpr char kGroupTimeCreatedActionId[] = "group-by-time-created";
 
+static constexpr char kCustomPathStrategy[] { "CustomPath" };
+static constexpr char kCustomTimeStrategy[] { "CustomTime" };
+
 using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 
@@ -191,11 +194,11 @@ bool TrashMenuScene::triggered(QAction *action)
             return true;
         } else if (actId == TrashActionId::kGroupBySourcePath) {
             fmDebug() << "Trash: Setting group by source path for window:" << d->windowId;
-            d->groupByRole(Global::ItemRoles::kItemFileOriginalPath);
+            d->groupByRole(kCustomPathStrategy);
             return true;
         } else if (actId == TrashActionId::kGroupByTimeDeleted) {
             fmDebug() << "Trash: Setting group by deletion time for window:" << d->windowId;
-            d->groupByRole(Global::ItemRoles::kItemFileDeletionDate);
+            d->groupByRole(kCustomTimeStrategy);
             return true;
         }
         return false;
@@ -348,27 +351,43 @@ void TrashMenuScenePrivate::updateSortSubMenu(QMenu *menu)
         { Global::ItemRoles::kItemFileOriginalPath, TrashActionId::kSourcePath },
         { Global::ItemRoles::kItemFileDeletionDate, TrashActionId::kTimeDeleted }
     };
-    
-    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentSortRole", roleToActionMap);
+
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd);
+
+    // Update state based on current role
+    auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
+    if (roleToActionMap.contains(role)) {
+        const QString &actionId = roleToActionMap[role];
+        if (predicateAction.contains(actionId)) {
+            predicateAction[actionId]->setChecked(true);
+        }
+    }
 }
 
 void TrashMenuScenePrivate::updateGroupSubMenu(QMenu *menu)
 {
     QStringList actionsToRemove = { kGroupTimeModifiedActionId, kGroupTimeCreatedActionId };
     QStringList actionsToAdd = { TrashActionId::kGroupByTimeDeleted, TrashActionId::kGroupBySourcePath };
-    QMap<Global::ItemRoles, QString> roleToActionMap = {
-        { Global::ItemRoles::kItemFileOriginalPath, TrashActionId::kGroupBySourcePath },
-        { Global::ItemRoles::kItemFileDeletionDate, TrashActionId::kGroupByTimeDeleted }
+    QMap<QString, QString> strategyToActionMap = {
+        { kCustomPathStrategy, TrashActionId::kGroupBySourcePath },
+        { kCustomTimeStrategy, TrashActionId::kGroupByTimeDeleted }
     };
-    
-    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd, "slot_Model_CurrentGroupRole", roleToActionMap);
+
+    updateSubMenuGeneric(menu, actionsToRemove, actionsToAdd);
+
+    // Update state based on current strategy
+    auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", windowId).toString();
+    if (strategyToActionMap.contains(role)) {
+        const QString &actionId = strategyToActionMap[role];
+        if (predicateAction.contains(actionId)) {
+            predicateAction[actionId]->setChecked(true);
+        }
+    }
 }
 
-void TrashMenuScenePrivate::updateSubMenuGeneric(QMenu *menu, 
-                                                const QStringList &actionsToRemove,
-                                                const QStringList &actionsToAdd,
-                                                const QString &currentRoleSlot,
-                                                const QMap<Global::ItemRoles, QString> &roleToActionMap)
+void TrashMenuScenePrivate::updateSubMenuGeneric(QMenu *menu,
+                                                 const QStringList &actionsToRemove,
+                                                 const QStringList &actionsToAdd)
 {
     // Collect all actions to remove
     QList<QAction *> actionsToRemoveList;
@@ -395,21 +414,11 @@ void TrashMenuScenePrivate::updateSubMenuGeneric(QMenu *menu,
         for (auto act : actionsToRemoveList) {
             menu->removeAction(act);
         }
-
-        // Update state based on current role
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", currentRoleSlot, windowId).value<Global::ItemRoles>();
-        if (roleToActionMap.contains(role)) {
-            const QString &actionId = roleToActionMap[role];
-            if (predicateAction.contains(actionId)) {
-                predicateAction[actionId]->setChecked(true);
-            }
-        }
     }
 }
 
-void TrashMenuScenePrivate::groupByRole(int role)
+void TrashMenuScenePrivate::groupByRole(const QString &strategy)
 {
-    auto itemRole = static_cast<Global::ItemRoles>(role);
-    fmDebug() << "Trash: Grouping by role:" << role;
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", windowId, itemRole);
+    fmDebug() << "Trash: Grouping by role:" << strategy;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", windowId, strategy);
 }

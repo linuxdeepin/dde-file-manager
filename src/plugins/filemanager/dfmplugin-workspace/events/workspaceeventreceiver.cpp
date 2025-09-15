@@ -130,8 +130,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleColumnRoles);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetSort",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_CurrentGroupRole",
-                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentGroupRole);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_CurrentGroupStrategy",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentGroupStrategy);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetGroup",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetGroup);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterDataCache",
@@ -193,26 +193,15 @@ void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
     WorkspaceHelper::instance()->setSort(windowId, role);
 }
 
-ItemRoles WorkspaceEventReceiver::handleCurrentGroupRole(quint64 windowId)
+QString WorkspaceEventReceiver::handleCurrentGroupStrategy(quint64 windowId)
 {
-    // Convert modern grouping strategy to ItemRoles for backward compatibility
-    // QString currentStrategy = WorkspaceHelper::instance()->getGroupingStrategy(windowId);
-    // return GroupingManager::strategyNameToRole(currentStrategy);
-    return Global::ItemRoles::kItemUnknowRole;
+    return WorkspaceHelper::instance()->getGroupingStrategy(windowId);
 }
 
-void WorkspaceEventReceiver::handleSetGroup(quint64 windowId, ItemRoles role)
+void WorkspaceEventReceiver::handleSetGroup(quint64 windowId, const QString &strategyName)
 {
-    fmDebug() << "WorkspaceEventReceiver: handling set group request for window" << windowId << "role" << static_cast<int>(role);
-
-    // // Convert ItemRoles to modern grouping strategy
-    // QString strategyName = GroupingManager::roleToStrategyName(role);
-    // bool shouldEnable = (role != ItemRoles::kItemUnknowRole);
-
-    // WorkspaceHelper::instance()->setGroupingEnabled(windowId, shouldEnable);
-    // if (shouldEnable) {
-    //     WorkspaceHelper::instance()->setGroupingStrategy(windowId, strategyName);
-    // }
+    fmDebug() << "WorkspaceEventReceiver: handling set group request for window" << windowId << " strategy" << strategyName;
+    WorkspaceHelper::instance()->setGroupingStrategy(windowId, strategyName);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)

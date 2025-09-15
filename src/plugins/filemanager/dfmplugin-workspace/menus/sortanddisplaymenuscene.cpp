@@ -15,6 +15,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -385,44 +386,13 @@ QMenu *SortAndDisplayMenuScenePrivate::addDisplayAsActions(QMenu *menu)
 
 void SortAndDisplayMenuScenePrivate::sortByRole(int role)
 {
-    auto itemRole = static_cast<Global::ItemRoles>(role);
-    Qt::SortOrder order = view->model()->sortOrder();
-    auto oldRole = view->model()->sortRole();
-    order = oldRole != role               ? Qt::AscendingOrder
-            : order == Qt::AscendingOrder ? Qt::DescendingOrder
-                                          : Qt::AscendingOrder;
-
-    fmDebug() << "Sorting by role:" << role << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-              << "old role:" << oldRole;
-
-    view->setSort(itemRole, order);
+    WorkspaceHelper::instance()->setSort(FMWindowsIns.findWindowId(view),
+                                         static_cast<Global::ItemRoles>(role));
 }
 
 void SortAndDisplayMenuScenePrivate::groupByStrategy(const QString &strategyName)
 {
-    QString currentStrategy = view->model()->groupingStrategy();
-    Qt::SortOrder order = view->model()->groupingOrder();
-
-    fmInfo() << "Setting grouping strategy:" << strategyName << "current strategy:" << currentStrategy;
-
-    // Always set the strategy first (including "NoGroupStrategy")
-    if (currentStrategy == strategyName) {
-        // User clicked the same strategy - toggle sort order (unless it's NoGroupStrategy)
-        if (strategyName != GroupStrategty::kNoGroup) {
-            order = (order == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
-            fmInfo() << "Toggling grouping order for strategy:" << strategyName
-                     << "to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
-        }
-        // For NoGroupStrategy, clicking again just reconfirms the disable state
-    } else {
-        // Different strategy - set default ascending order for new strategy
-        order = Qt::AscendingOrder;
-    }
-
-    view->setGroup(strategyName, order);
-
-    fmInfo() << "Grouping set with strategy:" << strategyName
-             << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
+    WorkspaceHelper::instance()->setGroupingStrategy(FMWindowsIns.findWindowId(view), strategyName);
 }
 
 void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
@@ -482,8 +452,6 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         fmDebug() << "Set group by type action as checked";
     } else {
         fmDebug() << "Unknown grouping strategy:" << currentStrategy;
-        // Default to none if unknown
-        predicateAction[ActionID::kGroupByNone]->setChecked(true);
     }
 
     // display as

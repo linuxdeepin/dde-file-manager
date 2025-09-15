@@ -8,6 +8,7 @@
 #include "sizegroupstrategy.h"
 #include "timegroupstrategy.h"
 #include "typegroupstrategy.h"
+#include "pathgroupstrategy.h"
 
 #include <dfm-base/dfm_log_defines.h>
 
@@ -24,11 +25,15 @@ AbstractGroupStrategy *GroupingFactory::createStrategy(const QString &strategyNa
     } else if (strategyName == GroupStrategty::kSize) {
         return new SizeGroupStrategy(parent);
     } else if (strategyName == GroupStrategty::kModifiedTime) {
-        return new TimeGroupStrategy(TimeGroupStrategy::ModificationTime, parent);
+        return new TimeGroupStrategy(TimeGroupStrategy::kModificationTime, parent);
     } else if (strategyName == GroupStrategty::kCreatedTime) {
-        return new TimeGroupStrategy(TimeGroupStrategy::CreationTime, parent);
+        return new TimeGroupStrategy(TimeGroupStrategy::kCreationTime, parent);
     } else if (strategyName == GroupStrategty::kType) {
         return new TypeGroupStrategy(parent);
+    } else if (strategyName == GroupStrategty::kCustomPath) {
+        return new PathGroupStrategy(parent);
+    } else if (strategyName == GroupStrategty::kCustomTime) {
+        return new TimeGroupStrategy(TimeGroupStrategy::kCustomTime);
     } else {
         fmWarning() << "GroupingFactory: Unknown strategy name:" << strategyName;
         return nullptr;

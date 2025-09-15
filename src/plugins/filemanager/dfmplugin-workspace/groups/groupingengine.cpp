@@ -225,7 +225,9 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
         || strategyName == GroupStrategty::kSize
         || strategyName == GroupStrategty::kType
         || strategyName == GroupStrategty::kModifiedTime
-        || strategyName == GroupStrategty::kCreatedTime) {
+        || strategyName == GroupStrategty::kCreatedTime
+        || strategyName == GroupStrategty::kCustomPath
+        || strategyName == GroupStrategty::kCustomTime) {
         fmDebug() << "GroupingEngine: Fast path for built-in strategy" << strategyName
                   << "- skipping file info conversion";
         return !groupFiles.isEmpty();

@@ -84,6 +84,8 @@ QString RecentFileInfo::nameOf(const NameInfoType type) const
 QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
+    case FileUrlInfoType::kCustomerStartUrl:
+        [[fallthrough]];
     case FileUrlInfoType::kRedirectedFileUrl:
         return proxy ? proxy->urlOf(UrlInfoType::kUrl) : url;
     case FileUrlInfoType::kUrl:
@@ -113,6 +115,16 @@ QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
         }
     }
     return ProxyFileInfo::displayOf(type);
+}
+
+QVariant RecentFileInfo::timeOf(const FileTimeType type) const
+{
+    switch (type) {
+    case TimeInfoType::kCustomerSupport:
+        return timeOf(TimeInfoType::kLastRead);
+    default:
+        return ProxyFileInfo::timeOf(type);
+    }
 }
 
 }

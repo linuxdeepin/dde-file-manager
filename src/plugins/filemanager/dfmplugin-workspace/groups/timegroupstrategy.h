@@ -30,8 +30,9 @@ public:
      * @brief Time type for grouping
      */
     enum TimeType {
-        ModificationTime,   ///< Use file modification time
-        CreationTime   ///< Use file creation time
+        kModificationTime,   ///< Use file modification time
+        kCreationTime,   ///< Use file creation time
+        kCustomTime
     };
 
     /**
@@ -39,7 +40,7 @@ public:
      * @param timeType The type of time to use for grouping
      * @param parent Parent object
      */
-    explicit TimeGroupStrategy(TimeType timeType = ModificationTime, QObject *parent = nullptr);
+    explicit TimeGroupStrategy(TimeType timeType = kModificationTime, QObject *parent = nullptr);
 
     /**
      * @brief Destructor
