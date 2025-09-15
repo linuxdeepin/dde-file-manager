@@ -26,7 +26,7 @@ GroupedModelData &GroupedModelData::operator=(const GroupedModelData &other)
     if (this != &other) {
         QMutexLocker locker1(&m_mutex);
         QMutexLocker locker2(&other.m_mutex);
-        
+
         groups = other.groups;
         flattenedItems = other.flattenedItems;
         groupExpansionStates = other.groupExpansionStates;
@@ -63,7 +63,7 @@ QList<FileItemDataPointer> GroupedModelData::getAllFiles() const
 ModelItemWrapper GroupedModelData::getItemAt(int index) const
 {
     if (index < 0 || index >= flattenedItems.size()) {
-        return ModelItemWrapper(); // Return invalid wrapper
+        return ModelItemWrapper();   // Return invalid wrapper
     }
     return flattenedItems.at(index);
 }
@@ -80,7 +80,7 @@ void GroupedModelData::setGroupExpanded(const QString &groupKey, bool expanded)
     }
 
     groupExpansionStates[groupKey] = expanded;
-    
+
     // Update the corresponding group's expansion state
     for (auto &group : groups) {
         if (group.groupKey == groupKey) {
@@ -95,26 +95,30 @@ void GroupedModelData::setGroupExpanded(const QString &groupKey, bool expanded)
 
 bool GroupedModelData::isGroupExpanded(const QString &groupKey) const
 {
-    return groupExpansionStates.value(groupKey, true); // Default to expanded
+    return groupExpansionStates.value(groupKey, true);   // Default to expanded
 }
 
 void GroupedModelData::rebuildFlattenedItems()
 {
     flattenedItems.clear();
-    
-    for (const auto &group : groups) {
+
+    int index = 0;
+    for (auto &group : groups) {
+        group.displayInedx = index;
         // Always add the group header
         flattenedItems.append(ModelItemWrapper(&group));
-        
+
         // Add files if the group is expanded
         bool isExpanded = groupExpansionStates.value(group.groupKey, true);
         if (isExpanded) {
             for (const auto &file : group.files) {
                 if (file) {
+                    file->setGroupDisplayIndex(index);
                     flattenedItems.append(ModelItemWrapper(file, group.groupKey));
                 }
             }
         }
+        ++index;
     }
 }
 
@@ -133,20 +137,20 @@ bool GroupedModelData::isEmpty() const
 FileGroupData *GroupedModelData::getGroup(const QString &groupKey)
 {
     auto it = std::find_if(groups.begin(), groups.end(),
-                          [&groupKey](const FileGroupData &group) {
-                              return group.groupKey == groupKey;
-                          });
-    
+                           [&groupKey](const FileGroupData &group) {
+                               return group.groupKey == groupKey;
+                           });
+
     return (it != groups.end()) ? &(*it) : nullptr;
 }
 
 const FileGroupData *GroupedModelData::getGroup(const QString &groupKey) const
 {
     auto it = std::find_if(groups.constBegin(), groups.constEnd(),
-                          [&groupKey](const FileGroupData &group) {
-                              return group.groupKey == groupKey;
-                          });
-    
+                           [&groupKey](const FileGroupData &group) {
+                               return group.groupKey == groupKey;
+                           });
+
     return (it != groups.constEnd()) ? &(*it) : nullptr;
 }
 
@@ -160,9 +164,9 @@ ModelItemWrapper GroupedModelData::getItemAtThreadSafe(int index) const
 {
     QMutexLocker locker(&m_mutex);
     if (index < 0 || index >= flattenedItems.size()) {
-        return ModelItemWrapper(); // Return invalid wrapper
+        return ModelItemWrapper();   // Return invalid wrapper
     }
     return flattenedItems.at(index);
 }
 
-DPWORKSPACE_END_NAMESPACE 
+DPWORKSPACE_END_NAMESPACE

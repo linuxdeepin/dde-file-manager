@@ -268,8 +268,9 @@ QVariant FileItemData::data(int role) const
     case kItemFileContentPreviewRole:
         if (sortInfo)
             return sortInfo->highlightContent();
-
         return QString();
+    case kItemGroupDisplayIndex:
+        return QVariant(groupDisplayIndex);
     default:
         return QVariant();
     }
@@ -288,6 +289,11 @@ void FileItemData::setExpanded(bool b)
 void FileItemData::setDepth(const int8_t depth)
 {
     this->depth = depth;
+}
+
+void FileItemData::setGroupDisplayIndex(int index)
+{
+    groupDisplayIndex = index;
 }
 
 void FileItemData::transFileInfo()

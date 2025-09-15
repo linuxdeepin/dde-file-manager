@@ -50,6 +50,7 @@ public:
     int fileCount;             ///< Number of files in the group
     bool isExpanded;           ///< Expansion state (default: true)
     int displayOrder;          ///< Display order for sorting groups
+    int displayInedx;          ///< Display index for sorting groups   
     QList<FileItemDataPointer> files; ///< List of files in this group
 
     /**

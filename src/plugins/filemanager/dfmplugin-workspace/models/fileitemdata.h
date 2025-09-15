@@ -33,6 +33,7 @@ public:
     void setAvailableState(bool b);
     void setExpanded(bool b);
     void setDepth(const int8_t depth);
+    void setGroupDisplayIndex(int index);
 
     void transFileInfo();
 
@@ -47,7 +48,8 @@ private:
     bool isAvailable { true };
     std::atomic_int8_t depth { 0 };
     std::atomic_bool expanded { false };
-    std::atomic_int subFileCount{ 0 }; // sub file count,not contain hide file
+    std::atomic_int subFileCount { 0 };   // sub file count,not contain hide file
+    std::atomic_int groupDisplayIndex { -1 };   // -1 means no group mode
     mutable std::atomic_bool updateOnce { true };
 };
 
