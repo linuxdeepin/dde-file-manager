@@ -660,8 +660,7 @@ void FileViewModel::grouping(const QString &strategyName, Qt::SortOrder order)
     }
     fmInfo() << "Grouping by :" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "URL:" << dirRootUrl.toString();
 
-    Q_EMIT requestGroupingChildren(order, strategyName,
-                                Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
+    Q_EMIT requestGroupingChildren(order, strategyName);
 }
 
 void FileViewModel::stopTraversWork(const QUrl &newUrl)
