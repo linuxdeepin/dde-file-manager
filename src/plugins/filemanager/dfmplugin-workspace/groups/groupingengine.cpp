@@ -109,6 +109,28 @@ void GroupingEngine::setGroupOrder(Qt::SortOrder order)
     }
 }
 
+void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
+{
+    if (!modelData || modelData->groups.isEmpty()) {
+        return;
+    }
+
+    fmDebug() << "GroupingEngine: Reordering" << modelData->groups.size()
+              << "groups with current order" << (m_groupOrder == Qt::AscendingOrder ? "Ascending" : "Descending");
+
+    // Sort groups based on their displayOrder according to m_groupOrder
+    std::sort(modelData->groups.begin(), modelData->groups.end(),
+              [this](const FileGroupData &left, const FileGroupData &right) {
+                  if (m_groupOrder == Qt::AscendingOrder) {
+                      return left.displayOrder < right.displayOrder;
+                  } else {
+                      return left.displayOrder > right.displayOrder;
+                  }
+              });
+
+    modelData->rebuildFlattenedItems();
+}
+
 GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileItemDataPointer> &files,
                                                                AbstractGroupStrategy *strategy) const
 {
