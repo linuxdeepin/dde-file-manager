@@ -2140,10 +2140,13 @@ QList<FileItemDataPointer> FileSortWorker::getAllFiles() const
     QList<FileItemDataPointer> allFiles;
 
     QReadLocker lk(&childrenDataLocker);
-    for (auto it = childrenDataMap.constBegin(); it != childrenDataMap.constEnd(); ++it) {
-        const FileItemDataPointer &fileData = it.value();
-        if (fileData) {
-            allFiles.append(fileData);
+    QReadLocker vlk(&locker);
+    for (const QUrl &url : visibleChildren) {
+        if (childrenDataMap.contains(url)) {
+            const FileItemDataPointer &fileData = childrenDataMap.value(url);
+            if (fileData) {
+                allFiles.append(fileData);
+            }
         }
     }
 

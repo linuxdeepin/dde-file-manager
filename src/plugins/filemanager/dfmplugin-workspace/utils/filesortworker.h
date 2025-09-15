@@ -244,7 +244,7 @@ private:
     mutable QReadWriteLock childrenDataLocker;
     QHash<QUrl, FileItemDataPointer> childrenDataMap {};
     QList<QUrl> visibleChildren {};
-    QReadWriteLock locker;
+    mutable QReadWriteLock locker;
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     FileItemDataPointer rootdata { nullptr };

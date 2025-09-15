@@ -124,7 +124,7 @@ Q_SIGNALS:
     void requestClearThumbnail();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
-    void requestGroupingChildren(Qt::SortOrder order, const QString &strategyName, const bool isMixAndFile);
+    void requestGroupingChildren(Qt::SortOrder order, const QString &strategyName);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
