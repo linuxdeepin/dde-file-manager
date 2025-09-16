@@ -35,17 +35,15 @@ QString NoGroupStrategy::getGroupDisplayName(const QString &groupKey) const
     return QString();
 }
 
-QStringList NoGroupStrategy::getGroupOrder(Qt::SortOrder order) const
+QStringList NoGroupStrategy::getGroupOrder() const
 {
-    Q_UNUSED(order)
     // Only one virtual group exists
     return QStringList() << QString::fromLatin1(kNoGroupKey);
 }
 
-int NoGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
+int NoGroupStrategy::getGroupDisplayOrder(const QString &groupKey) const
 {
     Q_UNUSED(groupKey)
-    Q_UNUSED(order)
     // Only one group, so it's always at position 0
     return 0;
 }

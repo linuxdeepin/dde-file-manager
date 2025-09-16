@@ -39,8 +39,8 @@ public:
     // AbstractGroupStrategy interface implementation
     QString getGroupKey(const FileInfoPointer &info) const override;
     QString getGroupDisplayName(const QString &groupKey) const override;
-    QStringList getGroupOrder(Qt::SortOrder order = Qt::AscendingOrder) const override;
-    int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const override;
+    QStringList getGroupOrder() const override;
+    int getGroupDisplayOrder(const QString &groupKey) const override;
     bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
 
