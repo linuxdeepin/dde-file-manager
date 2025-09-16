@@ -180,6 +180,16 @@ void TitleBarWidget::handleHotketCreateNewTab()
     openNewTab(currentUrl());
 }
 
+void TitleBarWidget::handleCreateTabList(const QList<QUrl> &urlList)
+{
+    for (const auto &url : urlList) {
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
+        if (fileInfoPtr && fileInfoPtr->isAttributes(OptInfoType::kIsDir)) {
+            openNewTab(url);
+        }
+    }
+}
+
 void TitleBarWidget::handleHotketActivateTab(const int index)
 {
     tabBar()->setCurrentIndex(index);

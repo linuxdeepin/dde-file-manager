@@ -52,6 +52,7 @@ public slots:
     void handleHotketPreviousTab();
     void handleHotketCloseCurrentTab();
     void handleHotketCreateNewTab();
+    void handleCreateTabList(const QList<QUrl> &urlList);
     void handleHotketActivateTab(const int index);
 
 protected:

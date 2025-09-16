@@ -87,6 +87,7 @@ void TitleBar::onWindowOpened(quint64 windId)
     connect(window, &FileManagerWindow::reqActivateNextTab, titleBarWidget, &TitleBarWidget::handleHotketNextTab);
     connect(window, &FileManagerWindow::reqActivatePreviousTab, titleBarWidget, &TitleBarWidget::handleHotketPreviousTab);
     connect(window, &FileManagerWindow::reqCreateTab, titleBarWidget, &TitleBarWidget::handleHotketCreateNewTab);
+    connect(window, &FileManagerWindow::reqCreateTabList, titleBarWidget, &TitleBarWidget::handleCreateTabList);
     connect(window, &FileManagerWindow::reqCloseCurrentTab, titleBarWidget, &TitleBarWidget::handleHotketCloseCurrentTab);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, titleBarWidget, &TitleBarWidget::handleHotketActivateTab);
     connect(window, &FileManagerWindow::windowSplitterWidthChanged, titleBarWidget, &TitleBarWidget::handleSplitterAnimation);

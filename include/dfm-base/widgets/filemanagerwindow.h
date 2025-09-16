@@ -74,6 +74,7 @@ Q_SIGNALS:
     void reqForward();   // ctrl / alt + Right
     void reqCloseCurrentTab();   // ctrl + W
     void reqCreateTab();   // ctrl + T
+    void reqCreateTabList(const QList<QUrl> &urlList);
     void reqCreateWindow();   // ctrl + N
     void reqTriggerActionByIndex(int index);   // ctrl + [1, 8]
     void reqActivateTabByIndex(int index);   // alt + [1, 8]

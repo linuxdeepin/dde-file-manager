@@ -142,6 +142,15 @@ QUrl Application::appUrlAttribute(Application::ApplicationAttribute aa)
     return appSetting()->urlValue(group, key);
 }
 
+QList<QUrl> Application::appUrlListAttribute(ApplicationAttribute aa)
+{
+    const QString group(QT_STRINGIFY(ApplicationAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).remove(0, 1);
+
+    return appSetting()->urlListValue(group, key);
+}
+
 void Application::setAppAttribute(Application::ApplicationAttribute aa, const QVariant &value)
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));
