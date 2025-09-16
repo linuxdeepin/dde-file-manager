@@ -344,7 +344,7 @@ void VirtualEntryMenuScenePrivate::actCptForget()
 
 void VirtualEntryMenuScenePrivate::gotoDefaultPageOnUnmount()
 {
-    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+    const auto &defaultUrlList = Application::instance()->appUrlListAttribute(Application::kUrlOfNewWindow);
     const auto &&winIds = FileManagerWindowsManager::instance().windowIdList();
     for (const auto &winId : winIds) {
         const auto &window = FileManagerWindowsManager::instance().findWindowById(winId);
@@ -355,7 +355,7 @@ void VirtualEntryMenuScenePrivate::gotoDefaultPageOnUnmount()
         if (!UniversalUtils::urlEquals(urlOfWin, QUrl(stdSmb)))
             continue;
 
-        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, defaultUrl);
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, defaultUrlList.isEmpty() ? QUrl() : defaultUrlList.first());
     }
 }
 

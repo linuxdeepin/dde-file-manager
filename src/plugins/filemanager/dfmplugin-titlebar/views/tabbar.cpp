@@ -52,6 +52,7 @@ public:
     void handleTabReleased(int index);
     void handleDragActionChanged(Qt::DropAction action);
     void handleContextMenu(int index);
+    void handleTabClicked(int index);
     void updateToolTip(int index, const QString &tip);
 
     QString tabDisplayName(const QUrl &url) const;
@@ -120,10 +121,7 @@ void TabBarPrivate::initConnections()
         Q_EMIT q->currentTabChanged(currentTabIndex, index);
         currentTabIndex = index;
     });
-    connect(q, &TabBar::tabBarClicked, this, [this](int index) {
-        if (isCloseButtonHovered(index))
-            Q_EMIT q->tabCloseRequested(index);
-    });
+    connect(q, &TabBar::tabBarClicked, this, &TabBarPrivate::handleTabClicked);
     connect(q, &TabBar::tabReleaseRequested, this, &TabBarPrivate::handleTabReleased);
     connect(q, &TabBar::dragActionChanged, this, &TabBarPrivate::handleDragActionChanged);
 }
@@ -235,6 +233,12 @@ void TabBarPrivate::handleContextMenu(int index)
     QApplication::sendEvent(tabBar, &event);
 }
 
+void TabBarPrivate::handleTabClicked(int index)
+{
+    if (isCloseButtonHovered(index))
+        Q_EMIT q->tabCloseRequested(index);
+}
+
 void TabBarPrivate::updateToolTip(int index, const QString &tip)
 {
     q->setTabToolTip(index, tip);
@@ -264,7 +268,10 @@ QString TabBarPrivate::tabDisplayName(const QUrl &url) const
 
 QUrl TabBarPrivate::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
 {
-    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+    const auto &defaultUrlList = Application::instance()->appUrlListAttribute(Application::kUrlOfNewWindow);
+    QUrl defaultUrl;
+    if (!defaultUrlList.isEmpty())
+        defaultUrl = defaultUrlList.first();
 
     // BUG: 303643
     QString targetPath = targetUrl.toLocalFile();

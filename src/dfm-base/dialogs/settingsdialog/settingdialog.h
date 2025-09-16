@@ -32,6 +32,7 @@ private:
     [[nodiscard]] static QPair<QWidget *, QWidget *> createCheckBoxWithMessage(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createPushButton(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createSliderWithSideIcon(QObject *opt);
+    [[nodiscard]] static QWidget *createFixedTabWidget(QObject *opt);
 
     static void mountCheckBoxStateChangedHandle(DSettingsOption *option, int state);
     static void autoMountCheckBoxChangedHandle(DSettingsOption *option, int state);

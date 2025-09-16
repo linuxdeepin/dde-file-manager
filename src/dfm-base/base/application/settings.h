@@ -36,12 +36,14 @@ public:
     QStringList keyList(const QString &group) const;
     QStringList defaultConfigkeyList(const QString &group) const;
     static QUrl toUrlValue(const QVariant &url);
+    static QList<QUrl> toUrlListValue(const QVariant &urlList);
     QVariant value(const QString &group, const QString &key, const QVariant &defaultValue = QVariant()) const;
     QVariant value(const QString &group, const QUrl &key, const QVariant &defaultValue = QVariant()) const;
     QVariant defaultConfigValue(const QString &group, const QString &key, const QVariant &defaultValue = QVariant()) const;
     QVariant defaultConfigValue(const QString &group, const QUrl &key, const QVariant &defaultValue = QVariant()) const;
     QUrl urlValue(const QString &group, const QString &key, const QUrl &defaultValue = QUrl()) const;
     QUrl urlValue(const QString &group, const QUrl &key, const QUrl &defaultValue = QUrl()) const;
+    QList<QUrl> urlListValue(const QString &group, const QString &key, const QList<QUrl> &defaultValue = {}) const;
     void setValue(const QString &group, const QString &key, const QVariant &value);
     void setValue(const QString &group, const QUrl &key, const QVariant &value);
     bool setValueNoNotify(const QString &group, const QString &key, const QVariant &value);

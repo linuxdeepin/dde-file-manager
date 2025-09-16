@@ -12,6 +12,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.h>
 
 #include <dtkcore_global.h>
 #include <DSettingsOption>
@@ -155,6 +156,7 @@ void SettingDialog::initialze()
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
     widgetFactory()->registerWidget("pushButton", &SettingDialog::createPushButton);
     widgetFactory()->registerWidget("sliderWithSideIcon", &SettingDialog::createSliderWithSideIcon);
+    widgetFactory()->registerWidget("fixedTabWidget", &SettingDialog::createFixedTabWidget);
 
     auto creators = CustomSettingItemRegister::instance()->getCreators();
     auto iter = creators.cbegin();
@@ -315,7 +317,6 @@ QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
     return qMakePair(new QLabel(desc), rightWidget);
 }
 
-
 QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
@@ -342,14 +343,14 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
 
     QVariantList valList = option->data("values").toList();
     if (!valList.isEmpty()) {
-        QObject::connect(slider, &DSlider::sliderMoved, slider, [ = ](int position) {
+        QObject::connect(slider, &DSlider::sliderMoved, slider, [=](int position) {
             if (position >= valList.count())
                 return;
             int stepLength = (slider->slider()->width() - 28) / option->data("max").toInt();
             QPoint pos = slider->slider()->mapToGlobal(QPoint(4 + position * stepLength, -48));
             QToolTip::showText(pos, valList.at(position).toString(), slider);
         });
-        QObject::connect(slider, &DSlider::sliderPressed, slider, [ = ]{
+        QObject::connect(slider, &DSlider::sliderPressed, slider, [=] {
             int position = slider->slider()->sliderPosition();
             if (position >= valList.count())
                 return;
@@ -360,18 +361,25 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
     }
 
     option->connect(slider, &DSlider::valueChanged,
-    option, [ = ](int value) {
-        slider->blockSignals(true);
-        option->setValue(value);
-        slider->blockSignals(false);
-    });
+                    option, [=](int value) {
+                        slider->blockSignals(true);
+                        option->setValue(value);
+                        slider->blockSignals(false);
+                    });
     option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
-    slider, [ = ](const QVariant & value) {
-        slider->setValue(value.toInt());
-        slider->update();
-    });
+                    slider, [=](const QVariant &value) {
+                        slider->setValue(value.toInt());
+                        slider->update();
+                    });
 
     return qMakePair(label, slider);
+}
+
+QWidget *SettingDialog::createFixedTabWidget(QObject *opt)
+{
+    FixedTabWidget *widget = new FixedTabWidget;
+    widget->setOption(opt);
+    return widget;
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)
