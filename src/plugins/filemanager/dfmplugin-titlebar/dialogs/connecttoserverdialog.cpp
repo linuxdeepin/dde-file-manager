@@ -110,22 +110,6 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
     close();
 }
 
-void ConnectToServerDialog::onCurrentTextChanged(const QString &string)
-{
-    if (string == serverComboBox->itemText(serverComboBox->count() - 1)) {
-        QSignalBlocker blocker(serverComboBox);
-        Q_UNUSED(blocker)
-
-        serverComboBox->clear();
-        serverComboBox->addItem(tr("Clear History"));
-        serverComboBox->clearEditText();
-        serverComboBox->completer()->setModel(new QStringListModel());
-
-        SearchHistroyManager::instance()->clearHistory(supportedSchemes);
-        SearchHistroyManager::instance()->clearIPHistory();
-    }
-}
-
 void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
 {
     QString deletedItem = text;
@@ -152,6 +136,9 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &server)
         QSignalBlocker blocker(serverComboBox);
         Q_UNUSED(blocker)
         serverComboBox->clear();
+        // After clearing history, show a disabled "No history" placeholder
+        serverComboBox->addItem(tr("No history"));
+        serverComboBox->model()->setData(serverComboBox->model()->index(serverComboBox->count() - 1, 0), 0, Qt::UserRole - 1);
         serverComboBox->clearEditText();
         serverComboBox->completer()->setModel(new QStringListModel());
         SearchHistroyManager::instance()->clearHistory(supportedSchemes);
@@ -293,8 +280,14 @@ void ConnectToServerDialog::initServerDatas()
 
     completer->setModel(new QStringListModel(hosts, completer));
     if (!hosts.isEmpty()) {
+        // Add a clear-history action as the last item (customData true)
         serverComboBox->addItem(tr("Clear History"), true);
         onCurrentInputChanged(hosts.last());
+    } else {
+        // No history: show a disabled placeholder so dropdown shows a hint
+        serverComboBox->addItem(tr("No history"));
+        serverComboBox->model()->setData(serverComboBox->model()->index(serverComboBox->count() - 1, 0), 0, Qt::UserRole - 1);
+        serverComboBox->clearEditText();
     }
 }
 

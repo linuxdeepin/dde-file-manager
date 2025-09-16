@@ -36,7 +36,6 @@ public:
 public slots:
     void collectionOperate();
     void onButtonClicked(const int &index);
-    void onCurrentTextChanged(const QString &string);
     void doDeleteCollection(const QString &text, int row = -1);
     void onCurrentInputChanged(const QString &text);
     void onCollectionViewClicked(const QModelIndex &index);
