@@ -646,16 +646,16 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
 
 void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &strategy)
 {
-    if (isCanceled) {
-        fmDebug() << "Ignoring regrouping request - operation canceled";
-        return;
-    }
-
     emit requestCursorWait();
     FinallyUtil release([this] {
         emit groupingDataChanged();
         emit reqUestCloseCursor();
     });
+
+    if (isCanceled) {
+        fmDebug() << "Ignoring regrouping request - operation canceled";
+        return;
+    }
 
     auto opt = setGroupArguments(order, strategy);
     if (opt == GroupingOpt::kGroupingOptNone) {
@@ -670,27 +670,16 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         return;
     }
 
-    // Set group order in engine (support for ascending/descending order)
-    groupingEngine->setGroupOrder(groupOrder);
     if (opt == GroupingOpt::kGroupingOptOnlyOrderChanged) {
+        // Set group order in engine (support for ascending/descending order)
+        groupingEngine->setGroupOrder(groupOrder);
         groupingEngine->reorderGroups(&groupedData);
     } else {
-        // Perform grouping using GroupingEngine
-        const auto &result = groupingEngine->groupFiles(allFiles, currentStrategy);
-        if (!result.success) {
-            fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
-            return;
-        }
-
-        // Generate model data with current expansion states
-        groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
+        applyGrouping(allFiles);
     }
 
     fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
              << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
-
-    // Emit signal to notify model of changes (thread-safe)
-    emit groupingDataChanged();
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -698,8 +687,11 @@ void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa,
     if (isCanceled || istree)
         return;
 
-    if (aa == Application::kFileAndDirMixedSort)
+    if (aa == Application::kFileAndDirMixedSort) {
         handleResort(sortOrder, orgSortRole, value.toBool());
+        if (isCurrentGroupingEnabled)
+            applyGrouping(getAllFiles());
+    }
 }
 
 bool FileSortWorker::handleUpdateFile(const QUrl &url)
@@ -820,6 +812,8 @@ void FileSortWorker::handleRefresh()
     children.clear();
     visibleTreeChildren.clear();
     depthMap.clear();
+    if (isCurrentGroupingEnabled)
+        groupedData.clear();
 
     {
         QWriteLocker lk(&childrenDataLocker);
@@ -1149,6 +1143,7 @@ void FileSortWorker::resortCurrent(const bool reverse)
     }
 
     resortVisibleChildren(visibleList);
+    applyGrouping(getAllFiles());
     emit reqUestCloseCursor();
 }
 
@@ -2170,4 +2165,24 @@ FileItemDataPointer FileSortWorker::createGroupHeaderData(const FileGroupData *g
     headerData->setParentData(rootdata.data());
     fmDebug() << "FileSortWorker: Created group header data for group" << groupData->groupKey;
     return headerData;
+}
+
+void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
+{
+    Q_ASSERT(currentStrategy);
+    Q_ASSERT(groupingEngine);
+
+    if (files.isEmpty())
+        return;
+
+    // Perform grouping using GroupingEngine
+    groupingEngine->setGroupOrder(groupOrder);
+    const auto &result = groupingEngine->groupFiles(files, currentStrategy);
+    if (!result.success) {
+        fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
+        return;
+    }
+
+    // Generate model data with current expansion states
+    groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
 }

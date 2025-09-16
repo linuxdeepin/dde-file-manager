@@ -235,6 +235,7 @@ private:
     // Grouping-related private methods
     QList<FileItemDataPointer> getAllFiles() const;
     FileItemDataPointer createGroupHeaderData(const FileGroupData *groupData) const;
+    void applyGrouping(const QList<FileItemDataPointer> &files);
 
 private:
     QUrl current;
