@@ -26,6 +26,16 @@ ModelItemWrapper::ModelItemWrapper(const FileItemDataPointer &fileData, const QS
 ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
     : itemType(GroupHeaderItem), groupKey(groupData ? groupData->groupKey : QString()), groupData(groupData)
 {
+    if (groupData) {
+        // Use special URL format to identify group headers
+        QUrl groupHeaderUrl = QUrl::fromUserInput(QString("group-header://%1").arg(groupData->groupKey));
+
+        // Create a special FileItemData to represent group headers
+        // Pass nullptr as FileInfoPointer to mark it as a special group header
+
+        FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl);
+        fileData = headerData;
+    }
 }
 
 ModelItemWrapper::ModelItemWrapper(const ModelItemWrapper &other)

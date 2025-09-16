@@ -216,14 +216,11 @@ FileItemDataPointer FileSortWorker::childData(const int index)
             return nullptr;
         }
 
-        if (wrapper.isFileItem()) {
-            return wrapper.fileData;
-        } else if (wrapper.isGroupHeader()) {
-            // Return special FileItemData for group headers
-            return createGroupHeaderData(wrapper.groupData);
+        if (wrapper.isGroupHeader() && wrapper.fileData) {
+            wrapper.fileData->setParentData(rootdata.data());
         }
 
-        return nullptr;
+        return wrapper.fileData;
     }
 }
 
@@ -646,12 +643,6 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
 
 void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &strategy)
 {
-    emit requestCursorWait();
-    FinallyUtil release([this] {
-        emit groupingDataChanged();
-        emit reqUestCloseCursor();
-    });
-
     if (isCanceled) {
         fmDebug() << "Ignoring regrouping request - operation canceled";
         return;
@@ -663,7 +654,7 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         return;
     }
 
-    QList<FileItemDataPointer> allFiles = getAllFiles();
+    const QList<FileItemDataPointer> &allFiles = getAllFiles();
     if (allFiles.isEmpty()) {
         fmDebug() << "FileSortWorker: No files to group";
         groupedData.clear();
@@ -674,6 +665,7 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         // Set group order in engine (support for ascending/descending order)
         groupingEngine->setGroupOrder(groupOrder);
         groupingEngine->reorderGroups(&groupedData);
+        emit groupingDataChanged();
     } else {
         applyGrouping(allFiles);
     }
@@ -689,8 +681,7 @@ void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa,
 
     if (aa == Application::kFileAndDirMixedSort) {
         handleResort(sortOrder, orgSortRole, value.toBool());
-        if (isCurrentGroupingEnabled)
-            applyGrouping(getAllFiles());
+        applyGrouping(getAllFiles());
     }
 }
 
@@ -1621,12 +1612,6 @@ void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoP
 
     item->setDepth(depth);
 
-    if (!istree || !child->isDir()) {
-        QWriteLocker lk(&childrenDataLocker);
-        childrenDataMap.insert(child->fileUrl(), item);
-        return;
-    }
-
     QWriteLocker lk(&childrenDataLocker);
     childrenDataMap.insert(child->fileUrl(), item);
 }
@@ -2136,7 +2121,14 @@ QList<FileItemDataPointer> FileSortWorker::getAllFiles() const
 
     QReadLocker lk(&childrenDataLocker);
     QReadLocker vlk(&locker);
-    for (const QUrl &url : visibleChildren) {
+
+    // 在 TeeView 下使用 visibleChildren 将导致子目录的文件也被分组
+    const QList<QUrl> &children =
+            visibleTreeChildren.contains(current)
+            ? visibleTreeChildren[current]
+            : visibleChildren;
+
+    for (const QUrl &url : children) {
         if (childrenDataMap.contains(url)) {
             const FileItemDataPointer &fileData = childrenDataMap.value(url);
             if (fileData) {
@@ -2149,24 +2141,6 @@ QList<FileItemDataPointer> FileSortWorker::getAllFiles() const
     return allFiles;
 }
 
-FileItemDataPointer FileSortWorker::createGroupHeaderData(const FileGroupData *groupData) const
-{
-    if (!groupData) {
-        return nullptr;
-    }
-
-    // Use special URL format to identify group headers
-    QUrl groupHeaderUrl = QUrl::fromUserInput(QString("group-header://%1").arg(groupData->groupKey));
-
-    // Create a special FileItemData to represent group headers
-    // Pass nullptr as FileInfoPointer to mark it as a special group header
-
-    FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl);
-    headerData->setParentData(rootdata.data());
-    fmDebug() << "FileSortWorker: Created group header data for group" << groupData->groupKey;
-    return headerData;
-}
-
 void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 {
     Q_ASSERT(currentStrategy);
@@ -2174,6 +2148,15 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 
     if (files.isEmpty())
         return;
+
+    if (!isCurrentGroupingEnabled)
+        return;
+
+    emit requestCursorWait();
+    FinallyUtil release([this] {
+        emit groupingDataChanged();
+        emit reqUestCloseCursor();
+    });
 
     // Perform grouping using GroupingEngine
     groupingEngine->setGroupOrder(groupOrder);
