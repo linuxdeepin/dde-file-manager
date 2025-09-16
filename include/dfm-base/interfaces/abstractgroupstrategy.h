@@ -48,18 +48,16 @@ public:
 
     /**
      * @brief Get the ordered list of group keys
-     * @param order The sort order (ascending or descending)
      * @return List of group keys in the specified order
      */
-    virtual QStringList getGroupOrder(Qt::SortOrder order = Qt::AscendingOrder) const = 0;
+    virtual QStringList getGroupOrder() const = 0;
 
     /**
      * @brief Get the display order index for a group key
      * @param groupKey The group key to get order for
-     * @param order The sort order (ascending or descending)
      * @return The numeric order index for sorting groups
      */
-    virtual int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const = 0;
+    virtual int getGroupDisplayOrder(const QString &groupKey) const = 0;
 
     /**
      * @brief Check if a group should be visible

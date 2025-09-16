@@ -165,7 +165,7 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
             group.files = groupFiles;
             group.fileCount = groupFiles.size();
             group.isExpanded = true;   // Default to expanded
-            group.displayOrder = strategy->getGroupDisplayOrder(groupKey, m_groupOrder);
+            group.displayOrder = strategy->getGroupDisplayOrder(groupKey);
 
             // Check group visibility with converted file infos if needed
             if (!isGroupVisibleWithConversion(groupKey, groupFiles, strategy)) {

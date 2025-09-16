@@ -101,7 +101,7 @@ QString TimeGroupStrategy::getGroupDisplayName(const QString &groupKey) const
     return getDisplayNames().value(groupKey, groupKey);
 }
 
-QStringList TimeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
+QStringList TimeGroupStrategy::getGroupOrder() const
 {
     // For time grouping, we need to handle dynamic groups
     // Start with the basic time order
@@ -110,18 +110,14 @@ QStringList TimeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
     // Note: Dynamic groups (months, years) will be inserted at runtime
     // based on the actual files present
 
-    if (order == Qt::DescendingOrder) {
-        std::reverse(result.begin(), result.end());
-    }
-
     return result;
 }
 
-int TimeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
+int TimeGroupStrategy::getGroupDisplayOrder(const QString &groupKey) const
 {
     // Handle dynamic time groups
     if (groupKey.startsWith("month-") || groupKey.startsWith("year-")) {
-        return getDynamicDisplayOrder(groupKey, order);
+        return getDynamicDisplayOrder(groupKey);
     }
 
     // Handle basic time groups
@@ -131,11 +127,7 @@ int TimeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrd
         index = timeOrder.size();   // Unknown groups go to the end
     }
 
-    if (order == Qt::AscendingOrder) {
-        return index;
-    } else {
-        return timeOrder.size() - index - 1;
-    }
+    return index;
 }
 
 bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const
@@ -204,7 +196,7 @@ QString TimeGroupStrategy::calculateTimeGroup(const QDateTime &fileTime) const
     return "earlier";
 }
 
-int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
+int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey) const
 {
     QDate today = QDate::currentDate();
 
@@ -220,11 +212,7 @@ int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey, Qt::SortO
         // Month groups come after "past-30-days" (index 3) but before "past-years"
         int baseIndex = 4;   // After "past-30-days"
 
-        if (order == Qt::AscendingOrder) {
-            return baseIndex + monthsAgo;
-        } else {
-            return baseIndex - monthsAgo;
-        }
+        return baseIndex + monthsAgo;
 
     } else if (groupKey.startsWith("year-")) {
         bool ok;
@@ -237,11 +225,7 @@ int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey, Qt::SortO
         // Year groups come after month groups but before "earlier"
         int baseIndex = 100;   // After all possible month groups
 
-        if (order == Qt::AscendingOrder) {
-            return baseIndex + yearsAgo;
-        } else {
-            return baseIndex - yearsAgo;
-        }
+        return baseIndex + yearsAgo;
     }
 
     return 1000;   // Unknown, put at end

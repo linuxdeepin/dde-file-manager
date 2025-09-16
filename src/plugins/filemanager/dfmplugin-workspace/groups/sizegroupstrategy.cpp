@@ -78,19 +78,12 @@ QString SizeGroupStrategy::getGroupDisplayName(const QString &groupKey) const
     return getDisplayNames().value(groupKey, groupKey);
 }
 
-QStringList SizeGroupStrategy::getGroupOrder(Qt::SortOrder order) const
+QStringList SizeGroupStrategy::getGroupOrder() const
 {
-    QStringList sizeOrder = getSizeOrder();
-    if (order == Qt::AscendingOrder) {
-        return sizeOrder;
-    } else {
-        QStringList reversed = sizeOrder;
-        std::reverse(reversed.begin(), reversed.end());
-        return reversed;
-    }
+    return getSizeOrder();
 }
 
-int SizeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order) const
+int SizeGroupStrategy::getGroupDisplayOrder(const QString &groupKey) const
 {
     QStringList sizeOrder = getSizeOrder();
     int index = sizeOrder.indexOf(groupKey);
@@ -98,11 +91,7 @@ int SizeGroupStrategy::getGroupDisplayOrder(const QString &groupKey, Qt::SortOrd
         index = sizeOrder.size();   // Unknown groups go to the end
     }
 
-    if (order == Qt::AscendingOrder) {
-        return index;
-    } else {
-        return sizeOrder.size() - index - 1;
-    }
+    return index;
 }
 
 bool SizeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const

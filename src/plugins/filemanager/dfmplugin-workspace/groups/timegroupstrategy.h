@@ -50,8 +50,8 @@ public:
     // AbstractGroupStrategy interface implementation
     QString getGroupKey(const FileInfoPointer &info) const override;
     QString getGroupDisplayName(const QString &groupKey) const override;
-    QStringList getGroupOrder(Qt::SortOrder order = Qt::AscendingOrder) const override;
-    int getGroupDisplayOrder(const QString &groupKey, Qt::SortOrder order = Qt::AscendingOrder) const override;
+    QStringList getGroupOrder() const override;
+    int getGroupDisplayOrder(const QString &groupKey) const override;
     bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
 
@@ -66,10 +66,9 @@ private:
     /**
      * @brief Get display order for dynamic time groups (months, years)
      * @param groupKey The group key to get order for
-     * @param order Sort order
      * @return The display order index
      */
-    int getDynamicDisplayOrder(const QString &groupKey, Qt::SortOrder order) const;
+    int getDynamicDisplayOrder(const QString &groupKey) const;
 
     /**
      * @brief The type of time to use for grouping
