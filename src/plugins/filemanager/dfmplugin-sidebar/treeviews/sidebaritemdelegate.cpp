@@ -421,7 +421,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
                                    bool keepHighlighted) const
 {
     const bool isActive = option.widget && option.widget->isActiveWindow();
-    if (option.state & QStyle::State_Selected) {
+    if (iconMode == QIcon::Selected) {
         painter->setPen(option.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {
         painter->setPen(option.palette.color(cg, QPalette::Text));
@@ -437,6 +437,12 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         painter->setOpacity(0.4);
     }
 
+    // 若为“按下未松开但未选中”的过渡态，属于非Selected状态
+    bool pressedNotSelected = (option.state & QStyle::State_Sunken) && iconMode != QIcon::Selected;
+    QStyleOptionViewItem optForIcon = option;
+    if (pressedNotSelected)
+        optForIcon.state &= ~QStyle::State_Selected;
+
     QVariant icon = index.data(Qt::DecorationRole);
     DDciIcon dciIcon;
     if (icon.canConvert<DTK_GUI_NAMESPACE::DDciIcon>())
@@ -445,7 +451,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
         option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
     } else {
-        drawDciIcon(option, painter, dciIcon, iconRect, cg, keepHighlighted);
+        drawDciIcon(optForIcon, painter, dciIcon, iconRect, cg, keepHighlighted);
     }
     
     painter->restore();
