@@ -100,6 +100,8 @@ bool GroupedModelData::isGroupExpanded(const QString &groupKey) const
 
 void GroupedModelData::rebuildFlattenedItems()
 {
+    QMutexLocker locker(&m_mutex);
+
     flattenedItems.clear();
 
     int index = 0;

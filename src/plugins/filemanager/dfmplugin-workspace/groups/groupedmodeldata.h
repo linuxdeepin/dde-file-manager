@@ -48,7 +48,6 @@ public:
 
     // Core data members
     QList<FileGroupData> groups;   ///< All group data
-    QList<ModelItemWrapper> flattenedItems;   ///< Flattened model items list
     QHash<QString, bool> groupExpansionStates;   ///< Group expansion state mapping
 
     /**
@@ -138,6 +137,7 @@ public:
 
 private:
     mutable QMutex m_mutex;   ///< Mutex for thread safety
+    QList<ModelItemWrapper> flattenedItems;   ///< Flattened model items list
 };
 
 DPWORKSPACE_END_NAMESPACE
