@@ -15,6 +15,8 @@
 #include <QString>
 #include <QMutex>
 
+#include <optional>
+
 DPWORKSPACE_BEGIN_NAMESPACE
 
 /**
@@ -51,29 +53,10 @@ public:
     QHash<QString, bool> groupExpansionStates;   ///< Group expansion state mapping
 
     /**
-     * @brief Get the total number of files across all groups
-     * @return Total file count
-     */
-    int getTotalFileCount() const;
-
-    /**
      * @brief Get all files from all groups
      * @return List of all file data pointers
      */
     QList<FileItemDataPointer> getAllFiles() const;
-
-    /**
-     * @brief Get the item at a specific index
-     * @param index The index in the flattened list
-     * @return The model item wrapper at the specified index
-     */
-    ModelItemWrapper getItemAt(int index) const;
-
-    /**
-     * @brief Get the total number of items (groups + files)
-     * @return Total item count in the flattened list
-     */
-    int getItemCount() const;
 
     /**
      * @brief Set the expansion state of a group
@@ -126,14 +109,21 @@ public:
      * @brief Thread-safe access to item count
      * @return Total item count in the flattened list
      */
-    int getItemCountThreadSafe() const;
+    int getItemCount() const;
 
     /**
      * @brief Thread-safe access to item at index
      * @param index The index in the flattened list
      * @return The model item wrapper at the specified index
      */
-    ModelItemWrapper getItemAtThreadSafe(int index) const;
+    ModelItemWrapper getItemAt(int index) const;
+
+    /**
+     * @brief Find the start position of a group header
+     * @param key The group identifier
+     * @return The start position of the group header, or std::nullopt if not found
+     */
+    std::optional<int> findGroupHeaderStartPos(const QString &key) const;
 
 private:
     mutable QMutex m_mutex;   ///< Mutex for thread safety
