@@ -152,8 +152,7 @@ int FileSortWorker::childrenCount()
 {
     if (!isCurrentGroupingEnabled) {
         // Traditional mode: use original logic
-        QReadLocker lk(&locker);
-        return visibleChildren.count();
+        return childrenCountInternal();
     } else {
         // Grouping mode: return flattened item count
         return groupedData.getItemCount();
@@ -233,8 +232,11 @@ void FileSortWorker::cancel()
 
 int FileSortWorker::getChildShowIndex(const QUrl &url)
 {
-    QReadLocker lk(&locker);
-    return visibleChildren.indexOf(url);
+    if (!isCurrentGroupingEnabled) {
+        return getChildShowIndexInternal(url);
+    } else {
+        return groupedData.findFileStartPos(url).value_or(-1);
+    }
 }
 
 QList<QUrl> FileSortWorker::getChildrenUrls()
@@ -674,6 +676,14 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
              << "groups with" << groupedData.getItemCount() << "total items";
 }
 
+void FileSortWorker::handleGroupingUpdate()
+{
+    if (!isCurrentGroupingEnabled)
+        return;
+
+    // TODO: update groupedData
+}
+
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
 {
     if (isCanceled || istree)
@@ -732,12 +742,12 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         // 根目录下的offset计算不一样
         if (UniversalUtils::urlEquals(parentUrl, current)) {
             if (offset >= subVisibleList.count() || offset == 0) {
-                offset = offset >= subVisibleList.count() ? childrenCount() : 0;
+                offset = offset >= subVisibleList.count() ? childrenCountInternal() : 0;
             } else {
                 auto tmpUrl = offset >= subVisibleList.length() ? QUrl() : subVisibleList.at(offset);
-                offset = getChildShowIndex(tmpUrl);
+                offset = getChildShowIndexInternal(tmpUrl);
                 if (offset < 0)
-                    offset = childrenCount();
+                    offset = childrenCountInternal();
             }
         }
 
@@ -784,7 +794,7 @@ void FileSortWorker::handleUpdateFiles(const QList<QUrl> &urls)
             added = suc;
     }
     if (added)
-        emit insertFinish();
+        Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleRefresh()
@@ -906,18 +916,18 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
 
     if (currentState) {
         // current is expanded
-        emit removeRows(pos + 1, count);
+        Q_EMIT removeGroupRows(pos + 1, count);
     } else {
-        emit insertRows(pos + 1, count);
+        Q_EMIT insertGroupRows(pos + 1, count);
     }
 
     groupedData.setGroupExpanded(groupKey, newState);
 
     if (currentState) {
         // current is expanded
-        emit removeFinish();
+        Q_EMIT removeGroupFinish();
     } else {
-        emit insertFinish();
+        Q_EMIT insertGroupFinish();
     }
 
     fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
@@ -1275,12 +1285,12 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     // 根目录下的offset计算不一样
     if (UniversalUtils::urlEquals(parentUrl, current)) {
         if (offset >= subVisibleList.length() || offset == 0) {
-            offset = offset >= subVisibleList.length() ? childrenCount() : 0;
+            offset = offset >= subVisibleList.length() ? childrenCountInternal() : 0;
         } else {
             auto tmpUrl = offset >= subVisibleList.length() ? QUrl() : subVisibleList.at(offset);
-            offset = getChildShowIndex(tmpUrl);
+            offset = getChildShowIndexInternal(tmpUrl);
             if (offset < 0)
-                offset = childrenCount();
+                offset = childrenCountInternal();
         }
     }
 
@@ -1525,7 +1535,7 @@ void FileSortWorker::removeSubDir(const QUrl &dir)
     // 移除可显示的所有的url
     auto removeDir = removeVisibleTreeChildren(dir);
     // 移除界面所有显示的url
-    removeVisibleChildren(startPos, endPos == -1 ? childrenCount() - startPos : endPos - startPos);
+    removeVisibleChildren(startPos, endPos == -1 ? childrenCountInternal() - startPos : endPos - startPos);
     // 移除itemdata
     if (removeDir.isEmpty())
         return;
@@ -1555,7 +1565,7 @@ int8_t FileSortWorker::findDepth(const QUrl &parent)
 int FileSortWorker::findEndPos(const QUrl &dir)
 {
     if (UniversalUtils::urlEquals(dir, current))
-        return childrenCount();
+        return childrenCountInternal();
 
     const auto &parentUrl = makeParentUrl(dir);
     auto index = visibleTreeChildren.value(parentUrl).indexOf(dir);
@@ -1565,14 +1575,14 @@ int FileSortWorker::findEndPos(const QUrl &dir)
     if (index == visibleTreeChildren.value(parentUrl).length() - 1)
         return findEndPos(makeParentUrl(dir));
 
-    return getChildShowIndex(visibleTreeChildren.value(parentUrl).at(index + 1));
+    return getChildShowIndexInternal(visibleTreeChildren.value(parentUrl).at(index + 1));
 }
 
 int FileSortWorker::findStartPos(const QUrl &parent)
 {
     if (UniversalUtils::urlEquals(parent, current))
         return 0;
-    auto pos = getChildShowIndex(parent);
+    auto pos = getChildShowIndexInternal(parent);
     // 在父目录的后面一个位置插入
     return pos < 0 ? pos : pos + 1;
 }
@@ -2191,15 +2201,28 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     }
 
     // Generate model data with current expansion states
+    // TODO: handle expanded tree items
     const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
-    emit insertRows(0, data.getItemCount());
+    Q_EMIT insertGroupRows(0, data.getItemCount());
     groupedData = data;
-    emit insertFinish();
+    Q_EMIT insertGroupFinish();
 }
 
 void FileSortWorker::clearGroupedData()
 {
-    emit removeRows(0, groupedData.getItemCount());
+    Q_EMIT removeGroupRows(0, groupedData.getItemCount());
     groupedData.clear();
-    emit removeFinish();
+    Q_EMIT removeGroupFinish();
+}
+
+int FileSortWorker::childrenCountInternal()
+{
+    QReadLocker lk(&locker);
+    return visibleChildren.count();
+}
+
+int FileSortWorker::getChildShowIndexInternal(const QUrl &url)
+{
+    QReadLocker lk(&locker);
+    return visibleChildren.indexOf(url);
 }

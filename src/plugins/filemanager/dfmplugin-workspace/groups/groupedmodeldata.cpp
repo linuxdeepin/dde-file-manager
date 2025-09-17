@@ -4,10 +4,16 @@
 
 #include "groupedmodeldata.h"
 
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/universalutils.h>
+
 #include <QMutexLocker>
+
 #include <algorithm>
 
 DPWORKSPACE_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 GroupedModelData::GroupedModelData()
 {
@@ -157,6 +163,27 @@ std::optional<int> GroupedModelData::findGroupHeaderStartPos(const QString &key)
         const ModelItemWrapper &item = flattenedItems.at(i);
         if (item.isGroupHeader() && item.groupKey == key) {
             return i;
+        }
+    }
+
+    return std::nullopt;
+}
+
+std::optional<int> GroupedModelData::findFileStartPos(const QUrl &url) const
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (!url.isValid()) {
+        return std::nullopt;
+    }
+
+    for (int i = 0; i < flattenedItems.size(); ++i) {
+        const ModelItemWrapper &item = flattenedItems.at(i);
+        if (item.isFileItem() && item.fileData) {
+            const auto &fileUrl = item.fileData->data(kItemUrlRole).toUrl();
+            if (UniversalUtils::urlEquals(fileUrl, url)) {
+                return i;
+            }
         }
     }
 

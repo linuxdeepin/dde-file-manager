@@ -85,10 +85,16 @@ public:
     void setTreeView(const bool isTree);
 
 signals:
+    // NOTE: Group 重复信号的原因是为了防止死循环
+    void insertGroupRows(int first, int count);
+    void insertGroupFinish();
+    void removeGroupRows(int first, int count);
+    void removeGroupFinish();
     void insertRows(int first, int count);
     void insertFinish();
     void removeRows(int first, int count);
     void removeFinish();
+
     void requestFetchMore();
     void selectAndEditFile(const QUrl &url);
     void dataChanged(int first, int last);
@@ -148,6 +154,7 @@ public slots:
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
     void handleReGrouping(const Qt::SortOrder order, const QString &strategy);
+    void handleGroupingUpdate();
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
     bool handleUpdateFile(const QUrl &url);
@@ -236,6 +243,9 @@ private:
     QList<FileItemDataPointer> getAllFiles() const;
     void applyGrouping(const QList<FileItemDataPointer> &files);
     void clearGroupedData();
+
+    int childrenCountInternal();
+    int getChildShowIndexInternal(const QUrl &url);
 
 private:
     QUrl current;
