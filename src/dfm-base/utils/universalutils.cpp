@@ -498,14 +498,16 @@ int UniversalUtils::getTextLineHeight(const QModelIndex &index, const QFontMetri
 
 int UniversalUtils::getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics)
 {
+    const int fontHeight = fontMetrics.height();
     if (text.isEmpty())
-        return fontMetrics.height();
+        return fontHeight;
 
-    auto textRect = fontMetrics.boundingRect(text);
-    if (textRect.height() <= 0)
-        return fontMetrics.height();
+    const QRect textRect = fontMetrics.boundingRect(text);
+    const int tightHeight = textRect.height();
+    if (tightHeight <= 0)
+        return fontHeight;
 
-    return textRect.height();
+    return qMax(fontHeight, tightHeight);
 }
 
 /*!
