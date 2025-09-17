@@ -90,6 +90,8 @@ QVariant ModelItemWrapper::getData(int role) const
             return groupData->groupKey;
         case Global::kItemGroupDisplayIndex:
             return groupData->displayInedx;
+        case Global::kItemGroupExpandedRole:
+            return groupData->isExpanded;
         default:
             break;
         }

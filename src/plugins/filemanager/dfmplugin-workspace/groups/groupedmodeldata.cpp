@@ -97,6 +97,7 @@ void GroupedModelData::rebuildFlattenedItems()
                 }
             }
         }
+        group.isExpanded = isExpanded;
         ++index;
     }
 }

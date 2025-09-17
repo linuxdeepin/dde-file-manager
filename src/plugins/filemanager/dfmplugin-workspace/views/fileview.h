@@ -246,10 +246,13 @@ private:
     bool cdUp();
     QModelIndex iconIndexAt(const QPoint &pos, const QSize &itemSize) const;
     bool expandOrCollapseItem(const QModelIndex &index, const QPoint &pos);
+    bool groupExpandOrCollapseItem(const QModelIndex &index, const QPoint &pos, const bool isArr = true);
 
     void recordSelectedUrls();
 
     void focusOnView();
+
+    bool isGroupHeader(const QModelIndex &index) const;
 };
 
 }

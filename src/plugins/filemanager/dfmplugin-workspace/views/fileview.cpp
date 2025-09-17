@@ -512,6 +512,10 @@ void FileView::onClicked(const QModelIndex &index)
 void FileView::onDoubleClicked(const QModelIndex &index)
 {
     fmDebug() << "Item double clicked for URL:" << rootUrl().toString();
+    if (isGroupHeader(index)) {
+        groupExpandOrCollapseItem(index, QPoint(), false);
+        return;
+    }
     openIndexByClicked(ClickedAction::kDoubleClicked, index);
 }
 
@@ -608,7 +612,7 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
     } else if (isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
-        if (!model()->index(0,0, rootIndex()).data(Global::ItemRoles::kItemGroupHeaderKey).toString().isEmpty()) {
+        if (isGroupHeader(model()->index(0,0, rootIndex()))) {
             list << calcGroupRectContiansIndexes(rect);
             return list;
         }
@@ -1327,8 +1331,8 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     }
 
     auto currentIndex = DListView::indexAt(pos);
-    if (!currentIndex.data(Global::ItemRoles::kItemGroupHeaderKey).toString().isEmpty())
-        return QModelIndex();
+    if (isGroupHeader(currentIndex))
+        return currentIndex;
 
     auto paintRect = visualRect(currentIndex);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -1338,6 +1342,9 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     initViewItemOption(&opt);
 #endif
     opt.rect = paintRect;
+    if (!itemDelegate())
+        return QModelIndex();
+
     auto rectList = itemDelegate()->itemGeomertys(opt, currentIndex);
     for (const auto &rect : rectList) {
         if (rect.contains(pos))
@@ -1364,6 +1371,25 @@ bool FileView::expandOrCollapseItem(const QModelIndex &index, const QPoint &pos)
         fmInfo() << "do expanded item, index = " << index << index.row() << model()->data(index, kItemUrlRole).toUrl();
         model()->toggleTreeItemExpansion(index);
     }
+
+    return true;
+}
+
+bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint &pos, const bool isArr)
+{
+    if (!isArr) {
+        onGroupExpansionToggled(index.data(kItemGroupHeaderKey).toString());
+        return true;
+    }
+    QStyleOptionViewItem op;
+    QRect rect = visualRect(index);// 绘制区域
+    op.rect = rect;
+    QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
+
+    if (!arrowRect.contains(pos))
+        return false;
+
+    onGroupExpansionToggled(index.data(kItemGroupHeaderKey).toString());
 
     return true;
 }
@@ -1552,6 +1578,11 @@ void FileView::mousePressEvent(QMouseEvent *event)
                 d->pressedStartWithExpand = true;
                 return;
             }
+        }
+
+        // 分组视图展开逻辑处理
+        if (isGroupHeader(index) && groupExpandOrCollapseItem(index, event->pos())) {
+            return;
         }
 
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
@@ -2636,6 +2667,11 @@ void FileView::focusOnView()
 
     if (isVisible())
         setFocus();
+}
+
+bool FileView::isGroupHeader(const QModelIndex &index) const
+{
+    return !index.data(kItemGroupHeaderKey).toString().isEmpty();
 }
 
 // Grouping-related slot implementations

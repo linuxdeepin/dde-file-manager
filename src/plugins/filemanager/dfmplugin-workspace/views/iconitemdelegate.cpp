@@ -917,24 +917,24 @@ int IconItemDelegate::getGroupHeaderHeight(const QStyleOptionViewItem &option) c
 
 bool IconItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    // Handle group header clicks
-    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        handleGroupHeaderClick(mouseEvent, option, index);
-        return true;
-    }
+    // // Handle group header clicks
+    // if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonPress) {
+    //     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    //     handleGroupHeaderClick(mouseEvent, option, index);
+    //     return true;
+    // }
 
-    // Handle double-click on group headers for expand/collapse
-    if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonDblClick) {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        if (mouseEvent->button() == Qt::LeftButton) {
-            const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
-            if (!groupKey.isEmpty()) {
-                emit const_cast<IconItemDelegate *>(this)->groupExpansionToggled(groupKey);
-            }
-            return true;
-        }
-    }
+    // // Handle double-click on group headers for expand/collapse
+    // if (isGroupHeaderItem(index) && event->type() == QEvent::MouseButtonDblClick) {
+    //     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    //     if (mouseEvent->button() == Qt::LeftButton) {
+    //         const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
+    //         if (!groupKey.isEmpty()) {
+    //             emit const_cast<IconItemDelegate *>(this)->groupExpansionToggled(groupKey);
+    //         }
+    //         return true;
+    //     }
+    // }
 
     // Call base class implementation for regular items
     return BaseItemDelegate::editorEvent(event, model, option, index);
