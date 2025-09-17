@@ -20,9 +20,7 @@ QStringList TimeGroupStrategy::getTimeOrder()
         "today",   // 今天
         "yesterday",   // 昨天
         "past-7-days",   // 过去7天
-        "past-30-days",   // 过去30天
-        "this-year",   // 今年其他月份
-        "past-years",   // 过去年份
+        "past-30-days",   // 过去30天s
         "earlier"   // 更早
     };
 }
@@ -115,19 +113,46 @@ QStringList TimeGroupStrategy::getGroupOrder() const
 
 int TimeGroupStrategy::getGroupDisplayOrder(const QString &groupKey) const
 {
-    // Handle dynamic time groups
-    if (groupKey.startsWith("month-") || groupKey.startsWith("year-")) {
-        return getDynamicDisplayOrder(groupKey);
+    // 使用基数来确保大的分组类别顺序正确
+    // 今天 (0) -> 昨天 (1) -> 过去7天 (2) -> 过去30天 (3)
+    // -> 月份 (100+) -> 年份 (200+) -> 更早 (9999)
+
+    if (groupKey == "today") return 0;
+    if (groupKey == "yesterday") return 1;
+    if (groupKey == "past-7-days") return 2;
+    if (groupKey == "past-30-days") return 3;
+
+    // 月份分组 (基数 100)
+    // 越近的月份，排序值越小
+    if (groupKey.startsWith("month-")) {
+        bool ok;
+        int month = groupKey.mid(6).toInt(&ok);
+        if (ok) {
+            QDate today = QDate::currentDate();
+            int monthsAgo = today.month() - month;   // 在同一年内，这个差值越大说明月份越早
+            return 100 + monthsAgo;   // 例如：5月文件(5-5=0)->100, 4月文件(5-4=1)->101
+        }
     }
 
-    // Handle basic time groups
-    QStringList timeOrder = getTimeOrder();
-    int index = timeOrder.indexOf(groupKey);
-    if (index == -1) {
-        index = timeOrder.size();   // Unknown groups go to the end
+    // 年份分组 (基数 200)
+    // 越近的年份，排序值越小
+    if (groupKey.startsWith("year-")) {
+        bool ok;
+        int year = groupKey.mid(5).toInt(&ok);
+        if (ok) {
+            QDate today = QDate::currentDate();
+            int yearsAgo = today.year() - year;
+            return 200 + yearsAgo;   // 例如：2024年(2025-2024=1)->201, 2023年(2025-2023=2)->202
+        }
     }
 
-    return index;
+    // “更早” 永远是最后一个
+    if (groupKey == "earlier") {
+        return 9999;
+    }
+
+    // 未知分组也放在最后
+    return 10000;
 }
 
 bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const
@@ -158,75 +183,39 @@ QString TimeGroupStrategy::calculateTimeGroup(const QDateTime &fileTime) const
     QDate today = now.date();
     QDate fileDate = fileTime.date();
 
-    // Today
+    // 今天：时间为当日 00：00-23：59的文件。
     if (fileDate == today) {
         return "today";
     }
 
-    // Yesterday
+    // 昨天：时间为昨天 00：00-23：59的文件。
     if (fileDate == today.addDays(-1)) {
         return "yesterday";
     }
 
-    qint64 daysAgo = fileDate.daysTo(today);
-
-    // Past 7 days (excluding today and yesterday)
-    if (daysAgo <= 7) {
+    // 过去 7天：按当前精确时分倒推 7*24h，排除今天和昨天。
+    if (fileTime >= now.addDays(-7)) {
         return "past-7-days";
     }
 
-    // Past 30 days (excluding past 7 days)
-    if (daysAgo <= 30) {
+    // 过去 30天：按当前精确时分倒推 30*24h，排除已分组的。
+    if (fileTime >= now.addDays(-30)) {
         return "past-30-days";
     }
 
-    // This year - other months
+    // 月份：今年内的文件，排除以上所有。
     if (fileDate.year() == today.year()) {
         return QString("month-%1").arg(fileDate.month());
     }
 
+    // 年份：最多显示过去 5年。
+    // 例如今年是 2025年，显示 2024, 2023, 2022, 2021, 2020 年。
     int yearDiff = today.year() - fileDate.year();
-
-    // Past 5 years
-    if (yearDiff <= 5) {
+    if (yearDiff >= 1 && yearDiff <= 5) {
         return QString("year-%1").arg(fileDate.year());
     }
 
-    // Earlier (more than 5 years ago)
+    // 更早：5年以前的文件。
+    // 例如今年是 2025年，2019年及之前的文件。
     return "earlier";
-}
-
-int TimeGroupStrategy::getDynamicDisplayOrder(const QString &groupKey) const
-{
-    QDate today = QDate::currentDate();
-
-    if (groupKey.startsWith("month-")) {
-        bool ok;
-        int month = groupKey.mid(6).toInt(&ok);
-        if (!ok) return 1000;   // Invalid, put at end
-
-        // Months are ordered by recency (current month = 0, previous month = 1, etc.)
-        int monthsAgo = (today.year() - today.year()) * 12 + (today.month() - month);
-        if (monthsAgo < 0) monthsAgo += 12;   // Handle year boundary
-
-        // Month groups come after "past-30-days" (index 3) but before "past-years"
-        int baseIndex = 4;   // After "past-30-days"
-
-        return baseIndex + monthsAgo;
-
-    } else if (groupKey.startsWith("year-")) {
-        bool ok;
-        int year = groupKey.mid(5).toInt(&ok);
-        if (!ok) return 1000;   // Invalid, put at end
-
-        // Years are ordered by recency (current year = 0, previous year = 1, etc.)
-        int yearsAgo = today.year() - year;
-
-        // Year groups come after month groups but before "earlier"
-        int baseIndex = 100;   // After all possible month groups
-
-        return baseIndex + yearsAgo;
-    }
-
-    return 1000;   // Unknown, put at end
 }

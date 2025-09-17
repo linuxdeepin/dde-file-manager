@@ -64,13 +64,6 @@ private:
     QString calculateTimeGroup(const QDateTime &fileTime) const;
 
     /**
-     * @brief Get display order for dynamic time groups (months, years)
-     * @param groupKey The group key to get order for
-     * @return The display order index
-     */
-    int getDynamicDisplayOrder(const QString &groupKey) const;
-
-    /**
      * @brief The type of time to use for grouping
      */
     TimeType m_timeType;
