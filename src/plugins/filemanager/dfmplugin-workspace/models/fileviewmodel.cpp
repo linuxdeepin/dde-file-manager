@@ -1004,24 +1004,42 @@ void FileViewModel::onFileUpdated(int show)
 
 void FileViewModel::onInsert(int firstIndex, int count)
 {
+    if (filterSortWorker->currentIsGroupingMode())
+        return;
+
     beginInsertRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onInsertFinish()
 {
+    FinallyUtil release([this] {
+        emit requestGroupingUpdate();
+    });
+
+    if (filterSortWorker->currentIsGroupingMode())
+        return;
+
     endInsertRows();
-    emit requestGroupingUpdate();
 }
 
 void FileViewModel::onRemove(int firstIndex, int count)
 {
+    if (filterSortWorker->currentIsGroupingMode())
+        return;
+
     beginRemoveRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onRemoveFinish()
 {
+    FinallyUtil release([this] {
+        emit requestGroupingUpdate();
+    });
+
+    if (filterSortWorker->currentIsGroupingMode())
+        return;
+
     endRemoveRows();
-    emit requestGroupingUpdate();
 
     if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
         WorkspaceEventCaller::sendModelFilesEmpty();
@@ -1045,6 +1063,9 @@ void FileViewModel::onGroupRemove(int firstIndex, int count)
 void FileViewModel::onGroupRemoveFinish()
 {
     endRemoveRows();
+
+    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+        WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
 void FileViewModel::onUpdateView()
@@ -1188,8 +1209,10 @@ void FileViewModel::initFilterSortWork()
     // get sort config
     Qt::SortOrder order = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
     ItemRoles role = static_cast<ItemRoles>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortRole", kItemFileDisplayNameRole).toInt());
+    // get group config
     QString groupStrategy = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupStrategy", GroupStrategty::kNoGroup).toString();
     Qt::SortOrder groupOrder = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupingOrder", Qt::AscendingOrder).toInt());
+    // TODO: get groupExpansionStates
 
     fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role << "for URL:" << dirRootUrl.toString();
 
