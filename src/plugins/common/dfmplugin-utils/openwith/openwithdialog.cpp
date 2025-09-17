@@ -288,8 +288,8 @@ void OpenWithDialog::initUI()
     setToDefaultCheckBox->setChecked(true);
     cancelButton = new DPushButton(tr("Cancel", "button"));
     chooseButton = new DSuggestButton(tr("Confirm", "button"));
-    cancelButton->setFixedWidth(78);
-    chooseButton->setFixedWidth(78);
+    cancelButton->setMinimumWidth(78);
+    chooseButton->setMinimumWidth(78);
     chooseButton->setFocus();
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
