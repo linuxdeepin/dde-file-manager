@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="353"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="354"/>
         <source>File Manager</source>
         <translation>מנהל קבצים</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="358"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="359"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation type="unfinished"/>
     </message>
@@ -62,8 +62,8 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="668"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="782"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="840"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="950"/>
         <source>Can&apos;t access file!</source>
         <translation type="unfinished"/>
     </message>
@@ -113,9 +113,94 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="686"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="684"/>
         <source>The file name or the path is too long!</source>
         <translation>שם הקובץ או הנתיב ארוכים מדי!</translation>
+    </message>
+</context>
+<context>
+    <name>FixedTabWidget</name>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="46"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="162"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="184"/>
+        <source>Specify directory %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="70"/>
+        <source>Computer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="71"/>
+        <source>Home</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="72"/>
+        <source>Desktop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="73"/>
+        <source>Videos</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="74"/>
+        <source>Music</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="75"/>
+        <source>Pictures</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="76"/>
+        <source>Documents</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="77"/>
+        <source>Downloads</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="78"/>
+        <source>Specify directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="84"/>
+        <source>Display when launching a new window:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="85"/>
+        <source>Default Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="87"/>
+        <source>Custom Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="128"/>
+        <source>Invalid Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="129"/>
+        <source>The directory is unavailable for this operation. Please select a local directory and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="201"/>
+        <source>Add Directory</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -137,7 +222,7 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="780"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="771"/>
         <source>Unknown</source>
         <translation>לא ידוע</translation>
     </message>
@@ -171,33 +256,33 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1105"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
         <source>need authorization to access</source>
         <translation>יש צורך בתשומת לב כדי לגשת</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1112"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1122"/>
         <source>Authentication Required
 Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1184"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1194"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>לא ניתן לה Púb את זהות של %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1185"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1195"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>זה קורה כאשר אתה הולך למחשב לראשונה.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1186"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1196"/>
         <source>The identity sent by the remote computer is</source>
         <translation>זהות שהועלתה מהמחשב המרחק היא</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1188"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1198"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>אם אתה רוצה להיות בטוח לחלוטין שאפשר להמשיך, פנה למנהל מערכת.</translation>
     </message>
@@ -240,7 +325,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="105"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>&apos;%1 נפח&apos;,</translation>
     </message>
@@ -261,7 +346,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="114"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="118"/>
         <source>%1 on %2</source>
         <translation>&apos;%1 על %2&apos;,</translation>
     </message>
@@ -346,7 +431,7 @@ Enter user and password for %1</source>
         <translation>אחרונים</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="215"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="217"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -354,7 +439,7 @@ Enter user and password for %1</source>
         <translation>עיגון אוטומטי</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="243"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -367,12 +452,12 @@ Enter user and password for %1</source>
         <translation>%1 משימות בתהליך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="787"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="778"/>
         <source>%1 item</source>
         <translation>פריט %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="788"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="779"/>
         <source>%1 items</source>
         <translation>%1 פריטים</translation>
     </message>
@@ -489,7 +574,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="84"/>
         <source>Mounted sharing folders</source>
         <translation>תיקיות משותפות מותקנות</translation>
     </message>
@@ -914,41 +999,41 @@ Enter user and password for %1</source>
         <translation>עצירה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="695"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="204"/>
         <source>Shortcut</source>
         <translation>קיצור־דרך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1059"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1085"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>רקע שולחן העבודה הזה של המערכת נעול. נא ליצור קשר עם ההנהלה.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="127"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="136"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (העתק)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="128"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="137"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation> (העתק %1)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="83"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="180"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="105"/>
         <source>Files are being processed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="213"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="187"/>
         <source>Bit</source>
         <translation>ביט</translation>
     </message>
@@ -966,7 +1051,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="561"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="578"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="70"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="298"/>
@@ -980,7 +1065,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="565"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="582"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="73"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
@@ -993,7 +1078,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="574"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="591"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>שנה שם</translation>
@@ -1013,37 +1098,37 @@ Enter user and password for %1</source>
         <translation>מאפיינים</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="52"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="57"/>
         <source>New Folder</source>
         <translation>תיקייה חדשה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="55"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
         <source>New Text</source>
         <translation>טקסט חדש</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
         <source>Document</source>
         <translation>מסמך</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
         <source>Spreadsheet</source>
         <translation>גיליון נתונים</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="67"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
         <source>Presentation</source>
         <translation>מצגת</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="71"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="76"/>
         <source>New File</source>
         <translation>קובץ חדש</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="818"/>
         <source>Create symlink</source>
         <translation type="unfinished"/>
     </message>
@@ -1273,7 +1358,7 @@ Enter user and password for %1</source>
         <translation>אפור</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="578"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="595"/>
         <source>Remove</source>
         <translation>הסר</translation>
     </message>
@@ -1739,7 +1824,7 @@ Enter user and password for %1</source>
         <translation>הקובץ מופעל</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="391"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="403"/>
         <source>Device disconnected</source>
         <translation type="unfinished"/>
     </message>
@@ -1770,7 +1855,7 @@ Enter user and password for %1</source>
         <translation>או</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <source>Clear search history</source>
         <translation type="unfinished"/>
     </message>
@@ -1780,12 +1865,12 @@ Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="268"/>
         <source>search</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="283"/>
         <source>advanced search</source>
         <translation type="unfinished"/>
     </message>
@@ -2641,10 +2726,10 @@ Enter user and password for %1</source>
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="621"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="570"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="584"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="623"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="644"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2717,6 +2802,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="150"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
         <source>Authentication failed</source>
         <translation type="unfinished"/>
     </message>
@@ -2727,252 +2813,247 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
-        <source>Error occured while mounting device</source>
-        <translation>שגיאה התרחשה במהלך האתחול של Gerät</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>הgerät נחסם ואין לך הרשאה ל Lager darauf. אנא התאם מדיניות החיבור שלו בquisitions מרכז הביטחון או פנה למנהל שלך.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="166"/>
         <source>The device is busy, cannot remove now</source>
         <translation>הgerät עייף, לא ניתן להסיר עכשיו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="187"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="189"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>אין לך הרשאהoperateacted��作文件/文件夹</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>מצטער, אין לך הרשאה��作以下%1文件/文件夹！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="233"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="245"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="680"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="242"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
         <source>Operation failed!</source>
         <translation>הפעולה נכשלה！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="241"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
         <source>Target folder is inside the source folder!</source>
         <translation>תא宛目标文件夹在源文件夹内！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="303"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="305"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>הסיסמה הנדרשת כדיccess encrypted data on %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="491"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="665"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="383"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="432"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="643"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="667"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="312"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="314"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>פורמט</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="313"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="315"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>כדי לגשת לgerät, עליך להפורמט את הディ스크 ראשית. אתה בטוח שאתה רוצה להפורמט אותו עכשיו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="329"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>האם אתה רוצה להריץ %1 או להציג את תוכןו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="328"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
         <source>It is an executable text file.</source>
         <translation>זה קובץ טקסט נריץ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="364"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="668"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>הריץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="333"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="335"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="363"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>הצג ב терמינל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="336"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>הצג</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="359"/>
         <source>Do you want to run %1?</source>
         <translation>להריץ את %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="358"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="360"/>
         <source>It is an executable file.</source>
         <translation>זה קובץ רץ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="377"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="378"/>
         <source>Permanently delete %1 items?</source>
         <translation>מחק באופן קבוע %1 קבצים？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="408"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="384"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="433"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="494"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="407"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
         <source>Permanently delete %1?</source>
         <translation>מחק באופן קבוע %1？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="452"/>
         <source>This action cannot be undone</source>
         <translation>הפעולה הזו לא ניתן לבטל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="428"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>למחוק פריט %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="427"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="429"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>למחוק %1 פריטים?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="438"/>
         <source>Empty</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="477"/>
         <source>Do you want to delete %1?</source>
         <translation>למחוק את %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="478"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>למחוק את %1 הפריטים הנבחרים?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="507"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>הレストור של קובץ %1 נכשל, המFTERיה מטרה היא רק קריאה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="511"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>הレストור של קבצים %1 נכשל, המFTERיה מטרה היא רק קריאה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="552"/>
         <source>This operation cannot be reversed.</source>
         <translation>הפעולה הזו לא ניתן להפוך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="566"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; כבר קיים, אנא השתמש בשמ אחר.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
         <source>Device or resource busy</source>
         <translation>הDEVICE או הресурс מופעל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="593"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>הקובץ י�藏起来 如果文件名以&apos;.&apos;开始。你想要隐藏它？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="594"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>Hide</source>
         <translation>הסתר</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="595"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="597"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="618"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="620"/>
         <source>Unable to access %1</source>
         <translation>לא ניתן לגשת ל-%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="635"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="637"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>&apos;%1 שהקצאתה מתארת נUARTר או נלהב</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="639"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="641"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>אתה רוצה למחוק את הקצאתה？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="664"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="666"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>הקובץ הזה לא ניתן להריץ, האם אתה רוצה להוסיף את הרשאת הריצה והריץ אותו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="676"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="678"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>הקובצים המוצלחים מכילים קובץ/ Geliיה של מערכת, ולא ניתן למחוק אותם</translation>
     </message>
@@ -3103,7 +3184,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="279"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="285"/>
         <source>Copy complete info</source>
         <translation>העתקת מידע מלא</translation>
     </message>
@@ -3111,255 +3192,252 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::SettingBackend</name>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="246"/>
         <source>Always open folder in new window</source>
         <translation>פתח תיקיה תמיד בחלון חדש</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="268"/>
         <source>Open file:</source>
         <translation>פתור קובץ:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>Click</source>
         <translation>לחוץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="270"/>
         <source>Double click</source>
         <translation>לחוץ בדופל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
-        <source>New window and tab</source>
-        <translation>חלון חדש וטאב</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="271"/>
-        <source>Open from default window:</source>
-        <translation>פתח מהחלון ברירת מחדל:</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="273"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="295"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
         <source>Computer</source>
         <translation>מחשב</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="285"/>
         <source>Home</source>
         <translation>בית</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="297"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="286"/>
         <source>Desktop</source>
         <translation>שולחן עבודה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="276"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="287"/>
         <source>Videos</source>
         <translation>וידאו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="299"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="288"/>
         <source>Music</source>
         <translation>מוזיקה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="289"/>
         <source>Pictures</source>
         <translation>תמונות</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="290"/>
         <source>Documents</source>
         <translation>filer</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="291"/>
         <source>Downloads</source>
         <translation>ה Téléchargements</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
         <source>Open in new tab:</source>
         <translation>פתח בטאב חדש:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="294"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
         <source>Current Directory</source>
         <translation>הנתיב הנוכחי</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="315"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
         <source>Files and folders</source>
         <translation>filer ותיקיות</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="317"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
         <source>Show hidden files</source>
         <translation>הצגfiler נסתרים</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="309"/>
         <source>Show file extensions</source>
         <translation>הצג הרחבות קבצים</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="322"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="311"/>
         <source>Mix sorting of files and folders</source>
         <translation>혼합 תرتיבתfiler ותיקיות</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="330"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="319"/>
         <source>Workspace</source>
         <translation>משרדי עבודה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="331"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="320"/>
         <source>View</source>
         <translation>תצוגה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="348"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="337"/>
         <source>Default icon grid density:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="358"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="347"/>
         <source>Default list height:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="357"/>
         <source>Tree</source>
         <translation>עץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="361"/>
         <source>Default view:</source>
         <translation>תצוגה מְקוֹרֶה：</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Icon</source>
         <translation>סמל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
+        <source>Open new folder in a new tab</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
         <source>Activate existing window when reopening folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="338"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
+        <source>New window</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
+        <source>New tab</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
         <source>Default icon size:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="365"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>List</source>
         <translation>רשימה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="367"/>
         <source>Restore default view mode for all directories</source>
         <translation>אתחול לתצוגה מְקוֹרֶה עבור כל התיקיות</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="368"/>
         <source>Restore default view mode</source>
         <translation>אתחול לתצוגה מְקוֹרֶה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="372"/>
         <source>Thumbnail preview</source>
         <translation>תצוגה מקטנה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="375"/>
         <source>Compressed file preview</source>
         <translation>תצוגה של קובץ מצומצם</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
         <source>Text preview</source>
         <translation>תצוגה של טקסט</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="391"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="380"/>
         <source>Document preview</source>
         <translation>תצוגה של דキュ먼ט</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="393"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="382"/>
         <source>Image preview</source>
         <translation>תצוגה של תמונה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="384"/>
         <source>Video preview</source>
         <translation>תצוגה של וידאו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="397"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="386"/>
         <source>Music preview</source>
         <translation>תצוגה של מוזיקה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="400"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="389"/>
         <source>The remote environment shows thumbnail previews</source>
         <translation>הסביבה המרוממת מציגה תצוגות מקטנה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="390"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
         <translation>הנחיית תצוגת מקטנה עליה יכולה לגרום להעלאה האיטית של התיקיה המרוממת או ל עצרה של הפעולה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="410"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="399"/>
         <source>Advanced</source>
         <translation>תק增值服务</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="401"/>
         <source>Mount</source>
         <translation>הנחת</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="415"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="404"/>
         <source>Auto mount</source>
         <translation>הנחת אוטומטית</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="420"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="409"/>
         <source>Open after auto mount</source>
         <translation>פתח לאחר הנחת אוטומטית</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="425"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="414"/>
         <source>Merge the entries of Samba shared folders</source>
         <translation>לכOUSר את הכניסות של רשתות Samba</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="416"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>החלפת הצגה של הכניסה עלולה לגרום לטעות при קNxת</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="432"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="421"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>למשוך את חלון בחירת קובץ של המנהל קובץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="434"/>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="423"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>לבקש אישור מניי-י בעת מחיקת קבצים</translation>
     </message>
@@ -3648,98 +3726,98 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="212"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation>הפק קובץ מקורות %1: הפעולה של התראה על סכסוך נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="222"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation>הפק קובץ מטרה %1: הפעולה של התראה על סכסוך נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="777"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="768"/>
         <source>Time modified: %1</source>
         <translation>השנה נמשכה: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="773"/>
         <source>Original folder</source>
         <translation>היקף מקורי</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="789"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="780"/>
         <source>Contains: %1</source>
         <translation>מכיל: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="792"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="783"/>
         <source>Original file</source>
         <translation>קובץ מקורי</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="793"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="784"/>
         <source>Size: %1</source>
         <translation>גודל: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="782"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="773"/>
         <source>Target folder</source>
         <translation>תיקיה מטרה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="448"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="781"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="439"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="772"/>
         <source>In data statistics ...</source>
         <translation>בסטטיסטיקות הנתונים ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="792"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="783"/>
         <source>Target file</source>
         <translation>קובץ מטרה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="376"/>
         <source>Syncing data</source>
         <translation>המשיכת נתונים</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="386"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="377"/>
         <source>Please wait</source>
         <translation>נא לחכות</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="597"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="588"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>שמור על שניהם</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="600"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="591"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>פספס</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="662"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="596"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="653"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>החלף</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="630"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="621"/>
         <source>Do not ask again</source>
         <translation>לא לשאול שוב</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="659"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="650"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>נסה שוב</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="665"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="656"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>לכבות</translation>
@@ -3779,18 +3857,18 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="339"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="342"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
         <translation>מצטער, לא ניתן למצוא את התיקייה של גישה מהירה שלך, האם אתה רוצה להסיר אותה？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="341"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="344"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="342"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="345"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>הסר</translation>
@@ -3812,38 +3890,38 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::AbstractBurnJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="86"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="87"/>
         <source>Burning disc %1, please wait...</source>
         <translation>הכנת дисק %1, אנא המתן...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="87"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="88"/>
         <source>Writing data...</source>
         <translation>כתיבת הנתונים...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="91"/>
         <source>Verifying data...</source>
         <translation>ה eksamen של הנתונים...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="164"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="170"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>Data verification successful.</source>
         <translation>ה eksamen של הנתונים בהצלחה.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="172"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="173"/>
         <source>Burn process completed</source>
         <translation>הכנת הדיסק בוטלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="215"/>
         <source>The device was not safely unmounted</source>
         <translation>הDEVICE לא ננתק בטוח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="215"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>ה디יסק מופעל, לא ניתן להנתק עכשיו</translation>
     </message>
@@ -3864,7 +3942,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="435"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>שם הקובץ או ה途径过长。请缩短文件名或路径，然后再次尝试。</translation>
     </message>
@@ -3987,7 +4065,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="532"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>השם הקובץ או המיקום ארוכים מדי. נא להיעזר בשמ קובץ או מיקום קצר יותר ולנסות שוב.</translation>
     </message>
@@ -3995,12 +4073,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="582"/>
         <source>Creating an ISO image</source>
         <translation>הצגת קובץ ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="571"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="583"/>
         <source>to %1</source>
         <translation>ל%1</translation>
     </message>
@@ -4032,7 +4110,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="362"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="374"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>מחיקת הדיסק %1, אנא המתן...</translation>
     </message>
@@ -4086,42 +4164,42 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="329"/>
         <source>Unlock device failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="329"/>
         <source>Wrong password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="182"/>
         <source>Rename failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="182"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
         <source>Format failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
         <source>Mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
         <source>Cannot access %1</source>
         <translation type="unfinished"/>
     </message>
@@ -4129,27 +4207,27 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="47"/>
         <source>Computer</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="292"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="293"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="295"/>
         <source>Cancel</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="296"/>
         <source>Enable Now</source>
         <translation type="unfinished"/>
     </message>
@@ -4213,8 +4291,9 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="200"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="52"/>
         <source>%1 on %2</source>
         <translation>%1 ב־%2</translation>
     </message>
@@ -4273,130 +4352,130 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="110"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="102"/>
         <source>Sharing</source>
         <translation>משותפת</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="161"/>
         <source>Share this folder</source>
         <translation>שיתוף התיקייה הזאת</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="131"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="124"/>
         <source>Share name</source>
         <translation>שם השיתוף</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="133"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="126"/>
         <source>Permission</source>
         <translation>הרשאה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="135"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="128"/>
         <source>Anonymous</source>
         <translation>אלמוני</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read and write</source>
         <translation>קריאה וכתיבה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="192"/>
         <source>Read only</source>
         <translation>קריאה בלבד</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Not allow</source>
         <translation>לא להרשות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="205"/>
         <source>Allow</source>
         <translation>להרשות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="140"/>
         <source>Network path</source>
         <translation>נתיב רשת</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="226"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="253"/>
         <source>Copy</source>
         <translation>העתקה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="141"/>
         <source>Username</source>
         <translation>שם משתמש</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="292"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="578"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="285"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="571"/>
         <source>None</source>
         <translation>ללא</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="294"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="572"/>
         <source>Set password</source>
         <translation>הגדרת סיסמה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="579"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="572"/>
         <source>Change password</source>
         <translation>החלפת סיסמה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="142"/>
         <source>Share password</source>
         <translation>סיסמת השיתוף</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="313"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="306"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>הסיסמה הזאת תחול על כל התיקיות המשותפות ומשתמשים שאין להם את הסיסמה יוכלו לגשת לתיקיות משותפות שמרשות גישה אלמונית.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="416"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="409"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>שם ההצגה לא יכול להכיל שתי נקודות (...) או נקודה (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="434"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="427"/>
         <source>The share name is used by another user.</source>
         <translation>שם ההצגה בשימוש על ידי משתמש אחר.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="435"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="437"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="430"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>שם השיתוף כבר קיים. להחליף את התיקייה המשותפת?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="438"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="431"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="439"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="432"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>החלפה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
         <source>The shared name is too long and will be truncated.</source>
         <translation type="unfinished"/>
     </message>
@@ -4404,45 +4483,45 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Kindly Reminder</source>
         <translation>תזכורת אדיבה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
         <source>Please firstly install samba to continue</source>
         <translation>נא להתקין קודם את samba כדי להמשיך</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="103"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="525"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="106"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="564"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>שם ההצגה לא יכול להכיל %1, ולא יכול להתחיל עם נקודה מinus (-) או רווח, או להסתיים ברווח.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="513"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="552"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>לא ניתן להגדיר את תיקון ההצגה בשם המשתמש הנוכחי</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="519"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="558"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>כדי להגן על הקבצים, לא ניתן להחלק את התיקיה הזו.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="545"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="547"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="584"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="586"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
         <source>Sharing failed</source>
         <translation>החלפתה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="548"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="557"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
         <source>The computer name is too long</source>
         <translation>שם המחשב ארוך מדי</translation>
     </message>
@@ -5426,38 +5505,74 @@ Enter user and password for %1</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_fileoperations::FileOperations</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="336"/>
+        <source>External storage device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="347"/>
+        <source>External storage device usage patterns</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="350"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="355"/>
         <source>Rename file error</source>
         <translation>שגיאה בנaming של קובץ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="641"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="646"/>
         <source>Failed to create the directory</source>
         <translation>ה kreirah של директорיה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1169"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1226"/>
         <source>Failed to create the file</source>
         <translation>ה kreirah של הקובץ נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1247"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1327"/>
         <source>link file error</source>
         <translation>שגיאה בנ kreirah של קובץ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1286"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1295"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1369"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1378"/>
         <source>Failed to modify file permissions</source>
         <translation>השינויים הרשאות הקובץ נכשלו</translation>
     </message>
 </context>
 <context>
+    <name>dfmplugin_fileoperations::OperationSettings</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="41"/>
+        <source>Real-time data synchronization (Recommended)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
+        <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
+        <source>Performance First (Requires Safe Removal)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
+        <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_filepreview::PreviewDialogManager</name>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewdialogmanager.cpp" line="92"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewdialogmanager.cpp" line="94"/>
         <source>Unable to find the original file</source>
         <translation>לא ניתן למצוא את הקובץ המקורי</translation>
     </message>
@@ -5590,22 +5705,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_menu::SendToMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="263"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="257"/>
         <source>Send to</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
         <source>Bluetooth</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
         <source>Create link</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="266"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="260"/>
         <source>Send to desktop</source>
         <translation type="unfinished"/>
     </message>
@@ -5946,7 +6061,7 @@ Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
         <translation type="unfinished"/>
     </message>
@@ -6257,17 +6372,17 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_smbbrowser::VirtualEntryMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
         <source>Unmount</source>
         <translation>拔出</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
         <source>Clear saved password and unmount</source>
         <translation>הסר סיסמה נשמרה ו拔出</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="194"/>
         <source>Remove</source>
         <translation>מחק</translation>
     </message>
@@ -6333,66 +6448,65 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="72"/>
         <source>Connect to Server</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="118"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="393"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="296"/>
         <source>Clear History</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Unfavorite</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="313"/>
         <source>Error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="314"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="371"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="368"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="372"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Charset Encoding</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="419"/>
         <source>Default</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="475"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="478"/>
         <source>My Favorites</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="462"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="465"/>
         <source>No favorites yet</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
         <source>Favorite</source>
         <translation type="unfinished"/>
     </message>
@@ -6527,30 +6641,30 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::OptionButtonBox</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="264"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="356"/>
         <source>Icon view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="271"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="348"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="281"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="360"/>
         <source>List view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="282"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="364"/>
         <source>Tree view</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="316"/>
         <source>Sort by</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="322"/>
         <source>View options</source>
         <translation type="unfinished"/>
     </message>
@@ -6584,29 +6698,52 @@ Enter user and password for %1</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_titlebar::TabBar</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="205"/>
+        <source>Close tab</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="206"/>
+        <source>Close other tabs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="214"/>
+        <source>Close tabs to the left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="222"/>
+        <source>Close tabs to the right</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_titlebar::ViewOptionsWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="58"/>
         <source>View Options</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="72"/>
         <source>Icon size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="106"/>
         <source>Grid density</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="140"/>
         <source>List height</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="167"/>
         <source>Display preview</source>
         <translation type="unfinished"/>
     </message>
@@ -6825,6 +6962,49 @@ Enter user and password for %1</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_utils::FileShredWorker</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
+        <source>Analyzing files...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="124"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
+        <source>Operation cancelled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
+        <source>Starting file shredding...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
+        <source>All files have been successfully shredded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
+        <source>Failed to start shred command</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
+        <source>Permission denied</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
+        <source>The file has been moved or the process has exited</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="264"/>
@@ -6883,11 +7063,86 @@ Enter user and password for %1</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_utils::ProgressDialog</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="106"/>
+        <source>File shredder failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="108"/>
+        <source>Close</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
+        <source>Shredding file</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ProgressWidget</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="39"/>
+        <source>Shredding file &quot; %1 &quot;</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ShredMenuScene</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
+        <source>File Shred</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::ShredUtils</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
+        <source>Enable File Shred</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
+        <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
+        <source>Are you sure to shred these %1 items?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
+        <source>The file will be completely deleted and cannot be recovered.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
+        <source>Cancel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
+        <source>Shred</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_utils::VirtualBluetoothPlugin</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="46"/>
         <source>Sending files now, please try later.</source>
         <translation>המשהו תיח Gör נשלח עכשיו, אנא נסה מאוחר יותר.</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::VirtualShredPlugin</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
+        <source>File shred</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7637,7 +7892,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>לא ניתן לפתוח %1, שהוא עשוי להימסך או שונא שם</translation>
     </message>
@@ -7645,12 +7900,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2238"/>
         <source>Mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2239"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation type="unfinished"/>
     </message>
