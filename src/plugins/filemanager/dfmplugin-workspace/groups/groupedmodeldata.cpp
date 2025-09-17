@@ -38,15 +38,6 @@ GroupedModelData::~GroupedModelData()
 {
 }
 
-int GroupedModelData::getTotalFileCount() const
-{
-    int totalCount = 0;
-    for (const auto &group : groups) {
-        totalCount += group.fileCount;
-    }
-    return totalCount;
-}
-
 QList<FileItemDataPointer> GroupedModelData::getAllFiles() const
 {
     QList<FileItemDataPointer> allFiles;
@@ -58,19 +49,6 @@ QList<FileItemDataPointer> GroupedModelData::getAllFiles() const
         }
     }
     return allFiles;
-}
-
-ModelItemWrapper GroupedModelData::getItemAt(int index) const
-{
-    if (index < 0 || index >= flattenedItems.size()) {
-        return ModelItemWrapper();   // Return invalid wrapper
-    }
-    return flattenedItems.at(index);
-}
-
-int GroupedModelData::getItemCount() const
-{
-    return flattenedItems.size();
 }
 
 void GroupedModelData::setGroupExpanded(const QString &groupKey, bool expanded)
@@ -89,7 +67,6 @@ void GroupedModelData::setGroupExpanded(const QString &groupKey, bool expanded)
         }
     }
 
-    // Rebuild flattened items to reflect the change
     rebuildFlattenedItems();
 }
 
@@ -156,19 +133,33 @@ const FileGroupData *GroupedModelData::getGroup(const QString &groupKey) const
     return (it != groups.constEnd()) ? &(*it) : nullptr;
 }
 
-int GroupedModelData::getItemCountThreadSafe() const
+int GroupedModelData::getItemCount() const
 {
     QMutexLocker locker(&m_mutex);
     return flattenedItems.size();
 }
 
-ModelItemWrapper GroupedModelData::getItemAtThreadSafe(int index) const
+ModelItemWrapper GroupedModelData::getItemAt(int index) const
 {
     QMutexLocker locker(&m_mutex);
     if (index < 0 || index >= flattenedItems.size()) {
         return ModelItemWrapper();   // Return invalid wrapper
     }
     return flattenedItems.at(index);
+}
+
+std::optional<int> GroupedModelData::findGroupHeaderStartPos(const QString &key) const
+{
+    QMutexLocker locker(&m_mutex);
+
+    for (int i = 0; i < flattenedItems.size(); ++i) {
+        const ModelItemWrapper &item = flattenedItems.at(i);
+        if (item.isGroupHeader() && item.groupKey == key) {
+            return i;
+        }
+    }
+
+    return std::nullopt;
 }
 
 DPWORKSPACE_END_NAMESPACE

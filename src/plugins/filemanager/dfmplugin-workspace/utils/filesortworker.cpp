@@ -156,14 +156,14 @@ int FileSortWorker::childrenCount()
         return visibleChildren.count();
     } else {
         // Grouping mode: return flattened item count
-        return groupedData.getItemCountThreadSafe();
+        return groupedData.getItemCount();
     }
 }
 
 QVariant FileSortWorker::groupHeaderData(const int index, const int role)
 {
     // Grouping mode: use flattened data mapping
-    ModelItemWrapper wrapper = groupedData.getItemAtThreadSafe(index);
+    ModelItemWrapper wrapper = groupedData.getItemAt(index);
     if (!wrapper.isValid()) {
         fmDebug() << "Invalid index for groupHeaderData:" << index;
         return {};
@@ -210,7 +210,7 @@ FileItemDataPointer FileSortWorker::childData(const int index)
         return childrenDataMap.value(url);
     } else {
         // Grouping mode: use flattened data mapping
-        ModelItemWrapper wrapper = groupedData.getItemAtThreadSafe(index);
+        ModelItemWrapper wrapper = groupedData.getItemAt(index);
         if (!wrapper.isValid()) {
             fmDebug() << "Invalid index for grouped childData:" << index;
             return nullptr;
@@ -650,14 +650,14 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
 
     auto opt = setGroupArguments(order, strategy);
     if (opt == GroupingOpt::kGroupingOptNone) {
-        groupedData.clear();
+        clearGroupedData();
         return;
     }
 
     const QList<FileItemDataPointer> &allFiles = getAllFiles();
     if (allFiles.isEmpty()) {
         fmDebug() << "FileSortWorker: No files to group";
-        groupedData.clear();
+        clearGroupedData();
         return;
     }
 
@@ -671,7 +671,7 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
     }
 
     fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
-             << "groups with" << groupedData.getItemCountThreadSafe() << "total items";
+             << "groups with" << groupedData.getItemCount() << "total items";
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -681,7 +681,6 @@ void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa,
 
     if (aa == Application::kFileAndDirMixedSort) {
         handleResort(sortOrder, orgSortRole, value.toBool());
-        applyGrouping(getAllFiles());
     }
 }
 
@@ -888,13 +887,40 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
     }
 
     bool currentState = groupExpansionStates.value(groupKey, true);
-    groupExpansionStates[groupKey] = !currentState;
+    bool newState = !currentState;
+    groupExpansionStates[groupKey] = newState;
 
-    // Update the grouped data
-    groupedData.setGroupExpanded(groupKey, !currentState);
+    auto group = groupedData.getGroup(groupKey);
+    if (!group) {
+        fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
+        return;
+    }
+
+    int count = group->fileCount;
+    int pos = groupedData.findGroupHeaderStartPos(groupKey).value_or(-1);
+
+    if (pos < 0) {
+        fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
+        return;
+    }
+
+    if (currentState) {
+        // current is expanded
+        emit removeRows(pos + 1, count);
+    } else {
+        emit insertRows(pos + 1, count);
+    }
+
+    groupedData.setGroupExpanded(groupKey, newState);
+
+    if (currentState) {
+        // current is expanded
+        emit removeFinish();
+    } else {
+        emit insertFinish();
+    }
 
     fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
-    emit groupingDataChanged();
 }
 
 void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)
@@ -1134,7 +1160,9 @@ void FileSortWorker::resortCurrent(const bool reverse)
     }
 
     resortVisibleChildren(visibleList);
-    applyGrouping(getAllFiles());
+    if (isCurrentGroupingEnabled) {
+        applyGrouping(getAllFiles());
+    }
     emit reqUestCloseCursor();
 }
 
@@ -2149,12 +2177,8 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     if (files.isEmpty())
         return;
 
-    if (!isCurrentGroupingEnabled)
-        return;
-
     emit requestCursorWait();
     FinallyUtil release([this] {
-        emit groupingDataChanged();
         emit reqUestCloseCursor();
     });
 
@@ -2167,5 +2191,15 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     }
 
     // Generate model data with current expansion states
-    groupedData = groupingEngine->generateModelData(result, groupExpansionStates);
+    const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
+    emit insertRows(0, data.getItemCount());
+    groupedData = data;
+    emit insertFinish();
+}
+
+void FileSortWorker::clearGroupedData()
+{
+    emit removeRows(0, groupedData.getItemCount());
+    groupedData.clear();
+    emit removeFinish();
 }
