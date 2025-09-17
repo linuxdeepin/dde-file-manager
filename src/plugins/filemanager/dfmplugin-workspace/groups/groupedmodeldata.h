@@ -125,6 +125,13 @@ public:
      */
     std::optional<int> findGroupHeaderStartPos(const QString &key) const;
 
+    /**
+     * @brief Find the start position of a file
+     * @param url The file URL
+     * @return The start position of the file, or std::nullopt if not found
+     */
+    std::optional<int> findFileStartPos(const QUrl &url) const;
+
 private:
     mutable QMutex m_mutex;   ///< Mutex for thread safety
     QList<ModelItemWrapper> flattenedItems;   ///< Flattened model items list
