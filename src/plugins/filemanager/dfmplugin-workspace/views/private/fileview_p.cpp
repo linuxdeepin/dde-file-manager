@@ -302,6 +302,8 @@ void FileViewPrivate::updateHorizontalOffset()
 {
     horizontalOffset = 0;
     if (q->isIconViewMode()) {
+
+
         int contentWidth = q->maximumViewportSize().width();
         int itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
         int itemColumn = 0;
@@ -313,6 +315,10 @@ void FileViewPrivate::updateHorizontalOffset()
         int startLeftPx = q->visualRect(q->model()->index(0, 0, q->rootIndex())).left();
         int rowCount = q->model()->rowCount(q->rootIndex());
         int maxColumnCount = qCeil(contentWidth / (60 + q->spacing() * 2)) + 2;   // 60是item最小宽度
+        // group绘制时，设置分组为正常显示，才能正常计算出每一行绘制多少个item
+        if (!q->model()->index(0,0,q->rootIndex()).data(Global::ItemRoles::kItemGroupHeaderKey).toString().isEmpty()) {
+            q->model()->updateHorizontalOffset(true);
+        }
         for (int i = 1; i < qMax(maxColumnCount, rowCount); i++) {
             int itemLeft = q->visualRect(q->model()->index(i, 0, q->rootIndex())).left();
             // NOTE：如果实际item数量不足以绘制到第二行，qt将不会在位置计算中加上边距，
@@ -322,6 +328,9 @@ void FileViewPrivate::updateHorizontalOffset()
                 break;
             }
         }
+
+        // 关闭更新状态
+        q->model()->updateHorizontalOffset(false);
 
         columnCountByCalc = itemColumn;
         // 如果itemColumn为0或itemColumn大于等于实际item数量，则说明当前只有一行，则水平偏移量为默认偏移
@@ -340,3 +349,4 @@ void FileViewPrivate::updateHorizontalOffset()
         horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     }
 }
+

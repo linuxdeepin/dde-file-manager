@@ -107,6 +107,9 @@ public:
     // 执行实际的加载，使用之前准备的URL或当前URL
     void executeLoad();
 
+    // 设置当前正在正在更新HorizontalOffset
+    void updateHorizontalOffset(const bool update);
+
 Q_SIGNALS:
     void stateChanged();
     void renameFileProcessStarted();
@@ -181,6 +184,7 @@ private:
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
     bool isTree { false };
+    bool updating { false };
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;

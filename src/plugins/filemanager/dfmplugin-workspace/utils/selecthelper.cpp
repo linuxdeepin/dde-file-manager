@@ -263,6 +263,15 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
     int firstIndex = firstRow * rowItemCount;
     int lastIndex = qMin(lastRow * rowItemCount, itemCount);
 
+    // 分组绘制时计算起始
+    if (isGroupHeaderIndex(view->model()->index(0, 0, view->rootIndex()))) {
+        auto list = view->calcGroupRectContiansIndexes(rect);
+        if (!list.isEmpty() && list.first().first != -1 && list.first().second != -1) {
+            firstIndex = list.first().first;
+            lastIndex = list.first().second + 1;
+        }
+    }
+
     for (int i = firstIndex; i < lastIndex; ++i) {
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
         // Skip group header items - they should not be selectable
