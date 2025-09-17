@@ -116,6 +116,7 @@ enum ItemRoles {
     kItemIsGroupHeaderType = Qt::UserRole + 39,
     kItemGroupHeaderKey = Qt::UserRole + 40,
     kItemGroupDisplayIndex = Qt::UserRole + 41,
+    kItemGroupExpandedRole = Qt::UserRole + 42,
     kItemUnknowRole = Qt::UserRole + 999
 };
 

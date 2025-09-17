@@ -131,6 +131,8 @@ public:
     virtual QSize getGroupHeaderSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void paintGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
+
 signals:
     void groupExpansionToggled(const QString &groupKey);
     void groupHeaderClicked(const QString &groupKey);
@@ -149,7 +151,7 @@ protected:
     void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, const QStyleOptionViewItem &option) const;
 
     // Group layout calculation methods
-    QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
+
     QRect getGroupTextRect(const QStyleOptionViewItem &option) const;
 
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
