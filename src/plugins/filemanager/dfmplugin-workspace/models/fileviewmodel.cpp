@@ -392,6 +392,11 @@ int FileViewModel::columnCount(const QModelIndex &parent) const
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
+    // update view HorizontalOffset 需要判断不是group，sizehint才正确，才可以获取到正确
+    // 绘制了多少列
+    if (role == Global::kItemGroupHeaderKey && updating)
+        return QString();
+
     const QModelIndex &parentIndex = index.parent();
 
     if (filterSortWorker.isNull())
@@ -965,6 +970,11 @@ void FileViewModel::executeLoad()
     // 清除准备的URL
     preparedUrl = QUrl();
     fmDebug() << "Load execution completed for URL:" << urlToLoad.toString();
+}
+
+void FileViewModel::updateHorizontalOffset(const bool update)
+{
+    updating = update;
 }
 
 void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)

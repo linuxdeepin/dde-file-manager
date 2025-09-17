@@ -229,6 +229,7 @@ private:
     RandeIndexList visibleIndexes(const QRect &rect) const;
     RandeIndexList rectContainsIndexes(const QRect &rect) const;
     RandeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
+    RandeIndexList calcGroupRectContiansIndexes(const QRect &rect) const;
 
     QSize itemSizeHint() const;
 

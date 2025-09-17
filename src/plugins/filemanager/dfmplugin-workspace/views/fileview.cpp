@@ -606,6 +606,13 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 
         list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (isIconViewMode()) {
+
+        // 分组绘制时计算区域内的list
+        if (!model()->index(0,0, rootIndex()).data(Global::ItemRoles::kItemGroupHeaderKey).toString().isEmpty()) {
+            list << calcGroupRectContiansIndexes(rect);
+            return list;
+        }
+
         int columnCount = d->calcColumnCount(rect.width(), itemSize.width());
 
         list << calcRectContiansIndexes(columnCount, rect);
@@ -1315,22 +1322,14 @@ QModelIndex FileView::iconIndexAt(const QPoint &pos, const QSize &itemSize) cons
     if (isListViewMode() || isTreeViewMode())
         return QModelIndex();
 
-    int iconVerticalTopMargin = 0;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
-#endif
-
     if (itemDelegate() && itemDelegate()->itemExpanded() && itemDelegate()->expandItemRect().contains(pos)) {
         return itemDelegate()->expandedIndex();
     }
 
-    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset() - iconVerticalTopMargin);
-    auto index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
-
-    if (index == -1 || index >= model()->rowCount(rootIndex()))
+    auto currentIndex = DListView::indexAt(pos);
+    if (!currentIndex.data(Global::ItemRoles::kItemGroupHeaderKey).toString().isEmpty())
         return QModelIndex();
 
-    auto currentIndex = model()->index(index, 0, rootIndex());
     auto paintRect = visualRect(currentIndex);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto opt = viewOptions();
@@ -2102,6 +2101,8 @@ void FileView::paintEvent(QPaintEvent *event)
 
     if (d->horizontalOffset == 0)
         d->updateHorizontalOffset();
+
+    // 设置标志是否记录当前绘制的itemindex
     DListView::paintEvent(event);
 
     if (d->isShowViewSelectBox) {
@@ -2597,6 +2598,27 @@ void FileView::openIndex(const QModelIndex &index)
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
 {
     WorkspaceHelper::instance()->setFileViewStateValue(url, key, value);
+}
+
+FileView::RandeIndexList FileView::calcGroupRectContiansIndexes(const QRect &rect) const
+{
+    // 计算当前区域内的index，目前采用的是遍历的方式，这个有效率问题
+    // 后面优化，通过每行绘制个数，每个绘制大小，每个分组的个数，先计算出来大致的一个index的范围，再判断这个范围内的index
+    RandeIndexList list {};
+    int begin = -1, end = -1;
+    for (int i = 0; i < model()->rowCount(); ++i ){
+        auto indexRect = DListView::visualRect(model()->index(i, 0, rootIndex()));
+        if (rect.intersects(indexRect)) {
+            if (begin < 0)
+                begin = i;
+            end = i;
+        } else if (indexRect.top() >= rect.bottom() && indexRect.top() >= rect.top()) {
+            break;
+        }
+    }
+
+    list << RandeIndex(begin, end);
+    return list;
 }
 
 void FileView::saveViewModeState()
