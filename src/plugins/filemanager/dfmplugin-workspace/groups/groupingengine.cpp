@@ -93,6 +93,16 @@ void GroupingEngine::setGroupOrder(Qt::SortOrder order)
     }
 }
 
+void GroupingEngine::setVisibleTreeChildren(QHash<QUrl, QList<QUrl>> *children)
+{
+    visibleTreeChildren = children;
+}
+
+void GroupingEngine::setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map)
+{
+    childrenDataMap = map;
+}
+
 void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
 {
     if (!modelData || modelData->groups.isEmpty()) {
@@ -143,6 +153,11 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
             }
 
             groupMap[groupKey].append(file);
+            // a item is expanded tree item
+            const auto &expandedFiles = findExpandedFiles(file);
+            if (!expandedFiles.isEmpty()) {
+                groupMap[groupKey].append(expandedFiles);
+            }
         }
 
         // Convert hash map to result groups
@@ -251,6 +266,70 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
     }
 
     return strategy->isGroupVisible(groupKey, groupFileInfos);
+}
+
+QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataPointer &file) const
+{
+    // 1. --- 前置安全检查 ---
+    bool isExpanded = file->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
+    if (!isExpanded || !visibleTreeChildren || !childrenDataMap || file.isNull()) {
+        return {};   // 如果初始节点未展开或数据结构无效，则其下没有任何“展开的文件”
+    }
+
+    const QUrl &fileUrl = file->data(ItemRoles::kItemUrlRole).toUrl();
+    if (!fileUrl.isValid()) {
+        return {};
+    }
+
+    // 2. --- 初始化 ---
+    QList<FileItemDataPointer> expandedFiles;   // 最终返回的线性列表
+    QStack<QUrl> urlsToProcess;   // 使用栈来模拟递归的深度优先（DFS）搜索
+
+    // 3. --- 遍历 ---
+    // 遍历从`file`的直接子项开始，将它们压入栈中
+    auto initialChildrenIt = visibleTreeChildren->constFind(fileUrl);
+    if (initialChildrenIt != visibleTreeChildren->constEnd()) {
+        const QList<QUrl> &directChildren = initialChildrenIt.value();
+        // 使用反向迭代器将子项逆序压入栈中，以保证处理时是正序
+        for (auto it = directChildren.crbegin(); it != directChildren.crend(); ++it) {
+            urlsToProcess.push(*it);
+        }
+    }
+
+    // 4. --- 迭代遍历 ---
+    // 当栈不为空时，说明还有节点需要处理
+    while (!urlsToProcess.isEmpty()) {
+        const QUrl currentUrl = urlsToProcess.pop();
+
+        // 从数据映射中查找当前URL对应的FileItemDataPointer
+        auto dataIt = childrenDataMap->constFind(currentUrl);
+        if (dataIt == childrenDataMap->constEnd()) {
+            // 数据不一致：URL在树中但不在数据映射中。
+            fmWarning() << "Inconsistent data: URL not found in childrenDataMap:" << currentUrl;
+            continue;   // 跳过这个无效的条目
+        }
+
+        const FileItemDataPointer &currentItem = dataIt.value();
+
+        // 将当前项添加到结果列表中
+        expandedFiles.append(currentItem);
+
+        // 检查当前项是否也处于展开状态
+        bool currentItemIsExpanded = currentItem->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
+        if (currentItemIsExpanded) {
+            // 如果是展开的，将其子项压入栈中，以便在后续迭代中处理
+            auto childrenIt = visibleTreeChildren->constFind(currentUrl);
+            if (childrenIt != visibleTreeChildren->constEnd()) {
+                const QList<QUrl> &childrenOfCurrent = childrenIt.value();
+                // 同样，将其子项逆序压入栈中
+                for (auto it = childrenOfCurrent.crbegin(); it != childrenOfCurrent.crend(); ++it) {
+                    urlsToProcess.push(*it);
+                }
+            }
+        }
+    }
+
+    return expandedFiles;
 }
 
 DPWORKSPACE_END_NAMESPACE
