@@ -80,6 +80,18 @@ public:
      */
     void setGroupOrder(Qt::SortOrder order);
 
+    /**
+     * @brief Set the current visible tree children
+     * @param children The map of URLs to child URLs
+     */
+    void setVisibleTreeChildren(QHash<QUrl, QList<QUrl>> *children);
+
+    /**
+     * @brief Set the children data map
+     * @param map The children data map
+     */
+    void setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map);
+
 private:
     /**
      * @brief Perform the actual grouping algorithm
@@ -108,8 +120,18 @@ private:
                                       const QList<FileItemDataPointer> &groupFiles,
                                       DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
+    /**
+     * @brief Find expanded files in the file tree
+     * @param file The file to start from
+     * @return The list of expanded files
+     */
+    QList<FileItemDataPointer> findExpandedFiles(const FileItemDataPointer &file) const;
+
+private:
     // Configuration
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
+    QHash<QUrl, QList<QUrl>> *visibleTreeChildren { nullptr };
+    QHash<QUrl, FileItemDataPointer> *childrenDataMap { nullptr };
 };
 
 DPWORKSPACE_END_NAMESPACE

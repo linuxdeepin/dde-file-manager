@@ -2194,6 +2194,10 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 
     // Perform grouping using GroupingEngine
     groupingEngine->setGroupOrder(groupOrder);
+    if (istree) {
+        groupingEngine->setVisibleTreeChildren(&visibleTreeChildren);
+        groupingEngine->setChildrenDataMap(&childrenDataMap);
+    }
     const auto &result = groupingEngine->groupFiles(files, currentStrategy);
     if (!result.success) {
         fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;
@@ -2201,7 +2205,6 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     }
 
     // Generate model data with current expansion states
-    // TODO: handle expanded tree items
     const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
     Q_EMIT insertGroupRows(0, data.getItemCount());
     groupedData = data;
