@@ -125,82 +125,82 @@
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="162"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="184"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Especifiqueu el directori: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="70"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Ordinador</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="71"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Carpeta de l&apos;usuari</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="72"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Escriptori</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="73"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="74"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Música</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="75"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Imatges</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="76"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Documents</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="77"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Baixades</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="78"/>
         <source>Specify directory</source>
-        <translation type="unfinished"/>
+        <translation>Especifiqueu el directori</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="84"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Mostra en obrir una finestra nova:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="85"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directori per defecte</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="87"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directori personalitzat</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="128"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directori no vàlid</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="129"/>
         <source>The directory is unavailable for this operation. Please select a local directory and try again.</source>
-        <translation type="unfinished"/>
+        <translation>El directori no està disponible per a aquesta operació. Seleccioneu un directori local i torneu-ho a intentar.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="201"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Afegeix un directori</translation>
     </message>
 </context>
 <context>
@@ -3318,7 +3318,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Obre una carpeta nova en una pestanya nova</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
@@ -3328,12 +3328,12 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Finestra nova</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Pestanya nova</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
@@ -6702,22 +6702,22 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="205"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Tanca la pestanya</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="206"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Tanca altres pestanyes</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="214"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Tanca les pestanyes de l&apos;esquerra</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="222"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Tanca les pestanyes de la dreta</translation>
     </message>
 </context>
 <context>
