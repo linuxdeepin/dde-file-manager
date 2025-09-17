@@ -125,82 +125,82 @@
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="162"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="184"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Kies map %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="70"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Computer</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="71"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Persoonlijke map</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="72"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Bureaublad</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="73"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Video&apos;s</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="74"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Muziek</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="75"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Afbeeldingen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="76"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Documenten</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="77"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Downloads</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="78"/>
         <source>Specify directory</source>
-        <translation type="unfinished"/>
+        <translation>Kies een map</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="84"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Map tonen na openen van nieuw venster:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="85"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Standaardmap</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="87"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Map kiezen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="128"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ongeldige map</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="129"/>
         <source>The directory is unavailable for this operation. Please select a local directory and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Deze map is niet beschikbaar. Kies een lokale map en probeer het opnieuw.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="201"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Map toevoegen</translation>
     </message>
 </context>
 <context>
@@ -3318,7 +3318,7 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Map openen op nieuw tabblad</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
@@ -3328,12 +3328,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Nieuw venster</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Nieuw tabblad</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
@@ -6702,22 +6702,22 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="205"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Tabblad sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="206"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Overige tabbladen sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="214"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Tabbladen links sluiten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="222"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Tabbladen rechts sluiten</translation>
     </message>
 </context>
 <context>
