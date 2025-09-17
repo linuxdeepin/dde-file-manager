@@ -100,6 +100,7 @@ FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrde
     groupOrder = order;
     currentStrategy = GroupingFactory::createStrategy(strategy, this);
     isCurrentGroupingEnabled = (currentStrategy->getStrategyName() == GroupStrategty::kNoGroup) ? false : true;
+    // TODO: init groupExpansionStates
 
     if (!currentStrategy || !isCurrentGroupingEnabled || !groupingEngine) {
         return FileSortWorker::GroupingOpt::kGroupingOptNone;
@@ -276,6 +277,11 @@ void FileSortWorker::setTreeView(const bool isTree)
     istree = isTree;
     isMixDirAndFile = istree ? false : isMixDirAndFile;
     fmDebug() << "Mixed dir and file sorting now:" << isMixDirAndFile;
+}
+
+bool FileSortWorker::currentIsGroupingMode() const
+{
+    return isCurrentGroupingEnabled;
 }
 
 void FileSortWorker::handleIteratorLocalChildren(const QString &key,
@@ -465,12 +471,9 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
         }
 
         auto suc = addChild(sortInfo, SortScenarios::kSortScenariosWatcherAddFile);
-        if (!added)
-            added = suc;
+        if (suc)
+            Q_EMIT insertFinish();
     }
-
-    if (added)
-        Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &children)
@@ -502,7 +505,6 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &c
 
     auto subChildren = this->children.take(parentUrl);
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
-    bool removed = false;
     for (const auto &sortInfo : children) {
         if (isCanceled)
             return;
@@ -527,14 +529,13 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &c
         }
 
         Q_EMIT removeRows(showIndex, 1);
-        removed = true;
         {
             QWriteLocker lk(&locker);
             visibleChildren.removeAt(showIndex);
         }
-    }
-    if (removed)
         Q_EMIT removeFinish();
+    }
+
     this->children.insert(parentUrl, subChildren);
     visibleTreeChildren.insert(parentUrl, subVisibleList);
 }
@@ -678,8 +679,23 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
 
 void FileSortWorker::handleGroupingUpdate()
 {
-    if (!isCurrentGroupingEnabled)
+    if (!isCurrentGroupingEnabled || isCanceled
+        || (groupedData.isEmpty() && visibleChildren.isEmpty())) {
+        fmDebug() << "Ignoring grouping update - no grouping data";
         return;
+    }
+
+    if (groupedData.isEmpty() && !visibleChildren.isEmpty()) {
+        fmDebug() << "applying grouping";
+        applyGrouping(getAllFiles());
+        return;
+    }
+
+    if (!groupedData.isEmpty() && visibleChildren.isEmpty()) {
+        fmDebug() << "clearing grouping";
+        clearGroupedData();
+        return;
+    }
 
     // TODO: update groupedData
 }
@@ -895,17 +911,11 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
     if (groupKey.isEmpty() || !isCurrentGroupingEnabled || isCanceled || key != currentKey) {
         return;
     }
-
-    bool currentState = groupExpansionStates.value(groupKey, true);
-    bool newState = !currentState;
-    groupExpansionStates[groupKey] = newState;
-
     auto group = groupedData.getGroup(groupKey);
     if (!group) {
         fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
         return;
     }
-
     int count = group->fileCount;
     int pos = groupedData.findGroupHeaderStartPos(groupKey).value_or(-1);
 
@@ -913,6 +923,10 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
         fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
         return;
     }
+
+    bool currentState = groupExpansionStates.value(groupKey, true);
+    bool newState = !currentState;
+    groupExpansionStates[groupKey] = newState;
 
     if (currentState) {
         // current is expanded
@@ -929,6 +943,8 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
     } else {
         Q_EMIT insertGroupFinish();
     }
+
+    // TODO: EMIT groupExpansionStates to savw
 
     fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
 }

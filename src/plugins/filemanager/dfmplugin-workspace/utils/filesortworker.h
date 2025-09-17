@@ -28,6 +28,7 @@ namespace dfmplugin_workspace {
 class FileSortWorker : public QObject
 {
     Q_OBJECT
+
     enum class SortOpt : uint8_t {
         kSortOptNone = 0,
         kSortOptOnlyOrderChanged = 1,
@@ -83,9 +84,10 @@ public:
 
     // 只有在没有启动sort线程时才能调用，线程启动成功了，发送信号处理
     void setTreeView(const bool isTree);
+    bool currentIsGroupingMode() const;
 
 signals:
-    // NOTE: Group 重复信号的原因是为了防止死循环
+    // NOTE: 添加以下 Group 重复信号的原因是为了防止死循环
     void insertGroupRows(int first, int count);
     void insertGroupFinish();
     void removeGroupRows(int first, int count);
