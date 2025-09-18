@@ -139,6 +139,7 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &server)
         // After clearing history, show a disabled "No history" placeholder
         serverComboBox->addItem(tr("No history"));
         serverComboBox->model()->setData(serverComboBox->model()->index(serverComboBox->count() - 1, 0), 0, Qt::UserRole - 1);
+        serverComboBox->setCurrentIndex(-1);
         serverComboBox->clearEditText();
         serverComboBox->completer()->setModel(new QStringListModel());
         SearchHistroyManager::instance()->clearHistory(supportedSchemes);
@@ -287,6 +288,7 @@ void ConnectToServerDialog::initServerDatas()
         // No history: show a disabled placeholder so dropdown shows a hint
         serverComboBox->addItem(tr("No history"));
         serverComboBox->model()->setData(serverComboBox->model()->index(serverComboBox->count() - 1, 0), 0, Qt::UserRole - 1);
+        serverComboBox->setCurrentIndex(-1);
         serverComboBox->clearEditText();
     }
 }
