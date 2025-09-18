@@ -709,9 +709,24 @@ void FileSortWorker::handleGroupingUpdate()
         }
 
         // 截取新插入的数据
+        auto anchor = groupingEngine->findPrecedingAnchor(visibleChildren, range);
+        if (!anchor.has_value()) {
+            fmWarning() << "Failed to find preceding anchor";
+            return;
+        }
         groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
+        groupingEngine->setChildrenDataMap(&childrenDataMap);
+        const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
+                                                                    groupedModelData, currentStrategy);
 
-        // TODO: update groupedData
+        if (!result.success) {
+            fmWarning() << "Failed to insert file to grouping data";
+            return;
+        }
+
+        Q_EMIT insertGroupRows(result.pos, result.count);
+        groupedModelData = result.newData;
+        Q_EMIT insertGroupFinish();
 
         return;
     }

@@ -50,9 +50,9 @@ public:
      */
     struct UpdateResult
     {
-        GroupedModelData newData; ///< The new model data
-        int pos; ///< The position of the updated items
-        int count; ///< The number of items in the update
+        GroupedModelData newData;   ///< The new model data
+        int pos;   ///< The position of the updated items
+        int count;   ///< The number of items in the update
         bool success = false;   ///< Whether the operation succeeded
     };
 
@@ -73,6 +73,17 @@ public:
      * @param oldData The old model data
      */
     UpdateResult removeFilesFromModelData(const GroupedModelData &oldData);
+
+    /**
+     * @brief Insert files into the model data
+     * @param anchorUrl The anchor URL for the insertion
+     * @param oldData The old model data
+     * @param strategy The grouping strategy to use
+     * @return The updated model data
+     */
+    UpdateResult insertFilesToModelData(const QUrl &anchorUrl,
+                                        const GroupedModelData &oldData,
+                                        DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy);
 
     /**
      * @brief Group files using the specified strategy
@@ -107,6 +118,14 @@ public:
      */
     GroupedModelData generateModelData(const GroupingResult &groupingResult,
                                        const QHash<QString, bool> &expansionStates) const;
+
+    /**
+     * @brief Find the preceding anchor URL for a given slice range
+     * @param container The container to search in
+     * @param sliceRange The slice range to search
+     * @return The preceding anchor URL, or std::nullopt if none found
+     */
+    std::optional<QUrl> findPrecedingAnchor(const QList<QUrl> &container, const QPair<int, int> &sliceRange);
 
     /**
      * @brief Set the current group order
@@ -150,6 +169,13 @@ private:
      */
     GroupingResult performGrouping(const QList<FileItemDataPointer> &files,
                                    DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+
+    /**
+     * @brief Get FileInfoPointer from FileItemDataPointer
+     * @param file The file item data pointer
+     * @return FileInfoPointer or nullptr if failed
+     */
+    FileInfoPointer getFileInfoFromFileItem(const FileItemDataPointer &file) const;
 
     /**
      * @brief Sort groups by their display order

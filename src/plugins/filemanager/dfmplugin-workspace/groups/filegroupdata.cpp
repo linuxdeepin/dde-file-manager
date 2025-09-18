@@ -58,6 +58,21 @@ void FileGroupData::addFile(const FileItemDataPointer &file)
     updateFileCount();
 }
 
+void FileGroupData::insertFile(int index, const FileItemDataPointer &file)
+{
+    if (!file) {
+        return;
+    }
+
+    // Make sure the index is within valid range
+    if (index < 0 || index > files.size()) {
+        return;
+    }
+
+    files.insert(index, file);
+    updateFileCount();
+}
+
 bool FileGroupData::removeFile(const QUrl &url)
 {
     auto it = std::find_if(files.begin(), files.end(),

@@ -66,6 +66,13 @@ public:
     void addFile(const FileItemDataPointer &file);
 
     /**
+     * @brief Insert a file to this group at specific position
+     * @param index The position to insert at
+     * @param file The file item to insert
+     */
+    void insertFile(int index, const FileItemDataPointer &file);
+
+    /**
      * @brief Remove a file from this group
      * @param url The URL of the file to remove
      * @return True if the file was found and removed, false otherwise
