@@ -81,6 +81,15 @@ public:
     void rebuildFlattenedItems();
 
     /**
+     * @brief Update a specific group header in flattened items
+     * 
+     * This method updates the group header information in flattened items
+     * without rebuilding the entire list.
+     * @param groupKey The group identifier
+     */
+    void updateGroupHeader(const QString &groupKey);
+
+    /**
      * @brief Clear all data
      */
     void clear();
@@ -90,6 +99,35 @@ public:
      * @return True if there are no groups, false otherwise
      */
     bool isEmpty() const;
+
+    /**
+     * @brief Add a new group to the model data
+     * @param group The group data to add
+     * @return True if the group was added successfully, false if a group with the same key already exists
+     */
+    bool addGroup(const FileGroupData &group);
+
+    /**
+     * @brief Remove a group from the model data
+     * @param groupKey The group identifier to remove
+     * @return True if the group was removed successfully, false if the group was not found
+     */
+    bool removeGroup(const QString &groupKey);
+
+    /**
+     * @brief Insert an item to the flattened items list
+     * @param index The position where to insert the item
+     * @param item The item to insert
+     */
+    void insertItem(int index, const ModelItemWrapper &item);
+
+    /**
+     * @brief Remove items from the flattened items list
+     * @param index The position from where to start removing items
+     * @param count The number of items to remove
+     * @return The number of items actually removed
+     */
+    int removeItems(int index, int count);
 
     /**
      * @brief Get a group by its key

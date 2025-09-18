@@ -24,6 +24,91 @@ GroupingEngine::~GroupingEngine()
 {
 }
 
+GroupingEngine::UpdateResult GroupingEngine::removeFilesFromModelData(const GroupedModelData &oldData)
+{
+    GroupingEngine::UpdateResult result;
+
+    if (m_updateMode != UpdateMode::kRemove || m_visibleChildrenForUpdate.isEmpty()) {
+        fmWarning() << "GroupingEngine: Cannot remove files from model data without a valid update mode";
+        return result;
+    }
+
+    result.newData = oldData;
+    result.pos = result.newData.findFileStartPos(m_visibleChildrenForUpdate.first()).value_or(-1);
+    result.count = m_visibleChildrenForUpdate.count();
+
+    bool success = true;
+    QSet<QString> updatedGroups;   // Track which groups need to be updated
+    bool groupRemoved = false;
+    for (auto &url : std::as_const(m_visibleChildrenForUpdate)) {
+        int pos = result.newData.findFileStartPos(url).value_or(-1);
+        if (pos < 0) {
+            success = false;
+            fmWarning() << "GroupingEngine: File" << url << "not found in model data";
+            break;
+        }
+
+        const auto &wrapper = result.newData.getItemAt(pos);
+        if (!wrapper.isFileItem() || wrapper.fileData.isNull()) {
+            success = false;
+            fmWarning() << "GroupingEngine: File" << url << "is not a file item";
+            break;
+        }
+
+        FileGroupData *groupData = result.newData.getGroup(wrapper.groupKey);
+        if (!groupData) {
+            success = false;
+            fmWarning() << "GroupingEngine: Group" << groupData->groupKey << "not found in model data";
+            break;
+        }
+
+        if (!groupData->removeFile(url)) {
+            success = false;
+            fmWarning() << "GroupingEngine: File" << url << "not removed from group" << groupData->groupKey;
+            break;
+        }
+
+        // Track this group for update
+        updatedGroups.insert(groupData->groupKey);
+
+        // Remove group from model data if it is empty
+        if (groupData->isEmpty()) {
+            result.newData.removeGroup(groupData->groupKey);
+            groupRemoved = true;
+        }
+    }
+
+    result.success = success;
+    if (result.success) {
+        if (groupRemoved) {
+            fmInfo() << "GroupingEngine: Due to an empty group, rebuilding flattened items";
+            result.pos = 0;
+            result.count = result.newData.getItemCount();
+            result.newData.rebuildFlattenedItems();
+        } else {
+            fmDebug() << "GroupingEngine: Removing" << result.count << "items from model data at position" << result.pos;
+            result.newData.removeItems(result.pos, result.count);
+
+            // Update only the group headers that were affected
+            for (const QString &groupKey : std::as_const(updatedGroups)) {
+                result.newData.updateGroupHeader(groupKey);
+            }
+        }
+    }
+
+    return result;
+}
+
+QPair<int, int> GroupingEngine::currentUpdateChildrenRange() const
+{
+    return m_visibleChildrenRangeForUpdate;
+}
+
+GroupingEngine::UpdateMode GroupingEngine::currentUpdateMode() const
+{
+    return m_updateMode;
+}
+
 GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDataPointer> &files,
                                                           AbstractGroupStrategy *strategy) const
 {
@@ -95,12 +180,27 @@ void GroupingEngine::setGroupOrder(Qt::SortOrder order)
 
 void GroupingEngine::setVisibleTreeChildren(QHash<QUrl, QList<QUrl>> *children)
 {
-    visibleTreeChildren = children;
+    m_visibleTreeChildren = children;
 }
 
 void GroupingEngine::setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map)
 {
-    childrenDataMap = map;
+    m_childrenDataMap = map;
+}
+
+void GroupingEngine::setUpdateMode(UpdateMode mode)
+{
+    m_updateMode = mode;
+}
+
+void GroupingEngine::setUpdateChildren(const QList<QUrl> &children)
+{
+    m_visibleChildrenForUpdate = children;
+}
+
+void GroupingEngine::setUpdateChildrenRange(int pos, int count)
+{
+    m_visibleChildrenRangeForUpdate = qMakePair(pos, count);
 }
 
 void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
@@ -272,7 +372,7 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
 {
     // 1. --- 前置安全检查 ---
     bool isExpanded = file->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
-    if (!isExpanded || !visibleTreeChildren || !childrenDataMap || file.isNull()) {
+    if (!isExpanded || !m_visibleTreeChildren || !m_childrenDataMap || file.isNull()) {
         return {};   // 如果初始节点未展开或数据结构无效，则其下没有任何“展开的文件”
     }
 
@@ -287,8 +387,8 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
 
     // 3. --- 遍历 ---
     // 遍历从`file`的直接子项开始，将它们压入栈中
-    auto initialChildrenIt = visibleTreeChildren->constFind(fileUrl);
-    if (initialChildrenIt != visibleTreeChildren->constEnd()) {
+    auto initialChildrenIt = m_visibleTreeChildren->constFind(fileUrl);
+    if (initialChildrenIt != m_visibleTreeChildren->constEnd()) {
         const QList<QUrl> &directChildren = initialChildrenIt.value();
         // 使用反向迭代器将子项逆序压入栈中，以保证处理时是正序
         for (auto it = directChildren.crbegin(); it != directChildren.crend(); ++it) {
@@ -302,8 +402,8 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
         const QUrl currentUrl = urlsToProcess.pop();
 
         // 从数据映射中查找当前URL对应的FileItemDataPointer
-        auto dataIt = childrenDataMap->constFind(currentUrl);
-        if (dataIt == childrenDataMap->constEnd()) {
+        auto dataIt = m_childrenDataMap->constFind(currentUrl);
+        if (dataIt == m_childrenDataMap->constEnd()) {
             // 数据不一致：URL在树中但不在数据映射中。
             fmWarning() << "Inconsistent data: URL not found in childrenDataMap:" << currentUrl;
             continue;   // 跳过这个无效的条目
@@ -318,8 +418,8 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
         bool currentItemIsExpanded = currentItem->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
         if (currentItemIsExpanded) {
             // 如果是展开的，将其子项压入栈中，以便在后续迭代中处理
-            auto childrenIt = visibleTreeChildren->constFind(currentUrl);
-            if (childrenIt != visibleTreeChildren->constEnd()) {
+            auto childrenIt = m_visibleTreeChildren->constFind(currentUrl);
+            if (childrenIt != m_visibleTreeChildren->constEnd()) {
                 const QList<QUrl> &childrenOfCurrent = childrenIt.value();
                 // 同样，将其子项逆序压入栈中
                 for (auto it = childrenOfCurrent.crbegin(); it != childrenOfCurrent.crend(); ++it) {

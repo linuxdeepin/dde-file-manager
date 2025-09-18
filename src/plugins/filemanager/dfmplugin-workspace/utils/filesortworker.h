@@ -168,6 +168,9 @@ public slots:
     void handleUpdateRefreshFiles();
     void handleSortByMimeType();
 
+    void handleAboutToInsertFilesToGroup(int pos, int count);
+    void handleAboutToRemoveFilesFromGroup(int pos, int count);
+
     // treeview solts
 public slots:
     void handleToggleGroupExpansion(const QString &key, const QString &groupKey);
@@ -270,7 +273,7 @@ private:
     Qt::SortOrder groupOrder { Qt::AscendingOrder };
     std::unique_ptr<GroupingEngine> groupingEngine;
     AbstractGroupStrategy *currentStrategy { nullptr };
-    GroupedModelData groupedData;
+    GroupedModelData groupedModelData;
     std::atomic_bool isCurrentGroupingEnabled { false };
     QHash<QString, bool> groupExpansionStates;
 

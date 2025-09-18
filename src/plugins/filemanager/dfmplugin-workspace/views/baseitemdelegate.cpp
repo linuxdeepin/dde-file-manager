@@ -306,7 +306,6 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
     }
 
     // Get expansion state - assume expanded by default for now
-    // TODO: This should be retrieved from the model or worker
     bool isExpanded = index.data(Global::ItemRoles::kItemGroupExpandedRole).toBool();
 
     // Calculate layout rectangles

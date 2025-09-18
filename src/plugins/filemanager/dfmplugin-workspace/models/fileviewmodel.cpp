@@ -1004,17 +1004,15 @@ void FileViewModel::onFileUpdated(int show)
 
 void FileViewModel::onInsert(int firstIndex, int count)
 {
-    if (filterSortWorker->currentIsGroupingMode())
+    if (filterSortWorker->currentIsGroupingMode()) {
         return;
+    }
 
     beginInsertRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onInsertFinish()
 {
-    FinallyUtil release([this] {
-        emit requestGroupingUpdate();
-    });
 
     if (filterSortWorker->currentIsGroupingMode())
         return;
@@ -1024,18 +1022,15 @@ void FileViewModel::onInsertFinish()
 
 void FileViewModel::onRemove(int firstIndex, int count)
 {
-    if (filterSortWorker->currentIsGroupingMode())
+    if (filterSortWorker->currentIsGroupingMode()) {
         return;
+    }
 
     beginRemoveRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onRemoveFinish()
 {
-    FinallyUtil release([this] {
-        emit requestGroupingUpdate();
-    });
-
     if (filterSortWorker->currentIsGroupingMode())
         return;
 
@@ -1360,7 +1355,6 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestUpdateFile, filterSortWorker.data(), &FileSortWorker::handleUpdateFile, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::handleResort, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestGroupingChildren, filterSortWorker.data(), &FileSortWorker::handleReGrouping, Qt::QueuedConnection);
-    connect(this, &FileViewModel::requestGroupingUpdate, filterSortWorker.data(), &FileSortWorker::handleGroupingUpdate, Qt::QueuedConnection);
 
     connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
