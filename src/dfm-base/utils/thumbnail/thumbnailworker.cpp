@@ -59,7 +59,7 @@ QString ThumbnailWorkerPrivate::createThumbnail(const QUrl &url, Global::Thumbna
                 break;
             }
         }
-        
+
         // If no parent match, try pattern matching
         if (img.isNull()) {
             for (auto &mimeRegx : creators.keys()) {
@@ -133,39 +133,6 @@ void ThumbnailWorkerPrivate::startDelayWork()
     qCDebug(logDFMBase) << "thumbnail: delay timer started for" << delayTaskMap.size() << "tasks";
 }
 
-QUrl ThumbnailWorkerPrivate::setCheckCount(const QUrl &url, int count)
-{
-    QUrl tmpUrl(url);
-    QUrlQuery query(url.query());
-    query.removeQueryItem("checkCount");
-    query.addQueryItem("checkCount", QString::number(count));
-    tmpUrl.setQuery(query);
-
-    return tmpUrl;
-}
-
-int ThumbnailWorkerPrivate::checkCount(const QUrl &url)
-{
-    if (!url.hasQuery())
-        return 0;
-
-    QUrlQuery query(url.query());
-    return query.queryItemValue("checkCount").toInt();
-}
-
-QUrl ThumbnailWorkerPrivate::clearCheckCount(const QUrl &url)
-{
-    if (!url.hasQuery())
-        return url;
-
-    QUrl tmpUrl(url);
-    QUrlQuery query(url.query());
-    query.removeQueryItem("checkCount");
-    tmpUrl.setQuery(query);
-
-    return tmpUrl;
-}
-
 ThumbnailWorker::ThumbnailWorker(QObject *parent)
     : QObject(parent),
       d(new ThumbnailWorkerPrivate(this))
@@ -229,26 +196,28 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
     // if not, rejoin the event queue and create thumbnail later
     if (!d->checkFileStable(url)) {
         if (!d->delayTaskMap.contains(d->originalUrl)) {
-            d->originalUrl = d->setCheckCount(d->originalUrl, 1);
+            d->urlCheckCountMap[d->originalUrl] = 1;
             qCDebug(logDFMBase) << "thumbnail: file not stable, adding to delay queue:" << d->originalUrl;
         } else {
             d->delayTaskMap.remove(d->originalUrl);
             // Give up generation after 10 attempts
-            auto count = d->checkCount(d->originalUrl);
+            auto count = d->urlCheckCountMap.value(d->originalUrl, 0);
             if (++count > 10) {
                 qCWarning(logDFMBase) << "thumbnail: giving up after 10 stability check attempts for:" << d->originalUrl;
+                d->urlCheckCountMap.remove(d->originalUrl);   // 清理映射表
                 return;
             }
 
-            d->originalUrl = d->setCheckCount(d->originalUrl, count);
+            d->urlCheckCountMap[d->originalUrl] = count;
             qCDebug(logDFMBase) << "thumbnail: file still not stable, retry count:" << count << "for:" << d->originalUrl;
         }
 
         d->delayTaskMap.insert(d->originalUrl, size);
         d->startDelayWork();
         return;
-    } else if (d->originalUrl.hasQuery()) {
-        d->originalUrl = d->clearCheckCount(d->originalUrl);
+    } else if (d->urlCheckCountMap.contains(d->originalUrl)) {
+        // 文件已稳定，清理重试计数
+        d->urlCheckCountMap.remove(d->originalUrl);
         qCDebug(logDFMBase) << "thumbnail: file is now stable, cleared check count for:" << d->originalUrl;
     }
 
