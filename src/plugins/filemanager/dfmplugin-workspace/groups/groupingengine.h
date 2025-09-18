@@ -29,6 +29,12 @@ class GroupingEngine : public QObject
     Q_OBJECT
 
 public:
+    enum class UpdateMode {
+        kNoGrouping,
+        kInsert,
+        kRemove
+    };
+
     /**
      * @brief Result structure for grouping operations
      */
@@ -37,6 +43,17 @@ public:
         QList<FileGroupData> groups;   ///< The grouped file data
         bool success = false;   ///< Whether the operation succeeded
         QString errorMessage;   ///< Error message if operation failed
+    };
+
+    /**
+     * @brief Result structure for update operations
+     */
+    struct UpdateResult
+    {
+        GroupedModelData newData; ///< The new model data
+        int pos; ///< The position of the updated items
+        int count; ///< The number of items in the update
+        bool success = false;   ///< Whether the operation succeeded
     };
 
     /**
@@ -51,6 +68,13 @@ public:
     ~GroupingEngine();
 
     /**
+     * @brief Remove files from the model data
+     * @return The updated model data
+     * @param oldData The old model data
+     */
+    UpdateResult removeFilesFromModelData(const GroupedModelData &oldData);
+
+    /**
      * @brief Group files using the specified strategy
      * @param files List of files to group
      * @param strategy The grouping strategy to use
@@ -58,6 +82,16 @@ public:
      */
     GroupingResult groupFiles(const QList<FileItemDataPointer> &files,
                               DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+
+    /**
+     * @brief Get the current update mode
+     */
+    UpdateMode currentUpdateMode() const;
+
+    /**
+     * @brief Get the current visible children for update
+     */
+    QPair<int, int> currentUpdateChildrenRange() const;
 
     /**
      * @brief Reorder existing groups in GroupedModelData according to current group order
@@ -91,6 +125,21 @@ public:
      * @param map The children data map
      */
     void setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map);
+
+    /**
+     * @brief Set the current update mode
+     */
+    void setUpdateMode(UpdateMode mode);
+
+    /**
+     * @brief Set the current visible children for update
+     */
+    void setUpdateChildren(const QList<QUrl> &children);
+
+    /**
+     * @brief Set the current visible children for update
+     */
+    void setUpdateChildrenRange(int pos, int count);
 
 private:
     /**
@@ -130,8 +179,12 @@ private:
 private:
     // Configuration
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
-    QHash<QUrl, QList<QUrl>> *visibleTreeChildren { nullptr };
-    QHash<QUrl, FileItemDataPointer> *childrenDataMap { nullptr };
+    const QHash<QUrl, QList<QUrl>> *m_visibleTreeChildren { nullptr };
+    const QHash<QUrl, FileItemDataPointer> *m_childrenDataMap { nullptr };
+    // for update
+    UpdateMode m_updateMode { UpdateMode::kNoGrouping };
+    QList<QUrl> m_visibleChildrenForUpdate;
+    QPair<int, int> m_visibleChildrenRangeForUpdate;
 };
 
 DPWORKSPACE_END_NAMESPACE

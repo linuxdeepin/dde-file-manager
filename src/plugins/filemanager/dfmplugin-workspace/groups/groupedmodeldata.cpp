@@ -81,6 +81,37 @@ bool GroupedModelData::isGroupExpanded(const QString &groupKey) const
     return groupExpansionStates.value(groupKey, true);   // Default to expanded
 }
 
+void GroupedModelData::updateGroupHeader(const QString &groupKey)
+{
+    if (groupKey.isEmpty()) {
+        return;
+    }
+
+    QMutexLocker locker(&m_mutex);
+    
+    // Find the group data
+    const FileGroupData *groupData = nullptr;
+    for (const auto &group : qAsConst(groups)) {
+        if (group.groupKey == groupKey) {
+            groupData = &group;
+            break;
+        }
+    }
+    
+    if (!groupData) {
+        return;
+    }
+    
+    // Find and update the group header in flattenedItems
+    for (auto &item : flattenedItems) {
+        if (item.isGroupHeader() && item.groupKey == groupKey) {
+            // Create a new ModelItemWrapper with updated group data
+            item = ModelItemWrapper(groupData);
+            break;
+        }
+    }
+}
+
 void GroupedModelData::rebuildFlattenedItems()
 {
     QMutexLocker locker(&m_mutex);
@@ -118,6 +149,78 @@ void GroupedModelData::clear()
 bool GroupedModelData::isEmpty() const
 {
     return groups.isEmpty();
+}
+
+bool GroupedModelData::addGroup(const FileGroupData &group)
+{
+    if (group.groupKey.isEmpty()) {
+        return false;
+    }
+
+    // Check if a group with the same key already exists
+    for (const auto &existingGroup : qAsConst(groups)) {
+        if (existingGroup.groupKey == group.groupKey) {
+            return false;  // Group with this key already exists
+        }
+    }
+
+    // Add the new group
+    groups.append(group);
+    
+    // Ensure the expansion state is consistent
+    if (!groupExpansionStates.contains(group.groupKey)) {
+        groupExpansionStates[group.groupKey] = group.isExpanded;
+    }
+
+    return true;
+}
+
+bool GroupedModelData::removeGroup(const QString &groupKey)
+{
+    if (groupKey.isEmpty()) {
+        return false;
+    }
+
+    // Find and remove the group
+    for (auto it = groups.begin(); it != groups.end(); ++it) {
+        if (it->groupKey == groupKey) {
+            groups.erase(it);
+            groupExpansionStates.remove(groupKey);
+            return true;
+        }
+    }
+
+    return false;  // Group not found
+}
+
+void GroupedModelData::insertItem(int index, const ModelItemWrapper &item)
+{
+    QMutexLocker locker(&m_mutex);
+    
+    // Make sure the index is within valid range
+    if (index < 0 || index > flattenedItems.size()) {
+        return;
+    }
+    
+    flattenedItems.insert(index, item);
+}
+
+int GroupedModelData::removeItems(int index, int count)
+{
+    QMutexLocker locker(&m_mutex);
+    
+    // Make sure the parameters are within valid range
+    if (index < 0 || index >= flattenedItems.size() || count <= 0) {
+        return 0;
+    }
+    
+    // Adjust count if it exceeds the available items
+    int actualCount = qMin(count, flattenedItems.size() - index);
+    
+    // Remove the items
+    flattenedItems.erase(flattenedItems.begin() + index, flattenedItems.begin() + index + actualCount);
+    
+    return actualCount;
 }
 
 FileGroupData *GroupedModelData::getGroup(const QString &groupKey)

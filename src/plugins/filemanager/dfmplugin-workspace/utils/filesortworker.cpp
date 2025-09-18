@@ -65,6 +65,15 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
+    // 此处必须DirectConnection才能保证数据的准确性
+    connect(this, &FileSortWorker::insertRows, this, &FileSortWorker::handleAboutToInsertFilesToGroup,
+            Qt::DirectConnection);
+    connect(this, &FileSortWorker::removeRows, this, &FileSortWorker::handleAboutToRemoveFilesFromGroup,
+            Qt::DirectConnection);
+    connect(this, &FileSortWorker::insertFinish, this, &FileSortWorker::handleGroupingUpdate,
+            Qt::DirectConnection);
+    connect(this, &FileSortWorker::removeFinish, this, &FileSortWorker::handleGroupingUpdate,
+            Qt::DirectConnection);
 
     // Initialize grouping engine
     groupingEngine = std::make_unique<GroupingEngine>(this);
@@ -156,14 +165,14 @@ int FileSortWorker::childrenCount()
         return childrenCountInternal();
     } else {
         // Grouping mode: return flattened item count
-        return groupedData.getItemCount();
+        return groupedModelData.getItemCount();
     }
 }
 
 QVariant FileSortWorker::groupHeaderData(const int index, const int role)
 {
     // Grouping mode: use flattened data mapping
-    ModelItemWrapper wrapper = groupedData.getItemAt(index);
+    ModelItemWrapper wrapper = groupedModelData.getItemAt(index);
     if (!wrapper.isValid()) {
         fmDebug() << "Invalid index for groupHeaderData:" << index;
         return {};
@@ -210,7 +219,7 @@ FileItemDataPointer FileSortWorker::childData(const int index)
         return childrenDataMap.value(url);
     } else {
         // Grouping mode: use flattened data mapping
-        ModelItemWrapper wrapper = groupedData.getItemAt(index);
+        ModelItemWrapper wrapper = groupedModelData.getItemAt(index);
         if (!wrapper.isValid()) {
             fmDebug() << "Invalid index for grouped childData:" << index;
             return nullptr;
@@ -236,7 +245,7 @@ int FileSortWorker::getChildShowIndex(const QUrl &url)
     if (!isCurrentGroupingEnabled) {
         return getChildShowIndexInternal(url);
     } else {
-        return groupedData.findFileStartPos(url).value_or(-1);
+        return groupedModelData.findFileStartPos(url).value_or(-1);
     }
 }
 
@@ -456,7 +465,6 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
 {
     fmDebug() << "Handling watcher add children - count:" << children.size();
 
-    bool added = false;
     for (const auto &sortInfo : children) {
         if (isCanceled) {
             fmDebug() << "Operation canceled during watcher add children";
@@ -470,9 +478,7 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
             continue;
         }
 
-        auto suc = addChild(sortInfo, SortScenarios::kSortScenariosWatcherAddFile);
-        if (suc)
-            Q_EMIT insertFinish();
+        addChild(sortInfo, SortScenarios::kSortScenariosWatcherAddFile);
     }
 }
 
@@ -570,17 +576,11 @@ bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 
 void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &children)
 {
-    bool added = false;
     for (auto sort : children) {
         if (isCanceled)
             return;
-        auto suc = handleWatcherUpdateFile(sort);
-        if (!added)
-            added = suc;
+        handleWatcherUpdateFile(sort);
     }
-
-    if (added)
-        Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
@@ -667,37 +667,65 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
     if (opt == GroupingOpt::kGroupingOptOnlyOrderChanged) {
         // Set group order in engine (support for ascending/descending order)
         groupingEngine->setGroupOrder(groupOrder);
-        groupingEngine->reorderGroups(&groupedData);
+        groupingEngine->reorderGroups(&groupedModelData);
         emit groupingDataChanged();
     } else {
         applyGrouping(allFiles);
     }
 
-    fmInfo() << "FileSortWorker: Grouping completed - created" << groupedData.groups.size()
-             << "groups with" << groupedData.getItemCount() << "total items";
+    fmInfo() << "FileSortWorker: Grouping completed - created" << groupedModelData.groups.size()
+             << "groups with" << groupedModelData.getItemCount() << "total items";
 }
 
 void FileSortWorker::handleGroupingUpdate()
 {
     if (!isCurrentGroupingEnabled || isCanceled
-        || (groupedData.isEmpty() && visibleChildren.isEmpty())) {
+        || (groupedModelData.isEmpty() && visibleChildren.isEmpty())) {
         fmDebug() << "Ignoring grouping update - no grouping data";
         return;
     }
 
-    if (groupedData.isEmpty() && !visibleChildren.isEmpty()) {
+    // load directory
+    if (groupedModelData.isEmpty() && !visibleChildren.isEmpty()) {
         fmDebug() << "applying grouping";
         applyGrouping(getAllFiles());
         return;
     }
 
-    if (!groupedData.isEmpty() && visibleChildren.isEmpty()) {
+    // remove all files
+    if (!groupedModelData.isEmpty() && visibleChildren.isEmpty()) {
         fmDebug() << "clearing grouping";
         clearGroupedData();
         return;
     }
 
-    // TODO: update groupedData
+    if (groupingEngine->currentUpdateMode() == GroupingEngine::UpdateMode::kInsert) {
+        auto range = groupingEngine->currentUpdateChildrenRange();
+        // 插入数据的范围是整个历史数据，说明发生了覆盖，直接重新分组
+        if (range.first == 0 && range.second == visibleChildren.count()) {
+            fmDebug() << "applying grouping";
+            applyGrouping(getAllFiles());
+            return;
+        }
+
+        // 截取新插入的数据
+        groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
+
+        // TODO: update groupedData
+
+        return;
+    }
+
+    if (groupingEngine->currentUpdateMode() == GroupingEngine::UpdateMode::kRemove) {
+        const auto &result = groupingEngine->removeFilesFromModelData(groupedModelData);
+        if (!result.success) {
+            fmWarning() << "Failed to remove file from grouping data";
+            return;
+        }
+        Q_EMIT removeGroupRows(result.pos, result.count);
+        groupedModelData = result.newData;
+        Q_EMIT removeGroupFinish();
+    }
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -787,9 +815,9 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         Q_EMIT insertRows(showIndex, 1);
         {
             QWriteLocker lk(&locker);
-
             insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
         }
+        Q_EMIT insertFinish();
         added = true;
 
         // async create file will add to view while file info updated.
@@ -801,23 +829,18 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
 
 void FileSortWorker::handleUpdateFiles(const QList<QUrl> &urls)
 {
-    bool added = false;
     for (auto const &url : urls) {
         if (isCanceled)
             return;
-        auto suc = handleUpdateFile(url);
-        if (!added)
-            added = suc;
+        handleUpdateFile(url);
     }
-    if (added)
-        Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleRefresh()
 {
     fmInfo() << "Handling refresh operation";
 
-    int childrenCount = this->childrenCount();
+    int childrenCount = this->childrenCountInternal();
     if (childrenCount > 0)
         Q_EMIT removeRows(0, childrenCount);
 
@@ -828,8 +851,9 @@ void FileSortWorker::handleRefresh()
     children.clear();
     visibleTreeChildren.clear();
     depthMap.clear();
-    if (isCurrentGroupingEnabled)
-        groupedData.clear();
+    if (isCurrentGroupingEnabled) {
+        clearGroupedData();
+    }
 
     {
         QWriteLocker lk(&childrenDataLocker);
@@ -906,18 +930,41 @@ void FileSortWorker::handleSortByMimeType()
     resortCurrent(false);
 }
 
+void FileSortWorker::handleAboutToInsertFilesToGroup(int pos, int count)
+{
+    if (!isCurrentGroupingEnabled || isCanceled) {
+        return;
+    }
+
+    groupingEngine->setUpdateMode(GroupingEngine::UpdateMode::kInsert);
+    // 此时还没有更新完成，无法获取children,只能先记录范围，后续在handleGroupingUpdate完成更新
+    groupingEngine->setUpdateChildrenRange(pos, count);
+}
+
+void FileSortWorker::handleAboutToRemoveFilesFromGroup(int pos, int count)
+{
+    if (!isCurrentGroupingEnabled || isCanceled) {
+        return;
+    }
+
+    groupingEngine->setUpdateMode(GroupingEngine::UpdateMode::kRemove);
+    groupingEngine->setUpdateChildren(visibleChildren.mid(pos, count));
+    // 对于移除，设置范围没意义，所以这里只是重置
+    groupingEngine->setUpdateChildrenRange(0, 0);
+}
+
 void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QString &groupKey)
 {
     if (groupKey.isEmpty() || !isCurrentGroupingEnabled || isCanceled || key != currentKey) {
         return;
     }
-    auto group = groupedData.getGroup(groupKey);
+    auto group = groupedModelData.getGroup(groupKey);
     if (!group) {
         fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
         return;
     }
     int count = group->fileCount;
-    int pos = groupedData.findGroupHeaderStartPos(groupKey).value_or(-1);
+    int pos = groupedModelData.findGroupHeaderStartPos(groupKey).value_or(-1);
 
     if (pos < 0) {
         fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
@@ -935,7 +982,7 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
         Q_EMIT insertGroupRows(pos + 1, count);
     }
 
-    groupedData.setGroupExpanded(groupKey, newState);
+    groupedModelData.setGroupExpanded(groupKey, newState);
 
     if (currentState) {
         // current is expanded
@@ -1331,6 +1378,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
         QWriteLocker lk(&locker);
         insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
     }
+    Q_EMIT insertFinish();
 
     if (sort == SortScenarios::kSortScenariosWatcherAddFile)
         Q_EMIT selectAndEditFile(sortInfo->fileUrl());
@@ -2223,14 +2271,14 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     // Generate model data with current expansion states
     const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
     Q_EMIT insertGroupRows(0, data.getItemCount());
-    groupedData = data;
+    groupedModelData = data;
     Q_EMIT insertGroupFinish();
 }
 
 void FileSortWorker::clearGroupedData()
 {
-    Q_EMIT removeGroupRows(0, groupedData.getItemCount());
-    groupedData.clear();
+    Q_EMIT removeGroupRows(0, groupedModelData.getItemCount());
+    groupedModelData.clear();
     Q_EMIT removeGroupFinish();
 }
 
