@@ -12,6 +12,11 @@
 #include <QApplication>
 #include <QMouseEvent>
 #include <QMenu>
+#include <QPainter>
+#include <QStyleOptionHeader>
+#include <QFontMetrics>
+#include <QToolTip>
+#include <QHelpEvent>
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -28,6 +33,7 @@ HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
     setSortIndicatorShown(true);
     setSectionsMovable(true);
     setFirstSectionMovable(false);
+    setMouseTracking(true);   // 启用鼠标跟踪以支持tooltip
 
     fmDebug() << "HeaderView initialization completed - sections clickable:" << sectionsClickable()
               << "movable:" << sectionsMovable() << "sort indicator shown:" << isSortIndicatorShown();
@@ -168,7 +174,7 @@ void HeaderView::mouseMoveEvent(QMouseEvent *e)
 
     int result = -1;
     if (atLeft) {
-        //grip at the beginning of the section
+        // grip at the beginning of the section
         while (visual > -1) {
             int logical = logicalIndex(--visual);
             if (!isSectionHidden(logical)) {
@@ -177,7 +183,7 @@ void HeaderView::mouseMoveEvent(QMouseEvent *e)
             }
         }
     } else if (atRight) {
-        //grip at the end of the section
+        // grip at the end of the section
         result = log;
     }
 
@@ -251,7 +257,77 @@ void HeaderView::paintEvent(QPaintEvent *e)
         this->setFixedHeight(idealHeight);
 }
 
+void HeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
+{
+    // 绘制背景和边框
+    QStyleOptionHeader opt;
+    initStyleOption(&opt);
+    initStyleOptionForIndex(&opt, logicalIndex);
+    opt.rect = rect;
+    opt.section = logicalIndex;
+
+    // 获取省略后的文本
+    opt.text = sectionElidedName(logicalIndex, rect.width() - 6);
+
+    // 让系统绘制整个头部，包括背景、边框、文本和排序箭头
+    style()->drawControl(QStyle::CE_Header, &opt, painter, this);
+}
+
+bool HeaderView::event(QEvent *e)
+{
+    if (e->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(e);
+        int logicalIndex = logicalIndexAt(helpEvent->pos());
+
+        if (logicalIndex >= 0) {
+            QString name = sectionName(logicalIndex);
+            if (!name.isEmpty()) {
+                int sectionWidth = sectionSize(logicalIndex);
+                QString elidedText = sectionElidedName(logicalIndex, sectionWidth - 6);
+
+                // 如果文本被省略了，显示完整文本的tooltip
+                if (elidedText != name) {
+                    QToolTip::showText(helpEvent->globalPos(), name);
+                } else {
+                    QToolTip::hideText();
+                }
+            }
+        } else {
+            QToolTip::hideText();
+        }
+        return true;
+    }
+
+    return QHeaderView::event(e);
+}
+
 FileViewModel *HeaderView::viewModel() const
 {
     return qobject_cast<FileViewModel *>(model());
+}
+
+QString HeaderView::sectionName(int logicalIndex) const
+{
+    auto model = viewModel();
+    if (model) {
+        int role = model->getRoleByColumn(logicalIndex);
+        return model->roleDisplayString(role);
+    }
+    return QString();
+}
+
+QString HeaderView::sectionElidedName(int logicalIndex, int availableWidth) const
+{
+    QString name = sectionName(logicalIndex);
+    if (name.isEmpty()) {
+        return QString();
+    }
+
+    // 如果有排序指示器，需要为其预留空间
+    if (isSortIndicatorShown() && sortIndicatorSection() == logicalIndex) {
+        availableWidth -= 26;
+    }
+
+    QFontMetrics fm(font());
+    return fm.elidedText(name, Qt::ElideRight, availableWidth);
 }

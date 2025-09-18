@@ -38,6 +38,8 @@ protected:
     void leaveEvent(QEvent *e) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     void paintEvent(QPaintEvent *e) override;
+    void paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const override;
+    bool event(QEvent *e) override;
 
 Q_SIGNALS:
     void mousePressed();
@@ -47,6 +49,8 @@ Q_SIGNALS:
 
 private:
     FileViewModel *viewModel() const;
+    QString sectionElidedName(int logicalIndex, int availableWidth) const;
+    QString sectionName(int logicalIndex) const;
 
     FileView *view { nullptr };
     int firstVisibleColumn = -1;
