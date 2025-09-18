@@ -16,6 +16,7 @@
 #include <QProcess>
 #include <QDBusReply>
 #include <QVBoxLayout>
+#include <QEvent>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmbase;
@@ -28,6 +29,7 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
 {
     setTitle(tr("Enter a password to protect shared folders"));
     setIcon(QIcon::fromTheme("dialog-password-publicshare"));
+    installEventFilter(this);
     initializeUi();
 }
 
@@ -89,4 +91,14 @@ void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
         Q_EMIT inputPassword(password);
     }
     close();
+}
+
+bool UserSharePasswordSettingDialog::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::FontChange || event->type() == QEvent::Show) {
+        // 当字体大小变化或窗口显示时，调整窗口大小以适应内容
+        adjustSize();
+        return true;
+    }
+    return DDialog::eventFilter(object, event);
 }
