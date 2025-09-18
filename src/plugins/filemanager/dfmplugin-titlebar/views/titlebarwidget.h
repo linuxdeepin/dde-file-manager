@@ -97,9 +97,7 @@ private:
     QWidget *placeholder { nullptr };
 
     bool searchButtonSwitchState { false };
-    int splitterStartValue { -1 };
     int splitterEndValue { -1 };
-    bool isSplitterAnimating { false };
 
     struct TitleBarState
     {

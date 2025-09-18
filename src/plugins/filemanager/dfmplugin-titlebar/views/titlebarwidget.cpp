@@ -94,16 +94,10 @@ void TitleBarWidget::openNewTab(const QUrl &url)
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 {
-    if (position == splitterEndValue) {
-        splitterStartValue = -1;
+    int newWidth = qMax(0, 95 - splitterEndValue);
+    if (position == splitterEndValue)
         splitterEndValue = -1;
-        isSplitterAnimating = false;
-    }
 
-    tabBar()->updateGeometry();
-    tabBar()->adjustSize();
-
-    int newWidth = qMax(0, 95 - position.toInt());
     if (newWidth == placeholder->width())
         return;
 
@@ -112,8 +106,7 @@ void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 
 void TitleBarWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
 {
-    isSplitterAnimating = true;
-    splitterStartValue = startValue;
+    Q_UNUSED(startValue);
     splitterEndValue = endValue;
 }
 
@@ -441,13 +434,6 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         default:
             break;
         }
-    }
-
-    // if the splitter is animating, do not process the resize event of tabbar
-    // otherwise, the tabbar width will be changed twice(once by the resizeEvent and once by placeholder size changed)
-    if (watched == bottomBar && event->type() == QEvent::Resize) {
-        if (isSplitterAnimating)
-            return true;
     }
 
     return false;

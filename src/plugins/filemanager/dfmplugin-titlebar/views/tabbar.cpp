@@ -686,3 +686,10 @@ void TabBar::mousePressEvent(QMouseEvent *e)
 
     DTabBar::mousePressEvent(e);
 }
+
+void TabBar::resizeEvent(QResizeEvent *e)
+{
+    // 临时修改方案：通过调用setIconSize()，更新内部的layoutDirty标识，强制重新刷新标签页布局
+    setIconSize(iconSize());
+    DTabBar::resizeEvent(e);
+}
