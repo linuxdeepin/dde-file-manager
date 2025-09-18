@@ -721,6 +721,10 @@ void FileSortWorker::handleGroupingUpdate()
 
         if (!result.success) {
             fmWarning() << "Failed to insert file to grouping data";
+            if (result.alwaysUpdate) {
+                groupedModelData = result.newData;
+                emit groupingDataChanged();
+            }
             return;
         }
 

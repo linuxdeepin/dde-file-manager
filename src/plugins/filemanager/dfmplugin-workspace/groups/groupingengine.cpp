@@ -78,6 +78,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
         // Get the URL of the file
         QUrl fileUrl = file->data(Global::kItemUrlRole).toUrl();
 
+        // TODO:tree
         // Find which group this file belongs to
         QString groupKey = strategy->getGroupKey(fileInfo);
         if (groupKey.isEmpty()) {
@@ -116,8 +117,16 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
             groupData->insertFile(groupData->files.size(), file);
         }
 
-        // Add the file to the group
         updatedGroups.insert(groupKey);
+        if (!groupData->isExpanded) {
+            fmWarning() << "GroupingEngine: group is collapsed:" << groupKey;
+            result.success = false;
+            result.alwaysUpdate = true;
+            for (const QString &groupKey : std::as_const(updatedGroups)) {
+                result.newData.updateGroupHeader(groupKey);
+            }
+            break;
+        }
     }
 
     if (!result.success) {
@@ -126,18 +135,31 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     }
 
     // Handle position calculation and insertion
-    if (anchorUrl.isValid()) {
-        // Find the position of the anchor URL
-        std::optional<int> anchorPos = result.newData.findFileStartPos(anchorUrl);
-        if (anchorPos.has_value()) {
+    if (!groupAdded) {
+        if (anchorUrl.isValid()) {
+            // Find the position of the anchor URL
+            std::optional<int> anchorPos = result.newData.findFileStartPos(anchorUrl);
+            if (!anchorPos.has_value()) {
+                fmWarning() << "GroupingEngine: Invalid anchorPos";
+                result.success = false;
+                return result;
+            }
+
             result.pos = anchorPos.value() + 1;   // Insert after the anchor
+            const auto anchorGroupKey = result.newData.getItemAt(anchorPos.value()).groupKey;
+            if (anchorGroupKey != *updatedGroups.begin()) {
+                while (result.newData.getItemAt(result.pos).isGroupHeader()) {
+                    result.pos += 1;
+                }
+            }
         } else {
-            // Anchor not found, insert at the beginning
+            // Invalid anchor URL means insert at the beginning
             result.pos = 0;
+            // skip group header
+            while (result.newData.getItemAt(result.pos).isGroupHeader()) {
+                result.pos += 1;
+            }
         }
-    } else {
-        // Invalid anchor URL means insert at the beginning
-        result.pos = 0;
     }
 
     // Update the model data
