@@ -24,10 +24,6 @@ public:
     bool checkFileStable(const QUrl &url);
     void startDelayWork();
 
-    QUrl setCheckCount(const QUrl &url, int count);
-    int checkCount(const QUrl &url);
-    QUrl clearCheckCount(const QUrl &url);
-
     ThumbnailWorker *q { nullptr };
     DMimeDatabase mimeDb;
     QMap<QString, ThumbnailWorker::ThumbnailCreator> creators;
@@ -36,6 +32,7 @@ public:
     std::atomic_bool isStoped = false;
     QTimer *delayTimer { nullptr };
     ThumbnailWorker::ThumbnailTaskMap delayTaskMap;
+    QMap<QUrl, int> urlCheckCountMap;  // 用于跟踪URL的重试次数
 };
 
 }   // namespace dfmbase
