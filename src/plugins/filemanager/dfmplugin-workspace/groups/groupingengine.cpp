@@ -24,6 +24,169 @@ GroupingEngine::~GroupingEngine()
 {
 }
 
+GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &anchorUrl,
+                                                                    const GroupedModelData &oldData,
+                                                                    DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy)
+{
+    GroupingEngine::UpdateResult result;
+
+    if (m_updateMode != UpdateMode::kInsert || m_visibleChildrenForUpdate.isEmpty() || !strategy) {
+        fmWarning() << "GroupingEngine: Cannot insert files to model data without a valid update mode";
+        return result;
+    }
+
+    if (!m_childrenDataMap) {
+        fmWarning() << "GroupingEngine: Cannot insert files without a valid children data map";
+        return result;
+    }
+
+    result.newData = oldData;
+    result.count = m_visibleChildrenForUpdate.count();
+    result.success = true;
+
+    bool groupAdded = false;
+    QSet<QString> updatedGroups;   // Track which groups need to be updated
+
+    // Collect FileItemDataPointer for all files to be inserted
+    QList<FileItemDataPointer> filesToInsert;
+    filesToInsert.reserve(m_visibleChildrenForUpdate.size());
+    for (const QUrl &url : std::as_const(m_visibleChildrenForUpdate)) {
+        auto it = m_childrenDataMap->constFind(url);
+        if (it == m_childrenDataMap->constEnd()) {
+            fmWarning() << "GroupingEngine: File data not found for URL" << url;
+            result.success = false;
+            break;
+        }
+        filesToInsert.append(it.value());
+    }
+
+    if (!result.success) {
+        return result;
+    }
+
+    // Process each file to insert
+    for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
+        if (!file) {
+            continue;
+        }
+
+        auto fileInfo = getFileInfoFromFileItem(file);
+        if (!fileInfo) {
+            continue;
+        }
+
+        // Get the URL of the file
+        QUrl fileUrl = file->data(Global::kItemUrlRole).toUrl();
+
+        // Find which group this file belongs to
+        QString groupKey = strategy->getGroupKey(fileInfo);
+        if (groupKey.isEmpty()) {
+            fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
+            continue;
+        }
+
+        // Get or create the group
+        FileGroupData *groupData = result.newData.getGroup(groupKey);
+        if (!groupData) {
+            // Create a new group
+            FileGroupData newGroup;
+            newGroup.groupKey = groupKey;
+            newGroup.displayName = strategy->getGroupDisplayName(groupKey);
+            newGroup.isExpanded = true;
+            newGroup.displayOrder = strategy->getGroupDisplayOrder(groupKey);
+            if (!result.newData.addGroup(newGroup)) {
+                fmWarning() << "GroupingEngine: Failed to add group" << groupKey;
+                result.success = false;
+                break;
+            }
+            groupData = result.newData.getGroup(groupKey);
+            groupAdded = true;
+
+            if (!groupData) {
+                fmWarning() << "GroupingEngine: Failed to create or retrieve group" << groupKey;
+                result.success = false;
+                break;
+            }
+            groupData->addFile(file);
+        } else {
+            // TODO: insert to groupData
+            // For existing group, we need to determine the correct insert position
+            // For simplicity, we add the file to the end of the group
+            // A more sophisticated implementation might sort the files or use a specific insert position
+            groupData->insertFile(groupData->files.size(), file);
+        }
+
+        // Add the file to the group
+        updatedGroups.insert(groupKey);
+    }
+
+    if (!result.success) {
+        fmWarning() << "GroupingEngine: Failed to insert files to model data";
+        return result;
+    }
+
+    // Handle position calculation and insertion
+    if (anchorUrl.isValid()) {
+        // Find the position of the anchor URL
+        std::optional<int> anchorPos = result.newData.findFileStartPos(anchorUrl);
+        if (anchorPos.has_value()) {
+            result.pos = anchorPos.value() + 1;   // Insert after the anchor
+        } else {
+            // Anchor not found, insert at the beginning
+            result.pos = 0;
+        }
+    } else {
+        // Invalid anchor URL means insert at the beginning
+        result.pos = 0;
+    }
+
+    // Update the model data
+    if (groupAdded) {
+        // If we added new groups, we need to rebuild the flattened items
+        fmInfo() << "GroupingEngine: New groups added, rebuilding flattened items";
+        result.pos = 0;
+        result.count = result.newData.getItemCount();
+        reorderGroups(&result.newData);
+    } else {
+        // Update only the group headers that were affected
+        fmDebug() << "GroupingEngine: Updating" << updatedGroups.size() << "group headers";
+        for (const QString &groupKey : std::as_const(updatedGroups)) {
+            result.newData.updateGroupHeader(groupKey);
+        }
+
+        // Insert files to flattenedItems at the correct position
+        // Find the correct insert position based on the anchor and group structure
+        int insertPos = result.pos;
+        for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
+            if (!file) {
+                continue;
+            }
+
+            // Get file info using helper function
+            FileInfoPointer fileInfo = getFileInfoFromFileItem(file);
+            if (!fileInfo) {
+                continue;
+            }
+
+            // Get the group key for this file
+            QString groupKey = strategy->getGroupKey(fileInfo);
+            if (groupKey.isEmpty()) {
+                fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
+                continue;
+            }
+
+            // Create a ModelItemWrapper for this file
+            ModelItemWrapper fileWrapper(file, groupKey);
+
+            // Insert the file at the correct position
+            result.newData.insertItem(insertPos, fileWrapper);
+            insertPos++;   // Next file should be inserted at the next position
+        }
+    }
+
+    return result;
+}
+
 GroupingEngine::UpdateResult GroupingEngine::removeFilesFromModelData(const GroupedModelData &oldData)
 {
     GroupingEngine::UpdateResult result;
@@ -169,6 +332,25 @@ GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupin
     return modelData;
 }
 
+std::optional<QUrl> GroupingEngine::findPrecedingAnchor(const QList<QUrl> &container, const QPair<int, int> &sliceRange)
+{
+    const int sliceStartIndex = sliceRange.first;
+
+    // 安全检查：范围是否有效
+    if (sliceStartIndex < 0 || sliceStartIndex + sliceRange.second > container.size()) {
+        // 范围无效，无法确定锚点
+        return std::nullopt;
+    }
+
+    // 如果切片的起始索引大于0，说明它前面有元素，可以作为锚点
+    if (sliceStartIndex > 0) {
+        return container.at(sliceStartIndex - 1);
+    }
+
+    // 切片位于容器的开头，没有前置锚点
+    return QUrl();
+}
+
 void GroupingEngine::setGroupOrder(Qt::SortOrder order)
 {
     if (m_groupOrder != order) {
@@ -206,6 +388,7 @@ void GroupingEngine::setUpdateChildrenRange(int pos, int count)
 void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
 {
     if (!modelData || modelData->groups.isEmpty()) {
+        fmWarning() << "GroupingEngine: Cannot reorder groups from empty model data";
         return;
     }
 
@@ -238,10 +421,8 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
             // Convert FileItemDataPointer to FileInfoPointer for strategy interface
             FileInfoPointer fileInfo = file->fileInfo();
             if (!fileInfo) {
-                fileInfo = InfoFactory::create<FileInfo>(file->data(ItemRoles::kItemUrlRole).toUrl());
-                Q_ASSERT(fileInfo);
+                fileInfo = getFileInfoFromFileItem(file);
                 if (!fileInfo) {
-                    fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
                     continue;
                 }
             }
@@ -430,6 +611,23 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
     }
 
     return expandedFiles;
+}
+
+FileInfoPointer GroupingEngine::getFileInfoFromFileItem(const FileItemDataPointer &file) const
+{
+    if (!file) {
+        return nullptr;
+    }
+
+    auto fileInfo = file->fileInfo();
+    if (!fileInfo) {
+        fileInfo = InfoFactory::create<FileInfo>(file->data(ItemRoles::kItemUrlRole).toUrl());
+        Q_ASSERT(fileInfo);
+        if (!fileInfo) {
+            fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
+        }
+    }
+    return fileInfo;
 }
 
 DPWORKSPACE_END_NAMESPACE
