@@ -138,6 +138,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
     QFrame *listHeightLabelFrame = new QFrame(q);
     listHeightLabelFrame->setFixedWidth(10);
     listHeightTitle = new DLabel(tr("List height"), q);
+    DFontSizeManager::instance()->bind(listHeightTitle, DFontSizeManager::T10, QFont::Normal);
     listHeightLabelLayout->addWidget(listHeightLabelFrame);
     listHeightLabelLayout->addWidget(listHeightTitle);
     listHeightLayout->addLayout(listHeightLabelLayout);
@@ -182,6 +183,7 @@ void ViewOptionsWidgetPrivate::initializeUi()
         pa.setColor(DPalette::WindowText, textColor);
         iconSizeTitle->setPalette(pa);
         gridDensityTitle->setPalette(pa);
+        listHeightTitle->setPalette(pa);
     };
     updateLabelColor();
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
