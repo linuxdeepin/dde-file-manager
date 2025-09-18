@@ -21,6 +21,7 @@
 #include <QAction>
 #include <QHBoxLayout>
 #include <QGuiApplication>
+#include <QScreen>
 #include <QTimer>
 #include <QWindow>
 #include <QMimeType>
@@ -66,7 +67,7 @@ FilePreviewDialog::~FilePreviewDialog()
 void FilePreviewDialog::updatePreviewList(const QList<QUrl> &previewUrllist)
 {
     qCInfo(logLibFilePreview) << "FilePreviewDialog: updating preview list with" << previewUrllist.size() << "files";
-    
+
     // 视频预览的前一秒禁止再次播放
     if (playingVideo) {
         qCDebug(logLibFilePreview) << "FilePreviewDialog: video is playing, ignoring preview list update";
@@ -95,7 +96,7 @@ void FilePreviewDialog::setEntryUrlList(const QList<QUrl> &urlList)
         qCDebug(logLibFilePreview) << "FilePreviewDialog: empty URL list provided for entry list";
         return;
     }
-    
+
     QUrl currentUrl = fileList.at(currentPageIndex);
     if (urlList.contains(currentUrl)) {
         qCInfo(logLibFilePreview) << "FilePreviewDialog: setting directory preview mode with" << urlList.size() << "files";
@@ -158,7 +159,7 @@ void FilePreviewDialog::handleFileInfoRefreshFinished(const QUrl url, const QStr
 {
     Q_UNUSED(infoPtr)
     Q_UNUSED(isLinkOrg)
-    
+
     if (UniversalUtils::urlEquals(url, fileList.at(currentPageIndex))) {
         qCDebug(logLibFilePreview) << "FilePreviewDialog: file info refreshed for current file, updating preview:" << url.toString();
         switchToPage(currentPageIndex);
@@ -247,7 +248,7 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 void FilePreviewDialog::initUI()
 {
     qCDebug(logLibFilePreview) << "FilePreviewDialog: initializing UI components";
-    
+
     closeBtn = new DFloatingButton(DStyle::SP_CloseButton, this);
     closeBtn->setStyleSheet("background-color: transparent;");
     closeBtn->setFixedSize(46, 46);
@@ -286,19 +287,22 @@ void FilePreviewDialog::initUI()
     connect(statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(statusBar->openButton(), &QPushButton::clicked, this, &FilePreviewDialog::openFile);
-    
+
     qCDebug(logLibFilePreview) << "FilePreviewDialog: UI initialization completed";
 }
 
 void FilePreviewDialog::switchToPage(int index)
 {
     qCInfo(logLibFilePreview) << "FilePreviewDialog: switching to page" << index << "of" << fileList.count() << "files";
-    
+
     if (index < 0 || index >= fileList.count()) {
         qCWarning(logLibFilePreview) << "FilePreviewDialog: invalid page index:" << index << "valid range: 0 -" << (fileList.count() - 1);
         return;
     }
-    
+
+    // 在切换视图前记录当前窗口中心位置（如果窗口可见）
+    saveCenterPos();
+
     currentPageIndex = index;
     statusBar->preButton()->setEnabled(index > 0);
     statusBar->nextButton()->setEnabled(index < fileList.count() - 1);
@@ -356,6 +360,7 @@ void FilePreviewDialog::switchToPage(int index)
                 int newPerviewHeight = preview->contentWidget()->size().height();
                 setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
+                restoreCenterPos();
                 qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully reused preview for file:" << fileList.at(index).toString();
                 return;
             }
@@ -427,7 +432,10 @@ void FilePreviewDialog::switchToPage(int index)
     int newPerviewHeight = preview->contentWidget()->size().height();
     setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
     updateTitle();
-    
+
+    // 切换并调整大小后，尝试将窗口移动回之前的中心位置
+    restoreCenterPos();
+
     qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully switched to page" << index << "for file:" << fileList.at(index).toString();
 }
 
@@ -485,7 +493,7 @@ void FilePreviewDialog::updateTitle()
     }
     statusBar->title()->setText(elidedText);
     statusBar->title()->setHidden(statusBar->title()->text().isEmpty());
-    
+
     qCDebug(logLibFilePreview) << "FilePreviewDialog: updated title to:" << elidedText;
 }
 
@@ -497,4 +505,57 @@ QString FilePreviewDialog::generalKey(const QString &key)
         return tmp.first() + "/*";
 
     return key;
+}
+
+void FilePreviewDialog::saveCenterPos()
+{
+    if (!isVisible()) {
+        // 窗口不可见时不记录
+        return;
+    }
+
+    // 使用 frameGeometry 来考虑窗口装饰
+    QRect fg = frameGeometry();
+    previousCenter = fg.center();
+    qCDebug(logLibFilePreview) << "FilePreviewDialog: saved center position:" << previousCenter;
+}
+
+void FilePreviewDialog::restoreCenterPos()
+{
+    if (previousCenter.isNull()) {
+        // 没有记录过中心点
+        return;
+    }
+
+    // 计算新的左上角位置以保持中心点不变
+    QSize s = size();
+    QPoint newTopLeft(previousCenter.x() - s.width() / 2, previousCenter.y() - s.height() / 2);
+
+    // 限制窗口位置到记录中心所在屏幕的可用区域，避免跨屏显示
+    QScreen *scr = QGuiApplication::screenAt(previousCenter);
+    QRect avail;
+    if (scr) {
+        avail = scr->availableGeometry();
+    } else if (QGuiApplication::primaryScreen()) {
+        avail = QGuiApplication::primaryScreen()->availableGeometry();
+    }
+
+    if (!avail.isNull()) {
+        // 如果窗口大小大于可用区域，则将窗口居中显示在该屏幕内
+        if (s.width() > avail.width() || s.height() > avail.height()) {
+            QPoint centered(avail.center().x() - s.width() / 2, avail.center().y() - s.height() / 2);
+            newTopLeft = centered;
+        } else {
+            // 将 newTopLeft 限定在 avail 内
+            int x = qBound(avail.left(), newTopLeft.x(), avail.right() - s.width());
+            int y = qBound(avail.top(), newTopLeft.y(), avail.bottom() - s.height());
+            newTopLeft = QPoint(x, y);
+        }
+    }
+
+    // 将窗口移动到新位置，但确保在主线程和可见时操作
+    if (isVisible()) {
+        move(newTopLeft);
+        qCDebug(logLibFilePreview) << "FilePreviewDialog: restored window to keep center at" << previousCenter << "moved to" << newTopLeft;
+    }
 }

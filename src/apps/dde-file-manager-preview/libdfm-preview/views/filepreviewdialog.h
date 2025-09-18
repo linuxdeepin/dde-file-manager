@@ -55,6 +55,10 @@ private:
     void updateTitle();
     QString generalKey(const QString &key);
 
+    // 保存/恢复中心位置，保证切换视图后窗口仍居中到之前的位置
+    void saveCenterPos();
+    void restoreCenterPos();
+
     QList<QUrl> fileList;
 
     DTK_WIDGET_NAMESPACE::DFloatingButton *closeBtn { Q_NULLPTR };
@@ -68,6 +72,8 @@ private:
     quint64 currentWinID { 0 };
     DFMBASE_NAMESPACE::AbstractBasePreview *preview { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
+    // 在切换视图前记录中心点, 切换后恢复
+    QPoint previousCenter { 0, 0 };
 };
 }
 #endif
