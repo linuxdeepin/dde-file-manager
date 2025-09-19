@@ -204,6 +204,63 @@ private:
     QList<FileItemDataPointer> findExpandedFiles(const FileItemDataPointer &file) const;
 
 private:
+    /**
+     * @brief Collect files to be inserted from visible children
+     * @param filesToInsert Output list of files to insert
+     * @return true if successful, false otherwise
+     */
+    bool collectFilesToInsert(QList<FileItemDataPointer> &filesToInsert) const;
+
+    /**
+     * @brief Process files and update groups in the model data
+     * @param filesToInsert List of files to insert
+     * @param strategy The grouping strategy to use
+     * @param newData The model data to update
+     * @param updatedGroups Set to track which groups were updated
+     * @param groupAdded Output parameter indicating if new groups were added
+     * @param alwaysUpdate Output parameter indicating if always update is needed
+     * @return true if successful, false otherwise
+     */
+    bool processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
+                                     DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                     GroupedModelData *newData,
+                                     QSet<QString> *updatedGroups,
+                                     bool *groupAdded,
+                                     bool *alwaysUpdate) const;
+
+    /**
+     * @brief Calculate the insertion position in the model data
+     * @param anchorUrl The anchor URL for the insertion
+     * @param newData The model data
+     * @param updatedGroups The set of updated groups
+     * @param groupAdded Whether new groups were added
+     * @param pos Output parameter for the calculated position
+     * @return true if successful, false otherwise
+     */
+    bool calculateInsertPosition(const QUrl &anchorUrl,
+                                 const GroupedModelData &newData,
+                                 const QSet<QString> &updatedGroups,
+                                 bool groupAdded,
+                                 int *pos) const;
+
+    /**
+     * @brief Finalize the model data update by inserting files at the correct position
+     * @param filesToInsert List of files to insert
+     * @param strategy The grouping strategy to use
+     * @param newData The model data to update
+     * @param updatedGroups The set of updated groups
+     * @param groupAdded Whether new groups were added
+     * @param pos The position to insert files
+     * @return true if successful, false otherwise
+     */
+    bool finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
+                             DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                             GroupedModelData *newData,
+                             const QSet<QString> &updatedGroups,
+                             bool groupAdded,
+                             int pos) const;
+
+private:
     // Configuration
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
     const QHash<QUrl, QList<QUrl>> *m_visibleTreeChildren { nullptr };

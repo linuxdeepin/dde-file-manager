@@ -43,27 +43,63 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     result.newData = oldData;
     result.count = m_visibleChildrenForUpdate.count();
     result.success = true;
-
-    bool groupAdded = false;
-    QSet<QString> updatedGroups;   // Track which groups need to be updated
+    result.alwaysUpdate = false;
 
     // Collect FileItemDataPointer for all files to be inserted
     QList<FileItemDataPointer> filesToInsert;
+    if (!collectFilesToInsert(filesToInsert)) {
+        result.success = false;
+        return result;
+    }
+
+    // Process each file to insert and update groups
+    QSet<QString> updatedGroups;   // Track which groups need to be updated
+    bool groupAdded = false;
+    bool alwaysUpdate = false;
+    if (!processFilesAndUpdateGroups(filesToInsert, strategy, &result.newData, &updatedGroups, &groupAdded, &alwaysUpdate)) {
+        result.success = false;
+        result.alwaysUpdate = alwaysUpdate;
+        fmWarning() << "GroupingEngine: Failed to insert files to model data";
+        return result;
+    }
+
+    // Handle position calculation and insertion
+    if (!calculateInsertPosition(anchorUrl, result.newData, updatedGroups, groupAdded, &result.pos)) {
+        result.success = false;
+        return result;
+    }
+
+    // Finalize the model update
+    if (!finalizeModelUpdate(filesToInsert, strategy, &result.newData, updatedGroups, groupAdded, result.pos)) {
+        result.success = false;
+        return result;
+    }
+
+    result.count = groupAdded ? result.newData.getItemCount() : m_visibleChildrenForUpdate.count();
+    return result;
+}
+
+bool GroupingEngine::collectFilesToInsert(QList<FileItemDataPointer> &filesToInsert) const
+{
     filesToInsert.reserve(m_visibleChildrenForUpdate.size());
     for (const QUrl &url : std::as_const(m_visibleChildrenForUpdate)) {
         auto it = m_childrenDataMap->constFind(url);
         if (it == m_childrenDataMap->constEnd()) {
             fmWarning() << "GroupingEngine: File data not found for URL" << url;
-            result.success = false;
-            break;
+            return false;
         }
         filesToInsert.append(it.value());
     }
+    return true;
+}
 
-    if (!result.success) {
-        return result;
-    }
-
+bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
+                                                 DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                                 GroupedModelData *newData,
+                                                 QSet<QString> *updatedGroups,
+                                                 bool *groupAdded,
+                                                 bool *alwaysUpdate) const
+{
     // Process each file to insert
     for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
         if (!file) {
@@ -87,7 +123,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
         }
 
         // Get or create the group
-        FileGroupData *groupData = result.newData.getGroup(groupKey);
+        FileGroupData *groupData = newData->getGroup(groupKey);
         if (!groupData) {
             // Create a new group
             FileGroupData newGroup;
@@ -95,18 +131,16 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
             newGroup.displayName = strategy->getGroupDisplayName(groupKey);
             newGroup.isExpanded = true;
             newGroup.displayOrder = strategy->getGroupDisplayOrder(groupKey);
-            if (!result.newData.addGroup(newGroup)) {
+            if (!newData->addGroup(newGroup)) {
                 fmWarning() << "GroupingEngine: Failed to add group" << groupKey;
-                result.success = false;
-                break;
+                return false;
             }
-            groupData = result.newData.getGroup(groupKey);
-            groupAdded = true;
+            groupData = newData->getGroup(groupKey);
+            *groupAdded = true;
 
             if (!groupData) {
                 fmWarning() << "GroupingEngine: Failed to create or retrieve group" << groupKey;
-                result.success = false;
-                break;
+                return false;
             }
             groupData->addFile(file);
         } else {
@@ -117,68 +151,81 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
             groupData->insertFile(groupData->files.size(), file);
         }
 
-        updatedGroups.insert(groupKey);
+        updatedGroups->insert(groupKey);
         if (!groupData->isExpanded) {
             fmWarning() << "GroupingEngine: group is collapsed:" << groupKey;
-            result.success = false;
-            result.alwaysUpdate = true;
-            for (const QString &groupKey : std::as_const(updatedGroups)) {
-                result.newData.updateGroupHeader(groupKey);
+            *alwaysUpdate = true;
+            // Update group headers before returning
+            for (const QString &groupKey : std::as_const(*updatedGroups)) {
+                newData->updateGroupHeader(groupKey);
             }
-            break;
+            return false;
         }
     }
+    return true;
+}
 
-    if (!result.success) {
-        fmWarning() << "GroupingEngine: Failed to insert files to model data";
-        return result;
-    }
-
-    // Handle position calculation and insertion
-    if (!groupAdded) {
-        if (anchorUrl.isValid()) {
-            // Find the position of the anchor URL
-            std::optional<int> anchorPos = result.newData.findFileStartPos(anchorUrl);
-            if (!anchorPos.has_value()) {
-                fmWarning() << "GroupingEngine: Invalid anchorPos";
-                result.success = false;
-                return result;
-            }
-
-            result.pos = anchorPos.value() + 1;   // Insert after the anchor
-            const auto anchorGroupKey = result.newData.getItemAt(anchorPos.value()).groupKey;
-            if (anchorGroupKey != *updatedGroups.begin()) {
-                while (result.newData.getItemAt(result.pos).isGroupHeader()) {
-                    result.pos += 1;
-                }
-            }
-        } else {
-            // Invalid anchor URL means insert at the beginning
-            result.pos = 0;
-            // skip group header
-            while (result.newData.getItemAt(result.pos).isGroupHeader()) {
-                result.pos += 1;
-            }
-        }
-    }
-
-    // Update the model data
+bool GroupingEngine::calculateInsertPosition(const QUrl &anchorUrl,
+                                             const GroupedModelData &newData,
+                                             const QSet<QString> &updatedGroups,
+                                             bool groupAdded,
+                                             int *pos) const
+{
     if (groupAdded) {
         // If we added new groups, we need to rebuild the flattened items
         fmInfo() << "GroupingEngine: New groups added, rebuilding flattened items";
-        result.pos = 0;
-        result.count = result.newData.getItemCount();
-        reorderGroups(&result.newData);
+        *pos = 0;
+        return true;
+    }
+
+    if (anchorUrl.isValid()) {
+        // Find the position of the anchor URL
+        std::optional<int> anchorPos = newData.findFileStartPos(anchorUrl);
+        if (!anchorPos.has_value()) {
+            fmWarning() << "GroupingEngine: Invalid anchorPos";
+            return false;
+        }
+
+        *pos = anchorPos.value() + 1;   // Insert after the anchor
+        if (!updatedGroups.isEmpty()) {
+            const auto anchorGroupKey = newData.getItemAt(anchorPos.value()).groupKey;
+            if (anchorGroupKey != *updatedGroups.begin()) {
+                while (newData.getItemAt(*pos).isGroupHeader()) {
+                    *pos += 1;
+                }
+            }
+        }
+    } else {
+        // Invalid anchor URL means insert at the beginning
+        *pos = 0;
+        // skip group header
+        while (newData.getItemAt(*pos).isGroupHeader()) {
+            *pos += 1;
+        }
+    }
+    return true;
+}
+
+bool GroupingEngine::finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
+                                         DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                         GroupedModelData *newData,
+                                         const QSet<QString> &updatedGroups,
+                                         bool groupAdded,
+                                         int pos) const
+{
+    if (groupAdded) {
+        // If we added new groups, we need to rebuild the flattened items
+        reorderGroups(newData);
     } else {
         // Update only the group headers that were affected
         fmDebug() << "GroupingEngine: Updating" << updatedGroups.size() << "group headers";
         for (const QString &groupKey : std::as_const(updatedGroups)) {
-            result.newData.updateGroupHeader(groupKey);
+            newData->updateGroupHeader(groupKey);
         }
 
         // Insert files to flattenedItems at the correct position
         // Find the correct insert position based on the anchor and group structure
-        int insertPos = result.pos;
+        int insertPos = pos;
         for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
             if (!file) {
                 continue;
@@ -201,12 +248,11 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
             ModelItemWrapper fileWrapper(file, groupKey);
 
             // Insert the file at the correct position
-            result.newData.insertItem(insertPos, fileWrapper);
+            newData->insertItem(insertPos, fileWrapper);
             insertPos++;   // Next file should be inserted at the next position
         }
     }
-
-    return result;
+    return true;
 }
 
 GroupingEngine::UpdateResult GroupingEngine::removeFilesFromModelData(const GroupedModelData &oldData)
