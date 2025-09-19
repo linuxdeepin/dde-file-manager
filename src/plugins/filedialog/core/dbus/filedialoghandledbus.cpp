@@ -81,7 +81,9 @@ void FileDialogHandleDBus::setFilter(int filters)
 
 void FileDialogHandleDBus::setViewMode(int mode)
 {
-    FileDialogHandle::setViewMode(static_cast<QFileDialog::ViewMode>(mode));
+    // 打开文件对话框时（QFileDialog），视图模式默认为 Detail（列表模式），与文管自身的逻辑冲突
+    // 文管会根据url获取其配置的视图模式进行显示
+    // FileDialogHandle::setViewMode(static_cast<QFileDialog::ViewMode>(mode));
 }
 
 int FileDialogHandleDBus::viewMode() const
