@@ -239,6 +239,7 @@ private:
     bool isIconViewMode() const;
     bool isListViewMode() const;
     bool isTreeViewMode() const;
+    bool isGroupedView() const;
 
     void resetSelectionModes();
     QList<SelectionMode> fetchSupportSelectionModes();

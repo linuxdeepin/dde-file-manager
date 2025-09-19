@@ -92,7 +92,7 @@ inline constexpr char kCreatedTime[] { "CreatedTime" };
 inline constexpr char kType[] { "Type" };
 inline constexpr char kCustomPath[] { "CustomPath" };
 inline constexpr char kCustomTime[] { "CustomTime" };
-}
+}   // namespace GroupStrategty
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };
 inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };

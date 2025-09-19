@@ -803,7 +803,12 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
     model()->grouping(strategyName, order);
 
     const QUrl &url = rootUrl();
-    if (url.isValid()) {
+
+    // 搜索使用了 kKeepOrder 作为属性避免搜索过程中排序
+    // 此处使用 kKeepOrder 不持久化存储分组状态，那么搜索过程将不会被分组
+    auto dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, {});
+    bool keepOrder = dirIterator && dirIterator->property(IteratorProperty::kKeepOrder).toBool();
+    if (url.isValid() && !keepOrder) {
         setFileViewStateValue(url, "groupStrategy", strategyName);
         setFileViewStateValue(url, "groupingOrder", static_cast<int>(order));
     }
@@ -1273,6 +1278,16 @@ bool FileView::isListViewMode() const
 bool FileView::isTreeViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kTreeMode;
+}
+
+bool FileView::isGroupedView() const
+{
+    const auto strategyName = model()->groupingStrategy();
+
+    if (strategyName.isEmpty() || strategyName == GroupStrategty::kNoGroup)
+        return false;
+
+    return true;
 }
 
 void FileView::resetSelectionModes()

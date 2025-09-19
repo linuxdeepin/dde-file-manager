@@ -144,17 +144,16 @@ void TitleBarEventCaller::sendSetSort(QWidget *sender, ItemRoles role)
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", id, role);
 }
 
-ItemRoles TitleBarEventCaller::sendCurrentGroupRole(QWidget *sender)
+QString TitleBarEventCaller::sendCurrentGroupRoleStrategy(QWidget *sender)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    int currentGroupRole = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", id).toInt();
-    return static_cast<ItemRoles>(currentGroupRole);
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", id).toString();
 }
 
-void TitleBarEventCaller::sendSetGroup(QWidget *sender, ItemRoles role)
+void TitleBarEventCaller::sendSetGroupStrategy(QWidget *sender, const QString &strategy)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", id, role);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", id, strategy);
 }

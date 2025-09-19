@@ -25,6 +25,8 @@ public:
     void setItemSortRoles();
     void setItemGroupRoles();
     void sort();
+    QString findObjNameByGroupStrategy(const QString &strategy);
+    QString findStrategyByObjName(const QString &objName);
 
 private slots:
     void menuTriggered(QAction *action);
@@ -37,7 +39,8 @@ private:
     bool hoverFlag { false };
     QMenu *menu { nullptr };
     QMenu *groupMenu { nullptr };
-    bool iconClicked { false }; // Add iconClicked state
+    bool iconClicked { false };   // Add iconClicked state
+    QHash<QString, QString> objNamesToGroupStrategies;
 };
 }   // namespace dfmplugin_titlebar
 
