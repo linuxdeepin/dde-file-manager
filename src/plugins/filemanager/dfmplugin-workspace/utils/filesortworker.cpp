@@ -108,6 +108,9 @@ FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrde
     QString oldStrategy = currentStrategy ? currentStrategy->getStrategyName() : "";
     groupOrder = order;
     currentStrategy = GroupingFactory::createStrategy(strategy, this);
+    if (!currentStrategy) {
+        return FileSortWorker::GroupingOpt::kGroupingOptNone;
+    }
     isCurrentGroupingEnabled = (currentStrategy->getStrategyName() == GroupStrategty::kNoGroup) ? false : true;
     // TODO: init groupExpansionStates
 

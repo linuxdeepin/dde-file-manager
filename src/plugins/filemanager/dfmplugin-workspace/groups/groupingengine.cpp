@@ -47,7 +47,20 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
 
     // Collect FileItemDataPointer for all files to be inserted
     QList<FileItemDataPointer> filesToInsert;
-    if (!collectFilesToInsert(filesToInsert)) {
+    if (!collectFilesToInsert(&filesToInsert)) {
+        result.success = false;
+        return result;
+    }
+
+    if (filesToInsert.size() != m_visibleChildrenForUpdate.size()) {
+        fmWarning() << "GroupingEngine: Number of files to insert does not match number of visible children";
+        result.success = false;
+        return result;
+    }
+
+    // Get group key for the files
+    QString groupKey = getGroupKeyForFiles(filesToInsert, anchorUrl, strategy);
+    if (groupKey.isEmpty()) {
         result.success = false;
         return result;
     }
@@ -56,7 +69,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     QSet<QString> updatedGroups;   // Track which groups need to be updated
     bool groupAdded = false;
     bool alwaysUpdate = false;
-    if (!processFilesAndUpdateGroups(filesToInsert, strategy, &result.newData, &updatedGroups, &groupAdded, &alwaysUpdate)) {
+    if (!processFilesAndUpdateGroups(filesToInsert, groupKey, strategy, &result.newData, &updatedGroups, &groupAdded, &alwaysUpdate)) {
         result.success = false;
         result.alwaysUpdate = alwaysUpdate;
         fmWarning() << "GroupingEngine: Failed to insert files to model data";
@@ -70,7 +83,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     }
 
     // Finalize the model update
-    if (!finalizeModelUpdate(filesToInsert, strategy, &result.newData, updatedGroups, groupAdded, result.pos)) {
+    if (!finalizeModelUpdate(filesToInsert, groupKey, strategy, &result.newData, updatedGroups, groupAdded, result.pos)) {
         result.success = false;
         return result;
     }
@@ -79,22 +92,50 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     return result;
 }
 
-bool GroupingEngine::collectFilesToInsert(QList<FileItemDataPointer> &filesToInsert) const
+QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &filesToInsert,
+                                            const QUrl &anchorUrl,
+                                            DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const
 {
-    filesToInsert.reserve(m_visibleChildrenForUpdate.size());
+    QString groupKey;
+    FileItemDataPointer groupKeyItem;
+
+    // 区分新增的文件是树形item展开的，还是当前目录新增的
+    // 如果是树形展开的文件，其所属分组应该属于anchorUrl的分组
+    int anchorExpandedCount = anchorUrl.isValid() ? findExpandedFiles(m_childrenDataMap->value(anchorUrl)).size() : 0;
+    int insertedCount = filesToInsert.count();
+    if (insertedCount == 1 && insertedCount != anchorExpandedCount) {
+        // 文件新增
+        groupKeyItem = filesToInsert.first();
+    } else {
+        // 树形item展开
+        groupKeyItem = m_childrenDataMap->value(anchorUrl);
+    }
+
+    if (!groupKeyItem.isNull()) {
+        auto groupKeyInfo = getFileInfoFromFileItem(groupKeyItem);
+        groupKey = strategy->getGroupKey(groupKeyInfo);
+    }
+
+    return groupKey;
+}
+
+bool GroupingEngine::collectFilesToInsert(QList<FileItemDataPointer> *filesToInsert) const
+{
+    filesToInsert->reserve(m_visibleChildrenForUpdate.size());
     for (const QUrl &url : std::as_const(m_visibleChildrenForUpdate)) {
         auto it = m_childrenDataMap->constFind(url);
         if (it == m_childrenDataMap->constEnd()) {
             fmWarning() << "GroupingEngine: File data not found for URL" << url;
             return false;
         }
-        filesToInsert.append(it.value());
+        filesToInsert->append(it.value());
     }
     return true;
 }
 
 bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
-                                                 DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                                 const QString groupKey,
+                                                 const AbstractGroupStrategy *strategy,
                                                  GroupedModelData *newData,
                                                  QSet<QString> *updatedGroups,
                                                  bool *groupAdded,
@@ -103,20 +144,10 @@ bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer
     // Process each file to insert
     for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
         if (!file) {
+            fmWarning() << "GroupingEngine: Invalid file data";
             continue;
         }
 
-        auto fileInfo = getFileInfoFromFileItem(file);
-        if (!fileInfo) {
-            continue;
-        }
-
-        // Get the URL of the file
-        QUrl fileUrl = file->data(Global::kItemUrlRole).toUrl();
-
-        // TODO:tree
-        // Find which group this file belongs to
-        QString groupKey = strategy->getGroupKey(fileInfo);
         if (groupKey.isEmpty()) {
             fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
             continue;
@@ -207,7 +238,8 @@ bool GroupingEngine::calculateInsertPosition(const QUrl &anchorUrl,
 }
 
 bool GroupingEngine::finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
-                                         DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                         const QString groupKey,
+                                         const AbstractGroupStrategy *strategy,
                                          GroupedModelData *newData,
                                          const QSet<QString> &updatedGroups,
                                          bool groupAdded,
@@ -228,17 +260,10 @@ bool GroupingEngine::finalizeModelUpdate(const QList<FileItemDataPointer> &files
         int insertPos = pos;
         for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
             if (!file) {
+                fmWarning() << "GroupingEngine: Invalid file data";
                 continue;
             }
 
-            // Get file info using helper function
-            FileInfoPointer fileInfo = getFileInfoFromFileItem(file);
-            if (!fileInfo) {
-                continue;
-            }
-
-            // Get the group key for this file
-            QString groupKey = strategy->getGroupKey(fileInfo);
             if (groupKey.isEmpty()) {
                 fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
                 continue;
@@ -620,9 +645,13 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
 QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataPointer &file) const
 {
     // 1. --- 前置安全检查 ---
-    bool isExpanded = file->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
-    if (!isExpanded || !m_visibleTreeChildren || !m_childrenDataMap || file.isNull()) {
+    if (!m_visibleTreeChildren || !m_childrenDataMap || file.isNull()) {
         return {};   // 如果初始节点未展开或数据结构无效，则其下没有任何“展开的文件”
+    }
+
+    bool isExpanded = file->data(ItemRoles::kItemTreeViewExpandedRole).toBool();
+    if (!isExpanded) {
+        return {};
     }
 
     const QUrl &fileUrl = file->data(ItemRoles::kItemUrlRole).toUrl();
