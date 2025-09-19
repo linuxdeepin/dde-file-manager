@@ -76,7 +76,7 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
             Qt::DirectConnection);
 
     // Initialize grouping engine
-    groupingEngine = std::make_unique<GroupingEngine>(this);
+    groupingEngine = std::make_unique<GroupingEngine>(current, this);
 
     fmDebug() << "FileSortWorker: Grouping engine initialized";
 }
@@ -2287,10 +2287,9 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 
     // Perform grouping using GroupingEngine
     groupingEngine->setGroupOrder(groupOrder);
-    if (istree) {
-        groupingEngine->setVisibleTreeChildren(&visibleTreeChildren);
-        groupingEngine->setChildrenDataMap(&childrenDataMap);
-    }
+    groupingEngine->setVisibleTreeChildren(&visibleTreeChildren);
+    groupingEngine->setChildrenDataMap(&childrenDataMap);
+
     const auto &result = groupingEngine->groupFiles(files, currentStrategy);
     if (!result.success) {
         fmCritical() << "FileSortWorker: Grouping failed:" << result.errorMessage;

@@ -61,7 +61,7 @@ public:
      * @brief Constructor
      * @param parent Parent object
      */
-    explicit GroupingEngine(QObject *parent = nullptr);
+    explicit GroupingEngine(const QUrl &rootUrl, QObject *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -203,6 +203,17 @@ private:
      */
     QList<FileItemDataPointer> findExpandedFiles(const FileItemDataPointer &file) const;
 
+    /**
+     * @brief Finds the top-level ancestor directory of the given URL in the tree.
+     *              * The top-level ancestor directory is defined as a direct child of the root node (m_rootUrl),
+     * and an ancestor of the anchorUrl.
+     *              * @param anchorUrl The URL whose top-level ancestor is to be found.
+     * @return If found, returns the URL of the top-level ancestor.
+     *         If anchorUrl itself is a top-level directory, returns anchorUrl.
+     *         If anchorUrl is the root node or not found in the tree, returns an invalid QUrl().
+     */
+    QUrl findTopLevelAncestorOf(const QUrl &anchorUrl) const;
+
 private:
     /**
      * @brief Get the group key for a set of files
@@ -277,6 +288,7 @@ private:
 
 private:
     // Configuration
+    QUrl m_rootUrl;
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
     const QHash<QUrl, QList<QUrl>> *m_visibleTreeChildren { nullptr };
     const QHash<QUrl, FileItemDataPointer> *m_childrenDataMap { nullptr };

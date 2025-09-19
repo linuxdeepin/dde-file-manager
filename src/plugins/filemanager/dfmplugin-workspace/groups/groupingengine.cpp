@@ -15,8 +15,8 @@ DPWORKSPACE_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
-GroupingEngine::GroupingEngine(QObject *parent)
-    : QObject(parent)
+GroupingEngine::GroupingEngine(const QUrl &rootUrl, QObject *parent)
+    : QObject(parent), m_rootUrl(rootUrl)
 {
 }
 
@@ -108,7 +108,8 @@ QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &fi
         groupKeyItem = filesToInsert.first();
     } else {
         // 树形item展开
-        groupKeyItem = m_childrenDataMap->value(anchorUrl);
+        const QUrl &topLevelUrl = findTopLevelAncestorOf(anchorUrl);
+        groupKeyItem = m_childrenDataMap->value(topLevelUrl);
     }
 
     if (!groupKeyItem.isNull()) {
@@ -708,6 +709,63 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
     }
 
     return expandedFiles;
+}
+
+QUrl GroupingEngine::findTopLevelAncestorOf(const QUrl &anchorUrl) const
+{
+    // --- 1. 前置安全与边界检查 ---
+    if (!m_visibleTreeChildren || m_visibleTreeChildren->isEmpty() || !anchorUrl.isValid()) {
+        return QUrl();   // 数据无效
+    }
+
+    // 如果 anchorUrl 就是根节点本身，它没有顶层祖先
+    if (anchorUrl == m_rootUrl) {
+        return QUrl();
+    }
+
+    // 检查 anchorUrl 是否本身就是顶层目录
+    const QList<QUrl> &rootChildren = m_visibleTreeChildren->value(m_rootUrl);
+    if (rootChildren.contains(anchorUrl)) {
+        return anchorUrl;
+    }
+
+    // --- 2. 构建子到父的反向映射表 ---
+    QHash<QUrl, QUrl> childToParentMap;
+    for (auto it = m_visibleTreeChildren->constBegin(); it != m_visibleTreeChildren->constEnd(); ++it) {
+        const QUrl &parent = it.key();
+        const QList<QUrl> &children = it.value();
+        for (const QUrl &child : children) {
+            childToParentMap.insert(child, parent);
+        }
+    }
+
+    // --- 3. 从 anchorUrl 向上回溯 ---
+    QUrl currentUrl = anchorUrl;
+    int safetyCounter = 0;   // 防止因数据错误导致无限循环
+    const int maxDepth = 1000;   // 设定一个合理的最大深度
+
+    while (safetyCounter++ < maxDepth) {
+        // 获取当前节点的父节点
+        const QUrl parentUrl = childToParentMap.value(currentUrl);
+
+        // 检查终止条件
+        if (!parentUrl.isValid()) {
+            // 到达了一个没有父节点的节点（但它不是根），说明 anchorUrl 不在 m_rootUrl 的子树下
+            fmWarning() << "Could not trace back to root. Anchor URL might not be in the tree:" << anchorUrl;
+            return QUrl();   // 查找失败
+        }
+
+        if (parentUrl == m_rootUrl) {
+            // 找到了！当前节点的父节点是根，所以当前节点就是我们要找的顶层祖先
+            return currentUrl;
+        }
+
+        // 继续向上移动
+        currentUrl = parentUrl;
+    }
+
+    fmWarning() << "Search for top-level ancestor exceeded max depth. Possible cyclic dependency in data.";
+    return QUrl();   // 查找失败（超出最大深度）
 }
 
 FileInfoPointer GroupingEngine::getFileInfoFromFileItem(const FileItemDataPointer &file) const
