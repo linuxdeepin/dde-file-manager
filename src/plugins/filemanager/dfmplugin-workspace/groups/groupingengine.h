@@ -205,15 +205,27 @@ private:
 
 private:
     /**
+     * @brief Get the group key for a set of files
+     * @param filesToInsert List of files to determine group key from
+     * @param anchorUrl The anchor URL
+     * @param strategy The grouping strategy to use
+     * @return The group key
+     */
+    QString getGroupKeyForFiles(const QList<FileItemDataPointer> &filesToInsert,
+                                const QUrl &anchorUrl,
+                                DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
+
+    /**
      * @brief Collect files to be inserted from visible children
      * @param filesToInsert Output list of files to insert
      * @return true if successful, false otherwise
      */
-    bool collectFilesToInsert(QList<FileItemDataPointer> &filesToInsert) const;
+    bool collectFilesToInsert(QList<FileItemDataPointer> *filesToInsert) const;
 
     /**
      * @brief Process files and update groups in the model data
      * @param filesToInsert List of files to insert
+     * @param groupKey The group key for these files
      * @param strategy The grouping strategy to use
      * @param newData The model data to update
      * @param updatedGroups Set to track which groups were updated
@@ -222,7 +234,8 @@ private:
      * @return true if successful, false otherwise
      */
     bool processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
-                                     DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                     const QString groupKey,
+                                     const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
                                      GroupedModelData *newData,
                                      QSet<QString> *updatedGroups,
                                      bool *groupAdded,
@@ -246,6 +259,7 @@ private:
     /**
      * @brief Finalize the model data update by inserting files at the correct position
      * @param filesToInsert List of files to insert
+     * @param groupKey The group key for these files
      * @param strategy The grouping strategy to use
      * @param newData The model data to update
      * @param updatedGroups The set of updated groups
@@ -254,7 +268,8 @@ private:
      * @return true if successful, false otherwise
      */
     bool finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
-                             DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                             const QString groupKey,
+                             const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
                              GroupedModelData *newData,
                              const QSet<QString> &updatedGroups,
                              bool groupAdded,
