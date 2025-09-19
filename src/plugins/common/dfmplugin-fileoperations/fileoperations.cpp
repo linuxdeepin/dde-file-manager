@@ -349,7 +349,7 @@ void FileOperations::regSettingConfig()
     SettingJsonGenerator::instance()->addConfig(QString("%1.01_sync_mode_item").arg(kSettingGroup),
                                                 { { "key", "01_sync_mode_item" },
                                                   { "type", "syncModeItem" },
-                                                  { "default", false } });
+                                                  { "default", true } });
 
     SettingBackend::instance()->addSettingAccessor(
             QString("%1.01_sync_mode_item").arg(kSettingGroup),
