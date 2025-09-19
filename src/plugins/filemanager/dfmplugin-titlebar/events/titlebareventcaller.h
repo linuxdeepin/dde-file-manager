@@ -35,8 +35,8 @@ public:
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
     static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentSortRole(QWidget *sender);
     static void sendSetSort(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
-    static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentGroupRole(QWidget *sender);
-    static void sendSetGroup(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
+    static QString sendCurrentGroupRoleStrategy(QWidget *sender);
+    static void sendSetGroupStrategy(QWidget *sender, const QString &strategy);
 };
 
 }

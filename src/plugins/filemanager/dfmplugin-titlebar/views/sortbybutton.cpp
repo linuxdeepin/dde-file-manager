@@ -44,8 +44,26 @@ static constexpr char kGroupToolTimeCreated[] = "group-by-time-created";
 static constexpr char kGroupToolSize[] = "group-by-size";
 static constexpr char kGroupToolType[] = "group-by-type";
 
+namespace GroupStrategty {
+inline constexpr char kNoGroup[] { "NoGroupStrategy" };
+inline constexpr char kName[] { "Name" };
+inline constexpr char kSize[] { "Size" };
+inline constexpr char kModifiedTime[] { "ModifiedTime" };
+inline constexpr char kCreatedTime[] { "CreatedTime" };
+inline constexpr char kType[] { "Type" };
+inline constexpr char kCustomPath[] { "CustomPath" };
+inline constexpr char kCustomTime[] { "CustomTime" };
+}   // namespace GroupStrategty
+
 SortByButtonPrivate::SortByButtonPrivate(SortByButton *parent)
-    : QObject(parent), q(parent)
+    : QObject(parent),
+      q(parent),
+      objNamesToGroupStrategies { { kGroupToolNone, GroupStrategty::kNoGroup },
+                                  { kGroupToolName, GroupStrategty::kName },
+                                  { kGroupToolTimeModified, GroupStrategty::kModifiedTime },
+                                  { kGroupToolTimeCreated, GroupStrategty::kCreatedTime },
+                                  { kGroupToolSize, GroupStrategty::kSize },
+                                  { kGroupToolType, GroupStrategty::kType } }
 {
     initializeUi();
     initConnect();
@@ -92,52 +110,32 @@ void SortByButtonPrivate::setItemSortRoles()
 
 void SortByButtonPrivate::setItemGroupRoles()
 {
-    DFMGLOBAL_NAMESPACE::ItemRoles groupRole = TitleBarEventCaller::sendCurrentGroupRole(q);
-    switch (groupRole) {
-    case DFMGLOBAL_NAMESPACE::kItemUnknowRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolNone);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolName);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolTimeModified);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileCreatedRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolTimeCreated);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileSizeRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolSize);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole: {
-        auto action = groupMenu->findChild<QAction *>(kGroupToolType);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    default:
-        break;
+    const QString groupStrategy = TitleBarEventCaller::sendCurrentGroupRoleStrategy(q);
+    const QString objName = findObjNameByGroupStrategy(groupStrategy);
+    auto action = groupMenu->findChild<QAction *>(objName);
+    if (action) {
+        action->setChecked(true);
     }
 }
 
 void SortByButtonPrivate::sort()
 {
     TitleBarEventCaller::sendSetSort(q, TitleBarEventCaller::sendCurrentSortRole(q));
+}
+
+QString SortByButtonPrivate::findObjNameByGroupStrategy(const QString &strategy)
+{
+    for (auto it = objNamesToGroupStrategies.constBegin(); it != objNamesToGroupStrategies.constEnd(); ++it) {
+        if (it.value() == strategy) {
+            return it.key();
+        }
+    }
+    return kGroupToolNone;
+}
+
+QString SortByButtonPrivate::findStrategyByObjName(const QString &objName)
+{
+    return objNamesToGroupStrategies.value(objName, kGroupToolNone);
 }
 
 SortByButtonPrivate::~SortByButtonPrivate() = default;
@@ -179,7 +177,7 @@ void SortByButtonPrivate::initializeUi()
     groupByAction->setMenu(groupMenu);
 
     auto groupActionGroup = new QActionGroup(q);
-    
+
     action = groupMenu->addAction(tr("None"));
     action->setObjectName(kGroupToolNone);
     action->setCheckable(true);
@@ -238,19 +236,9 @@ void SortByButtonPrivate::groupMenuTriggered(QAction *action)
 {
     if (!action)
         return;
-    if (action->objectName() == kGroupToolNone) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemUnknowRole);
-    } else if (action->objectName() == kGroupToolName) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole);
-    } else if (action->objectName() == kGroupToolTimeModified) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole);
-    } else if (action->objectName() == kGroupToolTimeCreated) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileCreatedRole);
-    } else if (action->objectName() == kGroupToolSize) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileSizeRole);
-    } else if (action->objectName() == kGroupToolType) {
-        TitleBarEventCaller::sendSetGroup(q, DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole);
-    }
+
+    const QString strategy = findStrategyByObjName(action->objectName());
+    TitleBarEventCaller::sendSetGroupStrategy(q, strategy);
 }
 
 SortByButton::SortByButton(QWidget *parent)
@@ -302,7 +290,7 @@ void SortByButton::paintEvent(QPaintEvent *event)
 
     painter.save();
     if (d->iconClicked) {
-        painter.setPen(palette().highlight().color()); // Use highlight color for icon when clicked
+        painter.setPen(palette().highlight().color());   // Use highlight color for icon when clicked
     }
     leftIcon.paint(&painter, leftRect);
     painter.restore();
@@ -313,7 +301,7 @@ void SortByButton::paintEvent(QPaintEvent *event)
     opt.rect = rightRect;
 
     if (d->menu->isVisible()) {
-        painter.setPen(palette().highlight().color()); // Use highlight color for arrow when menu visible
+        painter.setPen(palette().highlight().color());   // Use highlight color for arrow when menu visible
     }
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, &painter, this);
 }
@@ -327,9 +315,9 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
     }
     if (event->button() == Qt::LeftButton) {
         int leftWidth = 2 * kSortToolHMargin + kSortToolLeftButtonSize;
-        d->iconClicked = event->x() <= leftWidth; // Check if icon area is clicked
+        d->iconClicked = event->position().x() <= leftWidth;   // Check if icon area is clicked
 
-        if (event->x() > leftWidth && d->menu) {
+        if (event->position().x() > leftWidth && d->menu) {
             d->setItemSortRoles();
             d->setItemGroupRoles();
             d->menu->exec(mapToGlobal(rect().bottomLeft()));
@@ -340,11 +328,7 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
     }
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 void SortByButton::enterEvent(QEnterEvent *event)
-#else
-void SortByButton::enterEvent(QEvent *event)
-#endif
 {
     DToolButton::enterEvent(event);
     if (!d->hoverFlag) {
@@ -358,8 +342,8 @@ void SortByButton::leaveEvent(QEvent *event)
     DToolButton::leaveEvent(event);
     if (d->hoverFlag) {
         d->hoverFlag = false;
-        d->iconClicked = false; // Reset icon click state
-        update(); // Trigger repaint to restore colors
+        d->iconClicked = false;   // Reset icon click state
+        update();   // Trigger repaint to restore colors
     }
 }
 
@@ -375,6 +359,6 @@ void SortByButton::mouseMoveEvent(QMouseEvent *event)
 void SortByButton::mouseReleaseEvent(QMouseEvent *event)
 {
     DToolButton::mouseReleaseEvent(event);
-    d->iconClicked = false; // Reset icon click state
-    update(); // Trigger repaint to restore colors
+    d->iconClicked = false;   // Reset icon click state
+    update();   // Trigger repaint to restore colors
 }
