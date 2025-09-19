@@ -739,6 +739,8 @@ void FileSortWorker::handleGroupingUpdate()
         const auto &result = groupingEngine->removeFilesFromModelData(groupedModelData);
         if (!result.success) {
             fmWarning() << "Failed to remove file from grouping data";
+            // TODO: perf
+            applyGrouping(getAllFiles());
             return;
         }
         Q_EMIT removeGroupRows(result.pos, result.count);
