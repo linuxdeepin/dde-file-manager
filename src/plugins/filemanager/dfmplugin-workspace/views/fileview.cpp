@@ -612,7 +612,7 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
     } else if (isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
-        if (isGroupHeader(model()->index(0,0, rootIndex()))) {
+        if (isGroupHeader(model()->index(0, 0, rootIndex()))) {
             list << calcGroupRectContiansIndexes(rect);
             return list;
         }
@@ -1382,7 +1382,7 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
         return true;
     }
     QStyleOptionViewItem op;
-    QRect rect = visualRect(index);// 绘制区域
+    QRect rect = visualRect(index);   // 绘制区域
     op.rect = rect;
     QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
 
@@ -2637,7 +2637,7 @@ FileView::RandeIndexList FileView::calcGroupRectContiansIndexes(const QRect &rec
     // 后面优化，通过每行绘制个数，每个绘制大小，每个分组的个数，先计算出来大致的一个index的范围，再判断这个范围内的index
     RandeIndexList list {};
     int begin = -1, end = -1;
-    for (int i = 0; i < model()->rowCount(); ++i ){
+    for (int i = 0; i < model()->rowCount(); ++i) {
         auto indexRect = DListView::visualRect(model()->index(i, 0, rootIndex()));
         if (rect.intersects(indexRect)) {
             if (begin < 0)
