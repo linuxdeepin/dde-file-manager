@@ -102,7 +102,9 @@ FileSortWorker::~FileSortWorker()
     waitUpdatedFiles.clear();
 }
 
-FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrder order, const QString &strategy)
+FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrder order,
+                                                              const QString &strategy,
+                                                              const QVariantHash &expandStates)
 {
     fmInfo() << "Setting group arguments - strategy:" << strategy << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");
     QString oldStrategy = currentStrategy ? currentStrategy->getStrategyName() : "";
@@ -112,7 +114,10 @@ FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrde
         return FileSortWorker::GroupingOpt::kGroupingOptNone;
     }
     isCurrentGroupingEnabled = (currentStrategy->getStrategyName() == GroupStrategty::kNoGroup) ? false : true;
-    // TODO: init groupExpansionStates
+    groupExpansionStates.clear();
+    for (const auto &key : expandStates.keys()) {
+        groupExpansionStates.insert(key, expandStates.value(key).toBool());
+    }
 
     if (!currentStrategy || !isCurrentGroupingEnabled || !groupingEngine) {
         return FileSortWorker::GroupingOpt::kGroupingOptNone;
@@ -647,14 +652,14 @@ void FileSortWorker::handleResort(const Qt::SortOrder order, const ItemRoles sor
     }
 }
 
-void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &strategy)
+void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &strategy, const QVariantHash &expansionStates)
 {
     if (isCanceled) {
         fmDebug() << "Ignoring regrouping request - operation canceled";
         return;
     }
 
-    auto opt = setGroupArguments(order, strategy);
+    auto opt = setGroupArguments(order, strategy, expansionStates);
     if (opt == GroupingOpt::kGroupingOptNone) {
         clearGroupedData();
         return;
@@ -671,7 +676,7 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         // Set group order in engine (support for ascending/descending order)
         groupingEngine->setGroupOrder(groupOrder);
         groupingEngine->reorderGroups(&groupedModelData);
-        emit groupingDataChanged();
+        emit groupDataChanged();
     } else {
         applyGrouping(allFiles);
     }
@@ -726,7 +731,7 @@ void FileSortWorker::handleGroupingUpdate()
             fmWarning() << "Failed to insert file to grouping data";
             if (result.alwaysUpdate) {
                 groupedModelData = result.newData;
-                emit groupingDataChanged();
+                emit groupDataChanged();
             }
             return;
         }
@@ -1015,7 +1020,7 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
         Q_EMIT insertGroupFinish();
     }
 
-    // TODO: EMIT groupExpansionStates to savw
+    Q_EMIT groupExpansionChanged(currentStrategy->getStrategyName(), groupKey, newState);
 
     fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
 }

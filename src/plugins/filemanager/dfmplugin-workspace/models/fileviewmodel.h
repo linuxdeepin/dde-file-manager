@@ -127,7 +127,7 @@ Q_SIGNALS:
     void requestClearThumbnail();
 
     void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
-    void requestGroupingChildren(Qt::SortOrder order, const QString &strategyName);
+    void requestGroupingChildren(Qt::SortOrder order, const QString &strategyName, const QVariantHash &expansionStates);
     void requestSetFilterData(const QVariant &data);
     void requestSetFilterCallback(FileViewFilterCallback callback);
     void requestShowHiddenChanged(bool value);
@@ -149,6 +149,7 @@ public Q_SLOTS:
     void onGroupInsertFinish();
     void onGroupRemove(int firstIndex, int count);
     void onGroupRemoveFinish();
+    void onGroupExpansionChanged(const QString &strategyName, const QString &key, bool state);
     void onUpdateView();
     void onGenericAttributeChanged(DFMBASE_NAMESPACE::Application::GenericAttribute ga, const QVariant &value);
     void onDConfigChanged(const QString &config, const QString &key);

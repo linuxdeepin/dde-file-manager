@@ -665,7 +665,9 @@ void FileViewModel::grouping(const QString &strategyName, Qt::SortOrder order)
     }
     fmInfo() << "Grouping by :" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "URL:" << dirRootUrl.toString();
 
-    Q_EMIT requestGroupingChildren(order, strategyName);
+    const QString &expandsionKey = QString("groupExpansion.%1").arg(strategyName);
+    auto expansionStates = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, expandsionKey).toHash();
+    Q_EMIT requestGroupingChildren(order, strategyName, expansionStates);
 }
 
 void FileViewModel::stopTraversWork(const QUrl &newUrl)
@@ -1063,6 +1065,14 @@ void FileViewModel::onGroupRemoveFinish()
         WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
+void FileViewModel::onGroupExpansionChanged(const QString &strategyName, const QString &key, bool state)
+{
+    const QString &expandsionKey = QString("groupExpansion.%1").arg(strategyName);
+    auto expansionStates = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, expandsionKey).toHash();
+    expansionStates.insert(key, state);
+    WorkspaceHelper::instance()->setFileViewStateValue(dirRootUrl, expandsionKey, expansionStates);
+}
+
 void FileViewModel::onUpdateView()
 {
     FileView *view = qobject_cast<FileView *>(QObject::parent());
@@ -1207,7 +1217,8 @@ void FileViewModel::initFilterSortWork()
     // get group config
     QString groupStrategy = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupStrategy", GroupStrategty::kNoGroup).toString();
     Qt::SortOrder groupOrder = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupingOrder", Qt::AscendingOrder).toInt());
-    // TODO: get groupExpansionStates
+    const QString &expandsionKey = QString("groupExpansion.%1").arg(groupStrategy);
+    const auto &expansionStates = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, expandsionKey).toHash();
 
     fmDebug() << "Sort configuration - order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "role:" << role << "for URL:" << dirRootUrl.toString();
 
@@ -1224,7 +1235,7 @@ void FileViewModel::initFilterSortWork()
     filterSortWorker->setRootData(FileItemDataPointer(new FileItemData(dirRootUrl, rootInfo)));
     endInsertRows();
     filterSortWorker->setSortArguments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    filterSortWorker->setGroupArguments(groupOrder, groupStrategy);
+    filterSortWorker->setGroupArguments(groupOrder, groupStrategy, expansionStates);
     filterSortWorker->setTreeView(this->isTree
                                   && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), ViewMode::kTreeMode));
     filterSortWorker->moveToThread(filterSortThread.data());
@@ -1328,6 +1339,7 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(filterSortWorker.data(), &FileSortWorker::insertGroupFinish, this, &FileViewModel::onGroupInsertFinish, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeGroupRows, this, &FileViewModel::onGroupRemove, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::removeGroupFinish, this, &FileViewModel::onGroupRemoveFinish, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::groupExpansionChanged, this, &FileViewModel::onGroupExpansionChanged, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::dataChanged, this, &FileViewModel::onDataChanged, Qt::QueuedConnection);
     connect(
             filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
@@ -1366,7 +1378,7 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestTreeView, filterSortWorker.data(), &FileSortWorker::handleSwitchTreeView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::aboutToSwitchToListView, this, &FileViewModel::aboutToSwitchToListView, Qt::QueuedConnection);
-    connect(filterSortWorker.data(), &FileSortWorker::groupingDataChanged, this, &FileViewModel::onGroupingDataChanged, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::groupDataChanged, this, &FileViewModel::onGroupingDataChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 }
 

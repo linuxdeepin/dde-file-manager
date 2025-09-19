@@ -65,7 +65,8 @@ public:
     ~FileSortWorker();
     SortOpt setSortArguments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole,
                              const bool isMixDirAndFile);
-    GroupingOpt setGroupArguments(const Qt::SortOrder order, const QString &strategy);
+    GroupingOpt setGroupArguments(const Qt::SortOrder order, const QString &strategy,
+                                  const QVariantHash &expandStates);
 
     int childrenCount();
     QVariant groupHeaderData(const int index, const int role);
@@ -112,7 +113,8 @@ signals:
     void reqUestCloseCursor();
 
     // Grouping-related signals
-    void groupingDataChanged();
+    void groupDataChanged();
+    void groupExpansionChanged(const QString &strategy, const QString &key, bool state);
 
     // Note that the slot functions here are executed in asynchronous threads,
     // so the link can only be Qt:: QueuedConnection,
@@ -155,7 +157,7 @@ public slots:
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
-    void handleReGrouping(const Qt::SortOrder order, const QString &strategy);
+    void handleReGrouping(const Qt::SortOrder order, const QString &strategy, const QVariantHash &expansionStates);
     void handleGroupingUpdate();
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
