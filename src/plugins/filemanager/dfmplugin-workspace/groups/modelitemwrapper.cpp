@@ -14,17 +14,17 @@ DPWORKSPACE_BEGIN_NAMESPACE
 using namespace DFMBASE_NAMESPACE;
 
 ModelItemWrapper::ModelItemWrapper()
-    : itemType(FileItem), groupData(nullptr)
+    : itemType(FileItem)
 {
 }
 
 ModelItemWrapper::ModelItemWrapper(const FileItemDataPointer &fileData, const QString &groupKey)
-    : itemType(FileItem), groupKey(groupKey), fileData(fileData), groupData(nullptr)
+    : itemType(FileItem), groupKey(groupKey), fileData(fileData)
 {
 }
 
 ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
-    : itemType(GroupHeaderItem), groupKey(groupData ? groupData->groupKey : QString()), groupData(groupData)
+    : itemType(GroupHeaderItem), groupKey(groupData ? groupData->groupKey : QString())
 {
     if (groupData) {
         // Use special URL format to identify group headers
@@ -35,11 +35,19 @@ ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
 
         FileItemDataPointer headerData = QSharedPointer<FileItemData>::create(groupHeaderUrl);
         fileData = headerData;
+
+        // Store group values directly instead of pointer
+        groupValues[Global::kItemIsGroupHeaderType] = true;
+        groupValues[Global::kItemDisplayRole] = groupData->getHeaderText();
+        groupValues[Global::kItemNameRole] = groupData->getHeaderText();
+        groupValues[Global::kItemGroupHeaderKey] = groupData->groupKey;
+        groupValues[Global::kItemGroupDisplayIndex] = groupData->displayIndex;
+        groupValues[Global::kItemGroupExpandedRole] = groupData->isExpanded;
     }
 }
 
 ModelItemWrapper::ModelItemWrapper(const ModelItemWrapper &other)
-    : itemType(other.itemType), groupKey(other.groupKey), fileData(other.fileData), groupData(other.groupData)
+    : itemType(other.itemType), groupKey(other.groupKey), fileData(other.fileData), groupValues(other.groupValues)
 {
 }
 
@@ -49,14 +57,14 @@ ModelItemWrapper &ModelItemWrapper::operator=(const ModelItemWrapper &other)
         itemType = other.itemType;
         groupKey = other.groupKey;
         fileData = other.fileData;
-        groupData = other.groupData;
+        groupValues = other.groupValues;
     }
     return *this;
 }
 
 ModelItemWrapper::~ModelItemWrapper()
 {
-    // Note: We don't own the groupData pointer, so we don't delete it
+    // No manual memory management needed
 }
 
 bool ModelItemWrapper::isGroupHeader() const
@@ -78,22 +86,11 @@ QVariant ModelItemWrapper::getData(int role) const
         }
         // For file items, delegate to the file data
         return fileData->data(role);
-    } else if (itemType == GroupHeaderItem && groupData) {
-        // For group headers, provide appropriate data based on role
-        switch (role) {
-        case Global::kItemIsGroupHeaderType:
-            return true;
-        case Global::kItemDisplayRole:
-        case Global::kItemNameRole:
-            return groupData->getHeaderText();
-        case Global::kItemGroupHeaderKey:
-            return groupData->groupKey;
-        case Global::kItemGroupDisplayIndex:
-            return groupData->displayInedx;
-        case Global::kItemGroupExpandedRole:
-            return groupData->isExpanded;
-        default:
-            break;
+    } else if (itemType == GroupHeaderItem) {
+        // For group headers, provide appropriate data from groupValues
+        auto it = groupValues.find(role);
+        if (it != groupValues.end()) {
+            return it.value();
         }
     }
 
@@ -105,7 +102,7 @@ bool ModelItemWrapper::isValid() const
     if (itemType == FileItem) {
         return fileData != nullptr;
     } else if (itemType == GroupHeaderItem) {
-        return groupData != nullptr;
+        return !groupValues.isEmpty();
     }
 
     return false;

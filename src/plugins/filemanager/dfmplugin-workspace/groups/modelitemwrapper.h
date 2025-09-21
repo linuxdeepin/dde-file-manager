@@ -13,6 +13,7 @@
 #include <QUrl>
 #include <QString>
 #include <QVariant>
+#include <QHash>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -72,7 +73,7 @@ public:
     ItemType itemType;   ///< Type of the item
     QString groupKey;   ///< Group identifier
     FileItemDataPointer fileData;   ///< File data (valid for FileItem)
-    const FileGroupData *groupData;   ///< Group data pointer (valid for GroupHeaderItem)
+    QHash<int, QVariant> groupValues;   ///< Group data values (valid for GroupHeaderItem)
 
     /**
      * @brief Check if this is a group header item
