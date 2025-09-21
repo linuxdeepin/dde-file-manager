@@ -120,7 +120,7 @@ void GroupedModelData::rebuildFlattenedItems()
 
     int index = 0;
     for (auto &group : groups) {
-        group.displayInedx = index;
+        group.displayIndex = index;
         // Always add the group header
         flattenedItems.append(ModelItemWrapper(&group));
 

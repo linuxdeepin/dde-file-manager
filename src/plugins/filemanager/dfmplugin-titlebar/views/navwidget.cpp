@@ -74,6 +74,8 @@ void NavWidget::removeUrlFromHistoryStack(const QUrl &url)
 
 void NavWidget::back()
 {
+    if (!d->curNavStack)
+        return;
     QUrl &&url = d->curNavStack->back();
 
     if (!url.isEmpty()) {
@@ -84,6 +86,8 @@ void NavWidget::back()
 
 void NavWidget::forward()
 {
+    if (!d->curNavStack)
+        return;
     QUrl &&url = d->curNavStack->forward();
 
     if (!url.isEmpty()) {
