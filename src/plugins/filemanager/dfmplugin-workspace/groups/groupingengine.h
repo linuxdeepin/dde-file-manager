@@ -250,75 +250,30 @@ private:
      * @param filesToInsert List of files to insert
      * @param groupKey The group key for these files
      * @param strategy The grouping strategy to use
+     * @param anchorUrl The anchor URL
      * @param newData The model data to update
-     * @param updatedGroups Set to track which groups were updated
-     * @param groupAdded Output parameter indicating if new groups were added
      * @param alwaysUpdate Output parameter indicating if always update is needed
      * @return true if successful, false otherwise
      */
     bool processFilesAndInsertGroups(const QList<FileItemDataPointer> &filesToInsert,
                                      const QString groupKey,
                                      const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                     const QUrl &anchorUrl,
                                      GroupedModelData *newData,
-                                     QSet<QString> *updatedGroups,
-                                     bool *groupAdded,
                                      bool *alwaysUpdate) const;
 
     /**
      * @brief Process files and update groups in the model data
      * @param filesToInsert List of files to insert
      * @param groupKey The group key for these files
+     * @param anchorUrl The anchor URL
      * @param newData The model data to update
-     * @param updatedGroups Set to track which groups were updated
      * @return true if successful, false otherwise
      */
     bool processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
                                      const QString groupKey,
-                                     GroupedModelData *newData,
-                                     QSet<QString> *updatedGroups) const;
-
-    /**
-     * @brief Calculate the insertion position in the model data
-     * @param anchorUrl The anchor URL for the insertion
-     * @param newData The model data
-     * @param updatedGroups The set of updated groups
-     * @param groupAdded Whether new groups were added
-     * @param pos Output parameter for the calculated position
-     * @return true if successful, false otherwise
-     */
-    bool calculateInsertPosition(const QUrl &anchorUrl,
-                                 const GroupedModelData &newData,
-                                 const QSet<QString> &updatedGroups,
-                                 bool groupAdded,
-                                 int *pos) const;
-
-    /**
-     * @brief Finalize the model data update by inserting files at the correct position
-     * @param filesToInsert List of files to insert
-     * @param groupKey The group key for these files
-     * @param newData The model data to update
-     * @param updatedGroups The set of updated groups
-     * @param groupAdded Whether new groups were added
-     * @param pos The position to insert files
-     * @return true if successful, false otherwise
-     */
-    bool finalizeModelInsert(const QList<FileItemDataPointer> &filesToInsert,
-                             const QString groupKey,
-                             GroupedModelData *newData,
-                             const QSet<QString> &updatedGroups,
-                             bool groupAdded,
-                             int pos) const;
-
-    /**
-     * @brief Finalize the model data update for update operations by replacing files at the correct position
-     * @param filesToUpdate List of files to update
-     * @param newData The model data to update
-     * @param pos The position to update files
-     * @return true if successful, false otherwise
-     */
-    bool finalizeModelUpdate(const QList<FileItemDataPointer> &filesToUpdate,
-                             GroupedModelData *newData,
-                             int pos) const;
+                                     const QUrl &anchorUrl,
+                                     GroupedModelData *newData) const;
 
 private:
     // Configuration

@@ -1,25 +1,28 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "filegroupdata.h"
 
+#include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/universalutils.h>
 
-#include <QUrl>
-
 #include <algorithm>
+#include <optional>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 FileGroupData::FileGroupData()
-    : fileCount(0), isExpanded(true), displayOrder(0)
+    : fileCount(0), isExpanded(true), displayOrder(0), displayIndex(0)
 {
 }
 
 FileGroupData::FileGroupData(const FileGroupData &other)
-    : groupKey(other.groupKey), displayName(other.displayName), fileCount(other.fileCount), isExpanded(other.isExpanded), displayOrder(other.displayOrder), files(other.files)
+    : groupKey(other.groupKey),
+      displayName(other.displayName),
+      fileCount(other.fileCount),
+      isExpanded(other.isExpanded),
+      displayOrder(other.displayOrder),
+      displayIndex(other.displayIndex),
+      files(other.files)
 {
 }
 
@@ -31,6 +34,7 @@ FileGroupData &FileGroupData::operator=(const FileGroupData &other)
         fileCount = other.fileCount;
         isExpanded = other.isExpanded;
         displayOrder = other.displayOrder;
+        displayIndex = other.displayIndex;
         files = other.files;
     }
     return *this;
@@ -42,9 +46,6 @@ FileGroupData::~FileGroupData()
 
 QString FileGroupData::getHeaderText() const
 {
-    if (displayName.isEmpty()) {
-        return QString("(%1)").arg(fileCount);
-    }
     return QString("%1 (%2)").arg(displayName).arg(fileCount);
 }
 
@@ -71,6 +72,20 @@ void FileGroupData::insertFile(int index, const FileItemDataPointer &file)
 
     files.insert(index, file);
     updateFileCount();
+}
+
+void FileGroupData::replaceFile(int index, const FileItemDataPointer &file)
+{
+    if (!file) {
+        return;
+    }
+
+    // Make sure the index is within valid range
+    if (index < 0 || index >= files.size()) {
+        return;
+    }
+
+    files[index] = file;
 }
 
 bool FileGroupData::removeFile(const QUrl &url)
@@ -117,4 +132,20 @@ void FileGroupData::updateFileCount()
     fileCount = files.count();
 }
 
-DPWORKSPACE_END_NAMESPACE
+std::optional<int> FileGroupData::findFileIndex(const QUrl &url) const
+{
+    if (!url.isValid())
+        return std::nullopt;
+
+    for (int i = 0; i < files.size(); ++i) {
+        const FileItemDataPointer &file = files.at(i);
+        if (file) {
+            const auto &fileUrl = file->data(kItemUrlRole).toUrl();
+            if (UniversalUtils::urlEquals(fileUrl, url)) {
+                return i;
+            }
+        }
+    }
+
+    return std::nullopt;
+}
