@@ -130,6 +130,13 @@ public:
     int removeItems(int index, int count);
 
     /**
+     * @brief Replace an item in the flattened items list
+     * @param index The position of the item to replace
+     * @param item The new item
+     */
+    void replaceItem(int index, const ModelItemWrapper &item);
+
+    /**
      * @brief Get a group by its key
      * @param groupKey The group identifier
      * @return Pointer to the group data, or nullptr if not found
@@ -148,6 +155,12 @@ public:
      * @return Total item count in the flattened list
      */
     int getItemCount() const;
+
+    /**
+     * @brief Thread-safe access to file item count
+     * @return Total file item count in the flattened list
+     */
+    int getFileItemCount() const;
 
     /**
      * @brief Thread-safe access to item at index

@@ -70,9 +70,9 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
             Qt::DirectConnection);
     connect(this, &FileSortWorker::removeRows, this, &FileSortWorker::handleAboutToRemoveFilesFromGroup,
             Qt::DirectConnection);
-    connect(this, &FileSortWorker::insertFinish, this, &FileSortWorker::handleGroupingUpdate,
+    connect(this, &FileSortWorker::insertFinish, this, &FileSortWorker::handleGroupingChanged,
             Qt::DirectConnection);
-    connect(this, &FileSortWorker::removeFinish, this, &FileSortWorker::handleGroupingUpdate,
+    connect(this, &FileSortWorker::removeFinish, this, &FileSortWorker::handleGroupingChanged,
             Qt::DirectConnection);
 
     // Initialize grouping engine
@@ -685,76 +685,128 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
              << "groups with" << groupedModelData.getItemCount() << "total items";
 }
 
-void FileSortWorker::handleGroupingUpdate()
+void FileSortWorker::handleGroupingChanged()
 {
+    // Early return for invalid state
     if (!isCurrentGroupingEnabled || isCanceled
         || (groupedModelData.isEmpty() && visibleChildren.isEmpty())) {
         fmDebug() << "Ignoring grouping update - no grouping data";
         return;
     }
 
-    // load directory
-    if (groupedModelData.isEmpty() && !visibleChildren.isEmpty()) {
-        fmDebug() << "applying grouping";
-        applyGrouping(getAllFiles());
-        return;
-    }
-
-    // remove all files
     if (!groupedModelData.isEmpty() && visibleChildren.isEmpty()) {
+        // Remove all files - clear grouping
         fmDebug() << "clearing grouping";
         clearGroupedData();
         return;
     }
 
+    // transform insert to update if all files are visible
     if (groupingEngine->currentUpdateMode() == GroupingEngine::UpdateMode::kInsert) {
-        auto range = groupingEngine->currentUpdateChildrenRange();
-        // 插入数据的范围是整个历史数据，说明发生了覆盖，直接重新分组
-        if (range.first == 0 && range.second == visibleChildren.count()) {
-            fmDebug() << "applying grouping";
-            applyGrouping(getAllFiles());
-            return;
+        if (!visibleChildren.isEmpty() && groupedModelData.getFileItemCount() == visibleChildren.count()) {
+            groupingEngine->setUpdateMode(GroupingEngine::UpdateMode::kUpdate);
         }
+    }
 
-        // 截取新插入的数据
-        auto anchor = groupingEngine->findPrecedingAnchor(visibleChildren, range);
-        if (!anchor.has_value()) {
-            fmWarning() << "Failed to find preceding anchor";
-            return;
-        }
-        groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
-        groupingEngine->setChildrenDataMap(&childrenDataMap);
-        const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
-                                                                    groupedModelData, currentStrategy);
+    // Handle different update modes
+    switch (groupingEngine->currentUpdateMode()) {
+    case GroupingEngine::UpdateMode::kInsert: {
+        handleGroupingInsert();
+        break;
+    }
+    case GroupingEngine::UpdateMode::kRemove: {
+        handleGroupingRemove();
+        break;
+    }
+    case GroupingEngine::UpdateMode::kUpdate: {
+        handleGroupingUpdate();
+        break;
+    }
+    case GroupingEngine::UpdateMode::kNoGrouping:
+    default:
+        // Do nothing for unsupported modes
+        break;
+    }
+}
 
-        if (!result.success) {
-            fmWarning() << "Failed to insert file to grouping data";
-            if (result.alwaysUpdate) {
-                groupedModelData = result.newData;
-                emit groupDataChanged();
-            }
-            return;
-        }
+void FileSortWorker::handleGroupingInsert()
+{
+    auto range = groupingEngine->currentUpdateChildrenRange();
+    bool isCoverage = range.first == 0 && range.second == visibleChildren.count();
 
-        Q_EMIT insertGroupRows(result.pos, result.count);
-        groupedModelData = result.newData;
-        Q_EMIT insertGroupFinish();
-
+    // 插入数据的范围是整个历史数据，说明发生了覆盖，直接重新分组
+    if (isCoverage) {
+        fmDebug() << "applying grouping";
+        applyGrouping(getAllFiles());
         return;
     }
 
-    if (groupingEngine->currentUpdateMode() == GroupingEngine::UpdateMode::kRemove) {
-        const auto &result = groupingEngine->removeFilesFromModelData(groupedModelData);
-        if (!result.success) {
-            fmWarning() << "Failed to remove file from grouping data";
-            // TODO: perf
-            applyGrouping(getAllFiles());
-            return;
-        }
-        Q_EMIT removeGroupRows(result.pos, result.count);
-        groupedModelData = result.newData;
-        Q_EMIT removeGroupFinish();
+    // 截取新插入的数据
+    auto anchor = groupingEngine->findPrecedingAnchor(visibleChildren, range);
+    if (!anchor.has_value()) {
+        fmWarning() << "Failed to find preceding anchor";
+        return;
     }
+    groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
+    groupingEngine->setChildrenDataMap(&childrenDataMap);
+    const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
+                                                                groupedModelData, currentStrategy);
+
+    if (!result.success) {
+        fmWarning() << "Failed to insert file to grouping data";
+        if (result.alwaysUpdate) {
+            groupedModelData = result.newData;
+            emit groupDataChanged();
+        }
+        return;
+    }
+
+    Q_EMIT insertGroupRows(result.pos, result.count);
+    groupedModelData = result.newData;
+    Q_EMIT insertGroupFinish();
+}
+
+void FileSortWorker::handleGroupingRemove()
+{
+    const auto &result = groupingEngine->removeFilesFromModelData(groupedModelData);
+    if (!result.success) {
+        fmWarning() << "Failed to remove file from grouping data";
+        // TODO: perf
+        applyGrouping(getAllFiles());
+        return;
+    }
+    Q_EMIT removeGroupRows(result.pos, result.count);
+    groupedModelData = result.newData;
+    Q_EMIT removeGroupFinish();
+}
+
+void FileSortWorker::handleGroupingUpdate()
+{
+    auto range = groupingEngine->currentUpdateChildrenRange();
+    if (range.first == 0 && range.second == visibleChildren.count()) {
+        fmDebug() << "applying grouping";
+        applyGrouping(getAllFiles());
+        return;
+    }
+
+    auto anchor = groupingEngine->findPrecedingAnchor(visibleChildren, range);
+    if (!anchor.has_value()) {
+        fmWarning() << "Failed to find preceding anchor";
+        return;
+    }
+    groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
+    groupingEngine->setChildrenDataMap(&childrenDataMap);
+    const auto &result = groupingEngine->updateFilesToModelData(anchor.value(),
+                                                                groupedModelData, currentStrategy);
+
+    if (!result.success) {
+        fmWarning() << "Failed to update file to grouping data";
+        return;
+    }
+
+    Q_EMIT insertGroupRows(result.pos, result.count);
+    groupedModelData = result.newData;
+    Q_EMIT insertGroupFinish();
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -966,7 +1018,8 @@ void FileSortWorker::handleAboutToInsertFilesToGroup(int pos, int count)
     }
 
     groupingEngine->setUpdateMode(GroupingEngine::UpdateMode::kInsert);
-    // 此时还没有更新完成，无法获取children,只能先记录范围，后续在handleGroupingUpdate完成更新
+    // 对于数据插入，此时还没有更新完成，无法获取children,
+    // 只能先记录范围，后续在handleGroupingUpdate完成更新
     groupingEngine->setUpdateChildrenRange(pos, count);
 }
 

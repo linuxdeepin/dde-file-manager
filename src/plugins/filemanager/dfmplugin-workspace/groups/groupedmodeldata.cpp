@@ -223,6 +223,19 @@ int GroupedModelData::removeItems(int index, int count)
     return actualCount;
 }
 
+void GroupedModelData::replaceItem(int index, const ModelItemWrapper &item)
+{
+    QMutexLocker locker(&m_mutex);
+
+    // Make sure the index is within valid range
+    if (index < 0 || index >= flattenedItems.size()) {
+        return;
+    }
+
+    // Replace the item
+    flattenedItems[index] = item;
+}
+
 FileGroupData *GroupedModelData::getGroup(const QString &groupKey)
 {
     auto it = std::find_if(groups.begin(), groups.end(),
@@ -247,6 +260,16 @@ int GroupedModelData::getItemCount() const
 {
     QMutexLocker locker(&m_mutex);
     return flattenedItems.size();
+}
+
+int GroupedModelData::getFileItemCount() const
+{
+    QMutexLocker locker(&m_mutex);
+    int count = 0;
+    for (const auto &group : groups) {
+        count += group.files.size();
+    }
+    return count;
 }
 
 ModelItemWrapper GroupedModelData::getItemAt(int index) const
