@@ -73,6 +73,13 @@ public:
     void insertFile(int index, const FileItemDataPointer &file);
 
     /**
+     * @brief Replace a file in this group at specific position
+     * @param index The position to replace at
+     * @param file The file item to replace with
+     */
+    void replaceFile(int index, const FileItemDataPointer &file);
+
+    /**
      * @brief Remove a file from this group
      * @param url The URL of the file to remove
      * @return True if the file was found and removed, false otherwise
@@ -100,6 +107,14 @@ public:
      * @brief Update file count based on current files list
      */
     void updateFileCount();
+    
+    /**
+     * @brief Find the index of a file in this group
+     * @param url The URL of the file to find
+     * @return The index of the file if found, std::nullopt otherwise
+     */
+    std::optional<int> findFileIndex(const QUrl &url) const;
+
 };
 
 DPWORKSPACE_END_NAMESPACE
