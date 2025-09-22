@@ -343,7 +343,10 @@ TabBar::~TabBar()
 
 int TabBar::createTab()
 {
+    QSignalBlocker blk(this);
     int index = addTab("");
+    blk.unblock();
+
     Tab tab;
     QString prefix = "tab_";
     tab.uniqueId = prefix + QString::number(++d->nextTabUniqueId);
@@ -351,6 +354,7 @@ int TabBar::createTab()
 
     Q_EMIT newTabCreated(tab.uniqueId);
     setCurrentIndex(index);
+    Q_EMIT currentChanged(index);
     return index;
 }
 
