@@ -32,7 +32,8 @@ public:
     enum class UpdateMode {
         kNoGrouping,
         kInsert,
-        kRemove
+        kRemove,
+        kUpdate
     };
 
     /**
@@ -83,6 +84,17 @@ public:
      * @return The updated model data
      */
     UpdateResult insertFilesToModelData(const QUrl &anchorUrl,
+                                        const GroupedModelData &oldData,
+                                        DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy);
+
+    /**
+     * @brief Update files into the model data
+     * @param anchorUrl The anchor URL for the insertion
+     * @param oldData The old model data
+     * @param strategy The grouping strategy to use
+     * @return The updated model data
+     */
+    UpdateResult updateFilesToModelData(const QUrl &anchorUrl,
                                         const GroupedModelData &oldData,
                                         DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy);
 
@@ -244,13 +256,26 @@ private:
      * @param alwaysUpdate Output parameter indicating if always update is needed
      * @return true if successful, false otherwise
      */
-    bool processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
+    bool processFilesAndInsertGroups(const QList<FileItemDataPointer> &filesToInsert,
                                      const QString groupKey,
                                      const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
                                      GroupedModelData *newData,
                                      QSet<QString> *updatedGroups,
                                      bool *groupAdded,
                                      bool *alwaysUpdate) const;
+
+    /**
+     * @brief Process files and update groups in the model data
+     * @param filesToInsert List of files to insert
+     * @param groupKey The group key for these files
+     * @param newData The model data to update
+     * @param updatedGroups Set to track which groups were updated
+     * @return true if successful, false otherwise
+     */
+    bool processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
+                                     const QString groupKey,
+                                     GroupedModelData *newData,
+                                     QSet<QString> *updatedGroups) const;
 
     /**
      * @brief Calculate the insertion position in the model data
@@ -271,19 +296,28 @@ private:
      * @brief Finalize the model data update by inserting files at the correct position
      * @param filesToInsert List of files to insert
      * @param groupKey The group key for these files
-     * @param strategy The grouping strategy to use
      * @param newData The model data to update
      * @param updatedGroups The set of updated groups
      * @param groupAdded Whether new groups were added
      * @param pos The position to insert files
      * @return true if successful, false otherwise
      */
-    bool finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
+    bool finalizeModelInsert(const QList<FileItemDataPointer> &filesToInsert,
                              const QString groupKey,
-                             const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
                              GroupedModelData *newData,
                              const QSet<QString> &updatedGroups,
                              bool groupAdded,
+                             int pos) const;
+
+    /**
+     * @brief Finalize the model data update for update operations by replacing files at the correct position
+     * @param filesToUpdate List of files to update
+     * @param newData The model data to update
+     * @param pos The position to update files
+     * @return true if successful, false otherwise
+     */
+    bool finalizeModelUpdate(const QList<FileItemDataPointer> &filesToUpdate,
+                             GroupedModelData *newData,
                              int pos) const;
 
 private:

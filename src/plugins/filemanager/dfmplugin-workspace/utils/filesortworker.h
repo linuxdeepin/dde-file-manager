@@ -158,7 +158,6 @@ public slots:
 
     void handleResort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
     void handleReGrouping(const Qt::SortOrder order, const QString &strategy, const QVariantHash &expansionStates);
-    void handleGroupingUpdate();
     void onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value);
 
     bool handleUpdateFile(const QUrl &url);
@@ -250,6 +249,12 @@ private:
     QList<FileItemDataPointer> getAllFiles() const;
     void applyGrouping(const QList<FileItemDataPointer> &files);
     void clearGroupedData();
+
+    // Grouping update handlers
+    void handleGroupingInsert();
+    void handleGroupingRemove();
+    void handleGroupingUpdate();
+    void handleGroupingChanged();
 
     int childrenCountInternal();
     int getChildShowIndexInternal(const QUrl &url);

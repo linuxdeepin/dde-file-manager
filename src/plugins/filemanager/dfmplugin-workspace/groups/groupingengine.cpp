@@ -24,6 +24,67 @@ GroupingEngine::~GroupingEngine()
 {
 }
 
+GroupingEngine::UpdateResult GroupingEngine::updateFilesToModelData(const QUrl &anchorUrl, const GroupedModelData &oldData, dfmbase::AbstractGroupStrategy *strategy)
+{
+    GroupingEngine::UpdateResult result;
+
+    if (m_updateMode != UpdateMode::kUpdate || m_visibleChildrenForUpdate.isEmpty() || !strategy || !anchorUrl.isValid()) {
+        fmWarning() << "GroupingEngine: Cannot update files to model data without a valid update mode";
+        return result;
+    }
+
+    if (!m_childrenDataMap) {
+        fmWarning() << "GroupingEngine: Cannot update files without a valid children data map";
+        return result;
+    }
+
+    result.newData = oldData;
+    result.count = m_visibleChildrenForUpdate.count();
+    result.success = true;
+    result.alwaysUpdate = false;
+
+    // Collect FileItemDataPointer for all files to be updated
+    QList<FileItemDataPointer> filesToUpdate;
+    if (!collectFilesToInsert(&filesToUpdate)) {   // Reuse existing method to collect files
+        result.success = false;
+        return result;
+    }
+
+    if (filesToUpdate.size() != m_visibleChildrenForUpdate.size()) {
+        fmWarning() << "GroupingEngine: Number of files to update does not match number of visible children";
+        result.success = false;
+        return result;
+    }
+
+    // Get group key for the files
+    const QString groupKey = getGroupKeyForFiles(filesToUpdate, anchorUrl, strategy);
+    if (groupKey.isEmpty()) {
+        result.success = false;
+        return result;
+    }
+
+    QSet<QString> updatedGroups;   // Track which groups need to be updated
+    if (!processFilesAndUpdateGroups(filesToUpdate, groupKey, &result.newData, &updatedGroups)) {
+        result.success = false;
+        fmWarning() << "GroupingEngine: Failed to update files to model data";
+        return result;
+    }
+
+    // Handle position calculation and insertion
+    if (!calculateInsertPosition(anchorUrl, result.newData, updatedGroups, false, &result.pos)) {
+        result.success = false;
+        return result;
+    }
+
+    // Finalize the model update - for update we replace existing items directly
+    if (!finalizeModelUpdate(filesToUpdate, &result.newData, result.pos)) {
+        result.success = false;
+        return result;
+    }
+
+    return result;
+}
+
 GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &anchorUrl,
                                                                     const GroupedModelData &oldData,
                                                                     DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy)
@@ -69,7 +130,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     QSet<QString> updatedGroups;   // Track which groups need to be updated
     bool groupAdded = false;
     bool alwaysUpdate = false;
-    if (!processFilesAndUpdateGroups(filesToInsert, groupKey, strategy, &result.newData, &updatedGroups, &groupAdded, &alwaysUpdate)) {
+    if (!processFilesAndInsertGroups(filesToInsert, groupKey, strategy, &result.newData, &updatedGroups, &groupAdded, &alwaysUpdate)) {
         result.success = false;
         result.alwaysUpdate = alwaysUpdate;
         fmWarning() << "GroupingEngine: Failed to insert files to model data";
@@ -83,7 +144,7 @@ GroupingEngine::UpdateResult GroupingEngine::insertFilesToModelData(const QUrl &
     }
 
     // Finalize the model update
-    if (!finalizeModelUpdate(filesToInsert, groupKey, strategy, &result.newData, updatedGroups, groupAdded, result.pos)) {
+    if (!finalizeModelInsert(filesToInsert, groupKey, &result.newData, updatedGroups, groupAdded, result.pos)) {
         result.success = false;
         return result;
     }
@@ -102,8 +163,7 @@ QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &fi
     // 区分新增的文件是树形item展开的，还是当前目录新增的
     // 如果是树形展开的文件，其所属分组应该属于anchorUrl的分组
     int anchorExpandedCount = anchorUrl.isValid() ? findExpandedFiles(m_childrenDataMap->value(anchorUrl)).size() : 0;
-    int insertedCount = filesToInsert.count();
-    if (insertedCount == 1 && insertedCount != anchorExpandedCount) {
+    if (anchorExpandedCount == 0) {
         // 文件新增
         groupKeyItem = filesToInsert.first();
     } else {
@@ -134,7 +194,7 @@ bool GroupingEngine::collectFilesToInsert(QList<FileItemDataPointer> *filesToIns
     return true;
 }
 
-bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert,
+bool GroupingEngine::processFilesAndInsertGroups(const QList<FileItemDataPointer> &filesToInsert,
                                                  const QString groupKey,
                                                  const AbstractGroupStrategy *strategy,
                                                  GroupedModelData *newData,
@@ -197,6 +257,34 @@ bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer
     return true;
 }
 
+bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer> &filesToInsert, const QString groupKey,
+                                                 GroupedModelData *newData, QSet<QString> *updatedGroups) const
+{
+    if (groupKey.isEmpty() || !newData) {
+        fmWarning() << "GroupingEngine: Empty group key ";
+        return false;
+    }
+
+    FileGroupData *groupData = newData->getGroup(groupKey);
+    if (!groupData) {
+        return false;
+    }
+
+    // Process each file to update
+    for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
+        if (!file) {
+            fmWarning() << "GroupingEngine: Invalid file data";
+            return false;
+        }
+
+        // TODO: update to groupData
+        //  groupData->insertFile(groupData->files.size(), file);
+        updatedGroups->insert(groupKey);
+    }
+
+    return true;
+}
+
 bool GroupingEngine::calculateInsertPosition(const QUrl &anchorUrl,
                                              const GroupedModelData &newData,
                                              const QSet<QString> &updatedGroups,
@@ -238,9 +326,8 @@ bool GroupingEngine::calculateInsertPosition(const QUrl &anchorUrl,
     return true;
 }
 
-bool GroupingEngine::finalizeModelUpdate(const QList<FileItemDataPointer> &filesToInsert,
+bool GroupingEngine::finalizeModelInsert(const QList<FileItemDataPointer> &filesToInsert,
                                          const QString groupKey,
-                                         const AbstractGroupStrategy *strategy,
                                          GroupedModelData *newData,
                                          const QSet<QString> &updatedGroups,
                                          bool groupAdded,
@@ -783,6 +870,42 @@ FileInfoPointer GroupingEngine::getFileInfoFromFileItem(const FileItemDataPointe
         }
     }
     return fileInfo;
+}
+
+bool GroupingEngine::finalizeModelUpdate(const QList<FileItemDataPointer> &filesToUpdate,
+                                         GroupedModelData *newData,
+                                         int pos) const
+{
+    // For update operation, we replace existing items directly
+    // We don't need to update group headers as groups are not affected by file updates
+
+    // Replace files in flattenedItems at the correct position
+    int replacePos = pos;
+    for (const FileItemDataPointer &file : std::as_const(filesToUpdate)) {
+        if (!file) {
+            fmWarning() << "GroupingEngine: Invalid file data";
+            continue;
+        }
+
+        // Get the group key for this file from the existing data
+        QString groupKey;
+        const auto &existingItem = newData->getItemAt(replacePos);
+        if (existingItem.isValid() && existingItem.isFileItem()) {
+            groupKey = existingItem.groupKey;
+        } else {
+            fmWarning() << "GroupingEngine: Cannot determine group key for file replacement";
+            continue;
+        }
+
+        // Create a ModelItemWrapper for this file
+        ModelItemWrapper fileWrapper(file, groupKey);
+
+        // Replace the file at the correct position
+        newData->replaceItem(replacePos, fileWrapper);
+        replacePos++;   // Next file should be replaced at the next position
+    }
+
+    return true;
 }
 
 DPWORKSPACE_END_NAMESPACE
