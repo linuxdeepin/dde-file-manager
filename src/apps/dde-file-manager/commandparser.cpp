@@ -364,7 +364,8 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     }
 
     auto flag = !DConfigManager::instance()->value(kViewDConfName, kOpenFolderWindowsInASeparateProcess, true).toBool();
-    if (Application::appAttribute(Application::kOpenInNewTab).toBool() && !FMWindowsIns.windowIdList().isEmpty()) {
+    auto actWinId = FMWindowsIns.lastActivedWindowId();
+    if (Application::appAttribute(Application::kOpenInNewTab).toBool() && actWinId > 0) {
         auto activeWindow = [](FileManagerWindow *w) {
             if (w->isMinimized())
                 w->setWindowState(w->windowState() & ~Qt::WindowMinimized);
@@ -379,11 +380,8 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
             }
         }
 
-        auto winId = FMWindowsIns.lastActivedWindowId();
-        if (winId <= 0)
-            winId = FMWindowsIns.windowIdList().last();
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, url);
-        auto window = FMWindowsIns.findWindowById(winId);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, actWinId, url);
+        auto window = FMWindowsIns.findWindowById(actWinId);
         if (window)
             activeWindow(window);
     } else {
