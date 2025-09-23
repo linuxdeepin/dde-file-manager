@@ -24,7 +24,7 @@ class ProgressWidget : public QWidget
 
 public:
     explicit ProgressWidget(QWidget *parent = Q_NULLPTR);
-    void setValue(int value, const QString &fileName);
+    void setValue(int value, const QString &msg);
     void stopProgress();
 
 private:
