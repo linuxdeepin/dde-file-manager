@@ -58,6 +58,8 @@ public:
     QString tabDisplayName(const QUrl &url) const;
     QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
     QUrl findValidParentPath(const QUrl &url) const;
+    void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
+    void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
 
 public:
     TabBar *q;
@@ -328,6 +330,144 @@ QUrl TabBarPrivate::findValidParentPath(const QUrl &url) const
     return parentUrl;
 }
 
+void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab &option)
+{
+    painter->save();
+
+    const QRect rect = option.rect;
+    const bool isSelected = option.state & QStyle::State_Selected;
+    const bool isHovered = option.state & QStyle::State_MouseOver;
+
+    // 获取主题颜色
+    DPalette pal = DPaletteHelper::instance()->palette(q);
+    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+
+    // 绘制背景
+    if (isHovered) {
+        QColor bgColor = isDarkTheme ? QColor(255, 255, 255, 15) : QColor(0, 0, 0, 26);
+        painter->setBrush(bgColor);
+    } else {
+        painter->setBrush(pal.color(QPalette::Active, QPalette::Base));
+    }
+
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->drawRect(rect);
+
+    // 绘制边框
+    QColor borderColor = isDarkTheme ? QColor(255, 255, 255, 20) : QColor(0, 0, 0, 20);
+    painter->setPen(borderColor);
+    painter->setBrush(Qt::NoBrush);
+    if (isSelected) {
+        QPainterPath path;
+        path.moveTo(rect.bottomLeft());
+        path.lineTo(rect.topLeft());
+        path.lineTo(rect.topRight());
+        path.lineTo(rect.bottomRight());
+        painter->drawPath(path);
+    } else {
+        painter->drawRect(rect);
+    }
+    // 对中间的tabbar尾后加一根明显的线
+    if (QStyleOptionTab::End != option.position && QStyleOptionTab::OnlyOneTab != option.position) {
+        painter->drawLine(rect.topRight(), rect.bottomRight());
+    }
+
+    painter->restore();
+}
+
+void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option)
+{
+    painter->save();
+    const QRect rect = option.rect;
+    const bool isSelected = option.state & QStyle::State_Selected;
+    const bool isHovered = option.state & QStyle::State_MouseOver;
+
+    // 获取主题颜色
+    DPalette pal = DPaletteHelper::instance()->palette(q);
+
+    // 计算布局参数
+    const int tabMargin = 10;
+    const int blueMarkerWidth = isSelected ? 6 : 0;
+    const int blueMarkerMargin = isSelected ? 4 : 0;
+    const int closeButtonSize = isHovered ? kCloseButtonSize : 0;
+    const int closeButtonMargin = isHovered ? kCloseButtonMargin : 0;
+
+    // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
+    const int textMargin = blueMarkerWidth + blueMarkerMargin;
+    const int leftSpace = tabMargin / 2 + textMargin;
+    const int rightSpace = isHovered ? (closeButtonSize + closeButtonMargin) : 0;
+    const int availableTextWidth = rect.width() - leftSpace;
+
+    // 截断文本以适应可用宽度
+    QString elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, availableTextWidth);
+
+    // 计算文本居中位置
+    const int textWidth = option.fontMetrics.horizontalAdvance(elidedText);
+    const int textX = rect.x() + (rect.width() - option.fontMetrics.horizontalAdvance(elidedText) - textMargin) / 2 + textMargin;
+    const int textY = rect.y() + (rect.height() - option.fontMetrics.height()) / 2 + option.fontMetrics.ascent();
+
+    if (isHovered) {
+        int textEndX = textX + textWidth;
+        int buttonStartX = rect.right() - rightSpace;
+        if (textEndX > buttonStartX) {
+            // 重新计算文本宽度，确保不重叠
+            elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, buttonStartX - textX);
+        }
+    }
+
+    // 设置tooltip，只有省略时才显示
+    const auto &tooltip = q->tabToolTip(index);
+    if (option.text != elidedText && tooltip != option.text)
+        updateToolTip(index, option.text);
+    else if (option.text == elidedText && !tooltip.isEmpty())
+        updateToolTip(index, "");
+
+    // 绘制蓝色标记
+    if (isSelected) {
+        painter->save();
+        QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(blueColor);
+
+        const int markerY = rect.y() + (rect.height() - blueMarkerWidth) / 2;
+        painter->drawRoundedRect(QRect(textX - textMargin, markerY,
+                                       blueMarkerWidth, blueMarkerWidth),
+                                 1, 1);
+        painter->restore();
+    }
+
+    // 绘制文本
+    QColor textColor = isSelected ? pal.color(QPalette::Active, QPalette::Text) : pal.color(QPalette::Inactive, QPalette::Text);
+    painter->setPen(textColor);
+    painter->drawText(textX, textY, elidedText);
+
+    // 绘制关闭按钮
+    if (isHovered) {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+
+        const QRect closeButtonRect(rect.right() - rightSpace,
+                                    rect.y() + (rect.height() - closeButtonSize) / 2,
+                                    closeButtonSize, closeButtonSize);
+
+        // 检测鼠标是否在关闭按钮上
+        const bool closeButtonHovered = isCloseButtonHovered(index);
+        QColor buttonColor = closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
+        painter->setPen(QPen(buttonColor, 1.5));
+
+        // 绘制X形关闭按钮
+        const int offset = 4;
+        painter->drawLine(closeButtonRect.topLeft() + QPoint(offset, offset),
+                          closeButtonRect.bottomRight() + QPoint(-offset, -offset));
+        painter->drawLine(closeButtonRect.topRight() + QPoint(-offset, offset),
+                          closeButtonRect.bottomLeft() + QPoint(offset, -offset));
+        painter->restore();
+    }
+
+    painter->restore();
+}
+
 TabBar::TabBar(QWidget *parent)
     : DTabBar(parent),
       d(new TabBarPrivate(this))
@@ -436,116 +576,8 @@ void TabBar::updateTabName(int index)
 
 void TabBar::paintTab(QPainter *painter, int index, const QStyleOptionTab &option) const
 {
-    painter->save();
-
-    const QRect rect = option.rect;
-    const bool isSelected = option.state & QStyle::State_Selected;
-    const bool isHovered = option.state & QStyle::State_MouseOver;
-
-    // 获取主题颜色
-    DPalette pal = DPaletteHelper::instance()->palette(this);
-    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-
-    // 绘制背景
-    if (isHovered) {
-        QColor bgColor = isDarkTheme ? QColor(255, 255, 255, 15) : QColor(0, 0, 0, 26);
-        painter->fillRect(rect, bgColor);
-    } else {
-        painter->fillRect(rect, pal.color(QPalette::Active, QPalette::Base));
-    }
-
-    // 计算布局参数
-    const int tabMargin = 10;
-    const int blueMarkerWidth = isSelected ? 6 : 0;
-    const int blueMarkerMargin = isSelected ? 4 : 0;
-    const int closeButtonSize = isHovered ? kCloseButtonSize : 0;
-    const int closeButtonMargin = isHovered ? kCloseButtonMargin : 0;
-
-    // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
-    const int textMargin = blueMarkerWidth + blueMarkerMargin;
-    const int leftSpace = tabMargin / 2 + textMargin;
-    const int rightSpace = isHovered ? (closeButtonSize + closeButtonMargin) : 0;
-    const int availableTextWidth = rect.width() - leftSpace;
-
-    // 截断文本以适应可用宽度
-    QString elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, availableTextWidth);
-
-    // 计算文本居中位置
-    const int textWidth = option.fontMetrics.horizontalAdvance(elidedText);
-    const int textX = rect.x() + (rect.width() - option.fontMetrics.horizontalAdvance(elidedText) - textMargin) / 2 + textMargin;
-    const int textY = rect.y() + (rect.height() - option.fontMetrics.height()) / 2 + option.fontMetrics.ascent();
-
-    if (isHovered) {
-        int textEndX = textX + textWidth;
-        int buttonStartX = rect.right() - rightSpace;
-        if (textEndX > buttonStartX) {
-            // 重新计算文本宽度，确保不重叠
-            elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, buttonStartX - textX);
-        }
-    }
-
-    // 设置tooltip，只有省略时才显示
-    const auto &tootip = tabToolTip(index);
-    if (option.text != elidedText && tootip != option.text)
-        d->updateToolTip(index, option.text);
-    else if (option.text == elidedText && !tootip.isEmpty())
-        d->updateToolTip(index, "");
-
-    // 绘制蓝色标记
-    if (isSelected) {
-        painter->save();
-        QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(blueColor);
-
-        const int markerY = rect.y() + (rect.height() - blueMarkerWidth) / 2;
-        painter->drawRoundedRect(QRect(textX - textMargin, markerY,
-                                       blueMarkerWidth, blueMarkerWidth),
-                                 1, 1);
-        painter->restore();
-    }
-
-    // 绘制文本
-    QColor textColor = isSelected ? pal.color(QPalette::Active, QPalette::Text) : pal.color(QPalette::Inactive, QPalette::Text);
-    painter->setPen(textColor);
-    painter->drawText(textX, textY, elidedText);
-
-    // 绘制边框
-    QColor borderColor = isDarkTheme ? QColor(255, 255, 255, 20) : QColor(0, 0, 0, 20);
-    painter->setPen(borderColor);
-
-    // 右侧边框
-    painter->drawLine(rect.topRight() + QPoint(-1, 0), rect.bottomRight() + QPoint(-1, 0));
-
-    // 底部边框（仅非选中标签）
-    if (!isSelected) {
-        painter->drawLine(rect.bottomLeft(), rect.bottomRight() + QPoint(-1, 0));
-    }
-
-    // 绘制关闭按钮
-    if (isHovered) {
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-
-        const QRect closeButtonRect(rect.right() - rightSpace,
-                                    rect.y() + (rect.height() - closeButtonSize) / 2,
-                                    closeButtonSize, closeButtonSize);
-
-        // 检测鼠标是否在关闭按钮上
-        const bool closeButtonHovered = d->isCloseButtonHovered(index);
-        QColor buttonColor = closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
-        painter->setPen(QPen(buttonColor, 1.5));
-
-        // 绘制X形关闭按钮
-        const int offset = 4;
-        painter->drawLine(closeButtonRect.topLeft() + QPoint(offset, offset),
-                          closeButtonRect.bottomRight() + QPoint(-offset, -offset));
-        painter->drawLine(closeButtonRect.topRight() + QPoint(-offset, offset),
-                          closeButtonRect.bottomLeft() + QPoint(offset, -offset));
-        painter->restore();
-    }
-
-    painter->restore();
+    d->paintTabBackground(painter, option);
+    d->paintTabLabel(painter, index, option);
 }
 
 QSize TabBar::tabSizeHint(int index) const
