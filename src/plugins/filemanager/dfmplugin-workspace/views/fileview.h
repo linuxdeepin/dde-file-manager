@@ -202,7 +202,7 @@ private slots:
 
     // Grouping-related slots
     void onGroupExpansionToggled(const QString &groupKey);
-    void onGroupHeaderClicked(const QString &groupKey);
+    void onGroupHeaderClicked(const QModelIndex &index);
 
 private:
     void initializeModel();
@@ -211,6 +211,7 @@ private:
     void initializeConnect();
     void initializeScrollBarWatcher();
     void initializePreSelectTimer();
+    void initializeGroupHeaderTimer();
 
     void delayUpdateStatusBar();
     void updateStatusBar();

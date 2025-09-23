@@ -4,7 +4,6 @@
 
 #include "selecthelper.h"
 #include "views/fileview.h"
-#include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
 
 #include <dfm-base/utils/windowutils.h>
@@ -343,33 +342,14 @@ void SelectHelper::handleGroupHeaderClick(const QModelIndex &index, Qt::Keyboard
         return;
     }
 
-    QString groupKey = getGroupKeyFromIndex(index);
+    const QString groupKey = getGroupKeyFromIndex(index);
     if (groupKey.isEmpty()) {
         return;
     }
 
     fmDebug() << "Handling group header click for group:" << groupKey << "with modifiers:" << static_cast<int>(modifiers);
 
-    if (modifiers & Qt::ControlModifier) {
-        // Ctrl+Click: toggle group selection
-        QList<QModelIndex> groupIndexes = getGroupFileIndexes(groupKey);
-        bool allSelected = true;
-
-        // Check if all files in group are selected
-        for (const auto &idx : groupIndexes) {
-            if (!view->selectionModel()->isSelected(idx)) {
-                allSelected = false;
-                break;
-            }
-        }
-
-        // Toggle selection based on current state
-        selectGroup(groupKey, !allSelected);
-    } else {
-        // Regular click: select entire group
-        view->clearSelection();
-        selectGroup(groupKey, true);
-    }
+    selectGroup(groupKey, true);
 }
 
 void SelectHelper::selectGroup(const QString &groupKey, bool select)

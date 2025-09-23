@@ -81,8 +81,6 @@ private:
     int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
-    void handleGroupHeaderClick(QMouseEvent *event, const QStyleOptionViewItem &option, const QModelIndex &index);
-
     Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };
 

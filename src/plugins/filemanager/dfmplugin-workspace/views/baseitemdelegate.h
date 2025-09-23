@@ -133,10 +133,6 @@ public:
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
 
-signals:
-    void groupExpansionToggled(const QString &groupKey);
-    void groupHeaderClicked(const QString &groupKey);
-
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
 
