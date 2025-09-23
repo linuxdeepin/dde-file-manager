@@ -1010,7 +1010,7 @@ void FileViewModel::onFileUpdated(int show)
 
 void FileViewModel::onInsert(int firstIndex, int count)
 {
-    if (filterSortWorker->currentIsGroupingMode()) {
+    if (filterSortWorker && filterSortWorker->currentIsGroupingMode()) {
         return;
     }
 
@@ -1019,16 +1019,16 @@ void FileViewModel::onInsert(int firstIndex, int count)
 
 void FileViewModel::onInsertFinish()
 {
-
-    if (filterSortWorker->currentIsGroupingMode())
+    if (filterSortWorker && filterSortWorker->currentIsGroupingMode()) {
         return;
+    }
 
     endInsertRows();
 }
 
 void FileViewModel::onRemove(int firstIndex, int count)
 {
-    if (filterSortWorker->currentIsGroupingMode()) {
+    if (filterSortWorker && filterSortWorker->currentIsGroupingMode()) {
         return;
     }
 
@@ -1037,12 +1037,13 @@ void FileViewModel::onRemove(int firstIndex, int count)
 
 void FileViewModel::onRemoveFinish()
 {
-    if (filterSortWorker->currentIsGroupingMode())
+    if (filterSortWorker && filterSortWorker->currentIsGroupingMode()) {
         return;
+    }
 
     endRemoveRows();
 
-    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+    if (filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
         WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
@@ -1388,11 +1389,15 @@ void FileViewModel::connectFilterSortWorkSignals()
 
 QString FileViewModel::groupingStrategy() const
 {
+    if (!filterSortWorker)
+        return {};
     return filterSortWorker->getGroupStrategyName();
 }
 
 Qt::SortOrder FileViewModel::groupingOrder() const
 {
+    if (!filterSortWorker)
+        return {};
     return filterSortWorker->getGroupOrder();
 }
 
