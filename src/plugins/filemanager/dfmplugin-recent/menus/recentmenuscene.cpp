@@ -207,8 +207,8 @@ RecentMenuScenePrivate::RecentMenuScenePrivate(RecentMenuScene *qq)
     predicateName[RecentActionID::kOpenFileLocation] = tr("Open file location");
     predicateName[RecentActionID::kSortByPath] = tr("Path");
     predicateName[RecentActionID::kSortByLastRead] = tr("Last access");
-    predicateName[RecentActionID::kGroupByPath] = tr("Path");
-    predicateName[RecentActionID::kGroupByLastRead] = tr("Last access");
+    predicateName[RecentActionID::kGroupByPath] = QObject::tr("Path");
+    predicateName[RecentActionID::kGroupByLastRead] = QObject::tr("Last access");
 
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kPaste);
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);

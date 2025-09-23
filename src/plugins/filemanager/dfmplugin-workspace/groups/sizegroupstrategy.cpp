@@ -29,14 +29,14 @@ QStringList SizeGroupStrategy::getSizeOrder()
 QHash<QString, QString> SizeGroupStrategy::getDisplayNames()
 {
     return {
-        { "unknown", QObject::tr("Unknown") },
-        { "empty", QObject::tr("Empty (0KB)") },
-        { "tiny", QObject::tr("Tiny (0-16KB)") },
-        { "small", QObject::tr("Small (16KB-1MB)") },
-        { "medium", QObject::tr("Medium (1-128MB)") },
-        { "large", QObject::tr("Large (128MB-1GB)") },
-        { "huge", QObject::tr("Huge (1-4GB)") },
-        { "gigantic", QObject::tr("Gigantic (>4GB)") }
+        { "unknown", tr("Unknown") },
+        { "empty", tr("Empty") + " " + ("(0KB)") },
+        { "tiny", tr("Tiny") + " " + ("(0-16KB)") },
+        { "small", tr("Small") + " " + ("(16KB-1MB)") },
+        { "medium", tr("Medium") + " " + ("(1-128MB)") },
+        { "large", tr("Large") + " " + ("(128MB-1GB)") },
+        { "huge", tr("Huge") + " " + ("(1-4GB)") },
+        { "gigantic", tr("Gigantic") + " " + ("(>4GB)") }
     };
 }
 

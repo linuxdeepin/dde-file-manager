@@ -294,11 +294,13 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="31"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="386"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="32"/>
         <source>Data Disk</source>
         <translation>数据盘</translation>
     </message>
@@ -312,6 +314,8 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="42"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -429,7 +433,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="114"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
@@ -502,6 +506,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="66"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="41"/>
         <source>Executable</source>
         <translation>可执行程序</translation>
     </message>
@@ -979,7 +984,7 @@ Enter user and password for %1</source>
         <translation>切换入口显示模式可能会导致挂载状态失效</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="37"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="39"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
@@ -1046,7 +1051,7 @@ Enter user and password for %1</source>
         <translation>禁止访问</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="38"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="40"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="55"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -1172,6 +1177,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="164"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="40"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
@@ -1500,6 +1506,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
@@ -1949,6 +1956,173 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
         <source>File Vault</source>
         <translation>保险箱</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="210"/>
+        <source>Path</source>
+        <translation>路径</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
+        <source>Last access</source>
+        <translation>最近访问时间</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
+        <source>Group by</source>
+        <translation>分组方式</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
+        <source>None</source>
+        <translation>无</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
+        <source>Time modified</source>
+        <translation>修改时间</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
+        <source>Time created</source>
+        <translation>创建时间</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
+        <source>Size</source>
+        <translation>大小</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
+        <source>Type</source>
+        <translation>类型</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="239"/>
+        <source>Time deleted</source>
+        <translation>删除时间</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
+        <source>Chinese A-H</source>
+        <translation>拼音 A-H</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
+        <source>Chinese I-P</source>
+        <translation type="unfinished">拼音 I-P</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
+        <source>Chinese Q-Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="33"/>
+        <source>Empty (0KB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
+        <source>Tiny (0-16KB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
+        <source>Small (16KB-1MB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
+        <source>Medium (1-128MB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
+        <source>Large (128MB-1GB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
+        <source>Huge (1-4GB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
+        <source>Gigantic (&gt;4GB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="31"/>
+        <source>Today</source>
+        <translation type="unfinished">今天</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="32"/>
+        <source>Yesterday</source>
+        <translation type="unfinished">昨天</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
+        <source>Past 7 Days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
+        <source>Past 30 Days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
+        <source>Earlier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="34"/>
+        <source>Directory</source>
+        <translation type="unfinished">目录</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="35"/>
+        <source>Text</source>
+        <translation type="unfinished">文档</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
+        <source>Image</source>
+        <translation type="unfinished">图片</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="37"/>
+        <source>Video</source>
+        <translation type="unfinished">视频</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="38"/>
+        <source>Audio</source>
+        <translation type="unfinished">音频</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="39"/>
+        <source>Archive</source>
+        <translation type="unfinished">压缩文件</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="40"/>
+        <source>Application</source>
+        <translation type="unfinished">应用程序</translation>
     </message>
 </context>
 <context>
@@ -3827,12 +4001,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="29"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="30"/>
         <source>Enter a password to protect shared folders</source>
         <translation>请输入共享密码</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="53"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="55"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
         <translation>非匿名访问必须设置共享密码</translation>
     </message>
@@ -6071,22 +6245,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_recent::RecentMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="206"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="207"/>
         <source>Open file location</source>
         <translation>打开文件所在位置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="182"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="208"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="209"/>
         <source>Last access</source>
         <translation>最近访问时间</translation>
     </message>
@@ -6257,17 +6431,17 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="173"/>
         <source>Open file location</source>
         <translation>打开文件所在位置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="172"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="174"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="173"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="175"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
@@ -6455,60 +6629,65 @@ Enter user and password for %1</source>
         <translation>连接到服务器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="120"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="285"/>
         <source>Clear History</source>
         <translation>清除最近使用的服务器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
         <source>Unfavorite</source>
         <translation>取消收藏</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
+        <source>No history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Error</source>
         <translation>错误信息</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>非法url无法收藏！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="372"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>连 接</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
         <source>Charset Encoding</source>
         <translation>字符集编码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="419"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="478"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="473"/>
         <source>My Favorites</source>
         <translation>我收藏的服务器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="465"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="460"/>
         <source>No favorites yet</source>
         <translation>暂无收藏</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
         <source>Favorite</source>
         <translation>收藏</translation>
     </message>
@@ -6630,12 +6809,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::NavWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
         <source>back</source>
         <translation>后退</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="174"/>
         <source>forward</source>
         <translation>前进</translation>
     </message>
@@ -6674,27 +6853,27 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::SortByButtonPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="149"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="154"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="159"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="164"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="169"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
@@ -6745,7 +6924,7 @@ Enter user and password for %1</source>
         <translation>列表高度</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="168"/>
         <source>Display preview</source>
         <translation>显示预览</translation>
     </message>
@@ -6784,27 +6963,27 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_trash::TrashMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="233"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="234"/>
         <source>Restore all</source>
         <translation>全部还原</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="235"/>
         <source>Empty trash</source>
         <translation>清空回收站</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="236"/>
         <source>Source path</source>
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="237"/>
         <source>Time deleted</source>
         <translation>删除时间</translation>
     </message>
@@ -7067,17 +7246,17 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::ProgressDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="106"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="109"/>
         <source>File shredder failure</source>
         <translation>文件粉碎失败</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="108"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="111"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="132"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="135"/>
         <source>Shredding file</source>
         <translation>文件粉碎中</translation>
     </message>
@@ -7085,7 +7264,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_utils::ProgressWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
         <translation>正在粉碎 &quot;%1&quot;</translation>
     </message>
@@ -7901,12 +8080,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2317"/>
         <source>Mount error</source>
         <translation>挂载错误</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2318"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>服务器登录凭证失效，请卸载后重新挂载</translation>
     </message>
@@ -7914,27 +8093,27 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="734"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="774"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="736"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="776"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="738"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="778"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="740"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="780"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="742"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="782"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
@@ -7966,52 +8145,52 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::SortAndDisplayMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Sort by</source>
         <translation>排序方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Display as</source>
         <translation>显示方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="60"/>
         <source>Icon</source>
         <translation>图标视图</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="61"/>
         <source>List</source>
         <translation>列表视图</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="62"/>
         <source>Tree</source>
         <translation>树形视图</translation>
     </message>

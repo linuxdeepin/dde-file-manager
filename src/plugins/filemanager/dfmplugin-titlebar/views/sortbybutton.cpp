@@ -172,38 +172,38 @@ void SortByButtonPrivate::initializeUi()
     actionGroup->addAction(action);
 
     // Add Group by submenu
-    auto groupByAction = menu->addAction(tr("Group by"));
+    auto groupByAction = menu->addAction(QObject::tr("Group by"));
     groupMenu = new QMenu(q);
     groupByAction->setMenu(groupMenu);
 
     auto groupActionGroup = new QActionGroup(q);
 
-    action = groupMenu->addAction(tr("None"));
+    action = groupMenu->addAction(QObject::tr("None"));
     action->setObjectName(kGroupToolNone);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
 
-    action = groupMenu->addAction(tr("Name"));
+    action = groupMenu->addAction(QObject::tr("Name"));
     action->setObjectName(kGroupToolName);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
 
-    action = groupMenu->addAction(tr("Time modified"));
+    action = groupMenu->addAction(QObject::tr("Time modified"));
     action->setObjectName(kGroupToolTimeModified);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
 
-    action = groupMenu->addAction(tr("Time created"));
+    action = groupMenu->addAction(QObject::tr("Time created"));
     action->setObjectName(kGroupToolTimeCreated);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
 
-    action = groupMenu->addAction(tr("Size"));
+    action = groupMenu->addAction(QObject::tr("Size"));
     action->setObjectName(kGroupToolSize);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
 
-    action = groupMenu->addAction(tr("Type"));
+    action = groupMenu->addAction(QObject::tr("Type"));
     action->setObjectName(kGroupToolType);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
