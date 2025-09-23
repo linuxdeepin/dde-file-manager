@@ -235,8 +235,8 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
     predicateName[TrashActionId::kEmptyTrash] = tr("Empty trash");
     predicateName[TrashActionId::kSourcePath] = tr("Source path");
     predicateName[TrashActionId::kTimeDeleted] = tr("Time deleted");
-    predicateName[TrashActionId::kGroupBySourcePath] = tr("Source path");
-    predicateName[TrashActionId::kGroupByTimeDeleted] = tr("Time deleted");
+    predicateName[TrashActionId::kGroupBySourcePath] = QObject::tr("Source path");
+    predicateName[TrashActionId::kGroupByTimeDeleted] = QObject::tr("Time deleted");
 
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);

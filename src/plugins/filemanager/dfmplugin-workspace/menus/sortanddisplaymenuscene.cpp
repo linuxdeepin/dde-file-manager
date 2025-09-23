@@ -38,7 +38,7 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
 {
     fmDebug() << "SortAndDisplayMenuScene initialized";
     d->predicateName[ActionID::kSortBy] = tr("Sort by");
-    d->predicateName[ActionID::kGroupBy] = tr("Group by");
+    d->predicateName[ActionID::kGroupBy] = QObject::tr("Group by");
     d->predicateName[ActionID::kDisplayAs] = tr("Display as");
 
     // 排序子菜单
@@ -49,12 +49,12 @@ SortAndDisplayMenuScene::SortAndDisplayMenuScene(QObject *parent)
     d->predicateName[ActionID::kSrtType] = tr("Type");
 
     // 分组子菜单
-    d->predicateName[ActionID::kGroupByNone] = tr("None");
-    d->predicateName[ActionID::kGroupByName] = tr("Name");
-    d->predicateName[ActionID::kGroupByModified] = tr("Time modified");
-    d->predicateName[ActionID::kGroupByCreated] = tr("Time created");
-    d->predicateName[ActionID::kGroupBySize] = tr("Size");
-    d->predicateName[ActionID::kGroupByType] = tr("Type");
+    d->predicateName[ActionID::kGroupByNone] = QObject::tr("None");
+    d->predicateName[ActionID::kGroupByName] = QObject::tr("Name");
+    d->predicateName[ActionID::kGroupByModified] = QObject::tr("Time modified");
+    d->predicateName[ActionID::kGroupByCreated] = QObject::tr("Time created");
+    d->predicateName[ActionID::kGroupBySize] = QObject::tr("Size");
+    d->predicateName[ActionID::kGroupByType] = QObject::tr("Type");
 
     // 显示子菜单
     d->predicateName[ActionID::kDisplayIcon] = tr("Icon");

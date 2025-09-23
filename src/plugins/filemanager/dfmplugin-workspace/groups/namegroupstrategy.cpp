@@ -30,10 +30,10 @@ QStringList NameGroupStrategy::getNameOrder()
 QHash<QString, QString> NameGroupStrategy::getDisplayNames()
 {
     return {
-        { "0-9", QObject::tr("0-9") },
-        { "A-H", QObject::tr("A-H") },
-        { "I-P", QObject::tr("I-P") },
-        { "Q-Z", QObject::tr("Q-Z") },
+        { "0-9", "0-9" },
+        { "A-H", "A-H" },
+        { "I-P", "I-P" },
+        { "Q-Z", "Q-Z" },
         { "pinyin-A-H", QObject::tr("Chinese A-H") },
         { "pinyin-I-P", QObject::tr("Chinese I-P") },
         { "pinyin-Q-Z", QObject::tr("Chinese Q-Z") },
