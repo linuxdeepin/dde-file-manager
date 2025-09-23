@@ -6,6 +6,7 @@
 
 #include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QElapsedTimer>
 #include <QDebug>
@@ -778,8 +779,11 @@ FileInfoPointer GroupingEngine::getFileInfoFromFileItem(const FileItemDataPointe
     }
 
     auto fileInfo = file->fileInfo();
-    if (!fileInfo) {
-        fileInfo = InfoFactory::create<FileInfo>(file->data(ItemRoles::kItemUrlRole).toUrl());
+    const auto url = file->data(ItemRoles::kItemUrlRole).toUrl();
+
+    // 非本地fileinfo是异步的，文件属性可能无法得到
+    if (!fileInfo || !ProtocolUtils::isLocalFile(url)) {
+        fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         Q_ASSERT(fileInfo);
         if (!fileInfo) {
             fmWarning() << "GroupingEngine: Invalid file info for" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
