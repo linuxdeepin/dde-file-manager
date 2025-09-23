@@ -13,11 +13,16 @@
 
 #include <dfm-base/dfm_base_global.h>
 
+#include <DPalette>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
+
 #include <QTextLayout>
 #include <QPainter>
 #include <QApplication>
 #include <QStyle>
 
+DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -294,11 +299,10 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         return;
     }
 
-    painter->save();
-
     // Paint background
     paintGroupBackground(painter, option);
 
+    painter->save();
     // Get group information
     QString groupText = index.data(Qt::DisplayRole).toString();
     if (groupText.isEmpty()) {
@@ -323,21 +327,24 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
 
 void BaseItemDelegate::paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const
 {
-    if (!painter) {
+    if (!painter && !option.widget) {
         return;
     }
 
+    painter->save();
+    DPalette pl(DPaletteHelper::instance()->palette(option.widget));
+    QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    QColor adjustColor = baseColor;
+
     // Choose background color based on state
-    QColor backgroundColor;
     if (option.state & QStyle::State_MouseOver) {
-        backgroundColor = option.palette.color(QPalette::AlternateBase);
+        adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
     } else {
-        backgroundColor = option.palette.color(QPalette::Base);
-        // Make it slightly different from normal items
-        backgroundColor = backgroundColor.lighter(105);
+        painter->setOpacity(0);
     }
 
-    painter->fillRect(option.rect, backgroundColor);
+    painter->fillRect(option.rect, adjustColor);
+    painter->restore();
 }
 
 void BaseItemDelegate::paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const
