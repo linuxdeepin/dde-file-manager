@@ -747,6 +747,7 @@ void FileSortWorker::handleGroupingInsert()
         fmWarning() << "Failed to find preceding anchor";
         return;
     }
+
     groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
     groupingEngine->setChildrenDataMap(&childrenDataMap);
     const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
@@ -794,6 +795,7 @@ void FileSortWorker::handleGroupingUpdate()
         fmWarning() << "Failed to find preceding anchor";
         return;
     }
+
     groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
     groupingEngine->setChildrenDataMap(&childrenDataMap);
     const auto &result = groupingEngine->updateFilesToModelData(anchor.value(),

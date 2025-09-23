@@ -142,7 +142,8 @@ QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &fi
 
     // 区分新增的文件是树形item展开的，还是当前目录新增的
     // 如果是树形展开的文件，其所属分组应该属于anchorUrl的分组
-    int anchorExpandedCount = anchorUrl.isValid() ? findExpandedFiles(m_childrenDataMap->value(anchorUrl)).size() : 0;
+    auto anchorPointer = m_childrenDataMap->value(anchorUrl);
+    int anchorExpandedCount = !anchorPointer.isNull() ? findExpandedFiles(anchorPointer).size() : 0;
     if (anchorExpandedCount == 0) {
         // 文件新增
         groupKeyItem = filesToInsert.first();
