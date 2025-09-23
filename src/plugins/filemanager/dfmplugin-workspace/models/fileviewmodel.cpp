@@ -245,11 +245,15 @@ void FileViewModel::toggleTreeItemExpansion(const QModelIndex &index)
 
     canFetchFiles = true;
     fetchingUrl = url;
-    fetchMore(index);
 
+    // 由于 featchmore 异步， 此处必须先 setExpanded，
+    // 否则后续使用 ItemRoles::kItemTreeViewExpandedRole 判断是随机的
     FileItemDataPointer item = filterSortWorker->childData(index.row());
-    if (item)
+    if (item) {
         item->setExpanded(true);
+    }
+
+    fetchMore(index);
 }
 
 void FileViewModel::toggleTreeItemCollapse(const QModelIndex &index)
