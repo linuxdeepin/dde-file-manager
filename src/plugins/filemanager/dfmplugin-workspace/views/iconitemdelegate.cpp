@@ -939,27 +939,3 @@ bool IconItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
     // Call base class implementation for regular items
     return BaseItemDelegate::editorEvent(event, model, option, index);
 }
-
-void IconItemDelegate::handleGroupHeaderClick(QMouseEvent *event, const QStyleOptionViewItem &option, const QModelIndex &index)
-{
-    if (!event || !index.isValid()) {
-        return;
-    }
-
-    // Extract group key from index
-    QUrl url = index.data(Global::kItemUrlRole).toUrl();
-    const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
-    if (groupKey.isEmpty()) {
-        return;
-    }
-
-    // Check if click is on expand button
-    QRect expandButtonRect = getExpandButtonRect(option);
-    if (expandButtonRect.contains(event->pos())) {
-        // Toggle expansion
-        emit const_cast<IconItemDelegate *>(this)->groupExpansionToggled(groupKey);
-    } else {
-        // Click on group header text area
-        emit const_cast<IconItemDelegate *>(this)->groupHeaderClicked(groupKey);
-    }
-}

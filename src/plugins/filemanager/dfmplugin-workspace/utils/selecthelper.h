@@ -39,7 +39,7 @@ public:
     void selectGroup(const QString &groupKey, bool select = true);
     QList<QModelIndex> getGroupFileIndexes(const QString &groupKey) const;
     bool isSelectableItem(const QModelIndex &index) const;
-    
+
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);

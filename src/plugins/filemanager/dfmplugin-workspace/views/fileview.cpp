@@ -94,6 +94,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeConnect();
     initializeScrollBarWatcher();
     initializePreSelectTimer();
+    initializeGroupHeaderTimer();
 
     viewport()->installEventFilter(this);
 }
@@ -495,6 +496,11 @@ void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 
 void FileView::onClicked(const QModelIndex &index)
 {
+    d->lastClickedIndex = index;
+    if (isGroupHeader(index)) {
+        d->groupHeaderTimer->start();
+        return;
+    }
     openIndexByClicked(ClickedAction::kClicked, index);
 
     QUrl url { "" };
@@ -513,6 +519,7 @@ void FileView::onDoubleClicked(const QModelIndex &index)
 {
     fmDebug() << "Item double clicked for URL:" << rootUrl().toString();
     if (isGroupHeader(index)) {
+        d->groupHeaderTimer->stop();
         groupExpandOrCollapseItem(index, QPoint(), false);
         return;
     }
@@ -2230,13 +2237,6 @@ void FileView::initializeDelegate()
     setDelegate(Global::ViewMode::kIconMode, iconDelegate);
     setDelegate(Global::ViewMode::kListMode, listDelegate);
 
-    // Connect grouping signals for all delegates
-    connect(iconDelegate, &BaseItemDelegate::groupExpansionToggled, this, &FileView::onGroupExpansionToggled);
-    connect(iconDelegate, &BaseItemDelegate::groupHeaderClicked, this, &FileView::onGroupHeaderClicked);
-
-    connect(listDelegate, &BaseItemDelegate::groupExpansionToggled, this, &FileView::onGroupExpansionToggled);
-    connect(listDelegate, &BaseItemDelegate::groupHeaderClicked, this, &FileView::onGroupHeaderClicked);
-
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
 
@@ -2355,6 +2355,17 @@ void FileView::initializePreSelectTimer()
     connect(d->preSelectTimer, &QTimer::timeout, this, [=] {
         if (selectFiles(d->preSelectionUrls))
             d->preSelectionUrls.clear();
+    });
+}
+
+void FileView::initializeGroupHeaderTimer()
+{
+    d->groupHeaderTimer = new QTimer(this);
+
+    d->groupHeaderTimer->setInterval(qApp->doubleClickInterval());
+    d->groupHeaderTimer->setSingleShot(true);
+    connect(d->groupHeaderTimer, &QTimer::timeout, this, [this] {
+        onGroupHeaderClicked(d->lastClickedIndex);
     });
 }
 
@@ -2705,43 +2716,17 @@ void FileView::onGroupExpansionToggled(const QString &groupKey)
     }
 }
 
-void FileView::onGroupHeaderClicked(const QString &groupKey)
+void FileView::onGroupHeaderClicked(const QModelIndex &index)
 {
-    fmDebug() << "Group header clicked for key:" << groupKey << "for URL:" << rootUrl().toString();
+    fmDebug() << "Group header clicked for:" << index << "for URL:" << rootUrl().toString();
 
-    if (groupKey.isEmpty()) {
+    if (!index.isValid()) {
         fmWarning() << "Cannot handle header click: empty group key";
         return;
     }
 
     // Use SelectHelper to handle group selection
     if (d->selectHelper) {
-        // Get keyboard modifiers from current application state
-        Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
-
-        // Create a dummy index for the group header to pass to SelectHelper
-        // We need to find the actual group header index
-        QAbstractItemModel *itemModel = model();
-        if (itemModel) {
-            int rowCount = itemModel->rowCount(rootIndex());
-            for (int row = 0; row < rowCount; ++row) {
-                QModelIndex index = itemModel->index(row, 0, rootIndex());
-                if (index.isValid()) {
-                    QUrl url = index.data(Global::kItemUrlRole).toUrl();
-                    if (url.scheme() == "group-header") {
-                        QString currentGroupKey = url.path();
-                        if (currentGroupKey.startsWith("/")) {
-                            currentGroupKey = currentGroupKey.mid(1);
-                        }
-                        if (currentGroupKey == groupKey) {
-                            d->selectHelper->handleGroupHeaderClick(index, modifiers);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        d->selectHelper->handleGroupHeaderClick(index, QApplication::keyboardModifiers());
     }
-
-    fmDebug() << "Group header click processed for group:" << groupKey;
 }

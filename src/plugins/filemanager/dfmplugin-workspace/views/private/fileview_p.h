@@ -63,6 +63,7 @@ class FileViewPrivate
     // move cursor later selecte index when pressed key shift
     QModelIndex lastCursorIndex;
     QModelIndex lastMousePressedIndex;
+    QModelIndex lastClickedIndex;
 
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
@@ -72,6 +73,7 @@ class FileViewPrivate
 
     QList<QUrl> preSelectionUrls;
     QTimer *preSelectTimer { nullptr };
+    QTimer *groupHeaderTimer { nullptr };
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
     QMap<QString, bool> columnForRoleHiddenMap;
