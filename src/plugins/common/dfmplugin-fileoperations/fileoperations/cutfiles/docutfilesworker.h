@@ -6,7 +6,6 @@
 #define DOCUTFILESWORKER_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "fileoperations/fileoperationutils/abstractworker.h"
 #include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include <dfm-base/interfaces/abstractjobhandler.h>
@@ -37,9 +36,9 @@ protected:
 
     bool cutFiles();
     bool doCutFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, bool *skip);
-    DFileInfoPointer doRenameFile(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetPathInfo,
-                                 const QString fileName, bool *ok, bool *skip);
-    bool renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo);
+    bool renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo, bool *skip);
+    DFileInfoPointer trySameDeviceRename(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetPathInfo,
+                                         const QString fileName, bool *ok, bool *skip);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
     bool doMergDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);

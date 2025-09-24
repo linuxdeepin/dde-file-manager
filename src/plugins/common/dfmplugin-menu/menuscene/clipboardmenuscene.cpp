@@ -130,11 +130,6 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             if (!d->focusFileInfo->isAttributes(OptInfoType::kIsReadable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink))
                 copy->setDisabled(true);
         }
-
-        if (auto cut = d->predicateAction.value(ActionID::kCut)) {
-            if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename))
-                cut->setDisabled(true);
-        }
     }
 
     AbstractMenuScene::updateState(parent);

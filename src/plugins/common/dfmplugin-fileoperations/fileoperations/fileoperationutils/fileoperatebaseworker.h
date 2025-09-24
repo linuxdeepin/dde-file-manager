@@ -92,9 +92,9 @@ protected:
     QUrl trashInfo(const DFileInfoPointer &fromInfo);
     QString fileOriginName(const QUrl &trashInfoUrl);
     void removeTrashInfo(const QUrl &trashInfoUrl);
+    void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
 
 private:
-    void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
     void initSignalCopyWorker();
     bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
     QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
