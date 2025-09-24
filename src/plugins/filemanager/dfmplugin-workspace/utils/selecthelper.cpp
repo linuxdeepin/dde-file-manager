@@ -370,11 +370,9 @@ void SelectHelper::selectGroup(const QString &groupKey, bool select)
             ? (QItemSelectionModel::Select | QItemSelectionModel::Rows)
             : (QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
 
-    for (const auto &index : groupIndexes) {
-        if (isSelectableItem(index)) {
-            view->selectionModel()->select(index, flags);
-        }
-    }
+    const auto &begin = groupIndexes.first();
+    const auto &end = groupIndexes.last();
+    view->selectionModel()->select(QItemSelection(begin, end), flags);
 
     fmDebug() << "Group selection completed for:" << groupKey << "files count:" << groupIndexes.size();
 }
@@ -415,11 +413,6 @@ bool SelectHelper::isSelectableItem(const QModelIndex &index) const
         return false;
     }
 
-    // Group headers are not selectable
-    if (isGroupHeaderIndex(index)) {
-        return false;
-    }
-
     // Check if the item has the necessary flags for selection
     Qt::ItemFlags flags = index.flags();
     return (flags & Qt::ItemIsSelectable) && (flags & Qt::ItemIsEnabled);
@@ -441,10 +434,4 @@ QString SelectHelper::getGroupKeyFromIndex(const QModelIndex &index) const
     }
 
     return index.data(Global::kItemGroupHeaderKey).toString();
-}
-
-void SelectHelper::selectGroupFiles(const QString &groupKey, bool select)
-{
-    // This method is an alias for selectGroup, provided for consistency
-    selectGroup(groupKey, select);
 }

@@ -53,7 +53,6 @@ private:
     // Grouping-related helper methods
     bool isGroupHeaderIndex(const QModelIndex &index) const;
     QString getGroupKeyFromIndex(const QModelIndex &index) const;
-    void selectGroupFiles(const QString &groupKey, bool select);
 
 private:
     FileView *view { nullptr };
