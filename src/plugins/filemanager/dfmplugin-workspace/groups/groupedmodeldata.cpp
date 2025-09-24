@@ -141,6 +141,8 @@ void GroupedModelData::rebuildFlattenedItems()
 
 void GroupedModelData::clear()
 {
+    QMutexLocker locker(&m_mutex);
+
     groups.clear();
     flattenedItems.clear();
     groupExpansionStates.clear();
