@@ -2000,14 +2000,8 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
             return info->customData("fast_mime_type");
         }
         QString type;
-        if (ProtocolUtils::isRemoteFile(info->fileUrl())) {
-            // For remote files, use fast extension-based detection
-            type = SortUtils::fastMimeType(info->fileUrl());
-        } else {
-            // For local files, use accurate content-based detection for proper sorting
-            type = SortUtils::accurateLocalMimeType(info->fileUrl());
-        }
-
+        // For local files, use accurate content-based detection for proper sorting
+        type = SortUtils::accurateLocalMimeType(info->fileUrl());
         const_cast<SortInfoPointer &>(info)->setCustomData("fast_mime_type", type);
         return type;
     }
