@@ -132,48 +132,61 @@ bool DoCutFilesWorker::cutFiles()
 
 bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, bool *skip)
 {
-    // try rename
-    bool ok = false;
-    // 获取trashinfourl
     QUrl trashInfoUrl;
     QString fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString();
-    bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
+    const bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
         trashInfoUrl = trashInfo(fromInfo);
         fileName = fileOriginName(trashInfoUrl);
     }
-    DFileInfoPointer toInfo = doRenameFile(fromInfo, targetPathInfo, fileName, &ok, skip);
+    DFileInfoPointer toInfo = nullptr;
+    bool success = false;
 
-    auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    if (ok) {
+    const bool isSameDevice = DFMIO::DFMUtils::deviceNameFromUrl(fromInfo->uri()) == DFMIO::DFMUtils::deviceNameFromUrl(targetOrgUrl);
+
+    if (isSameDevice) {
+        // Same device: try to rename directly. This is the fast path for moving files.
+        bool renameOk = false;
+        toInfo = trySameDeviceRename(fromInfo, targetPathInfo, fileName, &renameOk, skip);
+        success = renameOk;
+        if (!success) {
+            fmWarning() << "Same-device rename failed - from:" << fromInfo->uri();
+            // If rename fails on the same device, it's a genuine error. We should not fall back to copy-delete.
+            // Return false unless the operation was skipped by user interaction.
+            return skip && *skip;
+        }
+        // For same-device rename, we update progress based on file/dir size.
+        const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
         workData->currentWriteSize += fromSize;
         if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool()) {
             workData->blockRenameWriteSize += fromSize;
-            workData->currentWriteSize += (fromSize > 0
-                                                   ? fromSize
-                                                   : FileUtils::getMemoryPageSize());
             if (fromSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-        } else {
-            // count size
+        } else {   // Directory
             SizeInfoPointer sizeInfo(new FileUtils::FilesSizeInfo);
             FileOperationsUtils::statisticFilesSize(fromInfo->uri(), sizeInfo);
             workData->blockRenameWriteSize += sizeInfo->totalSize;
             if (sizeInfo->totalSize <= 0)
                 workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
         }
-        QUrl orignalUrl = fromInfo->uri();
-        if (isTrashFile) {
-            removeTrashInfo(trashInfoUrl);
-            orignalUrl.setScheme("trash");
-            orignalUrl.setPath("/" + orignalUrl.path().replace("/", "\\"));
-            auto tmpFileName = fromInfo->uri().fileName();
-            auto orignalName = QUrl::toPercentEncoding(tmpFileName);
-            orignalUrl.setPath(orignalUrl.path().replace(tmpFileName, orignalName));
+    } else {
+        // Cross-device: fall back to copy-then-delete.
+        fmInfo() << "Cross-device move detected, using copy-delete fallback - from:" << fromInfo->uri() << "to:" << targetPathInfo->uri();
+        toInfo = doCheckFile(fromInfo, targetPathInfo, fileName, skip);
+        if (toInfo.isNull()) {
+            return skip && *skip;
         }
-        if (toInfo)
-            emit fileRenamed(orignalUrl, toInfo->uri());
-        return true;
+        success = copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, skip);
+        if (success) {
+            const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+            workData->currentWriteSize += fromSize;
+        }
+    }
+
+    if (!success) {
+        if (stopWork.load())
+            stopWork.store(false);
+        return false;
     }
 
     if (stopWork.load()) {
@@ -185,15 +198,10 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         return false;
 
     if (toInfo.isNull()) {
-        fmWarning() << "Rename failed: cannot create target file info";
+        fmWarning() << "Operation failed: cannot create target file info";
         return false;
     }
 
-    fmInfo() << "Rename failed, using copy-delete fallback - from:" << fromInfo->uri() << "to:" << toInfo->uri();
-    if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, skip))
-        return false;
-
-    workData->currentWriteSize += fromSize;
     QUrl orignalUrl = fromInfo->uri();
     if (isTrashFile) {
         removeTrashInfo(trashInfoUrl);
@@ -312,50 +320,63 @@ bool DoCutFilesWorker::checkSelf(const DFileInfoPointer &fileInfo)
     return false;
 }
 
-bool DoCutFilesWorker::renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo)
+bool DoCutFilesWorker::renameFileByHandler(const DFileInfoPointer &sourceInfo, const DFileInfoPointer &targetInfo, bool *skip)
 {
     if (localFileHandler) {
         const QUrl &sourceUrl = sourceInfo->uri();
         const QUrl &targetUrl = targetInfo->uri();
-        return localFileHandler->renameFile(sourceUrl, targetUrl, false);
+        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+
+        do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
+            if (!localFileHandler->renameFile(sourceUrl, targetUrl, false)) {
+                auto err = AbstractJobHandler::JobErrorType::kPermissionError;
+                if (localFileHandler->errorCode() != DFMIOErrorCode::DFM_IO_ERROR_PERMISSION_DENIED) {
+                    err = AbstractJobHandler::JobErrorType::kUnknowError;
+                }
+                action = doHandleErrorAndWait(sourceUrl, targetUrl, err, false, localFileHandler->errorString());
+            }
+        } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+        checkRetry();
+
+        if (action != AbstractJobHandler::SupportAction::kNoAction) {
+            setSkipValue(skip, action);
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
-DFileInfoPointer DoCutFilesWorker::doRenameFile(const DFileInfoPointer &sourceInfo,
-                                                const DFileInfoPointer &targetPathInfo,
-                                                const QString fileName, bool *ok, bool *skip)
+DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &sourceInfo,
+                                                       const DFileInfoPointer &targetPathInfo,
+                                                       const QString fileName, bool *ok, bool *skip)
 {
+    // This function assumes the source and target are on the same device.
+    // It handles name collision checks and performs the rename operation.
     const QUrl &sourceUrl = sourceInfo->uri();
-    if (DFMIO::DFMUtils::deviceNameFromUrl(sourceUrl) == DFMIO::DFMUtils::deviceNameFromUrl(targetOrgUrl)) {
-        fmDebug() << "Same device rename - from:" << sourceUrl << "to:" << targetPathInfo->uri();
-        auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, skip);
-        if (newTargetInfo.isNull())
-            return nullptr;
+    fmDebug() << "Attempting same-device rename - from:" << sourceUrl << "to:" << targetPathInfo->uri();
+    auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, skip);
+    if (newTargetInfo.isNull())
+        return nullptr;
 
-        emitCurrentTaskNotify(sourceUrl, newTargetInfo->uri());
-        bool result = false;
-        if (isCutMerge) {
-            newTargetInfo->initQuerier();
-            isCutMerge = false;
-            result = doMergDir(sourceInfo, newTargetInfo, skip);
-        } else {
-            result = renameFileByHandler(sourceInfo, newTargetInfo);
-        }
-
-        if (result) {
-            if (targetPathInfo == this->targetInfo) {
-                completeSourceFiles.append(sourceUrl);
-                completeTargetFiles.append(newTargetInfo->uri());
-            }
-        }
-        if (ok)
-            *ok = result;
-        return newTargetInfo;
+    emitCurrentTaskNotify(sourceUrl, newTargetInfo->uri());
+    bool result = false;
+    if (isCutMerge) {
+        newTargetInfo->initQuerier();
+        isCutMerge = false;
+        result = doMergDir(sourceInfo, newTargetInfo, skip);
     } else {
-        fmInfo() << "Cross-device move detected - from:" << sourceUrl << "to:" << targetPathInfo->uri();
+        result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
     }
 
-    auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, ok);
+    if (result) {
+        if (targetPathInfo == this->targetInfo) {
+            completeSourceFiles.append(sourceUrl);
+            completeTargetFiles.append(newTargetInfo->uri());
+        }
+    }
+    if (ok)
+        *ok = result;
     return newTargetInfo;
 }
