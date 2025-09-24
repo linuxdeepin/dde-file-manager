@@ -65,15 +65,6 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 
     connect(this, &FileSortWorker::requestSortByMimeType, this, &FileSortWorker::handleSortByMimeType,
             Qt::QueuedConnection);
-    // 此处必须DirectConnection才能保证数据的准确性
-    connect(this, &FileSortWorker::insertRows, this, &FileSortWorker::handleAboutToInsertFilesToGroup,
-            Qt::DirectConnection);
-    connect(this, &FileSortWorker::removeRows, this, &FileSortWorker::handleAboutToRemoveFilesFromGroup,
-            Qt::DirectConnection);
-    connect(this, &FileSortWorker::insertFinish, this, &FileSortWorker::handleGroupingChanged,
-            Qt::DirectConnection);
-    connect(this, &FileSortWorker::removeFinish, this, &FileSortWorker::handleGroupingChanged,
-            Qt::DirectConnection);
 
     // Initialize grouping engine
     groupingEngine = std::make_unique<GroupingEngine>(current, this);
@@ -542,12 +533,12 @@ void FileSortWorker::handleWatcherRemoveChildren(const QList<SortInfoPointer> &c
             showIndex = visibleChildren.indexOf(sortInfo->fileUrl());
         }
 
-        Q_EMIT removeRows(showIndex, 1);
+        doModelChanged(ModelChangeType::kRemoveRows, showIndex, 1);
         {
             QWriteLocker lk(&locker);
             visibleChildren.removeAt(showIndex);
         }
-        Q_EMIT removeFinish();
+        doModelChanged(ModelChangeType::kRemoveFinished);
     }
 
     this->children.insert(parentUrl, subChildren);
@@ -762,9 +753,9 @@ void FileSortWorker::handleGroupingInsert()
         return;
     }
 
-    Q_EMIT insertGroupRows(result.pos, result.count);
+    doModelChanged(ModelChangeType::kInsertGroupRows, result.pos, result.count);
     groupedModelData = result.newData;
-    Q_EMIT insertGroupFinish();
+    doModelChanged(ModelChangeType::kInsertGroupFinished);
 }
 
 void FileSortWorker::handleGroupingRemove()
@@ -776,9 +767,9 @@ void FileSortWorker::handleGroupingRemove()
         applyGrouping(getAllFiles());
         return;
     }
-    Q_EMIT removeGroupRows(result.pos, result.count);
+    doModelChanged(ModelChangeType::kRemoveGroupRows, result.pos, result.count);
     groupedModelData = result.newData;
-    Q_EMIT removeGroupFinish();
+    doModelChanged(ModelChangeType::kRemoveGroupFinished);
 }
 
 void FileSortWorker::handleGroupingUpdate()
@@ -806,9 +797,9 @@ void FileSortWorker::handleGroupingUpdate()
         return;
     }
 
-    Q_EMIT insertGroupRows(result.pos, result.count);
+    doModelChanged(ModelChangeType::kInsertGroupRows, result.pos, result.count);
     groupedModelData = result.newData;
-    Q_EMIT insertGroupFinish();
+    doModelChanged(ModelChangeType::kInsertGroupFinished);
 }
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
@@ -843,12 +834,12 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
 
     if (childVisible) {
         if (!checkFilters(sortInfo, true)) {
-            Q_EMIT removeRows(childIndex, 1);
+            doModelChanged(ModelChangeType::kRemoveRows, childIndex, 1);
             {
                 QWriteLocker lk(&locker);
                 visibleChildren.removeAt(childIndex);
             }
-            Q_EMIT removeFinish();
+            doModelChanged(ModelChangeType::kRemoveFinished);
             return false;
         }
         Q_EMIT updateRow(childIndex);
@@ -895,12 +886,12 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         if (isCanceled)
             return false;
 
-        Q_EMIT insertRows(showIndex, 1);
+        doModelChanged(ModelChangeType::kInsertRows, showIndex, 1);
         {
             QWriteLocker lk(&locker);
             insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
         }
-        Q_EMIT insertFinish();
+        doModelChanged(ModelChangeType::kInsertFinished);
         added = true;
 
         // async create file will add to view while file info updated.
@@ -925,7 +916,7 @@ void FileSortWorker::handleRefresh()
 
     int childrenCount = this->childrenCountInternal();
     if (childrenCount > 0)
-        Q_EMIT removeRows(0, childrenCount);
+        doModelChanged(ModelChangeType::kRemoveRows, 0, childrenCount);
 
     {
         QWriteLocker lk(&locker);
@@ -944,7 +935,7 @@ void FileSortWorker::handleRefresh()
     }
 
     if (childrenCount > 0)
-        Q_EMIT removeFinish();
+        doModelChanged(ModelChangeType::kRemoveFinished);
 
     Q_EMIT requestFetchMore();
 }
@@ -1061,18 +1052,18 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
 
     if (currentState) {
         // current is expanded
-        Q_EMIT removeGroupRows(pos + 1, count);
+        doModelChanged(ModelChangeType::kRemoveGroupRows, pos + 1, count);
     } else {
-        Q_EMIT insertGroupRows(pos + 1, count);
+        doModelChanged(ModelChangeType::kInsertGroupRows, pos + 1, count);
     }
 
     groupedModelData.setGroupExpanded(groupKey, newState);
 
     if (currentState) {
         // current is expanded
-        Q_EMIT removeGroupFinish();
+        doModelChanged(ModelChangeType::kRemoveGroupFinished);
     } else {
-        Q_EMIT insertGroupFinish();
+        doModelChanged(ModelChangeType::kInsertGroupFinished);
     }
 
     Q_EMIT groupExpansionChanged(currentStrategy->getStrategyName(), groupKey, newState);
@@ -1377,10 +1368,10 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
     visibleTreeChildren.remove(parent);
     if (filterUrls.isEmpty()) {
         if (UniversalUtils::urlEquals(parent, current)) {
-            Q_EMIT removeRows(0, visibleChildren.count());
+            doModelChanged(ModelChangeType::kRemoveRows, 0, visibleChildren.count());
             QWriteLocker lk(&locker);
             visibleChildren.clear();
-            Q_EMIT removeFinish();
+            doModelChanged(ModelChangeType::kRemoveFinished);
         }
         return;
     }
@@ -1457,12 +1448,12 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     if (isCanceled)
         return false;
 
-    Q_EMIT insertRows(showIndex, 1);
+    doModelChanged(ModelChangeType::kInsertRows, showIndex, 1);
     {
         QWriteLocker lk(&locker);
         insertToList(visibleChildren, showIndex, sortInfo->fileUrl());
     }
-    Q_EMIT insertFinish();
+    doModelChanged(ModelChangeType::kInsertFinished);
 
     if (sort == SortScenarios::kSortScenariosWatcherAddFile)
         Q_EMIT selectAndEditFile(sortInfo->fileUrl());
@@ -1760,16 +1751,16 @@ void FileSortWorker::insertVisibleChildren(const int startPos, const QList<QUrl>
     if (isCanceled)
         return;
 
-    Q_EMIT insertRows(startPos, filterUrls.length());
+    doModelChanged(ModelChangeType::kInsertRows, startPos, filterUrls.length());
     setVisibleChildren(startPos, filterUrls, opt, endPos);
-    Q_EMIT insertFinish();
+    doModelChanged(ModelChangeType::kInsertFinished);
 }
 
 void FileSortWorker::removeVisibleChildren(const int startPos, const int size)
 {
     if (isCanceled || size <= 0)
         return;
-    Q_EMIT removeRows(startPos, size);
+    doModelChanged(ModelChangeType::kRemoveRows, startPos, size);
     {
         auto tmp = getChildrenUrls();
         QList<QUrl> visibleList;
@@ -1782,7 +1773,7 @@ void FileSortWorker::removeVisibleChildren(const int startPos, const int size)
         visibleChildren = visibleList;
     }
 
-    Q_EMIT removeFinish();
+    doModelChanged(ModelChangeType::kRemoveFinished, 0, 0);
 }
 
 void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info)
@@ -2353,16 +2344,16 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 
     // Generate model data with current expansion states
     const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
-    Q_EMIT insertGroupRows(0, data.getItemCount());
+    doModelChanged(ModelChangeType::kInsertGroupRows, 0, data.getItemCount());
     groupedModelData = data;
-    Q_EMIT insertGroupFinish();
+    doModelChanged(ModelChangeType::kInsertGroupFinished);
 }
 
 void FileSortWorker::clearGroupedData()
 {
-    Q_EMIT removeGroupRows(0, groupedModelData.getItemCount());
+    doModelChanged(ModelChangeType::kRemoveGroupRows, 0, groupedModelData.getItemCount());
     groupedModelData.clear();
-    Q_EMIT removeGroupFinish();
+    doModelChanged(ModelChangeType::kRemoveGroupFinished);
 }
 
 int FileSortWorker::childrenCountInternal()
@@ -2375,4 +2366,60 @@ int FileSortWorker::getChildShowIndexInternal(const QUrl &url)
 {
     QReadLocker lk(&locker);
     return visibleChildren.indexOf(url);
+}
+
+void FileSortWorker::doModelChanged(const ModelChangeType type, int index, int count)
+{
+    if (currentIsGroupingMode()) {
+        switch (type) {
+        // 收到普通插入/删除事件，但需要按分组逻辑处理
+        case ModelChangeType::kInsertRows:
+            handleAboutToInsertFilesToGroup(index, count);
+            break;
+        case ModelChangeType::kRemoveRows:
+            handleAboutToRemoveFilesFromGroup(index, count);
+            break;
+
+        // 插入/删除完成事件，在分组模式下触发通用的变更处理
+        case ModelChangeType::kInsertFinished:
+        case ModelChangeType::kRemoveFinished:
+            handleGroupingChanged();
+            break;
+
+        // 直接转发专门用于分组视图的事件
+        case ModelChangeType::kInsertGroupRows:
+            Q_EMIT insertGroupRows(index, count);
+            break;
+        case ModelChangeType::kInsertGroupFinished:
+            Q_EMIT insertGroupFinish();
+            break;
+        case ModelChangeType::kRemoveGroupRows:
+            Q_EMIT removeGroupRows(index, count);
+            break;
+        case ModelChangeType::kRemoveGroupFinished:
+            Q_EMIT removeGroupFinish();
+            break;
+
+        default:
+            break;
+        }
+    } else {
+        // 在非分组模式下，我们只关心“普通”事件，忽略所有“Group”事件
+        switch (type) {
+        case ModelChangeType::kInsertRows:
+            Q_EMIT insertRows(index, count);
+            break;
+        case ModelChangeType::kInsertFinished:
+            Q_EMIT insertFinish();
+            break;
+        case ModelChangeType::kRemoveRows:
+            Q_EMIT removeRows(index, count);
+            break;
+        case ModelChangeType::kRemoveFinished:
+            Q_EMIT removeFinish();
+            break;
+        default:
+            break;
+        }
+    }
 }

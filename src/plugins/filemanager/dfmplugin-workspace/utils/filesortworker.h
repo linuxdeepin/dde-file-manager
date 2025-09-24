@@ -55,6 +55,19 @@ class FileSortWorker : public QObject
         kSortScenariosWatcherOther = 5,   // Other file watcher scenarios
     };
 
+    enum class ModelChangeType {
+        // normal
+        kInsertRows,
+        kInsertFinished,
+        kRemoveRows,
+        kRemoveFinished,
+        // group
+        kInsertGroupRows,
+        kInsertGroupFinished,
+        kRemoveGroupRows,
+        kRemoveGroupFinished
+    };
+
 public:
     explicit FileSortWorker(const QUrl &url,
                             const QString &key,
@@ -258,6 +271,7 @@ private:
 
     int childrenCountInternal();
     int getChildShowIndexInternal(const QUrl &url);
+    void doModelChanged(const ModelChangeType type, int index = 0, int count = 0);
 
 private:
     QUrl current;
