@@ -75,9 +75,8 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     // TODO(zhangs): use model direct
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info)) {
-        fmInfo() << "item already added to sidebar, update it." << url;
-        handleItemUpdate(url, properties);
-        return true;
+        fmInfo() << "item already added to sidebar." << url;
+        return false;
     }
 
     SideBarItem *item = SideBarHelper::createItemByInfo(info);
