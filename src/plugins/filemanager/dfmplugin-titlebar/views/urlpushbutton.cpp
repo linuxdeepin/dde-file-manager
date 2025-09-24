@@ -70,7 +70,7 @@ int UrlPushButtonPrivate::arrowWidth() const
     int width = 0;
     if (q->icon().isNull()) {
         // 计算箭头宽度
-        QFont adjustedFont(q->font());
+        QFont adjustedFont(font);
         adjustedFont.setBold(subDir.isEmpty());
         int fontWidth = QFontMetrics(adjustedFont).horizontalAdvance("/") * 2;
         if (fontWidth < 4) {
@@ -99,9 +99,29 @@ bool UrlPushButtonPrivate::isTextClipped() const
         availableWidth -= arrowWidth() - kBorderWidth;
     }
 
-    QFont adjustedFont(q->font());
+    QFont adjustedFont(font);
     adjustedFont.setBold(subDir.isEmpty());
     return QFontMetrics(adjustedFont).horizontalAdvance(q->text()) > availableWidth;
+}
+
+void UrlPushButtonPrivate::adjustButtonFont()
+{
+    QFont tmpFont = font;
+    font = q->font();
+    // 计算可用的垂直空间
+    int availableHeight = q->height();
+    QFontMetrics fm(font);
+
+    // 如果字体太大，适当缩小（但不要过小）
+    int originalSize = font.pointSize();
+    int minSize = qMax(8, originalSize - 3);   // 最多缩小3个点，且不小于8点
+
+    while (fm.height() > availableHeight && font.pointSize() > minSize) {
+        font.setPointSize(font.pointSize() - 1);
+        fm = QFontMetrics(font);
+    }
+
+    q->updateWidth();
 }
 
 bool UrlPushButtonPrivate::isSubDir(int x) const
@@ -346,10 +366,6 @@ void UrlPushButton::focusOutEvent(QFocusEvent *event)
 void UrlPushButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
-    if (d->font != font()) {
-        d->font = font();
-        updateWidth();
-    }
     QPainter painter(this);
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
 
@@ -373,7 +389,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
         return;
     }
 
-    QFont adjustedFont(font());
+    QFont adjustedFont(d->font);
     // adjustedFont.setBold(d->subDir.isEmpty());
     painter.setFont(adjustedFont);
 
@@ -495,6 +511,14 @@ void UrlPushButton::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+void UrlPushButton::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::FontChange)
+        d->adjustButtonFont();
+
+    DPushButton::changeEvent(event);
+}
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 void UrlPushButton::enterEvent(QEnterEvent *event)
 #else
@@ -547,7 +571,7 @@ void UrlPushButton::updateWidth()
         maxWidth = minWidth;
     } else {
         // 文本模式下的宽度
-        QFont adjustedFont(font());
+        QFont adjustedFont(d->font);
         adjustedFont.setBold(d->subDir.isEmpty());
         int fontWidth = QFontMetrics(adjustedFont).horizontalAdvance(text());
         int defaultWinWidth = QFontMetrics(adjustedFont).horizontalAdvance("......");

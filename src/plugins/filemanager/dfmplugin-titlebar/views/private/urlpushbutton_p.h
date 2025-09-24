@@ -50,6 +50,7 @@ private:
     bool isSubDir(int x) const;
     QColor foregroundColor() const;
     bool popupVisible() const;
+    void adjustButtonFont();
 
     void requestCompleteByUrl(const QUrl &url);
 
