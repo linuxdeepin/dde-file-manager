@@ -38,3 +38,9 @@ application/vnd.oasis.opendocument.spreadsheet
 application/uot
 application/uop
 application/uos
+application/xml
+application/xhtml+xml
+application/javascript
+application/sql
+application/x-yaml
+application/x-php

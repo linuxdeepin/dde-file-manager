@@ -143,10 +143,6 @@ QString TypeGroupStrategy::mapMimeTypeToGroup(const QString &mimeType) const
     case FileInfo::FileType::kDesktopApplication:
         return "application";
     default:
-        // For other application types or unknown
-        if (mimeType.startsWith("application/")) {
-            return "application";
-        }
         return "unknown";
     }
 }
