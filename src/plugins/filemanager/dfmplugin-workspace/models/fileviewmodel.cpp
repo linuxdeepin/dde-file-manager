@@ -1049,21 +1049,33 @@ void FileViewModel::onRemoveFinish()
 
 void FileViewModel::onGroupInsert(int firstIndex, int count)
 {
+    if (filterSortWorker && !filterSortWorker->currentIsGroupingMode()) {
+        return;
+    }
     beginInsertRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onGroupInsertFinish()
 {
+    if (filterSortWorker && !filterSortWorker->currentIsGroupingMode()) {
+        return;
+    }
     endInsertRows();
 }
 
 void FileViewModel::onGroupRemove(int firstIndex, int count)
 {
+    if (filterSortWorker && !filterSortWorker->currentIsGroupingMode()) {
+        return;
+    }
     beginRemoveRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onGroupRemoveFinish()
 {
+    if (filterSortWorker && !filterSortWorker->currentIsGroupingMode()) {
+        return;
+    }
     endRemoveRows();
 
     if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
