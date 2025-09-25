@@ -743,9 +743,13 @@ void FileSortWorker::handleGroupingInsert()
     }
 
     groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
+
+    QReadLocker datalocker(&childrenDataLocker);
+    QReadLocker visibleChildrenLocker(&locker);
     const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
                                                                 groupedModelData, currentStrategy);
-
+    datalocker.unlock();
+    visibleChildrenLocker.unlock();
     if (!result.success) {
         fmWarning() << "Failed to insert file to grouping data";
         if (result.alwaysUpdate) {
@@ -762,7 +766,10 @@ void FileSortWorker::handleGroupingInsert()
 
 void FileSortWorker::handleGroupingRemove()
 {
+    QReadLocker datalocker(&childrenDataLocker);
     const auto &result = groupingEngine->removeFilesFromModelData(groupedModelData);
+    datalocker.unlock();
+
     if (!result.success) {
         fmWarning() << "Failed to remove file from grouping data";
         // TODO: perf
@@ -776,7 +783,12 @@ void FileSortWorker::handleGroupingRemove()
 
 void FileSortWorker::handleGroupingUpdate()
 {
+    QReadLocker datalocker(&childrenDataLocker);
+    QReadLocker visibleChildrenLocker(&locker);
     auto range = groupingEngine->currentUpdateChildrenRange();
+    datalocker.unlock();
+    visibleChildrenLocker.unlock();
+
     if (range.first == 0 && range.second == visibleChildren.count()) {
         fmDebug() << "applying grouping";
         applyGrouping(getAllFiles());
@@ -1370,8 +1382,10 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
     if (filterUrls.isEmpty()) {
         if (UniversalUtils::urlEquals(parent, current)) {
             doModelChanged(ModelChangeType::kRemoveRows, 0, visibleChildren.count());
-            QWriteLocker lk(&locker);
-            visibleChildren.clear();
+            {
+                QWriteLocker lk(&locker);
+                visibleChildren.clear();
+            }
             doModelChanged(ModelChangeType::kRemoveFinished);
         }
         return;
