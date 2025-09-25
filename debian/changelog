@@ -1,3 +1,10 @@
+dde-file-manager (6.5.94) unstable; urgency=medium
+
+  * feat: file grouping
+  * fix bugs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 25 Sep 2025 21:32:46 +0800
+
 dde-file-manager (6.5.93) unstable; urgency=medium
 
  * fix bugs
