@@ -125,7 +125,7 @@
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="162"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="184"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Määritä hakemisto %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="70"/>
@@ -195,7 +195,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="129"/>
         <source>The directory is unavailable for this operation. Please select a local directory and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Hakemisto ei ole käytettävissä. Valitse paikallinen hakemisto ja yritä uudelleen.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="201"/>
@@ -1974,7 +1974,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="181"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Tyhjä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="186"/>
