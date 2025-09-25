@@ -18,17 +18,10 @@ bool compareStringForMimeType(const QString &str1, const QString &str2);
 bool compareForSize(const SortInfoPointer info1, const SortInfoPointer info2);
 bool compareForSize(const qint64 size1, const qint64 size2);
 
-QString fastDisplayType(const QUrl &url);
-QString fastMimeType(const QUrl &url);
 QString accurateDisplayType(const QUrl &url);
 QString accurateLocalMimeType(const QUrl &url);
 
 // private
-bool isNumOrChar(const QChar ch);
-bool isNumber(const QChar ch);
-bool isSymbol(const QChar ch);
-QString numberStr(const QString &str, int pos);
-bool isFullWidthChar(const QChar ch, QChar &normalized);
 qint64 getEffectiveSize(const SortInfoPointer &info);
 QString getLocalPath(const QUrl &url);
 }   // namespace SortUtils
