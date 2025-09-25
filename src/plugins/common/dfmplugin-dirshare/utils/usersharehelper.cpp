@@ -162,8 +162,8 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 
     // Write credentials to pipe and close write end immediately
     ssize_t written = write(pipefd[1], credentials.constData(), credentials.size());
-    close(pipefd[1]);  // Close write end immediately after writing
-    
+    close(pipefd[1]);   // Close write end immediately after writing
+
     if (written != credentials.size()) {
         fmInfo() << "Failed to write credentials to pipe, written:" << written << "expected:" << credentials.size();
         close(pipefd[0]);
@@ -188,7 +188,7 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 
     // Close read end (D-Bus service will have its own copy)
     close(pipefd[0]);
-    
+
     Q_EMIT sambaPasswordSet(success);
 }
 
@@ -400,7 +400,7 @@ void UserShareHelper::readShareInfos(bool sendSignal)
         QMap<QString, QString> info;
         QTextStream stream(&file);
         while (!stream.atEnd()) {
-            QString line = stream.readLine().trimmed();
+            QString line = stream.readLine();
             if (!line.isEmpty() && line.contains("=")) {
                 int idx = line.indexOf("=");
                 QString key = line.mid(0, idx);
