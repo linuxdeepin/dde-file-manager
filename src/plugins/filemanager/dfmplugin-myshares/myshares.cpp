@@ -15,6 +15,7 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -24,6 +25,7 @@
 #include <DMenu>
 
 DWIDGET_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -210,6 +212,11 @@ void MyShares::doInitialize()
 
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
+
+    QVariantMap property;
+    property[ViewCustomKeys::kSupportTreeMode] = false;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetCustomViewProperty", ShareUtils::scheme(), property);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", ShareUtils::scheme(), property);
 
     followEvents();
     bindWindows();

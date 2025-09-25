@@ -24,7 +24,7 @@ ShareWatcher::~ShareWatcher()
 
 void ShareWatcher::shareAdded(const QString &path)
 {
-    const auto &url = QUrl::fromLocalFile(path);
+    auto &&url = ShareUtils::makeShareUrl(path);
     auto info = InfoFactory::create<FileInfo>(url);
     if (info)
         info->refresh();   // make sure that the cache can be updated if share's name updated.
@@ -33,7 +33,7 @@ void ShareWatcher::shareAdded(const QString &path)
 
 void ShareWatcher::shareRemoved(const QString &path)
 {
-    Q_EMIT fileDeleted(QUrl::fromLocalFile(path));
+    Q_EMIT fileDeleted(ShareUtils::makeShareUrl(path));
 }
 
 ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
