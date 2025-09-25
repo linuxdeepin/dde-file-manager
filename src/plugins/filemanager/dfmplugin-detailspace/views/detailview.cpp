@@ -20,6 +20,10 @@
 #    include <DSizeMode>
 #endif
 
+inline constexpr int kIconMaxWidth { 260 };
+inline constexpr int kIconMaxHeight { 200 };
+inline constexpr int kIconNormalSize { 128 };
+
 Q_DECLARE_METATYPE(QString *)
 
 DFMBASE_USE_NAMESPACE
@@ -148,51 +152,20 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
     if (widgetFilter == DetailFilterType::kIconView) {
         return;
     } else {
-        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (info.isNull()) {
-            fmWarning() << "Failed to create file info for URL:" << url.toString();
-            return;
-        }
-
         if (iconLabel) {
+            disconnect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, iconLabel, nullptr);
             vLayout->removeWidget(iconLabel);
             delete iconLabel;
             iconLabel = nullptr;
         }
 
         iconLabel = new DLabel(this);
-        iconLabel->setFixedSize(200, 200);
-        //iconLabel->setStyleSheet("border: 1px solid red;");
-        QSize targetSize(160, 160);
-        auto findPluginIcon = [](const QUrl &url) -> QString {
-            QString iconName;
-            bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
-            if (ok && !iconName.isEmpty())
-                return iconName;
+        iconLabel->setFixedSize(kIconMaxWidth, kIconMaxHeight);
+        // iconLabel->setStyleSheet("border: 1px solid red;");
+        setDetailIcon(url);
+        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+                iconLabel, std::bind(&DetailView::setDetailIcon, this, url));
 
-            return QString();
-        };
-
-        // get icon from plugin
-        QIcon icon;
-        ThumbnailHelper helper;
-        const QString &iconName = findPluginIcon(info->urlOf(UrlInfoType::kUrl));
-        if (!iconName.isEmpty()) {
-            icon = QIcon::fromTheme(iconName);
-        } else if (helper.checkThumbEnable(url)) {
-            icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
-            if (icon.isNull()) {
-                const auto &img = helper.thumbnailImage(url, Global::kLarge);
-                icon = QPixmap::fromImage(img);
-            }
-        }
-        if (icon.isNull())
-            icon = info->fileIcon();
-
-        QPixmap px = icon.pixmap(targetSize);
-        px.setDevicePixelRatio(qApp->devicePixelRatio());
-        iconLabel->setPixmap(px);
-        iconLabel->setAlignment(Qt::AlignCenter);
         vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
     }
 }
@@ -206,6 +179,49 @@ void DetailView::createBasicWidget(const QUrl &url, int widgetFilter)
         fileBaseInfoView->setFileUrl(url);
         addCustomControl(fileBaseInfoView);
     }
+}
+
+void DetailView::setDetailIcon(const QUrl &url)
+{
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    if (info.isNull()) {
+        fmWarning() << "Failed to create file info for URL:" << url.toString();
+        return;
+    }
+
+    QSize targetSize(kIconNormalSize, kIconNormalSize);
+    auto findPluginIcon = [](const QUrl &url) -> QString {
+        QString iconName;
+        bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
+        if (ok && !iconName.isEmpty())
+            return iconName;
+
+        return QString();
+    };
+
+    // get icon from plugin
+    QIcon icon;
+    ThumbnailHelper helper;
+    const QString &iconName = findPluginIcon(info->urlOf(UrlInfoType::kUrl));
+    if (!iconName.isEmpty()) {
+        icon = QIcon::fromTheme(iconName);
+    } else if (helper.checkThumbEnable(url)) {
+        icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
+        if (icon.isNull()) {
+            const auto &img = helper.thumbnailImage(url, Global::kLarge);
+            icon = QPixmap::fromImage(img);
+        }
+
+        if (!icon.isNull())
+            targetSize = QSize(kIconMaxWidth, kIconMaxHeight);
+    }
+    if (icon.isNull())
+        icon = info->fileIcon();
+
+    QPixmap px = icon.pixmap(targetSize);
+    px.setDevicePixelRatio(qApp->devicePixelRatio());
+    iconLabel->setPixmap(px);
+    iconLabel->setAlignment(Qt::AlignCenter);
 }
 
 void DetailView::showEvent(QShowEvent *event)

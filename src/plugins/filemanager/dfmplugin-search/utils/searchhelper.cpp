@@ -209,7 +209,7 @@ bool SearchHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const 
 bool SearchHelper::searchIconName(const QUrl &url, QString *iconName)
 {
     if (url.scheme() == SearchHelper::scheme()) {
-        *iconName = "search";
+        *iconName = "dfm_search";
         return true;
     }
 

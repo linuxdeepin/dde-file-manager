@@ -34,10 +34,9 @@ private slots:
 
 private:
     void initInfoUI();
-
     void createHeadUI(const QUrl &url, int widgetFilter);
-
     void createBasicWidget(const QUrl &url, int widgetFilter);
+    void setDetailIcon(const QUrl &url);
 
 protected:
     virtual void showEvent(QShowEvent *event);
