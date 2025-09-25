@@ -2098,12 +2098,6 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
             return false;
     }
 
-    // all dir, don't apply the filters to directory names.
-    if ((filters & QDir::AllDirs) == QDir::AllDirs) {
-        if (isDir)
-            return true;
-    }
-
     if (filterCallback)
         return filterCallback(sortInfo.data(), filterData);
 
