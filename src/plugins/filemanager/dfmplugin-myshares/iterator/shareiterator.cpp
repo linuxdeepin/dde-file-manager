@@ -32,7 +32,7 @@ ShareIterator::~ShareIterator()
 QUrl ShareIterator::next()
 {
     if (d->proxy)
-        return QUrl::fromLocalFile(d->proxy->next().path());
+        return ShareUtils::makeShareUrl(d->proxy->next().path());
 
     if (d->shares.isEmpty())
         return {};
@@ -61,9 +61,9 @@ QString ShareIterator::fileName() const
 QUrl ShareIterator::fileUrl() const
 {
     if (d->proxy)
-        return d->proxy->fileUrl().path();
+        return ShareUtils::makeShareUrl(d->proxy->fileUrl().path());
 
-    return QUrl::fromLocalFile(d->currentInfo.value(ShareInfoKeys::kPath).toString());
+    return ShareUtils::makeShareUrl(d->currentInfo.value(ShareInfoKeys::kPath).toString());
 }
 
 const FileInfoPointer ShareIterator::fileInfo() const
