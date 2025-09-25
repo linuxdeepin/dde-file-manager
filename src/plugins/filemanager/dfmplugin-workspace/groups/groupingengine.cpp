@@ -220,10 +220,9 @@ bool GroupingEngine::processFilesAndInsertGroups(const QList<FileItemDataPointer
             if (index == -1) {
                 index = groupData->findFileIndex(anchorUrl).value_or(-1);
                 // 由于分组导致visiblechilren不连续，anchorUrl可能不在组中。
-                // 此时anchorUrl一定位于其他组的末尾，那么index就应该为0
                 if (index < 0) {
-                    fmInfo() << "GroupingEngine: anchorUrl not found in group, index set to 0";
-                    index = 0;
+                    index = findNewAnchorPos(anchorUrl, groupData).value_or(0);
+                    fmInfo() << "GroupingEngine: anchorUrl not found in group, index set to " << index;
                 } else {
                     // 数据插入到 anchorUrl 之后
                     index += 1;
@@ -269,10 +268,9 @@ bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer
         if (index == -1) {
             index = groupData->findFileIndex(anchorUrl).value_or(-1);
             // 由于分组导致visiblechilren不连续，anchorUrl可能不在组中。
-            // 此时anchorUrl一定位于其他组的末尾，那么index就应该为0
             if (index < 0) {
-                fmInfo() << "GroupingEngine: anchorUrl not found in group, index set to 0";
-                index = 0;
+                index = findNewAnchorPos(anchorUrl, groupData).value_or(0);
+                fmInfo() << "GroupingEngine: anchorUrl not found in group, index set to " << index;
             } else {
                 // 数据插入到 anchorUrl 之后
                 index += 1;
@@ -283,6 +281,29 @@ bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer
     }
 
     return true;
+}
+
+std::optional<int> GroupingEngine::findNewAnchorPos(const QUrl &oldAnchorUrl, const FileGroupData *group) const
+{
+    Q_ASSERT(m_visibleChildren);
+    Q_ASSERT(group);
+    QUrl newAnchorUrl;
+    int index = m_visibleChildren->indexOf(oldAnchorUrl);
+    if (index <= 0) {
+        fmWarning() << "GroupingEngine: Old anchor URL not found in group";
+        return std::nullopt;
+    }
+
+    index -= 1;   // ignore oldAnchorUrl index
+    for (int i = index; i >= 0; --i) {
+        const auto &url = m_visibleChildren->at(i);
+        const auto &fileIndex = group->findFileIndex(url);
+        if (fileIndex.has_value()) {
+            return fileIndex.value() + 1;
+        }
+    }
+
+    return std::nullopt;
 }
 
 GroupingEngine::UpdateResult GroupingEngine::removeFilesFromModelData(const GroupedModelData &oldData)
@@ -466,6 +487,11 @@ void GroupingEngine::setVisibleTreeChildren(QHash<QUrl, QList<QUrl>> *children)
 void GroupingEngine::setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map)
 {
     m_childrenDataMap = map;
+}
+
+void GroupingEngine::setVisibleChildren(QList<QUrl> *visibleChildren)
+{
+    m_visibleChildren = visibleChildren;
 }
 
 void GroupingEngine::setUpdateMode(UpdateMode mode)
