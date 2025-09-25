@@ -159,6 +159,12 @@ public:
     void setChildrenDataMap(QHash<QUrl, FileItemDataPointer> *map);
 
     /**
+     * @brief Set the visible children
+     * @param visibleChildren The list of visible children
+     */
+    void setVisibleChildren(QList<QUrl> *visibleChildren);
+
+    /**
      * @brief Set the current update mode
      */
     void setUpdateMode(UpdateMode mode);
@@ -275,10 +281,19 @@ private:
                                      const QUrl &anchorUrl,
                                      GroupedModelData *newData) const;
 
+    /**
+     * @brief Find the new anchor position in the model
+     * @param oldAnchorUrl The old anchor URL
+     * @param group The group to find the new anchor position in
+     * @return The new anchor position, or std::nullopt if not found
+     */
+    std::optional<int> findNewAnchorPos(const QUrl &oldAnchorUrl, const FileGroupData *group) const;
+
 private:
     // Configuration
     QUrl m_rootUrl;
     Qt::SortOrder m_groupOrder = Qt::AscendingOrder;
+    const QList<QUrl> *m_visibleChildren { nullptr };
     const QHash<QUrl, QList<QUrl>> *m_visibleTreeChildren { nullptr };
     const QHash<QUrl, FileItemDataPointer> *m_childrenDataMap { nullptr };
     // for update

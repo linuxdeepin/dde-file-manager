@@ -743,7 +743,6 @@ void FileSortWorker::handleGroupingInsert()
     }
 
     groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
-    groupingEngine->setChildrenDataMap(&childrenDataMap);
     const auto &result = groupingEngine->insertFilesToModelData(anchor.value(),
                                                                 groupedModelData, currentStrategy);
 
@@ -791,7 +790,6 @@ void FileSortWorker::handleGroupingUpdate()
     }
 
     groupingEngine->setUpdateChildren(visibleChildren.mid(range.first, range.second));
-    groupingEngine->setChildrenDataMap(&childrenDataMap);
     const auto &result = groupingEngine->updateFilesToModelData(anchor.value(),
                                                                 groupedModelData, currentStrategy);
 
@@ -2326,6 +2324,7 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     groupingEngine->setGroupOrder(groupOrder);
     groupingEngine->setVisibleTreeChildren(&visibleTreeChildren);
     groupingEngine->setChildrenDataMap(&childrenDataMap);
+    groupingEngine->setVisibleChildren(&visibleChildren);
 
     const auto &result = groupingEngine->groupFiles(files, currentStrategy);
     if (!result.success) {
