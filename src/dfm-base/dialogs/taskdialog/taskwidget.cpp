@@ -262,6 +262,9 @@ void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
     if (isCurPaused == isPauseState) {
         return;
     }
+
+    bool oldPauseState = isPauseState;   // 保存旧状态
+
     if (state == kPausedState) {
         isPauseState = true;
         btnPause->setIcon(QIcon::fromTheme("dfm_task_start"));
@@ -276,6 +279,11 @@ void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
         variantPause.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPauseAction);
         btnPause->setProperty(kBtnPropertyActionName, variantPause);
         progress->start();
+    }
+
+    // 只有在暂停状态发生变化时才发出信号
+    if (oldPauseState != isPauseState) {
+        emit pausedStateChange();
     }
 }
 /*!

@@ -43,6 +43,17 @@ class TaskWidget : public QWidget
 Q_SIGNALS:
     void buttonClicked(AbstractJobHandler::SupportActions actions);
     void heightChanged(int height);
+    void pausedStateChange();
+
+public:
+    // 允许TaskDialog访问暂停状态
+    friend class TaskDialog;
+    
+Q_SIGNALS:
+    /*!
+     * \brief closed 当前进度窗口关闭时，发送关闭信号
+     */
+    void closed();
 public Q_SLOTS:
     void parentClose();
 private Q_SLOTS:
