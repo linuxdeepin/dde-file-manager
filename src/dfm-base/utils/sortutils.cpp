@@ -7,6 +7,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QCollator>
 #include <QChar>
 
@@ -34,152 +36,7 @@ bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order
 
 bool compareStringForFileName(const QString &str1, const QString &str2)
 {
-    thread_local static DCollator sortCollator;
-
-    enum CharType {
-        NumberType = 0,   // 数字
-        LetterType = 1,   // 字母 (非汉字)
-        HanType = 2,   // 汉字
-        SymbolType = 3   // 符号
-    };
-
-    auto getCharType = [](uint unicode) -> CharType {
-        // 使用静态 QChar 函数，它们可以安全地处理32位Unicode码点
-        if (QChar::isDigit(unicode)) return NumberType;
-        // isNumber() 辅助函数可以处理全角数字，但 QChar::isDigit 更高效
-        // 我们的 isNumber 仍需在 numberStr 中使用
-
-        QChar::Script script = QChar::script(unicode);
-        if (script == QChar::Script_Han) return HanType;
-        if (QChar::isLetter(unicode)) return LetterType;
-        return SymbolType;
-    };
-
-    auto compareUnified = [&](const QString &s1, const QString &s2) -> int {
-        QString::const_iterator it1 = s1.constBegin();
-        QString::const_iterator it2 = s2.constBegin();
-
-        while (it1 != s1.constEnd() && it2 != s2.constEnd()) {
-            int len1 = 1;
-            uint unicode1 = it1->unicode();
-            if (it1->isHighSurrogate() && (it1 + 1) != s1.constEnd()) {
-                unicode1 = QChar::surrogateToUcs4(*it1, *(it1 + 1));
-                len1 = 2;
-            }
-
-            int len2 = 1;
-            uint unicode2 = it2->unicode();
-            if (it2->isHighSurrogate() && (it2 + 1) != s2.constEnd()) {
-                unicode2 = QChar::surrogateToUcs4(*it2, *(it2 + 1));
-                len2 = 2;
-            }
-
-            CharType type1 = getCharType(unicode1);
-            CharType type2 = getCharType(unicode2);
-
-            if (type1 != type2) {
-                return (type1 < type2) ? -1 : 1;
-            }
-
-            switch (type1) {
-            // ============================ FIX START ============================
-            case NumberType: {
-                // 提取从当前位置开始的整个数字块
-                QString numPart1 = numberStr(s1, it1 - s1.constBegin());
-                QString numPart2 = numberStr(s2, it2 - s2.constBegin());
-
-                // 规则1: 使用QCollator按数值大小比较
-                int numCompareResult = sortCollator.compare(numPart1, numPart2);
-                if (numCompareResult != 0) {
-                    return numCompareResult;
-                }
-
-                // 规则2: 数值相同，比较原始长度 (前导零多的排前面)
-                // numberStr返回的是规范化后的半角字符串，其长度可能与原始长度不同。
-                // 我们需要计算原始字符串中数字块的真实长度。
-                int rawLen1 = 0;
-                for (auto temp_it = it1; temp_it != s1.constEnd() && isNumber(*temp_it); ++temp_it)
-                    rawLen1++;
-                int rawLen2 = 0;
-                for (auto temp_it = it2; temp_it != s2.constEnd() && isNumber(*temp_it); ++temp_it)
-                    rawLen2++;
-
-                if (rawLen1 != rawLen2) {
-                    // 原始字符串更长的排在前面
-                    return (rawLen1 > rawLen2) ? -1 : 1;
-                }
-
-                // 数值和原始长度都相同，跳过这个块继续比较
-                it1 += rawLen1;
-                it2 += rawLen2;
-                continue;
-            }
-            // ============================= FIX END =============================
-            case LetterType:
-            case HanType: {
-                // 使用 char32_t* overload to avoid deprecation warning.
-                QString charStr1 = QString::fromUcs4(reinterpret_cast<const char32_t *>(&unicode1), 1);
-                QString charStr2 = QString::fromUcs4(reinterpret_cast<const char32_t *>(&unicode2), 1);
-
-                int result = sortCollator.compare(charStr1, charStr2);
-                if (result != 0) return result;
-
-                // 规则3平局决胜: a A b B
-                if (QChar::isLetter(unicode1) && QChar::isLetter(unicode2)) {
-                    if (QChar::toLower(unicode1) == QChar::toLower(unicode2)) {
-                        // 如果小写形式相同，小写字母排在前面
-                        if (QChar::isLower(unicode1) != QChar::isLower(unicode2)) {
-                            return QChar::isLower(unicode1) ? -1 : 1;
-                        }
-                    }
-                }
-                break;
-            }
-            case SymbolType: {
-                if (unicode1 != unicode2) {
-                    return (unicode1 < unicode2) ? -1 : 1;
-                }
-                break;
-            }
-            }
-            it1 += len1;
-            it2 += len2;
-        }
-
-        if (it1 == s1.constEnd() && it2 != s2.constEnd()) return -1;
-        if (it1 != s1.constEnd() && it2 == s2.constEnd()) return 1;
-        return 0;
-    };
-
-    // --- 主流程 ---
-    QString name1, suf1;
-    int dotPos1 = str1.lastIndexOf('.');
-    if (dotPos1 <= 0) {
-        name1 = str1;
-    } else {
-        name1 = str1.left(dotPos1);
-        suf1 = str1.mid(dotPos1 + 1);
-    }
-
-    QString name2, suf2;
-    int dotPos2 = str2.lastIndexOf('.');
-    if (dotPos2 <= 0) {
-        name2 = str2;
-    } else {
-        name2 = str2.left(dotPos2);
-        suf2 = str2.mid(dotPos2 + 1);
-    }
-
-    int nameCompareResult = compareUnified(name1, name2);
-    if (nameCompareResult != 0) {
-        return nameCompareResult < 0;
-    }
-
-    // 如果文件名相同，但一个有后缀一个没有，没有后缀的排前面
-    if (suf1.isEmpty() && !suf2.isEmpty()) return true;
-    if (!suf1.isEmpty() && suf2.isEmpty()) return false;
-
-    return compareUnified(suf1, suf2) < 0;
+    return DFMIO::DFMUtils::compareFileName(str1, str2);
 }
 
 bool compareStringForTime(const QString &str1, const QString &str2)
