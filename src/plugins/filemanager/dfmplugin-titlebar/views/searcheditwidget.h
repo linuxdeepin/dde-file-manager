@@ -57,6 +57,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void searchQuit();
+    void searchStop();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -71,11 +72,12 @@ private:
 
     void updateSearchWidgetLayout();
     void quitSearch();
-    
+    void stopSearch();
+
     /**
      * @brief Update spacing between searchEdit and advancedButton
      * @param showAdvancedButton Whether the advanced button should be visible
-     * 
+     *
      * This method ensures consistent 10px right margin by adjusting the internal
      * spacing based on advanced button visibility. When the button is visible,
      * 10px spacing is applied; when hidden, spacing is removed.
