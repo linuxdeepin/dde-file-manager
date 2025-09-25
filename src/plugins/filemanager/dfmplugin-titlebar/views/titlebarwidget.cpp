@@ -343,6 +343,9 @@ void TitleBarWidget::initConnect()
     });
 
     connect(searchEditWidget, &SearchEditWidget::searchQuit, this, &TitleBarWidget::quitSearch);
+    connect(searchEditWidget, &SearchEditWidget::searchStop, this, [this]() {
+        TitleBarEventCaller::sendStopSearch(this);
+    });
 
     connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
 
