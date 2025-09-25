@@ -130,7 +130,7 @@
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="70"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Tietokone</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.cpp" line="71"/>
@@ -2039,17 +2039,17 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Past 7 Days</source>
-        <translation type="unfinished"/>
+        <translation>Viimeiset 7 päivää</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"/>
+        <translation>Viimeiset 30 päivää</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Earlier</source>
-        <translation type="unfinished"/>
+        <translation>Aiemmin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="34"/>
@@ -2100,42 +2100,42 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="32"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Tuntematon</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="33"/>
         <source>Empty</source>
-        <translation type="unfinished"/>
+        <translation>Tyhjä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>Pienin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Pieni</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Keskikoko</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Suuri</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Huge</source>
-        <translation type="unfinished"/>
+        <translation>Valtava</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Gigantic</source>
-        <translation type="unfinished"/>
+        <translation>Jättimäinen</translation>
     </message>
 </context>
 <context>
@@ -3499,7 +3499,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Avaa uusi kansio välilehdessä</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
@@ -3509,12 +3509,12 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Uusi ikkuna</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Uusi välilehti</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="327"/>
@@ -6647,7 +6647,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"/>
+        <translation>Ei historiaa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -6888,22 +6888,22 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="205"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Sulje välilehti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="206"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Sule välilehdet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="214"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Sulje välilehdet vasemmalla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="222"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Sulje välilehdet oikealla</translation>
     </message>
 </context>
 <context>
