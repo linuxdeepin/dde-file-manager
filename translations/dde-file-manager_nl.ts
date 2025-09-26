@@ -368,24 +368,24 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="394"/>
         <source>Specify directory</source>
-        <translation type="unfinished"/>
+        <translation>Kies een map</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="404"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="425"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="438"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Kies map %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="419"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ongeldige map</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="420"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Deze map kan niet worden vastgemaakt</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="153"/>
@@ -3460,12 +3460,12 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Map tonen na openen van nieuw venster:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Standaardmap</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
@@ -6658,22 +6658,22 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Map kiezen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ongeldige map</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Deze map kan niet worden vastgemaakt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="146"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Map toevoegen</translation>
     </message>
 </context>
 <context>
@@ -6890,24 +6890,24 @@ Voer de gebruikersnaam en het wachtwoord in voor %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="489"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Map niet aangetroffen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="490"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"/>
+        <translation>De map is niet aangetroffen. Wil je hem verwijderen?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Verwijderen</translation>
     </message>
 </context>
 <context>
