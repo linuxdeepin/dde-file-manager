@@ -79,7 +79,6 @@ public:
 
     static QVariant appAttribute(ApplicationAttribute aa);
     static QUrl appUrlAttribute(ApplicationAttribute aa);
-    static QList<QUrl> appUrlListAttribute(ApplicationAttribute aa);
     static void setAppAttribute(ApplicationAttribute aa, const QVariant &value);
     static bool syncAppAttribute();
 

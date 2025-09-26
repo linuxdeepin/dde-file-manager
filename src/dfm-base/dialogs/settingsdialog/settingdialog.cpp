@@ -11,8 +11,10 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
-#include <dfm-base/dialogs/settingsdialog/controls/fixedtabwidget.h>
+#include <dfm-base/dialogs/settingsdialog/controls/aliascombobox.h>
 
 #include <dtkcore_global.h>
 #include <DSettingsOption>
@@ -22,6 +24,7 @@
 #include <DSlider>
 #include <DLabel>
 
+#include <QFileDialog>
 #include <QToolTip>
 #include <QWindow>
 #include <QFile>
@@ -156,7 +159,7 @@ void SettingDialog::initialze()
     widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
     widgetFactory()->registerWidget("pushButton", &SettingDialog::createPushButton);
     widgetFactory()->registerWidget("sliderWithSideIcon", &SettingDialog::createSliderWithSideIcon);
-    widgetFactory()->registerWidget("fixedTabWidget", &SettingDialog::createFixedTabWidget);
+    widgetFactory()->registerWidget("pathcombobox", &SettingDialog::createPathComboboxItem);
 
     auto creators = CustomSettingItemRegister::instance()->getCreators();
     auto iter = creators.cbegin();
@@ -375,11 +378,71 @@ QPair<QWidget *, QWidget *> SettingDialog::createSliderWithSideIcon(QObject *opt
     return qMakePair(label, slider);
 }
 
-QWidget *SettingDialog::createFixedTabWidget(QObject *opt)
+QPair<QWidget *, QWidget *> SettingDialog::createPathComboboxItem(QObject *opt)
 {
-    FixedTabWidget *widget = new FixedTabWidget;
-    widget->setOption(opt);
-    return widget;
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const auto &name = option->name();
+    const auto &itemMap = option->data("items").toMap();
+    const auto &keyList = itemMap.value("keys").toStringList();
+    const auto &valueList = itemMap.value("values").toStringList();
+    Q_ASSERT(keyList.size() == valueList.size());
+
+    AliasComboBox *combobox = new AliasComboBox;
+    for (int i = 0; i < valueList.size(); ++i) {
+        combobox->addItem(valueList[i], keyList[i]);
+    }
+    combobox->addItem(QObject::tr("Specify directory"));
+
+    auto defItem = option->defaultValue().toString();
+    if (option->value().isValid())
+        defItem = option->value().toString();
+
+    static int lastIndex = 0;
+    lastIndex = keyList.indexOf(defItem);
+    if (lastIndex == -1) {
+        lastIndex = combobox->count() - 1;
+        combobox->setItemAlias(lastIndex, QObject::tr("Specify directory %1").arg(QUrl(defItem).path()));
+    }
+    combobox->setCurrentIndex(lastIndex);
+
+    combobox->connect(combobox, &AliasComboBox::currentIndexChanged, option,
+                      [=](int index) {
+                          QSignalBlocker blk(combobox);
+                          if (index == combobox->count() - 1) {
+                              const auto &url = QFileDialog::getExistingDirectoryUrl(combobox);
+                              if (!url.isValid()) {
+                                  combobox->setCurrentIndex(lastIndex);
+                                  return;
+                              }
+
+                              if (!ProtocolUtils::isLocalFile(url)) {
+                                  DialogManagerInstance->showErrorDialog(QObject::tr("Invalid Directory"),
+                                                                         QObject::tr("This directory does not support pinning"));
+                                  combobox->setCurrentIndex(lastIndex);
+                                  return;
+                              }
+                              combobox->setItemData(index, url.toString());
+                              combobox->setItemAlias(index, QObject::tr("Specify directory %1").arg(url.path()));
+                          }
+
+                          lastIndex = index;
+                          option->setValue(combobox->itemData(index).toString());
+                      });
+    option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
+                    combobox, [=](const QVariant &value) {
+                        const auto &url = value.toString();
+                        int index = combobox->findData(url);
+                        if (index == -1) {
+                            index = combobox->count() - 1;
+                            combobox->setItemData(index, url);
+                            combobox->setItemAlias(index, tr("Specify directory %1").arg(QUrl(url).path()));
+                        }
+                        lastIndex = index;
+                        QSignalBlocker blk(combobox);
+                        combobox->setCurrentIndex(index);
+                    });
+
+    return qMakePair(new QLabel(name), combobox);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)

@@ -558,14 +558,6 @@ QUrl Settings::toUrlValue(const QVariant &url)
     return QUrl::fromUserInput(urlString);
 }
 
-QList<QUrl> Settings::toUrlListValue(const QVariant &urlList)
-{
-    QList<QUrl> list;
-    for (const auto &url : urlList.toStringList()) {
-        list << toUrlValue(url);
-    }
-    return list;
-}
 /*!
  * \brief Settings::value 获取某个组的某个key对应的value，配置的某个属性
  *
@@ -649,10 +641,6 @@ QUrl Settings::urlValue(const QString &group, const QUrl &key, const QUrl &defau
     return urlValue(group, d->urlToKey(key), defaultValue);
 }
 
-QList<QUrl> Settings::urlListValue(const QString &group, const QString &key, const QList<QUrl> &defaultValue) const
-{
-    return toUrlListValue(value(group, key, QVariant::fromValue(defaultValue)));
-}
 /*!
  * \brief Settings::setValue 设置属性
  *

@@ -170,41 +170,44 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Creating window for URL:" << url
                         << "New window:" << isNewWindow;
 
-    QUrl defUrl;
-    auto newWindowUrls = Application::instance()->appUrlListAttribute(Application::kUrlOfNewWindow);
-    if (!newWindowUrls.isEmpty())
-        defUrl = newWindowUrls.first();
+    QUrl showedUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
+    auto info = InfoFactory::create<FileInfo>(showedUrl);
+    if (!info || !info->exists()) {
+        showedUrl.setScheme(Global::Scheme::kComputer);
+        showedUrl.setPath("/");
+        Application::instance()->setAppAttribute(Application::kUrlOfNewWindow, showedUrl);
+    }
 
     if (!url.isEmpty()) {
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
         if (info && info->isAttributes(OptInfoType::kIsFile)) {
-            defUrl = UrlRoute::urlParent(url);
-            qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: URL is file, using parent directory:" << defUrl;
+            showedUrl = UrlRoute::urlParent(url);
+            qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: URL is file, using parent directory:" << showedUrl;
         } else {
-            defUrl = url;
+            showedUrl = url;
         }
     }
-    if (!d->isValidUrl(defUrl, &error)) {
-        qCWarning(logDFMBase) << "FileManagerWindowsManager::createWindow: Invalid URL:" << defUrl
+    if (!d->isValidUrl(showedUrl, &error)) {
+        qCWarning(logDFMBase) << "FileManagerWindowsManager::createWindow: Invalid URL:" << showedUrl
                               << "Error:" << error;
         // use home as showed url if default url is invalid
-        defUrl = UrlRoute::pathToReal(QDir::home().path());
-        qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Using home directory as fallback:" << defUrl;
-        if (!d->isValidUrl(defUrl, &error)) {
+        showedUrl = UrlRoute::pathToReal(QDir::home().path());
+        qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Using home directory as fallback:" << showedUrl;
+        if (!d->isValidUrl(showedUrl, &error)) {
             qCCritical(logDFMBase) << "FileManagerWindowsManager::createWindow: Even home directory is invalid:"
-                                   << defUrl << "Error:" << error;
+                                   << showedUrl << "Error:" << error;
             return nullptr;
         }
     }
 
     // Directly active window if the window exists
     if (!isNewWindow) {
-        qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Looking for existing window for:" << defUrl;
-        auto window = d->activeExistsWindowByUrl(defUrl);
+        qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Looking for existing window for:" << showedUrl;
+        auto window = d->activeExistsWindowByUrl(showedUrl);
         if (!window) {
-            qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: No existing window found for:" << defUrl;
+            qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: No existing window found for:" << showedUrl;
         } else {
-            qCInfo(logDFMBase) << "FileManagerWindowsManager::createWindow: Activated existing window for:" << defUrl;
+            qCInfo(logDFMBase) << "FileManagerWindowsManager::createWindow: Activated existing window for:" << showedUrl;
         }
         return window;
     }
@@ -214,8 +217,8 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: Creating new window instance";
 
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
-    FMWindow *window = d->customCreator ? d->customCreator(defUrl)
-                                        : new FMWindow(defUrl);
+    FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
+                                        : new FMWindow(showedUrl);
 
     window->winId();
 
@@ -235,14 +238,10 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         d->onWindowClosed(window);
     });
 
-    connect(window, &FileManagerWindow::aboutToOpen, this, [this, window, newWindowUrls]() {
+    connect(window, &FileManagerWindow::aboutToOpen, this, [this, window]() {
         auto &&id { window->internalWinId() };
         qCInfo(logDFMBase) << "FileManagerWindowsManager: Window opened with ID:" << id;
         emit windowOpened(id);
-        if (newWindowUrls.size() > 1) {
-            Q_EMIT window->reqCreateTabList(newWindowUrls.mid(1));
-            Q_EMIT window->reqActivateTabByIndex(0);
-        }
     });
 
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
@@ -265,7 +264,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 
     // In order for the plugin to cache the current window (before the base frame is installed)
     qCInfo(logDFMBase) << "FileManagerWindowsManager::createWindow: New window created with ID:"
-                       << window->winId() << "URL:" << defUrl;
+                       << window->winId() << "URL:" << showedUrl;
 
     d->windows.insert(window->internalWinId(), window);
 

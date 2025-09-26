@@ -44,7 +44,7 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
     { LV2_GROUP_OPEN_ACTION ".00_allways_open_on_new_window", Application::kAllwayOpenOnNewWindow },
     { LV2_GROUP_OPEN_ACTION ".01_open_in_new_tab", Application::kOpenInNewTab },
     { LV2_GROUP_OPEN_ACTION ".03_open_file_action", Application::kOpenFileMode },
-    { LV2_GROUP_NEW_WINDOWS ".00_default_window_path", Application::kUrlOfNewWindow },
+    { LV2_GROUP_NEW_WINDOWS ".01_default_window_path", Application::kUrlOfNewWindow },
     { LV2_GROUP_NEW_TAB ".01_new_tab_path", Application::kUrlOfNewTab },
     { LV2_GROUP_VIEW ".00_icon_size", Application::kIconSizeLevel },
     { LV2_GROUP_VIEW ".01_icon_grid_density", Application::kGridDensityLevel },
@@ -272,10 +272,32 @@ void SettingBackend::initBasicSettingConfig()
 
     // base / new_win_and_tab
     ins->addGroup(LV2_GROUP_NEW_WINDOWS, tr("New window"));
-    ins->addConfig(LV2_GROUP_NEW_WINDOWS ".00_default_window_path",
-                   { { "key", "00_default_window_path" },
-                     { "type", "fixedTabWidget" },
-                     { "default", "computer:///" } });
+    ins->addConfig(LV2_GROUP_NEW_WINDOWS ".00_message_label",
+                   { { "key", "00_message_label" },
+                     { "name", tr("Display when launching a new window:") },
+                     { "type", "label" } });
+    ins->addPathComboboxConfig(LV2_GROUP_NEW_WINDOWS ".01_default_window_path",
+                   tr("Default Directory"),
+                   { { "values",
+                       QStringList { tr("Computer"),
+                                     tr("Home"),
+                                     tr("Desktop"),
+                                     tr("Videos"),
+                                     tr("Music"),
+                                     tr("Pictures"),
+                                     tr("Documents"),
+                                     tr("Downloads") } },
+                     { "keys",
+                       QStringList { "computer:///",
+                                     "standard://home",
+                                     "standard://desktop",
+                                     "standard://videos",
+                                     "standard://music",
+                                     "standard://pictures",
+                                     "standard://documents",
+                                     "standard://downloads" } } },
+                   "computer:///");
+
     ins->addGroup(LV2_GROUP_NEW_TAB, tr("New tab"));
     ins->addComboboxConfig(LV2_GROUP_NEW_TAB ".01_new_tab_path",
                            tr("Open in new tab:"),

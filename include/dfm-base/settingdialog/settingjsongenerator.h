@@ -57,6 +57,7 @@ public:
     bool addCheckBoxConfig(const QString &key, const QString &text, bool defaultVal = true);
     bool addComboboxConfig(const QString &key, const QString &name, const QStringList &options, int defaultVal = 0);
     bool addComboboxConfig(const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal = QVariant());
+    bool addPathComboboxConfig(const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal = QVariant());
     bool addSliderConfig(const QString &key, const QString &name, int maxVal, int minVal, int defaultVal = 0);
     bool addSliderConfig(const QString &key, const QString &name, const QString &leftIcon, const QString &rightIcon, int maxVal, int minVal, int defaultVal = 0);
     bool addSliderConfig(const QString &key, const QString &name, const QString &leftIcon, const QString &rightIcon, int maxVal, int minVal, QVariantList valueList, int defaultVal = 0);

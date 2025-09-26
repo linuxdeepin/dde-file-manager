@@ -36,6 +36,7 @@ public:
     TabBar *tabBar() const;
     CrumbBar *titleCrumbBar() const;
     void openNewTab(const QUrl &url);
+    void openCustomFixedTabs();
 
     void showSearchFilterButton(bool visible);
     void setViewModeState(int mode);
@@ -68,13 +69,15 @@ private:
 
     void saveTitleBarState(const QString &uniqueId);
     void restoreTitleBarState(const QString &uniqueId);
+    bool checkCustomFixedTab(int index);
 
 signals:
     void currentUrlChanged(const QUrl &url);
 
 private slots:
     void onAddressBarJump();
-    void onTabCreated(const QString &uniqueId);
+    void onTabCreated();
+    void handleCreateView(const QString &uniqueId);
     void onTabRemoved(int oldIndex, int nextIndex);
     void onTabMoved(int from, int to);
     void onTabCurrentChanged(int oldIndex, int newIndex);

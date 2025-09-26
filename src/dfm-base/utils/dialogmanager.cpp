@@ -78,6 +78,23 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
     return code;
 }
 
+int DialogManager::showMessageDialog(MessageType messageLevel, const QString &title, const QString &message, const QStringList &btnTxtList)
+{
+    DDialog d(title, message, qApp->activeWindow());
+    d.moveToCenter();
+    d.addButtons(btnTxtList);
+    d.setDefaultButton(btnTxtList.size() - 1);
+    if (messageLevel == kMsgWarn) {
+        d.setIcon(warningIcon);
+    } else if (messageLevel == kMsgErr) {
+        d.setIcon(errorIcon);
+    } else {
+        d.setIcon(infoIcon);
+    }
+    int code = d.exec();
+    return code;
+}
+
 void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::OperationErrorInfo err)
 {
     static const QString kOpFailed = tr("Operating failed");

@@ -170,11 +170,8 @@ void TitleBarEventReceiver::handleSetTabAlias(const QUrl &url, const QString &na
     for (auto w : titlebarWidges) {
         auto tabBar = w->tabBar();
         for (int i = 0; i < tabBar->count(); ++i) {
-            auto tab = tabBar->tabData(i).value<Tab>();
-            if (UniversalUtils::urlEquals(url, tab.tabUrl)) {
-                tab.tabAlias = name;
-                tabBar->setTabData(i, QVariant::fromValue(tab));
-                tabBar->updateTabName(i);
+            if (UniversalUtils::urlEquals(url, tabBar->tabUrl(i))) {
+                tabBar->setTabAlias(i, name);
             }
         }
     }
