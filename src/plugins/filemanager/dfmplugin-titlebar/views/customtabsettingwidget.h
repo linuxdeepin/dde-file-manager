@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef FIXEDTABWIDGET_H
-#define FIXEDTABWIDGET_H
+#ifndef CUSTOMTABSETTINGWIDGET_H
+#define CUSTOMTABSETTINGWIDGET_H
+
+#include "dfmplugin_titlebar_global.h"
 
 #include <QWidget>
 
-class AliasComboBox;
 class QLabel;
 class QGridLayout;
 
@@ -16,12 +17,13 @@ namespace Core {
 class DSettingsOption;
 }
 }
+namespace dfmplugin_titlebar {
 
-class FixedTabWidget : public QWidget
+class CustomTabSettingWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FixedTabWidget(QWidget *parent = nullptr);
+    explicit CustomTabSettingWidget(QWidget *parent = nullptr);
 
     void setOption(QObject *opt);
 
@@ -31,18 +33,15 @@ private:
 
     QUrl selectCustomDirectory();
     void handleAddCustomItem(Dtk::Core::DSettingsOption *opt);
-    void handleDefaultChanged(Dtk::Core::DSettingsOption *opt, int index);
     void handleOptionChanged(const QVariant &value);
     void updateAddItemLabel(bool enable);
     void clearCustomItems();
     bool removeRow(QWidget *w);
 
 private:
-    AliasComboBox *defItemCB { nullptr };
     QLabel *addItemLabel { nullptr };
     QGridLayout *mainLayout { nullptr };
-
-    int lastDefIndex { -1 };
 };
+}
 
-#endif   // FIXEDTABWIDGET_H
+#endif   // CUSTOMTABSETTINGWIDGET_H

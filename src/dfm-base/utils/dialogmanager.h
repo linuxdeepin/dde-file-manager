@@ -54,6 +54,7 @@ public:
     void showCopyMoveToSelfDialog();
 
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
+    int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message, const QStringList &btnTxtList);
 
     void addTask(const JobHandlePointer task);
 

@@ -15,6 +15,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-framework/event/event.h>
 
@@ -90,6 +91,15 @@ void TitleBarWidget::openNewTab(const QUrl &url)
         TitleBarEventCaller::sendCd(this, StandardPaths::location(StandardPaths::kHomePath));
 
     TitleBarEventCaller::sendCd(this, url);
+}
+
+void TitleBarWidget::openCustomFixedTabs()
+{
+    const auto &itemList = DConfigManager::instance()->value(kDefaultCfgPath, kCunstomFixedTabs, {}).toStringList();
+    for (const auto &item : itemList) {
+        int index = tabBar()->createInactiveTab(item);
+        tabBar()->setTabUserData(index, true);
+    }
 }
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
@@ -350,6 +360,7 @@ void TitleBarWidget::initConnect()
     connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
+    connect(bottomBar, &TabBar::requestCreateView, this, &TitleBarWidget::handleCreateView);
     connect(bottomBar, &TabBar::tabHasRemoved, this, &TitleBarWidget::onTabRemoved);
     connect(bottomBar, &TabBar::tabMoved, this, &TitleBarWidget::onTabMoved);
     connect(bottomBar, &TabBar::currentTabChanged, this, &TitleBarWidget::onTabCurrentChanged);
@@ -465,6 +476,28 @@ void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
     }
 }
 
+bool TitleBarWidget::checkCustomFixedTab(int index)
+{
+    if (!tabBar()->tabUserData(index).toBool())
+        return true;
+
+    const auto &url = tabBar()->tabUrl(index);
+    auto info = InfoFactory::create<FileInfo>(url);
+    if (info && info->exists())
+        return true;
+
+    int ret = DialogManagerInstance->showMessageDialog(DialogManager::kMsgErr, tr("Directory not found"),
+                                                       tr("Directory not found. Remove it?"),
+                                                       { tr("Cancel", "button"), tr("Remove", "button") });
+    if (ret == 1) {
+        auto urlList = DConfigManager::instance()->value(kDefaultCfgPath, kCunstomFixedTabs, {}).toStringList();
+        urlList.removeOne(url.toString());
+        DConfigManager::instance()->setValue(kDefaultCfgPath, kCunstomFixedTabs, urlList);
+        return false;
+    }
+    return true;
+}
+
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
@@ -473,18 +506,21 @@ void TitleBarWidget::onAddressBarJump()
     QDir::setCurrent(currentDir);
 }
 
-void TitleBarWidget::onTabCreated(const QString &uniqueId)
+void TitleBarWidget::handleCreateView(const QString &uniqueId)
 {
     TitleBarEventCaller::sendTabCreated(this, uniqueId);
+}
+
+void TitleBarWidget::onTabCreated()
+{
     curNavWidget->addHistroyStack();
 }
 
 void TitleBarWidget::onTabRemoved(int oldIndex, int nextIndex)
 {
-    Tab tab = tabBar()->tabData(oldIndex).value<Tab>();
-    Tab nextTab = tabBar()->tabData(oldIndex).value<Tab>();
-    TitleBarEventCaller::sendTabRemoved(this, tab.uniqueId, nextTab.uniqueId);
-    curNavWidget->removeNavStackAt(oldIndex);
+    TitleBarEventCaller::sendTabRemoved(this, tabBar()->tabUniqueId(oldIndex), tabBar()->tabUniqueId(nextIndex));
+    if (!tabBar()->isInactiveTab(oldIndex))
+        curNavWidget->removeNavStackAt(oldIndex);
 }
 
 void TitleBarWidget::onTabMoved(int from, int to)
@@ -503,18 +539,20 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
 
 void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
 {
-    auto data = tabBar()->tabData(newIndex);
-    if (data.isValid()) {
-        Tab tab = data.value<Tab>();
+    if (tabBar()->isTabValid(newIndex)) {
+        if (!checkCustomFixedTab(newIndex)) {
+            tabBar()->removeTab(newIndex, oldIndex);
+            return;
+        }
+
         if (oldIndex >= 0 && oldIndex < tabBar()->count()) {
-            Tab oldTab = tabBar()->tabData(oldIndex).value<Tab>();
-            saveTitleBarState(oldTab.uniqueId);
+            saveTitleBarState(tabBar()->tabUniqueId(oldIndex));
         }
         // switch tab must before change url! otherwise NavWidget can not work!
         curNavWidget->switchHistoryStack(newIndex);
-        TitleBarEventCaller::sendTabChanged(this, tab.uniqueId);
-        TitleBarEventCaller::sendChangeCurrentUrl(this, tab.tabUrl);
-        restoreTitleBarState(tab.uniqueId);
+        TitleBarEventCaller::sendTabChanged(this, tabBar()->tabUniqueId(newIndex));
+        TitleBarEventCaller::sendChangeCurrentUrl(this, tabBar()->tabUrl(newIndex));
+        restoreTitleBarState(tabBar()->tabUniqueId(newIndex));
     }
 }
 
@@ -526,9 +564,9 @@ void TitleBarWidget::onTabCloseRequested(int index)
 void TitleBarWidget::onTabAddButtonClicked()
 {
     QUrl url = Application::instance()->appUrlAttribute(Application::kUrlOfNewTab);
-    auto tab = tabBar()->tabData(tabBar()->currentIndex()).value<Tab>();
-    if (!url.isValid() && tab.tabUrl.isValid())
-        url = tab.tabUrl;
+    auto tabUrl = tabBar()->tabUrl(tabBar()->currentIndex());
+    if (!url.isValid() && tabUrl.isValid())
+        url = tabUrl;
 
     openNewTab(url);
 }

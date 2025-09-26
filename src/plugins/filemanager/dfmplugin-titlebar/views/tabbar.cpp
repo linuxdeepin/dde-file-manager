@@ -25,6 +25,7 @@
 #include <QMouseEvent>
 
 #include <unistd.h>
+#include <functional>
 
 inline constexpr int kTabMaxWidth { 240 };
 inline constexpr int kTabMinWidth { 70 };
@@ -36,6 +37,15 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QPixmap *TabBar::sm_pDragPixmap = nullptr;
+
+struct Tab
+{
+    QUrl tabUrl;
+    QString tabAlias;
+    QString uniqueId;
+    QVariant userData;
+    bool isInactive { false };
+};
 
 namespace dfmplugin_titlebar {
 class TabBarPrivate : public QObject
@@ -53,6 +63,7 @@ public:
     void handleDragActionChanged(Qt::DropAction action);
     void handleContextMenu(int index);
     void handleTabClicked(int index);
+    void handleIndexChanged(int index);
     void updateToolTip(int index, const QString &tip);
 
     QString tabDisplayName(const QUrl &url) const;
@@ -60,6 +71,9 @@ public:
     QUrl findValidParentPath(const QUrl &url) const;
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
+
+    Tab tabInfo(int index) const;
+    bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
 
 public:
     TabBar *q;
@@ -119,10 +133,7 @@ void TabBarPrivate::initConnections()
         fmDebug() << "Mount point about to be removed:" << mpt.toString();
         q->closeTab(QUrl::fromLocalFile(mpt.toString()));
     });
-    connect(q, &TabBar::currentChanged, this, [this](int index) {
-        Q_EMIT q->currentTabChanged(currentTabIndex, index);
-        currentTabIndex = index;
-    });
+    connect(q, &TabBar::currentChanged, this, &TabBarPrivate::handleIndexChanged);
     connect(q, &TabBar::tabBarClicked, this, &TabBarPrivate::handleTabClicked);
     connect(q, &TabBar::tabReleaseRequested, this, &TabBarPrivate::handleTabReleased);
     connect(q, &TabBar::dragActionChanged, this, &TabBarPrivate::handleDragActionChanged);
@@ -178,11 +189,11 @@ void TabBarPrivate::handleTabReleased(int index)
     if (index == -1)
         index = 0;
 
-    Tab tab = q->tabData(index).value<Tab>();
-    if (!tab.tabUrl.isValid())
+    const auto &url = q->tabUrl(index);
+    if (!url.isValid())
         return;
 
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, tab.tabUrl);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
     q->removeTab(index);
 }
 
@@ -241,6 +252,20 @@ void TabBarPrivate::handleTabClicked(int index)
         Q_EMIT q->tabCloseRequested(index);
 }
 
+void TabBarPrivate::handleIndexChanged(int index)
+{
+    const auto &tab = tabInfo(index);
+    if (tab.isInactive) {
+        Q_EMIT q->requestCreateView(tab.uniqueId);
+        updateTabInfo(index, [](Tab &tab) {
+            tab.isInactive = false;
+        });
+    }
+
+    Q_EMIT q->currentTabChanged(currentTabIndex, index);
+    currentTabIndex = index;
+}
+
 void TabBarPrivate::updateToolTip(int index, const QString &tip)
 {
     q->setTabToolTip(index, tip);
@@ -270,10 +295,7 @@ QString TabBarPrivate::tabDisplayName(const QUrl &url) const
 
 QUrl TabBarPrivate::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
 {
-    const auto &defaultUrlList = Application::instance()->appUrlListAttribute(Application::kUrlOfNewWindow);
-    QUrl defaultUrl;
-    if (!defaultUrlList.isEmpty())
-        defaultUrl = defaultUrlList.first();
+    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
 
     // BUG: 303643
     QString targetPath = targetUrl.toLocalFile();
@@ -468,6 +490,34 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     painter->restore();
 }
 
+Tab TabBarPrivate::tabInfo(int index) const
+{
+    Tab tab;
+    if (index < 0 || index >= q->count())
+        return tab;
+
+    auto data = q->tabData(index);
+    if (!data.isValid())
+        return tab;
+
+    return data.value<Tab>();
+}
+
+bool TabBarPrivate::updateTabInfo(int index, std::function<void(Tab &)> modifier)
+{
+    if (index < 0 || index >= q->count())
+        return false;
+
+    auto data = q->tabData(index);
+    if (!data.isValid())
+        return false;
+
+    auto tab = data.value<Tab>();
+    modifier(tab);
+    q->setTabData(index, QVariant::fromValue(tab));
+    return true;
+}
+
 TabBar::TabBar(QWidget *parent)
     : DTabBar(parent),
       d(new TabBarPrivate(this))
@@ -492,25 +542,48 @@ int TabBar::createTab()
     tab.uniqueId = prefix + QString::number(++d->nextTabUniqueId);
     setTabData(index, QVariant::fromValue(tab));
 
-    Q_EMIT newTabCreated(tab.uniqueId);
+    Q_EMIT newTabCreated();
+    Q_EMIT requestCreateView(tab.uniqueId);
     setCurrentIndex(index);
     Q_EMIT currentChanged(index);
     return index;
 }
 
-void TabBar::removeTab(const int index)
+int TabBar::createInactiveTab(const QUrl &url, const QVariant &userData)
 {
-    int newIndex;
-    int curIndex = currentIndex();
-    if (curIndex < index) {
-        // Current tab is before the deleted tab, keep current index unchanged
-        newIndex = curIndex;
-    } else if (curIndex == index) {
-        // Delete current tab, select next tab (if last tab then select previous)
-        newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index;
-    } else {
-        // Current tab is after deleted tab, decrease index by 1
-        newIndex = curIndex - 1;
+    QSignalBlocker blk(this);
+    int index = addTab("");
+    blk.unblock();
+
+    Tab tab;
+    QString prefix = "tab_";
+    tab.uniqueId = prefix + QString::number(++d->nextTabUniqueId);
+    tab.tabUrl = url;
+    tab.userData = userData;
+    tab.isInactive = true;
+    dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &tab.tabAlias);
+    setTabData(index, QVariant::fromValue(tab));
+
+    updateTabName(index);
+    Q_EMIT newTabCreated();
+    return index;
+}
+
+void TabBar::removeTab(int index, int selectIndex)
+{
+    int newIndex = selectIndex;
+    if (newIndex == -1) {
+        int curIndex = currentIndex();
+        if (curIndex < index) {
+            // Current tab is before the deleted tab, keep current index unchanged
+            newIndex = curIndex;
+        } else if (curIndex == index) {
+            // Delete current tab, select next tab (if last tab then select previous)
+            newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index;
+        } else {
+            // Current tab is after deleted tab, decrease index by 1
+            newIndex = curIndex - 1;
+        }
     }
 
     Q_EMIT tabHasRemoved(index, newIndex);
@@ -550,6 +623,54 @@ void TabBar::closeTab(const QUrl &url)
             removeTab(i);
         }
     }
+}
+
+bool TabBar::isTabValid(int index) const
+{
+    auto data = tabData(index);
+    return data.isValid();
+}
+
+QUrl TabBar::tabUrl(int index) const
+{
+    return d->tabInfo(index).tabUrl;
+}
+
+QString TabBar::tabAlias(int index) const
+{
+    return d->tabInfo(index).tabAlias;
+}
+
+void TabBar::setTabAlias(int index, const QString &alias)
+{
+    if (d->updateTabInfo(index, [&alias](Tab &tab) {
+            tab.tabAlias = alias;
+        })) {
+        // 更新标签显示文本
+        updateTabName(index);
+    }
+}
+
+QString TabBar::tabUniqueId(int index) const
+{
+    return d->tabInfo(index).uniqueId;
+}
+
+QVariant TabBar::tabUserData(int index) const
+{
+    return d->tabInfo(index).userData;
+}
+
+void TabBar::setTabUserData(int index, const QVariant &userData)
+{
+    d->updateTabInfo(index, [&userData](Tab &tab) {
+        tab.userData = userData;
+    });
+}
+
+bool TabBar::isInactiveTab(int index) const
+{
+    return d->tabInfo(index).isInactive;
 }
 
 void TabBar::activateNextTab()

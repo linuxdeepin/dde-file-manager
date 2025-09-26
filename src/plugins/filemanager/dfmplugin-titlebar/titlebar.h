@@ -62,6 +62,9 @@ private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 windId);
     void bindEvents();
+
+private:
+    void registerTabSettingConfig();
 };
 
 }

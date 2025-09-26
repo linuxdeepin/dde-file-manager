@@ -214,6 +214,18 @@ bool SettingJsonGenerator::addComboboxConfig(const QString &key, const QString &
     return addConfig(key, config);
 }
 
+bool SettingJsonGenerator::addPathComboboxConfig(const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal)
+{
+    QVariantMap config {
+        { "key", key.mid(key.lastIndexOf(".") + 1) },
+        { "name", name },
+        { "items", options },
+        { "type", "pathcombobox" },
+        { "default", defaultVal }
+    };
+    return addConfig(key, config);
+}
+
 bool SettingJsonGenerator::addSliderConfig(const QString &key, const QString &name, int maxVal, int minVal, int defaultVal)
 {
     return addSliderConfig(key, name, "", "", maxVal, minVal, defaultVal);

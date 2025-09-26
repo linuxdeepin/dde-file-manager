@@ -8,6 +8,7 @@
 #include "utils/crumbmanager.h"
 #include "utils/searchhistroymanager.h"
 #include "views/titlebarwidget.h"
+#include "views/customtabsettingwidget.h"
 #include "events/titlebareventreceiver.h"
 
 #include <dfm-base/dfm_global_defines.h>
@@ -15,6 +16,10 @@
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/settingdialog/settingjsongenerator.h>
+#include <dfm-base/base/configs/settingbackend.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -43,13 +48,15 @@ bool TitleBar::start()
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         TitleBarHelper::searchEnabled = true;
     } else {
-        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
-            [](const QString &, const QString &name) {
-                if (name == "dfmplugin-search") TitleBarHelper::searchEnabled = true;
-            },
-        Qt::DirectConnection);
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
+                [](const QString &, const QString &name) {
+                    if (name == "dfmplugin-search") TitleBarHelper::searchEnabled = true;
+                },
+                Qt::DirectConnection);
     }
 
+    registerTabSettingConfig();
     return true;
 }
 
@@ -87,11 +94,15 @@ void TitleBar::onWindowOpened(quint64 windId)
     connect(window, &FileManagerWindow::reqActivateNextTab, titleBarWidget, &TitleBarWidget::handleHotketNextTab);
     connect(window, &FileManagerWindow::reqActivatePreviousTab, titleBarWidget, &TitleBarWidget::handleHotketPreviousTab);
     connect(window, &FileManagerWindow::reqCreateTab, titleBarWidget, &TitleBarWidget::handleHotketCreateNewTab);
-    connect(window, &FileManagerWindow::reqCreateTabList, titleBarWidget, &TitleBarWidget::handleCreateTabList);
     connect(window, &FileManagerWindow::reqCloseCurrentTab, titleBarWidget, &TitleBarWidget::handleHotketCloseCurrentTab);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, titleBarWidget, &TitleBarWidget::handleHotketActivateTab);
     connect(window, &FileManagerWindow::windowSplitterWidthChanged, titleBarWidget, &TitleBarWidget::handleSplitterAnimation);
     connect(window, &FileManagerWindow::aboutToPlaySplitterAnimation, titleBarWidget, &TitleBarWidget::handleAboutToPlaySplitterAnim);
+
+    if (qAppName() == "dde-file-manager") {
+        connect(window, &FileManagerWindow::workspaceInstallFinished, titleBarWidget,
+                &TitleBarWidget::openCustomFixedTabs);
+    }
 }
 
 void TitleBar::onWindowClosed(quint64 windId)
@@ -134,6 +145,36 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleSetTabAlias);
     dpfSlotChannel->connect(curSpace, "slot_Crumb_Update",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleUpdateCrumb);
+}
+
+void TitleBar::registerTabSettingConfig()
+{
+    DFMBASE_USE_NAMESPACE
+    using namespace GlobalDConfDefines::ConfigPath;
+    using namespace GlobalDConfDefines::BaseConfig;
+
+    DialogManager::instance()->registerSettingWidget("customtabsetting", [](QObject *opt) {
+        auto widget = new CustomTabSettingWidget;
+        widget->setOption(opt);
+        return widget;
+    });
+    SettingJsonGenerator::instance()->addConfig("00_base.01_new_windows.02_custom_tab",
+                                                { { "key", "02_custom_tab" },
+                                                  { "type", "customtabsetting" },
+                                                  { "default", {} } });
+
+    SettingBackend::instance()->addSettingAccessor(
+            "00_base.01_new_windows.02_custom_tab",
+            []() {
+                return DConfigManager::instance()->value(kDefaultCfgPath,
+                                                         kCunstomFixedTabs,
+                                                         {});
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(kDefaultCfgPath,
+                                                     kCunstomFixedTabs,
+                                                     val);
+            });
 }
 
 }   // namespace dfmplugin_titlebar
