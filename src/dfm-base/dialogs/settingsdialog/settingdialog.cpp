@@ -435,7 +435,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createPathComboboxItem(QObject *opt)
                         if (index == -1) {
                             index = combobox->count() - 1;
                             combobox->setItemData(index, url);
-                            combobox->setItemAlias(index, tr("Specify directory %1").arg(QUrl(url).path()));
+                            combobox->setItemAlias(index, QObject::tr("Specify directory %1").arg(QUrl(url).path()));
                         }
                         lastIndex = index;
                         QSignalBlocker blk(combobox);
