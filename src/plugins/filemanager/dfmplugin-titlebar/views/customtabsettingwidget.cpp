@@ -71,12 +71,7 @@ void CustomTabSettingWidget::addCustomItem(DSettingsOption *opt, const QUrl &url
             [=] {
                 if (removeRow(delBtn)) {
                     auto itemList = opt->value().toStringList();
-                    for (int i = 1; i < itemList.size(); ++i) {
-                        if (url.toString() == itemList[i]) {
-                            itemList.removeAt(i);
-                            break;
-                        }
-                    }
+                    itemList.removeOne(url.toString());
                     opt->setValue(itemList);
                     updateAddItemLabel(itemList.size() < 4);
                 }

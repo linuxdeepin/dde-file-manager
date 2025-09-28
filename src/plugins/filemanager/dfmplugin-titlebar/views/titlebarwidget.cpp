@@ -519,8 +519,7 @@ void TitleBarWidget::onTabCreated()
 void TitleBarWidget::onTabRemoved(int oldIndex, int nextIndex)
 {
     TitleBarEventCaller::sendTabRemoved(this, tabBar()->tabUniqueId(oldIndex), tabBar()->tabUniqueId(nextIndex));
-    if (!tabBar()->isInactiveTab(oldIndex))
-        curNavWidget->removeNavStackAt(oldIndex);
+    curNavWidget->removeNavStackAt(oldIndex);
 }
 
 void TitleBarWidget::onTabMoved(int from, int to)
