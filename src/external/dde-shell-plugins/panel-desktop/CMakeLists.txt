@@ -43,7 +43,6 @@ ds_install_package(PACKAGE org.deepin.ds.desktop TARGET ds-panel-desktop)
 install(FILES data/com.deepin.dde.desktop.service DESTINATION share/dbus-1/services)
 
 # computer and trash
-install(FILES data/applications/dfm-open.sh DESTINATION bin/)
 install(FILES data/applications/dde-computer.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-trash.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-home.desktop DESTINATION share/applications/)
