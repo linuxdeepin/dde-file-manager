@@ -971,9 +971,6 @@ bool AsyncFileInfoPrivate::canRename() const
     bool canRename = false;
     canRename = SysInfoUtils::isRootUser();
     if (!canRename) {
-        // dir can not write, will can not rename
-        if (this->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool() && !this->attribute(DFileInfo::AttributeID::kAccessCanWrite).toBool())
-            return false;
         return this->attribute(DFileInfo::AttributeID::kAccessCanRename).toBool();
     }
 
