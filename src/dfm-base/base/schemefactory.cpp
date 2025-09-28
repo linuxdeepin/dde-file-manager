@@ -19,7 +19,7 @@ QString InfoFactory::scheme(const QUrl &url)
     if (scheme != Global::Scheme::kFile)
         return scheme;
 
-    if (!ProtocolUtils::isLocalFile(url))
+    if (ProtocolUtils::isRemoteFile(url))
         return Global::Scheme::kAsyncFile;
 
     dfmio::DFileInfo dinfo(url);
@@ -27,7 +27,7 @@ QString InfoFactory::scheme(const QUrl &url)
         return scheme;
 
     auto targetPath = dinfo.attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
-    if (!targetPath.isEmpty() && !ProtocolUtils::isLocalFile(QUrl::fromLocalFile(targetPath)))
+    if (!targetPath.isEmpty() && ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath)))
         scheme = Global::Scheme::kAsyncFile;
 
     return scheme;

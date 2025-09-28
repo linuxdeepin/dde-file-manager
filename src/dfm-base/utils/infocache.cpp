@@ -36,8 +36,9 @@ InfoCache::InfoCache(QObject *parent)
 
 InfoCache &InfoCache::instance()
 {
-    static InfoCache cache;
-    return cache;
+    // 多个模块中使用static,析构的顺序无法预测，可能造成段错误
+    static InfoCache *cache = new InfoCache;
+    return *cache;
 }
 
 InfoCache::~InfoCache()

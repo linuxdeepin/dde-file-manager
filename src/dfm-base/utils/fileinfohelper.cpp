@@ -115,8 +115,8 @@ FileInfoHelper::~FileInfoHelper()
 
 FileInfoHelper &FileInfoHelper::instance()
 {
-    static FileInfoHelper helper;
-    return helper;
+    static FileInfoHelper *helper = new FileInfoHelper;
+    return *helper;
 }
 
 void FileInfoHelper::aboutToQuit()
@@ -164,7 +164,7 @@ void FileInfoHelper::handleFileRefresh(QSharedPointer<FileInfo> dfileInfo)
         needQureingInfo.appendByLock(asyncInfo);
         return;
     }
-    
+
     qureingInfo.appendByLock(asyncInfo);
     qCDebug(logDFMBase) << "Starting async file info query for URL:" << asyncInfo->fileUrl();
     asyncInfo->asyncQueryDfmFileInfo(0, callback);
@@ -180,10 +180,10 @@ void FileInfoHelper::handleCheckInfoRefresh(QSharedPointer<FileInfo> dfileInfo)
 {
     // 确保在主线程中执行，避免跨线程竞态条件
     assert(qApp->thread() == QThread::currentThread());
-    
+
     if (stoped)
         return;
-    
+
     qureingInfo.removeOneByLock(dfileInfo);
     if (needQureingInfo.containsByLock(dfileInfo)) {
         needQureingInfo.removeOneByLock(dfileInfo);
