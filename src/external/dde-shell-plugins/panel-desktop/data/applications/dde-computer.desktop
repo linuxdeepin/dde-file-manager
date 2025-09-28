@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System;
 Comment=Show basic info of the computer.
-Exec=dfm-open.sh computer:///
+Exec=xdg-open computer:///
 GenericName=Computer
 Icon=computer
 Name=Computer
