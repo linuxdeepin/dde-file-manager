@@ -271,7 +271,10 @@ QString CifsMountHelper::decryptPasswd(const QString &passwd)
 {
     QByteArray encodedByteArray = passwd.toUtf8();
     QByteArray decodedByteArray = QByteArray::fromBase64(encodedByteArray);
-    return QString::fromUtf8(decodedByteArray);
+    auto pwd = QString::fromUtf8(decodedByteArray);
+    if (pwd.contains(","))
+        pwd.replace(",", ",,");
+    return pwd;
 }
 
 uint CifsMountHelper::invokerUid()
