@@ -29,12 +29,12 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
 {
     setTitle(tr("Enter a password to protect shared folders"));
     setIcon(QIcon::fromTheme("dialog-password-publicshare"));
-    installEventFilter(this);
     initializeUi();
 }
 
 void UserSharePasswordSettingDialog::initializeUi()
 {
+    setMinimumWidth(380);
     QStringList buttonTexts;
     buttonTexts.append(QObject::tr("Cancel", "button"));
     buttonTexts.append(QObject::tr("Confirm", "button"));
@@ -93,12 +93,11 @@ void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
     close();
 }
 
-bool UserSharePasswordSettingDialog::eventFilter(QObject *object, QEvent *event)
+void UserSharePasswordSettingDialog::changeEvent(QEvent *event)
 {
-    if (event->type() == QEvent::FontChange || event->type() == QEvent::Show) {
-        // 当字体大小变化或窗口显示时，调整窗口大小以适应内容
+    if (event->type() == QEvent::FontChange) {
         adjustSize();
-        return true;
     }
-    return DDialog::eventFilter(object, event);
+
+    DDialog::changeEvent(event);
 }
