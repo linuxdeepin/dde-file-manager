@@ -103,7 +103,8 @@ void FileInfoHelper::cacheFileInfoByThread(const QSharedPointer<FileInfo> dfileI
 {
     if (stoped)
         return;
-    QtConcurrent::run(&pool, [this, dfileInfo]() {
+
+    pool.start([this, dfileInfo] {
         threadHandleDfmFileInfo(dfileInfo);
     });
 }
