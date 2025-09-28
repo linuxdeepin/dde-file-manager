@@ -36,6 +36,7 @@
 #include <QToolTip>
 #include <QMouseEvent>
 #include <QPainterPath>
+#include <QScrollBar>
 
 #include <linux/limits.h>
 
@@ -212,11 +213,20 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
         const QList<QRect> &geometries = paintGeomertys(option, index);
 
         QString tooltip {};
+        // 获取横向滚动偏移量，用于修正tooltip位置检测
+        int horizontalOffset = 0;
+        if (view)
+            horizontalOffset = view->horizontalScrollBar()->value();
+
         // 从1开始是为了排除掉icon区域
         for (int i = d->paintProxy->iconRectIndex() + 1; i < geometries.length() && i <= columnRoleList.length(); ++i) {
             const QRect &rect = geometries.at(i);
 
-            if (rect.left() <= event->x() && rect.right() >= event->x()) {
+            // 考虑横向滚动偏移量调整rect位置
+            QRect adjustedRect = rect;
+            adjustedRect.translate(-horizontalOffset, 0);
+
+            if (adjustedRect.left() <= event->x() && adjustedRect.right() >= event->x()) {
                 const QString &tipStr = index.data(columnRoleList[i - d->paintProxy->iconRectIndex() - 1]).toString();
 
                 if (option.fontMetrics.horizontalAdvance(tipStr) > rect.width()) {
