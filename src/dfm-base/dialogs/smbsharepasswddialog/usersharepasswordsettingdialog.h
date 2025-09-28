@@ -27,7 +27,7 @@ public Q_SLOTS:
     void onButtonClicked(const int &index);
 
 protected:
-    bool eventFilter(QObject *object, QEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
 private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit;
