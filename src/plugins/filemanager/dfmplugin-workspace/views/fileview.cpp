@@ -154,7 +154,6 @@ void FileView::setViewMode(Global::ViewMode mode)
         d->initHorizontalOffset = false;
         setUniformItemSizes(false);
         setResizeMode(QListView::Adjust);
-        setMovement(QListView::Static);
         setOrientation(QListView::LeftToRight, true);
 #ifdef DTKWIDGET_CLASS_DSizeMode
         setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
@@ -2521,8 +2520,7 @@ void FileView::setDefaultViewMode()
 
 void FileView::setListViewMode()
 {
-    setMovement(QListView::Static);
-    setUniformItemSizes(false);
+    setUniformItemSizes(true);
     setResizeMode(QListView::Fixed);
     setOrientation(QListView::TopToBottom, false);
     setSpacing(kListViewSpacing);
