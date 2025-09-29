@@ -24,11 +24,7 @@ public:
     static QString userLoginState();
     static quint32 currentLoginUser();
     static bool isLogined();
-
-    // New ScreenSaver-based standby inhibition
-    static uint32_t inhibitStandby(const QString &reason = QString());
-    static void uninhibitStandby(uint32_t cookie);
-
+    static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
     static qint64 computerMemory();
     static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
     static double sizeFormat(qint64 size, QString &unit);
