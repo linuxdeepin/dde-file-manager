@@ -405,28 +405,15 @@ QPair<QWidget *, QWidget *> SettingDialog::createPathComboboxItem(QObject *opt)
     }
     combobox->setCurrentIndex(lastIndex);
 
-    combobox->connect(combobox, &AliasComboBox::currentIndexChanged, option,
+    combobox->connect(combobox, &AliasComboBox::activated, option,
                       [=](int index) {
-                          QSignalBlocker blk(combobox);
-                          if (index == combobox->count() - 1) {
-                              const auto &url = QFileDialog::getExistingDirectoryUrl(combobox);
-                              if (!url.isValid()) {
-                                  combobox->setCurrentIndex(lastIndex);
-                                  return;
-                              }
+                          if (lastIndex == index && index != combobox->count() - 1)
+                              return;
 
-                              if (!ProtocolUtils::isLocalFile(url)) {
-                                  DialogManagerInstance->showErrorDialog(QObject::tr("Invalid Directory"),
-                                                                         QObject::tr("This directory does not support pinning"));
-                                  combobox->setCurrentIndex(lastIndex);
-                                  return;
-                              }
-                              combobox->setItemData(index, url.toString());
-                              combobox->setItemAlias(index, QObject::tr("Specify directory %1").arg(url.path()));
-                          }
-
-                          lastIndex = index;
-                          option->setValue(combobox->itemData(index).toString());
+                          if (pathComboBoxChangedHandle(combobox, option, index))
+                              lastIndex = index;
+                          else
+                              combobox->setCurrentIndex(lastIndex);
                       });
     option->connect(option, &DTK_CORE_NAMESPACE::DSettingsOption::valueChanged,
                     combobox, [=](const QVariant &value) {
@@ -469,4 +456,25 @@ void SettingDialog::autoMountCheckBoxChangedHandle(DSettingsOption *option, int 
     } else if (state == 2) {
         option->setValue(true);
     }
+}
+
+bool SettingDialog::pathComboBoxChangedHandle(AliasComboBox *acb, DSettingsOption *option, int index)
+{
+    QSignalBlocker blk(acb);
+    if (index == acb->count() - 1) {
+        const auto &url = QFileDialog::getExistingDirectoryUrl(acb);
+        if (!url.isValid())
+            return false;
+
+        if (!ProtocolUtils::isLocalFile(url)) {
+            DialogManagerInstance->showErrorDialog(QObject::tr("Invalid Directory"),
+                                                   QObject::tr("This directory does not support pinning"));
+            return false;
+        }
+        acb->setItemData(index, url.toString());
+        acb->setItemAlias(index, QObject::tr("Specify directory %1").arg(url.path()));
+    }
+
+    option->setValue(acb->itemData(index).toString());
+    return true;
 }

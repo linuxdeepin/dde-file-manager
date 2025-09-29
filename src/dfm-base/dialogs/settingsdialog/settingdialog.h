@@ -10,6 +10,7 @@
 #include <DSettingsDialog>
 
 class QCheckBox;
+class AliasComboBox;
 
 DCORE_BEGIN_NAMESPACE
 class DSettings;
@@ -36,6 +37,7 @@ private:
 
     static void mountCheckBoxStateChangedHandle(DSettingsOption *option, int state);
     static void autoMountCheckBoxChangedHandle(DSettingsOption *option, int state);
+    static bool pathComboBoxChangedHandle(AliasComboBox *acb, DSettingsOption *option, int index);
 
     void settingFilter(QByteArray &data);
     void loadSettings(const QString &templateFile);
