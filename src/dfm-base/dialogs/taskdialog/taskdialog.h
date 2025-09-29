@@ -49,9 +49,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    void checkAllTasksPaused();
-
-private:
     QListWidget *taskListWidget { nullptr };
     QMap<JobHandlePointer, QListWidgetItem *> taskItems;
     DTitlebar *titlebar { nullptr };
