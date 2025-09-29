@@ -7,6 +7,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/systempathutil.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -285,6 +286,10 @@ bool PermissionManagerWidget::canChmod(const FileInfoPointer &info)
 
     // Check if file exists
     if (!info->exists())
+        return false;
+
+    // 禁止对库目录进行权限修改
+    if (SystemPathUtil::instance()->isSystemPath(info->pathOf(PathInfoType::kAbsoluteFilePath)))
         return false;
 
     // Root user can always chmod
