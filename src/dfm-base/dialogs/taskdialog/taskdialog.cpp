@@ -49,8 +49,6 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
     connect(this, &TaskDialog::closed, wid, &TaskWidget::parentClose, Qt::QueuedConnection);
     taskHandler->connect(taskHandler.get(), &AbstractJobHandler::requestRemoveTaskWidget, this, &TaskDialog::removeTask);
-    // 连接任务状态变化信号，用于检查所有任务是否都已暂停
-    connect(wid, &TaskWidget::pausedStateChange, this, &TaskDialog::checkAllTasksPaused, Qt::QueuedConnection);
 
     wid->setTaskHandle(taskHandler);
 
@@ -225,49 +223,7 @@ void TaskDialog::removeTask()
     } else {
         adjustSize();
     }
-    
-    // 检查剩余任务是否都已暂停
-    checkAllTasksPaused();
 }
-
-/*!
- * \brief TaskDialog::checkAllTasksPaused 检查所有任务是否都已暂停，如果是则取消阻止系统待机
- */
-void TaskDialog::checkAllTasksPaused()
-{
-    // 如果没有任务项，直接返回
-    if (taskItems.isEmpty()) {
-        return;
-    }
-
-    // 检查是否所有任务都已暂停
-    bool allPaused = true;
-    for (int i = 0; i < taskListWidget->count(); ++i) {
-        QListWidgetItem *item = taskListWidget->item(i);
-        TaskWidget *widget = qobject_cast<TaskWidget *>(taskListWidget->itemWidget(item));
-        if (widget && !widget->isPauseState) {
-            allPaused = false;
-            break;
-        }
-    }
-
-    // 如果所有任务都已暂停且之前有阻止待机，则取消阻止
-    if (allPaused && m_inhibitCookie > 0) {
-        UniversalUtils::uninhibitStandby(m_inhibitCookie);
-        m_inhibitCookie = 0;
-        qCInfo(logDFMBase) << "All tasks paused, system standby uninhibited";
-    } 
-    // 如果有任务正在运行但系统待机被取消，则重新阻止
-    else if (!allPaused && m_inhibitCookie == 0) {
-        m_inhibitCookie = UniversalUtils::inhibitStandby(QObject::tr("Files are being processed"));
-        if (m_inhibitCookie > 0) {
-            qCInfo(logDFMBase) << "Tasks resumed, system standby inhibited again, cookie:" << m_inhibitCookie;
-        } else {
-            qCWarning(logDFMBase) << "Failed to inhibit system standby when resuming tasks";
-        }
-    }
-}
-
 /*!
  * \brief TaskDialog::closeEvent 关闭事件，这里是为了发送当前窗口关闭信号
  * \param event 关闭事件
