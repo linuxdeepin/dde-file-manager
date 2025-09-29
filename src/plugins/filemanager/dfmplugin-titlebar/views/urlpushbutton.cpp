@@ -106,7 +106,6 @@ bool UrlPushButtonPrivate::isTextClipped() const
 
 void UrlPushButtonPrivate::adjustButtonFont()
 {
-    QFont tmpFont = font;
     font = q->font();
     // 计算可用的垂直空间
     int availableHeight = q->height();
@@ -309,6 +308,7 @@ UrlPushButton::UrlPushButton(QWidget *parent)
     setContextMenuPolicy(Qt::CustomContextMenu);
 
     setIconSize({ kFolderIconSize, kFolderIconSize });
+    installEventFilter(this);
 }
 
 UrlPushButton::~UrlPushButton() = default;
@@ -511,12 +511,11 @@ void UrlPushButton::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void UrlPushButton::changeEvent(QEvent *event)
+bool UrlPushButton::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::FontChange)
+    if (obj == this && (event->type() == QEvent::FontChange || event->type() == QEvent::Show))
         d->adjustButtonFont();
-
-    DPushButton::changeEvent(event);
+    return DPushButton::eventFilter(obj, event);
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

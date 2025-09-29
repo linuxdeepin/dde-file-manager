@@ -56,7 +56,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void changeEvent(QEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 }   // namespace dfmplugin_titlebar
