@@ -98,6 +98,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
     static const QStringList whiteEmptyActIdList {
         "display-as",
         "sort-by",
+        "group-by",
         "open-as-administrator",
         "open-in-terminal",
         "paste",
