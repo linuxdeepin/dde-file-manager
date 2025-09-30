@@ -73,7 +73,7 @@ private:
     DFMBASE_NAMESPACE::AbstractBasePreview *preview { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
     // 在切换视图前记录中心点, 切换后恢复
-    QPoint previousCenter { 0, 0 };
+    QPointF previousCenter { 0.0, 0.0 };
 };
 }
 #endif

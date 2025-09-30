@@ -514,9 +514,8 @@ void FilePreviewDialog::saveCenterPos()
         return;
     }
 
-    // 使用 frameGeometry 来考虑窗口装饰
-    QRect fg = frameGeometry();
-    previousCenter = fg.center();
+    QRectF rectF = geometry();
+    previousCenter = rectF.center();
     qCDebug(logLibFilePreview) << "FilePreviewDialog: saved center position:" << previousCenter;
 }
 
@@ -527,12 +526,13 @@ void FilePreviewDialog::restoreCenterPos()
         return;
     }
 
-    // 计算新的左上角位置以保持中心点不变
-    QSize s = size();
-    QPoint newTopLeft(previousCenter.x() - s.width() / 2, previousCenter.y() - s.height() / 2);
+    // 计算新的左上角位置以保持中心点不变，使用浮点数计算保持精度
+    QSizeF sizeF = size();
+    QPointF newTopLeftF(previousCenter.x() - sizeF.width() / 2.0, previousCenter.y() - sizeF.height() / 2.0);
+    QPoint newTopLeft = newTopLeftF.toPoint();
 
     // 限制窗口位置到记录中心所在屏幕的可用区域，避免跨屏显示
-    QScreen *scr = QGuiApplication::screenAt(previousCenter);
+    QScreen *scr = QGuiApplication::screenAt(previousCenter.toPoint());
     QRect avail;
     if (scr) {
         avail = scr->availableGeometry();
@@ -541,6 +541,7 @@ void FilePreviewDialog::restoreCenterPos()
     }
 
     if (!avail.isNull()) {
+        QSize s = size();
         // 如果窗口大小大于可用区域，则将窗口居中显示在该屏幕内
         if (s.width() > avail.width() || s.height() > avail.height()) {
             QPoint centered(avail.center().x() - s.width() / 2, avail.center().y() - s.height() / 2);
