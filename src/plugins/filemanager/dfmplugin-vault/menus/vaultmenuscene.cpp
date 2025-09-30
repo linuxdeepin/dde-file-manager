@@ -38,6 +38,7 @@ QStringList VaultMenuScenePrivate::emptyMenuActionRule()
         "separator-line",
         "display-as",
         "sort-by",
+        "group-by",
         "refresh",
         "separator-line",
         "paste",
