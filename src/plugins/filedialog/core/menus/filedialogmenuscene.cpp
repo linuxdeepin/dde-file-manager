@@ -89,10 +89,10 @@ QString FileDialogMenuScene::findSceneName(QAction *act) const
 
 void FileDialogMenuScene::filterAction(QMenu *parent, bool isSubMenu)
 {
-    static const QStringList whiteActIdList { ActionID::kNewFolder, ActionID::kNewDoc, 
-                                              ActionID::kDisplayAs, ActionID::kSortBy,
-                                              ActionID::kOpen, ActionID::kRename, 
-                                              ActionID::kDelete, ActionID::kCopy, 
+    static const QStringList whiteActIdList { ActionID::kNewFolder, ActionID::kNewDoc,
+                                              ActionID::kDisplayAs, ActionID::kSortBy, ActionID::kGroupBy,
+                                              ActionID::kOpen, ActionID::kRename,
+                                              ActionID::kDelete, ActionID::kCopy,
                                               ActionID::kCut, ActionID::kPaste };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
                                               "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu" };

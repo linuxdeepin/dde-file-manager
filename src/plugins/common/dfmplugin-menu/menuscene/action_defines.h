@@ -59,6 +59,7 @@ inline constexpr char kSeparator[] = "separator-line";
 // ViewMenu
 inline constexpr char kDisplayAs[] = "display-as";
 inline constexpr char kSortBy[] = "sort-by";
+inline constexpr char kGroupBy[] = "group-by";
 }
 }
 
