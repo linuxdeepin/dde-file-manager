@@ -1906,13 +1906,13 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="175"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
-        <translation type="unfinished"/>
+        <translation>Grupoji sipas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="181"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Asnjë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="186"/>
@@ -1967,27 +1967,27 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="31"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Sot</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="32"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Dje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Past 7 Days</source>
-        <translation type="unfinished"/>
+        <translation>7 Ditët e Shkuara</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"/>
+        <translation>30 Ditët e Shkuara</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Earlier</source>
-        <translation type="unfinished"/>
+        <translation>Më herët</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="34"/>
@@ -2038,42 +2038,42 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="32"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>E panjohur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="33"/>
         <source>Empty</source>
-        <translation type="unfinished"/>
+        <translation>E zbrazët</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>E pakët</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>E vogël</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Mesatare</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>E madhe</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Huge</source>
-        <translation type="unfinished"/>
+        <translation>E stërmadhe</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Gigantic</source>
-        <translation type="unfinished"/>
+        <translation>Gjigante</translation>
     </message>
 </context>
 <context>
@@ -3445,7 +3445,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Hape dosjen e re në një skedë të re</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
@@ -3455,7 +3455,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Dritare e re</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
@@ -3465,12 +3465,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Drejtori Parazgjedhje</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Skedë e re</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="349"/>
@@ -5645,12 +5645,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="336"/>
         <source>External storage device</source>
-        <translation type="unfinished"/>
+        <translation>Pajisje e jashtme depozitimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="347"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"/>
+        <translation>Rregullsi përdorimi pajisjeje të jashtme depozitimi</translation>
     </message>
 </context>
 <context>
@@ -5687,7 +5687,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="41"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>Njëkohësim aty për aty të dhënash (I rekomanduar)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
