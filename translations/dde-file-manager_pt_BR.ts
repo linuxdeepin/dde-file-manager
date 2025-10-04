@@ -46,7 +46,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="38"/>
         <source>Disk</source>
-        <translation>Disco</translation>
+        <translation>Dispositivos de armazenamento</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="85"/>
