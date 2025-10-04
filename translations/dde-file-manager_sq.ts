@@ -5697,12 +5697,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation>Funksionimi Së Pari (Lyp Heqje Pa Rrezik)</translation>
+        <translation>Funksionimi Së Pari (Lyp Heqje të Parrezik)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Të dhënat e kopjimit të kartelës nuk njëkohësohen aty për aty. Pasi të jetë plotësuar kopjimi, duhet të përdorni “Heqje të Parrezik”, që të hiqni pajisjen e jashtme të depozitimit. Përndryshe mund të ndodhë dëmtim kartele, ose humbje të dhënash.</translation>
     </message>
 </context>
 <context>
@@ -6603,7 +6603,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"/>
+        <translation>S’ka histori</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -6658,22 +6658,22 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Drejtori Vetjake</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Drejtori i Pavlefshme</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Kjo drejtori s’mbulon fiksim</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="146"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Shtoni Drejtori</translation>
     </message>
 </context>
 <context>
@@ -6867,22 +6867,22 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="218"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Mbylle skedën</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="219"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Mbylli skedat e tjera</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="227"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Mbyll skedat në të majtë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="235"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Mbyll skedat në të djathtë</translation>
     </message>
 </context>
 <context>
@@ -6890,24 +6890,24 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="489"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Drejtoria s’u gjet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="490"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"/>
+        <translation>Drejtoria s’u gjet. Të hiqet?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Hiqe</translation>
     </message>
 </context>
 <context>
@@ -7156,7 +7156,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Po analizohen kartela…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -7166,32 +7166,32 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"/>
+        <translation>Veprimi u anulua</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"/>
+        <translation>Po fillohet prishje kartelash…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"/>
+        <translation>Krejt kartelat janë prishur me sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të nisej urdhri i prishjes</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Leje e mohuar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"/>
+        <translation>Kartela është hequr, ose procesi përfundoi</translation>
     </message>
 </context>
 <context>
@@ -7257,17 +7257,17 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="109"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"/>
+        <translation>Dështim prishësi kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="111"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Mbylle</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="135"/>
         <source>Shredding file</source>
-        <translation type="unfinished"/>
+        <translation>Po prishet kartelë</translation>
     </message>
 </context>
 <context>
@@ -7275,7 +7275,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"/>
+        <translation>Po prishet kartela “%1”</translation>
     </message>
 </context>
 <context>
@@ -7283,7 +7283,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Prishje Kartelash</translation>
     </message>
 </context>
 <context>
@@ -7291,7 +7291,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizo Prishje Kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
@@ -7306,17 +7306,17 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"/>
+        <translation>Kartela do të fshihet tërësisht dhe s’mund të rikthehet.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Asgjësoje</translation>
     </message>
 </context>
 <context>
@@ -7332,7 +7332,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Kartela u asgjësua</translation>
     </message>
 </context>
 <context>
