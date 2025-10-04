@@ -7171,17 +7171,17 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation>Po fillohet prishje kartelash…</translation>
+        <translation>Po fillohet asgjësim kartelash…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation>Krejt kartelat janë prishur me sukses</translation>
+        <translation>Krejt kartelat janë asgjësuar me sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation>S’u arrit të nisej urdhri i prishjes</translation>
+        <translation>S’u arrit të nisej urdhri i asgjësimit</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
@@ -7257,7 +7257,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="109"/>
         <source>File shredder failure</source>
-        <translation>Dështim prishësi kartelash</translation>
+        <translation>Dështim asgjësuesi kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="111"/>
@@ -7267,7 +7267,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="135"/>
         <source>Shredding file</source>
-        <translation>Po prishet kartelë</translation>
+        <translation>Po asgjësohet kartelë</translation>
     </message>
 </context>
 <context>
@@ -7275,7 +7275,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation>Po prishet kartela “%1”</translation>
+        <translation>Po asgjësohet kartela “%1”</translation>
     </message>
 </context>
 <context>
@@ -7283,7 +7283,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation>Prishje Kartelash</translation>
+        <translation>Asgjësim Kartelash</translation>
     </message>
 </context>
 <context>
@@ -7291,17 +7291,17 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation>Aktivizo Prishje Kartelash</translation>
+        <translation>Aktivizo Asgjësim Kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Pas aktivizimit, mundësia “Asgjësim Kartelash” bëhet e përdorshme te menuja e kontekstit, për fshirje të sigurt kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Jeni i sigurt se doni të asgjësohen këto %1 objekte?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
@@ -7880,7 +7880,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasafortë Kartelash</translation>
     </message>
 </context>
 <context>
@@ -7920,7 +7920,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasafortë Kartelash</translation>
     </message>
 </context>
 <context>
