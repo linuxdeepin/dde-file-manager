@@ -1900,7 +1900,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Hyrja e fundit</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="175"/>
@@ -2433,7 +2433,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Që të çaktivizoni veçorinë Fshehje Me Një Klikim, hapni dritaren “Rregullime Desktopi”, te menuja e kontekstit për desktopin dhe çaktivizoni “Fshehje Koleksioni Me Një Klikim”.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
@@ -2453,7 +2453,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
         <source>No more prompts</source>
-        <translation type="unfinished"/>
+        <translation>S’ka hapa të tjerë</translation>
     </message>
 </context>
 <context>
@@ -3460,7 +3460,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Kur hapet një dritare e re, shfaq:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
@@ -5692,12 +5692,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"/>
+        <translation>Pasi të jenë kopjuar kartelat, mund të hiqni pajisjen e jashtme pa u dashur ta “Hiqni Pa Rrezik”.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"/>
+        <translation>Funksionimi Së Pari (Lyp Heqje Pa Rrezik)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
