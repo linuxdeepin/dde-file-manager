@@ -3575,7 +3575,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="445"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation>Solicitar a minha confirmação ao excluir arquivos</translation>
+        <translation>Solicitar confirmação ao excluir arquivos</translation>
     </message>
 </context>
 <context>
