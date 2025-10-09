@@ -1893,57 +1893,12 @@ void FileView::keyboardSearch(const QString &search)
 
 void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    // if the left btn is pressed and the rect large enough, means the view state is draggingSelectState.
-    // and don't show menu in the draggingSelectState.
-    if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght)) {
-        fmDebug() << "Context menu blocked due to drag selection state";
-        return;
-    }
-
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
-        fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << rootUrl().toString();
-        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
-        return;
-    }
-
-    if (FileViewMenuHelper::disableMenu()) {
-        fmDebug() << "Context menu disabled by helper";
-        return;
-    }
-
-    d->viewMenuHelper->setWaitCursor();
-    const QModelIndex &index = indexAt(event->pos());
-    if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index) {
-        fmDebug() << "Setting focus due to editing index";
-        setFocus(Qt::FocusReason::OtherFocusReason);
-    }
-
-    if (d->fileViewHelper->isEmptyArea(event->pos())) {
-        fmDebug() << "Showing context menu for empty area";
-        BaseItemDelegate *de = itemDelegate();
-        if (de)
-            de->hideNotEditingIndexWidget();
-        clearSelection();
-
-        d->viewMenuHelper->showEmptyAreaMenu();
-    } else {
-        if (!isSelected(index)) {
-            fmDebug() << "Item not selected, clearing selection and selecting clicked item";
-            itemDelegate()->hideNotEditingIndexWidget();
-            clearSelection();
-
-            if (!index.isValid()) {
-                fmDebug() << "Invalid index, showing empty area menu";
-                d->viewMenuHelper->showEmptyAreaMenu();
-                d->viewMenuHelper->reloadCursor();
-                return;
-            }
-
-            selectionModel()->select(index, QItemSelectionModel::Select);
-        }
-
-        d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
-    }
+    // 先处理选中事件，选中事件处理完成后再处理ContextMenuEvent
+    // 在处理ContextMenuEvent设置了updateenable为false，不然刷新全部
+    QContextMenuEvent *e = new QContextMenuEvent(*event);
+    QTimer::singleShot(0,this,[this, e](){
+        onContextMenuEvent(e);
+    });
 }
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -2728,3 +2683,66 @@ void FileView::onGroupHeaderClicked(const QModelIndex &index)
         d->selectHelper->handleGroupHeaderClick(index, QApplication::keyboardModifiers());
     }
 }
+
+void FileView::onContextMenuEvent(QContextMenuEvent *event)
+{
+    FinallyUtil util([this, event]{
+        setUpdatesEnabled(true);
+        blockSignals(false);
+        delete event;
+    });
+    blockSignals(true);
+    setUpdatesEnabled(false);
+    // if the left btn is pressed and the rect large enough, means the view state is draggingSelectState.
+    // and don't show menu in the draggingSelectState.
+    if (d->mouseLeftPressed && (abs(d->mouseMoveRect.width()) > kMinMoveLenght || abs(d->mouseMoveRect.height()) > kMinMoveLenght)) {
+        fmDebug() << "Context menu blocked due to drag selection state";
+        return;
+    }
+
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << rootUrl().toString();
+        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
+        return;
+    }
+
+    if (FileViewMenuHelper::disableMenu()) {
+        fmDebug() << "Context menu disabled by helper";
+        return;
+    }
+
+    d->viewMenuHelper->setWaitCursor();
+    const QModelIndex &index = indexAt(event->pos());
+    if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index) {
+        fmDebug() << "Setting focus due to editing index";
+        setFocus(Qt::FocusReason::OtherFocusReason);
+    }
+
+    if (d->fileViewHelper->isEmptyArea(event->pos())) {
+        fmDebug() << "Showing context menu for empty area";
+        BaseItemDelegate *de = itemDelegate();
+        if (de)
+            de->hideNotEditingIndexWidget();
+        clearSelection();
+
+        d->viewMenuHelper->showEmptyAreaMenu();
+    } else {
+        if (!isSelected(index)) {
+            fmDebug() << "Item not selected, clearing selection and selecting clicked item";
+            itemDelegate()->hideNotEditingIndexWidget();
+            clearSelection();
+
+            if (!index.isValid()) {
+                fmDebug() << "Invalid index, showing empty area menu";
+                d->viewMenuHelper->showEmptyAreaMenu();
+                d->viewMenuHelper->reloadCursor();
+                return;
+            }
+
+            selectionModel()->select(index, QItemSelectionModel::Select);
+        }
+
+        d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
+    }
+}
+

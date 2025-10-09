@@ -16,6 +16,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/dpf.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -361,30 +362,12 @@ void CanvasView::paintEvent(QPaintEvent *event)
 
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 {
-    if (CanvasViewMenuProxy::disableMenu())
-        return;
-
-    QPoint gridPos = d->gridAt(event->pos());
-    itemDelegate()->revertAndcloseEditor();
-
-    const QModelIndex &index = indexAt(event->pos());
-    bool isEmptyArea = !index.isValid();
-    Qt::ItemFlags flags;
-
-    if (WindowUtils::isWayLand())
-        setAttribute(Qt::WA_InputMethodEnabled, false);
-    if (isEmptyArea) {
-        d->menuProxy->showEmptyAreaMenu(flags, gridPos);
-    } else {
-        // menu focus is on the index that is not selected
-        if (!selectionModel()->isSelected(index))
-            selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-
-        flags = model()->flags(index);
-        d->menuProxy->showNormalMenu(index, flags, gridPos);
-    }
-    if (WindowUtils::isWayLand())
-        setAttribute(Qt::WA_InputMethodEnabled, true);
+    // 先处理选中事件，选中事件处理完成后再处理ContextMenuEvent
+    // 在处理ContextMenuEvent设置了updateenable为false，不然刷新全部
+    QContextMenuEvent *e = new QContextMenuEvent(*event);
+    QTimer::singleShot(0, this, [this, e]{
+        onContextMenuEvent(e);
+    });
 }
 
 void CanvasView::startDrag(Qt::DropActions supportedActions)
@@ -490,6 +473,48 @@ void CanvasView::changeEvent(QEvent *event)
     }
 
     QAbstractItemView::changeEvent(event);
+}
+
+void CanvasView::onContextMenuEvent(QContextMenuEvent *event)
+{
+    FinallyUtil util([this, event]{
+        setUpdatesEnabled(true);
+        blockSignals(false);
+        if (event)
+            delete event;
+    });
+    blockSignals(true);
+    setUpdatesEnabled(false);
+    if (CanvasViewMenuProxy::disableMenu())
+        return;
+
+    QPoint gridPos = d->gridAt(event->pos());
+    itemDelegate()->revertAndcloseEditor();
+
+    const QModelIndex &index = indexAt(event->pos());
+    bool isEmptyArea = !index.isValid();
+    Qt::ItemFlags flags;
+
+    if (WindowUtils::isWayLand())
+        setAttribute(Qt::WA_InputMethodEnabled, false);
+    if (isEmptyArea) {
+        d->menuProxy->showEmptyAreaMenu(flags, gridPos);
+    } else {
+        // menu focus is on the index that is not selected
+        if (!selectionModel()->isSelected(index))
+            selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+
+        const QUrl &url = model()->fileUrl(index);
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+
+        flags = model()->flags(index);
+        d->menuProxy->showNormalMenu(index, flags, gridPos);
+    }
+    if (WindowUtils::isWayLand())
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasView::setScreenNum(const int screenNum)
