@@ -5,12 +5,10 @@
 #ifndef SIZEGROUPSTRATEGY_H
 #define SIZEGROUPSTRATEGY_H
 
-#include "dfmplugin_workspace_global.h"
-
 #include <dfm-base/interfaces/abstractgroupstrategy.h>
 #include <dfm-base/dfm_global_defines.h>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 /**
  * @brief Size-based grouping strategy implementation
@@ -63,6 +61,6 @@ private:
     static QHash<QString, QString> getDisplayNames();
 };
 
-DPWORKSPACE_END_NAMESPACE
+}   // namespace dfmplugin_workspace
 
 #endif   // SIZEGROUPSTRATEGY_H
