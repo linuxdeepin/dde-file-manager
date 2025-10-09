@@ -71,6 +71,7 @@ public:
     QUrl findValidParentPath(const QUrl &url) const;
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
+    void paintTabButton(DIconButton *btn);
 
     Tab tabInfo(int index) const;
     bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
@@ -113,11 +114,15 @@ void TabBarPrivate::initUI()
     Q_ASSERT(leftBtn);
     leftBtn->setFocusPolicy(Qt::NoFocus);
     leftBtn->setFixedSize(30, 30);
+    leftBtn->setFlat(true);
+    leftBtn->installEventFilter(q);
 
     auto rightBtn = q->findChild<DIconButton *>("rightButton");
     Q_ASSERT(rightBtn);
     rightBtn->setFocusPolicy(Qt::NoFocus);
     rightBtn->setFixedSize(30, 30);
+    rightBtn->setFlat(true);
+    rightBtn->installEventFilter(q);
 
     // for update close button state
     tabBar = q->findChild<QTabBar *>();
@@ -490,6 +495,34 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     painter->restore();
 }
 
+void TabBarPrivate::paintTabButton(DIconButton *btn)
+{
+    if (btn->isEnabled() && !btn->isChecked()) {
+        QPainter painter(btn);
+        painter.setRenderHint(QPainter::Antialiasing);
+        bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+        DStyleHelper dstyle(btn->style());
+        const int radius = dstyle.pixelMetric(DStyle::PM_FrameRadius);
+
+        QColor bgColor;
+        if (btn->isDown()) {
+            // 按下状态 - 20%不透明度
+            bgColor = isDarkTheme ? QColor(255, 255, 255, 51)
+                                  : QColor(0, 0, 0, 51);
+        } else if (btn->underMouse()) {
+            // 悬浮状态 - 10%不透明度
+            bgColor = isDarkTheme ? QColor(255, 255, 255, 26)
+                                  : QColor(0, 0, 0, 26);
+        }
+
+        if (bgColor.isValid()) {
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(bgColor);
+            painter.drawRoundedRect(btn->rect(), radius, radius);
+        }
+    }
+}
+
 Tab TabBarPrivate::tabInfo(int index) const
 {
     Tab tab;
@@ -790,31 +823,13 @@ bool TabBar::canInsertFromMimeData(int index, const QMimeData *source) const
 
 bool TabBar::eventFilter(QObject *obj, QEvent *e)
 {
-    if (obj == d->addBtn && e->type() == QEvent::Paint) {
-        QPainter painter(d->addBtn);
-        painter.setRenderHint(QPainter::Antialiasing);
-        if (d->addBtn->isEnabled() && !d->addBtn->isChecked()) {
-            bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-            DStyleHelper dstyle(d->addBtn->style());
-            const int radius = dstyle.pixelMetric(DStyle::PM_FrameRadius);
-
-            QColor bgColor;
-            if (d->addBtn->isDown()) {
-                // 按下状态 - 20%不透明度
-                bgColor = isDarkTheme ? QColor(255, 255, 255, 51)
-                                      : QColor(0, 0, 0, 51);
-            } else if (d->addBtn->underMouse()) {
-                // 悬浮状态 - 10%不透明度
-                bgColor = isDarkTheme ? QColor(255, 255, 255, 26)
-                                      : QColor(0, 0, 0, 26);
-            }
-
-            if (bgColor.isValid()) {
-                painter.setPen(Qt::NoPen);
-                painter.setBrush(bgColor);
-                painter.drawRoundedRect(d->addBtn->rect(), radius, radius);
-            }
-        }
+    if (obj == this && e->type() == QEvent::Paint) {
+        // 为了禁止DTabBar绘制延长线
+        return true;
+    } else if (e->type() == QEvent::Paint) {
+        auto btn = qobject_cast<DIconButton *>(obj);
+        if (btn)
+            d->paintTabButton(btn);
     } else if (obj == d->tabBar && e->type() == QEvent::MouseMove) {
         int index = tabAt(mapFromGlobal(QCursor::pos()));
         if (index != -1)
@@ -828,9 +843,6 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
                 return true;
             }
         }
-    } else if (obj == this && e->type() == QEvent::Paint) {
-        // 为了禁止DTabBar绘制延长线
-        return true;
     }
 
     return DTabBar::eventFilter(obj, e);
