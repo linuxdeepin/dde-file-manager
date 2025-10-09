@@ -519,7 +519,8 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     double columnX = iconRect.right();
 
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
-    if (isSelected)
+    bool isDropTarget = parent()->isDropTarget(index);
+    if (isSelected || isDropTarget)
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     // 绘制那些需要显示的项
@@ -560,7 +561,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
             textRect.setHeight(d->textLineHeight);
             textRect.moveTop(((columnRect.height() - textRect.height()) / 2) + columnRect.top());
 
-            if (!isSelected)
+            if (!isSelected && !isDropTarget)
                 painter->setPen(opt.palette.color(cGroup, QPalette::Text));
 
             if (data.canConvert<QString>()) {
@@ -582,7 +583,9 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         return;
 
     bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
-    painter->setPen(option.palette.color(isSelected ? QPalette::BrightText : QPalette::Text));
+    bool isDropTarget = parent()->isDropTarget(index);
+    const auto itemColor = option.palette.color((isSelected || isDropTarget) ? QPalette::BrightText : QPalette::Text);
+    painter->setPen(itemColor);
 
     const QString previewContent = index.data(kItemFileContentPreviewRole).toString();
     // 检查是否支持并需要显示内容预览
