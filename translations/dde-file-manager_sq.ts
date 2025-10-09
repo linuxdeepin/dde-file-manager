@@ -8113,12 +8113,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>E panjohur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Empty</source>
-        <translation type="unfinished"/>
+        <translation>E zbrazët</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
