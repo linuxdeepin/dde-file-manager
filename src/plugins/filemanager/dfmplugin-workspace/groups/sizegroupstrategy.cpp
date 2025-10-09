@@ -3,14 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sizegroupstrategy.h"
+#include "dfmplugin_workspace_global.h"
 
 #include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <QDebug>
 
-DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace dfmplugin_workspace {
 
 QStringList SizeGroupStrategy::getSizeOrder()
 {
@@ -130,3 +132,5 @@ QString SizeGroupStrategy::classifyBySize(qint64 size) const
         return "gigantic";
     }
 }
+
+}   // namespace dfmplugin_workspace
