@@ -255,6 +255,7 @@ private:
     void focusOnView();
 
     bool isGroupHeader(const QModelIndex &index) const;
+    void onContextMenuEvent(QContextMenuEvent *event);
 };
 
 }

@@ -2103,27 +2103,12 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
 
 void CollectionView::contextMenuEvent(QContextMenuEvent *event)
 {
-    if (this->property(kCollectionPropertyEditing).toBool())
-        return;
-    if (CollectionViewMenu::disableMenu())
-        return;
-
-    const QModelIndex &index = indexAt(event->pos());
-    itemDelegate()->revertAndcloseEditor();
-
-    if (!index.isValid())
-        d->menuProxy->emptyAreaMenu();
-    else {
-        // menu focus is on the index that is not selected
-        if (!selectionModel()->isSelected(index)) {
-            selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-            d->currentSelectionStartIndex = QModelIndex();
-        }
-
-        d->menuProxy->normalMenu(index, model()->flags(index), d->pointToPos(event->pos()));
-    }
-
-    event->accept();
+    // 先处理选中事件，选中事件处理完成后再处理ContextMenuEvent
+    // 在处理ContextMenuEvent设置了updateenable为false，不然刷新全部
+    QContextMenuEvent *e = new QContextMenuEvent(*event);
+    QTimer::singleShot(0, this, [this, e]{
+        onContextMenuEvent(e);
+    });
 }
 
 void CollectionView::startDrag(Qt::DropActions supportedActions)
@@ -2286,6 +2271,39 @@ void CollectionView::scrollContentsBy(int dx, int dy)
 
     // just update viewport.
     QAbstractItemView::scrollContentsBy(dx, dy);
+}
+
+void CollectionView::onContextMenuEvent(QContextMenuEvent *event)
+{
+    FinallyUtil util([this, event]{
+        setUpdatesEnabled(true);
+        blockSignals(false);
+        if (event)
+            delete event;
+    });
+    blockSignals(true);
+    setUpdatesEnabled(false);
+    if (this->property(kCollectionPropertyEditing).toBool())
+        return;
+    if (CollectionViewMenu::disableMenu())
+        return;
+
+    const QModelIndex &index = indexAt(event->pos());
+    itemDelegate()->revertAndcloseEditor();
+
+    if (!index.isValid())
+        d->menuProxy->emptyAreaMenu();
+    else {
+        // menu focus is on the index that is not selected
+        if (!selectionModel()->isSelected(index)) {
+            selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+            d->currentSelectionStartIndex = QModelIndex();
+        }
+
+        d->menuProxy->normalMenu(index, model()->flags(index), d->pointToPos(event->pos()));
+    }
+
+    event->accept();
 }
 
 bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
