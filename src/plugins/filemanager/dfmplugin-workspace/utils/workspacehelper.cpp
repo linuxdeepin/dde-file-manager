@@ -357,6 +357,15 @@ QString WorkspaceHelper::getGroupingStrategy(quint64 windowId)
     return {};
 }
 
+QString WorkspaceHelper::roleDisplayName(quint64 windowId, dfmbase::Global::ItemRoles role)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        return view->model()->roleDisplayString(role);
+
+    return {};
+}
+
 QList<ItemRoles> WorkspaceHelper::columnRoles(quint64 windowId)
 {
     FileView *view = findFileViewByWindowID(windowId);

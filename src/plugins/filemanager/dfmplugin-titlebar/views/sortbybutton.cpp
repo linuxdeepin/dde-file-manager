@@ -30,11 +30,7 @@ static constexpr int kSortToolLeftButtonSize { 16 };
 static constexpr int kSortToolArrowButtonSize { 12 };
 static constexpr int kSortToolHMargin { 6 };
 static constexpr int kSortToolVMargin { 9 };
-static constexpr char kSortToolName[] = "sort-by-name";
-static constexpr char kSortToolTimeModified[] = "sort-by-time-modified";
-static constexpr char kSortToolTimeCreated[] = "sort-by-time-created";
-static constexpr char kSortToolSize[] = "sort-by-size";
-static constexpr char kSortToolType[] = "sort-by-type";
+static constexpr char kItemRole[] = "item-role";
 
 // Group by constants
 static constexpr char kGroupToolNone[] = "group-by-none";
@@ -72,39 +68,13 @@ SortByButtonPrivate::SortByButtonPrivate(SortByButton *parent)
 void SortByButtonPrivate::setItemSortRoles()
 {
     DFMGLOBAL_NAMESPACE::ItemRoles sortRole = TitleBarEventCaller::sendCurrentSortRole(q);
-    switch (sortRole) {
-    case DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole: {
-        auto action = menu->findChild<QAction *>(kSortToolName);
-        if (action) {
-            action->setChecked(true);
+    auto actList = menu->actions();
+    for (auto act : actList) {
+        auto role = act->property(kItemRole).value<DFMGLOBAL_NAMESPACE::ItemRoles>();
+        if (role == sortRole) {
+            act->setChecked(true);
+            break;
         }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole: {
-        auto action = menu->findChild<QAction *>(kSortToolTimeModified);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileCreatedRole: {
-        auto action = menu->findChild<QAction *>(kSortToolTimeCreated);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileSizeRole: {
-        auto action = menu->findChild<QAction *>(kSortToolSize);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    case DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole: {
-        auto action = menu->findChild<QAction *>(kSortToolType);
-        if (action) {
-            action->setChecked(true);
-        }
-    } break;
-    default:
-        break;
     }
 }
 
@@ -140,45 +110,30 @@ QString SortByButtonPrivate::findStrategyByObjName(const QString &objName)
 
 SortByButtonPrivate::~SortByButtonPrivate() = default;
 
-void SortByButtonPrivate::initializeUi()
+void SortByButtonPrivate::setupMenu()
 {
-    q->setFixedSize(kSortToolButtonWidth, kToolButtonSize);   // 设置固定大小
-
-    auto actionGroup = new QActionGroup(q);
-    menu = new QMenu(q);
-    auto action = menu->addAction(tr("Name"));
-    action->setObjectName(kSortToolName);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
-
-    action = menu->addAction(tr("Time modified"));
-    action->setObjectName(kSortToolTimeModified);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
-
-    action = menu->addAction(tr("Time created"));
-    action->setObjectName(kSortToolTimeCreated);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
-
-    action = menu->addAction(tr("Size"));
-    action->setObjectName(kSortToolSize);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
-
-    action = menu->addAction(tr("Type"));
-    action->setObjectName(kSortToolType);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
+    menu->clear();
+    auto roleList = TitleBarEventCaller::sendColumnRoles(q);
+    for (const auto &role : std::as_const(roleList)) {
+        const auto &name = TitleBarEventCaller::sendColumnDisplyName(q, role);
+        auto act = menu->addAction(name);
+        act->setCheckable(true);
+        act->setProperty(kItemRole, role);
+    }
 
     // Add Group by submenu
     auto groupByAction = menu->addAction(QObject::tr("Group by"));
-    groupMenu = new QMenu(q);
     groupByAction->setMenu(groupMenu);
+}
 
+void SortByButtonPrivate::initializeUi()
+{
+    q->setFixedSize(kSortToolButtonWidth, kToolButtonSize);   // 设置固定大小
+    menu = new QMenu(q);
+    groupMenu = new QMenu(q);
     auto groupActionGroup = new QActionGroup(q);
 
-    action = groupMenu->addAction(QObject::tr("None"));
+    auto action = groupMenu->addAction(QObject::tr("None"));
     action->setObjectName(kGroupToolNone);
     action->setCheckable(true);
     groupActionGroup->addAction(action);
@@ -219,17 +174,13 @@ void SortByButtonPrivate::menuTriggered(QAction *action)
 {
     if (!action)
         return;
-    if (action->objectName() == kSortToolName) {
-        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole);
-    } else if (action->objectName() == kSortToolTimeModified) {
-        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileLastModifiedRole);
-    } else if (action->objectName() == kSortToolTimeCreated) {
-        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileCreatedRole);
-    } else if (action->objectName() == kSortToolSize) {
-        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileSizeRole);
-    } else if (action->objectName() == kSortToolType) {
-        TitleBarEventCaller::sendSetSort(q, DFMGLOBAL_NAMESPACE::kItemFileMimeTypeRole);
-    }
+
+    auto property = action->property(kItemRole);
+    if (!property.isValid())
+        return;
+
+    auto role = property.value<DFMGLOBAL_NAMESPACE::ItemRoles>();
+    TitleBarEventCaller::sendSetSort(q, role);
 }
 
 void SortByButtonPrivate::groupMenuTriggered(QAction *action)
@@ -318,6 +269,7 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
         d->iconClicked = event->position().x() <= leftWidth;   // Check if icon area is clicked
 
         if (event->position().x() > leftWidth && d->menu) {
+            d->setupMenu();
             d->setItemSortRoles();
             d->setItemGroupRoles();
             d->menu->exec(mapToGlobal(rect().bottomLeft()));

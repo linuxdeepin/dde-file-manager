@@ -33,6 +33,7 @@ private slots:
     void groupMenuTriggered(QAction *action);
 
 private:
+    void setupMenu();
     void initializeUi();
     void initConnect();
 

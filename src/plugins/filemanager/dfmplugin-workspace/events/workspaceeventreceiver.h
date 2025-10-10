@@ -55,6 +55,7 @@ public slots:
     void handleFileUpdate(const QUrl &url);
     DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> handleColumnRoles(quint64 windowId);
+    QString handleColumnDisplayName(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
     QString handleCurrentGroupStrategy(quint64 windowId);
 
     QRectF handleGetVisualGeometry(const quint64 windowID);
