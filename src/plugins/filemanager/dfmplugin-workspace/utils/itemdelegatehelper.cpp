@@ -87,8 +87,8 @@ void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         availableRect.adjust(iconStyle.stroke, iconStyle.stroke, -iconStyle.stroke, -iconStyle.stroke);
         
         // 计算缩略图的最佳显示尺寸 - 如果小于可用区域则放大铺满
-        qreal scaleX = availableRect.width() / w;
-        qreal scaleY = availableRect.height() / h;
+        qreal scaleX = availableRect.width() / (w > 0 ? w : 1);
+        qreal scaleY = availableRect.height() / (h > 0 ? h : 1);
         qreal scale = qMin(scaleX, scaleY);
         
         // 如果原图小于可用区域，则等比放大；否则保持原逻辑
