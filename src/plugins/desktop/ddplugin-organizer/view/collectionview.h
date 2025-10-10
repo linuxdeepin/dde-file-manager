@@ -100,9 +100,6 @@ protected:
     void scrollContentsBy(int dx, int dy) override;
 
 private:
-    void onContextMenuEvent(QContextMenuEvent *event);
-
-private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;
 };
 
