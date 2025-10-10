@@ -29,8 +29,12 @@ TextPreview::TextPreview(QObject *parent)
 TextPreview::~TextPreview()
 {
     fmInfo() << "Text preview: TextPreview instance destroyed";
-    if (textBrowser)
+    if (textBrowser) {
+        // Set parent to nullptr first to prevent recursive destruction issues
+        textBrowser->setParent(nullptr);
         textBrowser->deleteLater();
+        textBrowser = nullptr;
+    }
 }
 
 bool TextPreview::setFileUrl(const QUrl &url)
