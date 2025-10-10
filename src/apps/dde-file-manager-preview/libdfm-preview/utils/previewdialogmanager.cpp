@@ -23,8 +23,20 @@ PreviewDialogManager *PreviewDialogManager::instance()
 
 void PreviewDialogManager::onPreviewDialogClose()
 {
-    filePreviewDialog->deleteLater();
-    filePreviewDialog = nullptr;
+    if (filePreviewDialog) {
+        // Disconnect all signals to prevent any further interactions
+        filePreviewDialog->disconnect();
+        
+        // Use single shot timer to ensure proper cleanup order
+        // This allows the dialog's closeEvent to complete its cleanup first
+        QTimer::singleShot(0, this, [this]() {
+            if (filePreviewDialog) {
+                filePreviewDialog->deleteLater();
+                filePreviewDialog = nullptr;
+            }
+        });
+    }
+    
     qCInfo(logLibFilePreview) << "PreviewDialogManager: preview dialog closed, starting exit timer";
     exitTimer->start(60000);
 }
