@@ -78,7 +78,8 @@ void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, 
 
     painter->save();
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
-    if (isSelected) {
+    bool isDropTarget = view()->isDragTarget(index);
+    if (isSelected || isDropTarget) {
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::Text));
