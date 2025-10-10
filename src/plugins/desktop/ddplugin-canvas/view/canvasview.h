@@ -105,9 +105,6 @@ protected:
     void changeEvent(QEvent *event) override;
 
 private:
-    void onContextMenuEvent(QContextMenuEvent *event);
-
-private:
     CanvasViewPrivate *d;
 };
 
