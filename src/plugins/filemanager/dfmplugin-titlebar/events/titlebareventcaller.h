@@ -34,6 +34,8 @@ public:
     static void sendTabRemoved(QWidget *sender, const QString &removedId, const QString &nextId);
     static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
     static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentSortRole(QWidget *sender);
+    static QList<DFMGLOBAL_NAMESPACE::ItemRoles> sendColumnRoles(QWidget *sender);
+    static QString sendColumnDisplyName(QWidget *sender, DFMBASE_NAMESPACE::Global::ItemRoles role);
     static void sendSetSort(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
     static QString sendCurrentGroupRoleStrategy(QWidget *sender);
     static void sendSetGroupStrategy(QWidget *sender, const QString &strategy);

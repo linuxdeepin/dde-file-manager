@@ -126,6 +126,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetNameFilter);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_CurrentSortRole",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentSortRole);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_ColumnDisplayName",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleColumnDisplayName);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_ColumnRoles",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleColumnRoles);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetSort",
@@ -302,6 +304,11 @@ void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
 {
     fmDebug() << "WorkspaceEventReceiver: handling file update request for URL" << url.toString();
     WorkspaceHelper::instance()->fileUpdate(url);
+}
+
+QString WorkspaceEventReceiver::handleColumnDisplayName(quint64 windowId, dfmbase::Global::ItemRoles role)
+{
+    return WorkspaceHelper::instance()->roleDisplayName(windowId, role);
 }
 
 ItemRoles WorkspaceEventReceiver::handleCurrentSortRole(quint64 windowId)
