@@ -27,8 +27,6 @@ public:
     QStringList supportArchiveMimetypes() const;
     QStringList supportVideoMimeTypes() const;
     QStringList supportAudioMimeTypes() const;
-    QString fastDisplayTypeFromPath(const QString &filePath) const;
-    QString fastMimeTypeName(const QString &filePath) const;
     QString accurateDisplayTypeFromPath(const QString &filePath) const;
     QString accurateLocalMimeTypeName(const QString &filePath) const;
 
@@ -38,7 +36,6 @@ private:
     void initData();
     void loadSupportMimeTypes();
     QStringList readlines(const QString &path);
-    QMimeType fastDetermineMimeType(const QString &filePath) const;
     QMimeType accurateLocalMimeType(const QString &filePath) const;
 
 private:
@@ -54,9 +51,6 @@ private:
     QStringList imageMimeTypes;
     QStringList executableMimeTypes;
     QStringList backupMimeTypes;
-
-    mutable int contentBasedFallbackCount = 0;
-    static const int kMaxContentBasedFallback = 1000;
 };
 
 }
