@@ -819,11 +819,6 @@ QString SyncFileInfoPrivate::iconName() const
 
 QString SyncFileInfoPrivate::mimeTypeName() const
 {
-    // At present, there is no dfmio library code. For temporary repair
-    // local file use the method on v20 to obtain mimeType
-    if (ProtocolUtils::isRemoteFile(q->fileUrl())) {
-        return this->attribute(DFileInfo::AttributeID::kStandardContentType).toString();
-    }
     return q->fileMimeType().name();
 }
 

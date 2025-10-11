@@ -9,7 +9,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <algorithm>   // Required for std::sort
 #include <QMimeDatabase>
 #include <QMimeType>
 
@@ -63,56 +62,11 @@ void MimeTypeDisplayManager::initData()
     loadSupportMimeTypes();
 }
 
-QMimeType MimeTypeDisplayManager::fastDetermineMimeType(const QString &filePath) const
-{
-    if (filePath.isEmpty())
-        return QMimeType();
-
-    QMimeType mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
-    if (mimeType.isValid() && mimeType.name() != "application/octet-stream")
-        return mimeType;
-
-    // Fallback: Check if it's a directory
-    QFileInfo fileInfo(filePath);
-    if (fileInfo.isDir()) {
-        return mimeTypeDatabase.mimeTypeForName("inode/directory");
-    }
-
-    // Fallback to content-based detection limited by threshold
-    if (contentBasedFallbackCount < kMaxContentBasedFallback) {
-        ++contentBasedFallbackCount;
-        qCWarning(logDFMBase) << "Fallback to content-based mime detection, attempt" << contentBasedFallbackCount << "for file:" << filePath;
-        mimeType = mimeTypeDatabase.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
-        if (mimeType.isValid())
-            return mimeType;
-    }
-
-    return mimeType;   // May be invalid, but we skip further MatchContent
-}
-
 QMimeType MimeTypeDisplayManager::accurateLocalMimeType(const QString &filePath) const
 {
     Q_ASSERT(!filePath.isEmpty());
 
     return mimeTypeDatabase.mimeTypeForFile(filePath);
-}
-
-QString MimeTypeDisplayManager::fastDisplayTypeFromPath(const QString &filePath) const
-{
-    QMimeType mimeType = fastDetermineMimeType(filePath);
-    if (!mimeType.isValid())
-        return displayNamesMap[FileInfo::FileType::kUnknown];
-
-    return displayName(mimeType.name());
-}
-
-QString MimeTypeDisplayManager::fastMimeTypeName(const QString &filePath) const
-{
-    QMimeType mimeType = fastDetermineMimeType(filePath);
-    if (!mimeType.isValid())
-        return displayNamesMap[FileInfo::FileType::kUnknown];
-
-    return fullMimeName(mimeType.name());
 }
 
 QString MimeTypeDisplayManager::accurateDisplayTypeFromPath(const QString &filePath) const

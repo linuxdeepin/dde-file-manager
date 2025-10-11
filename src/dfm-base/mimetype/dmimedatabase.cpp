@@ -73,7 +73,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const FileInfoPointer &fileInfo, QMimeD
         }
     }
 
-    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), mode);
@@ -157,7 +157,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             isMatchExtension = blackList.contains(filePath);
         }
     }
-    if (isMatchExtension || ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(path))) {
+    if (isMatchExtension) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);

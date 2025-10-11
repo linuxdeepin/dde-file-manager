@@ -786,14 +786,6 @@ QString AsyncFileInfoPrivate::iconName() const
 
 QString AsyncFileInfoPrivate::mimeTypeName() const
 {
-    // At present, there is no dfmio library code. For temporary repair
-    // local file use the method on v20 to obtain mimeType
-    if (ProtocolUtils::isRemoteFile(q->fileUrl())) {
-        auto contentType = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardContentType).toString();
-        if (contentType.isEmpty())
-            contentType = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFastContentType).toString();
-        return contentType;
-    }
     return q->fileMimeType().name();
 }
 
