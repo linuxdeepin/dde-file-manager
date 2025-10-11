@@ -78,6 +78,8 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDefaultDropAction(Qt::CopyAction);
     setDragDropOverwriteMode(true);
     setDragEnabled(true);
+    setAutoScroll(true);
+    setAutoScrollMargin(100);
 //  TODO (search): perf
 //  setLayoutMode(QListView::Batched);
 #ifdef QT_SCROLL_WHEEL_ANI
@@ -1700,12 +1702,21 @@ void FileView::dragEnterEvent(QDragEnterEvent *event)
 
 void FileView::dragMoveEvent(QDragMoveEvent *event)
 {
+    // Always call parent implementation first - it includes auto-scroll logic
+
+    // Note: 此处一定要调用QAbstractItemView的dragMoveEvent,而非父类的。
+    // 这是因为QListView::dragMoveEvent中对viewMode的listview进行了特殊处理，导致后续
+    // 无法进入到QAbstractItemView::dragMoveEvent。
+    // 而当前类的viewMode是重定义的，并非QListView定义的ViewMode，这就导致图标模式
+    // 实际上被当作QListView::ListMode处理。最根因的解决方案应该是基于QAbstractItemView重写整个视图，
+    // 当前整个FileView的实现是畸形的，在QListView的实现上进行的魔改隐藏了很多问题
+    QAbstractItemView::dragMoveEvent(event);
+
+    // Handle drag-drop helper logic, but don't let it prevent Qt's auto-scroll logic
     if (d->dragDropHelper->dragMove(event)) {
         viewport()->update();
-        return;
+        // Note: We intentionally don't return here, so that both auto-scroll and dragDropHelper work
     }
-
-    DListView::dragMoveEvent(event);
 }
 
 void FileView::dragLeaveEvent(QDragLeaveEvent *event)
