@@ -375,17 +375,17 @@ Insira o usuário e a senha para %1</translation>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="425"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="475"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Especifique o diretório %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="470"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Diretório Inválido</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="471"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Este diretório não suporta pins</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="151"/>
@@ -1899,13 +1899,13 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="175"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
-        <translation type="unfinished"/>
+        <translation>Agrupar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="181"/>
