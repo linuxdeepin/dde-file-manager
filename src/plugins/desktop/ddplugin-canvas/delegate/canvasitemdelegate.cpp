@@ -46,6 +46,7 @@ const int CanvasItemDelegate::kTextPadding = 4;
 const int CanvasItemDelegate::kIconSpacing = 2;
 const int CanvasItemDelegate::kIconBackRadius = 18;
 const int CanvasItemDelegate::kIconRectRadius = 4;
+const int CanvasItemDelegate::kIconBackgroundMargin = 4;
 
 CanvasItemDelegatePrivate::CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
     : q(qq)
@@ -132,8 +133,9 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     // get item paint geomerty
     // the method to get rect for each element is equal to paintGeomertys(option, index);
     {
-        // draw icon
+        // draw icon and background
         const QRect rIcon = iconRect(option.rect);
+        paintBackground(painter, indexOption, rIcon);
         paintIcon(painter, indexOption.icon,
                   { rIcon,
                     Qt::AlignCenter,
@@ -607,7 +609,7 @@ QRect CanvasItemDelegate::labelRect(const QRect &paintRect, const QRect &usedRec
 {
     QRect lable = paintRect;
     // label rect is under the icon.
-    lable.setTop(usedRect.bottom());
+    lable.setTop(usedRect.bottom() + kIconBackgroundMargin);
 
     // minus text padding at left and right.
     lable.setWidth(paintRect.width() - 2 * kTextPadding);
@@ -839,6 +841,29 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
         });
     }
     return rect;
+}
+
+void CanvasItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QRect &iconRect) const
+{
+    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    if (!isSelected)
+        return;
+
+    QColor backgroundColor(0, 0, 0, qRound(255 * 0.15));
+    QColor borderColor(255, 255, 255, qRound(255 * 0.1));
+    QRect backgroundRect = iconRect.adjusted(-kIconBackgroundMargin, -kIconBackgroundMargin, kIconBackgroundMargin, kIconBackgroundMargin);
+
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QPainterPath path;
+    path.addRoundedRect(backgroundRect, kIconRectRadius, kIconRectRadius);
+    painter->fillPath(path, backgroundColor);
+
+    painter->setPen(borderColor);
+    painter->drawPath(path);
+
+    painter->restore();
 }
 
 void CanvasItemDelegatePrivate::extendLayoutText(const FileInfoPointer &info, dfmbase::ElideTextLayout *layout)

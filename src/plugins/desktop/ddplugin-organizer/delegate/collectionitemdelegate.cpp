@@ -50,6 +50,7 @@ const int CollectionItemDelegate::kIconSpacing = 2;
 const int CollectionItemDelegate::kIconTopSpacing = 4;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
+const int CollectionItemDelegate::kIconBackgroundMargin = 4;
 
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
@@ -151,8 +152,9 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     // get item paint geomerty
     // the method to get rect for each element is equal to paintGeomertys(option, index);
     {
-        // draw icon
+        // draw icon and background
         const QRect rIcon = iconRect(option.rect);
+        paintBackground(painter, indexOption, rIcon);
         paintIcon(painter, indexOption.icon,
                   { rIcon,
                     Qt::AlignCenter,
@@ -608,7 +610,7 @@ QRect CollectionItemDelegate::labelRect(const QRect &paintRect, const QRect &use
 {
     QRect lable = paintRect;
     // label rect is under the icon.
-    lable.setTop(usedRect.bottom());
+    lable.setTop(usedRect.bottom() + kIconBackgroundMargin);
 
     // minus text padding at left and right.
     lable.setWidth(paintRect.width() - 2 * kTextPadding);
@@ -864,6 +866,29 @@ QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rec
         });
     }
     return rect;
+}
+
+void CollectionItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QRect &iconRect) const
+{
+    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    if (!isSelected)
+        return;
+
+    QColor backgroundColor(0, 0, 0, qRound(255 * 0.15));
+    QColor borderColor(255, 255, 255, qRound(255 * 0.1));
+    QRect backgroundRect = iconRect.adjusted(-kIconBackgroundMargin, -kIconBackgroundMargin, kIconBackgroundMargin, kIconBackgroundMargin);
+
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QPainterPath path;
+    path.addRoundedRect(backgroundRect, kIconRectRadius, kIconRectRadius);
+    painter->fillPath(path, backgroundColor);
+
+    painter->setPen(borderColor);
+    painter->drawPath(path);
+
+    painter->restore();
 }
 
 void CollectionItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const
