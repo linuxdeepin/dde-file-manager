@@ -18,10 +18,10 @@
 #include <QStyleOptionButton>
 #include <QMouseEvent>
 #include <QStylePainter>
-#include <QActionGroup>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 
@@ -31,14 +31,6 @@ static constexpr int kSortToolArrowButtonSize { 12 };
 static constexpr int kSortToolHMargin { 6 };
 static constexpr int kSortToolVMargin { 9 };
 static constexpr char kItemRole[] = "item-role";
-
-// Group by constants
-static constexpr char kGroupToolNone[] = "group-by-none";
-static constexpr char kGroupToolName[] = "group-by-name";
-static constexpr char kGroupToolTimeModified[] = "group-by-time-modified";
-static constexpr char kGroupToolTimeCreated[] = "group-by-time-created";
-static constexpr char kGroupToolSize[] = "group-by-size";
-static constexpr char kGroupToolType[] = "group-by-type";
 
 namespace GroupStrategty {
 inline constexpr char kNoGroup[] { "NoGroupStrategy" };
@@ -51,15 +43,27 @@ inline constexpr char kCustomPath[] { "CustomPath" };
 inline constexpr char kCustomTime[] { "CustomTime" };
 }   // namespace GroupStrategty
 
+// TODO: This is workaround
+static QString roleToGroupingStrategy(const DFMGLOBAL_NAMESPACE::ItemRoles &role)
+{
+    static const QHash<DFMGLOBAL_NAMESPACE::ItemRoles, QString> kMapping = {
+        { kItemFileDisplayNameRole, GroupStrategty::kName },
+        { kItemFileLastModifiedRole, GroupStrategty::kModifiedTime },
+        { kItemFileCreatedRole, GroupStrategty::kCreatedTime },
+        { kItemFileSizeRole, GroupStrategty::kSize },
+        { kItemFileMimeTypeRole, GroupStrategty::kType },
+        { kItemFileOriginalPath, GroupStrategty::kCustomPath },
+        { kItemFilePathRole, GroupStrategty::kCustomPath },
+        { kItemFileDeletionDate, GroupStrategty::kCustomTime },
+        { kItemFileLastReadRole, GroupStrategty::kCustomTime }
+    };
+
+    return kMapping.value(role, "NoGroupStrategy");
+}
+
 SortByButtonPrivate::SortByButtonPrivate(SortByButton *parent)
     : QObject(parent),
-      q(parent),
-      objNamesToGroupStrategies { { kGroupToolNone, GroupStrategty::kNoGroup },
-                                  { kGroupToolName, GroupStrategty::kName },
-                                  { kGroupToolTimeModified, GroupStrategty::kModifiedTime },
-                                  { kGroupToolTimeCreated, GroupStrategty::kCreatedTime },
-                                  { kGroupToolSize, GroupStrategty::kSize },
-                                  { kGroupToolType, GroupStrategty::kType } }
+      q(parent)
 {
     initializeUi();
     initConnect();
@@ -81,10 +85,14 @@ void SortByButtonPrivate::setItemSortRoles()
 void SortByButtonPrivate::setItemGroupRoles()
 {
     const QString groupStrategy = TitleBarEventCaller::sendCurrentGroupRoleStrategy(q);
-    const QString objName = findObjNameByGroupStrategy(groupStrategy);
-    auto action = groupMenu->findChild<QAction *>(objName);
-    if (action) {
-        action->setChecked(true);
+    auto actList = groupMenu->actions();
+    for (auto act : actList) {
+        auto role = act->property(kItemRole).value<DFMGLOBAL_NAMESPACE::ItemRoles>();
+        const auto &strategy = roleToGroupingStrategy(role);
+        if (strategy == groupStrategy) {
+            act->setChecked(true);
+            break;
+        }
     }
 }
 
@@ -93,30 +101,24 @@ void SortByButtonPrivate::sort()
     TitleBarEventCaller::sendSetSort(q, TitleBarEventCaller::sendCurrentSortRole(q));
 }
 
-QString SortByButtonPrivate::findObjNameByGroupStrategy(const QString &strategy)
-{
-    for (auto it = objNamesToGroupStrategies.constBegin(); it != objNamesToGroupStrategies.constEnd(); ++it) {
-        if (it.value() == strategy) {
-            return it.key();
-        }
-    }
-    return kGroupToolNone;
-}
-
-QString SortByButtonPrivate::findStrategyByObjName(const QString &objName)
-{
-    return objNamesToGroupStrategies.value(objName, kGroupToolNone);
-}
-
 SortByButtonPrivate::~SortByButtonPrivate() = default;
 
 void SortByButtonPrivate::setupMenu()
 {
     menu->clear();
+    groupMenu->clear();
+
+    auto noneAct = groupMenu->addAction(QObject::tr("None"));
+    noneAct->setProperty(kItemRole, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUnknowRole);
+
     auto roleList = TitleBarEventCaller::sendColumnRoles(q);
     for (const auto &role : std::as_const(roleList)) {
         const auto &name = TitleBarEventCaller::sendColumnDisplyName(q, role);
         auto act = menu->addAction(name);
+        act->setCheckable(true);
+        act->setProperty(kItemRole, role);
+
+        act = groupMenu->addAction(name);
         act->setCheckable(true);
         act->setProperty(kItemRole, role);
     }
@@ -131,37 +133,6 @@ void SortByButtonPrivate::initializeUi()
     q->setFixedSize(kSortToolButtonWidth, kToolButtonSize);   // 设置固定大小
     menu = new QMenu(q);
     groupMenu = new QMenu(q);
-    auto groupActionGroup = new QActionGroup(q);
-
-    auto action = groupMenu->addAction(QObject::tr("None"));
-    action->setObjectName(kGroupToolNone);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
-
-    action = groupMenu->addAction(QObject::tr("Name"));
-    action->setObjectName(kGroupToolName);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
-
-    action = groupMenu->addAction(QObject::tr("Time modified"));
-    action->setObjectName(kGroupToolTimeModified);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
-
-    action = groupMenu->addAction(QObject::tr("Time created"));
-    action->setObjectName(kGroupToolTimeCreated);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
-
-    action = groupMenu->addAction(QObject::tr("Size"));
-    action->setObjectName(kGroupToolSize);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
-
-    action = groupMenu->addAction(QObject::tr("Type"));
-    action->setObjectName(kGroupToolType);
-    action->setCheckable(true);
-    groupActionGroup->addAction(action);
 }
 
 void SortByButtonPrivate::initConnect()
@@ -176,8 +147,10 @@ void SortByButtonPrivate::menuTriggered(QAction *action)
         return;
 
     auto property = action->property(kItemRole);
-    if (!property.isValid())
+    if (!property.isValid()) {
+        fmWarning() << "Invalid action property in menuTriggered";
         return;
+    }
 
     auto role = property.value<DFMGLOBAL_NAMESPACE::ItemRoles>();
     TitleBarEventCaller::sendSetSort(q, role);
@@ -188,7 +161,19 @@ void SortByButtonPrivate::groupMenuTriggered(QAction *action)
     if (!action)
         return;
 
-    const QString strategy = findStrategyByObjName(action->objectName());
+    auto property = action->property(kItemRole);
+    if (!property.isValid()) {
+        fmWarning() << "Invalid action property in groupMenuTriggered";
+        return;
+    }
+
+    auto role = property.value<DFMGLOBAL_NAMESPACE::ItemRoles>();
+    const auto &strategy = roleToGroupingStrategy(role);
+    if (strategy.isEmpty()) {
+        fmWarning() << "No strategy found for role:" << static_cast<int>(role);
+        return;
+    }
+
     TitleBarEventCaller::sendSetGroupStrategy(q, strategy);
 }
 
