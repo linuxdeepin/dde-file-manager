@@ -29,6 +29,7 @@ public:
     void setDataProvider(CollectionDataProvider *provider);
 
     void copyFiles(const CollectionView *view);
+    void copyFilePath(const CollectionView *view);
     void cutFiles(const CollectionView *view);
     void pasteFiles(const CollectionView *view, const QString &targetColletion);
     void openFiles(const CollectionView *view);

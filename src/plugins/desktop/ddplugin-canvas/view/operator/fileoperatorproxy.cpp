@@ -215,6 +215,12 @@ void FileOperatorProxy::copyFiles(const CanvasView *view)
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
+void FileOperatorProxy::copyFilePath(const CanvasView *view)
+{
+    auto urls = view->selectionModel()->selectedUrls();
+    dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, urls);
+}
+
 void FileOperatorProxy::cutFiles(const CanvasView *view)
 {
     auto urls = view->selectionModel()->selectedUrls();

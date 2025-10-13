@@ -23,6 +23,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-io/dfmio_utils.h>
@@ -1714,5 +1715,33 @@ bool FileOperationsEventReceiver::handleIsSubFile(const QUrl &parent, const QUrl
         return false;
 
     return sub.path().startsWith(parent.path());
+}
+
+void FileOperationsEventReceiver::handleCopyFilePath(const QList<QUrl> &urlList)
+{
+    if (urlList.isEmpty())
+        return;
+
+    QStringList pathList;
+    if (ProtocolUtils::isLocalFile(urlList.first())) {
+        std::transform(urlList.cbegin(), urlList.cend(), std::back_inserter(pathList),
+                       [](const auto &url) {
+                           return url.path();
+                       });
+    } else {
+        for (const auto &url : std::as_const(urlList)) {
+            auto info = InfoFactory::create<FileInfo>(url);
+            if (!info)
+                continue;
+
+            pathList << info->pathOf(PathInfoType::kAbsoluteFilePath);
+        }
+    }
+
+    if (!pathList.isEmpty()) {
+        QMimeData *data = new QMimeData;
+        data->setText(pathList.join('\n'));
+        ClipBoard::instance()->setDataToClipboard(data);
+    }
 }
 }   // namespace dfmplugin_fileoperations

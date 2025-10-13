@@ -28,6 +28,7 @@ public Q_SLOTS:
 
     bool hookTitleBarAddrHandle(QUrl *url);
     bool hookAllowRepeatUrl(const QUrl &cur, const QUrl &pre);
+    bool hookCopyFilePath(quint64, const QList<QUrl> &urlList, const QUrl &rootUrl);
 
 private:
     bool getOriginalUri(const QUrl &in, QUrl *out);

@@ -25,6 +25,7 @@ public:
     void touchFile(const CanvasView *view, const QPoint pos, const QUrl &source);
     void touchFolder(const CanvasView *view, const QPoint pos);
     void copyFiles(const CanvasView *view);
+    void copyFilePath(const CanvasView *view);
     void cutFiles(const CanvasView *view);
     void pasteFiles(const CanvasView *view, const QPoint pos = QPoint(0, 0));
     void openFiles(const CanvasView *view);

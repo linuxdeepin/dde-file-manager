@@ -163,6 +163,9 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         } else if (key == Qt::Key_N) {
             FileOperatorProxyIns->touchFolder(view, view->d->gridAt(QCursor::pos()));
             return true;
+        } else if (key == Qt::Key_C) {
+            FileOperatorProxyIns->copyFilePath(view);
+            return true;
         }
     }
 

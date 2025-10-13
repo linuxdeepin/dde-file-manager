@@ -6,6 +6,7 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/systempathutil.h>
+#include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/dfm_global_defines.h>
 
@@ -111,6 +112,38 @@ bool SmbBrowserEventReceiver::hookAllowRepeatUrl(const QUrl &cur, const QUrl &pr
     return allowReEnterScehmes.contains(cur.scheme()) && allowReEnterScehmes.contains(pre.scheme());
 }
 
+bool SmbBrowserEventReceiver::hookCopyFilePath(quint64, const QList<QUrl> &urlList, const QUrl &rootUrl)
+{
+    static QStringList protocolScheme { Global::Scheme::kSmb,
+                                        Global::Scheme::kSFtp,
+                                        Global::Scheme::kFtp,
+                                        Global::Scheme::kDav,
+                                        Global::Scheme::kDavs,
+                                        Global::Scheme::kNfs };
+
+    QStringList pathList;
+    if (protocolScheme.contains(rootUrl.scheme()) || UniversalUtils::isNetworkRoot(rootUrl)) {
+        std::transform(urlList.cbegin(), urlList.cend(), std::back_inserter(pathList),
+                       [](const QUrl &url) {
+                           return UrlRoute::urlToLocalPath(url.toString());
+                       });
+    } else if (getOriginalUri(rootUrl, nullptr)) {
+        for (const auto &url : std::as_const(urlList)) {
+            QUrl orgUrl;
+            if (getOriginalUri(url, &orgUrl))
+                pathList << orgUrl.toString();
+        }
+    }
+
+    if (pathList.isEmpty())
+        return false;
+
+    QMimeData *data = new QMimeData;
+    data->setText(pathList.join('\n'));
+    ClipBoard::instance()->setDataToClipboard(data);
+    return true;
+}
+
 bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
 {
     QString path = in.path();
@@ -132,8 +165,8 @@ bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
             QString subPath = "/" + share;
             subPath += path.remove(kCifsPrefix);
             out->setPath(subPath);
-            return true;
         }
+        return true;
     }
 
     // is gvfs: since mtp/gphoto... scheme are not supported path lookup, only handle ftp/sftp/smb
@@ -141,8 +174,8 @@ bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
     if (path.contains(QRegularExpression(R"(((^/run/user/[0-9]*/gvfs)|(^/root/.gvfs))/(ftp|sftp|smb|dav|davs|nfs))"))) {
         SyncFileInfo f(in);
         QUrl u = f.urlOf(dfmbase::FileInfo::FileUrlInfoType::kOriginalUrl);
-        if (u.isValid() && out) {
-            *out = u;
+        if (u.isValid()) {
+            if (out) *out = u;
             return true;
         } else {
             fmWarning() << "Failed to retrieve valid original URL via GIO for path:" << path;
@@ -153,4 +186,4 @@ bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
 }
 
 SmbBrowserEventReceiver::SmbBrowserEventReceiver(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent) { }

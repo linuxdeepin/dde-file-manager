@@ -305,6 +305,9 @@ void FileOperations::initEventHandle()
     dpfSignalDispatcher->subscribe(GlobalEventType::kRedo,
                                    FileOperationsEventReceiver::instance(),
                                    &FileOperationsEventReceiver::handleRecoveryOperationRedoRecovery);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFilePath,
+                                   FileOperationsEventReceiver::instance(),
+                                   &FileOperationsEventReceiver::handleCopyFilePath);
 
     dpfSlotChannel->connect("dfmplugin_fileoperations",
                             "slot_Operation_FilesPreview",
