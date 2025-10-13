@@ -238,6 +238,9 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
         case Qt::Key_I:
             fmDebug() << "Ctrl+Shift+I pressed - reverse selection";
             return reverseSelect();
+        case Qt::Key_C:
+            copyFilePath();
+            return true;
         }
         break;
     case Qt::AltModifier:
@@ -309,6 +312,22 @@ void ShortcutHelper::copyFiles()
         return;
     }
     FileOperatorHelperIns->copyFiles(view);
+}
+
+void ShortcutHelper::copyFilePath()
+{
+    const QList<QUrl> &selectUrls = view->selectedUrlList();
+    if (selectUrls.isEmpty()) {
+        fmDebug() << "Copy file path operation canceled - no files selected";
+        return;
+    }
+
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_CopyFilePath", windowId, selectUrls, view->rootUrl())) {
+        fmDebug() << "Copy file path handled by hook";
+        return;
+    }
+    FileOperatorHelperIns->copyFilePath(view);
 }
 
 void ShortcutHelper::cutFiles()

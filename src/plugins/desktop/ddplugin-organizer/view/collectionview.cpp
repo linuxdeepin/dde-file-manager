@@ -684,6 +684,11 @@ void CollectionViewPrivate::copyFiles()
     FileOperatorIns->copyFiles(q);
 }
 
+void CollectionViewPrivate::copyFilePath()
+{
+    FileOperatorIns->copyFilePath(q);
+}
+
 void CollectionViewPrivate::cutFiles()
 {
     FileOperatorIns->cutFiles(q);
@@ -2028,6 +2033,9 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     case (Qt::ControlModifier | Qt::ShiftModifier): {
         if (event->key() == Qt::Key_I) {
             d->toggleSelect();
+            return;
+        } else if (event->key() == Qt::Key_C) {
+            d->copyFilePath();
             return;
         }
     } break;

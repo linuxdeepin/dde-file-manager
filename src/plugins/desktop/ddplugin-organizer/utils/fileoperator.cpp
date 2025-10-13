@@ -141,6 +141,12 @@ void FileOperator::copyFiles(const CollectionView *view)
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
+void FileOperator::copyFilePath(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, urls);
+}
+
 void FileOperator::cutFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);

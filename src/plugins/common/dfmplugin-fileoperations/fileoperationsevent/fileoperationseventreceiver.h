@@ -210,6 +210,7 @@ public slots:
                                      const QList<QUrl> &selectUrls,
                                      const QList<QUrl> &dirUrls);
     bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
+    void handleCopyFilePath(const QList<QUrl> &urlList);
 
 private:
     enum class RenameTypes {

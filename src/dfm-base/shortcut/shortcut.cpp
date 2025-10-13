@@ -31,6 +31,7 @@ Shortcut::Shortcut(QObject *parent)
                       << ShortcutItem(tr("Cut"), "Ctrl + X ")
                       << ShortcutItem(tr("Paste"), "Ctrl + V ")
                       << ShortcutItem(tr("Rename"), "F2 ")
+                      << ShortcutItem(tr("Copy file path"), "Ctrl + Shift + C ")
                       << ShortcutItem(tr("Open in terminal"), "Shift + T ")
                       << ShortcutItem(tr("Undo"), "Ctrl + Z ")
                       << ShortcutItem(tr("Redo"), "Ctrl + Y ");

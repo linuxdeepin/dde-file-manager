@@ -29,6 +29,7 @@ public:
 protected slots:
     void acitonTriggered();
     void copyFiles();
+    void copyFilePath();
     void cutFiles();
     void pasteFiles();
     void undoFiles();

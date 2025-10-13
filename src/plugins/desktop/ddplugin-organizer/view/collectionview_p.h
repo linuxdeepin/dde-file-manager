@@ -86,6 +86,7 @@ public:
     void clearClipBoard();
     void selectCollection();
     void copyFiles();
+    void copyFilePath();
     void cutFiles();
     void pasteFiles();
     void undoFiles();
