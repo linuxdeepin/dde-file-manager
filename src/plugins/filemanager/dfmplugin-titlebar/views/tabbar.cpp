@@ -850,8 +850,11 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
 
 void TabBar::mousePressEvent(QMouseEvent *e)
 {
-    if (e->button() == Qt::MiddleButton)
-        Q_EMIT tabCloseRequested(tabAt(e->pos()));
+    if (e->button() == Qt::MiddleButton) {
+        int index = tabAt(e->pos());
+        if (-1 != index)
+            Q_EMIT tabCloseRequested(index);
+    }
 
     DTabBar::mousePressEvent(e);
 }
