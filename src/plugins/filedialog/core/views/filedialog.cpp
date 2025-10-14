@@ -1152,7 +1152,7 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
 
 void FileDialog::initializeUi()
 {
-    setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
+    setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog | Qt::WindowStaysOnTopHint);
 
     // init status bar
     d->statusBar = new FileDialogStatusBar(this);
