@@ -571,7 +571,7 @@ void RootInfo::handleGetSourceData(const QString &currentToken)
     QList<SortInfoPointer> newDatas;
     bool isEmpty = false;
     {
-        QWriteLocker wlk(&childrenLock);
+        QReadLocker wlk(&childrenLock);
         newDatas = sourceDataList;
         isEmpty = sourceDataList.isEmpty();
     }
@@ -763,18 +763,24 @@ SortInfoPointer RootInfo::updateChild(const QUrl &url)
 
     auto realUrl = info->urlOf(UrlInfoType::kUrl);
 
-    QWriteLocker lk(&childrenLock);
-    if (!childrenUrlList.contains(realUrl)) {
-        fmDebug() << "Child not found in list for update:" << realUrl.toString();
-        return nullptr;
+    {
+        QReadLocker lk(&childrenLock);
+        if (!childrenUrlList.contains(realUrl)) {
+            fmDebug() << "Child not found in list for update:" << realUrl.toString();
+            return nullptr;
+        }
     }
+
     sort = sortFileInfo(info);
     if (sort.isNull()) {
         fmWarning() << "Failed to create sort info for update:" << url.toString();
         return nullptr;
     }
-    sourceDataList.replace(childrenUrlList.indexOf(realUrl), sort);
 
+    {
+        QWriteLocker lk(&childrenLock);
+        sourceDataList.replace(childrenUrlList.indexOf(realUrl), sort);
+    }
     // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
     // when the file is modified in other way.
     if (UniversalUtils::urlEquals(hiddenFileUrl, url)) {
