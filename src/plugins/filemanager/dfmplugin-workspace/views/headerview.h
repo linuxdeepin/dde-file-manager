@@ -29,6 +29,7 @@ public:
 
 public slots:
     void onActionClicked(const int column, QAction *action);
+    void syncOffset(int value);
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
