@@ -97,6 +97,7 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
         return;
     }
 
+    itemInfo->updateAttributes();
     q->beginInsertRows(q->rootIndex(), row, row);
     {
         QWriteLocker lk(&lock);
