@@ -2348,10 +2348,23 @@ void FileView::initializeScrollBarWatcher()
         if (d->headerWidget && d->headerWidget->isVisible()) {
             auto headerLayout = d->headerWidget->layout();
             auto margins = headerLayout->contentsMargins();
-            if (value > 0 && margins.bottom() != 0)
+            if (value > 0 && margins.bottom() != 0) {
                 headerLayout->setContentsMargins(0, 0, 0, 0);
-            else if (value == 0 && margins.bottom() == 0)
+                QTimer::singleShot(0, this, [this]() {
+                    if (!d->headerView)
+                        return;
+                    int hVal = horizontalScrollBar() ? horizontalScrollBar()->value() : 0;
+                    d->headerView->syncOffset(hVal);
+                });
+            } else if (value == 0 && margins.bottom() == 0) {
                 headerLayout->setContentsMargins(0, 0, 0, 10);
+                QTimer::singleShot(0, this, [this]() {
+                    if (!d->headerView)
+                        return;
+                    int hVal = horizontalScrollBar() ? horizontalScrollBar()->value() : 0;
+                    d->headerView->syncOffset(hVal);
+                });
+            }
         }
     });
 }

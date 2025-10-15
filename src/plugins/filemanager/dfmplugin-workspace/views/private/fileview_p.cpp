@@ -168,7 +168,7 @@ void FileViewPrivate::initListModeView()
         QObject::connect(headerView, &HeaderView::sectionHandleDoubleClicked, q, &FileView::onSectionHandleDoubleClicked);
         QObject::connect(headerView, &HeaderView::hiddenSectionChanged, q, &FileView::onHeaderHiddenChanged);
         QObject::connect(q->horizontalScrollBar(), &QScrollBar::valueChanged, headerView, [=](int value) {
-            headerView->move(-value, headerView->y());
+            headerView->syncOffset(value);
         });
 
         fmDebug() << "Header view created and configured for list mode";
