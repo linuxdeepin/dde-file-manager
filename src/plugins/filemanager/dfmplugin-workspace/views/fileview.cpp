@@ -79,7 +79,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDragDropOverwriteMode(true);
     setDragEnabled(true);
     setAutoScroll(true);
-    setAutoScrollMargin(100);
+    setAutoScrollMargin(32);
 //  TODO (search): perf
 //  setLayoutMode(QListView::Batched);
 #ifdef QT_SCROLL_WHEEL_ANI
