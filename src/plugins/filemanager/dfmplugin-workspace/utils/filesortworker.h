@@ -82,6 +82,7 @@ public:
                                   const QVariantHash &expandStates);
 
     int childrenCount();
+    int getFileItemCount();
     QVariant groupHeaderData(const int index, const int role);
     FileItemDataPointer childData(const int index);
     FileItemDataPointer childData(const QUrl &url);

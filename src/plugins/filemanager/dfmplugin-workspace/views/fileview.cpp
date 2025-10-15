@@ -2389,8 +2389,10 @@ void FileView::updateStatusBar()
     int count = selectedIndexCount();
 
     if (count == 0) {
-        d->statusBar->itemCounted(model()->rowCount(rootIndex()));
-        fmDebug() << "Status bar updated: no selection, total items:" << model()->rowCount(rootIndex()) << "for URL:" << rootUrl().toString();
+        // Use file-only count for status bar (excludes group headers in grouped mode)
+        int totalCount = model()->getFileOnlyCount();
+        d->statusBar->itemCounted(totalCount);
+        fmDebug() << "Status bar updated: no selection, total items:" << totalCount << "for URL:" << rootUrl().toString();
         return;
     }
 
