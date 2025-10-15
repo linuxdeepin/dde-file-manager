@@ -168,6 +168,17 @@ int FileSortWorker::childrenCount()
     }
 }
 
+int FileSortWorker::getFileItemCount()
+{
+    if (!isCurrentGroupingEnabled) {
+        // Traditional mode: use original logic (same as childrenCount)
+        return childrenCountInternal();
+    } else {
+        // Grouping mode: return only file items count (excludes group headers)
+        return groupedModelData.getFileItemCount();
+    }
+}
+
 QVariant FileSortWorker::groupHeaderData(const int index, const int role)
 {
     // Grouping mode: use flattened data mapping

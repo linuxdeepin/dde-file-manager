@@ -97,6 +97,9 @@ public:
 
     QStringList getKeyWords();
 
+    // Get file-only count for status bar (excludes group headers)
+    int getFileOnlyCount() const;
+
     // 设置目录加载策略
     void setDirectoryLoadStrategy(DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy directoryLoadStrategy() const;

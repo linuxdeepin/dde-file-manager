@@ -893,6 +893,15 @@ QStringList FileViewModel::getKeyWords()
     return {};
 }
 
+int FileViewModel::getFileOnlyCount() const
+{
+    if (!filterSortWorker) {
+        return 0;
+    }
+
+    return filterSortWorker->getFileItemCount();
+}
+
 void FileViewModel::setDirectoryLoadStrategy(DirectoryLoadStrategy strategy)
 {
     fmDebug() << "Setting directory load strategy:" << static_cast<int>(strategy) << "for URL:" << dirRootUrl.toString();
