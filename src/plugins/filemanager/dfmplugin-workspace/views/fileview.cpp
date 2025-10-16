@@ -1033,13 +1033,17 @@ QRect FileView::calcVisualRect(int widgetWidth, int index) const
     rect.setSize(itemSize);
 
     // 计算水平居中偏移，仅当行数大于1时才应用
-    int totalItems = model()->rowCount();
-    int rowCount = (totalItems + columnCount - 1) / columnCount;   // 向上取整
-    if (rowCount > 1) {   // 计算可用宽度（减去左右边距）
-        int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
-        int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * 2 * iconViewSpacing;
-        int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
-        rect.moveLeft(rect.left() + horizontalOffset);
+    // In group mode, don't apply horizontal centering to keep group headers left-aligned
+    if (!isGroupedView()) {
+        int totalItems = model()->rowCount();
+        int rowCount = (totalItems + columnCount - 1) / columnCount;   // 向上取整
+        if (rowCount > 1) {
+            // 计算可用宽度（减去左右边距）
+            int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
+            int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * 2 * iconViewSpacing;
+            int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
+            rect.moveLeft(rect.left() + horizontalOffset);
+        }
     }
 
     rect.moveTop(rect.top() - verticalOffset());
