@@ -123,11 +123,8 @@ void TaskWidget::onButtonClicked()
         infoTimer.stop();
     if (btnPause)
         btnPause->setEnabled(true);
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     isShowError.storeRelaxed(false);
-#else
-    isShowError.store(false);
-#endif
+
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
@@ -148,11 +145,7 @@ void TaskWidget::parentClose()
  */
 void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     isShowError.storeRelaxed(true);
-#else
-    isShowError.store(true);
-#endif
 
     AbstractJobHandler::JobErrorType errorType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
     QString sourceMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
@@ -160,10 +153,18 @@ void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
     AbstractJobHandler::SupportActions actions = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kActionsKey).value<AbstractJobHandler::SupportActions>();
     lbSrcPath->setText(sourceMsg);
     lbDstPath->setText(targetMsg);
+
+    if (errorType == AbstractJobHandler::JobErrorType::kFileMoveToTrashNoSpace) {
+        QUrl source = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).value<QUrl>();
+        onShowPermanentlyDelete(source, actions);
+        return;
+    }
+
     if (errorType == AbstractJobHandler::JobErrorType::kFileExistsError || errorType == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
         QUrl source = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).value<QUrl>();
         QUrl target = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey).value<QUrl>();
-        return onShowConflictInfo(source, target, actions);
+        onShowConflictInfo(source, target, actions);
+        return;
     }
     QString errorMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
     lbErrorMsg->setText(errorMsg);
@@ -241,6 +242,41 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
 
     if (btnPause)
         btnPause->setEnabled(false);
+}
+
+void TaskWidget::onShowPermanentlyDelete(const QUrl source, const AbstractJobHandler::SupportActions action)
+{
+    if (!widButton) {
+        widButton = createBtnWidget();
+        mainLayout->addWidget(widButton);
+    }
+
+    if (!widConfict) {
+        widConfict = createConflictWidget();
+        rVLayout->addWidget(widConfict);
+    }
+
+    adjustSize();
+
+    // show messages
+    lbSrcPath->setText(QString(tr("Cannot move \"%1\" to the Trash. Delete it immediately?")).arg(source.fileName()));
+    lbErrorMsg->setText(tr("This action cannot be undone. Please proceed with caution!"));
+    lbErrorMsg->show();
+
+    // show buttons
+    showBtnByAction(action);
+
+    // show file info
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(source);
+    showFileInfo(info, true);
+    lbSrcTitle->setText(source.fileName());
+
+    widConfict->show();
+    widButton->show();
+    showConflictButtons();
+    if (btnPause)
+        btnPause->setEnabled(false);
+    chkboxNotAskAgain->setVisible(false);
 }
 /*!
  * \brief TaskWidget::onHandlerTaskStateChange 处理和显示当前拷贝任务的状态变化
@@ -420,7 +456,7 @@ void TaskWidget::initUI()
 {
     mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
-    setFixedWidth(685);
+    setFixedWidth(700);
 
     progress = new DWaterProgress(this);
     progress->setFixedSize(64, 64);
@@ -585,18 +621,24 @@ QWidget *TaskWidget::createBtnWidget()
 
     QVariant variantCoexit;
     variantCoexit.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kCoexistAction);
-    btnCoexist = new QPushButton(TaskWidget::tr("Keep both", "button"));
+    btnCoexist = new DPushButton(TaskWidget::tr("Keep both", "button"));
     btnCoexist->setProperty(kBtnPropertyActionName, variantCoexit);
 
-    btnSkip = new QPushButton(TaskWidget::tr("Skip", "button"));
+    btnSkip = new DPushButton(TaskWidget::tr("Skip", "button"));
     QVariant variantSkip;
     variantSkip.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kSkipAction);
     btnSkip->setProperty(kBtnPropertyActionName, variantSkip);
 
-    btnReplace = new QPushButton(TaskWidget::tr("Replace", "button"));
+    btnReplace = new DPushButton(TaskWidget::tr("Replace", "button"));
     QVariant variantReplace;
     variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
     btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
+
+    btnDelete = new DWarningButton();
+    btnDelete->setText(TaskWidget::tr("Permanently delete", "button"));
+    QVariant varianDelete;
+    varianDelete.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPermanentlyDelete);
+    btnDelete->setProperty(kBtnPropertyActionName, varianDelete);
 
     btnSkip->setFocusPolicy(Qt::NoFocus);
     btnReplace->setFocusPolicy(Qt::NoFocus);
@@ -607,11 +649,13 @@ QWidget *TaskWidget::createBtnWidget()
     btnSkip->setFixedWidth(80);
     btnReplace->setFixedWidth(80);
     btnCoexist->setFixedWidth(160);
+    btnReplace->setFixedWidth(160);
 
     buttonLayout->addStretch(1);
     buttonLayout->addWidget(btnSkip);
     buttonLayout->addWidget(btnReplace);
     buttonLayout->addWidget(btnCoexist);
+    buttonLayout->addWidget(btnDelete);
 
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -633,6 +677,7 @@ QWidget *TaskWidget::createBtnWidget()
     connect(btnSkip, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnReplace, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnCoexist, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
+    connect(btnDelete, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
 
     return buttonWidget;
 }
@@ -644,6 +689,8 @@ void TaskWidget::showBtnByAction(const AbstractJobHandler::SupportActions &actio
 {
     btnSkip->setHidden(!actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction));
     btnCoexist->setHidden(!actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction));
+    btnDelete->setHidden(!actions.testFlag(AbstractJobHandler::SupportAction::kPermanentlyDelete));
+
     QString btnTxt;
     QVariant variantReplace;
     if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {

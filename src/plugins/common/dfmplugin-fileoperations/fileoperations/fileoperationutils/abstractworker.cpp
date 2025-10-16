@@ -157,6 +157,8 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
         retry = workData->signalThread ? false : true;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
         currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPermanentlyDelete)) {
+        currentAction = AbstractJobHandler::SupportAction::kPermanentlyDelete;
     } else {
         currentAction = AbstractJobHandler::SupportAction::kNoAction;
     }
