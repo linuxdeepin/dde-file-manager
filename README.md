@@ -9,44 +9,52 @@ Deepin File Manager is a file management tool independently developed by Deepin 
 _The **master** branch is current development branch, build dependencies may change without updating README.md. Please refer to `./debian/control` for an accurate list of build dependencies_
 
 - cmake,
+- doxygen,
 - debhelper (>=9),
 - pkg-config,
-- dh-systemd,
-- qtbase5-dev,
-- qtbase5-private-dev,
-- qtmultimedia5-dev,
 - libffmpegthumbnailer-dev,
-- libqt5svg5-dev,
-- libpolkit-agent-1-dev, 
-- libpolkit-qt5-1-dev,
-- libdtkwidget-dev,
-- libdtkgui-dev,
-- libdtkcore-dev,
-- libdtkcore5-bin,
-- qttools5-dev-tools,
-- dde-dock-dev(>=4.8.4.1),
-- libdframeworkdbus-dev,
+- libpolkit-agent-1-dev,
+- dde-tray-loader-dev,
 - libtag1-dev,
 - libdmr-dev,
 - libicu-dev,
+- libxcb-ewmh-dev,
 - libdeepin-pdfium-dev,
-- libqt5xdg-dev,
-- libgio-qt-dev,
-- libdfm-io-dev,
-- libdfm-mount-dev,
-- libdfm-burn-dev,
 - libssl-dev,
 - libgtest-dev,
 - libgmock-dev,
-- libgsettings-qt-dev,
 - liblucene++-dev,
 - libdocparser-dev,
 - libboost-filesystem-dev,
 - libsecret-1-dev,
-- libkf5codecs-dev,
 - libpoppler-cpp-dev,
 - libcryptsetup-dev,
-- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+- libpcre2-dev,
+- libdde-shell-dev (>= 0.0.10),
+- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
+- qt6-base-dev,
+- qt6-base-private-dev,
+- qt6-svg-dev,
+- qt6-multimedia-dev,
+- qt6-tools-dev,
+- qt6-tools-dev-tools,
+- qt6-declarative-dev,
+- qt6-5compat-dev,
+- libdtk6widget-dev,
+- libdtk6gui-dev,
+- libdtk6core-dev,
+- libdtk6core-bin,
+- libdtk6declarative-dev,
+- libdfm6-io-dev,
+- libdfm6-mount-dev,
+- libdfm6-burn-dev,
+- libdfm6-search-dev,
+- libpolkit-qt6-1-dev,
+- libxcb-xfixes0-dev (>= 1.10~),
+- libopenjp2-7-dev,
+- liblcms2-dev,
+- libdeepin-service-framework-dev,
+- libheif-dev
 
 ## Installation
 
@@ -76,6 +84,14 @@ $ sudo cmake --build build --target install
 ```
 
 The executable binary file could be found at `/usr/bin/dde-file-manager`
+
+### Build Debian package
+
+A debian folder is provided to build the package under the deepin linux desktop distribution. To build the package, use the following command:
+
+```shell
+$ dpkg-buildpackage -uc -us -nc -b # build binary package(s)
+```
 
 ## Usage
 
