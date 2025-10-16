@@ -12,6 +12,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QPropertyAnimation>
+#include <QObject>
 
 using namespace dfmplugin_detailspace;
 using namespace GlobalDConfDefines::ConfigPath;
@@ -80,10 +81,11 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
         if (animEnable && notRepeatAni) {
             // Update workspace width before animation
             updateWorkspaceWidth(windowId, widget, true);
-            // Set initial width to 0 for animation
-            widget->setFixedWidth(0);
             // Start show animation
             animateDetailView(widget, true);
+        } else {
+            // Ensure width state is updated when animation is skipped
+            widget->handleAnimationFinished(true);
         }
 
         // Make widget visible
@@ -99,8 +101,9 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
             updateWorkspaceWidth(windowId, widget, false);
             animateDetailView(widget, false);
         } else {
-            // Just hide widget if animations disabled
-            widget->setVisible(false);
+            // Store current width and hide instantly when animations are disabled
+            widget->prepareForAnimation(false);
+            widget->handleAnimationFinished(false);
         }
     }
 }
@@ -141,6 +144,8 @@ QMutex &DetailSpaceHelper::mutex()
 
 void DetailSpaceHelper::animateDetailView(DetailSpaceWidget *widget, bool show)
 {
+    widget->prepareForAnimation(show);
+
     const int duration = getAnimationDuration();
     const auto curve = getAnimationCurve();
     QPropertyAnimation *ani = new QPropertyAnimation(widget, "maximumWidth");
@@ -148,6 +153,10 @@ void DetailSpaceHelper::animateDetailView(DetailSpaceWidget *widget, bool show)
     ani->setEasingCurve(curve);
     ani->setStartValue(show ? 0 : widget->width());
     ani->setEndValue(show ? widget->detailWidth() : 0);
+
+    QObject::connect(ani, &QPropertyAnimation::finished, widget, [widget, show]() {
+        widget->handleAnimationFinished(show);
+    });
 
     ani->start(QAbstractAnimation::DeleteWhenStopped);
 }
