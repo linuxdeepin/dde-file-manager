@@ -512,6 +512,8 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         devId = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err) {
             if (!ok) {
+                if (err.code == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+                    return;
                 fmInfo() << "unmount protocol device failed: " << devId << err.message << err.code;
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
