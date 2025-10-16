@@ -107,14 +107,14 @@ TEST_F(DetailSpaceWidgetTest, Constructor_DefaultConstruction_ObjectCreatedSucce
  */
 TEST_F(DetailSpaceWidgetTest, InitUiForSizeMode_Called_SetsCorrectWidth)
 {
-    int detailWidth = 290;
+    int expectedWidth = 300;
     bool setFixedWidthCalled = false;
     int receivedWidth = 0;
 
-    // Mock detailWidth method
-    stub.set_lamda(ADDR(DetailSpaceWidget, detailWidth), [detailWidth](DetailSpaceWidget *) {
+    // Mock clampWidth to provide a deterministic preferred width
+    stub.set_lamda(ADDR(DetailSpaceWidget, clampWidth), [expectedWidth](DetailSpaceWidget *, int) {
         __DBG_STUB_INVOKE__
-        return detailWidth;
+        return expectedWidth;
     });
 
     // Mock setFixedWidth method
@@ -128,7 +128,7 @@ TEST_F(DetailSpaceWidgetTest, InitUiForSizeMode_Called_SetsCorrectWidth)
     widget->initUiForSizeMode();
 
     EXPECT_TRUE(setFixedWidthCalled);
-    EXPECT_EQ(receivedWidth, detailWidth);
+    EXPECT_EQ(receivedWidth, expectedWidth);
 }
 
 /**
