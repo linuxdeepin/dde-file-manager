@@ -43,6 +43,12 @@ void BurnJobManager::startEraseDisc(const QString &dev)
     initBurnJobConnect(job);
     connect(qobject_cast<EraseJob *>(job), &EraseJob::eraseFinished, this, [job, this](bool result) {
         startAuditLogForEraseDisc(job->currentDeviceInfo(), result);
+        if (!result) {
+            DialogManagerInstance->showErrorDialog(tr("Erase failed"),
+                                                   tr("Unable to complete disc erasure. "
+                                                      "This may be due to read/write limitations or the disc media status. "
+                                                      "Please check the relevant settings and try again."));
+        }
     });
     job->start();
 }
