@@ -166,6 +166,7 @@ void TaskDialog::adjustSize(int hight)
         listHeight += h;
     }
 
+    int oldHeight = height();
     if (listHeight < qApp->primaryScreen()->availableGeometry().height() - 60) {
         taskListWidget->setFixedHeight(listHeight);
         setFixedHeight(listHeight + 60);
@@ -175,6 +176,11 @@ void TaskDialog::adjustSize(int hight)
     }
 
     layout()->setSizeConstraint(QLayout::SetNoConstraint);
+    
+    // 如果高度发生了变化，重新居中对话框以避免位置偏移
+    if (oldHeight != height()) {
+        moveYCenter();
+    }
 }
 /*!
  * \brief TaskDialog::moveYCenter 任务进度框自动调整到屏幕的中央
@@ -215,7 +221,7 @@ void TaskDialog::removeTask()
     QListWidgetItem *item = taskItems.value(jobHandler);
     taskListWidget->removeItemWidget(item);
     taskListWidget->takeItem(taskListWidget->row(item));
-    delete item;  // 显式删除动态分配的对象
+    delete item;   // 显式删除动态分配的对象
     taskItems.remove(jobHandler);
     setTitle(taskListWidget->count());
     if (taskListWidget->count() == 0) {
@@ -235,7 +241,7 @@ void TaskDialog::closeEvent(QCloseEvent *event)
         it.key()->operateTaskJob(AbstractJobHandler::SupportAction::kStopAction);
         taskListWidget->removeItemWidget(it.value());
         QListWidgetItem *item = taskListWidget->takeItem(taskListWidget->row(it.value()));
-        delete item;  // 显式删除动态分配的对象
+        delete item;   // 显式删除动态分配的对象
         it = taskItems.erase(it);
     }
     emit closed();
@@ -245,7 +251,7 @@ void TaskDialog::closeEvent(QCloseEvent *event)
 
 void TaskDialog::keyPressEvent(QKeyEvent *event)
 {
-    //handle escape key press event for emitting close event
+    // handle escape key press event for emitting close event
     if (event->key() == Qt::Key_Escape) {
         emit close();
     }
