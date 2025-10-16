@@ -37,6 +37,7 @@ protected:
     bool doMoveToTrash();
     bool isCanMoveToTrash(const QUrl &url, bool *result);
     QUrl trashTargetUrl(const QUrl &url);
+    AbstractJobHandler::SupportAction doHandleErrorNoSpace(const QUrl &url);
 
 private:
     FileInfoPointer targetFileInfo { nullptr };   // target file information

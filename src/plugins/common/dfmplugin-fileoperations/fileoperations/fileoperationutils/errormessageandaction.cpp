@@ -100,6 +100,8 @@ AbstractJobHandler::SupportActions ErrorMessageAndAction::supportActions(const A
         return support | AbstractJobHandler::SupportAction::kSkipAction;
     case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
         return support | AbstractJobHandler::SupportAction::kRetryAction;
+    case AbstractJobHandler::JobErrorType::kFileMoveToTrashNoSpace:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kPermanentlyDelete;
     default:
         break;
     }

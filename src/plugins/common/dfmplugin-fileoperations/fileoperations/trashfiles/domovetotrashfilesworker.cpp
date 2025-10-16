@@ -134,22 +134,35 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                     emit fileRenamed(urlSource, targetTash);
                 continue;
             } else {
-                // pause and emit error msg
-                auto errmsg = QString("Unknown error");
-                if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED) {
-                    errmsg = QString("The file can't be put into trash, you can use \"Shift+Del\" to delete the file completely.");
-                } else if (fileHandler.errorCode() != DFMIOErrorCode::DFM_IO_ERROR_NONE) {
-                    errmsg = fileHandler.errorString();
+                if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NO_SPACE) {
+                    action = doHandleErrorNoSpace(url);
+                    if (action == AbstractJobHandler::SupportAction::kPermanentlyDelete) {
+                        if (!fileHandler.deleteFileRecursive(urlSource)) {
+                            action = doHandleErrorAndWait(url, QUrl(),
+                                                          AbstractJobHandler::JobErrorType::kDeleteFileError, false,
+                                                          fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error"
+                                                                                                                       : fileHandler.errorString());
+                        }
+                    }
+                } else {
+                    // pause and emit error msg
+                    auto errmsg = QString("Unknown error");
+                    if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED) {
+                        errmsg = QString("The file can't be put into trash, you can use \"Shift+Del\" to delete the file completely.");
+                    } else if (fileHandler.errorCode() != DFMIOErrorCode::DFM_IO_ERROR_NONE) {
+                        errmsg = fileHandler.errorString();
+                    }
+                    action = doHandleErrorAndWait(url, QUrl(),
+                                                  AbstractJobHandler::JobErrorType::kFileMoveToTrashError, false,
+                                                  fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error"
+                                                                                                               : fileHandler.errorString());
                 }
-                action = doHandleErrorAndWait(url, QUrl(),
-                                              AbstractJobHandler::JobErrorType::kFileMoveToTrashError, false,
-                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error"
-                                                                                                           : fileHandler.errorString());
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
         if (action == AbstractJobHandler::SupportAction::kNoAction
-            || action == AbstractJobHandler::SupportAction::kSkipAction) {
+            || action == AbstractJobHandler::SupportAction::kSkipAction
+            || action == AbstractJobHandler::SupportAction::kPermanentlyDelete) {
             completeFilesCount++;
             continue;
         }
@@ -222,4 +235,21 @@ QUrl DoMoveToTrashFilesWorker::trashTargetUrl(const QUrl &url)
         return QUrl();
 
     return fileUrls.first();
+}
+
+AbstractJobHandler::SupportAction DoMoveToTrashFilesWorker::doHandleErrorNoSpace(const QUrl &url)
+{
+    fmWarning() << "File operation error - move " << url << "to trash failed, no space";
+
+    emitErrorNotify(url, {}, AbstractJobHandler::JobErrorType::kFileMoveToTrashNoSpace, false, quintptr(this));
+    pause();
+    {
+        QMutexLocker locker(&mutex);
+        waitCondition.wait(&mutex);
+    }
+
+    if (isStopped())
+        return AbstractJobHandler::SupportAction::kCancelAction;
+
+    return currentAction;
 }

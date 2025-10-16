@@ -11,12 +11,13 @@
 
 #include <DWaterProgress>
 #include <DIconButton>
+#include <DPushButton>
+#include <DWarningButton>
 
 #include <QWidget>
 #include <QLabel>
 #include <QTimer>
 
-class QPushButton;
 class QCheckBox;
 class QVBoxLayout;
 
@@ -49,6 +50,7 @@ private Q_SLOTS:
     void onButtonClicked();
     void onShowErrors(const JobInfoPointer JobInfo);
     void onShowConflictInfo(const QUrl source, const QUrl target, const AbstractJobHandler::SupportActions action);
+    void onShowPermanentlyDelete(const QUrl source, const AbstractJobHandler::SupportActions action);
     void onHandlerTaskStateChange(const JobInfoPointer JobInfo);
     void onShowTaskInfo(const JobInfoPointer JobInfo);
     void onShowTaskProccess(const JobInfoPointer JobInfo);
@@ -96,9 +98,10 @@ private:
     QCheckBox *chkboxNotAskAgain { nullptr };   // 不在询问按钮
     DTK_WIDGET_NAMESPACE::DIconButton *btnStop { nullptr };   // 停止按钮
     DTK_WIDGET_NAMESPACE::DIconButton *btnPause { nullptr };   // 暂停按钮
-    QPushButton *btnCoexist { nullptr };   // 共存按钮
-    QPushButton *btnSkip { nullptr };   // 跳过按钮
-    QPushButton *btnReplace { nullptr };   // 替换、合并按钮
+    DTK_WIDGET_NAMESPACE::DPushButton *btnCoexist { nullptr };   // 共存按钮
+    DTK_WIDGET_NAMESPACE::DPushButton *btnSkip { nullptr };   // 跳过按钮
+    DTK_WIDGET_NAMESPACE::DPushButton *btnReplace { nullptr };   // 替换、合并按钮
+    DTK_WIDGET_NAMESPACE::DWarningButton *btnDelete { nullptr };   // 彻底删除文件按钮
 
     QVBoxLayout *rVLayout { nullptr };
     QVBoxLayout *mainLayout { nullptr };

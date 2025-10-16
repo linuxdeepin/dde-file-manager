@@ -93,8 +93,9 @@ public:
         kFailedParseUrlOfTrash = 34,   // 解析trash的url失败 Failed to parse the url of trash
         kFailedObtainTrashOriginalFile = 35,   // 获取trash中原文件失败 Failed to obtain the trash original file
         kFileMoveToTrashError = 36,   // 文件移动到回收站错误
-        kRetryReadOrWriteFailed = 37, // 重试失败
-        kCanNotAccessFile = 38, // 无法访问远程文件
+        kRetryReadOrWriteFailed = 37,   // 重试失败
+        kCanNotAccessFile = 38,   // 无法访问远程文件
+        kFileMoveToTrashNoSpace = 39,   // 文件移动到回收站存储器空间不足
         kUnknowError = 255,   // 未知错误
     };
     Q_ENUM(JobErrorType)
@@ -102,7 +103,7 @@ public:
         kCopyType = 0,   // 拷贝任务
         kCutType = 1,   // 剪切任务
         kDeleteType = 2,   // 删除任务
-        kMoveToTrashType = 3,   //移动到回收站
+        kMoveToTrashType = 3,   // 移动到回收站
         kRestoreType = 4,   // 从回收站还原
         kCleanTrashType = 5,   // 清理回收站
         kUnknow = 255,
@@ -122,6 +123,7 @@ public:
         kStopAction = 0x200,   // 停止操作
         kStartAction = 0x400,   // 开始操作
         kResumAction = 0x800,   // 恢复
+        kPermanentlyDelete = 0x1000,   // 强制删除
     };
     Q_ENUM(SupportAction)
     Q_DECLARE_FLAGS(SupportActions, SupportAction)
