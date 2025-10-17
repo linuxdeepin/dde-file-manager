@@ -129,6 +129,15 @@ void ComputerView::setStatusBarHandler(ComputerStatusBar *sb)
     dp->statusBar = sb;
 }
 
+void ComputerView::setRowHidden(int row, bool hide)
+{
+    // 更新item的可见性状态，避免view隐藏了但绘制时仍然绘制该item的问题
+    // 在某些性能较差的机器上，通过view隐藏item后，若在delegate中进行了
+    // 设值操作（model()->data()），可能会绘制本该隐藏的item，造成显示问题
+    model()->setData(model()->index(row, 0), !hide, ComputerModel::DataRoles::kItemVisibleRole);
+    DListView::setRowHidden(row, hide);
+}
+
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();

@@ -182,6 +182,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kEditDisplayTextRole:
         return item->info ? item->info->editDisplayText() : "";
 
+    case kItemVisibleRole:
+        return item->isVisible;
+
     default:
         return {};
     }
@@ -209,6 +212,9 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
         return true;
     } else if (role == DataRoles::kDisplayNameIsElidedRole) {
         item.isElided = value.toBool();
+        return true;
+    } else if (role == DataRoles::kItemVisibleRole) {
+        item.isVisible = value.toBool();
         return true;
     }
     return false;

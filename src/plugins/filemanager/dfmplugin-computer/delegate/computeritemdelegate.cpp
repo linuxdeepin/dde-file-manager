@@ -81,6 +81,9 @@ ComputerItemDelegate::~ComputerItemDelegate()
 
 void ComputerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    if (!index.data(ComputerModel::kItemVisibleRole).toBool())
+        return;
+
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
     ComputerItemData::ShapeType type = ComputerItemData::ShapeType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
