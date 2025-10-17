@@ -915,6 +915,34 @@ int IconItemDelegate::getGroupHeaderHeight(const QStyleOptionViewItem &option) c
     return 32;
 }
 
+QRectF IconItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
+{
+    // In icon mode, the group header should span the full viewport width with 10px margins on both sides
+    // We need to get the viewport widget to calculate the correct rect
+    FileView *view = parent() ? parent()->parent() : nullptr;
+    if (!view) {
+        // Fallback: use option.rect if we can't get the view
+        return option.rect;
+    }
+
+    // Get viewport content margins (set by updateViewportContentsMargins in icon mode)
+    QMargins viewportMargins = view->viewport()->contentsMargins();
+
+    // Calculate the full width rect spanning from viewport left edge + 10px to right edge - 10px
+    QRectF rect = option.rect;
+
+    // Reset left to viewport left edge + viewport left margin + 10px
+    int viewportLeft = -viewportMargins.left();
+    rect.setLeft(viewportLeft + 10);
+
+    // Set right to viewport right edge - viewport right margin - 10px
+    int viewportWidth = view->viewport()->width();
+    int viewportRight = viewportLeft + viewportWidth - viewportMargins.right();
+    rect.setRight(viewportRight - 10);
+
+    return rect;
+}
+
 bool IconItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     // // Handle group header clicks
