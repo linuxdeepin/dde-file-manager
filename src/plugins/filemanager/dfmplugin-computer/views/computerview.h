@@ -46,6 +46,7 @@ public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
     void setStatusBarHandler(ComputerStatusBar *sb);
+    void setRowHidden(int row, bool hide);
 
 public Q_SLOTS:
     void handleComputerItemVisible();
