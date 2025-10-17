@@ -21,6 +21,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QStyle>
+#include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -325,9 +326,15 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
     painter->restore();
 }
 
+QRectF BaseItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
+{
+    // Default implementation: no margins
+    return option.rect;
+}
+
 void BaseItemDelegate::paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const
 {
-    if (!painter && !option.widget) {
+    if (!painter || !option.widget) {
         return;
     }
 
@@ -343,7 +350,19 @@ void BaseItemDelegate::paintGroupBackground(QPainter *painter, const QStyleOptio
         painter->setOpacity(0);
     }
 
-    painter->fillRect(option.rect, adjustColor);
+    // Get background rect from subclass (allows different implementations for different view modes)
+    QRectF rect = getGroupHeaderBackgroundRect(option);
+
+    // Use rounded rect path for smooth appearance (8px radius)
+    QPainterPath path;
+    path.addRoundedRect(rect, 8, 8);
+
+    // Set render antialiasing for smooth rounded corners
+    painter->setRenderHints(QPainter::Antialiasing
+                            | QPainter::TextAntialiasing
+                            | QPainter::SmoothPixmapTransform);
+
+    painter->fillPath(path, adjustColor);
     painter->restore();
 }
 
@@ -410,7 +429,7 @@ QRect BaseItemDelegate::getExpandButtonRect(const QStyleOptionViewItem &option) 
 {
     QRect buttonRect;
     buttonRect.setSize(m_expandButtonSize);
-    buttonRect.moveLeft(option.rect.left() + m_leftMargin);
+    buttonRect.moveLeft(option.rect.left() + 12);   // 12px left margin for expand button
     buttonRect.moveTop(option.rect.top() + (option.rect.height() - m_expandButtonSize.height()) / 2);
 
     return buttonRect;
@@ -423,7 +442,7 @@ QRect BaseItemDelegate::getGroupTextRect(const QStyleOptionViewItem &option) con
     QRect textRect;
     textRect.setLeft(expandButtonRect.right() + 8);   // 8px spacing after button
     textRect.setTop(option.rect.top());
-    textRect.setRight(option.rect.right() - m_rightMargin);
+    textRect.setRight(option.rect.right() - 12);   // 12px right margin
     textRect.setBottom(option.rect.bottom());
 
     return textRect;

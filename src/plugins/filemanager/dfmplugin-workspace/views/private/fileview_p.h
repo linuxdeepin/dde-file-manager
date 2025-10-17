@@ -109,6 +109,7 @@ class FileViewPrivate
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
 
     void updateHorizontalOffset();
+    void adjustHeaderLayoutMargin(const QString &strategyName);
 };
 
 }

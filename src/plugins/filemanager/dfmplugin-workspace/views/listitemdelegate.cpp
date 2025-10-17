@@ -773,6 +773,22 @@ int ListItemDelegate::getGroupHeaderHeight(const QStyleOptionViewItem &option) c
     return BaseItemDelegate::sizeHint(fileItemOption, QModelIndex()).height();
 }
 
+QRectF ListItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
+{
+    FileView *view = parent()->parent();
+    if (!view)
+        return option.rect;
+
+    // Use the same layout calculation as paintItemBackground for consistency
+    int totalWidth = view->getHeaderViewWidth() - (kListModeLeftMargin + kListModeRightMargin);
+
+    QRectF rect = option.rect;
+    rect.setLeft(rect.left() + kListModeLeftMargin);
+    rect.setWidth(totalWidth);
+
+    return rect;
+}
+
 bool ListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     // Handle group header clicks

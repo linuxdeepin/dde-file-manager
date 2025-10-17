@@ -72,6 +72,11 @@ void ViewAnimationHelper::aboutToPlay()
         return;
     }
 
+    if (view->isGroupedView()) {
+        fmDebug() << "Animation disabled in grpuped view";
+        return;
+    }
+
     fmDebug() << "Preparing animation - capturing current state";
     oldVisiableRect = view->viewport()->rect();
     oldVisiableRect.moveTop(view->verticalOffset());
@@ -95,6 +100,11 @@ void ViewAnimationHelper::playViewAnimation()
 
     if (playingAnim) {
         fmDebug() << "Animation already playing, skipping play request";
+        return;
+    }
+
+    if (view->isGroupedView()) {
+        fmDebug() << "Animation disabled in grpuped view";
         return;
     }
 
@@ -147,6 +157,11 @@ void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)
 {
     if (!initialized) {
         fmDebug() << "Animation not initialized, skipping width change animation";
+        return;
+    }
+
+    if (view->isGroupedView()) {
+        fmDebug() << "Animation disabled in grpuped view";
         return;
     }
 
