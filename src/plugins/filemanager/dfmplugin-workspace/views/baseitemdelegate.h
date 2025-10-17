@@ -141,6 +141,9 @@ protected:
     // Pure virtual method for group header height - must be implemented by subclasses
     virtual int getGroupHeaderHeight(const QStyleOptionViewItem &option) const = 0;
 
+    // Virtual method for group header background rect - can be overridden by subclasses
+    virtual QRectF getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const;
+
     // Group rendering helper methods
     void paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const;
     void paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const;
@@ -160,8 +163,6 @@ protected:
 private:
     // Group rendering constants
     QSize m_expandButtonSize = QSize(16, 16);
-    int m_leftMargin = 12;
-    int m_rightMargin = 12;
 };
 
 }
