@@ -244,6 +244,10 @@ bool FileView::setRootUrl(const QUrl &url)
     resetSelectionModes();
     updateListHeaderView();
 
+    // Adjust header layout margins based on grouping state for list/tree mode
+    // This handles both initialization and directory switching scenarios
+    d->adjustHeaderLayoutMargin(model()->groupingStrategy());
+
     // dir already traversal
     if (model()->currentState() == ModelState::kIdle)
         updateSelectedUrl();
@@ -820,6 +824,10 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
         setFileViewStateValue(url, "groupStrategy", strategyName);
         setFileViewStateValue(url, "groupingOrder", static_cast<int>(order));
     }
+
+    // Dynamically adjust header layout margins based on grouped view state
+    // For list/tree mode: remove bottom margin when in grouped view to eliminate gap above first group-header
+    d->adjustHeaderLayoutMargin(strategyName);
 }
 
 void FileView::setViewSelectState(bool isSelect)
