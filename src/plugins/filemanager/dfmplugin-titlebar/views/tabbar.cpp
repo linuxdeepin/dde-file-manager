@@ -23,6 +23,7 @@
 #include <DPlatformWindowHandle>
 
 #include <QMouseEvent>
+#include <QBoxLayout>
 
 #include <unistd.h>
 #include <functional>
@@ -79,6 +80,7 @@ public:
 public:
     TabBar *q;
     DIconButton *addBtn { nullptr };
+    DIconButton *leftBtn { nullptr };
     QTabBar *tabBar { nullptr };
 
     int nextTabUniqueId { 0 };
@@ -110,7 +112,7 @@ void TabBarPrivate::initUI()
     addBtn->setFocusPolicy(Qt::NoFocus);
     addBtn->installEventFilter(q);
 
-    auto leftBtn = q->findChild<DIconButton *>("leftButton");
+    leftBtn = q->findChild<DIconButton *>("leftButton");
     Q_ASSERT(leftBtn);
     leftBtn->setFocusPolicy(Qt::NoFocus);
     leftBtn->setFixedSize(30, 30);
@@ -843,6 +845,14 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
                 return true;
             }
         }
+    } else if (obj == d->leftBtn && e->type() == QEvent::Show) {
+        auto margin = layout()->contentsMargins();
+        margin.setLeft(4);
+        layout()->setContentsMargins(margin);
+    } else if (obj == d->leftBtn && e->type() == QEvent::Hide) {
+        auto margin = layout()->contentsMargins();
+        margin.setLeft(0);
+        layout()->setContentsMargins(margin);
     }
 
     return DTabBar::eventFilter(obj, e);
