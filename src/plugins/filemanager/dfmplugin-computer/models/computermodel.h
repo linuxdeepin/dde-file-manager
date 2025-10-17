@@ -44,7 +44,8 @@ public:
         kItemIsEditingRole,   // bool: if an item is renaming
         kDeviceDescriptionRole,
         kDisplayNameIsElidedRole,   // bool
-        kEditDisplayTextRole   // string
+        kEditDisplayTextRole,   // string
+        kItemVisibleRole
     };
     Q_ENUM(DataRoles)
 

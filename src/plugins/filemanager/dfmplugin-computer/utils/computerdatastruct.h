@@ -37,6 +37,7 @@ struct ComputerItemData
     QWidget *widget { nullptr };
     bool isEditing = false;
     bool isElided = false;
+    bool isVisible = true;
     DFMEntryFileInfoPointer info { nullptr };
 };
 
