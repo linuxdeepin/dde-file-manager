@@ -16,6 +16,7 @@
 #include <DPalette>
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
+#include <DStyleOption>
 
 #include <QTextLayout>
 #include <QPainter>
@@ -306,6 +307,7 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
     painter->save();
     // Get group information
     QString groupText = index.data(Qt::DisplayRole).toString();
+    int fileCount = index.data(Global::kItemGroupFileCount).toInt();
     if (groupText.isEmpty()) {
         groupText = "Group";
     }
@@ -321,7 +323,7 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
     paintExpandButton(painter, expandButtonRect, isExpanded);
 
     // Paint group text
-    paintGroupText(painter, textRect, groupText, option);
+    paintGroupText(painter, textRect, groupText, fileCount, option);
 
     painter->restore();
 }
@@ -394,33 +396,58 @@ void BaseItemDelegate::paintExpandButton(QPainter *painter, const QRect &buttonR
     painter->restore();
 }
 
-void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, const QStyleOptionViewItem &option) const
+void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, int count, const QStyleOptionViewItem &option) const
 {
-    if (!painter || textRect.isEmpty() || text.isEmpty()) {
+    if (!painter || textRect.isEmpty() || text.isEmpty() || count < 0) {
         return;
     }
 
     painter->save();
 
-    // Set up font - make it slightly bold
-    QFont font = option.font;
-    font.setBold(true);
-    painter->setFont(font);
+    QString filecountText = count <= 1 ? QObject::tr("%1 item").arg(count)
+                                       : QObject::tr("%1 items").arg(count);
 
-    // Set text color
-    QColor textColor;
-    if (option.state & QStyle::State_Selected) {
-        textColor = option.palette.color(QPalette::HighlightedText);
-    } else {
-        textColor = option.palette.color(QPalette::Text);
-    }
-    painter->setPen(textColor);
+    // Get fonts from DFontSizeManager
+    QFont groupTitleFont = DFontSizeManager::instance()->t6();   // T6 for group title
+    QFont fileCountFont = DFontSizeManager::instance()->t8();    // T8 for file count
 
-    // Draw text with elision if necessary
-    QFontMetrics fm(font);
-    QString elidedText = fm.elidedText(text, Qt::ElideRight, textRect.width());
+    // Determine base text color based on theme
+    bool isLightTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::ColorType::LightType;
 
-    painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    // Set group title color: 70% black/white
+    QColor groupTitleColor = isLightTheme ? QColor(0, 0, 0, qRound(255 * 0.7))
+                                          : QColor(255, 255, 255, qRound(255 * 0.7));
+
+    // Set file count color: 50% black/white
+    QColor fileCountColor = isLightTheme ? QColor(0, 0, 0, qRound(255 * 0.5))
+                                         : QColor(255, 255, 255, qRound(255 * 0.5));
+
+    // Calculate text widths
+    QFontMetrics groupTitleFm(groupTitleFont);
+    QFontMetrics fileCountFm(fileCountFont);
+
+    int fileCountWidth = fileCountFm.horizontalAdvance(filecountText);
+    int spacing = 6;   // 6px spacing between title and count
+    int availableWidthForTitle = textRect.width() - fileCountWidth - spacing;
+
+    // Draw group title
+    painter->setFont(groupTitleFont);
+    painter->setPen(groupTitleColor);
+
+    QString elidedTitle = groupTitleFm.elidedText(text, Qt::ElideRight, availableWidthForTitle);
+    int titleWidth = groupTitleFm.horizontalAdvance(elidedTitle);
+
+    QRect titleRect = textRect;
+    titleRect.setWidth(titleWidth);
+    painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter, elidedTitle);
+
+    // Draw file count
+    painter->setFont(fileCountFont);
+    painter->setPen(fileCountColor);
+
+    QRect countRect = textRect;
+    countRect.setLeft(titleRect.left() + titleWidth + spacing);
+    painter->drawText(countRect, Qt::AlignLeft | Qt::AlignVCenter, filecountText);
 
     painter->restore();
 }
