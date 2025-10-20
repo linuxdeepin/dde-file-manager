@@ -920,17 +920,6 @@ bool AsyncFileInfoPrivate::isExecutable() const
     return isExecutable;
 }
 
-bool AsyncFileInfoPrivate::isPrivate() const
-{
-    const QString &path = const_cast<AsyncFileInfoPrivate *>(this)->path();
-    const QString &name = fileName();
-
-    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
-
-    QReadLocker locker(&const_cast<AsyncFileInfoPrivate *>(this)->lock);
-    return match.match(path, name);
-}
-
 bool AsyncFileInfoPrivate::canDelete() const
 {
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
@@ -971,9 +960,6 @@ bool AsyncFileInfoPrivate::canRename() const
 
 bool AsyncFileInfoPrivate::canFetch() const
 {
-    if (isPrivate())
-        return false;
-
     bool isArchive = false;
     if (q->exists())
         isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(q->fileUrl()).name());

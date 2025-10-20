@@ -181,7 +181,6 @@ public:
         kIsRoot = 7,   // 是否是根文件
         kIsBundle = 8,   // 是否是二进制文件
         kIsDragCompressFileFormat = 9,   // 是否可以追加压缩
-        kIsPrivate = 10,   // 是否是私有文件
         kCustomerFileIs = 50,   // 其他用户使用
         kUnknowFileIsInfo = 255,
     };
