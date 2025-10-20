@@ -6,10 +6,13 @@
 #define PLAYERWIDGET_H
 
 #include "preview_plugin_global.h"
+#include "titlebarwidget.h"
 
 #include <danchors.h>
 
 #include <QLabel>
+#include <QMouseEvent>
+#include <QEnterEvent>
 
 #include <player_widget.h>
 #include <player_engine.h>
@@ -27,10 +30,16 @@ public:
 
     void mouseReleaseEvent(QMouseEvent *event) override;
 
+    void enterEvent(QEnterEvent *event) override;
+
+    void leaveEvent(QEvent *event) override;
+
     void showEvent(QShowEvent *event) override;
 
+    void resizeEvent(QResizeEvent *event) override;
+
     VideoPreview *p;
-    QLabel *title;
+    TitleBarWidget *titleBar;
     QUrl videoUrl;
 };
 }
