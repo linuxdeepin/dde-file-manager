@@ -10,18 +10,20 @@
 DWIDGET_USE_NAMESPACE
 using namespace plugin_filepreview;
 VideoWidget::VideoWidget(VideoPreview *preview)
-    : dmr::PlayerWidget(nullptr), p(preview), title(new QLabel(this))
+    : dmr::PlayerWidget(nullptr), p(preview), titleBar(new TitleBarWidget(this))
 {
+    fmDebug() << "Video widget: initializing VideoWidget with custom title bar";
+
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QPalette pa;
-    pa.setColor(QPalette::WindowText, Qt::white);
-
-    title->setPalette(pa);
-
-    DAnchorsBase::setAnchor(title, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
+    // Position title bar at the top of the widget
+    titleBar->move(0, 0);
+    titleBar->setVisible(true);
+    titleBar->raise(); // Ensure title bar is above video content
 
     engine().setBackendProperty("keep-open", "yes");
+
+    fmDebug() << "Video widget: VideoWidget initialization completed";
 }
 
 QSize VideoWidget::sizeHint() const
@@ -56,3 +58,39 @@ void VideoWidget::showEvent(QShowEvent *event)
 
     return dmr::PlayerWidget::showEvent(event);
 }
+
+void VideoWidget::resizeEvent(QResizeEvent *event)
+{
+    dmr::PlayerWidget::resizeEvent(event);
+
+    // Update title bar size and position
+    if (titleBar) {
+        titleBar->setGeometry(0, 0, width(), titleBar->height());
+    }
+}
+
+void VideoWidget::enterEvent(QEnterEvent *event)
+{
+    dmr::PlayerWidget::enterEvent(event);
+
+    fmDebug() << "Video widget: mouse entered video widget";
+
+    // When mouse enters the video widget, check if it's in title bar area
+    if (titleBar) {
+        titleBar->stopAutoHideTimer();
+        titleBar->showAnimated();
+    }
+}
+
+void VideoWidget::leaveEvent(QEvent *event)
+{
+    dmr::PlayerWidget::leaveEvent(event);
+
+    fmDebug() << "Video widget: mouse left video widget";
+
+    // When mouse leaves the video widget, start auto-hide timer
+    if (titleBar) {
+        titleBar->hideAnimated();
+    }
+}
+

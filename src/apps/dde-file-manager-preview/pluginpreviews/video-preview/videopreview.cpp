@@ -19,7 +19,7 @@ VideoPreview::VideoPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
     fmInfo() << "Video preview: VideoPreview instance created";
-    
+
     setlocale(LC_NUMERIC, "C");
 
     playerWidget = new VideoWidget(this);
@@ -28,14 +28,14 @@ VideoPreview::VideoPreview(QObject *parent)
 
     connect(&playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, &VideoPreview::sigPlayState);
     connect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
-    
+
     fmDebug() << "Video preview: VideoPreview initialization completed";
 }
 
 VideoPreview::~VideoPreview()
 {
     fmInfo() << "Video preview: VideoPreview instance destroyed";
-    
+
     if (statusBar) {
         statusBar->hide();
         statusBar->deleteLater();
@@ -47,19 +47,19 @@ VideoPreview::~VideoPreview()
         disconnect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
         playerWidget.data()->deleteLater();
     }
-    
+
     fmDebug() << "Video preview: VideoPreview cleanup completed";
 }
 
 bool VideoPreview::setFileUrl(const QUrl &url)
 {
     fmInfo() << "Video preview: setting file URL:" << url;
-    
+
     if (!url.isLocalFile()) {
         fmWarning() << "Video preview: URL is not a local file:" << url;
         return false;
     }
-    
+
     const QString filePath = url.toLocalFile();
     if (!QFileInfo::exists(filePath)) {
         fmWarning() << "Video preview: file does not exist:" << filePath;
@@ -80,9 +80,8 @@ bool VideoPreview::setFileUrl(const QUrl &url)
     }
 
     fmDebug() << "Video preview: movie info parsed successfully - title:" << info.title << "duration:" << info.duration;
-    
-    playerWidget->title->setText(info.title);
-    playerWidget->title->adjustSize();
+
+    playerWidget->titleBar->setText(info.title);
     statusBar->slider->setMaximum(static_cast<int>(info.duration));
     videoUrl = QUrl::fromLocalFile(filePath);
 
@@ -120,6 +119,11 @@ void VideoPreview::play()
     if (playerWidget && videoUrl.isValid()) {
         fmDebug() << "Video preview: starting playback for:" << videoUrl;
         playerWidget->playFile(videoUrl);
+
+        // Start the title bar auto-hide timer when playback begins
+        if (playerWidget->titleBar) {
+            playerWidget->titleBar->startAutoHideTimer();
+        }
     } else {
         fmWarning() << "Video preview: cannot play - invalid player widget or URL:" << videoUrl;
     }
