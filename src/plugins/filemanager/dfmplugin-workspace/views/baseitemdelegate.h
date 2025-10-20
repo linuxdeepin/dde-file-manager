@@ -147,7 +147,7 @@ protected:
     // Group rendering helper methods
     void paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const;
     void paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const;
-    void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, const QStyleOptionViewItem &option) const;
+    void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, int count, const QStyleOptionViewItem &option) const;
 
     // Group layout calculation methods
 

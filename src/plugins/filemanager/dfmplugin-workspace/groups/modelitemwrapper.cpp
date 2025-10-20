@@ -40,6 +40,7 @@ ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
         groupValues[Global::kItemIsGroupHeaderType] = true;
         groupValues[Global::kItemDisplayRole] = groupData->getHeaderText();
         groupValues[Global::kItemNameRole] = groupData->getHeaderText();
+        groupValues[Global::kItemGroupFileCount] = groupData->fileCount;
         groupValues[Global::kItemGroupHeaderKey] = groupData->groupKey;
         groupValues[Global::kItemGroupDisplayIndex] = groupData->displayIndex;
         groupValues[Global::kItemGroupExpandedRole] = groupData->isExpanded;

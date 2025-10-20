@@ -46,7 +46,7 @@ FileGroupData::~FileGroupData()
 
 QString FileGroupData::getHeaderText() const
 {
-    return QString("%1 (%2)").arg(displayName).arg(fileCount);
+    return displayName;
 }
 
 void FileGroupData::addFile(const FileItemDataPointer &file)
