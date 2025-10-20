@@ -391,8 +391,7 @@ bool dfmbase::FileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanFetch:
-        return isAttributes(OptInfoType::kIsDir)
-                && !isAttributes(OptInfoType::kIsPrivate);
+        return isAttributes(OptInfoType::kIsDir);
     case FileCanType::kCanDrop:
         return dptr->canDrop();
     case FileCanType::kCanDrag:
@@ -655,10 +654,6 @@ QString dfmbase::FileInfoPrivate::suffix() const
  */
 bool DFMBASE_NAMESPACE::FileInfoPrivate::canDrop() const
 {
-    if (q->isAttributes(OptInfoType::kIsPrivate)) {
-        return false;
-    }
-
     if (!q->isAttributes(OptInfoType::kIsSymLink)) {
         const bool isDesktop = q->nameOf(NameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
         return (q->isAttributes(OptInfoType::kIsDir) && q->isAttributes(OptInfoType::kIsWritable)) || isDesktop;

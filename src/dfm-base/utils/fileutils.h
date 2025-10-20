@@ -106,16 +106,6 @@ public:
     static QUrl homeDesktopFileUrl();
 };
 
-class Match
-{
-public:
-    explicit Match(const QString &group);
-    bool match(const QString &path, const QString &name);
-
-private:
-    QList<QPair<QString, QString>> patternList;
-};
-
 }
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo> SizeInfoPointer;

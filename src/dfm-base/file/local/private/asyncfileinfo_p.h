@@ -93,7 +93,6 @@ public:
     QString symLinkTarget() const;
     QUrl redirectedFileUrl() const;
     bool isExecutable() const;
-    bool isPrivate() const;
     bool canDelete() const;
     bool canTrash() const;
     bool canRename() const;

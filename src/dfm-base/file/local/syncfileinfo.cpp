@@ -226,8 +226,6 @@ bool SyncFileInfo::isAttributes(const OptInfoType type) const
         return d->filePath() == "/";
     case FileIsType::kIsBundle:
         return QFileInfo(url.path()).isBundle();
-    case FileIsType::kIsPrivate:
-        return d->isPrivate();
     default:
         return FileInfo::isAttributes(type);
     }
@@ -948,17 +946,6 @@ bool SyncFileInfoPrivate::isExecutable() const
     return isExecutable;
 }
 
-bool SyncFileInfoPrivate::isPrivate() const
-{
-    const QString &path = const_cast<SyncFileInfoPrivate *>(this)->path();
-    const QString &name = fileName();
-
-    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
-
-    QMutexLocker locker(&lock);
-    return match.match(path, name);
-}
-
 bool SyncFileInfoPrivate::canDelete() const
 {
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
@@ -999,9 +986,6 @@ bool SyncFileInfoPrivate::canRename() const
 
 bool SyncFileInfoPrivate::canFetch() const
 {
-    if (isPrivate())
-        return false;
-
     bool isArchive = false;
     if (q->exists())
         isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(q->fileUrl()).name());
