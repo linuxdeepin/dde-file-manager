@@ -387,19 +387,19 @@ void TitleBarWidget::updateUiForSizeMode()
 
     auto optionBtn = topBar->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
     if (optionBtn)
-        optionBtn->setFixedSize(50, 40);
+        optionBtn->setFixedSize(40, 40);
 
     auto closeBtn = topBar->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
     if (closeBtn)
-        closeBtn->setFixedSize(50, 40);
+        closeBtn->setFixedSize(40, 40);
 
     auto minBtn = topBar->findChild<DWindowMinButton *>("DTitlebarDWindowMinButton");
     if (minBtn)
-        minBtn->setFixedSize(50, 40);
+        minBtn->setFixedSize(40, 40);
 
     auto maxBtn = topBar->findChild<DWindowMaxButton *>("DTitlebarDWindowMaxButton");
     if (maxBtn)
-        maxBtn->setFixedSize(50, 40);
+        maxBtn->setFixedSize(40, 40);
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)
