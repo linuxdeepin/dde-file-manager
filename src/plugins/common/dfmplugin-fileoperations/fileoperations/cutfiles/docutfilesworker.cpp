@@ -367,7 +367,15 @@ DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &s
         isCutMerge = false;
         result = doMergDir(sourceInfo, newTargetInfo, skip);
     } else {
-        result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
+        if (newTargetInfo->exists()) {
+            result = deleteFile(newTargetInfo->uri(), newTargetInfo->uri(), skip);
+            if (result) {
+                *skip = false;   // deleteFile拷贝成功会设置skip为true，正确的删除后设置skip为false
+                result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
+            }
+        } else {
+            result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
+        }
     }
 
     if (result) {
