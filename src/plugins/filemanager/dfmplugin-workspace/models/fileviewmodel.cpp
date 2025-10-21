@@ -1052,7 +1052,7 @@ void FileViewModel::onRemoveFinish()
 
     endRemoveRows();
 
-    if (filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
         WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
