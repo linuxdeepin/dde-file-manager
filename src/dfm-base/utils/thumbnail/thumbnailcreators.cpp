@@ -31,6 +31,8 @@
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
 
+#include <appimage/appimage.h>
+
 static constexpr char kFormat[] { ".png" };
 
 using namespace dfmbase;
@@ -512,52 +514,42 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
         return QImage();
     }
 
-    // 3. Create temporary directory for AppImage extraction
-    QTemporaryDir tempDir;
-    if (!tempDir.isValid()) {
-        qCWarning(logDFMBase) << "thumbnail: failed to create temporary directory for AppImage extraction:" << tempDir.errorString()
-                              << "file:" << filePath;
-        return QImage();
-    }
-    auto extractTo = tempDir.path();
+    // 3. Use libappimage to read .DirIcon directly from AppImage
+    unsigned long iconSize = 0;
+    char *iconBuffer = nullptr;
 
-    qCDebug(logDFMBase) << "thumbnail: extracting AppImage to temporary directory:" << extractTo;
+    // Read .DirIcon file from AppImage without extraction
+    bool success = appimage_read_file_into_buffer_following_symlinks(
+        filePath.toUtf8().constData(),
+        ".DirIcon",
+        &iconBuffer,
+        &iconSize
+    );
 
-    // 4. Extract AppImage to temporary directory
-    QProcess proc;
-    proc.setWorkingDirectory(extractTo);
-    proc.start(filePath, { "--appimage-extract" });
-    auto done = proc.waitForFinished();
+    // Use RAII to ensure buffer cleanup
+    QScopedPointer<char, QScopedPointerPodDeleter> bufferCleanup(iconBuffer);
 
-    if (!done || proc.exitCode() != 0) {
-        qCWarning(logDFMBase) << "thumbnail: AppImage extraction failed for:" << filePath
-                              << "exit code:" << proc.exitCode()
-                              << "error:" << proc.errorString();
+    if (!success || !iconBuffer || iconSize == 0) {
+        qCWarning(logDFMBase) << "thumbnail: failed to read .DirIcon from AppImage:" << filePath;
         return QImage();
     }
 
-    qCDebug(logDFMBase) << "thumbnail: AppImage extraction completed successfully for:" << filePath;
+    qCDebug(logDFMBase) << "thumbnail: successfully read .DirIcon from AppImage, size:" << iconSize << "bytes";
 
-    // 5. Search for PNG/SVG files in temporary directory
-    QString iconPath;
-    QDir extractDir(extractTo + "/squashfs-root");
-    auto files = extractDir.entryInfoList(QStringList { "*.png", "*.svg" },
-                                          QDir::Files | QDir::NoDotAndDotDot);
-    iconPath = files.isEmpty() ? "" : files.first().filePath();
-
+    // 4. Load image from buffer
     QImage icon;
-    if (!iconPath.isEmpty()) {
-        qCDebug(logDFMBase) << "thumbnail: found AppImage icon:" << iconPath;
-        icon = QImage(iconPath).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        if (!icon.isNull()) {
-            qCDebug(logDFMBase) << "thumbnail: AppImage thumbnail created successfully for:" << filePath;
-        } else {
-            qCWarning(logDFMBase) << "thumbnail: failed to load AppImage icon:" << iconPath;
-        }
-    } else {
-        qCWarning(logDFMBase) << "thumbnail: no icon found in AppImage:" << filePath;
+    if (!icon.loadFromData(reinterpret_cast<const uchar *>(iconBuffer), iconSize)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to load image data from .DirIcon for:" << filePath;
+        return QImage();
     }
 
+    // 5. Scale image to requested thumbnail size
+    if (icon.width() > size || icon.height() > size) {
+        icon = icon.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        qCDebug(logDFMBase) << "thumbnail: scaled AppImage icon to" << size << "x" << size;
+    }
+
+    qCDebug(logDFMBase) << "thumbnail: AppImage thumbnail created successfully for:" << filePath;
     return icon;
 }
 
