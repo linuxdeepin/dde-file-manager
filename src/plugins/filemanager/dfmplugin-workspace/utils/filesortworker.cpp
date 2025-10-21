@@ -667,6 +667,8 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
         if (!currentIsGroupingMode()) {
             handleRefresh();
         }
+        // 通知分组完成(实际上是取消分组)
+        emit groupingFinished();
         return;
     }
 
@@ -674,6 +676,7 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
     if (allFiles.isEmpty()) {
         fmDebug() << "FileSortWorker: No files to group";
         clearGroupedData();
+        emit groupingFinished();
         return;
     }
 
@@ -688,6 +691,9 @@ void FileSortWorker::handleReGrouping(const Qt::SortOrder order, const QString &
 
     fmInfo() << "FileSortWorker: Grouping completed - created" << groupedModelData.groups.size()
              << "groups with" << groupedModelData.getItemCount() << "total items";
+
+    // 通知分组完成
+    emit groupingFinished();
 }
 
 void FileSortWorker::handleGroupingChanged()

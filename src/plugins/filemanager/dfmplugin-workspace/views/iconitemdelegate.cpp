@@ -271,7 +271,9 @@ void IconItemDelegate::updateItemSizeHint()
 
     // In grouped icon mode with spacing=0, add virtual margins to regular file items
     // This allows group-headers to have 0 spacing while files maintain 10px spacing between each other
-    if (parent()->parent()->isGroupedView() && parent()->parent()->spacing() == 0) {
+    if ((parent()->parent()->isGroupedView()
+         && parent()->parent()->spacing() == 0)
+        || parent()->parent()->groupingState() == GroupingState::kGrouping) {
         // Add 10px virtual margins on all sides (total 20px for width and height)
         // This creates the effect of 10px spacing between items when spacing=0
         width += (kIconViewSpacing * 2);   // 10px left + 10px right

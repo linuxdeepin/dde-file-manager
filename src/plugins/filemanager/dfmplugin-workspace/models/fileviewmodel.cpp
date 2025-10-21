@@ -398,8 +398,15 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
     // update view HorizontalOffset 需要判断不是group，sizehint才正确，才可以获取到正确
     // 绘制了多少列
-    if (role == Global::kItemGroupHeaderKey && updating)
-        return QString();
+    if (role == Global::kItemGroupHeaderKey && updating) {
+        return {};
+    }
+
+    // 分组时可能耗时很久，此时若返回数据会导致界面异常
+    if (groupingState() == GroupingState::kGrouping) {
+        fmDebug() << "Current grouping state is grouping, ignore data";
+        return {};
+    }
 
     const QModelIndex &parentIndex = index.parent();
 
@@ -459,6 +466,11 @@ void FileViewModel::refresh()
 ModelState FileViewModel::currentState() const
 {
     return state;
+}
+
+GroupingState FileViewModel::groupingState() const
+{
+    return groupingStateValue;
 }
 
 void FileViewModel::fetchMore(const QModelIndex &parent)
@@ -668,6 +680,9 @@ void FileViewModel::grouping(const QString &strategyName, Qt::SortOrder order)
         return;
     }
     fmInfo() << "Grouping by :" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "URL:" << dirRootUrl.toString();
+
+    // 设置分组状态为正在分组
+    changeGroupingState(GroupingState::kGrouping);
 
     const QString &expandsionKey = QString("groupExpansion.%1").arg(strategyName);
     auto expansionStates = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, expandsionKey).toHash();
@@ -1335,6 +1350,16 @@ void FileViewModel::changeState(ModelState newState)
     Q_EMIT stateChanged();
 }
 
+void FileViewModel::changeGroupingState(GroupingState newState)
+{
+    if (groupingStateValue == newState)
+        return;
+
+    groupingStateValue = newState;
+    fmDebug() << "Grouping state changed to:" << (newState == GroupingState::kGrouping ? "Grouping" : "Idle") << "for URL:" << dirRootUrl.toString();
+    Q_EMIT groupingStateChanged();
+}
+
 void FileViewModel::closeCursorTimer()
 {
     waitTimer.stop();
@@ -1367,6 +1392,11 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(filterSortWorker.data(), &FileSortWorker::removeGroupFinish, this, &FileViewModel::onGroupRemoveFinish, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::groupExpansionChanged, this, &FileViewModel::onGroupExpansionChanged, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::dataChanged, this, &FileViewModel::onDataChanged, Qt::QueuedConnection);
+    connect(
+            filterSortWorker.data(), &FileSortWorker::groupingFinished, this, [this]() {
+                changeGroupingState(GroupingState::kIdle);
+            },
+            Qt::QueuedConnection);
     connect(
             filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
         canFetchFiles = true;

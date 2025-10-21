@@ -128,6 +128,7 @@ signals:
 
     // Grouping-related signals
     void groupDataChanged();
+    void groupingFinished();   // 分组操作完成信号
     void groupExpansionChanged(const QString &strategy, const QString &key, bool state);
 
     // Note that the slot functions here are executed in asynchronous threads,
