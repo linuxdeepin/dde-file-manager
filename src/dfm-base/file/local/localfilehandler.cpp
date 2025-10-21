@@ -808,6 +808,8 @@ bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
     QStringList targetList;
     targetList.append(path);
     while (isSymLink) {
+        if (!info)
+            return false;
         pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         pathValue = pathValue.endsWith(QDir::separator()) && pathValue != QDir::separator() ? QString(pathValue).left(pathValue.length() - 1)
                                                                                             : pathValue;
