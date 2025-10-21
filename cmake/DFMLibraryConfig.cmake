@@ -13,6 +13,7 @@ function(dfm_configure_base_library target_name)
     find_package(dfm${DTK_VERSION_MAJOR}-io REQUIRED)
     find_package(dfm${DTK_VERSION_MAJOR}-mount REQUIRED)
     find_package(dfm${DTK_VERSION_MAJOR}-burn REQUIRED)
+    find_package(libappimage REQUIRED)
     find_package(PkgConfig REQUIRED)
     
     # System dependencies
@@ -76,6 +77,7 @@ function(dfm_configure_base_library target_name)
             poppler-cpp
             ${LIBHEIF_LIBRARIES}
             ${DFM_EXTRA_LIBRARIES}  
+            libappimage
     )
     
     # Include directories
@@ -151,7 +153,7 @@ endfunction()
 # Function to get library dependencies for testing
 function(dfm_get_library_test_dependencies lib_name result_var)
     if(lib_name STREQUAL "dfm-base")
-        set(${result_var} "Qt6::Core;Qt6::Widgets;Qt6::Gui;Qt6::Concurrent;Qt6::DBus;Qt6::Sql;Qt6::Network;Dtk6::Core;Dtk6::Widget;Dtk6::Gui;dfm6-io;dfm6-mount;dfm6-burn;PkgConfig::mount;PkgConfig::gio;PkgConfig::X11;poppler-cpp;${LIBHEIF_LIBRARIES}" PARENT_SCOPE)
+        set(${result_var} "Qt6::Core;Qt6::Widgets;Qt6::Gui;Qt6::Concurrent;Qt6::DBus;Qt6::Sql;Qt6::Network;Dtk6::Core;Dtk6::Widget;Dtk6::Gui;dfm6-io;dfm6-mount;dfm6-burn;PkgConfig::mount;PkgConfig::gio;PkgConfig::X11;poppler-cpp;${LIBHEIF_LIBRARIES};libappimage" PARENT_SCOPE)
     elseif(lib_name STREQUAL "dfm-framework")
         set(${result_var} "Qt6::Core;Qt6::Concurrent;Dtk6::Core;${CMAKE_DL_LIBS}" PARENT_SCOPE)
     elseif(lib_name STREQUAL "dfm-extension")
