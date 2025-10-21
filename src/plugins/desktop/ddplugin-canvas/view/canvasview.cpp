@@ -306,14 +306,22 @@ WId CanvasView::winId() const
 QModelIndex CanvasView::baseIndexAt(const QPoint &point) const
 {
     auto checkRect = [](const QList<QRect> &listRect, const QPoint &point) -> bool {
+        if (listRect.isEmpty())
+            return false;
+
         // icon rect
-        if (listRect.size() > 0 && listRect.at(0).contains(point))
+        QRect iconRect = listRect.at(0);
+        if (iconRect.contains(point))
             return true;
 
         if (listRect.size() > 1) {
             QRect identify = listRect.at(1);
             if (identify.contains(point))
                 return true;
+
+            // 检查图标和文本的包围区域
+            QRect combinedRect = iconRect.united(identify);
+            return combinedRect.contains(point);
         }
         return false;
     };
