@@ -828,6 +828,11 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
     d->adjustIconModeSpacing(strategyName);
 }
 
+GroupingState FileView::groupingState()
+{
+    return model()->groupingState();
+}
+
 void FileView::setViewSelectState(bool isSelect)
 {
     d->isShowViewSelectBox = isSelect;

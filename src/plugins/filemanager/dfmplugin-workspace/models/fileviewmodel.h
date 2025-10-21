@@ -61,6 +61,7 @@ public:
     void toggleGroupExpansion(const QString &groupKey);
 
     ModelState currentState() const;
+    GroupingState groupingState() const;
     FileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> getChildrenUrls() const;
     QModelIndex getIndexByUrl(const QUrl &url) const;
@@ -115,6 +116,7 @@ public:
 
 Q_SIGNALS:
     void stateChanged();
+    void groupingStateChanged();
     void renameFileProcessStarted();
     void selectAndEditFile(const QUrl &url);
     void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
@@ -170,6 +172,7 @@ private:
     void discardFilterSortObjects();
 
     void changeState(ModelState newState);
+    void changeGroupingState(GroupingState newState);
     void closeCursorTimer();
     void startCursorTimer();
 
@@ -177,6 +180,7 @@ private:
     QUrl fetchingUrl;
 
     ModelState state { ModelState::kIdle };
+    GroupingState groupingStateValue { GroupingState::kIdle };
     bool readOnly { false };
     bool canFetchFiles { false };
     FileItemData *itemRootData { nullptr };

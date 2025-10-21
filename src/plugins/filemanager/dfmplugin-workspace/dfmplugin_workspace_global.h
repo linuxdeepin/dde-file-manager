@@ -46,6 +46,11 @@ enum class ModelState : uint8_t {
     kIdle,
     kBusy
 };
+
+enum class GroupingState : uint8_t {
+    kIdle,       // 未在分组或分组已完成
+    kGrouping    // 正在执行分组操作
+};
 #ifdef DTKWIDGET_CLASS_DSizeMode
 inline constexpr int kCompactIconViewSpacing { 0 };
 inline constexpr int kCompactIconModeColumnPadding { 5 };
