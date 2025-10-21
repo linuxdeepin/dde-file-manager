@@ -157,11 +157,8 @@ void FileView::setViewMode(Global::ViewMode mode)
         setUniformItemSizes(false);
         setResizeMode(QListView::Adjust);
         setOrientation(QListView::LeftToRight, true);
-#ifdef DTKWIDGET_CLASS_DSizeMode
-        setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
-#else
-        setSpacing(kIconViewSpacing);
-#endif
+
+        d->adjustIconModeSpacing(model()->groupingStrategy());
         d->initIconModeView();
         setMinimumWidth(0);
         model()->setTreeView(false);
@@ -828,6 +825,7 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
     // Dynamically adjust header layout margins based on grouped view state
     // For list/tree mode: remove bottom margin when in grouped view to eliminate gap above first group-header
     d->adjustHeaderLayoutMargin(strategyName);
+    d->adjustIconModeSpacing(strategyName);
 }
 
 void FileView::setViewSelectState(bool isSelect)
@@ -2308,13 +2306,10 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
     connect(Application::instance(), &Application::viewModeChanged, this, &FileView::onDefaultViewModeChanged);
     connect(Application::appObtuselySetting(), &Settings::valueChanged, this, &FileView::onAppAttributeChanged);
-
-#ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         if (d->currentViewMode == Global::ViewMode::kIconMode)
-            this->setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
+            d->adjustIconModeSpacing(model()->groupingStrategy());
     });
-#endif
 
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
 

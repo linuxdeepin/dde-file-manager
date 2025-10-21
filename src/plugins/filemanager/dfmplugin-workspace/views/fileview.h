@@ -36,6 +36,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class FileViewPrivate;
     friend class FileViewHelper;
     friend class ViewAnimationHelper;
+    friend class IconItemDelegate;
 
     QSharedPointer<FileViewPrivate> d;
 
