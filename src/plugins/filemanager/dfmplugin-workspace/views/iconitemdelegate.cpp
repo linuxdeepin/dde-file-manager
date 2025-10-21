@@ -963,20 +963,14 @@ QRectF IconItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem
         return option.rect;
     }
 
-    // Get viewport content margins (set by updateViewportContentsMargins in icon mode)
-    QMargins viewportMargins = view->viewport()->contentsMargins();
-
-    // Calculate the full width rect spanning from viewport left edge + 10px to right edge - 10px
     QRectF rect = option.rect;
 
-    // Reset left to viewport left edge + viewport left margin + 10px
-    int viewportLeft = -viewportMargins.left();
-    rect.setLeft(viewportLeft + 10);
+    // Reset left to viewport left edge
+    rect.setLeft(10);
 
-    // Set right to viewport right edge - viewport right margin - 10px
+    // Set right to viewport right edge
     int viewportWidth = view->viewport()->width();
-    int viewportRight = viewportLeft + viewportWidth - viewportMargins.right();
-    rect.setRight(viewportRight - 10);
+    rect.setRight(viewportWidth - 10);
 
     return rect;
 }
