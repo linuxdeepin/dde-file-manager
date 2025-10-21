@@ -27,6 +27,7 @@
 #include <dfm-base/utils/viewdefines.h>
 
 #include <DGuiApplicationHelper>
+#include <DSizeMode>
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -373,4 +374,28 @@ void FileViewPrivate::adjustHeaderLayoutMargin(const QString &strategyName)
     headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
     fmDebug() << "Header layout bottom margin adjusted to:" << bottomMargin
               << "for grouped view:" << isGrouped << "URL:" << q->rootUrl().toString();
+}
+
+void FileViewPrivate::adjustIconModeSpacing(const QString &strategyName)
+{
+    if (!q->isIconViewMode())
+        return;
+
+    // Determine margin based on grouping state
+    bool isGrouped = strategyName != GroupStrategty::kNoGroup;
+    // In grouped icon mode, set spacing=0 to let delegate control spacing via sizeHint
+    if (isGrouped) {
+        q->setSpacing(0);
+        fmDebug() << "Icon mode: spacing set to 0 for grouped view";
+    } else {
+        q->setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
+        fmDebug() << "Icon mode: spacing set to" << q->spacing() << "for non-grouped view";
+    }
+
+    // Trigger sizeHint update to add/remove virtual margins
+    if (auto iconDelegate = dynamic_cast<IconItemDelegate *>(q->itemDelegate())) {
+        iconDelegate->updateItemSizeHint();
+        q->doItemsLayout();
+        q->updateHorizontalOffset();
+    }
 }

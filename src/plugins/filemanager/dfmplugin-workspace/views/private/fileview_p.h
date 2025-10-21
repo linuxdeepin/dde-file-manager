@@ -109,7 +109,9 @@ class FileViewPrivate
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
 
     void updateHorizontalOffset();
+    // 使用 strategyName 是因为当 setGroup 时，model并不是分组状态
     void adjustHeaderLayoutMargin(const QString &strategyName);
+    void adjustIconModeSpacing(const QString &strategyName);
 };
 
 }
