@@ -15,8 +15,15 @@
 #include <QHash>
 #include <QString>
 #include <QList>
+#include <functional>
 
 DPWORKSPACE_BEGIN_NAMESPACE
+
+/**
+ * @brief Callback function type for checking if operation should be canceled
+ * @return true if the operation should be canceled, false otherwise
+ */
+using CancellationCheckCallback = std::function<bool()>;
 
 /**
  * @brief Core engine for file grouping operations
@@ -179,6 +186,12 @@ public:
      */
     void setUpdateChildrenRange(int pos, int count);
 
+    /**
+     * @brief Set the cancellation check callback
+     * @param callback The callback function to check for cancellation
+     */
+    void setCancellationCheckCallback(CancellationCheckCallback callback);
+
 private:
     /**
      * @brief Perform the actual grouping algorithm
@@ -289,6 +302,15 @@ private:
      */
     std::optional<int> findNewAnchorPos(const QUrl &oldAnchorUrl, const FileGroupData *group) const;
 
+    /**
+     * @brief Check if the operation should be canceled
+     * @return true if operation should be canceled, false otherwise
+     */
+    inline bool shouldCancel() const
+    {
+        return m_cancellationCheck && m_cancellationCheck();
+    }
+
 private:
     // Configuration
     QUrl m_rootUrl;
@@ -300,6 +322,8 @@ private:
     UpdateMode m_updateMode { UpdateMode::kNoGrouping };
     QList<QUrl> m_visibleChildrenForUpdate;
     QPair<int, int> m_visibleChildrenRangeForUpdate;
+    // Cancellation callback
+    CancellationCheckCallback m_cancellationCheck;
 };
 
 DPWORKSPACE_END_NAMESPACE

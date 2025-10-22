@@ -166,6 +166,12 @@ bool GroupingEngine::collectFilesToInsert(QList<FileItemDataPointer> *filesToIns
 {
     filesToInsert->reserve(m_visibleChildrenForUpdate.size());
     for (const QUrl &url : std::as_const(m_visibleChildrenForUpdate)) {
+        // Check for cancellation during collection
+        if (shouldCancel()) {
+            fmInfo() << "GroupingEngine: File collection canceled by user";
+            return false;
+        }
+
         auto it = m_childrenDataMap->constFind(url);
         if (it == m_childrenDataMap->constEnd()) {
             fmWarning() << "GroupingEngine: File data not found for URL" << url;
@@ -189,6 +195,12 @@ bool GroupingEngine::processFilesAndInsertGroups(const QList<FileItemDataPointer
 
     // Process each file to insert
     for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
+        // Check for cancellation during file processing
+        if (shouldCancel()) {
+            fmInfo() << "GroupingEngine: File insertion processing canceled by user";
+            return false;
+        }
+
         if (!file) {
             fmWarning() << "GroupingEngine: Invalid file data";
             continue;
@@ -260,6 +272,12 @@ bool GroupingEngine::processFilesAndUpdateGroups(const QList<FileItemDataPointer
     int index = -1;
     // Process each file to update
     for (const FileItemDataPointer &file : std::as_const(filesToInsert)) {
+        // Check for cancellation during file update processing
+        if (shouldCancel()) {
+            fmInfo() << "GroupingEngine: File update processing canceled by user";
+            return false;
+        }
+
         if (!file) {
             fmWarning() << "GroupingEngine: Invalid file data";
             return false;
@@ -323,6 +341,13 @@ GroupingEngine::UpdateResult GroupingEngine::removeFilesFromModelData(const Grou
     QSet<QString> updatedGroups;   // Track which groups need to be updated
     bool groupRemoved = false;
     for (auto &url : std::as_const(m_visibleChildrenForUpdate)) {
+        // Check for cancellation during file removal
+        if (shouldCancel()) {
+            fmInfo() << "GroupingEngine: File removal canceled by user";
+            result.success = false;
+            return result;
+        }
+
         int pos = result.newData.findFileStartPos(url).value_or(-1);
         if (pos < 0) {
             success = false;
@@ -509,6 +534,11 @@ void GroupingEngine::setUpdateChildrenRange(int pos, int count)
     m_visibleChildrenRangeForUpdate = qMakePair(pos, count);
 }
 
+void GroupingEngine::setCancellationCheckCallback(CancellationCheckCallback callback)
+{
+    m_cancellationCheck = callback;
+}
+
 void GroupingEngine::reorderGroups(GroupedModelData *modelData) const
 {
     if (!modelData || modelData->groups.isEmpty()) {
@@ -538,6 +568,14 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
 
         // Single pass grouping
         for (const auto &file : files) {
+            // Check for cancellation at the beginning of each iteration
+            if (shouldCancel()) {
+                fmInfo() << "GroupingEngine: Grouping operation canceled by user";
+                result.success = false;
+                result.errorMessage = "Operation canceled";
+                return result;
+            }
+
             if (!file) {
                 continue;   // Skip null pointers
             }
@@ -569,6 +607,14 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
         result.groups.reserve(groupMap.size());
 
         for (auto it = groupMap.constBegin(); it != groupMap.constEnd(); ++it) {
+            // Check for cancellation when processing groups
+            if (shouldCancel()) {
+                fmInfo() << "GroupingEngine: Group conversion canceled by user";
+                result.success = false;
+                result.errorMessage = "Operation canceled";
+                return result;
+            }
+
             const QString &groupKey = it.key();
             const QList<FileItemDataPointer> &groupFiles = it.value();
 
@@ -708,6 +754,12 @@ QList<FileItemDataPointer> GroupingEngine::findExpandedFiles(const FileItemDataP
     // 4. --- 迭代遍历 ---
     // 当栈不为空时，说明还有节点需要处理
     while (!urlsToProcess.isEmpty()) {
+        // Check for cancellation during tree traversal
+        if (shouldCancel()) {
+            fmDebug() << "GroupingEngine: Tree traversal canceled by user";
+            return expandedFiles;   // Return what we have collected so far
+        }
+
         const QUrl currentUrl = urlsToProcess.pop();
 
         // 从数据映射中查找当前URL对应的FileItemDataPointer
