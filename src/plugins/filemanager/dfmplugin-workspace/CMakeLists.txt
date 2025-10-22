@@ -19,6 +19,17 @@ add_library(${BIN_NAME}
     ${WORKSPACE_FILES}
 )
 
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+target_link_libraries(${BIN_NAME}
+    PUBLIC
+    Qt6::Core
+    Qt6::Widgets
+)
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)
+    find_package(Qt6 REQUIRED COMPONENTS WidgetsPrivate)
+    target_link_libraries(${BIN_NAME} PRIVATE Qt6::WidgetsPrivate)
+endif()
+
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_FILEMANAGER_DIR})
 

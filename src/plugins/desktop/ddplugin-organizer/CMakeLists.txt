@@ -44,6 +44,17 @@ target_link_libraries(${BIN_NAME} PRIVATE
     Dtk6::Gui
 )
 
+find_package(Qt6 REQUIRED COMPONENTS Core Gui)
+target_link_libraries(${BIN_NAME} 
+    PUBLIC
+    Qt6::Core
+    Qt6::Gui
+)
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)
+    find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+    target_link_libraries(${BIN_NAME} PRIVATE Qt6::GuiPrivate)
+endif()
+
 install(TARGETS ${BIN_NAME}
     LIBRARY DESTINATION ${DFM_PLUGIN_DESKTOP_CORE_DIR}
 )

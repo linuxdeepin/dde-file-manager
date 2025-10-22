@@ -25,6 +25,17 @@ add_library(${BIN_NAME}
     ${EXT_FILES}
 )
 
+find_package(Qt6 REQUIRED COMPONENTS Core Gui)
+target_link_libraries(${BIN_NAME} 
+    PUBLIC
+    Qt6::Core
+    Qt6::Gui
+)
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)
+    find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+    target_link_libraries(${BIN_NAME} PRIVATE Qt6::GuiPrivate)
+endif()
+
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_DESKTOP_DIR})
 
