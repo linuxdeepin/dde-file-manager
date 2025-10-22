@@ -33,6 +33,7 @@ CollectionWidgetPrivate::CollectionWidgetPrivate(const QString &uuid, Collection
     connect(provider, &CollectionDataProvider::nameChanged, this, &CollectionWidgetPrivate::onNameChanged);
     connect(&updateSnapshotTimer, &QTimer::timeout, this, [this] {
         if (freeze) return;
+        if (!q->isVisible()) return;
         // grab the DBlurWidget, the pixmap a little white, reduce the alpha channel to make the color colser.
         // if DTK fixed, then remove the color sets.
         auto colorNormal = q->maskColor();
