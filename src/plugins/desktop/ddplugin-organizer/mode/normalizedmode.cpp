@@ -616,19 +616,6 @@ void NormalizedMode::layout()
         }
     }
 
-    //      2. see if screen resolution was changed, if so the collections should be re-layout or move.
-    //         since only horizontal axis is reversed, only screen width should be concerned
-    QMap<int, int> surfaceMove;   // key: surface/screen index, val: the delta x value that collections should move.
-    auto savedScreenSizes = CfgPresenter->surfaceSizes();
-    for (int i = 0; i < surfaces.count() && !surfaceRelayout.contains(i); ++i) {
-        auto sur = surfaces.at(i);
-        if (!sur) continue;
-        if (i >= savedScreenSizes.count()) continue;
-        int newWidth = sur->width();
-        int oldWidth = savedScreenSizes.at(i).width();
-        surfaceMove.insert(i, newWidth - oldWidth);
-    }
-
     //      3. if screen count == 1, make sure that all of the collections can be placed without overlap
     auto prefferDefaultSize = kMiddle;
     if (surfaces.count() == 1 && surfaceRelayout.contains(0)) {   // if re-layout is already decided, only need to decided the default size.
@@ -681,11 +668,6 @@ void NormalizedMode::layout()
                                                kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin });
-        } else {
-            if (surfaceMove.value(style.screenIndex - 1, 0) != 0) {   // surface size changed. x coordinate should be changed.
-                int dx = surfaceMove.value(style.screenIndex - 1);
-                style.rect.adjust(dx, 0, dx, 0);
-            }
         }
 
         holder->setSurface(surfaces.at(style.screenIndex - 1).data());
