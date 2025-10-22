@@ -31,15 +31,19 @@ public:
     void sync(int ms = 1000);
     int classification() const;
     void setClassification(int cf);
+    void setLastStyleConfigId(const QString &id);
+    QString lastStyleConfigId() const;
+    bool hasConfigId(const QString &configId) const;
+
 
     QList<CollectionBaseDataPtr> collectionBase(bool custom) const;
     CollectionBaseDataPtr collectionBase(bool custom, const QString &key) const;
     void updateCollectionBase(bool custom, const CollectionBaseDataPtr &base);
     void writeCollectionBase(bool custom, const QList<CollectionBaseDataPtr> &base);
 
-    CollectionStyle collectionStyle(bool custom, const QString &key) const;
-    void updateCollectionStyle(bool custom, const CollectionStyle &style);
-    void writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles);
+    CollectionStyle collectionStyle(const QString &styleId, const QString &key) const;
+    void updateCollectionStyle(const QString &styleId, const CollectionStyle &style);
+    void writeCollectionStyle(const QString &styleId, const QList<CollectionStyle> &styles);
 
 public:
 signals:

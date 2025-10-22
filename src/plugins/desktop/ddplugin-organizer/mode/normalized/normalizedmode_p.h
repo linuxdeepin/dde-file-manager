@@ -33,6 +33,8 @@ public:
 
     bool tryPlaceRect(QRect &item, const QList<QRect> &inSeats, const QSize &table);
 
+    QString generateScreenConfigId();
+
 public slots:
     void onSelectFile(QList<QUrl> &urls, int flag);
     void onClearSelection();
