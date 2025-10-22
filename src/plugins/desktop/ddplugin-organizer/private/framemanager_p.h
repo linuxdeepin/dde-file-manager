@@ -41,7 +41,6 @@ public slots:
     void switchToCustom();
     void switchToNormalized(int cf);
     void showOptionWindow();
-    void onOrganizered();
 
 protected:
     QWidget *findView(QWidget *root) const;
