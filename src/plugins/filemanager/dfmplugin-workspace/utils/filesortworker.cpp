@@ -68,6 +68,10 @@ FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilt
 
     // Initialize grouping engine
     groupingEngine = std::make_unique<GroupingEngine>(current, this);
+    // Set cancellation callback to allow GroupingEngine to check our cancel state
+    groupingEngine->setCancellationCheckCallback([this]() -> bool {
+        return this->isCanceled;
+    });
 
     fmDebug() << "FileSortWorker: Grouping engine initialized";
 }
@@ -2343,7 +2347,7 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     Q_ASSERT(currentStrategy);
     Q_ASSERT(groupingEngine);
 
-    if (files.isEmpty())
+    if (files.isEmpty() || isCanceled)
         return;
 
     emit requestCursorWait();
