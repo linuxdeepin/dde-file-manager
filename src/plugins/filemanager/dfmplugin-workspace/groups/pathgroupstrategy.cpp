@@ -54,6 +54,9 @@ QString PathGroupStrategy::getGroupKey(const FileInfoPointer &info) const
 
     QString path = info->urlOf(UrlInfoType::kCustomerStartUrl).path();
     if (path.isEmpty()) {
+        path = info->urlOf(UrlInfoType::kUrl).path();
+    }
+    if (path.isEmpty()) {
         fmWarning() << "PathGroupStrategy: Empty file path for" << info->urlOf(UrlInfoType::kUrl).toString();
         return "other";
     }

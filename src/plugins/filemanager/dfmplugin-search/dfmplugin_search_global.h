@@ -25,7 +25,9 @@ DFM_LOG_USE_CATEGORY(DPSEARCH_NAMESPACE)
 
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
-inline constexpr char kSrtPath[] { "sort-by-path" };
+inline constexpr char kSortByPath[] { "sort-by-path" };
+// group by actions
+inline constexpr char kGroupByPath[] { "group-by-path" };
 }
 
 namespace CustomKey {

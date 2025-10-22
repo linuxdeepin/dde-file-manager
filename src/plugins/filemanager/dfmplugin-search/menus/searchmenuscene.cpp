@@ -34,6 +34,10 @@ static constexpr char kDConfigFilterSceneName[] = "DConfigMenuFilter";
 static constexpr char kSortByActId[] = "sort-by";
 static constexpr char kGroupByActId[] = "group-by";
 static constexpr char kDisplayAsActId[] = "display-as";
+static constexpr char kGroupTimeModifiedActionId[] = "group-by-time-modified";
+static constexpr char kGroupTimeCreatedActionId[] = "group-by-time-created";
+
+static constexpr char kCustomPathStrategy[] { "CustomPath" };
 
 AbstractMenuScene *SearchMenuCreator::create()
 {
@@ -47,7 +51,8 @@ SearchMenuScenePrivate::SearchMenuScenePrivate(SearchMenuScene *qq)
     emptyWhitelist << kSortByActId
                    << kGroupByActId
                    << kDisplayAsActId
-                   << SearchActionId::kSrtPath
+                   << SearchActionId::kSortByPath
+                   << SearchActionId::kGroupByPath
                    << dfmplugin_menu::ActionID::kSelectAll;
 }
 
@@ -89,6 +94,9 @@ void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 
             if (sceneName == kSortAndDisplayMenuSceneName && actId == kSortByActId)
                 updateSortMenu(act->menu());
+
+            if (sceneName == kSortAndDisplayMenuSceneName && actId == kGroupByActId)
+                updateGroupSubMenu(act->menu());
         }
     } else {
         QAction *openLocalAct = nullptr;
@@ -119,26 +127,70 @@ void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 
 void SearchMenuScenePrivate::updateSortMenu(QMenu *menu)
 {
-    if (!predicateAction.contains(SearchActionId::kSrtPath))
+    if (!predicateAction.contains(SearchActionId::kSortByPath))
         return;
 
     auto actions = menu->actions();
     bool contians = std::any_of(actions.begin(), actions.end(), [](QAction *act) {
         auto actId = act->property(ActionPropertyKey::kActionID).toString();
-        return actId == SearchActionId::kSrtPath;
+        return actId == SearchActionId::kSortByPath;
     });
     if (contians)
         return;
 
     if (actions.size() > 1)
-        actions.insert(1, predicateAction[SearchActionId::kSrtPath]);
+        actions.insert(1, predicateAction[SearchActionId::kSortByPath]);
     else
-        actions.append(predicateAction[SearchActionId::kSrtPath]);
+        actions.append(predicateAction[SearchActionId::kSortByPath]);
 
     menu->addActions(actions);
     auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
     if (role == Global::ItemRoles::kItemFilePathRole)
-        predicateAction[SearchActionId::kSrtPath]->setChecked(true);
+        predicateAction[SearchActionId::kSortByPath]->setChecked(true);
+}
+
+void SearchMenuScenePrivate::updateGroupSubMenu(QMenu *menu)
+{
+    if (!predicateAction.contains(SearchActionId::kGroupByPath))
+        return;
+
+    auto actions = menu->actions();
+    QAction *insertBeforeAction = nullptr;
+    QAction *actionToRemove = nullptr;
+
+    // Find group-by-time-modified as insertion point and group-by-time-created to remove
+    for (auto act : actions) {
+        auto actId = act->property(ActionPropertyKey::kActionID).toString();
+        if (actId == kGroupTimeModifiedActionId) {
+            insertBeforeAction = act;
+        } else if (actId == kGroupTimeCreatedActionId) {
+            actionToRemove = act;
+        }
+    }
+
+    // Insert path action before modified time
+    if (insertBeforeAction) {
+        menu->insertAction(insertBeforeAction, predicateAction[SearchActionId::kGroupByPath]);
+    } else {
+        // If not found, just append
+        menu->addAction(predicateAction[SearchActionId::kGroupByPath]);
+    }
+
+    // Remove created time action
+    if (actionToRemove) {
+        menu->removeAction(actionToRemove);
+    }
+
+    // Update checked state based on current strategy
+    auto strategy = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", windowId).toString();
+    if (strategy == kCustomPathStrategy)
+        predicateAction[SearchActionId::kGroupByPath]->setChecked(true);
+}
+
+void SearchMenuScenePrivate::groupByRole(const QString &strategy)
+{
+    fmDebug() << "Search: Grouping by strategy:" << strategy;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", windowId, strategy);
 }
 
 bool SearchMenuScenePrivate::openFileLocation(const QString &path)
@@ -172,7 +224,8 @@ SearchMenuScene::SearchMenuScene(QObject *parent)
 {
     d->predicateName[SearchActionId::kOpenFileLocation] = tr("Open file location");
     d->predicateName[dfmplugin_menu::ActionID::kSelectAll] = tr("Select all");
-    d->predicateName[SearchActionId::kSrtPath] = tr("Path");
+    d->predicateName[SearchActionId::kSortByPath] = tr("Path");
+    d->predicateName[SearchActionId::kGroupByPath] = QObject::tr("Path");
 }
 
 SearchMenuScene::~SearchMenuScene()
@@ -253,8 +306,10 @@ bool SearchMenuScene::create(QMenu *parent)
         d->createAction(parent, dfmplugin_menu::ActionID::kSelectAll);
 
         auto roles = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_ColumnRoles", d->windowId).value<QList<Global::ItemRoles>>();
-        if (roles.contains(Global::ItemRoles::kItemFilePathRole))
-            d->createAction(parent, SearchActionId::kSrtPath, true, true);
+        if (roles.contains(Global::ItemRoles::kItemFilePathRole)) {
+            d->createAction(parent, SearchActionId::kSortByPath, true, true);
+            d->createAction(parent, SearchActionId::kGroupByPath, true, true);
+        }
     } else {
         d->createAction(parent, SearchActionId::kOpenFileLocation);
     }
@@ -289,8 +344,15 @@ bool SearchMenuScene::triggered(QAction *action)
         }
 
         // sort by path
-        if (actionId == SearchActionId::kSrtPath) {
+        if (actionId == SearchActionId::kSortByPath) {
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
+            return true;
+        }
+
+        // group by path
+        if (actionId == SearchActionId::kGroupByPath) {
+            fmDebug() << "Search: Setting group by path for window:" << d->windowId;
+            d->groupByRole(kCustomPathStrategy);
             return true;
         }
     }
