@@ -714,6 +714,7 @@ void NormalizedMode::detachLayout()
 void NormalizedMode::rebuild(bool reorganize)
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
+    const auto profiles = CfgPresenter->normalProfile();
     QElapsedTimer time;
     time.start();
     {
@@ -722,8 +723,8 @@ void NormalizedMode::rebuild(bool reorganize)
         auto files = model->files();
         d->classifier->reset(files);
 
-        // order item as config
-        d->restore(CfgPresenter->normalProfile(), reorganize);
+        // 从配置文件中恢复集合中元素顺序
+        d->restore(profiles, reorganize);
 
         fmInfo() << QString("Classifying %0 files takes %1 ms").arg(files.size()).arg(time.elapsed());
         time.restart();
@@ -755,7 +756,12 @@ void NormalizedMode::rebuild(bool reorganize)
                 d->connectCollectionSignals(collectionHolder);
                 d->holders.insert(key, collectionHolder);
 
-                if (!d->relayoutedCollectionIDs.contains(key)) {
+                bool inProfile = std::any_of(profiles.cbegin(),
+                                             profiles.cend(),
+                                             [key](const CollectionBaseDataPtr &base) {
+                                                 return base->key == key;
+                                             });
+                if (!d->relayoutedCollectionIDs.contains(key) && !inProfile) {
                     /* 在前序 restore 中进行该变量的填充时，如果此分组不在默认的 profile 中存在
                      * 则该组中的元素不会在集合后被选择。
                      * 因此需要将该分组添加到重排列表中，以便桌面整理后能正常选中该分组内文件。
