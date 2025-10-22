@@ -30,6 +30,14 @@ using namespace ddplugin_organizer;
 FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
     : QObject(qq), q(qq)
 {
+    layoutTimer = new QTimer(this);
+    layoutTimer->setInterval(1000);
+    layoutTimer->setSingleShot(true);
+    connect(layoutTimer, &QTimer::timeout, this, [this]{
+        if (organizer) {
+            organizer->layout();
+        }
+    });
 }
 
 FrameManagerPrivate::~FrameManagerPrivate()
@@ -67,7 +75,6 @@ void FrameManagerPrivate::buildSurface()
         for (const QString &sp : surfaceWidgets.keys()) {
             if (!rootMap.contains(sp)) {
                 surfaceWidgets.take(sp);
-                fmInfo() << "remove surface:" << sp;
             }
         }
     }
@@ -432,7 +439,7 @@ void FrameManager::onBuild()
 
     if (d->organizer) {
         d->organizer->setSurfaces(d->surfaces());
-        d->organizer->layout();
+        d->layoutTimer->start();
     } else {
         d->buildOrganizer();
     }
