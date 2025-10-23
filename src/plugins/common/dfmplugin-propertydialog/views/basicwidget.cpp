@@ -103,7 +103,7 @@ void BasicWidget::initUI()
     fileSize = createValueLabel(frameMain, tr("Size"));
     fileCount = createValueLabel(frameMain, tr("Contains"));
     fileType = createValueLabel(frameMain, tr("Type"));
-    filePosition = createValueLabel(frameMain, tr("Location"));
+    fileLocation = createValueLabel(frameMain, tr("Location"));
     fileCreated = createValueLabel(frameMain, tr("Created"));
     fileAccessed = createValueLabel(frameMain, tr("Accessed"));
     fileModified = createValueLabel(frameMain, tr("Modified"));
@@ -225,8 +225,8 @@ void BasicWidget::basicFieldFilter(const QUrl &url)
         fileCount = nullptr;
     } else if (fieldFilter & PropertyFilterType::kFilePositionFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFilePosition);
-        filePosition->deleteLater();
-        filePosition = nullptr;
+        fileLocation->deleteLater();
+        fileLocation = nullptr;
     } else if (fieldFilter & PropertyFilterType::kFileCreateTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileCreateTime);
         fileCreated->deleteLater();
@@ -261,35 +261,13 @@ void BasicWidget::basicFill(const QUrl &url)
     if (info->isAttributes(OptInfoType::kIsHidden))
         hideFile->setChecked(true);
 
-    connect(hideFile, &DCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
+    connect(hideFile, &DCheckBox::checkStateChanged, this, &BasicWidget::slotFileHide);
 
-    if (filePosition && filePosition->RightValue().isEmpty()) {
-        filePosition->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOf(PathInfoType::kSymLinkTarget)
+    if (fileLocation && fileLocation->RightValue().isEmpty()) {
+        fileLocation->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOf(PathInfoType::kSymLinkTarget)
                                                                                 : info->pathOf(PathInfoType::kAbsoluteFilePath),
                                     Qt::ElideMiddle, Qt::AlignVCenter, true);
-        if (info->isAttributes(OptInfoType::kIsSymLink)) {
-            auto &&symlink = info->pathOf(PathInfoType::kSymLinkTarget);
-            connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
-                const QUrl &url = QUrl::fromLocalFile(symlink);
-                const auto &fileInfo = InfoFactory::create<FileInfo>(url);
-                QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
-                parentUrl.setQuery("selectUrl=" + url.toString());
-
-                QDBusInterface interface("org.freedesktop.FileManager1",
-                                         "/org/freedesktop/FileManager1",
-                                         "org.freedesktop.FileManager1",
-                                         QDBusConnection::sessionBus());
-                interface.setTimeout(1000);
-                if (interface.isValid()) {
-                    fmInfo() << "Start call dbus org.freedesktop.FileManager1 ShowItems!";
-                    interface.call("ShowItems", QStringList() << url.toString(), "dfmplugin-propertydialog");
-                    fmInfo() << "End call dbus org.freedesktop.FileManager1 ShowItems!";
-                } else {
-                    fmWarning() << "dbus org.freedesktop.fileManager1 not vailid!";
-                    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
-                }
-            });
-        }
+        connect(fileLocation, &KeyValueLabel::valueAreaClicked, this, &BasicWidget::slotOpenFileLocation);
     }
 
     if (fileCreated && fileCreated->RightValue().isEmpty()) {
@@ -376,7 +354,7 @@ void BasicWidget::initFileMap()
     fieldMap.insert(BasicFieldExpandEnum::kFileSize, fileSize);
     fieldMap.insert(BasicFieldExpandEnum::kFileCount, fileCount);
     fieldMap.insert(BasicFieldExpandEnum::kFileType, fileType);
-    fieldMap.insert(BasicFieldExpandEnum::kFilePosition, filePosition);
+    fieldMap.insert(BasicFieldExpandEnum::kFilePosition, fileLocation);
     fieldMap.insert(BasicFieldExpandEnum::kFileCreateTime, fileCreated);
     fieldMap.insert(BasicFieldExpandEnum::kFileAccessedTime, fileAccessed);
     fieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, fileModified);
@@ -422,11 +400,46 @@ void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int di
     fileCount->setRightValue(txt.arg(fCount), Qt::ElideNone, Qt::AlignVCenter, true);
 }
 
-void BasicWidget::slotFileHide(int state)
+void BasicWidget::slotFileHide(Qt::CheckState state)
 {
     Q_UNUSED(state)
     auto winID = qApp->activeWindow() ? qApp->activeWindow()->winId() : 0;
     PropertyEventCall::sendFileHide(winID, { currentUrl });
+}
+
+void BasicWidget::slotOpenFileLocation()
+{
+    FileInfoPointer info = InfoFactory::create<FileInfo>(currentUrl);
+    if (info.isNull())
+        return;
+
+    // Determine the target path: for symlinks, use the link target; for others, use the file itself
+    QString targetPath = info->isAttributes(OptInfoType::kIsSymLink)
+            ? info->pathOf(PathInfoType::kSymLinkTarget)
+            : info->pathOf(PathInfoType::kAbsoluteFilePath);
+
+    const QUrl targetUrl = QUrl::fromLocalFile(targetPath);
+    const auto &targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    if (targetInfo.isNull())
+        return;
+
+    QUrl parentUrl = targetInfo->urlOf(UrlInfoType::kParentUrl);
+    parentUrl.setQuery("selectUrl=" + targetUrl.toString());
+
+    // Try to use DBus interface first
+    QDBusInterface interface("org.freedesktop.FileManager1",
+                             "/org/freedesktop/FileManager1",
+                             "org.freedesktop.FileManager1",
+                             QDBusConnection::sessionBus());
+    interface.setTimeout(1000);
+
+    if (interface.isValid()) {
+        fmInfo() << "Opening file location via DBus:" << targetUrl.toString();
+        interface.call("ShowItems", QStringList() << targetUrl.toString(), "dfmplugin-propertydialog");
+    } else {
+        fmWarning() << "DBus org.freedesktop.FileManager1 not available, using fallback";
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
+    }
 }
 
 void BasicWidget::closeEvent(QCloseEvent *event)

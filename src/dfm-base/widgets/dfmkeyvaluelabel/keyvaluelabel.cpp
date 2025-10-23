@@ -240,7 +240,10 @@ void RightValueWidget::setCompleteText(const QString &text)
 void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     QTextEdit::mouseReleaseEvent(event);
-    Q_EMIT clicked();
+    // Only emit clicked signal when Ctrl key is pressed
+    if (event->modifiers() & Qt::ControlModifier) {
+        Q_EMIT clicked();
+    }
 }
 
 void RightValueWidget::showEvent(QShowEvent *event)
