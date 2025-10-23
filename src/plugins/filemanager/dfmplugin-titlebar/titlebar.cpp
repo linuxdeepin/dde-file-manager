@@ -97,7 +97,6 @@ void TitleBar::onWindowOpened(quint64 windId)
     connect(window, &FileManagerWindow::reqCloseCurrentTab, titleBarWidget, &TitleBarWidget::handleHotketCloseCurrentTab);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, titleBarWidget, &TitleBarWidget::handleHotketActivateTab);
     connect(window, &FileManagerWindow::windowSplitterWidthChanged, titleBarWidget, &TitleBarWidget::handleSplitterAnimation);
-    connect(window, &FileManagerWindow::aboutToPlaySplitterAnimation, titleBarWidget, &TitleBarWidget::handleAboutToPlaySplitterAnim);
 
     if (qAppName() == "dde-file-manager") {
         connect(window, &FileManagerWindow::workspaceInstallFinished, titleBarWidget,
