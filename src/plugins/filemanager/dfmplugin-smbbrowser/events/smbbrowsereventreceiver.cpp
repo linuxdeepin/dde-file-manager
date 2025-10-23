@@ -131,7 +131,7 @@ bool SmbBrowserEventReceiver::hookCopyFilePath(quint64, const QList<QUrl> &urlLi
         for (const auto &url : std::as_const(urlList)) {
             QUrl orgUrl;
             if (getOriginalUri(url, &orgUrl))
-                pathList << orgUrl.toString();
+                pathList << QUrl::fromPercentEncoding(orgUrl.toString().toUtf8());
         }
     }
 
