@@ -1140,19 +1140,7 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &i
         cellWidth = viewWidth;
         columnCount = 1;
     } else {
-        int margin = (availableWidth - columnCount * itemWidth) / (columnCount + 1) / 2;
-        cellWidth = itemWidth + 2 * margin;
-
-        // update viewMargins
-        int leftViewMargin = viewMargins.left() + margin;
-        int rightViewMargin = viewMargins.right() + margin;
-        int unUsedWidth = viewWidth - leftViewMargin - rightViewMargin - columnCount * cellWidth;
-        // try to divide equally
-        leftViewMargin += unUsedWidth / 2;
-        rightViewMargin += unUsedWidth - unUsedWidth / 2;
-
-        viewMargins.setLeft(leftViewMargin);
-        viewMargins.setRight(rightViewMargin);
+        cellWidth = itemWidth;
     }
 
     if (Q_UNLIKELY(cellWidth < 1)) {
