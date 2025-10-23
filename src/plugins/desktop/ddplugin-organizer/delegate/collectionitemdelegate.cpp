@@ -45,7 +45,7 @@ using namespace ddplugin_organizer;
 
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 
-const int CollectionItemDelegate::kTextPadding = 2;
+const int CollectionItemDelegate::kTextPadding = 4;
 const int CollectionItemDelegate::kIconSpacing = 2;
 const int CollectionItemDelegate::kIconTopSpacing = 4;
 const int CollectionItemDelegate::kIconBackRadius = 18;
