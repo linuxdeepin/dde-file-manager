@@ -558,6 +558,7 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
             QVariantMap map {
                 { "Property_Key_Url", newUrl },
+                { "Property_Key_Editable", true }
             };
             dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", oldUrl, map);
 
