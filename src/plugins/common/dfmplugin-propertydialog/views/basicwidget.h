@@ -46,7 +46,9 @@ public slots:
 
     void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
 
-    void slotFileHide(int state);
+    void slotFileHide(Qt::CheckState state);
+
+    void slotOpenFileLocation();
 
     void imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
     void videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
@@ -59,7 +61,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileSize { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileCount { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileType { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *filePosition { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileLocation { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileCreated { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
