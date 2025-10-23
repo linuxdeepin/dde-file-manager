@@ -41,36 +41,47 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         return;
     }
 
+    QUrl netUrl = url;
+    if (url.hasFragment()) {
+        netUrl = url.adjusted(QUrl::RemoveFragment);
+        // # 标识片段起始，后面的内容被分配到了fragment字段中
+        auto path = url.path() + '#' + url.fragment(QUrl::FullyDecoded);
+        netUrl.setPath(path);
+        fmInfo() << "networkAccessPrehandler: converted fragment into path."
+                 << "oldUrl: " << url
+                 << "newUrl" << netUrl;
+    }
+
     // the mounted source must be the TOP dir.
     // if smb://1.2.3.4/top/subdir is passed in, the param passed to mount function must be smb://1.2.3.4/top
     // and only deal smb scheme now.
-    QString mountSource = url.toString();
+    QString mountSource = netUrl.toString();
     QString subPath;
     bool isSmb = false;
     if (scheme == Global::Scheme::kSmb) {
-        mountSource = prehandler_utils::splitMountSource(url.toString(), &subPath);
+        mountSource = prehandler_utils::splitMountSource(QUrl::fromPercentEncoding(netUrl.toString().toUtf8()), &subPath);
         isSmb = true;
     }
 
     // fix 237183
     QString origUrl;
-    auto host = url.host();
+    auto host = netUrl.host();
     if (host.contains("xn--")) {   // xn--0zwm56d (测试)
         int dotAppended = 0;
         if (!host.endsWith("."))
             host += ".", dotAppended = 1;   // without this dot, cannot decoded by punycode. qurlidna.cpp::qt_ACE_do()
         QUrl u = QUrl::fromUserInput(host);   // 'http://' is auto prepended. (http://xn--0zwm56d.)
         auto punyDecodedHost = u.host().chopped(dotAppended);
-        origUrl = url.toString().replace(url.host(), punyDecodedHost);   // got the original url (smb://测试/)
+        origUrl = netUrl.toString().replace(netUrl.host(), punyDecodedHost);   // got the original url (smb://测试/)
     }
 
-    auto onMountFailed = [url, origUrl](const dfmmount::OperationErrorInfo &err) {
-        fmCritical() << "Mount operation failed for URL:" << url.toString()
+    auto onMountFailed = [netUrl, origUrl](const dfmmount::OperationErrorInfo &err) {
+        fmCritical() << "Mount operation failed for URL:" << netUrl.toString()
                      << "error code:" << err.code << "error message:" << err.message;
 
         DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
         // remove from history when mount failed.
-        dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", netUrl.toString().toUtf8());
         if (!origUrl.isEmpty()) {
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", origUrl);
             fmDebug() << "Removed both original and decoded URLs from history";
@@ -99,14 +110,14 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     };
 
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
-        fmInfo() << "mount done: " << url << ok << err.code << err.message << mpt;
+        fmInfo() << "mount done: " << netUrl << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
             if (err.code == DFMMOUNT::DeviceError::kNoError)
                 recordSubPath(mountSource, subPath);
             QString jumpTo(subPath);
             if (jumpTo.isEmpty())
                 jumpTo = readSubPath(mountSource);
-            doChangeCurrentUrl(winId, mpt, jumpTo, url);
+            doChangeCurrentUrl(winId, mpt, jumpTo, netUrl);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
