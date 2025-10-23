@@ -8,7 +8,12 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDir>
+#include <QStandardPaths>
 
+inline constexpr char kDeepinAnythingDconfName[] { "org.deepin.anything" };
+inline constexpr char kDeepinAnythingDconfPathKey[] { "indexing_paths" };
+
+DCORE_USE_NAMESPACE
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
@@ -23,7 +28,7 @@ bool isIndexWithAnything(const QString &path)
 
 bool isDefaultIndexedDirectory(const QString &path)
 {
-    static const QStringList &kDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+    auto kDirs = AnythingConfigWatcher::instance()->defaultAnythingIndexPaths();
     return kDirs.contains(path);
 }
 
@@ -240,6 +245,56 @@ bool isSupportedFile(const QString &path)
     }
 }
 
+AnythingConfigWatcher *AnythingConfigWatcher::instance()
+{
+    static AnythingConfigWatcher *in = new AnythingConfigWatcher;
+    return in;
+}
+
+AnythingConfigWatcher::~AnythingConfigWatcher()
+{
+}
+
+QStringList AnythingConfigWatcher::defaultAnythingIndexPaths()
+{
+    QMutexLocker lk(&mu);
+    return defaultIndexPath;
+}
+
+QStringList AnythingConfigWatcher::defaultAnythingIndexPathsRealtime()
+{
+    QMutexLocker lk(&mu);
+    defaultIndexPath.clear();
+    defaultIndexPath = DFMSEARCH::Global::defaultIndexedDirectory();
+    return defaultIndexPath;
+}
+
+void AnythingConfigWatcher::handleConfigChanged(const QString &key)
+{
+    if (key != kDeepinAnythingDconfPathKey)
+        return;
+    defaultAnythingIndexPathsRealtime();
+}
+
+AnythingConfigWatcher::AnythingConfigWatcher(QObject *parent)
+    : QObject(parent)
+{
+    cfg = DConfig::create(kDeepinAnythingDconfName, kDeepinAnythingDconfName, "", this);
+    if (!cfg)
+        qWarning() << " [AnythingConfigWatcher::AnythingConfigWatcher] create dconfig error, nullptr!!" << kDeepinAnythingDconfName;
+
+    if (cfg && !cfg->isValid()) {
+        qWarning() << " [AnythingConfigWatcher::AnythingConfigWatcher] create dconfig error, config is not valid!!" << kDeepinAnythingDconfName;
+        cfg->deleteLater();
+        cfg = nullptr;
+    }
+
+    if (cfg && cfg->isValid())
+        connect(cfg, &DConfig::valueChanged, this, &AnythingConfigWatcher::handleConfigChanged);
+
+    defaultAnythingIndexPathsRealtime();
+}
+
 }   // namespace IndexUtility
 
 namespace PathCalculator {
@@ -270,13 +325,13 @@ bool isDirectoryMove(const QString &toPath)
     if (toPath.isEmpty()) {
         return false;
     }
-    
+
     // First check if path exists and is a directory
     QFileInfo toFileInfo(toPath);
     if (toFileInfo.exists()) {
         return toFileInfo.isDir();
     }
-    
+
     // If path doesn't exist, infer from path format (trailing slash indicates directory)
     return toPath.endsWith('/');
 }

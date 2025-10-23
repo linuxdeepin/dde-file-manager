@@ -7,6 +7,9 @@
 #include "service_textindex_global.h"
 
 #include <QFileInfo>
+#include <QMutex>
+
+#include <dconfig.h>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -38,6 +41,28 @@ bool checkFileSize(const QFileInfo &fileInfo);
  * @return true if file type is supported and meets size requirements, false otherwise
  */
 bool isSupportedFile(const QString &path);
+
+class AnythingConfigWatcher : public QObject
+{
+    Q_OBJECT
+public:
+    static AnythingConfigWatcher *instance();
+    ~AnythingConfigWatcher() override;
+
+    QStringList defaultAnythingIndexPaths();
+    QStringList defaultAnythingIndexPathsRealtime();
+
+private slots:
+    void handleConfigChanged(const QString &key);
+
+private:
+    explicit AnythingConfigWatcher(QObject *parent = nullptr);
+
+private:
+    DTK_CORE_NAMESPACE::DConfig *cfg { nullptr };
+    QMutex mu;
+    QStringList defaultIndexPath;
+};
 
 }   // namespace IndexUtility
 
