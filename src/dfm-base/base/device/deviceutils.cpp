@@ -632,7 +632,7 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
     auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
     if (map.contains(kSizeFree) && map.value(kSizeFree, 0).toLongLong() > 0)
         return map.value(kSizeFree, 0).toLongLong();
-    if (map.contains(kSizeTotal) && map.contains(kSizeUsed))
+    if (map.contains(kSizeTotal) && map.contains(kSizeUsed) && map.value(kSizeTotal, 0).toLongLong() > 0)
         return map.value(kSizeTotal, 0).toLongLong() - map.value(kSizeUsed, 0).toLongLong();
 
     return DFMIO::DFMUtils::deviceBytesFree(url);
