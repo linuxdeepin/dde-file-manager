@@ -59,7 +59,7 @@ public:
     QWidget *expandedItem() override;
 
     QString displayFileName(const QModelIndex &index) const;
-    QList<QRectF> calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const;
+    QList<QRectF> calcFileNameRect(const QModelIndex &index, const QRectF &rect, Qt::TextElideMode elideMode) const;
 
 private slots:
     void editorFinished();
