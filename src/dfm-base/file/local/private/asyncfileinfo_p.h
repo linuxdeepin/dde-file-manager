@@ -21,8 +21,8 @@
 #include <QFuture>
 #include <QQueue>
 #include <QMimeType>
-#include <QReadWriteLock>
-#include <QReadLocker>
+#include <QMutex>
+#include <QMutexLocker>
 
 namespace dfmbase {
 class AsyncFileInfoPrivate
@@ -42,18 +42,18 @@ public:
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
-    QReadWriteLock lock;
+    mutable QMutex lock;
     QReadWriteLock iconLock;
     QIcon fileIcon;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer updateFileCountFuture { nullptr };
     QMap<FileInfo::FileInfoAttributeID, QVariant> cacheAsyncAttributes;
-    QReadWriteLock notifyLock;
+    mutable QMutex notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
     quint64 tokenKey { 0 };
     AsyncFileInfo *const q;
-    QReadWriteLock changesLock;
+    mutable QMutex changesLock;
     QList<FileInfo::FileInfoAttributeID> changesAttributes;
 
 public:
