@@ -213,7 +213,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 
 void FileOperatorHelper::copyFilePath(const FileView *view)
 {
-    QList<QUrl> selectedUrls = view->selectedTreeViewUrlList();
+    const QList<QUrl> &selectedUrls = view->selectedUrlList();
     dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, selectedUrls);
 }
 
