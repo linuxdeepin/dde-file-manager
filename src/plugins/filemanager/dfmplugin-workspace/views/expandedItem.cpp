@@ -181,7 +181,7 @@ QRectF ExpandedItem::textGeometry(int width) const
                         INT_MAX);
 
         QString str = delegate->displayFileName(index);
-        const QList<QRectF> &lines = delegate->calFileNameRect(str, labelRect, option.textElideMode);
+        const QList<QRectF> &lines = delegate->calcFileNameRect(index, labelRect, option.textElideMode);
 
         textBounding = GlobalPrivate::boundingRect(lines);
     }

@@ -237,7 +237,7 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     bool elide = (!isSelected || !singleSelected);
 
-    QList<QRectF> lines = calFileNameRect(fileName, labelRect, elide ? opt.textElideMode : Qt::ElideNone);
+    QList<QRectF> lines = calcFileNameRect(index, labelRect, elide ? opt.textElideMode : Qt::ElideNone);
 
     for (const QRectF &line : lines) {
         geometries << line.toRect();
@@ -413,7 +413,7 @@ QList<QRect> IconItemDelegate::itemGeomertys(const QStyleOptionViewItem &opt, co
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     labelRect.setWidth(labelRect.width() - kIconModeRectRadius);
 
-    QList<QRectF> lines = calFileNameRect(fileName, labelRect, opt.textElideMode);
+    QList<QRectF> lines = calcFileNameRect(index, labelRect, opt.textElideMode);
     for (const auto &line : lines) {
         geometries.append(line.toRect());
     }
@@ -466,11 +466,23 @@ QString IconItemDelegate::displayFileName(const QModelIndex &index) const
     return str;
 }
 
-QList<QRectF> IconItemDelegate::calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const
+QList<QRectF> IconItemDelegate::calcFileNameRect(const QModelIndex &index, const QRectF &rect, Qt::TextElideMode elideMode) const
 {
+    if (!index.isValid()) {
+        return QList<QRectF>();
+    }
+
+    const QString &name = displayFileName(index);
     int lineHeight = UniversalUtils::getTextLineHeight(name, parent()->parent()->fontMetrics());
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(name, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter));
+
+    // Add tag support by calling hook, same as Canvas implementation
+    const FileInfoPointer &info = parent()->fileInfo(index);
+    if (info) {
+        WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
+    }
+
     return layout->layout(rect, elideMode);
 }
 
