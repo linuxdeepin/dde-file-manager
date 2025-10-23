@@ -104,20 +104,11 @@ void TitleBarWidget::openCustomFixedTabs()
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 {
-    int newWidth = qMax(0, 95 - splitterEndValue);
-    if (position == splitterEndValue)
-        splitterEndValue = -1;
-
+    int newWidth = qMax(0, 95 - position.toInt());
     if (newWidth == placeholder->width())
         return;
 
     placeholder->setFixedWidth(newWidth);
-}
-
-void TitleBarWidget::handleAboutToPlaySplitterAnim(int startValue, int endValue)
-{
-    Q_UNUSED(startValue);
-    splitterEndValue = endValue;
 }
 
 void TitleBarWidget::handleHotkeyCtrlF()

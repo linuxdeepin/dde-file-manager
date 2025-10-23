@@ -41,7 +41,6 @@ public:
     void showSearchFilterButton(bool visible);
     void setViewModeState(int mode);
     void handleSplitterAnimation(const QVariant &position);
-    void handleAboutToPlaySplitterAnim(int startValue, int endValue);
 
     int calculateRemainingWidth() const;
 
@@ -100,7 +99,6 @@ private:
     QWidget *placeholder { nullptr };
 
     bool searchButtonSwitchState { false };
-    int splitterEndValue { -1 };
 
     struct TitleBarState
     {
