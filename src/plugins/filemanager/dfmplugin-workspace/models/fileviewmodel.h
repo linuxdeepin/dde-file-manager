@@ -116,7 +116,7 @@ public:
 
 Q_SIGNALS:
     void stateChanged();
-    void groupingStateChanged();
+    void groupingStateChanged(GroupingState);
     void renameFileProcessStarted();
     void selectAndEditFile(const QUrl &url);
     void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);

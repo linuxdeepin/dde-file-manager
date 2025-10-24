@@ -2296,6 +2296,7 @@ void FileView::initializeConnect()
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
     connect(model(), &FileViewModel::renameFileProcessStarted, this, &FileView::onRenameProcessStarted);
     connect(model(), &FileViewModel::aboutToSwitchToListView, this, &FileView::onAboutToSwitchListView);
+
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
