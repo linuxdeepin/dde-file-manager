@@ -2,7 +2,7 @@
 Actions=clean-trash;
 Categories=System;
 Comment=Open trash.
-Exec=xdg-open trash:///
+Exec=dfm-trash.sh %F
 GenericName=Open Trash.
 Icon=user-trash
 Name=Trash

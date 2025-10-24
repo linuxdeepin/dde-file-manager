@@ -7,3 +7,4 @@ usr/share/dbus-1/services/com.deepin.dde.desktop.service
 usr/share/dbus-1/services/org.freedesktop.FileManager.service
 usr/share/dde-shell/*/*.json
 usr/lib/*/dde-shell/*.so
+usr/bin/dfm-trash.sh
