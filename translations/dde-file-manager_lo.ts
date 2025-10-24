@@ -40,7 +40,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/devicelist.cpp" line="148"/>
         <source>Disks</source>
-        <translation>ແຜ່ນໄດສ്രິບ</translation>
+        <translation>ລາຍຊື່ດິສກ໌</translation>
     </message>
 </context>
 <context>
@@ -4222,7 +4222,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="375"/>
         <source>Disks</source>
-        <translation>ឌីសខាងលីច</translation>
+        <translation>ລາຍຊື່ດິສກ໌</translation>
     </message>
 </context>
 <context>
