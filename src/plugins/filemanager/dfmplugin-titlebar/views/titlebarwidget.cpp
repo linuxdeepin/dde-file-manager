@@ -44,6 +44,7 @@ using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::BaseConfig;
 
 inline constexpr int kSpacing { 10 };
+inline constexpr char kIsCustomTab[] { "isCustomTab" };
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -98,7 +99,7 @@ void TitleBarWidget::openCustomFixedTabs()
     const auto &itemList = DConfigManager::instance()->value(kDefaultCfgPath, kCunstomFixedTabs, {}).toStringList();
     for (const auto &item : itemList) {
         int index = tabBar()->createInactiveTab(item);
-        tabBar()->setTabUserData(index, true);
+        tabBar()->setTabUserData(index, kIsCustomTab, true);
     }
 }
 
@@ -469,12 +470,16 @@ void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
 
 bool TitleBarWidget::checkCustomFixedTab(int index)
 {
-    if (!tabBar()->tabUserData(index).toBool())
+    if (!tabBar()->tabUserData(index, kIsCustomTab).toBool())
         return true;
 
     const auto &url = tabBar()->tabUrl(index);
     auto info = InfoFactory::create<FileInfo>(url);
     if (info && info->exists())
+        return true;
+
+    // Some URLs cannot be checked by info, such as `computer:///`.
+    if (UrlRoute::isVirtual(url) && UrlRoute::isRootUrl(url))
         return true;
 
     int ret = DialogManagerInstance->showMessageDialog(DialogManager::kMsgErr, tr("Directory not found"),
