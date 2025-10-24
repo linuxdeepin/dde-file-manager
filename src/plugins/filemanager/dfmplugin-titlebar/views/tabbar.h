@@ -22,7 +22,7 @@ public:
     ~TabBar() override;
 
     int createTab();
-    int createInactiveTab(const QUrl &url, const QVariant &userData = {});
+    int createInactiveTab(const QUrl &url, const QVariantMap &userData = {});
     void removeTab(int index, int selectIndex = -1);
     void setCurrentUrl(const QUrl &url);
     void closeTab(const QUrl &url);
@@ -32,8 +32,8 @@ public:
     QString tabAlias(int index) const;
     void setTabAlias(int index, const QString &alias);
     QString tabUniqueId(int index) const;
-    QVariant tabUserData(int index) const;
-    void setTabUserData(int index, const QVariant &userData);
+    QVariant tabUserData(int index, const QString &key) const;
+    void setTabUserData(int index, const QString &key, const QVariant &userData);
     bool isInactiveTab(int index) const;
 
 public Q_SLOTS:

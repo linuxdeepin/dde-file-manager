@@ -44,7 +44,7 @@ struct Tab
     QUrl tabUrl;
     QString tabAlias;
     QString uniqueId;
-    QVariant userData;
+    QVariantMap userData;
     bool isInactive { false };
 };
 
@@ -584,7 +584,7 @@ int TabBar::createTab()
     return index;
 }
 
-int TabBar::createInactiveTab(const QUrl &url, const QVariant &userData)
+int TabBar::createInactiveTab(const QUrl &url, const QVariantMap &userData)
 {
     QSignalBlocker blk(this);
     int index = addTab("");
@@ -691,15 +691,15 @@ QString TabBar::tabUniqueId(int index) const
     return d->tabInfo(index).uniqueId;
 }
 
-QVariant TabBar::tabUserData(int index) const
+QVariant TabBar::tabUserData(int index, const QString &key) const
 {
-    return d->tabInfo(index).userData;
+    return d->tabInfo(index).userData.value(key);
 }
 
-void TabBar::setTabUserData(int index, const QVariant &userData)
+void TabBar::setTabUserData(int index, const QString &key, const QVariant &userData)
 {
-    d->updateTabInfo(index, [&userData](Tab &tab) {
-        tab.userData = userData;
+    d->updateTabInfo(index, [&](Tab &tab) {
+        tab.userData[key] = userData;
     });
 }
 
