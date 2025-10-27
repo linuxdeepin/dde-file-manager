@@ -4066,12 +4066,12 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
         <source>Erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat l&apos;esborrament.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut completar l&apos;esborrament del disc. Això pot ser degut a limitacions de lectura / escriptura o a l&apos;estat del disc. Comproveu la configuració pertinent i torneu-ho a provar.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="231"/>
@@ -5706,7 +5706,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat obrir %1, que es pot haver mogut o canviat de nom.</translation>
     </message>
 </context>
 <context>
@@ -8052,7 +8052,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation>Ha fallat obrir %1, que es pot moure o canviar de nom.</translation>
+        <translation>Ha fallat obrir %1, que es pot haver mogut o canviat de nom.</translation>
     </message>
 </context>
 <context>
