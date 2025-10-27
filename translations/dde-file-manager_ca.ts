@@ -394,46 +394,48 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="876"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="407"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="877"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="408"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1336"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1338"/>
         <source>Unable to find the original file</source>
         <translation>No es pot trobar el fitxer original.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="442"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="445"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="494"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="443"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="492"/>
         <source>File has been moved or deleted</source>
         <translation>El fitxer s&apos;ha desplaçat o eliminat</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="448"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="496"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="446"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="494"/>
         <source>You do not have permission to access this folder</source>
         <translation>No teniu permís per accedir a aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="451"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="499"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="449"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="497"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>No teniu permís per passar-hi fitxers.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="438"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="437"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>La carpeta és buida</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="440"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="439"/>
         <source>Loading...</source>
         <translation>Carregant...</translation>
     </message>
@@ -963,6 +965,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation> (copia %1)</translation>
     </message>
     <message>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
@@ -1227,8 +1230,8 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Error desconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="340"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="301"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="346"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Tanca</translation>
@@ -1893,6 +1896,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="210"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="228"/>
         <source>Path</source>
         <translation>Camí</translation>
     </message>
@@ -2382,27 +2386,27 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="156"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="163"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
         <translation>Per desactivar la funció d&apos;amagar amb un clic, obriu la finestra de configuració de l&apos;escriptori al menú contextual de l&apos;escriptori i desactiveu la col·lecció d&apos;amagar amb un clic.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="166"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="173"/>
         <source>Desktop organizer</source>
         <translation>Organitzador de l&apos;escriptori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="169"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="176"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
         <translation>La drecera %1 serveix per mostrar les col·leccions.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
         <source>Close</source>
         <translation>Tanca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="171"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
         <source>No more prompts</source>
         <translation>Cap indicació més</translation>
     </message>
@@ -3253,7 +3257,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="285"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="288"/>
         <source>Copy complete info</source>
         <translation>Copia la informació completa</translation>
     </message>
@@ -4060,71 +4064,81 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_burn::BurnJobManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="225"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
+        <source>Erase failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
+        <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="231"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="240"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="246"/>
         <source>Disc erase failed</source>
         <translation>Ha fallat esborrar el disc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
         <source>Burn process failed</source>
         <translation>Ha fallat gravar el disc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="253"/>
         <source>Data verification failed</source>
         <translation>Ha fallat la verificació de les dades.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="256"/>
         <source>%1: %2</source>
         <translation>%1. %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="266"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="272"/>
         <source>Show details</source>
         <translation>Mostra&apos;n els detalls</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="270"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="276"/>
         <source>Hide details</source>
         <translation>Amaga&apos;n els detalls</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="271"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="280"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="286"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Mostra&apos;n els detalls</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="281"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="302"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>Mostra el fitxer d&apos;imatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="321"/>
         <source>Image successfully created</source>
         <translation>Imatge creada correctament</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="350"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="356"/>
         <source>Image creation failed</source>
         <translation>Ha fallat crear la imatge.</translation>
     </message>
@@ -4294,22 +4308,22 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>El dispositiu està ocupat i no se&apos;n pot canviar el nom ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="567"/>
         <source>Format failed</source>
         <translation>Ha fallat la formatació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="567"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>El dispositiu està ocupat i no es pot formatar ara.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="726"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="724"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="726"/>
         <source>Cannot access %1</source>
         <translation>No es pot accedir a %1</translation>
     </message>
@@ -5688,6 +5702,14 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
 </context>
 <context>
+    <name>dfmplugin_filepreview::PreviewFileOperation</name>
+    <message>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
+        <source>Failed to open %1, which may be moved or renamed</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
@@ -5982,13 +6004,13 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Durada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="421"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="399"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="421"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="399"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
     </message>
@@ -6366,17 +6388,17 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="173"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="225"/>
         <source>Open file location</source>
         <translation>Obre la ubicació del fitxer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="174"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="226"/>
         <source>Select all</source>
         <translation>Selecciona-ho tot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="227"/>
         <source>Path</source>
         <translation>Camí</translation>
     </message>
@@ -6811,22 +6833,22 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="223"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="225"/>
         <source>Close tab</source>
         <translation>Tanca la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="226"/>
         <source>Close other tabs</source>
         <translation>Tanca altres pestanyes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="234"/>
         <source>Close tabs to the left</source>
         <translation>Tanca les pestanyes de l&apos;esquerra</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="242"/>
         <source>Close tabs to the right</source>
         <translation>Tanca les pestanyes de la dreta</translation>
     </message>
@@ -6834,23 +6856,23 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="489"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="485"/>
         <source>Directory not found</source>
         <translation>No s&apos;ha trobat el directori.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="486"/>
         <source>Directory not found. Remove it?</source>
         <translation>No s&apos;ha trobat el directori. El voleu eliminar?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Elimina</translation>
@@ -8036,12 +8058,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2360"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2361"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Les credencials d&apos;inici de sessió del servidor no són vàlides. Desinstal·leu&lt;-lo i torneu-lo a muntar.</translation>
     </message>
@@ -8049,27 +8071,27 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="774"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="783"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="776"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="785"/>
         <source>Time modified</source>
         <translation>Hora de modificació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="778"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="787"/>
         <source>Time created</source>
         <translation>Hora de creació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="780"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="789"/>
         <source>Size</source>
         <translation>Mida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="782"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="791"/>
         <source>Type</source>
         <translation>Tipus</translation>
     </message>
