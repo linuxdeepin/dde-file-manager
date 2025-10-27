@@ -5,6 +5,7 @@
 #include "previewfileoperation.h"
 
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <dfm-framework/dpf.h>
 #include <dfm-base/file/local/localfilehandler.h>
@@ -12,6 +13,7 @@
 #include <QList>
 #include <QUrl>
 #include <QProcess>
+#include <QFileInfo>
 
 Q_DECLARE_METATYPE(bool *)
 
@@ -28,16 +30,22 @@ PreviewFileOperation::PreviewFileOperation(QObject *parent)
 bool PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
 {
     qCInfo(logLibFilePreview) << "PreviewFileOperation: attempting to open file:" << url.toString() << "from window ID:" << winID;
-    
-    if (!url.isValid()) {
+
+    if (!url.isValid() || !url.isLocalFile()) {
         qCWarning(logLibFilePreview) << "PreviewFileOperation: invalid URL provided:" << url.toString();
         return false;
     }
-    
+
+    if (!QFileInfo(url.toLocalFile()).exists()) {
+        UniversalUtils::notifyMessage(QObject::tr("dde-file-manager"),
+                                      tr("Failed to open %1, which may be moved or renamed").arg(url.fileName()));
+        return false;
+    }
+
     QList<QUrl> urls { url };
     LocalFileHandler fileHandler;
     bool ok = fileHandler.openFiles(urls);
-    
+
     if (!ok) {
         GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != GlobalEventType::kUnknowType) {

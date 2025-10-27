@@ -1039,7 +1039,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         }
 
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (!info) {
+        if (!info || !info->exists()) {
             qCWarning(logDFMBase) << "Failed to create FileInfo for:" << url;
             transUrls.removeOne(url);
             continue;
