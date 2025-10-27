@@ -280,6 +280,11 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     if (!tgItem)
         return nullptr;
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
+    // 重新设置调色板颜色值，使得背景色正确渲染，而不是保持透明状态。
+    auto p = editor->palette();
+    p.setColor(QPalette::Button, p.color(QPalette::Button));
+    editor->setPalette(p);
+
     QLineEdit *qle = nullptr;
     if ((qle = dynamic_cast<QLineEdit *>(editor))) {
         if (!NPDeviceAliasManager::instance()->canSetAlias(tgItem->targetUrl())) {
