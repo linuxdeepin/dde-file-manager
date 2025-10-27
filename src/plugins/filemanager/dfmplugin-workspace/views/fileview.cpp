@@ -245,6 +245,9 @@ bool FileView::setRootUrl(const QUrl &url)
     // This handles both initialization and directory switching scenarios
     d->adjustHeaderLayoutMargin(model()->groupingStrategy());
 
+    // 初始化分组状态追踪
+    d->previousGroupStrategy = model()->groupingStrategy();
+
     // dir already traversal
     if (model()->currentState() == ModelState::kIdle)
         updateSelectedUrl();
@@ -808,6 +811,9 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
 
     fmInfo() << "Setting group strategy:" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
              << "for URL:" << rootUrl().toString();
+
+    // 在分组开始前保存当前的分组策略
+    d->previousGroupStrategy = model()->groupingStrategy();
 
     model()->grouping(strategyName, order);
 
@@ -2171,6 +2177,21 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
 
 void FileView::paintEvent(QPaintEvent *event)
 {
+    // 仅在从无分组切换到有分组时才跳过绘制,避免UI异常
+    // 从一种分组策略切换到另一种分组策略时允许绘制,保持流畅性
+    if (model()->groupingState() == GroupingState::kGrouping) {
+        QString currentStrategy = model()->groupingStrategy();
+        bool isFromNoGroupToGrouped = (d->previousGroupStrategy == GroupStrategty::kNoGroup
+                                       && currentStrategy != GroupStrategty::kNoGroup);
+        if (isFromNoGroupToGrouped) {
+            fmDebug() << "Skipping paint during initial grouping from none to:" << currentStrategy;
+            return;
+        }
+        // 允许分组间切换时的绘制
+        fmDebug() << "Allow paint during group-to-group switch from:"
+                  << d->previousGroupStrategy << "to:" << currentStrategy;
+    }
+
     if (d->animationHelper->isWaitingToPlaying() || d->animationHelper->isAnimationPlaying()) {
         d->animationHelper->paintItems();
         itemDelegate()->hideAllIIndexWidget();
@@ -2296,7 +2317,6 @@ void FileView::initializeConnect()
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
     connect(model(), &FileViewModel::renameFileProcessStarted, this, &FileView::onRenameProcessStarted);
     connect(model(), &FileViewModel::aboutToSwitchToListView, this, &FileView::onAboutToSwitchListView);
-
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);

@@ -402,13 +402,6 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         return {};
     }
 
-    // TODO: ui bug
-    // // 分组时可能耗时很久，此时若返回数据会导致界面异常
-    // if (groupingState() == GroupingState::kGrouping) {
-    //     fmDebug() << "Current grouping state is grouping, ignore data";
-    //     return {};
-    // }
-
     const QModelIndex &parentIndex = index.parent();
 
     if (filterSortWorker.isNull())
