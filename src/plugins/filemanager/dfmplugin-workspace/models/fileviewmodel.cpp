@@ -1250,7 +1250,7 @@ void FileViewModel::initFilterSortWork()
     Qt::SortOrder order = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
     ItemRoles role = static_cast<ItemRoles>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "sortRole", kItemFileDisplayNameRole).toInt());
     // get group config
-    QString groupStrategy = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupStrategy", GroupStrategty::kNoGroup).toString();
+    QString groupStrategy = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupStrategy", GroupStrategy::kNoGroup).toString();
     Qt::SortOrder groupOrder = static_cast<Qt::SortOrder>(WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, "groupingOrder", Qt::AscendingOrder).toInt());
     const QString &expandsionKey = QString("groupExpansion.%1").arg(groupStrategy);
     const auto &expansionStates = WorkspaceHelper::instance()->getFileViewStateValue(dirRootUrl, expandsionKey).toHash();

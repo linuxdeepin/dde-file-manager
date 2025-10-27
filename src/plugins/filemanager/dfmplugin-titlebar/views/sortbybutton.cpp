@@ -32,7 +32,7 @@ static constexpr int kSortToolHMargin { 6 };
 static constexpr int kSortToolVMargin { 9 };
 static constexpr char kItemRole[] = "item-role";
 
-namespace GroupStrategty {
+namespace GroupStrategy {
 inline constexpr char kNoGroup[] { "NoGroupStrategy" };
 inline constexpr char kName[] { "Name" };
 inline constexpr char kSize[] { "Size" };
@@ -41,21 +41,21 @@ inline constexpr char kCreatedTime[] { "CreatedTime" };
 inline constexpr char kType[] { "Type" };
 inline constexpr char kCustomPath[] { "CustomPath" };
 inline constexpr char kCustomTime[] { "CustomTime" };
-}   // namespace GroupStrategty
+}   // namespace GroupStrategy
 
 // TODO: This is workaround
 static QString roleToGroupingStrategy(const DFMGLOBAL_NAMESPACE::ItemRoles &role)
 {
     static const QHash<DFMGLOBAL_NAMESPACE::ItemRoles, QString> kMapping = {
-        { kItemFileDisplayNameRole, GroupStrategty::kName },
-        { kItemFileLastModifiedRole, GroupStrategty::kModifiedTime },
-        { kItemFileCreatedRole, GroupStrategty::kCreatedTime },
-        { kItemFileSizeRole, GroupStrategty::kSize },
-        { kItemFileMimeTypeRole, GroupStrategty::kType },
-        { kItemFileOriginalPath, GroupStrategty::kCustomPath },
-        { kItemFilePathRole, GroupStrategty::kCustomPath },
-        { kItemFileDeletionDate, GroupStrategty::kCustomTime },
-        { kItemFileLastReadRole, GroupStrategty::kCustomTime }
+        { kItemFileDisplayNameRole, GroupStrategy::kName },
+        { kItemFileLastModifiedRole, GroupStrategy::kModifiedTime },
+        { kItemFileCreatedRole, GroupStrategy::kCreatedTime },
+        { kItemFileSizeRole, GroupStrategy::kSize },
+        { kItemFileMimeTypeRole, GroupStrategy::kType },
+        { kItemFileOriginalPath, GroupStrategy::kCustomPath },
+        { kItemFilePathRole, GroupStrategy::kCustomPath },
+        { kItemFileDeletionDate, GroupStrategy::kCustomTime },
+        { kItemFileLastReadRole, GroupStrategy::kCustomTime }
     };
 
     return kMapping.value(role, "NoGroupStrategy");

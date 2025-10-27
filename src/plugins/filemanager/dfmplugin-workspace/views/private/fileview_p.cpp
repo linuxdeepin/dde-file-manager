@@ -368,7 +368,7 @@ void FileViewPrivate::adjustHeaderLayoutMargin(const QString &strategyName)
         return;
 
     // Determine margin based on grouping state
-    bool isGrouped = strategyName != GroupStrategty::kNoGroup;
+    bool isGrouped = strategyName != GroupStrategy::kNoGroup;
     int bottomMargin = isGrouped ? 0 : 10;
 
     headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
@@ -382,7 +382,7 @@ void FileViewPrivate::adjustIconModeSpacing(const QString &strategyName)
         return;
 
     // Determine margin based on grouping state
-    bool isGrouped = strategyName != GroupStrategty::kNoGroup;
+    bool isGrouped = strategyName != GroupStrategy::kNoGroup;
     // In grouped icon mode, set spacing=0 to let delegate control spacing via sizeHint
     if (isGrouped) {
         q->setSpacing(0);

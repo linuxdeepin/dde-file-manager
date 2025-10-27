@@ -59,7 +59,7 @@ bool NoGroupStrategy::isGroupVisible(const QString &groupKey, const QList<FileIn
 QString NoGroupStrategy::getStrategyName() const
 {
     // Return localized strategy name
-    return GroupStrategty::kNoGroup;
+    return GroupStrategy::kNoGroup;
 }
 
 DPWORKSPACE_END_NAMESPACE

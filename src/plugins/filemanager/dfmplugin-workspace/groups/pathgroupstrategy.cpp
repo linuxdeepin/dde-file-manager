@@ -118,7 +118,7 @@ bool PathGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString PathGroupStrategy::getStrategyName() const
 {
-    return GroupStrategty::kCustomPath;
+    return GroupStrategy::kCustomPath;
 }
 
 QString PathGroupStrategy::classifyByPath(const QString &path) const

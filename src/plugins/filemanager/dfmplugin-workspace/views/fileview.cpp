@@ -1313,7 +1313,7 @@ bool FileView::isGroupedView() const
 {
     const auto strategyName = model()->groupingStrategy();
 
-    if (strategyName.isEmpty() || strategyName == GroupStrategty::kNoGroup)
+    if (strategyName.isEmpty() || strategyName == GroupStrategy::kNoGroup)
         return false;
 
     return true;
@@ -2181,8 +2181,8 @@ void FileView::paintEvent(QPaintEvent *event)
     // 从一种分组策略切换到另一种分组策略时允许绘制,保持流畅性
     if (model()->groupingState() == GroupingState::kGrouping) {
         QString currentStrategy = model()->groupingStrategy();
-        bool isFromNoGroupToGrouped = (d->previousGroupStrategy == GroupStrategty::kNoGroup
-                                       && currentStrategy != GroupStrategty::kNoGroup);
+        bool isFromNoGroupToGrouped = (d->previousGroupStrategy == GroupStrategy::kNoGroup
+                                       && currentStrategy != GroupStrategy::kNoGroup);
         if (isFromNoGroupToGrouped) {
             fmDebug() << "Skipping paint during initial grouping from none to:" << currentStrategy;
             return;

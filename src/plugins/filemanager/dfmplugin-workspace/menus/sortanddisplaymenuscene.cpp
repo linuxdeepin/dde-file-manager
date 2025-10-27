@@ -207,42 +207,42 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
             // group by none
             if (actionId == ActionID::kGroupByNone) {
                 fmInfo() << "Setting group by none";
-                d->groupByStrategy(GroupStrategty::kNoGroup);
+                d->groupByStrategy(GroupStrategy::kNoGroup);
                 return true;
             }
 
             // group by name
             if (actionId == ActionID::kGroupByName) {
                 fmInfo() << "Grouping by name";
-                d->groupByStrategy(GroupStrategty::kName);
+                d->groupByStrategy(GroupStrategy::kName);
                 return true;
             }
 
             // group by time modified
             if (actionId == ActionID::kGroupByModified) {
                 fmInfo() << "Grouping by time modified";
-                d->groupByStrategy(GroupStrategty::kModifiedTime);
+                d->groupByStrategy(GroupStrategy::kModifiedTime);
                 return true;
             }
 
             // group by time created
             if (actionId == ActionID::kGroupByCreated) {
                 fmInfo() << "Grouping by time created";
-                d->groupByStrategy(GroupStrategty::kCreatedTime);   // TimeStrategy handles both
+                d->groupByStrategy(GroupStrategy::kCreatedTime);   // TimeStrategy handles both
                 return true;
             }
 
             // group by size
             if (actionId == ActionID::kGroupBySize) {
                 fmInfo() << "Grouping by size";
-                d->groupByStrategy(GroupStrategty::kSize);
+                d->groupByStrategy(GroupStrategy::kSize);
                 return true;
             }
 
             // group by type
             if (actionId == ActionID::kGroupByType) {
                 fmInfo() << "Grouping by type";
-                d->groupByStrategy(GroupStrategty::kType);
+                d->groupByStrategy(GroupStrategy::kType);
                 return true;
             }
         }
@@ -432,22 +432,22 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     QString currentStrategy = view->model()->groupingStrategy();
     fmDebug() << "Current grouping strategy:" << currentStrategy;
 
-    if (currentStrategy == GroupStrategty::kNoGroup) {
+    if (currentStrategy == GroupStrategy::kNoGroup) {
         predicateAction[ActionID::kGroupByNone]->setChecked(true);
         fmDebug() << "Set group by none action as checked";
-    } else if (currentStrategy == GroupStrategty::kName) {
+    } else if (currentStrategy == GroupStrategy::kName) {
         predicateAction[ActionID::kGroupByName]->setChecked(true);
         fmDebug() << "Set group by name action as checked";
-    } else if (currentStrategy == GroupStrategty::kModifiedTime) {
+    } else if (currentStrategy == GroupStrategy::kModifiedTime) {
         predicateAction[ActionID::kGroupByModified]->setChecked(true);
         fmDebug() << "Set group by time modified action as checked";
-    } else if (currentStrategy == GroupStrategty::kCreatedTime) {
+    } else if (currentStrategy == GroupStrategy::kCreatedTime) {
         predicateAction[ActionID::kGroupByCreated]->setChecked(true);
         fmDebug() << "Set group by time created action as checked";
-    } else if (currentStrategy == GroupStrategty::kSize) {
+    } else if (currentStrategy == GroupStrategy::kSize) {
         predicateAction[ActionID::kGroupBySize]->setChecked(true);
         fmDebug() << "Set group by size action as checked";
-    } else if (currentStrategy == GroupStrategty::kType) {
+    } else if (currentStrategy == GroupStrategy::kType) {
         predicateAction[ActionID::kGroupByType]->setChecked(true);
         fmDebug() << "Set group by type action as checked";
     } else {
