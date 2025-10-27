@@ -384,16 +384,20 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
     // NOTE: Moving positions may cause deadlock
     Q_EMIT q->mountPointAboutToAdded(mpt);
 
-    QWriteLocker lk(&lock);
-    if (id.startsWith(kBlockDeviceIdPrefix)) {
-        auto &&info = q->queryBlockInfo(id);
-        if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
-            && !DeviceUtils::isBuiltInDisk(info))
+    {
+        QWriteLocker lk(&lock);
+        if (id.startsWith(kBlockDeviceIdPrefix)) {
+            auto &&info = q->queryBlockInfo(id);
+            if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool()
+                && !DeviceUtils::isBuiltInDisk(info))
+                externalMounts.insert(id, p);
+        } else {
             externalMounts.insert(id, p);
-    } else {
-        externalMounts.insert(id, p);
+        }
+        allMounts.insert(id, p);
     }
-    allMounts.insert(id, p);
+
+    Q_EMIT q->mountPointAdded(mpt);
 }
 
 void DeviceProxyManagerPrivate::removeMounts(const QString &id)
@@ -406,7 +410,10 @@ void DeviceProxyManagerPrivate::removeMounts(const QString &id)
     }
     Q_EMIT q->mountPointAboutToRemoved(mpt);
 
-    QWriteLocker lk(&lock);
-    externalMounts.remove(id);
-    allMounts.remove(id);
+    {
+        QWriteLocker lk(&lock);
+        externalMounts.remove(id);
+        allMounts.remove(id);
+    }
+    Q_EMIT q->mountPointRemoved(mpt);
 }

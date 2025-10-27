@@ -57,6 +57,8 @@ Q_SIGNALS:
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
     void mountPointAboutToAdded(QStringView mpt);
     void mountPointAboutToRemoved(QStringView mpt);
+    void mountPointAdded(QStringView mpt);
+    void mountPointRemoved(QStringView mpt);
 
     void blockDevPropertyChanged(const QString &id, const QString &property, const QVariant &val);
     void blockDriveAdded();
