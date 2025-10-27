@@ -90,6 +90,7 @@ class FileViewPrivate
 
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
+    QString previousGroupStrategy { GroupStrategty::kNoGroup };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
