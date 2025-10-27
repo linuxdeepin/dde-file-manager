@@ -14,6 +14,7 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
@@ -156,6 +157,12 @@ void CrumbBarPrivate::initConnections()
                        setClickableAreaEnabled(enabled);
                    });
     }
+
+    q->connect(DevProxyMng, &DeviceProxyManager::mountPointAdded, q,
+               [this](const QStringView &mpt) {
+                   if (lastUrl.path() == mpt)
+                       q->onUrlChanged(lastUrl);
+               });
 }
 
 void CrumbBarPrivate::appendWidget(QWidget *widget, int stretch)
