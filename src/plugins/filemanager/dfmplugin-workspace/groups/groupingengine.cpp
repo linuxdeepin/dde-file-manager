@@ -687,20 +687,20 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
 
     // Check if this is one of the built-in strategies that only check for non-empty lists
     // These strategies' isGroupVisible simply returns !infos.isEmpty()
-    if (strategyName == GroupStrategty::kName
-        || strategyName == GroupStrategty::kSize
-        || strategyName == GroupStrategty::kType
-        || strategyName == GroupStrategty::kModifiedTime
-        || strategyName == GroupStrategty::kCreatedTime
-        || strategyName == GroupStrategty::kCustomPath
-        || strategyName == GroupStrategty::kCustomTime) {
+    if (strategyName == GroupStrategy::kName
+        || strategyName == GroupStrategy::kSize
+        || strategyName == GroupStrategy::kType
+        || strategyName == GroupStrategy::kModifiedTime
+        || strategyName == GroupStrategy::kCreatedTime
+        || strategyName == GroupStrategy::kCustomPath
+        || strategyName == GroupStrategy::kCustomTime) {
         fmDebug() << "GroupingEngine: Fast path for built-in strategy" << strategyName
                   << "- skipping file info conversion";
         return !groupFiles.isEmpty();
     }
 
     // For NoGroupStrategy, it always returns false (groups are not visible in no-group mode)
-    if (strategyName == GroupStrategty::kNoGroup) {
+    if (strategyName == GroupStrategy::kNoGroup) {
         fmDebug() << "GroupingEngine: NoGroupStrategy always returns false for group visibility";
         return false;
     }

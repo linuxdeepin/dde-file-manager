@@ -105,7 +105,7 @@ bool SizeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString SizeGroupStrategy::getStrategyName() const
 {
-    return GroupStrategty::kSize;
+    return GroupStrategy::kSize;
 }
 
 QString SizeGroupStrategy::classifyBySize(qint64 size) const

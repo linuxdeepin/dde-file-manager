@@ -330,7 +330,7 @@ void WorkspaceHelper::setGroupingStrategy(quint64 windowId, const QString &strat
         // Always set the strategy first (including "NoGroupStrategy")
         if (oldStrategy == strategyName) {
             // User clicked the same strategy - toggle sort order (unless it's NoGroupStrategy)
-            if (strategyName != GroupStrategty::kNoGroup) {
+            if (strategyName != GroupStrategy::kNoGroup) {
                 order = (order == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
                 fmInfo() << "Toggling grouping order for strategy:" << strategyName
                          << "to" << (order == Qt::AscendingOrder ? "Ascending" : "Descending");

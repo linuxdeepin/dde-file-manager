@@ -18,21 +18,21 @@ AbstractGroupStrategy *GroupingFactory::createStrategy(const QString &strategyNa
 {
     fmDebug() << "GroupingFactory: Creating strategy for name:" << strategyName;
 
-    if (strategyName == GroupStrategty::kNoGroup) {
+    if (strategyName == GroupStrategy::kNoGroup) {
         return new NoGroupStrategy(parent);
-    } else if (strategyName == GroupStrategty::kName) {
+    } else if (strategyName == GroupStrategy::kName) {
         return new NameGroupStrategy(parent);
-    } else if (strategyName == GroupStrategty::kSize) {
+    } else if (strategyName == GroupStrategy::kSize) {
         return new SizeGroupStrategy(parent);
-    } else if (strategyName == GroupStrategty::kModifiedTime) {
+    } else if (strategyName == GroupStrategy::kModifiedTime) {
         return new TimeGroupStrategy(TimeGroupStrategy::kModificationTime, parent);
-    } else if (strategyName == GroupStrategty::kCreatedTime) {
+    } else if (strategyName == GroupStrategy::kCreatedTime) {
         return new TimeGroupStrategy(TimeGroupStrategy::kCreationTime, parent);
-    } else if (strategyName == GroupStrategty::kType) {
+    } else if (strategyName == GroupStrategy::kType) {
         return new TypeGroupStrategy(parent);
-    } else if (strategyName == GroupStrategty::kCustomPath) {
+    } else if (strategyName == GroupStrategy::kCustomPath) {
         return new PathGroupStrategy(parent);
-    } else if (strategyName == GroupStrategty::kCustomTime) {
+    } else if (strategyName == GroupStrategy::kCustomTime) {
         return new TimeGroupStrategy(TimeGroupStrategy::kCustomTime);
     } else {
         fmWarning() << "GroupingFactory: Unknown strategy name:" << strategyName;

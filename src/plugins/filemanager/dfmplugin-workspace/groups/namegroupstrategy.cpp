@@ -104,7 +104,7 @@ bool NameGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString NameGroupStrategy::getStrategyName() const
 {
-    return GroupStrategty::kName;
+    return GroupStrategy::kName;
 }
 
 QString NameGroupStrategy::classifyFirstCharacter(const QChar &ch) const

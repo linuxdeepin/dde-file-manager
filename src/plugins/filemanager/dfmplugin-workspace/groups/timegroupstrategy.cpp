@@ -165,11 +165,11 @@ bool TimeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 QString TimeGroupStrategy::getStrategyName() const
 {
     if (m_timeType == kModificationTime) {
-        return GroupStrategty::kModifiedTime;
+        return GroupStrategy::kModifiedTime;
     } else if (m_timeType == kCreationTime) {
-        return GroupStrategty::kCreatedTime;
+        return GroupStrategy::kCreatedTime;
     } else {
-        return GroupStrategty::kCustomTime;
+        return GroupStrategy::kCustomTime;
     }
 }
 

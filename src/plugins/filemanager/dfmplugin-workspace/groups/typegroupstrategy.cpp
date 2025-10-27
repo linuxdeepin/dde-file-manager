@@ -111,7 +111,7 @@ bool TypeGroupStrategy::isGroupVisible(const QString &groupKey, const QList<File
 
 QString TypeGroupStrategy::getStrategyName() const
 {
-    return GroupStrategty::kType;
+    return GroupStrategy::kType;
 }
 
 QString TypeGroupStrategy::mapMimeTypeToGroup(const QString &mimeType) const

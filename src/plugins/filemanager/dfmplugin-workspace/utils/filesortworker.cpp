@@ -108,7 +108,7 @@ FileSortWorker::GroupingOpt FileSortWorker::setGroupArguments(const Qt::SortOrde
     if (!currentStrategy) {
         return FileSortWorker::GroupingOpt::kGroupingOptNone;
     }
-    isCurrentGroupingEnabled = !(currentStrategy->getStrategyName() == GroupStrategty::kNoGroup);
+    isCurrentGroupingEnabled = !(currentStrategy->getStrategyName() == GroupStrategy::kNoGroup);
     groupExpansionStates.clear();
     for (const auto &key : expandStates.keys()) {
         groupExpansionStates.insert(key, expandStates.value(key).toBool());
@@ -283,7 +283,7 @@ Qt::SortOrder FileSortWorker::getSortOrder() const
 QString FileSortWorker::getGroupStrategyName() const
 {
     if (!currentStrategy) {
-        return GroupStrategty::kNoGroup;
+        return GroupStrategy::kNoGroup;
     }
 
     return currentStrategy->getStrategyName();
