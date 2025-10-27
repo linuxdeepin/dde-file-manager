@@ -4066,12 +4066,12 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
         <source>Erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Tyhjentäminen epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Levyn tyhjentämistä ei voitu suorittaa loppuun. Tämä voi johtua luku-/kirjoitusrajoituksesta. Tarkista asiaankuuluvat asetukset ja yritä uudelleen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="231"/>
@@ -5706,7 +5706,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostoa %1 ei voitu avata, voidaan siirtää tai nimetä</translation>
     </message>
 </context>
 <context>
