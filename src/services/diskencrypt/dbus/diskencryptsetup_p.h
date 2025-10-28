@@ -8,6 +8,8 @@
 #include "workers/baseencryptworker.h"
 
 #include <QObject>
+#include <QDBusUnixFileDescriptor>
+#include <QVariantMap>
 
 class DiskEncryptSetup;
 class DiskEncryptSetupPrivate : public QObject
@@ -25,6 +27,9 @@ class DiskEncryptSetupPrivate : public QObject
     bool validateResumeArgs(const QVariantMap &args);
     bool validateDecryptArgs(const QVariantMap &args);
     bool validateChgPwdArgs(const QVariantMap &args);
+
+    // Parse credentials from file descriptor
+    bool parseCredentialsFromFd(const QDBusUnixFileDescriptor &credentialsFd, QVariantMap *args);
 
     QString resolveDeviceByDetachHeaderName(const QString &fileName);
 
