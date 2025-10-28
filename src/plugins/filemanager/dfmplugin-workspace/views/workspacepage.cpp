@@ -31,6 +31,34 @@ WorkspacePage::WorkspacePage(QWidget *parent)
     initUI();
 }
 
+WorkspacePage::~WorkspacePage()
+{
+    fmInfo() << "Destroying WorkspacePage";
+
+    // 显式清理 views,确保析构顺序可控
+    // 注意: 必须先从 layout 移除,再 delete,避免 Qt 父子关系的二次删除
+    for (auto it = views.begin(); it != views.end(); ) {
+        QString scheme = it.key();
+        ViewPtr view = it.value();
+
+        fmDebug() << "Cleaning up view for scheme:" << scheme;
+
+        // 先从 layout 移除
+        if (view && view->widget()) {
+            viewStackLayout->removeWidget(view->widget());
+        }
+
+        // 删除 view (会触发 FileView::~FileView)
+        if (view) {
+            delete view;
+        }
+
+        it = views.erase(it);
+    }
+
+    fmDebug() << "WorkspacePage destruction completed";
+}
+
 void WorkspacePage::setUrl(const QUrl &url)
 {
     fmInfo() << "WorkspacePage setUrl called with url:" << url;

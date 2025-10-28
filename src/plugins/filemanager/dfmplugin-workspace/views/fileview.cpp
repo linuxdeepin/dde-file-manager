@@ -105,13 +105,29 @@ FileView::~FileView()
 {
     fmInfo() << "Destroying FileView for URL:" << rootUrl();
 
-    disconnect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
-    disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
+    // 关键修复: 必须在基类(QAbstractItemView)析构前解绑 model
+    // 原因: QAbstractItemView 持有 QPersistentModelIndex,如果 model 先于基类析构,
+    //      这些 QPersistentModelIndex 析构时会访问已释放的 model 导致崩溃
 
+    // 1. 断开信号连接
+    if (model()) {
+        disconnect(model(), nullptr, this, nullptr);
+    }
+    if (selectionModel()) {
+        disconnect(selectionModel(), nullptr, this, nullptr);
+    }
+
+    // 2. 解绑 model (关键步骤!)
+    // 这会触发 QAbstractItemView 清理所有 QPersistentModelIndex
+    DListView::setModel(nullptr);
+
+    // 3. 清理其他订阅
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 
     fmDebug() << "FileView destruction completed";
+
+    // 注意: model 作为 FileView 的子对象,会在基类析构后由 Qt 自动释放
 }
 
 QWidget *FileView::widget() const
@@ -317,12 +333,27 @@ FileViewModel *FileView::model() const
 
 void FileView::setModel(QAbstractItemModel *model)
 {
-    if (model->parent() != this)
-        model->setParent(this);
-    auto curr = FileView::model();
-    if (curr)
-        delete curr;
-    DListView::setModel(model);
+    // 1. 获取旧 model
+    auto oldModel = FileView::model();
+
+    // 2. 先解绑旧 model (关键!)
+    // 必须先调用 DListView::setModel(nullptr) 来清理 QAbstractItemView 中的 QPersistentModelIndex
+    if (oldModel) {
+        DListView::setModel(nullptr);
+        // 只删除我们拥有的 model (通过 QObject 父子关系判断)
+        if (oldModel->QObject::parent() == this) {
+            delete oldModel;
+        }
+    }
+
+    // 3. 设置新 model
+    if (model) {
+        // 如果没有 parent,设置为 this,这样 Qt 会自动管理生命周期
+        if (!model->QObject::parent()) {
+            model->setParent(this);
+        }
+        DListView::setModel(model);
+    }
 }
 
 void FileView::stopWork(const QUrl &newUrl)
