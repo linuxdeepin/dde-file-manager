@@ -8058,12 +8058,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2360"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2391"/>
         <source>Mount error</source>
         <translation>يۈكلەش خاتالىقى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2392"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>سىرتقى سىرتقى كىرۇش مەلۇملىقى ھەققىدە ھەققىقسىز. ئىشلىتىشنى ئۆچۈرۈپ ئەمەل قىلىڭ</translation>
     </message>
