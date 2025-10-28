@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <qdbusservice.h>
 
@@ -24,9 +25,9 @@ public:
 public Q_SLOTS:
     bool InitEncryption(const QVariantMap &args);
     bool ResumeEncryption(const QVariantMap &args);
-    bool Decryption(const QVariantMap &args);
-    bool ChangePassphrase(const QVariantMap &args);
-    void SetupAuthArgs(const QVariantMap &args);
+    bool Decryption(const QDBusUnixFileDescriptor &credentialsFd);
+    bool ChangePassphrase(const QDBusUnixFileDescriptor &credentialsFd);
+    void SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd);
     void IgnoreAuthSetup();
 
     QString TpmToken(const QString &dev);
