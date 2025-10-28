@@ -197,7 +197,7 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
     if (url.scheme() == VaultHelper::instance()->scheme()) {
         fmDebug() << "Vault: Processing vault URL change";
         VaultHelper::instance()->appendWinID(windowId);
-        const VaultState &state = VaultHelper::instance()->state(PathManager::vaultLockPath());
+        const VaultState &state = VaultHelper::instance()->state(PathManager::vaultLockPath(), false);
         fmDebug() << "Vault: Current vault state:" << static_cast<int>(state);
 
         if (VaultState::kNotExisted == state) {

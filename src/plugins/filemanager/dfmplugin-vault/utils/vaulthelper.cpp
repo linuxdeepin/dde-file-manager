@@ -130,7 +130,7 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
     QApplication::restoreOverrideCursor();
     VaultHelper::instance()->appendWinID(windowId);
 
-    switch (instance()->state(PathManager::vaultLockPath())) {
+    switch (instance()->state(PathManager::vaultLockPath(), false)) {
     case VaultState::kNotExisted: {
         fmInfo() << "Vault: Vault not existed, showing create dialog";
         VaultHelper::instance()->createVaultDialog();
@@ -156,9 +156,9 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
     }
 }
 
-VaultState VaultHelper::state(const QString &baseDir) const
+VaultState VaultHelper::state(const QString &baseDir, bool useCache) const
 {
-    return FileEncryptHandle::instance()->state(baseDir);
+    return FileEncryptHandle::instance()->state(baseDir, useCache);
 }
 
 bool VaultHelper::updateState(VaultState curState)

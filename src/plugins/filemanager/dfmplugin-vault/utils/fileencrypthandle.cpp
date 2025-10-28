@@ -191,14 +191,14 @@ bool FileEncryptHandle::createDirIfNotExist(QString path)
     return true;
 }
 
-VaultState FileEncryptHandle::state(const QString &encryptBaseDir) const
+VaultState FileEncryptHandle::state(const QString &encryptBaseDir, bool useCache) const
 {
     if (encryptBaseDir.isEmpty()) {
         fmWarning() << "Vault: not set the base dir!";
         return kUnknow;
     }
 
-    if (!(d->curState == kUnknow || d->curState == kEncrypted))
+    if (useCache && !(d->curState == kUnknow || d->curState == kEncrypted))
         return d->curState;
 
     const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
