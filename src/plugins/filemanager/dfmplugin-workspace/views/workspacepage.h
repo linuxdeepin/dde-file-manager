@@ -35,6 +35,7 @@ class WorkspacePage : public QWidget
 
 public:
     explicit WorkspacePage(QWidget *parent = nullptr);
+    ~WorkspacePage() override;
 
     void setUrl(const QUrl &url);
     QUrl currentUrl() const;
@@ -53,9 +54,9 @@ private:
     void setCurrentView(const QUrl &url);
     void playDisappearAnimation(ViewPtr view);
 
-    QWidget *topContainer { nullptr };     // 顶部容器
-    QVBoxLayout *topLayout { nullptr };    // 顶部布局
-    QWidget *viewContainer { nullptr };    // 视图容器
+    QWidget *topContainer { nullptr };   // 顶部容器
+    QVBoxLayout *topLayout { nullptr };   // 顶部布局
+    QWidget *viewContainer { nullptr };   // 视图容器
 
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
@@ -67,11 +68,11 @@ private:
     QUrl currentPageUrl {};
     QString currentViewScheme {};
 
-    QMap<QString, ViewPtr> views {};
-    QMap<QString, TopWidgetPtr> topWidgets {};
+    QHash<QString, ViewPtr> views {};
+    QHash<QString, TopWidgetPtr> topWidgets {};
     int highPriorityTopWidgetsCount { 0 };
 };
 
-} // namespace dfmplugin_workspace
+}   // namespace dfmplugin_workspace
 
-#endif // WORKSPACEPAGE_H
+#endif   // WORKSPACEPAGE_H
