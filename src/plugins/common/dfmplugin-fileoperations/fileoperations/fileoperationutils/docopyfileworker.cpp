@@ -121,7 +121,7 @@ bool DoCopyFileWorker::doDfmioFileCopy(const DFileInfoPointer fromInfo,
             ret = false;
             break;
         }
-        
+
         ret = op->copyFile(toUrl, flag, progressCallback, data);
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!ret) {
@@ -1148,24 +1148,23 @@ bool DoCopyFileWorker::handlePauseResume(FileWriter &writer, const QString &dest
 {
     // Sync data before pausing
     if (writer.fd >= 0) {
-        // TODO (io): sync data
         // Determine target filesystem type for appropriate sync strategy
-        // QUrl destUrl = QUrl::fromLocalFile(dest);
-        // QString targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);
+        const QUrl &destUrl = QUrl::fromLocalFile(dest);
+        const QString &targetFsType = dfmio::DFMUtils::fsTypeFromUrl(destUrl);
 
-        // if (targetFsType.toLower().contains("fuse")) {
-        //     // For fuse filesystems, avoid fsync as it may cause performance issues
-        //     // or hang in some fuse implementations
-        //     fmDebug() << "Skipping fsync for fuse filesystem:" << targetFsType;
-        // } else {
-        //     // For non-fuse filesystems, use fsync to ensure data is written to device
-        //     // before pausing, providing better data integrity
-        //     fmDebug() << "Performing fsync for non-fuse filesystem:" << targetFsType;
-        //     if (syncfs(writer.fd) != 0) {
-        //         fmWarning() << "fsync failed for file:" << dest << "error:" << strerror(errno);
-        //         // Continue anyway, as this is not a fatal error
-        //     }
-        // }
+        if (targetFsType.toLower().contains("fuse")) {
+            // For fuse filesystems, avoid fsync as it may cause performance issues
+            // or hang in some fuse implementations
+            fmInfo() << "Skipping fsync for fuse filesystem:" << targetFsType;
+        } else {
+            // For non-fuse filesystems, use fsync to ensure data is written to device
+            // before pausing, providing better data integrity
+            fmInfo() << "Performing fsync for non-fuse filesystem:" << targetFsType;
+            if (syncfs(writer.fd) != 0) {
+                fmWarning() << "fsync failed for file:" << dest << "error:" << strerror(errno);
+                // Continue anyway, as this is not a fatal error
+            }
+        }
         close(writer.fd);
     }
 
