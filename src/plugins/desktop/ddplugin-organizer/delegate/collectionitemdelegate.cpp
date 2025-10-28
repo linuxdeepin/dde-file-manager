@@ -874,8 +874,8 @@ void CollectionItemDelegate::paintBackground(QPainter *painter, const QStyleOpti
     if (!isSelected)
         return;
 
-    QColor backgroundColor(0, 0, 0, qRound(255 * 0.15));
-    QColor borderColor(255, 255, 255, qRound(255 * 0.1));
+    QColor backgroundColor(33, 33, 33, qRound(255 * 0.25));
+    QColor borderColor(241, 241, 241, qRound(255 * 0.25));
     QRect backgroundRect = iconRect.adjusted(-kIconBackgroundMargin, -kIconBackgroundMargin, kIconBackgroundMargin, kIconBackgroundMargin);
 
     painter->save();
