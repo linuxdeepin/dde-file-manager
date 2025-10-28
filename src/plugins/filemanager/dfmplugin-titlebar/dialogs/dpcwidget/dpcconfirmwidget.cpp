@@ -23,6 +23,10 @@
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 #include <QLibrary>
+#include <QDBusUnixFileDescriptor>
+#include <QDataStream>
+
+#include <unistd.h>
 
 DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -313,10 +317,50 @@ void DPCConfirmWidget::onSaveBtnClicked()
     if (accessControlInter->isValid()) {
         fmInfo() << "Sending password change request to daemon service";
         setEnabled(false);
-        QString oldPass(oldPwdEdit->text().trimmed()), newPass(newPwdEdit->text().trimmed());
+
+        QString oldPass(oldPwdEdit->text().trimmed());
+        QString newPass(newPwdEdit->text().trimmed());
+
+        // Create anonymous pipe for secure credential transmission
+        int pipefd[2];
+        if (pipe(pipefd) == -1) {
+            fmCritical() << "Failed to create anonymous pipe for credentials";
+            setEnabled(true);
+            return;
+        }
+
+        // Prepare credentials data using QDataStream for reliable serialization
+        QByteArray credentials;
+        QDataStream stream(&credentials, QIODevice::WriteOnly);
         QString oldPassEnc = FileUtils::encryptString(oldPass);
         QString newPassEnc = FileUtils::encryptString(newPass);
-        accessControlInter->asyncCall(DaemonServiceIFace::kFuncChangePwd, oldPassEnc, newPassEnc);
+        stream << oldPassEnc << newPassEnc;
+
+        // Write credentials to pipe and close write end immediately
+        ssize_t written = write(pipefd[1], credentials.constData(), credentials.size());
+        ::close(pipefd[1]);   // Close write end immediately after writing
+
+        if (written != credentials.size()) {
+            fmCritical() << "Failed to write credentials to pipe, written:" << written << "expected:" << credentials.size();
+            ::close(pipefd[0]);
+            setEnabled(true);
+            return;
+        }
+
+        // Create file descriptor for D-Bus transmission
+        QDBusUnixFileDescriptor fd(pipefd[0]);
+        if (!fd.isValid()) {
+            fmCritical() << "Failed to create valid file descriptor from pipe";
+            ::close(pipefd[0]);
+            setEnabled(true);
+            return;
+        }
+
+        // Call D-Bus interface with pipe file descriptor
+        accessControlInter->asyncCall(DaemonServiceIFace::kFuncChangePwd, QVariant::fromValue(fd));
+
+        // Close read end (D-Bus service will have its own copy)
+        ::close(pipefd[0]);
     } else {
         fmCritical() << "Access control interface is invalid, cannot change password";
     }

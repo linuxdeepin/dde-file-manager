@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <dfm-mount/base/dmount_global.h>
 
@@ -38,7 +39,7 @@ public:
     ~AccessControlDBus();
 
 public slots:
-    void ChangeDiskPassword(const QString &oldPwd, const QString &newPwd);
+    void ChangeDiskPassword(const QDBusUnixFileDescriptor &credentialsFd);
     bool Chmod(const QString &path, uint mode);
 
 private slots:

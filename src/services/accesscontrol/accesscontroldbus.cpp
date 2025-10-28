@@ -15,6 +15,7 @@
 #include <QDBusConnectionInterface>
 #include <QDBusVariant>
 #include <QtConcurrent>
+#include <QDataStream>
 
 #include <dfm-mount/dblockmonitor.h>
 #include <dfm-mount/dblockdevice.h>
@@ -22,6 +23,7 @@
 
 #include <sys/mount.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 namespace service_accesscontrol {
 DFM_LOG_REGISTER_CATEGORY(SERVICEACCESSCONTROL_NAMESPACE)
@@ -62,11 +64,51 @@ AccessControlDBus::~AccessControlDBus()
 {
 }
 
-void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString &newPwd)
+void AccessControlDBus::ChangeDiskPassword(const QDBusUnixFileDescriptor &credentialsFd)
 {
     if (!checkAuthentication(kPolicyKitDiskPwdActionId)) {
         fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Authentication failed for disk password change";
         emit DiskPasswordChecked(kAuthenticationFailed);
+        return;
+    }
+
+    // Validate file descriptor
+    if (!credentialsFd.isValid()) {
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Invalid file descriptor provided";
+        emit DiskPasswordChecked(kInvalidArgs);
+        return;
+    }
+
+    int fd = credentialsFd.fileDescriptor();
+    if (fd < 0) {
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Invalid file descriptor value:" << fd;
+        emit DiskPasswordChecked(kInvalidArgs);
+        return;
+    }
+
+    // Read all data from pipe into buffer
+    QByteArray buffer;
+    char readBuffer[1024];
+    ssize_t bytesRead;
+
+    while ((bytesRead = read(fd, readBuffer, sizeof(readBuffer))) > 0) {
+        buffer.append(readBuffer, bytesRead);
+    }
+
+    if (buffer.isEmpty()) {
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] No data received from pipe";
+        emit DiskPasswordChecked(kInvalidArgs);
+        return;
+    }
+
+    // Parse credentials using QDataStream
+    QDataStream stream(&buffer, QIODevice::ReadOnly);
+    QString oldPwd, newPwd;
+    stream >> oldPwd >> newPwd;
+
+    if (stream.status() != QDataStream::Ok) {
+        fmWarning() << "[AccessControlDBus::ChangeDiskPassword] Failed to parse credentials from pipe data, stream status:" << stream.status();
+        emit DiskPasswordChecked(kInvalidArgs);
         return;
     }
 
