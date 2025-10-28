@@ -6,6 +6,7 @@
 #include "utils/textindexconfig.h"
 
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-search/dsearch_global.h>
 
@@ -337,7 +338,8 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
     }
 
     // Check if path is on external mount
-    if (isExternalMount(path)) {
+    // Note: Block devices allowed to be mounted via udisks
+    if (!DevProxyMng->isFileOfExternalBlockMounts(path) && isExternalMount(path)) {
         fmDebug() << "FSMonitor: Excluding external mount:" << path;
         return true;
     }
